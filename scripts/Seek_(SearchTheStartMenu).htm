@@ -1,0 +1,833 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Seek -- von Phi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="alternate" type="application/rss+xml" title="AutoHotkey Forum RSS" href="/forum/rss.php">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>Seek -- von Phi</h1>
+
+<p> Die Navigation im Startmen&uuml; kann umst&auml;ndlich sein, besonders wenn viele Programme im Laufe der Zeit installiert wurden. Mit "Seek" kann ein Schl&uuml;sselwort unabh&auml;ngig von der Gro&szlig;- und Kleinschreibung angegeben werden, um &uuml;bereinstimmende Programme und Verzeichnisse im Startmen&uuml; herauszufiltern, damit das gew&uuml;nschte Programm aus der Liste einfach ge&ouml;ffnet werden kann. Dadurch entf&auml;llt das unn&ouml;tige Durchsuchen des Startmen&uuml;s.
+</p>
+<p><a href="Seek_(SearchTheStartMenu).ahk">Dieses Script herunterladen</a> &nbsp;| &nbsp;<a href="index.htm">Andere Beispiel-Scripts</a> &nbsp;| &nbsp;<a href="http://www.autohotkey.com">Home</a></p>
+
+<pre class="NoIndent"><em>;*****************************************************************
+;
+;  Programm : Seek
+;  Coder   : Phi
+;  Aktualisiert : Mon Jan 31 10:08:37 2005
+;
+;  Wonach suchst du, mein Freund?
+;
+;*****************************************************************
+;
+;  Ich hatte viel Spa&szlig; dabei, das hier zu programmieren, und hoffe,
+;  dass es dir auch gefallen wird. Du kannst mir jederzeit eine E-Mail mit
+;  Kommentaren und Feedbacks schreiben: phi1618 (*a.t*) gmail
+;  :D0T: com.
+;
+;  Optionen:
+;    -cache Die zwischengespeicherte Verzeichnisauflistung verwenden, falls verf&uuml;gbar
+;           (Standardmodus, wenn keine Optionen angegeben werden)
+;    -scan  Eine Verzeichnis&uuml;berpr&uuml;fung erzwingen, um die aktuellste
+;           Verzeichnisauflistung zu erhalten
+;    -scex  &Uuml;berpr&uuml;fen & Beenden (n&uuml;tzlich, um die
+;           m&ouml;glicherweise zeitraubende Verzeichnis&uuml;berpr&uuml;fung
+;           im Hintergrund durchzuf&uuml;hren)
+;    -help  Diese Hilfe anzeigen
+;
+;*****************************************************************
+;
+; WIE WIRD GESUCHT:
+;
+; 1. 'Seek' ist ein AutoHotkey-Script. Du kannst das Script entweder
+;    als Seek.ahk (originales Script) oder als Seek.exe (kompilierte
+;    ausf&uuml;hrbare Datei) ausf&uuml;hren.
+;
+;    Um Seek.exe zu erhalten, kannst du Seek.zip (enth&auml;lt
+;    sowohl den Quellcode als auch die kompilierte Bin&auml;rdatei) von
+;    http://home.ripway.com/2004-10/188589/ herunterladen.
+;    Ansonsten kannst du Seek.ahk auch selbst mithilfe des
+;    Ahk2Exe-Compilers von AutoHotkey kompilieren, oder von mir
+;    eine Kopie per E-Mail anfordern. Die Dateigr&ouml;&szlig;e liegt bei
+;    ca. 200 kbytes. Ich kann damit erreicht werden: phi1618 (*a.t*)
+;    gmail :D0T: com.
+;
+;    Damit Seek.ahk verwendet werden kann, installiere zuerst
+;    AutoHotkey v1.0.25 oder h&ouml;her auf deinem PC (von
+;    http://www.autohotkey.com herunterladen). Als n&auml;chstes den Befehl ausf&uuml;hren:
+;
+;    C:\Programme\AutoHotkey\AutoHotkey.exe C:\EigeneScripts\Seek.ahk
+;
+;    Denke daran, C:\Programme und C:\EigeneScripts mit
+;    den richtigen Verzeichnisnamen zu ersetzen.
+;
+; 2. Seek.exe kann von &uuml;berall ausgef&uuml;hrt
+;    werden. Es keine Installation notwendig, es wird
+;    nichts in deiner Registrierung geschrieben, und greift nicht
+;    auf das Internet zu (nicht nach Hause telefonieren). Um das Programm
+;    zu deinstallieren, l&ouml;sche einfach Seek.exe.
+;
+;    Es werden nur 2 Dateien im
+;    TMP-Verzeichnis erstellt:
+;
+;      a. _Seek.key  (Cache-Datei f&uuml;r den aktuellsten Abfragestring)
+;      b. _Seek.list (Cache-Datei f&uuml;r die Verzeichnisauflistung)
+;
+;    Wenn du ein Purist bist, dann kannst du diese Dateien manuell l&ouml;schen,
+;    falls du die Absicht hast, 'Seek' vom System zu entfernen.
+;
+; 3. Der bequemste Weg, 'Seek' auszuf&uuml;hren, erfolgt mittels
+;    einer Tastenkombination/einem Hotkey. Falls du noch kein
+;    Hotkey-Verwaltungsprogramm auf deinem PC verwendest,
+;    empfehle ich dringendst AutoHotkey. Wenn du kein Hotkey-Verwaltungsprogramm
+;    installieren willst, dann kannst du die
+;    Tastenkombinationsfunktion von Windows benutzen und
+;    einen Hotkey (z. B. ALT+F1) dazu bringen, 'Seek' auszuf&uuml;hren. Das ist
+;    wichtig, da du 'Seek' jederzeit und von &uuml;berall ausf&uuml;hren
+;    kannst.
+;
+; 4. Beim erstmaligen Ausf&uuml;hren von 'Seek' wird dein
+;    Startmen&uuml; &uuml;berpr&uuml;ft und die Verzeichnisauflistung in
+;    eine Cache-Datei gespeichert.
+;
+;    Die folgenden Verzeichnisse werden mit einbezogen:
+;    - %A_StartMenu%
+;    - %A_StartMenuCommon%
+;
+;    Standardm&auml;&szlig;ig werden nachfolgende Ausf&uuml;hrungen die
+;    Cache-Datei lesen, um die Ladezeit zu verringern. F&uuml;r
+;    mehr Infos &uuml;ber Optionen, f&uuml;hre 'Seek.exe -help' aus. Wenn du
+;    denkst, dass dein Startmen&uuml; nicht sehr viele Programme
+;    enth&auml;lt, kannst du die Zwischenspeicherung deaktivieren und
+;    'Seek' anweisen, immer eine Verzeichnis&uuml;berpr&uuml;fung durchzuf&uuml;hren (mittels
+;    der Option -scan).  Dadurch erh&auml;ltst du immer die aktuelle
+;    Auflistung.
+;
+; 5. Sobald du 'Seek' ausf&uuml;hrst, erscheint ein Fenster und wartet darauf,
+;    dass du ein Schl&uuml;sselwort eintr&auml;gst. Nachdem du einen
+;    Abfragestring eingetragen hast, wird eine Liste mit
+;    &Uuml;bereinstimmungen angezeigt. Als n&auml;chstes muss ein Eintrag ausgew&auml;hlt
+;    und &lt;Enter&gt; oder die Schaltfl&auml;che '&Ouml;ffnen' gedr&uuml;ckt
+;    werden, um das ausgew&auml;hlte Programm auszuf&uuml;hren
+;    oder das ausgew&auml;hlte Verzeichnis zu &ouml;ffnen.
+;
+;*****************************************************************
+;
+; TECHNISCHE HINWEISE:
+;
+; - 'Seek' ben&ouml;tigt Chris Mallett's AutoHotkey v1.0.25
+;   oder h&ouml;her (http://www.autohotkey.com).
+;   Danke an Chris f&uuml;r seine gro&szlig;artige Arbeit mit AutoHotkey. :)
+;
+; - Die folgenden Umgebungsvariablen m&uuml;ssen g&uuml;ltig sein:
+;   a. TMP
+;
+;*****************************************************************
+;
+; BEKANNTE PROBLEME:
+;
+; - Nil
+;
+;*****************************************************************
+;
+; UMGESETZTE VORSCHL&Auml;GE:
+;
+; - Erste &Uuml;bereinstimmung standardm&auml;&szlig;ig markieren, sodass
+;   der Benutzer nur &lt;Enter&gt; zu dr&uuml;cken braucht, um sie auszuf&uuml;hren.
+;   (Vorgeschlagen von Yih Yeong)
+;
+; - Doppelklick f&uuml;r die Auflistung der Suchergebnisse
+;   erm&ouml;glichen, um das Programm auszuf&uuml;hren.
+;   (Vorgeschlagen von Yih Yeong & Jack)
+;
+; - Automatische inkrementelle Suche in Echtzeit.
+;   (Vorgeschlagen von Rajat)
+;
+; - Fuzzy-Suche bei Benutzereingabe von mehreren Abfragestrings,
+;   durch Leerzeichen getrennt.
+;   (Vorgeschlagen von Rajat)
+;
+;*****************************************************************
+;
+; VORGESCHLAGENE FUNKTIONEN (DIE VIELLEICHT UMGESETZT WERDEN):
+;
+; - Ausf&uuml;hrungsablauf protokollieren. Die am h&auml;ufigsten
+;   verwendeten Programme am Anfang der Suchergebnisse auflisten.
+;   (Vorgeschlagen von Yih Yeong)
+;
+; - Anstelle einer ListBox eine Reihe von Anwendung-Icons
+;   darstellen, sodass ein ToolTip mit Programminformationen
+;   (Pfad usw.) angezeigt wird, sobald sich der Mauszeiger
+;   &uuml;ber das Icon befindet.
+;   (Vorgeschlagen von Yih Yeong)
+;
+; - Anstatt mit dem Text in der Mitte &uuml;bereinzustimmen, nur mit
+;   Programm-/Verzeichnisnamen &uuml;bereinstimmen, die mit dem
+;   Abfragestring beginnen.
+;   (Vorgeschlagen von Stefan)
+;
+; - Verwaltung von Favoriten hinzuf&uuml;gen. Eine Gruppe von Programmen
+;   bei einer einzigen Ausf&uuml;hrung starten.
+;   (Vorgeschlagen von Atomhrt)
+;
+; - Seek in der Taskleiste/Symbolleiste integrieren, sodass
+;   es immer verf&uuml;gbar ist, wodurch es unn&ouml;tig ist,
+;   einen Hotkey zum Ausf&uuml;hren von Seek zu erstellen.
+;   (Vorgeschlagen von Deniz Akay)
+;
+; - Suche mittels Platzhalter/RegEx.
+;   (Vorgeschlagen von Steve)
+;
+;*****************************************************************
+;
+; &Auml;NDERUNGEN:
+;
+; * v1.1.0
+; - Erste Ver&ouml;ffentlichung.
+;
+; * v1.1.1
+; - Maximierungsoption entfernt, da einige Programme nicht
+;   richtig damit funktionieren.
+; - Doppelklickerkennung hinzugef&uuml;gt, um die &Ouml;ffnen-Funktion auszul&ouml;sen.
+;
+; * v2.0.0
+; - Das Popup-Fenster von 'Seek' wurde im Ausgabebildschirm integriert,
+;   sodass der Benutzer den Abfragestring nochmals eingeben kann, um etwas
+;   zu suchen, ohne dabei Seek zu beenden und wieder zu starten.
+; - Schaltfl&auml;che 'Startmen&uuml; &uuml;berpr&uuml;fen'  hinzugef&uuml;gt.
+; - Inkrementelle Suche in Echtzeit hinzugef&uuml;gt, die &Uuml;bereinstimmungen
+;   bei der Benutzereingabe automatisch filtert, ohne darauf zu warten,
+;   dass du &lt;Enter&gt; dr&uuml;ckst.
+; - Internen Schalter hinzugef&uuml;gt (TrackKeyPhrase), um den Suchstring zu merken.
+; - Internen Schalter hinzugef&uuml;gt (ToolTipFilename), um den Dateinamen
+;   mithilfe des Tooltips anzuzeigen.
+;
+; * v2.0.1
+; - Horizontale Bildlaufleiste zur ListBox hinzugef&uuml;gt, sodass sehr
+;   lange &Uuml;bereinstimmungen nicht gek&uuml;rzt werden.
+;
+; * v2.0.2
+; - Der Benutzer kann nun seine eigene angepasste Liste mit Verzeichnissen hinzuf&uuml;gen,
+;   die beim &Uuml;berpr&uuml;fen mit einbezogen wird. Der Benutzer muss nur eine
+;   Textdatei namens 'Seek.dir' im gleichen Verzeichnis von Seek.exe oder
+;   Seek.ahk erstellen, und den vollst&auml;ndigen Pfad des Verzeichnisses angeben,
+;   ein Verzeichnis pro Zeile. Die Pfade d&uuml;rfen nicht in
+;   einfache oder doppelte Anf&uuml;hrungszeichen gesetzt werden.
+;
+; * v2.0.3
+; - /on-Option zum DIR-Befehl hinzugef&uuml;gt, um nach Name zu sortieren.
+; - Fuzzy-Suche, wenn der Benutzer mehrere Abfragestrings eingibt,
+;   getrennt durch Leerzeichen, zum Beispiel "med pla". Es erfolgt eine &Uuml;bereinstimmung,
+;   sobald alle Strings ("med" & "pla") gefunden werden. Damit wird zum Beispiel
+;   "Media Player", "Macromedia Flash Player",
+;   "Play Medieval King", "medpla", "plamed" gefunden.
+; - Tabulator-Bewegungsablauf korrigiert, indem bereits alle Schaltfl&auml;chen
+;   beim Start hinzugef&uuml;gt werden, die jedoch deaktiviert sind, bis sie
+;   gebraucht werden.
+; - Statusleiste hinzugef&uuml;gt, um ToolTip-Feedback zu ersetzen.
+; - Veraltete interne Schalter entfernt (ToolTipFilename).
+; - Das Verwenden des "dir"-Befehls wurde mit dem eigenen
+;   "Loop"-Befehl von AutoHotkey ersetzt, um Verzeichnisinhalte zu &uuml;berpr&uuml;fen.
+;   "dir" kann nicht mit erweiterten Zeichens&auml;tzen umgehen, folglich
+;   wurden nicht englische (z. B. deutsche) Verzeichnisse und Dateinamen
+;   falsch erfasst. (Danke an Wolfgang Bujatti und
+;   Sietse Fliege f&uuml;rs Testen der Modifikation)
+; - Internen Schalter hinzugef&uuml;gt (ScanMode), um zu definieren, ob
+;   Dateien und/oder Verzeichnisse beim &Uuml;berpr&uuml;fen mit einbezogen werden.
+; - Die selbst programmierte Erkennung vom Startmen&uuml;-Pfad wurde mit den
+;   internen Variablen A_StartMenu und A_StartMenuCommon ersetzt.
+;   Damit funktioniert Seek nun mit unterschiedlichen Sprachen, die
+;   verschiedene Namensgebungen f&uuml;r den Startmen&uuml; haben.
+;   (Danke an Wolfgang Bujatti und Sietse Fliege f&uuml;r die Hilfe
+;   beim Testen der anderen Methode, bevor diese neuen Variablen
+;   verf&uuml;gbar waren.)
+; - Vorauswahl der zuletzt ausgef&uuml;hrten &Uuml;bereinstimmung hinzugef&uuml;gt,
+;   sodass sie beim zweimaligen Dr&uuml;cken von &lt;ENTER&gt; ausgef&uuml;hrt werden kann.
+;
+;*****************************************************************</em>
+
+<em>;**************************
+;<--- BEGINN DES PROGRAMMS --->
+;**************************</em>
+
+<em>;==== DEINE KONFIGURATION ===================================</em>
+
+<em>; Gebt an, welches Programm beim &Ouml;ffnen eines Verzeichnisses verwendet werden soll.
+; Wenn das Programm nicht gefunden werden kann oder nicht angegeben ist
+; (z. B. ist die Variable leer oder enth&auml;lt einen Null-Wert),
+; dann wird standardm&auml;&szlig;ig der Explorer verwendet.</em>
+dirExplorer = E:\utl\xplorer2_lite\xplorer2.exe
+
+<em>; Eine benutzerdefinierte Liste von zus&auml;tzlichen Verzeichnissen,
+; die beim &Uuml;berpr&uuml;fen mit einbezogen wird. Der vollst&auml;ndige Pfad darf nicht in
+; einfachen oder doppelten Anf&uuml;hrungszeichen gesetzt werden. Wenn diese Datei nicht
+; vorhanden ist, dann werden nur die Standardverzeichnisse &uuml;berpr&uuml;ft.</em>
+SeekMyDir = %A_ScriptDir%\Seek.dir
+
+<em>; Gebt den Dateinamen und den Standort des Verzeichnisses an,
+; um die zwischengespeicherte Verzeichnis-/Programmauflistung zu speichern. Es ist nicht notwendig,
+; das hier zu &auml;ndern, solange es nicht der Wunsch ist.</em>
+dirListing = %A_Temp%\_Seek.list
+
+<em>; Gebt den Dateinamen und den Standort des Verzeichnisses an,
+; um das zwischengespeicherte Schl&uuml;sselwort der letzten Suche zu speichern. Es ist nicht notwendig,
+; das hier zu &auml;ndern, solange es nicht der Wunsch ist.</em>
+keyPhrase = %A_Temp%\_Seek.key
+
+<em>; Suchstring merken (ON/OFF)
+; Wenn ON, dann wird der zuletzt benutzte Abfragestring als
+; Standardabfragestring beim n&auml;chsten Ausf&uuml;hren von Seek wiederverwendet.
+; Wenn OFF, dann wird der zuletzt benutzte Abfragestring nicht gespeichert,
+; au&szlig;erdem ist beim n&auml;chsten Ausf&uuml;hren von Seek kein
+; Standardabfragestring vorhanden.</em>
+TrackKeyPhrase = ON
+
+<em>; Gebt an, was bei der &Uuml;berpr&uuml;fung mit einbezogen werden soll.
+; 0: Verzeichnisse werden ignoriert (nur Dateien).
+; 1: Es werden alle Dateien und Verzeichnisse mit einbezogen.
+; 2: Nur Verzeichnisse einbeziehen (keine Dateien).</em>
+ScanMode = 1
+
+<em>;...........................................................</em>
+
+<em>; INIT
+;#NoTrayIcon</em>
+StringCaseSense, Off
+version = Seek v2.0.3
+
+<em>; HILFE ANZEIGEN</em>
+If 1 in --help,-help,/h,-h,/?,-?
+{
+    MsgBox,, %version%, Die Navigation im Startmen&uuml; kann umst&auml;ndlich sein, besonders wenn viele Programme im Laufe der Zeit installiert wurden. Mit "Seek" kann ein Schl&uuml;sselwort unabh&auml;ngig von der Gro&szlig;- und Kleinschreibung angegeben werden, um &uuml;bereinstimmende Programme und Verzeichnisse im Startmen&uuml; herauszufiltern, damit das gew&uuml;nschte Programm aus der Liste einfach ge&ouml;ffnet werden kann. Dadurch entf&auml;llt das unn&ouml;tige Durchsuchen des Startmen&uuml;s.`n`nIch hatte viel Spa&szlig; dabei, das hier zu programmieren, und hoffe, dass es dir auch gefallen wird. Du kannst mir jederzeit eine E-Mail mit Kommentaren und Feedbacks schreiben: phi1618 (*a.t*) gmail :D0T: com.`n`nOptionen:`n  -cache`tDie zwischengespeicherte Verzeichnisauflistung verwenden, falls verf&uuml;gbar (Standardmodus, wenn keine Optionen angegeben werden)`n  -scan`tEine Verzeichnis&uuml;berpr&uuml;fung erzwingen, um die aktuellste Verzeichnisauflistung zu erhalten`n  -scex`t&Uuml;berpr&uuml;fen & Beenden (n&uuml;tzlich, um die m&ouml;glicherweise zeitraubende Verzeichnis&uuml;berpr&uuml;fung im Hintergrund durchzuf&uuml;hren)`n  -help`tDiese Hilfe anzeigen
+    Goto QuitNoSave
+}
+
+<em>; &Uuml;BERPR&Uuml;FEN, OB DIE WICHTIGEN UMGEBUNGSVARIABLEN VORHANDEN UND G&Uuml;LTIG SIND
+; *TMP*</em>
+IfNotExist, %A_Temp% <em>; PFAD IST NICHT VORHANDEN</em>
+{
+    MsgBox Diese wichtige Umgebungsvariable ist entweder nicht definiert oder ung&uuml;ltig:`n`n    TMP = %A_Temp%`n`nBitte behebt dieses Problem, damit Seek ausgef&uuml;hrt werden kann.
+    Goto QuitNoSave
+}
+
+<em>; WENN NICHT &Uuml;BERPF&Uuml;FEN-UND-BEENDEN</em>
+IfNotEqual 1, -scex
+{
+    <em>; DAS ZULETZT VERWENDETE SCHL&Uuml;SSELWORT VON DER CACHE-DATEI ABRUFEN,</em>
+    <em>; DAS ALS STANDARDABFRAGESTRING BENUTZT WIRD</em>
+    If TrackKeyPhrase = ON
+    {
+        FileReadLine, PrevKeyPhrase, %keyPhrase%, 1
+        FileReadLine, PrevOpenTarget, %keyPhrase%, 2
+    }
+    NewKeyPhrase = %PrevKeyPhrase%
+    NewOpenTarget = %PrevOpenTarget%
+
+    <em>; TEXTBOX F&Uuml;R DEN BENUTZER HINZUF&Uuml;GEN, DAMIT DER ABFRAGESTRING EINGEGEBEN WERDEN KANN</em>
+    Gui, 1:Add, Edit, vFilename W600, %NewKeyPhrase%
+
+    <em>; MEINE LIEBLINGSZEILE HINZUF&Uuml;GEN</em>
+    Gui, 1:Add, Text, X625 Y10, Wonach suchst du, mein Freund?
+
+    <em>; STATUSLEISTE HINZUF&Uuml;GEN, UM FEEDBACKS F&Uuml;R DEN BENUTZER BEREITZUSTELLEN</em>
+    Gui, 1:Add, Text, vStatusBar X10 Y31 R1 W764
+
+    <em>; AUSWAHL-LISTBOX HINZUF&Uuml;GEN, UM SUCHERGEBNISSE ANZUZEIGEN</em>
+    Gui, 1:Add, ListBox, vOpenTarget gTargetSelection X10 Y53 R28 W764 HScroll Disabled, %List%
+
+    <em>; DIESE SCHALTFL&Auml;CHEN HINZUF&Uuml;GEN, ABER ERSTMAL DEAKTIVIEREN</em>
+    Gui, 1:Add, Button, gButtonOPEN vButtonOPEN Default X10 Y446 Disabled, &Ouml;ffnen
+    Gui, 1:Add, Button, gButtonOPENDIR vButtonOPENDIR X59 Y446 Disabled, Verzeichnis &ouml;ffnen
+    Gui, 1:Add, Button, gButtonSCANSTARTMENU vButtonSCANSTARTMENU X340 Y446 Disabled, Startmen&uuml; &uuml;berpr&uuml;fen
+
+    <em>; BEENDEN-SCHALTFL&Auml;CHE HINZUF&Uuml;GEN</em>
+    Gui, 1:Add, Button, gButtonEXIT X743 Y446, Beenden
+
+    <em>; ABFRAGEFENSTER ANZEIGEN</em>
+    Gui, 1:Show, Center, %version%
+}
+
+<em>; NOCHMALIGE &Uuml;BERPR&Uuml;FUNG DER LETZTEN VERZEICHNISAUFLISTUNG AKTIVIEREN</em>
+If 1 in -scan,-scex
+    rescan = Y
+<em>; &Uuml;BERPR&Uuml;FEN, OB DIE CACHE-DATEI F&Uuml;R DIE VERZEICHNISAUFLISTUNG BEREITS EXISTIERT. WENN NICHT, DANN NOCHMALS &Uuml;BERPR&Uuml;FEN.</em>
+Else IfNotExist, %dirListing%
+    rescan = Y
+
+If rescan = Y <em>; NOCHMALS &Uuml;BERPR&Uuml;FEN</em>
+{
+    <em>; STATUS ANZEIGEN, ES SEI DENN, DIE OPTION &Uuml;BERPR&Uuml;FEN-UND-BEENDEN IST AKTIV</em>
+    IfNotEqual 1, -scex
+        GuiControl,, StatusBar, Verzeichnisauflistung wird &uuml;berpr&uuml;ft ...
+
+    <em>; STARTMEN&Uuml; &Uuml;BERPR&Uuml;FEN UND VERZEICHNIS-/PROGRAMMAUFLISTUNG IN DIE CACHE-DATEI SPEICHERN</em>
+    Gosub ScanStartMenu
+
+    <em>; BEENDEN, WENN DIE OPTION &Uuml;BERPR&Uuml;FEN-UND-BEENDEN AKTIV IST</em>
+    IfEqual 1, -scex, Goto, QuitNoSave
+}
+
+GuiControl,, StatusBar, Letztes Abfrageergebnis abrufen ...
+
+<em>; &Uuml;BEREINSTIMMUNGSLISTE F&Uuml;R DAS ZULETZT VERWENDETE SCHL&Uuml;SSELWORT ABRUFEN</em>
+Gosub SilentFindMatches
+
+<em>; STATUSTEXT ENTFERNEN</em>
+GuiControl,, StatusBar,
+
+<em>; VERZEICHNISAUFLISTUNG WURDE GELADEN. ANDERE SCHALTFL&Auml;CHEN WERDEN AKTIVIERT.
+; DIESE SCHALTFL&Auml;CHEN WURDEN VORHER DEAKTIVIERT, DA SIE ERST
+; FUNKTIONIEREN SOLLEN, WENN SIE GEBRAUCHT WERDEN.</em>
+GuiControl, 1:Enable, ButtonOPEN
+GuiControl, 1:Enable, ButtonOPENDIR
+GuiControl, 1:Enable, ButtonSCANSTARTMENU
+
+<em>; INKREMENTELLE SUCHE AKTIVIEREN</em>
+SetTimer, tIncrementalSearch, 500
+
+<em>; GUI AKTUALISIEREN</em>
+Gosub EnterQuery
+
+Return
+
+<em>;***********************************************************
+;                                                          *
+;                 ENDE DES HAUPTPROGRAMMS                      *
+;                                                          *
+;***********************************************************</em>
+
+
+<em>;=== BEGINN DES ButtonSCANSTARTMENU-EREIGNISSES =======================</em>
+
+ButtonSCANSTARTMENU:
+
+Gui, 1:Submit, NoHide
+GuiControl,, StatusBar, Verzeichnisauflistung wird &uuml;berpr&uuml;ft ...
+
+<em>; LISTBOX DEAKTIVIEREN, W&Auml;HREND &Uuml;BERPR&Uuml;FT WIRD</em>
+GuiControl, 1:Disable, OpenTarget
+GuiControl, 1:Disable, ButtonEXIT
+GuiControl, 1:Disable, ButtonOPEN
+GuiControl, 1:Disable, ButtonOPENDIR
+GuiControl, 1:Disable, ButtonSCANSTARTMENU
+
+<em>; &Uuml;BERPR&Uuml;FUNG DURCHF&Uuml;HREN</em>
+Gosub ScanStartMenu
+
+<em>; BENUTZER BENACHRICHTIGEN, DASS DIE &Uuml;BERPR&Uuml;FUNG ABGESCHLOSSEN IST</em>
+If Filename =
+{
+    <em>; WENN ABFRAGESTRING LEER IST...</em>
+    GuiControl, 1:Enable, ButtonEXIT
+    GuiControl, 1:Enable, ButtonOPEN
+    GuiControl, 1:Enable, ButtonSCANSTARTMENU
+    GuiControl,, StatusBar, &Uuml;berpr&uuml;fung abgeschlossen.
+    Gosub EnterQuery
+}
+Else
+{
+    <em>; WENN ABFRAGESTRING VORHANDEN IST...</em>
+    <em>; MIT SUCHSTRING DIE NEUE AUFLISTUNG FILTERN</em>
+    NewKeyPhrase =
+    Gosub FindMatches
+}
+Return
+
+<em>;... ENDE DES ButtonSCANSTARTMENU-EREIGNISSES .........................</em>
+
+
+<em>;=== BEGINN DER ScanStartMenu-SUBROUTINE ========================
+; STARTMEN&Uuml; &Uuml;BERPR&Uuml;FEN UND VERZEICHNIS-/PROGRAMMAUFLISTUNG
+; IN DIE CACHE-DATEI SPEICHERN</em>
+ScanStartMenu:
+
+<em>; VERZEICHNISPFADE DEFINIEREN, DIE ABGERUFEN WERDEN.
+; DER PFAD DARF NICHT IN EINFACHEN ODER DOPPELTEN ANF&Uuml;HRUNGSZEICHEN GESETZT WERDEN.
+;
+; F&Uuml;R DIE ENGLISCHE VERSION VON WINDOWS</em>
+scanPath = %A_StartMenu%|%A_StartMenuCommon%
+
+<em>; ZUS&Auml;TZLICHE BENUTZERDEFINIERTE PFADE BEIM &Uuml;BERPR&Uuml;FEN MIT EINBEZIEHEN</em>
+IfExist, %SeekMyDir%
+{
+    Loop, read, %SeekMyDir%
+    {
+        IfNotExist, %A_LoopReadLine%
+            MsgBox, 8192, %version%, Benutzerdefinierte Verzeichnisliste wird bearbeitet ...`n`n"%A_LoopReadLine%" ist weder vorhanden noch beim &Uuml;berpr&uuml;fen mit einbezogen.`nAktualisiert bitte [ %SeekMyDir% ].
+        Else
+            scanPath = %scanPath%|%A_LoopReadLine%
+    }
+}
+
+<em>; VORHANDENE DATEIEN L&Ouml;SCHEN, BEVOR EINE NEUE VERSION ERSTELLT WIRD</em>
+FileDelete, %dirListing%
+
+<em>; VERZEICHNISAUFLISTUNG &Uuml;BERPR&Uuml;FEN (TRENNZEICHEN = |), WOBEI AUCH JEDES
+; UNTERVERZEICHNIS MIT EINBEZOGEN WIRD. VERSTECKTE DATEIEN
+; WERDEN IGNORIERT.</em>
+Loop, parse, scanPath, |
+{
+    Loop, %A_LoopField%\*, %ScanMode%, 1
+    {
+        FileGetAttrib, fileAttrib, %A_LoopFileFullPath%
+        IfNotInString, fileAttrib, H <em>; VERSTECKTE DATEIEN IGNORIEREN</em>
+            FileAppend, %A_LoopFileFullPath%`n, %dirListing%
+    }
+}
+
+Return
+
+<em>;... ENDE DER ScanStartMenu-SUBROUTINE ..........................</em>
+
+
+<em>;=== BEGINN DER FindMatches-SUBROUTINE ==========================
+; ALLE &Uuml;BEREINSTIMMUNGEN IN DER LISTBOX ANZEIGEN</em>
+FindMatches:
+
+Gui, 1:Submit, NoHide
+CurFilename = %Filename%
+GuiControl,, StatusBar,
+
+<em>; WENN ABFRAGESTRING LEER IST ...</em>
+If CurFilename =
+{
+    MsgBox, 8192, %version%, Bitte ein Schl&uuml;sselwort eingeben, mit dem gesucht wird.
+    Goto EnterQuery
+}
+
+<em>; tIncrementalSearch WURDE UNTERBROCHEN. BEENDEN LASSEN.</em>
+If NewKeyPhrase &lt;&gt; %CurFilename%
+{
+    <em>; BENUTZER INFORMIEREN, DASS GEDULD EINE TUGEND IST</em>
+    GuiControl,, StatusBar, Suche ...
+    ResumeFindMatches = TRUE
+    Return
+}
+
+If List = |
+{
+    <em>; KEINE EINZIGE &Uuml;BEREINSTIMMUNG GEFUNDEN.</em>
+    <em>; LASS DEN BENUTZER DEN ABFRAGESTRING BEARBEITEN UND ERNEUT VERSUCHEN.</em>
+    MsgBox, 8192, %version%, Der Abfragestring "%CurFilename%" erm&ouml;glicht keine einzige &Uuml;bereinstimmung. Versuche es erneut.
+    GuiControl, 1:Disable, ButtonOPENDIR
+    GuiControl, 1:Enable, ButtonSCANSTARTMENU
+    Goto EnterQuery
+}
+Else
+{
+    <em>; ERSTE &Uuml;BEREINSTIMMUNG AUSW&Auml;HLEN, FALLS KEINE ANDERE &Uuml;BEREINSTIMMUNG AUSGEW&Auml;HLT WURDE</em>
+    Gui, 1:Submit, NoHide
+    GuiControl, 1:Enable, OpenTarget
+    GuiControl, 1:Enable, ButtonOPEN
+    GuiControl, 1:Enable, ButtonOPENDIR
+    GuiControl, 1:Enable, ButtonSCANSTARTMENU
+    GuiControl, Focus, OpenTarget
+    If OpenTarget =
+        GuiControl, 1:Choose, OpenTarget, |1
+}
+
+<em>; GUI AKTUALISIEREN</em>
+Gui, 1:Show, Center, %version%
+
+Return
+
+<em>;... ENDE DER FindMatches-SUBROUTINE ..........................</em>
+
+
+<em>;=== BEGINN DER SilentFindMatches-SUBROUTINE ====================</em>
+
+SilentFindMatches:
+
+Gui, 1:Submit, NoHide
+sfmFilename = %Filename%
+
+<em>; &Uuml;BEREINSTIMMUNGEN FILTERN, BASIEREND AUF DEM ABFRAGESTRING</em>
+List = |
+If sfmFilename &lt;&gt;
+{
+    Loop, read, %dirListing%
+    {
+        Gui, 1:Submit, NoHide
+        tFilename = %Filename%
+        If sfmFilename &lt;&gt; %tFilename%
+        {
+            <em>; BENUTZER HAT DEN SUCHSTRING GE&Auml;NDERT. ES MACHT KEINEN SINN,</em>
+            <em>; DIE SUCHE MIT DEM ALTEN STRING FORTZUSETZEN, ALSO ABBRECHEN.</em>
+            Return
+        }
+        Else
+        {
+            <em>; &Uuml;BEREINSTIMMUNGEN AN DIE LISTE ANF&Uuml;GEN</em>
+            SplitPath, A_LoopReadLine, name, dir, ext, name_no_ext, drive
+            MatchFound = Y
+            Loop, parse, sfmFilename, %A_Space%
+            {
+                IfNotInString, name, %A_LoopField%
+                {
+                    MatchFound = N
+                    Break
+                }
+            }
+            IfEqual, MatchFound, Y
+            {
+                <em>; &Uuml;BEREINSTIMMUNG ZUR LISTE HINZUF&Uuml;GEN</em>
+                List = %List%%A_LoopReadLine%|
+
+                <em>; VORAUSW&Auml;HLEN, WENN DIESE &Uuml;BEREINSTIMMUNG DAS ZULETZT AUSGEF&Uuml;HRTE PROGRAMM ENTSPRICHT</em>
+                If (A_LoopReadLine = PrevOpenTarget && sfmFilename = PrevKeyPhrase)
+                    List = %List%|
+            }
+        }
+    }
+}
+
+<em>; LISTE MIT SUCHERGEBNISSEN AKTUALISIEREN</em>
+GuiControl, 1:, OpenTarget, %List%
+
+If List = |
+{
+    <em>; KEINE &Uuml;BEREINSTIMMUNG GEFUNDEN</em>
+    <em>; LISTBOX DEAKTIVIEREN</em>
+    GuiControl, 1:Disable, OpenTarget
+    GuiControl, 1:Disable, ButtonOPENDIR
+}
+Else
+{
+    <em>; &Uuml;BEREINSTIMMUNGEN GEFUNDEN</em>
+    <em>; LISTBOX AKTIVIEREN</em>
+    GuiControl, 1:Enable, OpenTarget
+    GuiControl, 1:Enable, ButtonOPENDIR
+}
+
+<em>; GUI AKTUALISIEREN</em>
+Gui, 1:Show, Center, %version%
+
+Return
+
+<em>;... ENDE DER SilentFindMatches-SUBROUTINE ..........................</em>
+
+
+<em>;=== BEGINN DER EnterQuery-SUBROUTINE ===========================
+; GUI AKTUALISIEREN UND DEM BENUTZER DEN SUCHSTRING EINGEBEN LASSEN</em>
+EnterQuery:
+GuiControl, Focus, Filename
+GuiControl, 1:Enable, ButtonOPEN
+Gui, 1:Show, Center, %version%
+Return
+<em>;... ENDE DER EnterQuery-SUBROUTINE ..........................</em>
+
+
+<em>;=== BEGINN DES TargetSelection-EREIGNISSES ===========================</em>
+
+TargetSelection:
+Gui, 1:Submit, NoHide
+
+<em>; DOPPELKLICKERKENNUNG, UM PROGRAMM ZU STARTEN</em>
+If A_GuiControlEvent = DoubleClick
+{
+    Gosub ButtonOPEN
+}
+Else
+{
+    <em>; PLATZHALTER - F&Uuml;R ZUK&Uuml;NFTIGE VERWENDUNG</em>
+    If A_GuiControlEvent = Normal
+    {
+        <em>; ERSTMAL NICHTS TUN</em>
+    }
+}
+
+Return
+
+<em>;... ENDE DES TargetSelection-EREIGNISSES .........................</em>
+
+
+<em>;=== BEGINN DES ButtonOPEN-EREIGNISSES ================================</em>
+
+<em>; BENUTZER HAT DIE SCHALTFL&Auml;CHE '&Ouml;FFNEN' ODER &lt;ENTER&gt; GEDR&Uuml;CKT</em>
+ButtonOPEN:
+Gui, 1:Submit, NoHide
+
+<em>; HERAUSFINDEN, WO DER TASTATURFOKUS WAR. WENN ER BEIM
+; TEXTFELD IST, ABFRAGE AUSF&Uuml;HREN, UM &Uuml;BEREINSTIMMUNGEN ZU FINDEN. ANSONSTEN IST ER
+; BEI DER LISTBOX.</em>
+GuiControlGet, focusControl, 1:Focus
+If focusControl = Edit1
+{
+    GuiControl, Focus, OpenTarget
+    GuiControl, 1:Disable, OpenTarget
+    GuiControl, 1:Disable, ButtonOPENDIR
+    GuiControl, 1:Disable, ButtonSCANSTARTMENU
+    Goto FindMatches
+}
+
+<em>; KEINE &Uuml;BEREINSTIMMUNG AUF DER LISTBOX AUSGEW&Auml;HLT</em>
+If OpenTarget =
+{
+    MsgBox, 8192, %version%, Bitte eine Auswahl treffen`, bevor &lt;Enter&gt; gedr&uuml;ckt wird.`nDr&uuml;cke &lt;Esc&gt;`, um zu beenden.
+    Goto EnterQuery
+}
+
+<em>; AUSGEW&Auml;HLTE &Uuml;BEREINSTIMMUNG NICHT VORHANDEN  (DATEI ODER VERZEICHNIS NICHT GEFUNDEN)</em>
+IfNotExist, %OpenTarget%
+{
+    MsgBox, 8192, %version%, %OpenTarget% nicht vorhanden. Das hei&szlig;t&acute;, dass der Verzeichnis-Cache nicht mehr aktuell ist. Du kannst die Schaltfl&auml;che "Startmen&uuml; &uuml;berpr&uuml;fen" dr&uuml;cken&acute;, um den Verzeichnis-Cache mit deiner neuesten Verzeichnisliste zu aktualisieren.
+    Goto EnterQuery
+}
+
+<em>; &Uuml;BERPR&Uuml;FEN, OB DIE AUSGEW&Auml;HLTE &Uuml;BEREINSTIMMUNG EINE DATEI ODER EIN VERZEICHNIS IST</em>
+FileGetAttrib, fileAttrib, %OpenTarget%
+IfInString, fileAttrib, D <em>; IST EIN VERZEICHNIS</em>
+{
+    Gosub sOpenDir
+}
+Else If fileAttrib &lt;&gt; <em>; IST EINE DATEI</em>
+{
+    Run, %OpenTarget%
+}
+Else
+{
+    MsgBox %OpenTarget% ist weder ein VERZEICHNIS noch eine DATEI. Das sollte nicht passieren. Die Suche kann nicht fortgesetzt werden. Beenden ...
+}
+
+Goto Quit
+
+<em>;... ENDE DES ButtonOPEN-EREIGNISSES .........................</em>
+
+
+<em>;=== BEGINN DES ButtonOPENDIR-EREIGNISSES =============================</em>
+
+<em>; BENUTZER HAT DIE SCHALTFL&Auml;CHE 'VERZEICHNIS &Ouml;FFNEN' GEDR&Uuml;CKT</em>
+ButtonOPENDIR:
+Gui, 1:Submit, NoHide
+
+<em>; &Uuml;BERPR&Uuml;FEN, OB DER BENUTZER BEREITS EINE &Uuml;BEREINSTIMMUNG AUSGEW&Auml;HLT HAT</em>
+If OpenTarget =
+{
+    MsgBox, 8192, %version%, Bitte zuerst eine Auswahl treffen.
+    Goto EnterQuery
+}
+
+<em>; SUBROUTINE AUSF&Uuml;HREN, UM EIN VERZEICHNIS ZU &Ouml;FFNEN</em>
+Gosub sOpenDir
+
+Goto Quit
+
+<em>;... ENDE DES ButtonOPENDIR-EREIGNISSES .........................</em>
+
+
+<em>;=== BEGINN DER sOpenDir-SUBROUTINE =============================</em>
+
+sOpenDir:
+
+<em>; WENN DER BENUTZER EINE DATEI&Uuml;BEREINSTIMMUNG ANSTELLE EINER VERZEICHNIS&Uuml;BEREINSTIMMUNG AUSW&Auml;HLT,
+; DEN VERZEICHNISPFAD EXTRAHIEREN. (ICH VERWENDE DriveGet ANSTELLE VON
+; FileGetAttrib, UM DAS SZENARIO ZU ERM&Ouml;GLICHEN, WO OpenTarget
+; UNG&Uuml;LTIG IST, ABER DAS VERZEICHNIS VON OpenTarget G&Uuml;LTIG IST.</em>
+DriveGet, status, status, %OpenTarget%
+If status &lt;&gt; Ready <em>; KEIN VERZEICHNIS</em>
+{
+    SplitPath, OpenTarget, name, dir, ext, name_no_ext, drive
+    OpenTarget = %dir%
+}
+
+<em>; &Uuml;BERPR&Uuml;FEN, OB VERZEICHNIS VORHANDEN IST</em>
+IfNotExist, %OpenTarget%
+{
+    MsgBox, 8192, %version%, %OpenTarget% nicht vorhanden. Das hei&szlig;t&acute;, dass der Verzeichnis-Cache nicht mehr aktuell ist. Du kannst die Schaltfl&auml;che "Startmen&uuml; &uuml;berpr&uuml;fen" dr&uuml;cken&acute;, um den Verzeichnis-Cache mit deiner neuesten Verzeichnisliste zu aktualisieren.
+    Goto EnterQuery
+}
+
+<em>; DAS VERZEICHNIS &Ouml;FFNEN</em>
+IfExist, %dirExplorer%
+{
+    Run, "%dirExplorer%" "%OpenTarget%", , Max <em>; MIT BENUTZERDEFINIERTEN DATEI-EXPLORER &Ouml;FFNEN</em>
+}
+Else
+{
+    Run, %OpenTarget%, , Max <em>; MIT DEN STANDARD-EXPLORER VON WINDOWS &Ouml;FFNEN</em>
+}
+Return
+
+<em>;... ENDE DER sOpenDir-SUBROUTINE ..........................</em>
+
+
+<em>;=== BEGINN DES tIncrementalSearch-EREIGNISSES ========================
+; AUTOMATISCH EINE INKREMENTELLE SUCHE IN ECHTZEIT DURCHF&Uuml;HREN,
+; UM &Uuml;BEREINSTIMMUNGEN ZU FINDEN, OHNE DABEI AUF DIE BENUTZEREINGABE
+; &lt;ENTER&gt; ZU WARTEN</em>
+tIncrementalSearch:
+
+Loop
+<em>; SUCHE WIEDERHOLEN, BIS DER ABFRAGESTRING NICHT MEHR GE&Auml;NDERT WIRD</em>
+{
+    Gui, 1:Submit, NoHide
+    CurFilename = %Filename%
+    If NewKeyPhrase &lt;&gt; %CurFilename%
+    {
+        OpenTarget =
+        Gosub SilentFindMatches
+        NewKeyPhrase = %CurFilename%
+        Sleep, 100 <em>; NICHT DIE CPU &Uuml;BERLASTEN!</em>
+    }
+    Else
+    {
+        <em>; ABFRAGESTRING WIRD NICHT MEHR GE&Auml;NDERT</em>
+        Break
+    }
+}
+
+<em>; BENUTZER HAT &lt;ENTER&gt; GEDR&Uuml;CKT, UM DIE &Uuml;BEREINSTIMMUNGEN ANZUSCHAUEN.
+; JETZT FindMatches AUSF&Uuml;HREN.</em>
+If ResumeFindMatches = TRUE
+{
+    ResumeFindMatches = FALSE
+    Gosub FindMatches
+}
+
+<em>; &Auml;NDERUNGS&Uuml;BERWACHUNG FORTSETZEN</em>
+SetTimer, tIncrementalSearch, 500
+
+Return
+
+<em>;... ENDE DES tIncrementalSearch-EREIGNISSES .........................</em>
+
+
+<em>;=== BEGINN DER Quit-SUBROUTINE =================================</em>
+
+Quit:
+ButtonEXIT:
+GuiClose:
+GuiEscape:
+
+Gui, 1:Submit, NoHide
+
+<em>; SCHL&Uuml;SSELWORT F&Uuml;R DIE N&Auml;CHSTE AUSF&Uuml;HRUNG SPEICHERN, FALLS ES GE&Auml;NDERT WURDE</em>
+If TrackKeyPhrase = ON
+{
+    If (PrevKeyPhrase &lt;&gt; Filename || PrevOpenTarget &lt;&gt; OpenTarget)
+    {
+        FileDelete, %keyPhrase%
+        FileAppend, %Filename%`n, %keyPhrase%
+        FileAppend, %OpenTarget%`n, %keyPhrase%
+    }
+}
+
+QuitNoSave:
+ExitApp <em>; AUFGABE ERLEDIGT. GUTEN TAG!</em>
+
+<em>;... ENDE DER Quit-SUBROUTINE ..........................</em>
+
+
+<em>;************************
+;&lt;--- ENDE DES PROGRAMMS --->
+;************************</em>
+
+<em>; /* vim: set noexpandtab shiftwidth=4: */</em>
+</pre>
+</body>
+</html>

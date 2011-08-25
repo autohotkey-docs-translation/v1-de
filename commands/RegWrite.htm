@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>RegWrite</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>RegWrite</h1>
+
+<p>Schreibt einen Wert in die Registrierung.</p>
+
+<pre class="Syntax">RegWrite, Werttyp, Hauptschl&uuml;ssel, Unterschl&uuml;ssel [, Wertname, Wert]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td>Werttyp</td>
+    <td>Muss entweder REG_SZ, REG_EXPAND_SZ REG_MULTI_SZ, REG_DWORD oder REG_BINARY sein. </td>
+  </tr>
+  <tr>
+    <td width="15%">Hauptschl&uuml;ssel</td>
+    <td width="85%">Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC). Um auf eine entfernt liegende Registrierung zuzugreifen, stellt den Computernamen und ein Doppelpunkt voran, wie in diesem Beispiel: \\workstation01:HKEY_LOCAL_MACHINE</td>
+  </tr>
+  <tr>
+    <td>Unterschl&uuml;ssel</td>
+    <td>Der Name des Unterschl&uuml;ssels (z. B. Software\SomeApplication). Wenn der <em>Unterschl&uuml;ssel</em> nicht existiert, dann wird er erstellt (zusammen mit seinen Vorg&auml;ngern je nach Bedarf). Wenn der <em>Unterschl&uuml;ssel</em> leer gelassen wird, dann wird der Wert direkt in den <em>Hauptschl&uuml;ssel</em> geschrieben (obwohl einige Betriebssysteme sich weigern k&ouml;nnten, in die oberste Ebene von HKEY_CURRENT_USER zu schreiben).</td>
+  </tr>
+  <tr>
+    <td>Wertname</td>
+    <td>Der Name des Wertes, der beschrieben wird. Wenn weggelassen, dann wird der Standardwert vom <em>Unterschl&uuml;ssel</em> verwendet, der als "(Standard)" im RegEdit angezeigt wird. </td>
+  </tr>
+  <tr>
+    <td>Wert</td>
+    <td>Der Wert, der geschrieben wird. Wenn weggelassen, dann standardm&auml;&szlig;ig einen leeren String oder eine 0, abh&auml;ngig vom <em>Werttyp</em>. Wenn der Text lang ist, dann kann dieser in mehreren kurzen Zeilen aufgeteilt werden (<a href="../Scripts.htm#continuation">Fortsetzungsbereich</a>), die die Lesbarkeit und Wartbarkeit verbessern k&ouml;nnten.</td>
+  </tr>
+</table>
+<h3>ErrorLevel</h3>
+<p>Bei Problemen wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt, ansonsten enth&auml;lt ErrorLevel eine 0.</p>
+<h3>Bemerkungen</h3>
+<p>Wenn der <em>Werttyp</em> REG_DWORD enth&auml;lt, dann sollte <em>Wert</em> zwischen -2147483648 und 4294967295 (0xFFFFFFFF) liegen.</p>
+<p> Obwohl nicht mehr als 64 KB an Daten in REG_BINARY- und REG_MULTI_SZ-Werte geschrieben werden k&ouml;nnen, sind die anderen Arten nicht begrenzt, ausgenommen unter Windows 95/98/ME, da sind alle Typen auf 64 KB begrenzt. Wenn das Limit von 64 KB gilt, dann werden Daten &uuml;ber dem Limit nicht geschrieben. Mit anderen Worten werden nur die ersten 64 KB eines sehr gro&szlig;en Strings in die Registrierung gespeichert.</p>
+<p>Beim Schreiben in einen REG_BINARY-Schl&uuml;ssel muss ein String mit Hex-Zeichen verwendet werden, zum Beispiel kann der REG_BINARY-Wert von 01,a9,ff,77 mithilfe des Strings 01A9FF77 geschrieben.</p>
+<p> Beim Schreiben in einen REG_MULTI_SZ-Schl&uuml;ssel m&uuml;ssen alle Komponenten mit einem LF-Zeichen (`n) getrennt werden. Die letzte Komponente kann optional auch mit einem LF-Zeichen enden. Leere Komponenten sind nicht erlaubt. Mit anderen Worten d&uuml;rfen zwei LF-Zeichen nicht hintereinander erfolgen (`n`n), weil dadurch ein Wert in die Registrierung geschrieben wird, der k&uuml;rzer als erwartet ist.  Hinweis: Windows 95 unterst&uuml;tzt nicht den REG_MULTI_SZ-Werttyp.</p>
+<p>Um mehrere Schl&uuml;ssel und Werte einer Registrierung abzurufen und zu bearbeiten, verwendet eine <a href="LoopReg.htm">Registrierung-Schleife</a>.</p>
+<p>F&uuml;r Details, wie auf die Registrierung eines entfernt liegenden Computers zugegriffen werden kann, siehe die Bemerkungen in <a href="LoopReg.htm">Registrierung-Schleife</a>.</p>
+<p>Um Eintr&auml;ge von einem 64-Bit-Abschnitt einer Registrierung einzulesen oder zu schreiben, siehe <a href="http://www.autohotkey.com/forum/topic39560.html">www.autohotkey.com/forum/topic39560.html</a>.</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="RegDelete.htm">RegDelete</a>, <a href="RegRead.htm">RegRead</a>, <a href="LoopReg.htm">Registrierung-Schleife</a>, <a href="IniWrite.htm">IniWrite</a> </p>
+<h3>Beispiele</h3>
+<pre class="NoIndent">RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, SOFTWARE\Testschl&uuml;ssel, Wertname, Testwert
+RegWrite, REG_BINARY, HKEY_CURRENT_USER, Software\TEST_APP, TEST_NAME, 01A9FF77
+RegWrite, REG_MULTI_SZ, HKEY_CURRENT_USER, Software\TEST_APP, TEST_NAME, Zeile1`nZeile2</pre>
+
+</body>
+</html>

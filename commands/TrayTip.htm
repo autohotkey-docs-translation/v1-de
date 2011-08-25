@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>TrayTip</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>TrayTip</h1>
+
+<p>Erstellt in der N&auml;he des Tray-Icons eine Sprechblase. Ben&ouml;tigt Windows 2000/XP oder h&ouml;her.</p>
+
+<pre class="Syntax">TrayTip [, Titel, Text, Sekunden, Optionen]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td>Titel</td>
+    <td><p>Wenn kein Parameter angegeben ist, dann werden alle aktuell angezeigten TrayTip-Fenster entfernt.</p>
+    <p>Andernfalls enth&auml;lt dieser Parameter den Fenstertitel, der bis zu 73 Zeichen lang sein kann (alle dar&uuml;berliegenden Zeichen werden nicht dargestellt).</p>
+    <p>Wenn der <em>Titel</em> leer ist, dann wird die Titelzeile der Sprechblase komplett weggelassen und k&uuml;rzt das Fenster vertikal.</p></td>
+  </tr>
+  <tr>
+    <td width="15%">Text</td>
+    <td width="85%"><p>Wenn dieser Parameter leer oder nicht vorhanden ist, dann werden alle aktuell angezeigten TrayTip-Fenster entfernt.</p>
+      <p>Andernfalls kann eine Nachricht angegeben werden, die unter dem <em>Titel</em> angezeigt wird. Nur die ersten 265 Zeichen des <em>Textes</em> werden angezeigt. CR-Zeichen (`r) oder LF-Zeichen (` n) k&ouml;nnen verwendet werden, um mehrere Textzeilen zu erstellen. Zum Beispiel: Zeile1`nZeile2</p>
+      <p>Wenn <em>Text</em> lang ist, dann kann er in mehreren kurzen Zeilen aufgeteilt werden (<a href="../Scripts.htm#continuation">Fortsetzungsbereich</a>), die die Lesbarkeit und Wartbarkeit verbessern k&ouml;nnten.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="15%">Sekunden</td>
+    <td width="85%"><p>Die ungef&auml;hre Anzahl an Sekunden, um das Fenster anzuzeigen, dass danach automatisch vom Betriebssystem entfernt wird. Wird eine Zahl kleiner als 10 oder gr&ouml;&szlig;er als 30 verwendet, dann tritt das Minimum (10) oder Maximum (30) in Effekt. Wenn leer oder nicht vorhanden, dann wird f&uuml;r gew&ouml;hnlich die minimale Zeit verwendet. Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p>
+    <p>Die tats&auml;chliche Zeit&uuml;berschreitung weicht vom Angegebenen ab. Microsoft: "Wenn der Benutzer den Computer scheinbar nicht verwendet, dann z&auml;hlt das System diese Zeit nicht f&uuml;r die Zeit&uuml;berschreitung." (Technische Details <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/reference/structures/notifyicondata.asp">hier</a>) Deshalb kann f&uuml;r die genaue Kontrolle, wie lange das TrayTip-Fenster angezeigt wird, der <a href="Sleep.htm">Sleep</a>-Befehl gefolgt vom TrayTip-Befehl ohne Parameter verwendet werden, oder auch <a href="SetTimer.htm">SetTimer</a> wie im Beispielabschnitt.</p>
+    </td>
+  </tr>
+  <tr>
+    <td>Optionen</td>
+    <td><p>Verwendet eine der folgenden Ziffern, um ein kleines Icon auf der linken Seite des <em>Titels</em> anzuzeigen:</p>
+      <p>1: Info-Icon<br> 2: Warnung-Icon<br> 3: Fehler-Icon </p>
+      <p>Wenn weggelassen, standardm&auml;&szlig;ig 0 (kein Icon). Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.<br>
+      </p></td>
+  </tr>
+</table>
+<h3>Bemerkungen</h3>
+<p> TrayTip ben&ouml;tigt Windows 2000/XP oder h&ouml;her. In Windows 9x/NT funktioniert der Befehl nicht.</p>
+<p>Die Sprechblase kann nicht angezeigt werden, wenn das Script kein Tray-Icon hat (durch <a href="_NoTrayIcon.htm">#NoTrayIcon</a> oder <em><a href="Menu.htm">Menu</a>, Tray, NoIcon</em>). Wenn der folgende REG_DWORD-Wert vorhanden und auf 0 gesetzt ist, funktioniert TrayTip auch nicht:<br> HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced &gt;&gt; EnableBalloonTips</p>
+<p>Das Betriebssystem spielt normalerweise einen Sound beim Anzeigen einer Sprechblase ab. Dieser Sound kann deaktiviert werden, indem eine 16 mit dem <em>Optionen</em>-Parameter addiert wird (z. B. 16 ist kein Sound und kein Icon, 17 ist kein Sound aber mit Info-Icon, usw.)</p>
+<p>Zus&auml;tzlich wird ein ToolTip angezeigt, wenn der Benutzer den Mauszeiger &uuml;ber das Tray-Icon des Scripts h&auml;lt. Der Inhalt des Tooltips kann wie folgt ge&auml;ndert werden: <em><a href="Menu.htm">Menu</a>, Tray, Tip, Neuer Text</em></p>
+<h3>Verwandte Befehle</h3>
+<p><a href="ToolTip.htm">ToolTip</a>, <a href="SetTimer.htm">SetTimer</a>, <a href="Menu.htm">Menu</a>, <a href="SplashTextOn.htm">SplashTextOn</a>, <a href="MsgBox.htm">MsgBox</a>, <a href="InputBox.htm">InputBox</a>, <a href="FileSelectFile.htm">FileSelectFile</a>, <a href="FileSelectFolder.htm">FileSelectFolder</a></p>
+<h3>Beispiele</h3>
+<pre class="NoIndent">TrayTip, Eigener Titel, Mehrzeiliger`nText, 20, 17
+
+<em>; Um genauere Kontrolle &uuml;ber die Anzeigezeit zu haben,
+; ohne dabei Sleep zu verwenden (weil Sleep den aktuellen Thread stoppt):</em>
+#Persistent
+TrayTip, Zeitlich festgelegter TrayTip, Wird f&uuml;r 5 Sekunden angezeigt.
+SetTimer, TrayTipEntfernen, 5000
+Return
+
+TrayTipEntfernen:
+SetTimer, TrayTipEntfernen, Off
+TrayTip
+Return
+
+<em>; Damit ein TrayTip dauerhaft angezeigt wird, verwendet einen Timer, um es regelm&auml;&szlig;ig zu aktualisieren:</em>
+SetTimer, TrayTipAktualisieren, 1000
+Gosub, TrayTipAktualisieren <em>; Einmal aufrufen, um es sofort zu starten.</em>
+Return
+
+TrayTipAktualisieren:
+TrayTip, Aktualisierter TrayTip, Wird dauerhaft angezeigt TrayTip., , 16
+Return</pre>
+
+</body>
+</html>

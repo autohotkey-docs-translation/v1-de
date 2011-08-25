@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Lautst&auml;rke-Bildschirmanzeige (OSD) -- von Rajat</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="alternate" type="application/rss+xml" title="AutoHotkey Forum RSS" href="/forum/rss.php">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>Lautst&auml;rke-Bildschirmanzeige (OSD) -- von Rajat</h1>
+
+<p> Dieses Script erm&ouml;glicht beliebige Hotkeys, die Gesamt- und/oder Wave-Lautst&auml;rke zu erh&ouml;hen oder zu verringern.  Beide Lautst&auml;rken werden als Balkendiagramme mit unterschiedlichen Farben angezeigt.
+</p>
+<p><a href="VolumeOSD.ahk">Dieses Script herunterladen</a> &nbsp;| &nbsp;<a href="index.htm">Andere Beispiel-Scripts</a> &nbsp;| &nbsp;<a href="http://www.autohotkey.com">Home</a></p>
+
+<pre class="NoIndent"><em>;_________________________________________________
+;_______Benutzereinstellungen_____________________________ </em>
+
+<em>; Nur in diesem Bereich oder Hotkey-Bereich &Auml;nderungen durchf&uuml;hren!! </em>
+
+<em>; Der Prozentwert, um wieviel die Lautst&auml;rke jedes Mal erh&ouml;ht oder verringert wird:</em>
+vol_Step = 4
+
+<em>; Wie lange die Balkendiagramme der Lautst&auml;rken angezeigt werden sollen:</em>
+vol_DisplayTime = 2000
+
+<em>; Balkenfarbe der Gesamtlautst&auml;rke (siehe Hilfe-Datei, um pr&auml;zisere
+; Farbt&ouml;ne anzugeben):</em>
+vol_CBM = Red
+
+<em>; Balkenfarbe der Wave-Lautst&auml;rke</em>
+vol_CBW = Blue
+
+<em>; Hintergrundfarbe</em>
+vol_CW = Silver
+
+<em>; Balkenposition auf dem Bildschirm.  Verwendet -1, um den Balken in dieser Abmessung zu zentrieren:</em>
+vol_PosX = -1
+vol_PosY = -1
+vol_Width = 150  <em>; Balkenbreite</em>
+vol_Thick = 12   <em>; Balkendicke</em>
+
+<em>; Wenn die aktuelle Tastatur Multimedia-Tasten f&uuml;r die Lautst&auml;rke hat, dann
+; kannst du versuchen, die unteren Hotkeys so zu &auml;ndern, dass sie
+; Volume_Up, ^Volume_Up, Volume_Down und ^Volume_Down verwenden:</em>
+HotKey, #Up, vol_MasterUp      <em>; Win+Pfeil nach oben</em>
+HotKey, #Down, vol_MasterDown
+HotKey, +#Up, vol_WaveUp       <em>; Umschalt+Win+Pfeil nach oben</em>
+HotKey, +#Down, vol_WaveDown
+
+
+<em>;___________________________________________
+;_____automatischer Ausf&uuml;hrungsbereich_________ </em>
+
+<em>; HIER DANACH KEINE &Auml;NDERUNGEN DURCHF&Uuml;HREN (es sei denn, du wei&szlig;t, was du tust).</em>
+
+vol_BarOptionsMaster = 1:B ZH%vol_Thick% ZX0 ZY0 W%vol_Width% CB%vol_CBM% CW%vol_CW%
+vol_BarOptionsWave   = 2:B ZH%vol_Thick% ZX0 ZY0 W%vol_Width% CB%vol_CBW% CW%vol_CW%
+
+<em>; Wenn die X-Position angegeben wurde, dann wird sie zu den Optionen hinzugef&uuml;gt.
+; Ansonsten wird sie weggelassen, um den Balken horizontal zu zentrieren:</em>
+if vol_PosX >= 0
+{
+    vol_BarOptionsMaster = %vol_BarOptionsMaster% X%vol_PosX%
+    vol_BarOptionsWave   = %vol_BarOptionsWave% X%vol_PosX%
+}
+
+<em>; Wenn die Y-Position angegeben wurde, dann wird sie zu den Optionen hinzugef&uuml;gt.
+; Ansonsten wird sie weggelassen, um sie sp&auml;ter zu berechnen:</em>
+if vol_PosY >= 0
+{
+    vol_BarOptionsMaster = %vol_BarOptionsMaster% Y%vol_PosY%
+    vol_PosY_wave = %vol_PosY%
+    vol_PosY_wave += %vol_Thick%
+    vol_BarOptionsWave = %vol_BarOptionsWave% Y%vol_PosY_wave%
+}
+
+#SingleInstance
+SetBatchLines, 10ms
+Return
+
+
+<em>;___________________________________________ </em>
+
+vol_WaveUp:
+SoundSet, +%vol_Step%, Wave
+Gosub, vol_ShowBars
+return
+
+vol_WaveDown:
+SoundSet, -%vol_Step%, Wave
+Gosub, vol_ShowBars
+return
+
+vol_MasterUp:
+SoundSet, +%vol_Step%
+Gosub, vol_ShowBars
+return
+
+vol_MasterDown:
+SoundSet, -%vol_Step%
+Gosub, vol_ShowBars
+return
+
+vol_ShowBars:
+<em>; Um den Blinkeffekt zu unterdr&uuml;cken, wird nur das Balkenfenster erstellt,
+; falls noch nicht vorhanden:</em>
+IfWinNotExist, vol_Wave
+    Progress, %vol_BarOptionsWave%, , , vol_Wave
+IfWinNotExist, vol_Master
+{
+    <em>; Falls sich die Bildschirmaufl&ouml;sung &auml;ndert, wird hier die Position berechnet,</em>
+    <em>; w&auml;hrend das Script l&auml;uft:</em>
+    if vol_PosY < 0
+    {
+        <em>; Wave-Balken direkt &uuml;ber den Balken der Gesamtlautst&auml;rke erstellen:</em>
+        WinGetPos, , vol_Wave_Posy, , , vol_Wave
+        vol_Wave_Posy -= %vol_Thick%
+        Progress, %vol_BarOptionsMaster% Y%vol_Wave_Posy%, , , vol_Master
+    }
+    else
+        Progress, %vol_BarOptionsMaster%, , , vol_Master
+}
+<em>; Sobald beide Lautst&auml;rken vom Benutzer oder von einem externen Programm ge&auml;ndert werden, werden die neuen Lautst&auml;rken abgerufen:</em>
+SoundGet, vol_Master, Master
+SoundGet, vol_Wave, Wave
+Progress, 1:%vol_Master%
+Progress, 2:%vol_Wave%
+SetTimer, vol_BarOff, %vol_DisplayTime%
+return
+
+vol_BarOff:
+SetTimer, vol_BarOff, off
+Progress, 1:Off
+Progress, 2:Off
+return
+
+</pre>
+</body>
+</html>

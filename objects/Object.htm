@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Objekt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>Objekt</h1>
+
+<p>Alle internen Methoden von Objekten, die mit <a href="../Objects.htm#Arrays">Object()</a> oder <code>{}</code> erstellt wurden, k&ouml;nnen entweder als regul&auml;re Funktionen oder als Methoden aufgerufen werden:</p>
+<pre>Ergebnis := Objekt.Methode(Parameter)</pre>
+<p>Mit so einem Methodenaufruf kann jedes Objekt sein eigenes Verhalten f&uuml;r diese Methode umsetzen.  Wenn ein Objekt allerdings eine interne Methode &uuml;berschreibt, dann muss das Objekt irgendwie auf die urspr&uuml;ngliche Funktionalit&auml;t zur&uuml;ckgreifen. Mithilfe der folgenden Funktionsform kann das erreicht werden:</p>
+<pre>Ergebnis := ObjMethod(Objekt, Parameter)</pre>
+<p>Der direkte Aufruf der Funktion ist ein wenig schneller, da der Name bei der Ladezeit aufgel&ouml;st wird, jedoch ist die Syntax nicht gerade intuitiv.  Jedes implementierte benutzerdefinierte Verhalten vom Objekt wird umgangen, daher sollte diese Funktionen nur vom Objekt selbst verwendet werden.</p>
+
+<div class="methodShort" id="Insert"><h2>Insert <span class="ver">[AHK_L 31+]</span></h2>
+<p>F&uuml;gt Schl&uuml;ssel-Wert-Paare in das Objekt ein und passt gegebenenfalls automatisch vorhandene Schl&uuml;ssel an.</p>
+<pre class="Syntax">Objekt.Insert(Index, Wert1 [, Wert2, ... ... Wert<i>N</i> ])
+Objekt.Insert(Wert)
+Objekt.Insert(Schl&uuml;ssel, Wert)</pre>
+<table class="info">
+  <tr><td width="15%">Index</td><td width="85%">Ein Integer-Schl&uuml;ssel, der bei Wert1 eingef&uuml;gt wird. Nachfolgende Werte werden bei Index+1, Index+2 und so weiter eingef&uuml;gt.<br> Wenn weggelassen, dann standardm&auml;&szlig;ig <code>MaxIndex()="" ? 1 : MaxIndex() + 1</code>.</td></tr>
+  <tr><td>Schl&uuml;ssel</td><td>Ein String oder Objektschl&uuml;ssel.  Wenn der Schl&uuml;ssel bereits vorhanden ist, dann wird sein Wert &uuml;berschrieben.</td></tr>
+  <tr><td>Wert</td><td>Ein String, eine Zahl oder ein Objekt.</td></tr>
+  <tr><td><b>R&uuml;ckgabe</b></td><td>Der Wert ist bei Erfolg <i>wahr</i> oder bei Misserfolg ein leerer String, wenn das Script nicht genug Arbeitsspeicher hat.</td></tr>
+</table>
+<h3>Bemerkungen</h3>
+<p>Beachtet, dass diese Methode den <a href="../Objects.htm#Meta_Functions">__Set</a>-Mechanismus und das Sonderverhalten des <a href="../Objects.htm#Custom_Objects">Basis</a>-Schl&uuml;ssels umgeht.  Zum Beispiel bewirkt <code>Objekt.Insert("base","")</code>, dass <code>Objekt.base</code> einen leeren String anstelle des echten Basisobjekts zur&uuml;ckgibt, andere Operationen werden jedoch nicht daran gehindert, die Meta-Funktionen des Objekts auszul&ouml;sen.</p>
+</div>
+
+<div class="methodShort" id="Remove"><h2>Remove <span class="ver">[AHK_L 31+]</span></h2>
+<p>Entfernt Schl&uuml;ssel-Wert-Paare von einem Objekt.</p>
+<pre class="Syntax">Objekt.Remove(ErsterSchl&uuml;ssel, LetzterSchl&uuml;ssel)</pre>
+<table class="info">
+  <tr><td width="15%">ErsterSchl&uuml;ssel, LetzterSchl&uuml;ssel</td><td width="85%">Eine Reihe von Integer- oder String-Schl&uuml;sseln, die entfernt werden.  Wenn beide Schl&uuml;ssel Integer sind, dann wird jeder Integer-Schl&uuml;ssel gr&ouml;&szlig;er als <i>LetzterSchl&uuml;ssel</i> um <code>(ErsterSchl&uuml;ssel - LetzterSchl&uuml;ssel + 1)</code> verringert, um einen typischen numerisch indizierten Array zu emulieren.  Beide Schl&uuml;ssel m&uuml;ssen vom gleichen Typ sein (Integer oder String).</td></tr>
+  <tr><td><b>R&uuml;ckgabe</b></td><td>Die tats&auml;chliche Anzahl von Schl&uuml;ssel-Wert-Paaren, die erfolgreich entfernt wurden; eine 0, falls keine Schl&uuml;ssel gefunden wurden; oder bei Misserfolg ein leerer String.</td></tr>
+</table>
+<pre class="Syntax" style="margin-top:15px">Objekt.Remove(Schl&uuml;ssel = <i>MaxIndex()</i>)</pre>
+<table class="info">
+  <tr><td width="15%">Schl&uuml;ssel</td><td width="85%">Beliebiger g&uuml;ltiger Schl&uuml;ssel.  Wenn weggelassen, dann standardm&auml;&szlig;ig der h&ouml;chste vorhandene Integer-Schl&uuml;ssel; falls keine vorhanden sind, dann wird nichts entfernt. Vorhandene Schl&uuml;ssel werden angepasst, als ob <code>Remove(Schl&uuml;ssel, Schl&uuml;ssel)</code> verwendet wurde.</td></tr>
+  <tr><td><b>R&uuml;ckgabe</b></td><td>Der entfernte Wert, ansonsten ein leerer String.</td></tr>
+</table>
+<pre class="Syntax" style="margin-top:15px">Objekt.Remove(IntSchl&uuml;ssel, "")</pre>
+<p><span class="ver">[AHK_L 61+]:</span> Entfernt einen Integer-Schl&uuml;ssel und gibt seinen Wert zur&uuml;ck, andere Integer-Schl&uuml;ssel sind davon jedoch nicht betroffen.</p>
+</div>
+
+<div class="methodShort" id="MinMaxIndex"><h2>MinIndex / MaxIndex <span class="ver">[AHK_L 31+]</span></h2>
+<pre class="Syntax">MinIndex := Objekt.MinIndex()
+MaxIndex := Objekt.MaxIndex()</pre>
+<p>Sobald mindestens ein Integer-Schl&uuml;ssel vorhanden ist, wird MinIndex den niedrigsten und MaxIndex den h&ouml;chsten Schl&uuml;ssel zur&uuml;ckgeben.  Ansonsten wird ein leerer String zur&uuml;ckgegeben.</p></div>
+
+<div class="methodShort" id="SetCapacity"><h2>SetCapacity <span class="ver">[AHK_L 31+]</span></h2>
+<p>Passt die Kapazit&auml;t eines Objekts oder eins seiner Felder an.</p>
+<pre class="Syntax">Objekt.SetCapacity(Elementmaximum)
+Objekt.SetCapacity(Schl&uuml;ssel, Bytegr&ouml;&szlig;e)</pre>
+<table class="info">
+  <tr><td width="15%">Elementmaximum</td><td width="85%">Die maximale Anzahl von Schl&uuml;ssel-Wert-Paaren, die das Objekt aufnehmen kann, bevor es automatisch erweitert werden muss.  Wenn kleiner als die aktuelle Anzahl, dann wird das Objekt verkleinert, damit es passt.</td></tr>
+  <tr><td>Schl&uuml;ssel</td><td>Beliebiger g&uuml;ltiger Schl&uuml;ssel.</td></tr>
+  <tr><td>Bytegr&ouml;&szlig;e</td><td>Die neue String-Zwischenspeicher-Gr&ouml;&szlig;e des Feldes in Bytes, ohne den 0-Terminator.  Wenn das Feld noch nicht existiert, dann wird es erstellt.  Falls <i>Bytegr&ouml;&szlig;e</i> eine 0 ist, dann wird der Zwischenspeicher freigegeben, aber das leere Feld nicht entfernt.  Wenn <i>Bytegr&ouml;&szlig;e</i> kleiner als die aktuelle Gr&ouml;&szlig;e ist, dann werden &uuml;bersch&uuml;ssige Daten gek&uuml;rzt; ansonsten werden alle vorhandenen Daten beibehalten.</td></tr>
+  <tr><td><b>R&uuml;ckgabe</b></td><td>Die neue Kapazit&auml;t bei Erfolg, ansonsten ein leerer String.</td></tr>
+</table></div>
+
+<div class="methodShort" id="GetCapacity"><h2>GetCapacity <span class="ver">[AHK_L 31+]</span></h2>
+<pre class="Syntax">Elementmaximum := Objekt.GetCapacity()
+Bytegr&ouml;&szlig;e := Objekt.GetCapacity(Schl&uuml;ssel)</pre>
+<p>Gibt die Kapazit&auml;t eines Objekts oder eins seiner Felder zur&uuml;ck.</p></div>
+
+<div class="methodShort" id="GetAddress"><h2>GetAddress <span class="ver">[AHK_L 31+]</span></h2>
+<pre class="Syntax">Ptr := Objekt.GetAddress(Schl&uuml;ssel)</pre>
+<p>Gibt die aktuelle String-Zwischenspeicher-Adresse des Feldes zur&uuml;ck, falls vorhanden.</p></div>
+
+<div class="methodShort" id="NewEnum"><h2>NewEnum <span class="ver">[AHK_L 49+]</span></h2>
+<pre class="Syntax">Enum := Objekt._NewEnum()</pre>
+<p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zur&uuml;ck, um Schl&uuml;ssel-Wert-Paare des Objekts zu enumerieren.</p></div>
+
+<div class="methodShort" id="HasKey"><h2>HasKey <span class="ver">[AHK_L 53+]</span></h2>
+<pre class="Syntax">Objekt.HasKey(Schl&uuml;ssel)</pre>
+<p>Gibt wahr zur&uuml;ck, wenn der <i>Schl&uuml;ssel</i> mit einem Wert (auch "") innerhalb des <i>Objekts</i> verbunden ist, ansonsten falsch.</p></div>
+
+<div class="methodShort" id="Clone"><h2>Clone <span class="ver">[AHK_L 60+]</span></h2>
+<pre class="Syntax">Klon := Objekt.Clone()</pre>
+<p>Gibt eine oberfl&auml;chliche Kopie des Objekts zur&uuml;ck.</p></div>
+
+</body>
+</html>

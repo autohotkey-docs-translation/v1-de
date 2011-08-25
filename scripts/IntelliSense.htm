@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>IntelliSense -- von Rajat (ben&ouml;tigt XP/2k/NT)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="alternate" type="application/rss+xml" title="AutoHotkey Forum RSS" href="/forum/rss.php">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>IntelliSense -- von Rajat (ben&ouml;tigt XP/2k/NT)</h1>
+
+<p> Dieses Script &uuml;berwacht die Benutzereingaben beim Bearbeiten eines AutoHotkey-Scripts.  Sobald ein Befehl gefolgt von einem Komma oder eines Leerzeichens eingegeben wird, dann wird als Hilfe die Parameterliste des Befehls angezeigt.  Dar&uuml;ber hinaus kann Strg+F1 (oder ein anderer Hotkey) gedr&uuml;ckt werden, um die Befehlsseite in der Hilfe-Datei anzuzeigen. Um die Parameterliste zu schlie&szlig;en, dr&uuml;ckt Escape oder Enter.
+</p>
+<p><a href="IntelliSense.ahk">Dieses Script herunterladen</a> &nbsp;| &nbsp;<a href="index.htm">Andere Beispiel-Scripts</a> &nbsp;| &nbsp;<a href="http://www.autohotkey.com">Home</a></p>
+
+<pre class="NoIndent"><em>; Ben&ouml;tigt v1.0.41+</em>
+
+<em>; KONFIGURATIONSBEREICH: Passt das Script mit den folgenden Variablen an.</em>
+
+<em>; Der unten genannte Hotkey wird gedr&uuml;ckt, um die aktuelle Befehlsseite in der
+; Hilfedatei anzuzeigen:</em>
+I_HelpHotkey = ^F1
+
+<em>; Der nachfolgende String muss irgendwo im Titel des aktiven Fensters vorkommen,
+; damit IntelliSense bei der Benutzereingabe wirksam wird.  Macht sie leer,
+; damit IntelliSense alle Fenster bearbeitet.  Wenn sie Pad enth&auml;lt,
+; dann werden Editoren wie Metapad, Notepad und Textpad bearbeitet.  Falls .ahk vorhanden ist,
+; dann ist IntelliSense nur wirksam, wenn eine .ahk-Datei im Editor offen ist.</em>
+I_Editor = pad
+
+<em>; Wenn der Wunsch besteht, ein anderes Icon f&uuml;r dieses Script zu verwenden,
+; damit es sich von anderen Scripts unterscheidet, gebt unten den Dateinamen an
+; (leer lassen f&uuml;r kein Icon). Zum Beispiel: E:\stuff\Pics\icons\GeoIcons\Information.ico</em>
+I_Icon =
+
+<em>; ENDE DES KONFIGURATIONSBEREICHS (Hier danach keine &Auml;nderungen durchf&uuml;hren,
+; es sei denn, die allgemeine Funktionalit&auml;t des Scripts soll ge&auml;ndert werden).</em>
+
+SetKeyDelay, 0
+#SingleInstance
+
+if I_HelpHotkey &lt;&gt;
+    Hotkey, %I_HelpHotkey%, I_HelpHotkey
+
+<em>; Tray-Icon &auml;ndern (falls ein Icon im Konfigurationsbereich angegeben wurde):</em>
+if I_Icon &lt;&gt;
+    IfExist, %I_Icon%
+        Menu, Tray, Icon, %I_Icon%
+
+<em>; Standort von AutoHotkey ermitteln:</em>
+RegRead, ahk_dir, HKEY_LOCAL_MACHINE, SOFTWARE\AutoHotkey, InstallDir
+if ErrorLevel  <em>; Nichts gefunden, so in anderen h&auml;ufigen Standorten nachschauen.</em>
+{
+    if A_AhkPath
+        SplitPath, A_AhkPath,, ahk_dir
+    else IfExist ..\..\AutoHotkey.chm
+        ahk_dir = ..\..
+    else IfExist %A_ProgramFiles%\AutoHotkey\AutoHotkey.chm
+        ahk_dir = %A_ProgramFiles%\AutoHotkey
+    else
+    {
+        MsgBox AutoHotkey-Ordner konnte nicht gefunden werden.
+        ExitApp
+    }
+}
+
+ahk_help_file = %ahk_dir%\AutoHotkey.chm
+
+<em>; Befehlssyntax lesen:</em>
+Loop, Read, %ahk_dir%\Extras\Editors\Syntax\Commands.txt
+{
+    I_FullCmd = %A_LoopReadLine%
+
+    <em>; Anweisungen haben ein erstes Leerzeichen anstelle eines ersten Kommas.</em>
+    <em>; So wird je nach dem verwendet, was zuerst als Endzeichen im Befehlsnamen vorkommt:</em>
+    StringGetPos, I_cPos, I_FullCmd, `,
+    StringGetPos, I_sPos, I_FullCmd, %A_Space%
+    if (I_cPos = -1 or (I_cPos > I_sPos and I_sPos &lt;&gt; -1))
+        I_EndPos := I_sPos
+    else
+        I_EndPos := I_cPos
+
+    if I_EndPos &lt;&gt; -1
+        StringLeft, I_CurrCmd, I_FullCmd, %I_EndPos%
+    else  <em>; Eine Anweisung/ein Befehl ohne Parameter.</em>
+        I_CurrCmd = %A_LoopReadLine%
+
+    StringReplace, I_CurrCmd, I_CurrCmd, [,, All
+    StringReplace, I_CurrCmd, I_CurrCmd, %A_Space%,, All
+    StringReplace, I_FullCmd, I_FullCmd, ``n, `n, All
+    StringReplace, I_FullCmd, I_FullCmd, ``t, `t, All
+
+    <em>; Arrays mit Befehlsnamen und vollst&auml;ndige Befehlssyntax erstellen:</em>
+    I_Cmd%A_Index% = %I_CurrCmd%
+    I_FullCmd%A_Index% = %I_FullCmd%
+}
+
+<em>; Input-Befehl verwenden, um die eingegebenen Befehle des Benutzers zu &uuml;berwachen:</em>
+Loop
+{
+    <em>; Editor-Fenster &uuml;berpr&uuml;fen:</em>
+    WinGetTitle, ActiveTitle, A
+    IfNotInString, ActiveTitle, %I_Editor%
+    {
+        ToolTip
+        Sleep, 500
+        Continue
+    }
+
+    <em>; Alle Tasten bis zur Endtaste abrufen:</em>
+    Input, I_Word, V, {enter}{escape}{space}`,
+    I_EndKey = %ErrorLevel%
+
+    <em>; ToolTip wird in folgenden F&auml;llen versteckt:</em>
+    if I_EndKey in EndKey:Enter,EndKey:Escape
+    {
+        ToolTip
+        Continue
+    }
+
+    <em>; Nochmals Editor-Fenster &uuml;berpr&uuml;fen!</em>
+    WinGetActiveTitle, ActiveTitle
+    IfNotInString, ActiveTitle, %I_Editor%
+    {
+        ToolTip
+        Continue
+    }
+
+    <em>; Jede vorhandene Einr&uuml;ckung ersetzen:</em>
+    StringReplace, I_Word, I_Word, %A_Space%,, All
+    StringReplace, I_Word, I_Word, %A_Tab%,, All
+    if I_Word =
+        Continue
+
+    <em>; Kommentierte Zeile untersuchen:</em>
+    StringLeft, I_Check, I_Word, 1
+    if (I_Check = ";" or I_Word = "If")  <em>; "If" ist scheinbar ein wenig st&ouml;rend, um daf&uuml;r den ToolTip anzuzeigen.</em>
+        Continue
+
+    <em>; Wort stimmt mit Befehl &uuml;berein:</em>
+    I_Index =
+    Loop
+    {
+        <em>; Es hilft der Performance, wenn dynamische Variablen nur einmal aufgel&ouml;st werden.</em>
+        <em>; Dar&uuml;ber hinaus wird der eingef&uuml;gte Wert in I_ThisCmd auch von der</em>
+        <em>; I_HelpHotkey-Subroutine verwendet:</em>
+        I_ThisCmd := I_Cmd%A_Index%
+        if I_ThisCmd =
+            break
+        if (I_Word = I_ThisCmd)
+        {
+            I_Index := A_Index
+            I_HelpOn = %I_ThisCmd%
+            break
+        }
+    }
+
+    <em>; Falls keine &Uuml;bereinstimmung erfolgt, dann Benutzereingabe weiter &uuml;berwachen:</em>
+    if I_Index =
+        Continue
+
+    <em>; &Uuml;bereinstimmende Befehle anzeigen, um den Benutzer zu f&uuml;hren:</em>
+    I_ThisFullCmd := I_FullCmd%I_Index%
+    ToolTip, %I_ThisFullCmd%, A_CaretX, A_CaretY + 20
+}
+
+
+
+I_HelpHotkey:
+WinGetTitle, ActiveTitle, A
+IfNotInString, ActiveTitle, %I_Editor%, Return
+
+ToolTip  <em>; Syntaxhelfer deaktivieren, da er zurzeit nicht ben&ouml;tigt wird.</em>
+
+SetTitleMatchMode, 1  <em>; Falls es 3 ist. Diese Einstellung gilt nur f&uuml;r diesen Thread.</em>
+IfWinNotExist, AutoHotkey Help
+{
+    IfNotExist, %ahk_help_file%
+    {
+        MsgBox, Hilfe-Datei konnte nicht gefunden werden: %ahk_help_file%.
+        return
+    }
+    Run, %ahk_help_file%
+    WinWait, AutoHotkey Help
+}
+
+if I_ThisCmd =  <em>; Stattdessen wird die aktuellste Benutzereingabe verwendet.</em>
+    I_ThisCmd := I_Word
+
+<em>; Der obere Befehl bestimmt das "zuletzt gefundene" Fenster, das unten verwendet wird:</em>
+WinActivate
+WinWaitActive
+StringReplace, I_ThisCmd, I_ThisCmd, #, {#}  <em>; F&uuml;hrende # ersetzen, falls vorhanden.</em>
+Send, !n{home}+{end}%I_HelpOn%{enter}
+return
+
+</pre>
+</body>
+</html>

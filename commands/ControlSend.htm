@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>ControlSend / ControlSendRaw</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>ControlSend / ControlSendRaw</h1>
+
+<p>Sendet k&uuml;nstliche Tastatureingaben an ein Fenster oder Steuerelement.</p>
+
+<pre class="Syntax">ControlSend [, Steuerelement, Tasten, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme]
+ControlSendRaw: Die gleichen Parameter wie oben.</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td width="15%">Steuerelement</td>
+    <td width="85%"><p>M&ouml;glich ist entweder ClassNN (Klassenname und Instanznummer des Steuerelements) oder Name/Text des Steuerelements, die beide mit Windows Spy ermittelt werden k&ouml;nnen. Wenn Name/Text verwendet wird, wird das &Uuml;bereinstimmungsverhalten mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> bestimmt. Wenn dieser Parameter nicht vorhanden oder leer ist, dann wird das oberste Steuerelement des Fensters benutzt. Wenn dieser Parameter ahk_parent enth&auml;lt, dann werden die Tastatureingaben direkt an das Fenster des Steuerelements gesendet (als Beispiel siehe <a href="../misc/Winamp.htm">Winamp automatisieren</a>).</p>
+    <p>F&uuml;r das HWND eines Steuerelements (Windows Handle) wird der <em>Steuerelement</em>-Parameter leer gelassen und <em>ahk_id %SteuerelementHwnd%</em> im <em>Fenstertitel</em>-Parameter angegeben (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist). Das HWND eines Steuerelements wird &uuml;blicherweise mittels <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p></td>
+  </tr>
+  <tr>
+    <td>Tasten</td>
+    <td><p>Eine Abfolge von Tasten, die gesendet werden sollen (siehe <a href="Send.htm">Send</a>-Befehl f&uuml;r mehr Details). Um ein Komma direkt zu senden, <a href="_EscapeChar.htm">sch&uuml;tzt</a> es (`,). Die Geschwindigkeit, mit welcher die Zeichen gesendet werden, wird durch <a href="SetKeyDelay.htm">SetKeyDelay</a> beeinflusst.</p>
+    <p>Im Gegensatz zum <a href="Send.htm">Send</a>-Befehl k&ouml;nnen Mausklicks nicht mit ControlSend gesendet werden. Daf&uuml;r sollte <a href="ControlClick.htm">ControlClick</a> verwenden werden.</p></td>
+  </tr>
+  <tr>
+    <td>Fenstertitel</td>
+    <td>Der Titel oder Teiltitel des Fensters (das &Uuml;bereinstimmungsverhalten wird mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> bestimmt). Wenn dieser und die n&auml;chsten 3 Parameter nicht vorhanden sind, dann wird das <a href="../LastFoundWindow.htm">zuletzt gefundene Fenster</a> verwendet. Wenn dieser den Buchstaben A enth&auml;lt und die n&auml;chsten 3 Parameter nicht vorhanden sind, dann wird das aktive Fenster verwendet. Bei Verwendung einer Fensterklasse muss ahk_class ExakterKlassenname angegeben werden (wird von Windows Spy angezeigt). Bei Verwendung einer <a href="Process.htm">Prozess-Kennung (PID)</a> muss ahk_pid %VariableMitPID% angegeben werden. Bei Verwendung einer <a href="GroupAdd.htm">Fenstergruppe</a> muss ahk_group Gruppenname angegeben werden. Bei Verwendung einer <a href="WinGet.htm">eindeutigen ID-Nummer</a> eines Fensters muss ahk_id %VariableMitID% angegeben werden. Die Suche kann durch Angabe <a href="../LastFoundWindow.htm#multi">mehrerer Kriterien</a> eingeschr&auml;nkt werden. Zum Beispiel: <em>Eigene Datei.txt ahk_class Notepad</em></td>
+  </tr>
+  <tr>
+    <td>Fenstertext</td>
+    <td>Wenn vorhanden, dann muss dieser Parameter einen Teil der einzelnen Textelemente des Fensters enthalten (wird von Windows Spy angezeigt). Versteckte Textelemente werden erfasst, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> aktiv ist.</td>
+  </tr>
+  <tr>
+    <td>Titelausnahme</td>
+    <td>Fenstertitel mit diesem Wert werden nicht ber&uuml;cksichtigt.</td>
+  </tr>
+  <tr>
+    <td>Textausnahme</td>
+    <td>Fenstertexte mit diesem Wert werden nicht ber&uuml;cksichtigt.</td>
+  </tr>
+</table>
+
+<h3>ErrorLevel</h3>
+<p>Bei Problemen wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt, ansonsten enth&auml;lt ErrorLevel eine 0.</p>
+<h3>Bemerkungen</h3>
+<p>ControlSendRaw sendet die Tastatureingaben im <em>Tasten</em>-Parameter exakt so, wie sie dargestellt werden, anstatt z. B. {Enter} als eine ENTER-Taste, ^c als Steuerung+C, etc. zu &uuml;bersetzen. </p>
+<p>Wenn der <em>Steuerelement</em>-Parameter nicht vorhanden ist, dann versucht dieser Befehl, die Tasteneingaben direkt an das Fenster zu senden, indem es sich das oberste Steuerelement (welches oft das Richtige ist) raus sucht oder zum Fenster selbst, wenn keine Steuerelemente vorhanden sind. Das ist n&uuml;tzlich, wenn das Fenster scheinbar keine Steuerelemente hat oder sich der Einfachheit halber nicht k&uuml;mmern muss, welches Steuerelement die Tastatureingaben empfangen soll.</p>
+<p>Standardm&auml;&szlig;ig verhalten sich die Modifikatortasten (Control, Alt, Shift, und Win) wie bei dem Send-Befehl. Dadurch k&ouml;nnen Gro&szlig;buchstaben, Steuerungszeichen, etc. von Kommandozeileninterpreter und andere Konsolenfenster richtig erfasst werden. Es kann dadurch auch die Zuverl&auml;ssigkeit verbessert werden.</p>
+<p>Allerdings k&ouml;nnen diese Modifikatoren-Ereignisse in einigen F&auml;llen das aktive Fenster negativ beeintr&auml;chtigen, besonders wenn der Benutzer intensiv w&auml;hrend eines ControlSend-Befehls mit der Tastatur schreibt oder die Alt-Taste gesendet wurde (da Alt die Men&uuml;leiste im aktiven Fenster aktiviert). Diese St&ouml;rungen k&ouml;nnen verhindert werden, wenn die Up- und Down-Aktionen wie im folgenden Beispiel direkt gesendet werden:<br> ControlSend, Edit1, {Alt down}f{Alt up}, Unbenannt - Editor</p>
+<p>Die obere Methode erlaubt auch das Senden von Modifikatorentasten (Control/Alt/Shift/Win), w&auml;hrend der Arbeitsplatz gesperrt ist (gesch&uuml;tzt durch die Anmeldungsdarstellung).</p>
+<p><a href="BlockInput.htm">BlockInput</a> sollte vermieden werden, wenn ControlSend bei einem Konsolenfenster wie der Kommandozeileninterpreter verwendet wird. Dadurch k&ouml;nnen Gro&szlig;schreibungen und Modifikatorentasten wie Steuerung nicht richtig funktionieren.</p>
+<p>Die Geschwindigkeit, mit welcher die Tasten gesendet werden, wird mit <a href="SetKeyDelay.htm">SetKeyDelay</a> beeinflusst. Wenn das Fenster die Tasteneingaben nicht zuverl&auml;ssig erfasst, dann versucht man die Dr&uuml;ckdauer mit dem zweiten Parameter von <a href="SetKeyDelay.htm">SetKeyDelay</a> zu erh&ouml;hen:<br> SetKeyDelay, 10, 10<br> SetKeyDelay, 0, 10<br> SetKeyDelay, -1, 0</p>
+<p>Wenn das Fenster ein Edit-Steuerelement (oder so etwas &Auml;hnliches) ist, dann sind die folgenden Beispiele f&uuml;r gew&ouml;hnlich zuverl&auml;ssiger und schneller als ControlSend:<br> <a href="Control.htm">Control</a>, EditPaste, Dieser Text wird direkt am Tasten-Cursor angef&uuml;gt., Steuerelementname, Fenstertitel<br> <a href="ControlSetText.htm">ControlSetText</a>, Dieser Text ersetzt vollst&auml;ndig den vorherigen Text., Fenstertitel </p>
+<p>ControlSend ist f&uuml;r gew&ouml;hnlich nicht in der Lage, die Men&uuml;leiste eines Fensters zu manipulieren. Als &Uuml;bergangsl&ouml;sung dient <a href="WinMenuSelectItem.htm">WinMenuSelectItem</a>. Falls das infolge der Beschaffenheit der Men&uuml;leiste nicht m&ouml;glich ist, dann k&ouml;nnte herausgefunden werden, welche Nachricht dem gew&uuml;nschten Men&uuml;eintrag entspricht, indem das <a href="../misc/SendMessage.htm">SendMessage-Tutorial</a> befolgt wird.</p>
+<p>Fenstertitel und -texte sind von der Gro&szlig;- und Kleinschreibung abh&auml;ngig. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="SetKeyDelay.htm">SetKeyDelay</a>, <a href="_EscapeChar.htm">Schutzsequenzen (z. B. `%) </a>, <a href="Control.htm">Control</a>, <a href="ControlGet.htm">ControlGet</a>, <a href="ControlGetText.htm">ControlGetText</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlSetText.htm">ControlSetText</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="Send.htm">Send, </a><a href="../misc/Winamp.htm">Winamp automatisieren</a></p>
+<h3>Beispiele</h3>
+<pre class="NoIndent">ControlSend, Edit1, Das ist eine Textzeile im Editor-Fenster., Unbenannt
+SetTitleMatchMode, 2
+ControlSend, , abc, cmd.exe  <em>; Sendet direkt an einen Kommandozeileninterpreter.</em></pre>
+
+</body>
+</html>

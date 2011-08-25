@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Sort</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>Sort</h1>
+
+<p>Ordnet den Inhalt eine Variable in alphabetischer, numerischer oder zuf&auml;lliger Reihenfolge (entfernt optional Duplikate).</p>
+
+<pre class="Syntax">Sort, Variablenname [, Optionen]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td width="15%">Variablenname</td>
+    <td width="85%">Name der Variable, dessen Inhalt geordnet wird.</td>
+  </tr>
+  <tr>
+    <td>Optionen</td>
+    <td>Siehe untere Liste.</td>
+  </tr>
+</table>
+
+<h3>Optionen</h3>
+<p><u>Ein String mit beliebig vielen Buchstaben (in beliebiger Reihenfolge, optional mit Leerzeichen getrennt):</u></p>
+<p><strong>C</strong>: Nach Gro&szlig;- und Kleinschreibung sortieren (wird ignoriert, wenn die <strong>N</strong>-Option auch vorhanden ist). Wenn sowohl <strong>C</strong> als auch <strong>CL</strong> weggelassen werden, dann sind die Gro&szlig;buchstaben von A bis Z aus Sortierungsgr&uuml;nden identisch mit ihren Kleinbuchstaben.</p>
+<p><strong>CL</strong> <span class="ver">[v1.0.43.03+]:</span> Nicht nach Gro&szlig;- und Kleinschreibung sortieren, basierend auf das aktuelle Gebietsschema des Benutzers. Bei den meisten englischen und westeurop&auml;ischen Gebietsschemen sind die Gro&szlig;buchstaben A-Z und Buchstaben wie &Auml; und &Uuml; identisch mit ihren Kleinbuchstaben. Diese Methode behandelt W&ouml;rter wie "coop" und "co-op" gleichwertig (Bindestriche und Apostrophe). Je nach Inhalt der sortierten Elemente ist die Performance ein- bis achtmal schlechter als die Standardmethode der Unabh&auml;ngigkeit von Gro&szlig;- und Kleinschreibung.</p>
+<p><strong>Dx</strong>: Ersetzt <strong>x</strong> mit dem Trennzeichen, um den Anfang und das Ende jedes Elements in <em>Variablenname</em> zu bestimmen. Wenn diese Option nicht vorhanden ist, dann ist <strong>x</strong> standardm&auml;&szlig;ig ein LF-Zeichen (`n), die <em>Variablenname</em> korrekt sortieren, wenn die Zeilen entweder mit LF (`n) oder CR+LF (`r`n) enden.</p>
+<p><strong><a name="callback"></a>F Funktion</strong> <span class="ver">[v1.0.47+]:</span> Benutzerdefinierte Sortierung nach den Kriterien der <em>Funktion</em> (obwohl diese Sortierung viel l&auml;nger braucht). Verwendet den Buchstaben F, gefolgt von optionalen Leerzeichen/Tabulatoren und den Namen der <a href="../Functions.htm">Funktion</a>, um jeweils zwei Elemente in der Liste zu vergleichen. Die Funktion muss zwei oder drei Parameter akzeptieren. Wenn die Funktion davon ausgeht, dass der erste Parameter gr&ouml;&szlig;er als das der Zweite ist, dann wird ein positiver Integer zur&uuml;ckgegeben. Wenn sie davon ausgeht, dass die zwei Parameter gleich sind, dann wird eine 0 oder nichts zur&uuml;ckgegeben. Ansonsten wird ein negativer Integer zur&uuml;ckgeben. Wenn ein Dezimalpunkt im R&uuml;ckgabewert vorhanden ist, dann wird dieser Teil ignoriert (z. B. ist 0.8 das gleiche wie 0). Wenn vorhanden, dann erh&auml;lt der dritte Parameter den Offset (in Zeichen) vom ersten zum zweiten Element aus der originalen/unsortierten Liste (siehe Beispiele). Schlie&szlig;lich verwendet die Funktion die gleichen globalen Einstellungen (z. B. <a href="StringCaseSense.htm">StringCaseSense</a>) wie der Sort-Befehl, der sie aufgerufen hat.</p>
+<p>Hinweis: die <strong>F</strong>-Option bewirkt, dass alle anderen Optionen au&szlig;er <strong>D</strong>, <strong>Z</strong> und <strong>U</strong> ignoriert werden (obwohl <strong>N</strong>, <strong>C</strong> und <strong>CL</strong> immer noch bestimmen, wie <a href="#unique">Duplikate</a> erkannt werden). Ebenso tritt die Sortierung mit der angegebenen Funktion nicht auf, wenn ...: 1) sie nicht existiert, 2) sie weniger als zwei Parameter akzeptiert, oder 3) ihr erster oder zweiter Parameter <a href="../Functions.htm#ByRef">ByRef</a> enth&auml;lt.</p>
+<p><strong>N</strong>: Numerische Sortierung: Jedes Element wird als Zahl und nicht als String behandelt (wenn diese Option zum Beispiel nicht vorhanden ist, dann ist der String 233 aufgrund der alphabetischen Reihenfolge kleiner als der String 40). Sowohl dezimale als auch hexadezimale Strings (z. B. 0xF1) gelten als numerisch. Strings, die nicht mit einer Zahl beginnen, werden aus Sortierungsgr&uuml;nden als eine Null betrachtet. Zahlen werden als 64-Bit-Flie&szlig;kommawerte behandelt, damit die Nachkommastelle jeder Zahl (falls vorhanden) ber&uuml;cksichtigt wird.</p>
+<p><strong>Pn</strong>: Sortiert Elemente, basierend auf die Zeichenposition <strong>n</strong> (keine hexadezimalen Zahlen f&uuml;r <strong>n</strong> verwenden). Wenn diese Option nicht vorhanden ist, dann ist <strong>n</strong> standardm&auml;&szlig;ig eine 1, die Position des ersten Zeichens. Die Sortierung vergleicht jeden String mit anderen Strings, die bei dem <strong>n</strong>-ten Zeichen beginnen. Wenn <strong>n</strong> gr&ouml;&szlig;er als die L&auml;nge des Strings ist, dann wird dieser String aus Sortierungsgr&uuml;nden als leer angesehen. Wenn diese Option mit der <strong>N</strong>-Option (numerische Sortierung) verwendet wird, dann wird die Zeichenposition des Strings benutzt, die nicht unbedingt der Ziffernposition der Zahl entspricht.</p>
+<p><strong>R</strong>: Sortiert in umgekehrter Reihenfolge (alphabetisch oder numerisch, abh&auml;ngig von den anderen Optionen).</p>
+<p><strong>Random</strong>: Sortiert in zuf&auml;lliger Reihenfolge. Dadurch werden alle anderen Optionen au&szlig;er <strong>D</strong>, <strong>Z</strong> und <strong>U</strong> ignoriert (obwohl <strong>N</strong>, <strong>C</strong> und <strong>CL</strong> immer noch bestimmen, wie Duplikate erkannt werden). Beispiele:</p>
+<pre>Sort, EigeneVar, Random
+Sort, EigeneVar, Random Z D|</pre>
+<p><strong><a name="unique"></a>U</strong>: Entfernt doppelte Elemente von der Liste, damit jedes Element einzigartig ist. <a href="../misc/ErrorLevel.htm">ErrorLevel</a> enth&auml;lt die Anzahl der entfernten Elemente (0 wenn keine). Wenn die <strong>C</strong>-Option aktiv ist, dann muss auch die Gro&szlig;- und Kleinschreibung &uuml;bereinstimmen, damit sie identisch sind. Wenn die <strong>N</strong>-Option aktiv ist, dann wird ein Element wie z.B. 2 als Duplikat von 2.0 angesehen. Wenn die <strong>Pn</strong>- oder <strong>\</strong>-Option aktiv ist, dann muss das ganze Element ein Duplikat sein, nicht nur der Teilstring, der f&uuml;r die Sortierung verwendet wird. Wenn die <strong>Random</strong> oder <strong>F</strong>-Option aktiv ist, dann werden Duplikate nur entfernt, wenn sie aus Sortierungsgr&uuml;nden direkt nebeneinanderliegen. Wenn zum Beispiel "A|B|A" zuf&auml;llig sortiert wird, dann enth&auml;lt das Ergebnis m&ouml;glicherweise ein oder zwei A-Zeichen.</p>
+<p><strong>Z</strong>: Zum besseren Verst&auml;ndnis wird eine Variable mit ROT`nGR&Uuml;N`nBLAU`n in Betracht gezogen. Wenn die <strong>Z</strong>-Option nicht vorhanden ist, dann wird das letzte LF-Zeichen (`n) als Teil des letzten Elements angesehen (somit sind es nur 3 Elemente). Mit <strong>Z</strong> wird das LF-Zeichen (falls vorhanden) als Trennzeichen in Betracht gezogen, dass ein leeres Element am Ende der Liste abgrenzt (somit sind es 4 Elemente).</p>
+<p><strong>\</strong>: Sortiert Elemente, basierend auf dem Teilstring, der nach dem letzten Backslash erfolgt. Wenn das Element keinen Backslash enth&auml;lt, dann wird das ganze Element als Teilstring verwendet. Diese Option ist f&uuml;r die Sortierung blanker Dateinamen n&uuml;tzlich (d.h. ohne Pfade). Im folgenden Beispiel befindet sich AAA.txt &uuml;ber BBB.txt, weil die Verzeichnisse aus Sortierungsgr&uuml;nden ignoriert wurden:<br> C:\BBB\AAA.txt<br> C:\AAA\BBB.txt<br> Hinweis: Die Optionen <strong>N</strong> und <strong>P</strong> werden ignoriert, wenn die Backslash-Option vorhanden ist. </p>
+<h3>Bemerkungen</h3>
+<p>Dieser Befehl wird normalerweise verwendet, um eine Variable zu sortieren, die eine Liste von Zeilen enth&auml;lt, wobei jede Zeile mit einem LF-Zeichen (`n) endet. Eine Liste von Zeilen kann beispielsweise mit <a href="FileRead.htm">FileRead</a> in eine Variable geladen werden.</p>
+<p>Wenn der <em>Variablenname</em> das Wort <em>Clipboard</em> enth&auml;lt und die Zwischenablage Dateien beinhaltet (die beispielsweise von einem offenen Explorer-Fenster kopiert wurden), dann werden diese Dateien mit einer sortierten Liste von Dateinamen ersetzt. Mit anderen Worten enth&auml;lt die Zwischenablage nach dieser Operation nicht l&auml;nger die Dateien selbst.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird nur durch diesen Befehl ge&auml;ndert, wenn die <strong>U</strong>-Option aktiv ist.</p>
+<p>Die maximale Kapazit&auml;t einer Variable kann mit <a href="_MaxMem.htm">#MaxMem</a> erh&ouml;ht werden.</p>
+<p>Wenn eine gro&szlig;e Variable sortiert wurde und dessen Inhalt sp&auml;ter nicht mehr ben&ouml;tigt wird, dann kann dieser Speicher freigegeben werden, indem sie leer gemacht wird (z. B. EigeneVar =). </p>
+<h3>Verwandte Befehle</h3>
+<p><a href="FileRead.htm">FileRead</a>, <a href="LoopReadFile.htm">dateilesende Schleife</a>, <a href="LoopParse.htm">Parsing-Schleife</a>, <a href="StringSplit.htm">StringSplit</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="../misc/Clipboard.htm">Clipboard</a>, <a href="_MaxMem.htm">#MaxMem</a></p>
+<h3>Beispiele</h3>
+<pre class="NoIndent">EigeneVar = 5,3,7,9,1,13,999,-4
+<strong>Sort</strong> EigeneVar, N D,  <em>; Numerisch sortieren und Komma als Trennzeichen verwenden.</em>
+MsgBox %EigeneVar%   <em>; Das Ergebnis ist -4,1,3,5,7,9,13,999</em>
+
+<em>; Das folgende Beispiel sortiert den Inhalt einer Datei:</em>
+<a href="FileRead.htm">FileRead</a>, Inhalt, C:\Adressenliste.txt
+If not ErrorLevel  <em>; Erfolgreich geladen.</em>
+{
+    <strong>Sort</strong>, Inhalt
+    FileDelete, C:\Adressenliste (alphabetisch).txt
+    FileAppend, %Inhalt%, C:\Adressenliste (alphabetisch).txt
+    Inhalt =  <em>; Speicher freigeben.</em>
+}
+
+<em>; Das folgende Beispiel macht Win+C zu einem Hotkey, um Dateien von einem
+; Explorer-Fenster zu kopieren und die sortierten Dateinamen in die Zwischenablage einzuf&uuml;gen:</em>
+#c::
+Clipboard = <em>; Muss leer sein, damit die Erkennung funktioniert.</em>
+Send ^c
+ClipWait 2
+If ErrorLevel
+    Return
+<strong>Sort</strong> Clipboard
+MsgBox Bereit zum Einf&uuml;gen:`n%Clipboard%
+Return
+
+<em>; Die folgenden Beispiele demonstrieren benutzerdefinierte Sortierungen mit der Callback-Funktion.</em>
+EigeneVar = def`nabc`nmno`nFGH`nco-op`ncoop`ncop`ncon`n
+<strong>Sort</strong>, EigeneVar, F StringSort
+StringSort(a1, a2)
+{
+    Return a1 &gt; a2 ? 1 : a1 &lt; a2 ? -1 : 0  <em>; Sortiert alphabetisch, basierend auf der Einstellung von <a href="StringCaseSense.htm">StringCaseSense</a>.</em>
+}
+
+EigeneVar = 5,3,7,9,1,13,999,-4
+<strong>Sort</strong>, EigeneVar, F IntegerSort D,
+IntegerSort(a1, a2)
+{
+    Return a1 - a2  <em>; Sortiert in aufsteigender numerischen Reihenfolge.  Diese Methode funktioniert nur, wenn die Differenz nie so gro&szlig; ist, eine signed 64-Bit-Integer zu &uuml;berschreiten.</em>
+}
+
+EigeneVar = 1,2,3,4
+<strong>Sort</strong>, EigeneVar, F ReverseDirection D,  <em>; Kehrt die Liste um, damit sie 4,3,2,1 enth&auml;lt</em>
+ReverseDirection(a1, a2, offset)
+{
+    Return offset  <em>; Offset ist positiv, wenn a2 nach a1 in der originalen Liste kommt; ansonsten negativ.</em>
+}</pre>
+
+</body>
+</html>

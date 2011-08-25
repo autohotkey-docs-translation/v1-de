@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Regul&auml;re Ausdr&uuml;cke (RegEx) - Kurz&uuml;bersicht</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.regex {background-color: #FFEED3; font-weight: bold}
+.subj {background-color: #DDFFDD}
+-->
+</style>
+</head>
+<body>
+<h1>Regul&auml;re Ausdr&uuml;cke (RegEx) - Kurz&uuml;bersicht</h1>
+
+<h2>Grundlagen</h2>
+<p><strong>&Uuml;bereinstimmungen sind &uuml;berall</strong>: Standardm&auml;&szlig;ig stimmt ein regul&auml;rer Ausdruck mit einem Teilstring <em>&uuml;berall</em> innerhalb des durchsuchten Strings &uuml;berein. Zum Beispiel stimmt der regul&auml;re Ausdruck <span class="regex">abc</span> mit <span class="subj">abc</span>123, 123<span class="subj">abc</span> und 123<span class="subj">abc</span>xyz &uuml;berein. Damit die &Uuml;bereinstimmung nur am Anfang oder Ende erfolgt, verwendet einen <a href="#anchor">Anker</a>.</p>
+<p><strong>Schutzzeichen</strong>: Die meisten Zeichen wie abc123 k&ouml;nnen direkt in einem regul&auml;ren Ausdruck verwendet werden. Allerdings m&uuml;ssen die Zeichen <strong>\.*?+[{|()^$</strong> mit einem Backslash vorangestellt werden, damit sie direkt verwendet werden. Zum Beispiel ist <span class="regex">\.</span> ein direkt vorhandener Punkt und <span class="regex">\\</span> ist ein direkt vorhandener Backslash. Das Sch&uuml;tzen kann mit \Q...\E verhindert werden. Zum Beispiel: \QDirekt vorhandener Text\E.</p>
+<p><strong>Abh&auml;ngigkeit von Gro&szlig;- und Kleinschreibung</strong>: Standardm&auml;&szlig;ig sind regul&auml;re Ausdr&uuml;cke von der Gro&szlig;- und Kleinschreibung abh&auml;ngig. Das kann mit der "i"-Option ge&auml;ndert werden. Zum Beispiel sucht das Muster <span class="regex">i)abc</span> nach "abc", ohne R&uuml;cksicht auf die Gro&szlig;- und Kleinschreibung. Siehe unten f&uuml;r weitere Modifikatoren.</p>
+
+<h2 id="Options">Optionen (von der Gro&szlig;- und Kleinschreibung abh&auml;ngig)</h2>
+<p>Am Anfang eines regul&auml;ren Ausdrucks k&ouml;nnen beliebig viele Optionen stehen, gefolgt von einer schlie&szlig;enden Klammer. Zum Beispiel sucht das Muster "<span class="red">im)</span>abc" nach <em>abc</em> auf mehreren Zeilen, unabh&auml;ngig von der Gro&szlig;- und Kleinschreibung (die Klammer kann weggelassen werden, falls keine Optionen vorhanden sind). Obwohl diese Syntax vom traditionellen Weg abweicht, ben&ouml;tigt es keine speziellen Trennzeichen (z. B. Schr&auml;gstrich), daher m&uuml;ssen diese Trennzeichen innerhalb des Musters nicht gesch&uuml;tzt werden. Dar&uuml;ber hinaus wird die Performance verbessert, da die Optionen einfacher zu parsen sind.</p>
+<table class="info">
+  <tr>
+    <td><strong>i</strong></td>
+    <td>&Uuml;bereinstimmung ist nicht von Gro&szlig;- und Kleinschreibung abh&auml;ngig, das hei&szlig;t, dass die Buchstaben von A bis Z identisch zu ihren Gegenst&uuml;cken in Kleinbuchstaben sind. </td>
+  </tr>
+  <tr>
+    <td><strong>m</strong></td>
+    <td><p><a name="Multiline"></a>Mehrzeilig. Sieht den <em>Heuhaufen</em> als eine Ansammlung von einzelnen Zeilen (wenn Zeilenumbr&uuml;che vorhanden sind) und nicht als eine einzige durchgehende Zeile. Insbesondere wird dadurch Folgendes ge&auml;ndert:</p>
+      <p>1) Zirkumflex (^) hat nach jedem internen Zeilenumbruch eine &Uuml;bereinstimmung, sowie auch am Anfang des <em>Heuhaufens</em>, wo es immer &uuml;bereinstimmt (hat aber nach einem Zeilenumbruch <em>ziemlich am Ende</em> des <em>Heuhaufens</em> keine &Uuml;bereinstimmung).</p>
+      <p>2) Dollar-Zeichen ($) hat vor jedem Zeilenumbruch im <em>Heuhaufen</em> eine &Uuml;bereinstimmung (sowie ganz am Ende, wo es immer &uuml;bereinstimmt).</p>
+      <p>Zum Beispiel stimmt das Muster "<span class="red">m)</span>^abc$" erst mit dem <em>Heuhaufen</em> "xyz`r`nabc" &uuml;berein, wenn die "m"-Option vorhanden ist.</p>
+      <p>Die "D"-Option wird ignoriert, wenn "m" vorhanden ist.</p></td>
+  </tr>
+  <tr>
+    <td><strong>s</strong></td>
+    <td>DotAll. Dadurch stimmt der Punkt (.) mit allen Zeichen &uuml;berein, einschlie&szlig;lich Zeilenumbr&uuml;che (normalerweise stimmt es nicht mit Zeilenumbr&uuml;chen &uuml;berein). Wenn jedoch das Zeilenumbruch-Zeichen standardm&auml;&szlig;ig CRLF (`r`n) ist, dann sind zwei Punkte erforderlich, damit eine &Uuml;bereinstimmung erfolgt. Unabh&auml;ngig von dieser Option stimmt eine negative Klasse wie [^a] immer mit Zeilenumbr&uuml;chen &uuml;berein.</td>
+  </tr>
+  <tr>
+    <td><strong>x</strong></td>
+    <td>Ignoriert unsichtbare Zeichen im Muster, solange sie nicht gesch&uuml;tzt werden oder sich in einer Zeichenklasse befinden. Die Zeichen `n und `t dazwischen werden ignoriert, sobald sie im PCRE ankommen, weil sie da bereits als unbearbeitete/direkt vorhandene unsichtbare Zeichen behandelt werden (im Gegensatz dazu werden \n und \t nicht ignoriert, weil sie Schutzsequenzen im PCRE sind). Die <strong>x</strong>-Option ignoriert auch Zeichen zwischen einem nicht-gesch&uuml;tzten # au&szlig;erhalb einer Zeichenklasse und dem n&auml;chsten Zeilenumbruch-Zeichen. Damit ist es m&ouml;glich, Kommentare innerhalb eines komplizierten Musters einzuf&uuml;gen. Dies gilt jedoch nur f&uuml;r Datenzeichen. Unsichtbare Zeichen k&ouml;nnen nie innerhalb spezieller Zeichenfolgen wie (?( auftauchen, die ein Bedingungsmuster starten.</td>
+  </tr>
+  <tr>
+    <td><strong>A</strong></td>
+    <td>Zwingt das Muster zu verankern; das hei&szlig;t, es kann nur am Anfang des <em>Heuhaufens</em> &uuml;bereinstimmen. In den meisten F&auml;llen ist das gleichbedeutend mit der direkten Verankerung des Musters mithilfe von ^.</td>
+  </tr>
+  <tr>
+    <td><strong>D</strong></td>
+    <td>Zwingt Dollar-Zeichen ($), mit dem Ende des <em>Heuhaufens</em> &uuml;bereinzustimmen, selbst wenn das letzte Zeichen im <em>Heuhaufen</em> ein Zeilenumbruch ist. Ohne diese Option erfolgt eine &Uuml;bereinstimmung vor einem abschlie&szlig;enden Zeilenumbruch (falls vorhanden). Hinweis: Diese Option wird ignoriert, wenn "m" vorhanden ist.</td>
+  </tr>
+  <tr>
+    <td><strong>J</strong></td>
+    <td>Erlaubt doppelte <a href="../commands/RegExMatch.htm#NamedSubPat">benannte Teilausdr&uuml;cke</a>.
+
+
+ Das ist f&uuml;r Muster n&uuml;tzlich, in denen nur ein Teilausdruck von gleichnamigen Teilausdr&uuml;cken &uuml;bereinstimmen kann. Hinweis: Wenn mehrere Instanzen des bestimmten Namens mit etwas &uuml;bereinstimmen, dann wird nur die Instanz ganz links gespeichert. Auch sind Variablennamen nicht von Gro&szlig;- und Kleinschreibung abh&auml;ngig.</td>
+  </tr>
+  <tr>
+    <td><strong>U</strong></td>
+    <td>Ungreedy (nicht gierig).
+
+
+ Die Quantoren *+?{} verbrauchen so wenig Zeichen wie m&ouml;glich f&uuml;r eine &Uuml;bereinstimmung und lassen den Rest f&uuml;r den n&auml;chsten Teilausdruck &uuml;brig. Wenn die "U"-Option nicht aktiv ist, dann kann die Gier eines beliebigen Quantors mit einem nachfolgendem Fragezeichen aufgehoben werden. Wenn im Gegensatz dazu "U" aktiv <em>ist</em>, dann macht das Fragezeichen einen beliebigen Quantor gierig.</td>
+  </tr>
+  <tr>
+    <td><strong>X</strong></td>
+    <td> PCRE_EXTRA. Erm&ouml;glicht PCRE-Funktionen, die mit Perl nicht kompatibel sind. Derzeit ist nur eine Funktion vorhanden, die eine &Uuml;bereinstimmung mit jedem Backslash in einem Muster mit einem nachfolgendem Buchstaben ohne besondere Bedeutung fehlschlagen l&auml;sst und ErrorLevel demzufolge setzt. Diese Option hilft, unbenutzte Backslashs f&uuml;r die zuk&uuml;nftige Verwendung zu reservieren. Ohne diese Option wird ein Backslash mit einem nachfolgenden Buchstaben ohne besondere Bedeutung direkt behandelt (z. B. werden \g und g als ein direkt vorhandenes g angesehen). Unabh&auml;ngig dieser Option werden nicht-alphabetische Backslash-Zeichenfolgen ohne besondere Bedeutung immer direkt behandelt (z. B. wird sowohl \/ wie auch / als Schr&auml;gstrich erkannt). </td>
+  </tr>
+  <tr>
+    <td><strong>P</strong></td>
+    <td>Positionsmodus. Dadurch gibt RegExMatch() die Position und L&auml;nge der &Uuml;bereinstimmung und deren Teilausdr&uuml;cke zur&uuml;ck, anstatt ihre passenden Teilstrings. F&uuml;r weitere Details, siehe <a href="../commands/RegExMatch.htm#PosMode">NichtZitierteAusgabevariable</a>.</td>
+  </tr>
+  <tr>
+    <td><strong>S</strong></td>
+    <td><a name="Study"></a>&Uuml;berpr&uuml;ft das Muster, um die Performance zu verbessern. Das ist n&uuml;tzlich, wenn ein bestimmtes (besonders komplexes) Muster oft ausgef&uuml;hrt wird. Wenn PCRE einen Weg findet, die Performance zu verbessern, dann wird die Entdeckung zusammen mit dem Muster f&uuml;r nachfolgende Anwendungen desselben Musters in den Cache gespeichert (nachfolgende Verwendungen dieses Musters sollten auch die S-Option enthalten, weil notwendigerweise die Optionsbuchstaben und Reihenfolge exakt &uuml;bereinstimmen m&uuml;ssen, um eine &Uuml;bereinstimmung im Cache zu finden).</td>
+  </tr>
+  <tr>
+    <td><strong>C</strong></td>
+    <td>Aktiviert den Auto-Callout-Modus. Siehe <a href="../misc/RegExCallout.htm#auto">Callouts in regul&auml;ren Ausdr&uuml;cken</a> f&uuml;r weitere Informationen.</td>
+  </tr>
+  <tr>
+    <td><strong>`n</strong></td>
+    <td>Wechselt vom Standard-Unterbrechungszeichen (`r`n) zu einem LF-Zeichen (`n), welches Standard in UNIX-Systemen ist. Das ausgew&auml;hlte Unterbrechungszeichen beeinflusst das Verhalten von <a href="../misc/RegEx-QuickRef.htm#anchor">Verankerungen (^ und $)</a> und <a href="../misc/RegEx-QuickRef.htm#dot">Muster mit Punkten</a>.</td>
+  </tr>
+  <tr>
+    <td><strong>`r</strong></td>
+    <td>Wechselt vom Standard-Unterbrechungszeichen (`r`n) zu einem CR-Zeichen (`r).</td>
+  </tr>
+  <tr>
+    <td><strong>`a</strong></td>
+    <td><a name="NEWLINE_ANY"></a>Seit v1.0.46.06 erkennt `a jede Art von Zeilenumbruch: `r, `n, `r`n, `v/VT/vertical tab/chr(0xB), `f/FF/formfeed/chr(0xC) und NEL/next-line/chr(0x85). Seit v1.0.47.05 k&ouml;nnen Zeilenumbr&uuml;che mit (*ANYCRLF) am Anfang eines Musters (nach den Optionen) auf CR, LF und CRLF beschr&auml;nkt werden, zum Beispiel: <em>im)(*ANYCRLF)^abc$</em></td>
+  </tr>
+</table>
+<p>Hinweis: Leerzeichen und Tabulatoren k&ouml;nnen verwendet werden, um jede Option voneinander zu trennen.</p>
+
+<h2 id="Common">H&auml;ufig verwendete Symbole und Syntax </h2>
+<table class="info">
+        <tr>
+                <td align="center"><strong>.</strong></td>
+                <td><a name="dot"></a>Ein Punkt stimmt mit <em>jedem</em> Zeichen &uuml;berein (au&szlig;er Zeilenumbruch: `r und `n). Zum Beispiel stimmt <span class="regex">ab.</span> mit <span class="subj">abc</span> und <span class="subj">abz</span> und <span class="subj">ab_</span> &uuml;berein.</td>
+        </tr>
+        <tr>
+                <td align="center"><strong>*</strong></td>
+                <td><p>Mit dem Sternchen darf das voranstehende Element (Zeichen, <a href="#class">Klasse</a> oder <a href="#subpat">Teilausdruck</a>) kein- oder mehrmals vorkommen. Zum Beispiel stimmt <span class="regex">a*</span> mit <span class="subj">a</span>b und <span class="subj">aaa</span>b &uuml;berein. Es stimmt auch mit dem Anfang eines beliebigen Strings &uuml;berein, der &uuml;berhaupt kein "a" enth&auml;lt.</p>
+              <p><strong>Platzhalter:</strong> Das Punkt-Sternchen-Muster <span class="regex">.*</span> ist sehr gro&szlig;z&uuml;gig, weil es mit beliebig vielen Vorkommen eines <em>beliebigen</em> Zeichens &uuml;bereinstimmt (au&szlig;er Zeilenumbruch: `r und `n). Zum Beispiel stimmt <span class="regex">abc.*123</span> mit <span class="subj">abcAnything123</span> sowie mit <span class="subj">abc123</span> &uuml;berein.</p>                  </td>
+        </tr>
+        <tr>
+          <td align="center"><strong>?</strong></td>
+          <td>Mit dem Fragezeichen darf das voranstehende Element (Zeichen, <a href="#set">Klasse</a> oder <a href="#subpat">Teilausdruck</a>) kein- oder einmal vorkommen. Oder auch: "Das voranstehende Element ist optional". Zum Beispiel stimmt <span class="regex">colou?r</span> sowohl mit <span class="subj">color</span> als auch <span class="subj">colour</span> &uuml;berein, weil das "u" optional ist.</td>
+  </tr>
+        <tr>
+          <td align="center"><strong>+</strong></td>
+          <td>Mit dem Pluszeichen darf das voranstehende Element (Zeichen, <a href="#class">Klasse</a> oder <a href="#subpat">Teilausdruck</a>) ein- oder mehrmals vorkommen. Zum Beispiel stimmt <span class="regex">a+</span> mit <span class="subj">a</span>b und <span class="subj">aaa</span>b &uuml;berein. Aber im Gegensatz zu <span class="regex">a*</span> und <span class="regex">a?</span> stimmt das Muster <span class="regex">a+</span> nicht mit dem Anfang eines Strings &uuml;berein, dem ein "a"-Zeichen fehlt.</td>
+  </tr>
+        <tr>
+          <td align="center">{min,max}</td>
+          <td><p>Damit darf das voranstehende Element (Zeichen, <a href="#set">Klasse</a> oder <a href="#subpat">Teilausdruck</a>) <em>min</em>- bis <em>max</em>-mal vorkommen. Zum Beispiel stimmt <span class="regex">a{1,2}</span> mit <span class="subj">a</span>b &uuml;berein, bei <span class="subj">aa</span>ab jedoch nur die ersten 2 "a"-Zeichen.</p>
+        <p>Ebenso stimmt {3} mit genau 3 Vorkommen ein und {3<strong>,</strong>} mit 3 oder mehr Vorkommen. Hinweis: Die angegebenen Zahlen m&uuml;ssen kleiner als 65536 sein. Au&szlig;erdem muss der erste Wert kleiner gleich der zweite Wert sein.</p></td>
+  </tr>
+        <tr>
+          <td align="center"><strong>[...]</strong></td>
+          <td><p><a name="set"></a><a name="class"></a><strong>Zeichenklassen:</strong> Die eckigen Klammern umschlie&szlig;en eine Liste oder einen Bereich von Zeichen (oder beides). Zum Beispiel bedeutet <span class="regex">[abc]</span>: "jedes Zeichen, dass entweder ein a, b oder c ist". Mit einem Bindestrich wird ein Bereich erzeugt, zum Beispiel bedeutet <span class="regex">[a-z]</span>: "jedes Zeichen von a bis z". Listen und Bereiche k&ouml;nnen kombiniert werden, zum Beispiel bedeutet <span class="regex">[a-zA-Z0-9_]</span>: "jedes Zeichen, dass alphanumerisch oder ein Unterstrich ist".</p>
+            <p>Nach einer Zeichenklasse kann *, ?, + oder {min,max} erfolgen. Zum Beispiel stimmt <span class="regex">[0-9]+</span> mit einem oder mehreren Vorkommen von Ziffern &uuml;berein, daher erfolgt eine &Uuml;bereinstimmung mit xyz<span class="subj">123</span>, aber nicht mit abcxyz.</p>
+        <p>Die folgenden POSIX-Sets werden auch in Form von [[:xxx:]] unterst&uuml;tzt, wobei xxx ein folgendes Wort sein kann: alnum, alpha, ascii (0-127), blank (Leerzeichen oder Tabulator), cntrl (Steuerzeichen), digit (0-9), xdigit (hexadezimale Ziffern), print, graph (print ohne Leerzeichen), punct, lower, upper, space (unsichtbare Zeichen), word (wie <a href="#word">\w</a>).</p>
+        <p>Innerhalb einer Zeichenklasse m&uuml;ssen die Zeichen nicht gesch&uuml;tzt werden, es sei denn, sie haben eine besondere Bedeutung in der Klasse; z. B. <span class="regex">[\^a]</span>, <span class="regex">[a\-b]</span>, <span class="regex">[a\]]</span> und <span class="regex">[\\a]</span>.</p></td>
+  </tr>
+        <tr>
+          <td align="center"><strong>[^...]</strong></td>
+          <td>Stimmt mit jedem Zeichen &uuml;berein, das <strong>nicht</strong> in der Klasse ist. Zum Beispiel stimmt <span class="regex">[^/]*</span> mit beliebig vielen Vorkommen &uuml;berein, die <em>kein</em> Schr&auml;gstrich enthalten, wie z. B. <span class="subj">http:</span>//. Ebenso stimmt <span class="regex">[^0-9xyz]</span> mit jedem Zeichen &uuml;berein, dass keine Zahl oder nicht der Buchstabe x, y oder z ist.</td>
+  </tr>
+        <tr>
+          <td align="center"><strong>\d</strong></td>
+          <td>Stimmt mit jeder Ziffer &uuml;berein (entspricht der Klasse <span class="regex">[0-9]</span>). Umgekehrt bedeutet das gro&szlig;geschriebene \D: "jedes Zeichen, dass <em>keine</em> Ziffer ist". Dieser und die anderen zwei Buchstaben k&ouml;nnen in einer <a href="#set">Klasse</a> verwendet werden, zum Beispiel bedeutet <span class="regex">[\d.-]</span>: "jede Ziffer, jeder Punkt oder jedes Minuszeichen".</td>
+  </tr>
+        <tr>
+          <td align="center"><strong>\s</strong></td>
+          <td>Stimmt mit jedem unsichtbaren Zeichen &uuml;berein, vorwiegend Leerzeichen, Tabulatoren und Zeilenumbr&uuml;che (`r und `n). Umgekehrt bedeutet das gro&szlig;geschriebene \S: "jedes Zeichen, dass <em>nicht</em> unsichtbar ist".</td>
+  </tr>
+        <tr>
+          <td align="center"><strong>\w</strong></td>
+          <td><a name="word"></a>Stimmt mit jedem "Wort"-Zeichen &uuml;berein, n&auml;mlich alphanumerisch oder Unterstrich. Das ist gleichbedeutend mit <span class="regex">[a-zA-Z0-9_]</span>. Umgekehrt bedeutet das gro&szlig;geschriebene \W: "jedes Zeichen, dass <em>kein</em> Wort-Zeichen ist".</td>
+  </tr>
+        <tr>
+          <td align="center"><strong>^<br> $</strong></td>
+          <td><p><a name="anchor" id="anchor"></a>Zirkumflex (^) und Dollar-Zeichen ($) werden <em>Anker</em> genannt, weil sie keine Zeichen konsumieren, sondern das Muster an den Anfang oder an das Ende des durchsuchten Strings binden.</p>
+            <p><span class="regex">^</span> kann am Anfang eines Musters stehen, damit die &Uuml;bereinstimmung ganz am Anfang einer Zeile erfolgt. Zum Beispiel stimmt <span class="regex">^abc</span> mit <span class="subj">abc</span>123 &uuml;berein, aber nicht mit 123abc.</p>
+            <p><span class="regex">$</span> kann am Ende eines Musters stehen, damit die &Uuml;bereinstimmung ganz am Ende einer Zeile erfolgt. Zum Beispiel stimmt <span class="regex">abc$</span> mit 123<span class="subj">abc</span> &uuml;berein, aber nicht mit abc123.</p>
+      <p>Die beiden Anker k&ouml;nnen kombiniert werden. Zum Beispiel stimmt <span class="regex">^abc$</span> nur mit <span class="subj">abc</span> &uuml;berein (d. h. es d&uuml;rfen sich keine anderen Zeichen davor oder dahinter befinden).</p>
+      <p>Wenn der durchsuchte Text mehrere Zeilen enth&auml;lt, dann k&ouml;nnen die Anker mithilfe der <a href="#Multiline">"m"-Option</a> f&uuml;r jede Zeile anstelle des ganzen Textes g&uuml;ltig gemacht werden. Zum Beispiel stimmt <span class="regex">m)^abc$</span> mit 123`r`n<span class="subj">abc</span>`r`n789 &uuml;berein. Wenn die "m"-Option nicht vorhanden ist, dann erfolgt keine &Uuml;bereinstimmung.</p></td>
+  </tr>
+        <tr>
+          <td align="center"><strong>\b</strong></td>
+          <td>\B bedeutet "Wortgrenze", dass sich wie ein Anker verh&auml;lt, weil es keine Zeichen konsumiert. Der Status des aktuellen Zeichens muss ein <a href="#word">Wort-Zeichen (\w)</a> sein, um das Gegenteil des vorherigen Zeichens zu sein. Es wird normalerweise verwendet, um eine versehentliche &Uuml;bereinstimmung mit einem Wort zu vermeiden, dass sich in einem anderen Wort befindet. Zum Beispiel stimmt <span class="regex">\bcat\b</span> nicht mit catfish &uuml;berein, aber es stimmt mit <span class="subj">cat</span> &uuml;berein, egal ob es von Interpunktionen oder unsichtbare Zeichen umgeben ist. Gro&szlig;geschriebenes \B bewirkt das Gegenteil: das aktuelle Zeichen darf sich <em>nicht</em> an einer Wortgrenze befinden.</td>
+  </tr>
+        <tr>
+          <td align="center"><strong>|</strong></td>
+          <td>Mit dem vertikalen Strich werden mehrere Alternativen abgegrenzt. Eine &Uuml;bereinstimmung erfolgt, wenn eine <em>beliebige</em> Alternative zufrieden gestellt ist. Zum Beispiel stimmt <span class="regex">gray|grey</span> sowohl mit <span class="subj">gray</span> als auch <span class="subj">grey</span> &uuml;berein. Ebenso bewirkt <span class="regex">gr(a|e)y</span> mithilfe der unten genannten Klammern das Gleiche.</td>
+  </tr>
+        <tr>
+          <td align="center"><strong>(...)</strong></td>
+          <td><p><a name="subpat"></a>Elemente in Klammern werden h&auml;ufig verwendet, um:</p>
+            <ul>
+              <li>die Reihenfolge der Auswertung zu bestimmen. Zum Beispiel stimmt <span class="regex">(Sonn|Mon|Diens|Donners|Frei|Sams)tag|Mittwoch</span> mit dem Namen jeden Tages &uuml;berein.</li>
+              <li><span class="regex">*</span>, <span class="regex">?</span>, <span class="regex">+</span> oder <span class="regex">{min,max}</span> auf eine <em>Reihe</em> von Zeichen anstelle eines Zeichens anzuwenden. Zum Beispiel stimmt <span class="regex">(abc)+</span> mit einem oder mehreren Vorkommen von "abc" &uuml;berein, daher erfolgt eine &Uuml;bereinstimmung mit <span class="subj">abcabc</span>123, aber nicht mit ab123 oder bc123.</li>
+          <li><a name="capture"></a>einen Teilausdruck wie der Punkt-Stern in <span class="regex">abc<span class="red">(.*)</span>xyz</span> einzufangen. Zum Beispiel speichert <a href="../commands/RegExMatch.htm">RegExMatch()</a> den Teilstring, der mit jedem Teilausdruck &uuml;bereinstimmt, in einem <a href="../commands/RegExMatch.htm#Array">Ausgabe-Array</a>. Ebenso kann <a href="../commands/RegExReplace.htm">RegExReplace()</a> den Teilstring, der mit jedem Teilausdruck &uuml;bereinstimmt, in das Ergebnis per <a href="../commands/RegExReplace.htm#BackRef">R&uuml;ckreferenz</a> (z. B. $1) wieder einf&uuml;gen. Damit die Klammern den Teilausdruck nicht einfangen, m&uuml;ssen die ersten beiden Zeichen innerhalb der Klammern <span class="regex">?:</span> sein, zum Beispiel: <span class="regex">(<span class="red">?:</span>.*)</span></li>
+              <li><a href="#Options">Optionen</a> nebenbei zu &auml;ndern. Zum Beispiel aktiviert <span class="regex">(?im)</span> f&uuml;r den Rest des Musters (oder Teilmuster) die Optionen f&uuml;r die Unabh&auml;ngigkeit von Gro&szlig;- und Kleinschreibung und f&uuml;r mehrere Zeilen. Umgekehrt deaktiviert <span class="regex">(?-im)</span> diese Optionen. Alle Optionen werden unterst&uuml;tzt, au&szlig;er DPS`r`n`a.</li>
+            </ul></td>
+  </tr>
+        <tr>
+          <td align="center"><strong>\t<br> \r<br> usw.</strong></td>
+          <td><p>Diese Schutzsequenzen sind Sonderzeichen. <span class="regex">\t</span> (Tabulator), <span class="regex">\r</span> (CR-Zeichen) und <span class="regex">\n</span> (LF-Zeichen) werden am h&auml;ufigsten verwendet. In solchen F&auml;llen kann optional ein Akzent (`) anstelle des Backslashs verwendet werden. Schutzsequenzen in Form von \xhh werden ebenfalls unterst&uuml;tzt, wobei <em>hh</em> der Hex-Code eines ANSI-Zeichensatzes zwischen 00 und FF ist.</p>
+      <p>Seit v1.0.46.06 bedeutet <span class="regex">\R</span>: "jeder Zeilenumbruch beliebiger Art", die in der <a href="#NEWLINE_ANY">`a-Option</a> aufgelistet sind (in einer <a href="#class">Zeichenklasse</a> allerdings ist \R lediglich ein normales "R"). Seit v1.0.47.05 kann <span class="regex">\R</span> mit (*BSR_ANYCRLF) am Anfang eines Musters (nach den Optionen) auf CR, LF und CRLF beschr&auml;nkt werden, zum Beispiel: <span class="regex">im)(*BSR_ANYCRLF)abc\Rxyz</span></p></td>
+  </tr>
+  <tr id="slashP">
+    <td align="center"><strong>\p{xx}<br>\P{xx}<br>\X</strong></td>
+    <td><p><span class="ver">[AHK_L 61+]:</span> Eigenschaften von Unicode-Zeichen. Wird nicht von den ANSI-Versionen unterst&uuml;tzt. <span class="regex">\p{xx}</span> stimmt mit einem Zeichen anhand der xx-Eigenschaft &uuml;berein, w&auml;hrend <span class="regex">\P{xx}</span> mit einem beliebigen Zeichen <i>ohne</i> die xx-Eigenschaft &uuml;bereinstimmt. Zum Beispiel stimmt <span class="regex">\pL</span> mit einem beliebigen Buchstaben &uuml;berein und <span class="regex">\p{Lu}</span> mit einem gro&szlig;geschriebenen Buchstaben. <span class="regex">\X</span> stimmt mit einer beliebigen Anzahl an Zeichen &uuml;berein, die eine erweiterte Unicode-Sequenz formen.</p>
+    <p>F&uuml;r eine vollst&auml;ndige Namensliste von unterst&uuml;tzten Eigenschaften und andere Details sucht nach "\p{xx}" in <a href="http://www.pcre.org/pcre.txt">www.pcre.org/pcre.txt</a>.</p></td>
+  </tr>
+  <tr id="UCP">
+    <td><strong>(*UCP)</strong></td>
+    <td><p><span class="ver">[AHK_L 61+]:</span> Aus Performance-Gr&uuml;nden erkennen \d, \D, \s, \S, \w, \W, \b und \B standardm&auml;&szlig;ig nur ASCII-Zeichen, auch in Unicode-Versionen. Wenn das Muster mit <span class="regex">(*UCP)</span> beginnt, dann werden die Unicode-Eigenschaften verwendet, um festzustellen, welche Zeichen &uuml;bereinstimmen. Zum Beispiel wird \w gleichbedeutend mit <span class="regex">[\p{L}\p{N}_]</span> und \d wird gleichbedeutend mit <span class="regex">\p{Nd}</span>.</p>
+    </td>
+  </tr>
+</table>
+<p><strong>Greed (Gier)</strong>: Standardm&auml;&szlig;ig sind <span class="regex">*</span>, <span class="regex">?</span>, <span class="regex">+</span> und <span class="regex">{min,max}</span> gierig, weil sie alle Zeichen bis zum <em>letztm&ouml;glichen</em> Zeichen konsumieren, die das ganze Muster zufriedenstellen. Damit das Konsumieren beim <em>erstm&ouml;glichen</em> Zeichen endet, f&uuml;gt nach den Quantoren ein Fragezeichen an. Zum Beispiel hat das Muster <span class="regex">&lt;.+&gt;</span> (ohne Fragezeichen) die folgende Bedeutung: suche nach einem &lt;, gefolgt von einem oder mehren Zeichen, gefolgt von einem &gt;. Um das Muster daran zu hindern, mit dem <em>ganzen</em> String <span class="subj"><span class="red"><strong>&lt;</strong></span>em&gt;text&lt;/em<span class="red"><strong>&gt;</strong></span></span> &uuml;bereinzustimmen, f&uuml;gt nach dem Pluszeichen ein Fragezeichen an: <span class="regex">&lt;.+<span class="red">?</span>&gt;</span>. Dadurch stoppt die &Uuml;bereinstimmung beim ersten '>' und stimmt daher nur mit dem ersten Tag <span class="subj"><span class="red"><strong>&lt;</strong></span>em<span class="red"><strong>&gt;</strong></span></span> &uuml;berein.</p>
+<p><strong>Vorausschauende und zur&uuml;ckschauende Behauptungen</strong>: Die Gruppen <span class="regex">(?=...)</span>, <span class="regex">(?!...)</span>, <span class="regex">(?&lt;=...)</span> und <span class="regex">(?&lt;!...)</span> werden <em>Behauptungen</em> genannt, weil sie darauf bestehen, dass eine Bedingung eintrifft, ohne dabei beliebige Zeichen zu konsumieren. Zum Beispiel ist <span class="regex">abc(?=.*xyz)</span> eine vorausschauende Behauptung, weil der String xyz sich irgendwo auf der rechten Seite des Strings abc befinden muss (ist das nicht der Fall, dann erfolgt keine &Uuml;bereinstimmung). Mit <span class="regex">(?=...)</span> wird <em>positiv</em> vorausgeschaut, weil das angegebene Muster vorhanden sein muss. Im Gegenzug wird mit <span class="regex">(?!...)</span> <em>negativ</em> vorausgeschaut, weil das angegebene Muster <em>nicht</em> vorhanden sein darf. Ebenso wird mit <span class="regex">(?&lt;=...)</span> und <span class="regex">(?&lt;!...)</span> positiv bzw. negativ <em>zur&uuml;ckgeschaut</em>, weil sie auf der <em>linken</em> anstelle der rechten Seite nachschauen. Zur&uuml;ckschauende Behauptungen haben mehr Einschr&auml;nkungen als vorausschauende Behauptungen, weil sie keine Quantoren mit ver&auml;ndernder Gr&ouml;&szlig;e wie <span class="regex">*</span>, <span class="regex">?</span> und <span class="regex">+</span> unterst&uuml;tzen. Die Schutzsequenz \K ist mit einer zur&uuml;ckschauenden Behauptung vergleichbar, weil sie alle zuletzt &uuml;bereinstimmende Zeichen vom Endergebnis wegl&auml;sst. Zum Beispiel stimmt <span class="regex">foo\Kbar</span> mit "foobar" &uuml;berein, aber mit der Meldung, dass es eine &Uuml;bereinstimmung mit "bar" hat.</p>
+<p><strong>Verwandte Befehle</strong>: Regul&auml;re Ausdr&uuml;cke werden von <a href="../commands/RegExMatch.htm">RegExMatch()</a>, <a href="../commands/RegExReplace.htm">RegExReplace()</a> und <a href="../commands/SetTitleMatchMode.htm">SetTitleMatchMode</a> unterst&uuml;tzt.</p>
+<p><strong>Schlussbemerkung:</strong> Obwohl diese Seite h&auml;ufig verwendete RegEx-Funktionen anrei&szlig;t, existieren noch weitere Funktionen, die untersucht werden k&ouml;nnen, wie z. B. bedingte Teilmuster. Das komplette Handbuch &uuml;ber PCRE kann auf <a href="http://www.pcre.org/pcre.txt">www.pcre.org/pcre.txt</a> gefunden werden.</p>
+<p>&nbsp; </p>
+</body>
+</html>

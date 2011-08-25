@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>SetTitleMatchMode</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>SetTitleMatchMode</h1>
+
+<p>Bestimmt das &Uuml;bereinstimmungsverhalten der Fenstertitel-Parameter in Befehlen wie <a href="WinWait.htm">WinWait</a>.</p>
+
+<pre class="Syntax">SetTitleMatchMode, &Uuml;bereinstimmungsmodus
+SetTitleMatchMode, Fast|Slow</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td width="15%"><p>&Uuml;bereinstimmungsmodus</p>    </td>
+    <td width="85%"><p>Eine folgende Zahl oder das Wort RegEx:</p>
+      <p><strong>1</strong>: Der Fenstertitel muss mit dem angegebenen <em>Fenstertitel</em> beginnen, damit eine &Uuml;bereinstimmung erfolgt.<br> <strong>2</strong>: Der Fenstertitel kann <em>Fenstertitel</em> &uuml;berall enthalten, damit eine &Uuml;bereinstimmung erfolgt. <br> <strong>3</strong>:  Der Fenstertitel muss mit dem angegebenen <em>Fenstertitel</em> exakt &uuml;bereinstimmen, damit eine &Uuml;bereinstimmung erfolgt.</p>
+      <p>        <strong><a name="RegEx"></a>RegEx</strong> (v1.0.45+): &Auml;ndert <em>Fenstertitel</em>, <em>Fenstertext</em>, <em>Titelausnahme</em> und <em>Textausnahme</em> zu <a href="../misc/RegEx-QuickRef.htm">regul&auml;ren Ausdr&uuml;cken</a>. Solche Ausdr&uuml;cke d&uuml;rfen nicht in Anf&uuml;hrungszeichen eingeschlossen werden. Zum Beispiel: <a href="WinActivate.htm">WinActivate Unbenannt.*Editor</a>. RegEx gilt auch f&uuml;r <a href="../LastFoundWindow.htm#class">ahk_class</a>; zum Beispiel kann mit <em>ahk_class IEFrame</em> jedes Fenster gesucht werden, das den Klassenname <em>IEFrame</em> irgendwo enth&auml;lt (denn die regul&auml;ren Ausdr&uuml;cke finden standardm&auml;&szlig;ig <em>&uuml;berall</em> eine &Uuml;bereinstimmung im Zielstring). Hinweis: Jedes Textelement im <em>Fenstertext</em> (z. B. in Steuerelementen) wird daraufhin untersucht, ob der gesuchte Text enthalten ist.  Deshalb kann eine Suche auf &Uuml;bereinstimmung nicht mehrere Textelemente beinhalten.</p>
+      <p>Die obigen Methoden beeinflussen auch <em>Titelausnahme</em>, sowie <em>Fenstertitel</em>. In Modus 3 bedeutet das, das ein Fenster nur ausgew&auml;hlt wird, wenn sein Titel nicht komplett mit <em>Titelausnahme</em> &uuml;bereinstimmt.</p>
+    </td>
+  </tr>
+  <tr>
+    <td>Fast|Slow</td>
+    <td><p><strong>Fast</strong>: Standardwert. Die Performance ist erheblich besser als <em>Slow</em>, aber bestimmte <em>Fenstertext</em>-Elemente bei einigen Fensterarten werden m&ouml;glicherweise von verschiedenen Fenster-Befehlen nicht "gesehen".</p>
+      <p><strong>Slow</strong>: M&ouml;glicherweise deutlich langsamer, aber es werden alle m&ouml;glichen <em>Fenstertext</em>-Elemente von jedem Fenster abgerufen, um eine &Uuml;bereinstimmung zu finden. Window Spy zeigt, welcher Teil des Textes im Fenster (falls vorhanden) den langsamen Modus ben&ouml;tigt.</p>    </td>
+  </tr>
+</table>
+
+<h3>Bemerkungen</h3>
+<p>Dieser Befehl beeinflusst das Verhalten aller Fenster-Befehle (z. B. <a href="IfWinExist.htm">IfWinExist</a> und <a href="WinActivate.htm">WinActivate</a>).</p>
+<p>Wenn nicht angegeben, dann wird standardm&auml;&szlig;ig 1 und <em>Fast</em> verwendet.</p>
+<p>Wenn eine <a href="../LastFoundWindow.htm#group">Fenstergruppe</a> verwendet wird, dann gilt der aktuelle &Uuml;bereinstimmungsmodus des Titels f&uuml;r jede einzelne Regel in der Gruppe.</p>
+<p>Die Methode <em>Slow</em> sollte nur gew&auml;hlt werden, wenn das Ziel-Fenster nicht eindeutig durch den Titel oder Text der <em>Fast</em>-Methode identifiziert werden kann. Denn die Slow-Methode kann ziemlich langsam sein, wenn bestimmte Anwendungsfenster besch&auml;ftigt sind oder "nicht antworten".</p>
+<p>Die benutzerdefinierte Version von Window Spy zeigt den <em>Slow</em>-Text in einem abgegrenzten Abschnitt, so kann leicht ermittelt werden, ob die <em>Slow</em>-Methode gebraucht wird.</p>
+<p>Wenn es der Wunsch ist, beide Attribute zu &auml;ndern, f&uuml;hrt den Befehl wie im diesen Beispiel zweimal aus:<br> SetTitleMatchMode, 2<br> SetTitleMatchMode, slow</p>
+<p>Die internen Variablen <strong>A_TitleMatchMode</strong> und <strong>A_TitleMatchModeSpeed</strong> enthalten die aktuellen Einstellungen.</p>
+<p>Ungeachtet der aktuellen Einstellungen in TitleMatchMode sind <em>Fenstertitel</em>, <em>Fenstertext</em>, <em>Titelausnahme</em> und <em>Textausnahme</em> von der Gro&szlig;- und Kleinschreibung abh&auml;ngig. Die einzige Ausnahme bildet die <a href="../misc/RegEx-QuickRef.htm#Options">Option zur Unabh&auml;ngigkeit von Gro&szlig;- und Kleinschreibung</a> im RegEx-Modus, zum Beispiel: <em><strong>i)</strong>unbenannt - editor</em></p>
+<p>Jeder neu gestartete <a href="../misc/Threads.htm">Thread</a> (z. B. ein <a href="../Hotkeys.htm">Hotkey</a>, ein <a href="Menu.htm">benutzerdefinierter Men&uuml;punkt</a> oder eine <a href="SetTimer.htm">zeitlich festgelegte</a> Subroutine) beginnt mit der Voreinstellung f&uuml;r diesen Befehl. Die Voreinstellung l&auml;sst sich &auml;ndern, wenn dieser Befehl im automatischen Ausf&uuml;hrungsbereich (am Anfang des Scripts) ausgef&uuml;hrt wird.</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="SetWinDelay.htm">SetWinDelay</a>, <a href="IfWinExist.htm">IfWinExist</a>,<a href="WinActivate.htm"> WinActivate</a>, <a href="RegExMatch.htm">RegExMatch()</a> </p>
+<h3>Beispiel</h3>
+<pre class="NoIndent">SetTitleMatchMode 2
+<em>; ODER:</em>
+SetTitleMatchMode RegEx
+
+SetTitleMatchMode Slow  <em>; Slow/Fast k&ouml;nnen unabh&auml;ngig von den anderen Modi gesetzt werden.</em></pre>
+
+</body>
+</html>

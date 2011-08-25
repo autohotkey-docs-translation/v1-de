@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>FileCopyDir</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>FileCopyDir</h1>
+
+<p>Kopiert einen Ordner mit all seinen Unterordnern und Dateien (&auml;hnlich wie xcopy).</p>
+
+<pre class="Syntax">FileCopyDir, Quelle, Ziel [, Flag]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td>Quelle</td>
+    <td> Der Name des Quellverzeichnisses (ohne Backslash), das sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist. Zum Beispiel: C:\Eigener Ordner </td>
+  </tr>
+  <tr>
+    <td>Ziel</td>
+    <td> Der Name des Zielverzeichnisses (ohne Backslash), das sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist. Zum Beispiel: C:\Kopie des eigenen Ordners </td>
+  </tr>
+  <tr>
+    <td width="15%">Flag</td>
+    <td width="85%"><p>(Optional) Mit diesem Parameter wird bestimmt, ob Dateien &uuml;berschrieben werden, wenn sie bereits vorhanden sind:</p>
+      <p><strong>0</strong> (Standard): Vorhandene Dateien werden nicht &uuml;berschrieben. Der Vorgang schl&auml;gt fehl, wenn das <em>Ziel</em> bereits als Datei oder Verzeichnis existiert.</p>
+      <p><strong>1</strong>: Vorhandene Dateien werden &uuml;berschrieben. Allerdings wird jede Datei oder jeder Unterordner innerhalb vom <em>Ziel</em> ohne entsprechendes Gegenst&uuml;ck in der <em>Quelle</em> nicht gel&ouml;scht.</p>
+      <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> oder True bzw. False sein (intern auch als 1 bzw. 0 gespeichert).</p></td>
+  </tr>
+</table>
+
+<h3>ErrorLevel</h3>
+<p>Bei Problemen wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt, ansonsten enth&auml;lt ErrorLevel eine 0. Wenn das Quellverzeichnis eine beliebige gespeicherte Webseite enth&auml;lt, bestehend aus <em>Seitenname.htm</em> und dem dazugeh&ouml;rigen Verzeichnis mit dem Namen <em>Seitenname_Dateien</em>, dann kann ein Fehler angezeigt werden, selbst wenn das Kopieren erfolgreich war.</p>
+<h3>Bemerkungen</h3>
+<p> Wenn die Struktur des Zielverzeichnisses nicht existiert, dann wird sie erstellt, wenn m&ouml;glich.</p>
+<p>Da die Operation einen Ordner mit all seinen Unterordnern und Dateien rekursiv kopiert, ist das Ergebnis unbestimmt, wenn ein Ordner irgendwo in sich selbst kopiert wird. Als &Uuml;bergangsl&ouml;sung w&auml;re es m&ouml;glich, eine Kopie des Ordners au&szlig;erhalb des Zielverzeichnisses zu erstellen und dann mit <a href="FileMoveDir.htm">FileMoveDir</a> die Kopie an die gew&uuml;nschte Stelle zu verschieben.</p>
+<p>FileCopyDir kopiert einen einzelnen Ordner. Um stattdessen den Inhalt eines Ordners zu kopieren (alle Dateien und Unterordner), sieht die Beispiele bei <a href="FileCopy.htm">FileCopy</a>.</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="FileMoveDir.htm">FileMoveDir</a>, <a href="FileCopy.htm">FileCopy</a>, <a href="FileMove.htm">FileMove</a>, <a href="FileDelete.htm">FileDelete</a>, <a href="LoopFile.htm">file-loops</a>, <a href="FileSelectFolder.htm">FileSelectFolder</a>, <a href="SplitPath.htm">SplitPath</a> </p>
+<h3>Beispiele</h3>
+<pre class="NoIndent">FileCopyDir, C:\Eigener Ordner, C:\Kopie des eigenen Ordners
+
+<em>; Beispiel #2: Ein Script, der den Benutzer auffordert, einen Ordner zu kopieren.</em>
+FileSelectFolder, Quellordner, , 3, W&auml;hle den Ordner`, der kopiert werden soll
+If Quellordner =
+    Return
+<em>; Ansonsten fortfahren.</em>
+FileSelectFolder, Zielordner, , 3, W&auml;hle den Ordner, der die Kopie des Ordners enthalten soll.
+If Zielordner =
+    Return
+<em>; Ansonsten fortfahren.</em>
+MsgBox, 4, , Eine Kopie des Ordners "%Quellordner%" wird in "%Zielordner%" erstellt.  Weiter?
+IfMsgBox, No
+    Return
+SplitPath, Quellordner, Quellordnernamen <em>; Nur den Ordnernamen aus dem vollst&auml;ndigen Pfad extrahieren.</em>
+FileCopyDir, %Quellordner%, %Zielordner%\%Quellordnernamen%
+If ErrorLevel
+    MsgBox Der Ordner konnte nicht kopiert werden, weil vielleicht ein Ordner mit dem selben Namen in "%Zielordner%" bereits existiert.
+Return</pre>
+
+</body>
+</html>

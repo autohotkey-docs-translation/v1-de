@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Joystick-Test-Script</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="alternate" type="application/rss+xml" title="AutoHotkey Forum RSS" href="/forum/rss.php">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>Joystick-Test-Script</h1>
+
+<p> Dieses Script hilft dabei, die Tastennummern und andere Attribute des aktuellen Joysticks zu bestimmen. Es k&ouml;nnte auch erkennen lassen, ob der aktuelle Joystick kalibriert werden muss; das hei&szlig;t, ob der Bewegungsbereich jeder Achse von 0 bis 100 Prozent ist. Falls eine Kalibrierung erforderlich ist, verwendet die Systemsteuerung des Betriebssystems oder die mitgelieferte Software des aktuellen Joysticks.
+</p>
+<p><a href="JoystickTest.ahk">Dieses Script herunterladen</a> &nbsp;| &nbsp;<a href="index.htm">Andere Beispiel-Scripts</a> &nbsp;| &nbsp;<a href="http://www.autohotkey.com">Home</a></p>
+
+<pre class="NoIndent"><em>; 6. Juli 2005: Automatische Erkennung der Joystick-Nummer hinzugef&uuml;gt.
+; 8. Mai 2005: Fehler behoben: JoyAxes wird nicht l&auml;nger abgefragt, das hei&szlig;t,
+; ob der Joystick angeschlossen ist.  Einige Joysticks sind
+; Gamepads und haben keine einzige Achse.</em>
+
+<em>; Wenn unbedingt der Bedarf besteht, eine bestimmte Joystick-Nummer zu verwenden, &auml;ndert
+; den folgenden Wert von 0 auf eine Joystick-Nummer (1-16).
+; Bei einem Wert von 0 wird die Joystick-Nummer automatisch erkannt:</em>
+JoystickNumber = 0
+
+<em>; ENDE DES KONFIGURATIONSBEREICHS. Hier danach keine &Auml;nderungen durchf&uuml;hren,
+; es sei denn, die allgemeine Funktionalit&auml;t des Scripts soll ge&auml;ndert werden.</em>
+
+<em>; Joystick-Nummer automatisch erkennen, falls gefordert:</em>
+if JoystickNumber &lt;= 0
+{
+    Loop 16  <em>; Jede Joystick-Nummer auf Existenz &uuml;berpr&uuml;fen.</em>
+    {
+        GetKeyState, JoyName, %A_Index%JoyName
+        if JoyName &lt;&gt;
+        {
+            JoystickNumber = %A_Index%
+            break
+        }
+    }
+    if JoystickNumber &lt;= 0
+    {
+        MsgBox Das System hat scheinbar keine Joysticks.
+        ExitApp
+    }
+}
+
+#SingleInstance
+SetFormat, float, 03  <em>; Dezimalpunkt von den Prozentwerten der Achsenpositionen weglassen.</em>
+GetKeyState, joy_buttons, %JoystickNumber%JoyButtons
+GetKeyState, joy_name, %JoystickNumber%JoyName
+GetKeyState, joy_info, %JoystickNumber%JoyInfo
+Loop
+{
+    buttons_down =
+    Loop, %joy_buttons%
+    {
+        GetKeyState, joy%a_index%, %JoystickNumber%joy%a_index%
+        if joy%a_index% = D
+            buttons_down = %buttons_down%%a_space%%a_index%
+    }
+    GetKeyState, joyx, %JoystickNumber%JoyX
+    axis_info = X%joyx%
+    GetKeyState, joyy, %JoystickNumber%JoyY
+    axis_info = %axis_info%%a_space%%a_space%Y%joyy%
+    IfInString, joy_info, Z
+    {
+        GetKeyState, joyz, %JoystickNumber%JoyZ
+        axis_info = %axis_info%%a_space%%a_space%Z%joyz%
+    }
+    IfInString, joy_info, R
+    {
+        GetKeyState, joyr, %JoystickNumber%JoyR
+        axis_info = %axis_info%%a_space%%a_space%R%joyr%
+    }
+    IfInString, joy_info, U
+    {
+        GetKeyState, joyu, %JoystickNumber%JoyU
+        axis_info = %axis_info%%a_space%%a_space%U%joyu%
+    }
+    IfInString, joy_info, V
+    {
+        GetKeyState, joyv, %JoystickNumber%JoyV
+        axis_info = %axis_info%%a_space%%a_space%V%joyv%
+    }
+    IfInString, joy_info, P
+    {
+        GetKeyState, joyp, %JoystickNumber%JoyPOV
+        axis_info = %axis_info%%a_space%%a_space%POV%joyp%
+    }
+    ToolTip, %joy_name% (#%JoystickNumber%):`n%axis_info%`nGedr&uuml;ckte Tasten: %buttons_down%`n`n(Zum Beenden Rechtsklick auf Tray-Icon)
+    Sleep, 100
+}
+return
+
+</pre>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>#If</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+
+<h1>#If <span class="ver">[AHK_L]</span></h1>
+
+<p>Erstellt kontextabh&auml;ngige <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a>. Solche Hotkeys f&uuml;hren eine andere Aktion aus (oder gar keine), abh&auml;ngig vom Ergebnis des Ausdrucks.</p>
+
+<pre class="Syntax">#If [, Ausdruck]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td>Ausdruck</td>
+    <td>Beliebiger g&uuml;ltiger <a href="../Variables.htm#Expressions">Ausdruck</a>.</td>
+  </tr>
+</table>
+
+<h3>Grundlagen zur Bedienung</h3>
+<p>Jeder g&uuml;ltige Ausdruck kann verwendet werden, um den Kontext zu definieren, welcher Hotkey aktiv sein soll. Zum Beispiel:</p>
+<pre>#If WinActive("ahk_class Notepad") or WinActive(Fenstertitel)
+#Space::MsgBox Win+Leerzeichen wurde im Editor oder %Fenstertitel% gedr&uuml;ckt.</pre>
+<p>Die #If-Anweisung ist wie die #IfWin-Anweisung von der Position abh&auml;ngig; alle nachfolgende Hotkeys und Hotstrings im Script sind davon betroffen. #If und #IfWin schlie&szlig;en sich auch gegenseitig aus, d. h. nur das aktuellste #If oder #IfWin ist aktiv.</p>
+<p>Um die Kontextabh&auml;ngigkeit zu deaktivieren, verwendet #If oder #IfWin ohne Parameter. Zum Beispiel:</p>
+<pre>#If</pre>
+
+<h3>Allgemeine Bemerkungen</h3>
+<p>Wenn eine Tastenkombination (Hotkey) gedr&uuml;ckt wird, dann wird der #If-Ausdruck ausgewertet, um festzustellen, ob der Hotkey aktiviert werden soll. Das System reagiert m&ouml;glicherweise erst auf die Tastatureingabe, wenn die Auswertung des Ausdrucks fertig ist oder die <a href="_IfTimeout.htm">Zeit &uuml;berschritten</a> hat.</p>
+<p>Durch eine Eigenart von AutoHotkey werden #If-Ausdr&uuml;cke manchmal unter bestimmten Bedingungen doppelt ausgewertet. Daher sollten #If-Ausdr&uuml;cke so gestaltet werden, dass keine Nebeneffekte entstehen.</p>
+<p><span class="ver">[AHK_L 53+]:</span> <a href="../Variables.htm#ThisHotkey">A_ThisHotkey</a> und <a href="../Variables.htm#TimeSinceThisHotkey">A_TimeSinceThisHotkey</a> werden bestimmt, abh&auml;ngig vom Hotkey, der vom aktuellen #If-Ausdruck ausgewertet wird.</p>
+<p><span class="ver">[v1.0.95.00+]:</span> <a href="../Variables.htm#PriorHotkey">A_PriorHotkey</a> und <a href="../Variables.htm#TimeSincePriorHotkey">A_TimeSincePriorHotkey</a> enthalten vor&uuml;bergehend die vorherigen Werte der entsprechenden "This"-Variablen.</p>
+
+<h3>Verwandte Befehle</h3>
+<p>Die meisten Verhaltenseigenschaften von den <a href="_IfWinActive.htm">#IfWin</a>-Anweisungen gelten auch f&uuml;r #If.</p>
+<p><a href="_IfTimeout.htm">#IfTimeout</a> kann verwendet werden, um den Standardwert f&uuml;r die Zeit&uuml;berschreitung zu &uuml;berschreiben.</p>
+
+<h3 id="Examples">Beispiele</h3>
+<pre class="NoIndent">
+<em>; Beispiel #1: Passt die Lautst&auml;rke mit dem Mausrad an, wenn sich der Mauszeiger &uuml;ber der Task-Leiste befindet.</em>
+#If MouseIsOver("ahk_class Shell_TrayWnd")
+WheelUp::Send {Volume_Up}
+WheelDown::Send {Volume_Down}
+
+MouseIsOver(Fenstertitel) {
+    MouseGetPos,,, Fenster
+    Return WinExist(Fenstertitel . " ahk_id " . Fenster)
+}
+
+<em>; Beispiel #2: Einfache Tastaturbefehle, um W&ouml;rter in einem Edit-Steuerelement zu l&ouml;schen.</em>
+#If ActiveControlIsOfClass("Edit")
+^BS::Send ^+{Left}{Del}
+^Del::Send ^+{Right}{Del}
+
+ActiveControlIsOfClass(Klasse) {
+    ControlGetFocus, FokussiertesSteuerelement, A
+    ControlGet, FokussiertesSteuerelementHwnd, Hwnd,, %FokussiertesSteuerelement%, A
+    WinGetClass, FokussiertesSteuerelementKlasse, ahk_id %FokussiertesSteuerelementHwnd%
+    Return (FokussiertesSteuerelementKlasse=Klasse)
+}
+
+<em>; Beispiel #3: Kontextunabh&auml;ngiger Hotkey.</em>
+#If
+Esc::ExitApp
+
+<em id="ex4">; Beispiel #4: Dynamische Hotkeys. <b>Ben&ouml;tigt Beispiel #1.</b></em>
+NumpadAdd::
+Hotkey, If, MouseIsOver("ahk_class Shell_TrayWnd")
+If (doubleup := !doubleup)
+    Hotkey, WheelUp, DoubleUp
+Else
+    Hotkey, WheelUp, WheelUp
+Return
+
+DoubleUp:
+Send {Volume_Up 2}
+Return
+
+</pre>
+
+</body>
+</html>

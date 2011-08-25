@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Sleep</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>Sleep</h1>
+
+<p>Wartet die angegebene Zeit, bevor fortgefahren wird.</p>
+
+<pre class="Syntax">Sleep, Verz&ouml;gerung</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td width="15%">Verz&ouml;gerung</td>
+    <td width="85%">Die Wartezeit zwischen 0 und 2147483647 Millisekunden (24 Tage), die ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein kann.</td>
+  </tr>
+</table>
+
+<h3>Bemerkungen</h3>
+<p>Durch die Granularit&auml;t (k&ouml;rnige Beschaffenheit) der Zeiterfassung im Betriebssystem wird die <em>Verz&ouml;gerung</em> m&ouml;glicherweise auf das n&auml;chstm&ouml;gliche Vielfache von 10 oder 15.6 Millisekunden aufgerundet (abh&auml;ngig vom Typ der installierten Hardware und Treiber). Zum Beispiel ist eine Verz&ouml;gerung zwischen 1 und 10 in den meisten NT/2000/XP-Systemen gleichbedeutend mit 10 oder 15.6. Um eine k&uuml;rzere Verz&ouml;gerung zu erreichen, siehe <a href="#ShorterSleep">Beispiele</a>. </p>
+<p>Die tats&auml;chliche Verz&ouml;gerung kann l&auml;nger dauern als erwartet, wenn die CPU belastet wird. Denn das Betriebssystem gibt jedem bed&uuml;rftigen Prozess einen Teil der CPU-Zeit (in der Regel 20 Millisekunden), bevor eine weitere Zeitscheibe an das Script &uuml;bergeben wird.</p>
+<p>Eine Verz&ouml;gerung von 0 &uuml;bergibt den Rest der Script-Zeitscheibe an andere Prozesse, die es ben&ouml;tigen (solange sie nicht eine deutlich niedrigere <a href="Process.htm#Priority">Priorit&auml;t</a> als das Script haben). Dadurch erzeugt eine Verz&ouml;gerung von 0 tats&auml;chlich eine Verz&ouml;gerung von 0 bis 20 ms (oder mehr), abh&auml;ngig von der Anzahl bed&uuml;rftiger Prozesse (wenn keine bed&uuml;rftige Prozesse vorhanden sind, dann existiert keine Verz&ouml;gerung). Eine <em>Verz&ouml;gerung</em> von 0 sollte allerdings immer angemacht werden, um k&uuml;rzer als jede l&auml;ngere <em>Verz&ouml;gerung</em> zu sein.</p>
+<p>W&auml;hrend der Ruhephase k&ouml;nnen neue <a href="../misc/Threads.htm">Threads</a> per <a href="../Hotkeys.htm">Hotkey</a>, <a href="Menu.htm">benutzerdefinierte Men&uuml;eintr&auml;ge </a>oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
+<p>"Sleep -1": Eine Verz&ouml;gerung von -1 erzeugt keine Ruhephase, sondern erm&ouml;glicht dem Script, seine Warteschlange sofort zu &uuml;berpr&uuml;fen. Das kann verwendet werden, um ausstehende <a href="../misc/Threads.htm">Unterbrechungen</a> an einer bestimmten Stelle zu erzwingen und nicht zuf&auml;llig irgendwo anders. Siehe <a href="Critical.htm">Critical</a> f&uuml;r mehr Details.</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="SetKeyDelay.htm">SetKeyDelay</a>, <a href="SetMouseDelay.htm">SetMouseDelay</a>, <a href="SetControlDelay.htm">SetControlDelay</a>, <a href="SetWinDelay.htm">SetWinDelay</a>, <a href="SetBatchLines.htm">SetBatchLines</a> </p>
+<h3>Beispiele</h3>
+<pre class="NoIndent">Sleep, 1000  <em>; 1 Sekunde</em></pre>
+<p>&nbsp;</p>
+<pre class="NoIndent"><em><a name="ShorterSleep"></a>; Das Folgende ist ein funktionierendes Beispiel, dass demonstriert, wie die Ruhephase
+; kleiner als 10 oder 15.6 Millisekunden sein kann.
+; HINWEIS: W&auml;hrend ein Script l&auml;uft, wird das ganze Betriebssystem und alle Anwendungen
+; von timeBeginPeriod beeinflusst.</em>
+
+SetBatchLines -1  <em>; Erm&ouml;glicht maximale Effektivit&auml;t dieser Methode.</em>
+
+SleepDuration = 1  <em>; Das kann manchmal fein eingestellt werden (z. B. 2 ist anders als 3), abh&auml;ngig vom unteren Wert.</em>
+TimePeriod = 3 <em>; Versucht 7 oder 3.  Siehe unteren Kommentar.
+; Auf einem PC, dessen Ruhephase normalerweise auf 15.6 ms gerundet wird, versucht TimePeriod=7, um k&uuml;rzere Ruhephasen zu erm&ouml;glichen und versucht TimePeriod=3 oder weniger, um die k&uuml;rzeste Ruhephase zu erm&ouml;glichen.</em>
+
+DllCall("Winmm\timeBeginPeriod", uint, TimePeriod)  <em>; Beeinflusst alle Anwendungen, nicht nur DllCall("Sleep"...) vom Script, betrifft aber nicht SetTimer.</em>
+Iterationen = 50
+StartTime := A_TickCount
+
+Loop %Iterationen%
+    DllCall("Sleep", UInt, SleepDuration)  <em>; Es muss DllCall anstelle des Sleep-Befehls verwendet werden.</em>
+
+DllCall("Winmm\timeEndPeriod", UInt, TimePeriod)  <em>; Sollte aufgerufen werden, um die Normalit&auml;t des Systems wiederherzustellen.</em>
+MsgBox % "Ruhephase = " . (A_TickCount - StartTime) / Iterationen</pre>
+
+</body>
+</html>

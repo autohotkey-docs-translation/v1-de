@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>PostMessage/SendMessage-Einf&uuml;hrung</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>Nachrichten an ein Fenster oder Steuerelement senden <br> <span class="small80">von Rajat</span></h1>
+
+<p>Diese Seite beschreibt die Befehle <a href="../commands/PostMessage.htm">PostMessage</a>/<a href="../commands/PostMessage.htm">SendMessage</a> und wird einige Fragen beantworten:</p>
+<p>"Wie kann ich eine auf eine Schaltfl&auml;che eines minimierten Fensters dr&uuml;cken?" <br> "Wie kann ich einen Men&uuml;punkt ausw&auml;hlen, falls <a href="../commands/WinMenuSelectItem.htm">WinMenuSelectItem</a> nicht funktioniert?!"<br> "Das ist ein Fenster mit anpassbarem Skin.... wie sende ich einen Befehl, der immer funktioniert?"<br> "und was ist mit <strong>versteckten</strong> Fenstern?!"<br> <br> <br> Anforderungen: AutoHotkey v1.0.09+ und Winspector Spy (<a href="http://www.softpedia.com/get/Security/Security-Related/Winspector.shtml">http://www.softpedia.com/get/Security/Security-Related/Winspector.shtml</a>)</p>
+<p>Beachtet beim ersten Beispiel, dass <a href="../commands/WinMenuSelectItem.htm">WinMenuSelectItem</a> nicht mit der Men&uuml;leiste des Outlook-Fensters "Neue Nachricht" funktioniert. Mit anderen Worten wird dieser Code nicht funktionieren:</p>
+<p><em> WinMenuSelectItem, Neue Nachricht,, E&inf&uuml;gen, &Bild...</em></p>
+<p>&nbsp;</p>
+<p>Mit <a href="../commands/PostMessage.htm">PostMessage</a> funktioniert das ohne Probleme:</p>
+<p><em> PostMessage, 0x111, 40239, 0, , Neue Nachricht</em></p>
+<p>Das klappt hervorragend! Aber was zum Teufel ist das? 0x111 ist der Hex-Code der <a href="SendMessageList.htm">WM_COMMAND-Nachricht</a> und 40239 ist der Code, dass dieses bestimmte Fenster als die Auswahl des Men&uuml;punkts 'Einf&uuml;gen Bild' versteht. Nun lass' mich dir sagen, wie man einen Wert wie 40239 finden kann:</p>
+<ol>
+  <li>&Ouml;ffne Winspector Spy und das Fenster "Neue Nachricht".</li>
+  <li>Ziehe das Fadenkreuz aus dem Fenster Winspector Spy zur Titelleiste des Fensters "Neue Nachricht".</li>
+  <li>Klicke mit der rechten Maustaste auf das ausgew&auml;hlte Fenster in der Liste und w&auml;hle 'Messages' aus.</li>
+  <li>Klicke mit der rechten Maustaste auf das leere Fenster und w&auml;hle 'Edit message filter' aus.</li>
+  <li>Dr&uuml;cke die Schaltf&auml;che 'filter all' und klicke doppelt auf 'WM_COMMAND' in der linken Liste. Auf diese Weise wird nur diese Nachricht &uuml;berwacht.</li>
+  <li>Gehe nun zum Fenster "Neue Nachricht" und w&auml;hle in der Men&uuml;leiste: Einf&uuml;gen > Bild.</li>
+  <li>Zur&uuml;ck zum Winspector Spy und dr&uuml;cke die Ampel-Schalfl&auml;che, um die &Uuml;berwachung zu pausieren.</li>
+  <li>Klappe die angesammelten WM_COMMAND-Nachrichten auf (alle anderen ignorieren, falls vorhanden).</li>
+  <li>Suche eine Nachricht mit Code 0. Manchmal kommen WM_COMMAND-Nachrichten vor, die so etwas wie 'win activated' oder 'win destroyed' melden ... nicht zu gebrauchen. Du wirst eine Nachricht finden, die 'Control ID: 40239' meldet ... Fertig!</li>
+  <li>Setze zum Abschluss diese Zahl nun in den oberen Befehl. Das ist der wParam-Wert.</li>
+</ol>
+<p>F&uuml;r das n&auml;chste Beispiel habe ich Paint genommen, weil das wahrscheinlich jeder hat. Sagen wir mal, es ist eine Anwendung, wo du ein Werkzeug in der Werkzeugleiste mithilfe von AutoHotkey ausw&auml;hlen musst, z. B. die Farbauswahl.</p>
+<p>Was wird du tun? H&ouml;chstwahrscheinlich ein Mausklick auf die Schaltfl&auml;che der Werkzeugleiste, oder? Aber Werkzeugleisten k&ouml;nnen verschoben und ausgeblendet werden! Diese Leiste kann n&auml;mlich auch verschoben/versteckt werden. Also, wenn der Benutzer so etwas getan hat, wird dein Script dabei fehlschlagen. Aber der folgende Befehl wird immer noch funktionieren:</p>
+<p><em> PostMessage, 0x111, 639,,, Unbenannt - Paint</em></p>
+<p>Ein weiterer Vorteil von <a href="../commands/PostMessage.htm">PostMessage</a> ist, dass sich das Fenster im Hintergrund befinden kann. Mausklicks hingegen ben&ouml;tigen ein aktiviertes Fenster.<br> <br> <br> Hier ein paar weitere Beispiele. Hinweis: Ich verwende WinXP Pro (SP1) ... wenn du also ein anderes Betriebssystem hast, dann k&ouml;nnen sich deine Parameter von meinen unterscheiden (gilt nur f&uuml;r Windows-Anwendungen wie Wordpad und Editor, bei anderen Anwendungen sollten sich die Parameter nicht unterscheiden):</p>
+<p><em>; Erm&ouml;glicht das Schreiben in t&uuml;rkiser Farbe im Wordpad </em><br> <a href="../commands/PostMessage.htm">PostMessage</a>, 0x111, 32788, 0, , Dokument - WordPad </p>
+<p><em>; &Ouml;ffnet das Info-Fenster vom Editor </em><br> <a href="../commands/PostMessage.htm">PostMessage</a>, 0x111, 65, 0, , Unbenannt - Editor </p>
+<p><em>; Schaltet Zeilenumbruch im Editor um </em><br> <a href="../commands/PostMessage.htm">PostMessage</a>, 0x111, 32, 0, , Unbenannt - Editor </p>
+<p><em>; Wiedergabe/Anhalten im Windows Media Player </em><br> <a href="../commands/PostMessage.htm">PostMessage</a>, 0x111, 32808, 0, , Windows Media Player </p>
+<p><em>; Sperrt die Hotkeys eines laufenden AHK-Scripts!</em><br> DetectHiddenWindows, on<br> SetTitleMatchMode, 2<br> PostMessage, 0x111, 65305,,, EigenesScript.ahk - AutoHotkey <em>; Verwendet 65306 f&uuml;r Pause anstelle von Suspend.</em><br> <br> <br> Das oben genannte galt f&uuml;r PostMessage. <a href="../commands/PostMessage.htm">SendMessage</a> funktioniert nicht nur auf dieselbe Weise, sondern wartet zus&auml;tzlich auf einen R&uuml;ckgabewert, mit dem zum Beispiel der aktuelle Track von Winamp abgerufen werden kann (siehe <a href="Winamp.htm">Winamp automatisieren</a> f&uuml;r ein Beispiel). <br>
+</p>
+<p>Hier ein paar weitere Hinweise:</p>
+<ul>
+  <li>Der oben genannte Hinweis in Bezug auf Windows XP und dem &Auml;ndern der Nachrichtenwerte dient nur als Warnung. Wenn du eine Nachricht findest, die auf deinem Betriebssystem funktioniert (mit einer bestimmten Software-Version), dann kannst du dir sicher sein, dass sie auch auf andere Systeme mit der gleichen Software-Version funktioniert wird. Dar&uuml;ber hinaus sind die Nachrichtenwerte bei den meisten Anwendungen gleich, sogar in unterschiedlichen Versionen (z. B. Windows Media Player und Winamp).</li>
+  <li>Wenn du den Filter gesetzt hast, um nur WM_COMMAND im Winspector Spy anzuzeigen, und dabei immer noch eine Flut an Nachrichten erh&auml;ltst, dann klicke mit der rechten Maustaste auf diese Nachricht und w&auml;hle hide (msg name) aus ...  du willst dir nicht eine Nachricht anschauen, die ohne deinem Zutun erscheint. </li>
+  <li>Die Pfeile nach rechts im Winspector Spy zeigen die Nachrichtenwerte und die verschwommenen Pfeile nach links zeigen die R&uuml;ckgabewerte an. Ein 0-Wert kann standardm&auml;&szlig;ig ohne Bedenken als 'kein Fehler' genommen werden (bei SendMessage befindet sich der R&uuml;ckgabewert in <a href="ErrorLevel.htm">%ErrorLevel%</a>). </li>
+  <li>F&uuml;r das Senden mit PostMessage an einem Fenster mit einer teilweisen &Uuml;bereinstimmung des Titels verwende folgendes:<br> SetTitleMatchMode, 2 </li>
+  <li>F&uuml;r das Senden mit PostMessage an einem versteckten Fenster verwende folgendes: <br> DetectHiddenWindows, On</li>
+</ul>
+<p>Hinweis: Es gibt Anwendungen, bei denen diese Technik nicht funktioniert. Ich hatte gemischtes Gl&uuml;ck mit VB- und Delphi-Anwendungen. Diese Technik sollte am besten mit Anwendungen in C und C++ benutzt werden. Bei VB-Anwendungen wird der "LParam" vom selben Befehl daran gehindert, von einer Ausf&uuml;hrung zur n&auml;chsten zu wechseln. Bei einigen Delphi-Anwendungen verwendet das GUI nicht einmal WM_COMMAND. Es verwendet wahrscheinlich die Position und Klicks der Maus. </p>
+<p>Gehe und erkunde .... und teile deine Erfahrungen mit der Community von AutoHotkey. Feedbacks sind erw&uuml;nscht!</p>
+<p>Diese Einf&uuml;hrung ist nicht f&uuml;r totale Anf&auml;nger gedacht (nichts f&uuml;r ungut), da diese Befehle als erweiterte Funktionen betrachtet werden. Also, wenn du daraus nicht schlau geworden bist, bitte vergiss es.</p>
+<p>-Rajat</p>
+</body>
+</html>

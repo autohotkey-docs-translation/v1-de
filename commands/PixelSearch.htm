@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>PixelSearch</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>PixelSearch</h1>
+
+<p>Sucht auf einen Bereich des Bildschirms ein Pixel mit der angegebenen Farbe.</p>
+
+<pre class="Syntax">PixelSearch, AusgabevariableX, AusgabevariableY, X1, Y1, X2, Y2, FarbID [, Variation, Fast|RGB]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td width="15%">AusgabevariableX/Y</td>
+    <td width="85%"><p>Die Namen der Variablen, die denen die X- und Y-Koordinaten des ersten Pixels gespeichert werden, das mit der <em>FarbID</em> &uuml;bereinstimmt (wenn keine &Uuml;bereinstimmung gefunden wird, dann werden diese Variablen leer gemacht). Koordinaten beziehen sich auf das aktive Fenster, es sei denn, <a href="CoordMode.htm">CoordMode</a> wurde dazu verwendet, dass zu &auml;ndern.</p>
+    <p>Eine oder beide Parameter k&ouml;nnen leer gelassen werden. In diesem Fall kann mit ErrorLevel (siehe unten) festgestellt werden, ob eine &Uuml;bereinstimmung gefunden wurde. </p></td>
+  </tr>
+  <tr>
+    <td>X1, Y1</td>
+    <td>Die neuen X- und Y-Koordinaten der oberen linken Ecke des gesuchten Rechtecks, die <a href="../Variables.htm#Expressions">Ausdr&uuml;cke</a> sein k&ouml;nnen. <strong>Koordinaten beziehen sich auf das aktive Fenster, es sei denn, <a href="CoordMode.htm">CoordMode</a> wurde dazu verwendet, dass zu &auml;ndern.</strong></td>
+  </tr>
+  <tr>
+    <td>X2, Y2</td>
+    <td>Die neuen X- und Y-Koordinaten der unteren rechten Ecke des gesuchten Rechtecks, die <a href="../Variables.htm#Expressions">Ausdr&uuml;cke</a> sein k&ouml;nnen. Koordinaten beziehen sich auf das aktive Fenster, es sei denn, <a href="CoordMode.htm">CoordMode</a> wurde dazu verwendet, dass zu &auml;ndern.</td>
+  </tr>
+  <tr>
+    <td>FarbID</td>
+    <td>Die dezimale oder hexadezimale Farbkennung im BGR-Format, die gesucht wird (kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein). Farbkennungen k&ouml;nnen mit Window Spy (erreichbar &uuml;ber das Tray-Men&uuml;) oder mittels <a href="PixelGetColor.htm">PixelGetColor</a> abgerufen werden. Zum Beispiel: 0x9d6346</td>
+  </tr>
+  <tr>
+    <td>Variation</td>
+    <td> Es kann eine Nummer zwischen 0 und 255 angegeben werden, um den Farbtontoleranzbereich von Rot-, Gr&uuml;n- und Blaukomponenten jeder Pixelfarbe zu bestimmen (kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein). Dieser Parameter ist hilfreich, wenn die Farbe nicht immer exakt den gleichen Farbton hat. Bei 255 Farbtonvarianten stimmen alle Farben &uuml;berein. Standard sind 0 Farbtonvarianten.</td>
+  </tr>
+  <tr>
+    <td>Fast|RGB</td>
+    <td><p>Dieser Parameter kann das Wort Fast, RGB oder beide enthalten (wenn beide vorhanden sind, trennt diese mit einem Leerzeichen, z. B. <em>Fast RGB</em>).</p>
+      <p><strong><a name="fast"></a>Fast</strong>: Verwendet eine schnellere Suchmethode, die in den meisten F&auml;llen drastisch die Menge an CPU-Zeit reduziert. Obwohl niedrige Farbtiefen (z. B. 8-Bit) unterst&uuml;tzt werden, ist die Performance vom schnellen Modus bei 24-Bit- oder 32-Bit-Farben viel besser. Wenn die Farbtiefe des Bildschirms 16-Bit oder niedriger ist, dann verh&auml;lt sich der <em>Variation</em>-Parameter im schnellen Modus etwas anders, als im langsamen Modus. Der schnelle Modus sucht den Bildschirm Reihe f&uuml;r Reihe ab (von oben nach unten), anstatt Spalte f&uuml;r Spalte. Daher kann ein anderes Pixel als das vom langsamen Modus gefunden werden, falls mehrere Pixel &uuml;bereinstimmen.</p>
+      <p><strong>RGB</strong>: Die <em>FarbID</em> wird als ein RGB-Wert anstatt als BGR angesehen. Mit anderen Worten ist die rote und blaue Komponente vertauscht.</p></td>
+  </tr>
+</table>
+
+<h3>ErrorLevel</h3>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn die Farbe im angegeben Bereich gefunden wird. Ansonsten 1, wenn nicht oder 2, wenn der Befehl daran gehindert wird, die Suche durchzuf&uuml;hren.</p>
+<h3>Bemerkungen</h3>
+<p>Der Suchbereich muss sichtbar sein. Es ist nicht m&ouml;glich, den Bereich in einem Fenster zu suchen, das hinter einem anderen Fenster liegt. Im Gegensatz dazu werden Pixel, die sich unter dem Mauszeiger befinden, normalerweise erkannt. Die Ausnahme machen Zeiger in Spiele, die in den meisten F&auml;llen bestimmte Pixel darunter bedecken.</p>
+<p>Gilt nur f&uuml;r den langsamen Modus: Standardm&auml;&szlig;ig beginnt die Suche am linken oberen Pixel des Bereichs und sucht vertikal in den Pixeln darunter nach einer &Uuml;berstimmung. Wenn keine &Uuml;bereinstimmung gefunden wird, dann wird die Suche nach rechts weitergef&uuml;hrt, Spalte f&uuml;r Spalte, bis ein passendes Pixel gefunden wird. Die Suchreihenfolge von links nach rechts kann umgekehrt werden, indem <em>X1</em> und <em>X2</em> in der Parameterliste vertauscht werden. Wenn mit anderen Worten <em>X1</em> gr&ouml;&szlig;er als <em>X2</em> ist, dann erfolgt die Suche von rechts nach links, beginnend bei Spalte <em>X1</em>. Und wenn <em>Y1</em> gr&ouml;&szlig;er als <em>Y2</em> ist, dann beginnt die Suche in jeder Pixelspalte von unten, anstatt von oben. Wenn der Suchbereich gro&szlig; ist und die Suche mit hoher Frequenz wiederholt wird, dann wird viel CPU-Zeit verbraucht. Um dies zu mildern, haltet die Bereichsgr&ouml;&szlig;e auf ein Minimum.</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="PixelGetColor.htm">PixelGetColor</a>, <a href="ImageSearch.htm">ImageSearch</a>, <a href="CoordMode.htm">CoordMode</a>, <a href="MouseGetPos.htm">MouseGetPos</a></p>
+<h3>Beispiel</h3>
+<pre class="NoIndent">PixelSearch, Px, Py, 200, 200, 300, 300, 0x9d6346, 3, Fast
+If ErrorLevel
+    MsgBox, Die Farbe wurde nicht im angegebenen Bereich gefunden.
+Else
+    MsgBox, Eine Farbe mit einer Variation von 3 Farbt&ouml;nen wurde bei X%Px% Y%Py% gefunden.</pre>
+
+</body>
+</html>

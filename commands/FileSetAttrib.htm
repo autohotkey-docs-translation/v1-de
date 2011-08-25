@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>FileSetAttrib</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>FileSetAttrib</h1>
+
+<p>&Auml;ndert die Attribute von beliebig vielen Dateien oder Ordnern. Platzhalter werden unterst&uuml;tzt.</p>
+
+<pre class="Syntax">FileSetAttrib, Attribute [, Dateimuster, OrdnerEinbeziehen?, Rekursiv?]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td width="15%">Attribute</td>
+    <td width="85%">Die Attribute, die ge&auml;ndert werden (siehe Bemerkungen).</td>
+  </tr>
+  <tr>
+    <td>Dateimuster</td>
+    <td>Der Name einer Datei, eines Ordners oder einer musterbasierten Suche wie C:\Temp\*.tmp. Das <em>Dateimuster</em> befindet sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis, solange kein absoluter Pfad angegeben ist.
+    <p>Wenn nicht vorhanden, dann wird die aktuelle Datei in der innersten <a href="LoopFile.htm">dateilesende Schleife</a> verwendet.</p></td>
+  </tr>
+  <tr>
+    <td>OrdnerEinbeziehen?</td>
+    <td><p>0 (Standard) Ordner werden nicht mit einbezogen (nur Dateien). <br> 1 Alle Dateien und Ordner, die der musterbasierten Suche entsprechen, werden mit einbezogen.<br> 2 Nur Ordner werden mit einbezogen (keine Dateien). </p>
+      <p>Hinweis: Wenn das <I>Dateimuster</I> ein einzelner Ordner anstelle einer musterbasierten Suche ist, dann wird dieser immer mit einbezogen, unabh&auml;ngig von den Einstellungen.</p>
+      <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p></td>
+  </tr>
+  <tr>
+    <td>Rekursiv?</td>
+    <td><p>0 (Standard) Unterordner werden nicht rekursiv behandelt.<br> 1 Unterordner werden rekursiv behandelt, damit die enthaltenen Dateien und Unterordner mit einbezogen werden, wenn sie mit dem <em>Dateimuster</em> &uuml;bereinstimmen. Alle Unterordner werden rekursiv behandelt, nicht nur solche, die mit dem <em>Dateimuster</em> &uuml;bereinstimmen.  Allerdings werden Dateien und Ordner mit einem kompletten Pfad l&auml;nger als 259 Zeichen ignoriert, als w&uuml;rde sie nicht existieren. Solche Dateien sind selten, weil normalerweise das Betriebssystem das Erstellen solcher Dateien verbietet.</p>
+      <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p></td>
+  </tr>
+</table>
+
+<h3>ErrorLevel</h3>
+<p>Bei <u>Problemen</u> enth&auml;lt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> die Anzahl an Dateien, die nicht ge&auml;ndert werden konnten, ansonsten wird ErrorLevel auf 0 gesetzt.</p>
+<p>Wenn Dateien gefunden wurden, enth&auml;lt <a href="../Variables.htm#LastError">A_LastError</a> eine Null oder den R&uuml;ckgabewert der Systemfunktion GetLastError()-Funktion unmittelbar nach dem letzten Fehler. Ansonsten enth&auml;lt A_LastError einen Fehlercode, der darauf hinweist, warum keine Dateien gefunden wurden.</p>
+
+<h3>Bemerkungen</h3>
+<p>Der <em>Attribute</em>-Parameter besteht aus einer Sammlung von Operatoren und Attributsbuchstaben.</p>
+<p><em>Operatoren</em>:</p>
+<table class="info" style="width:574px">
+  <tr>
+    <td width="23">+</td>
+    <td width="535">Aktiviert das Attribut </td>
+  </tr>
+  <tr>
+    <td>-</td>
+    <td>Deaktiviert das Attribut </td>
+  </tr>
+  <tr>
+    <td>^</td>
+    <td>Schaltet das Attribut um (auf dem entgegengesetzten Wert)</td>
+  </tr>
+</table>
+<p><br> <em>Attributsbuchstaben</em>:<br> R = READONLY<br> A = ARCHIVE<br> S = SYSTEM<br> H = HIDDEN<br> N = NORMAL (nur g&uuml;ltig, wenn nicht mit anderen Attributen verwendet wird)<br> O = OFFLINE<br> T = TEMPORARY</p>
+<p>Hinweis: Derzeit kann die Komprimierung einer Datei mit diesem Befehl nicht ge&auml;ndert werden. </p>
+<h3>Verwandte Befehle</h3>
+<p><a href="FileGetAttrib.htm">FileGetAttrib</a>, <a href="FileGetTime.htm">FileGetTime</a>, <a href="FileSetTime.htm">FileSetTime</a>, <a href="FileGetSize.htm">FileGetSize</a>, <a href="FileGetVersion.htm">FileGetVersion</a>, <a href="LoopFile.htm">dateilesende Schleife</a></p>
+<h3>Beispiele</h3>
+<pre class="NoIndent">FileSetAttrib, +RH, C:\EigeneDateien\*.*, 1  <em>; +RH ist identisch mit +R+H</em>
+FileSetAttrib, ^H, C:\EigeneDateien  <em>; Schaltet das HIDDEN-Attribut des Ordners um.</em>
+FileSetAttrib, -R+A, C:\Neue Textdatei.txt
+FileSetAttrib, +A, C:\*.ini, , 1  <em>; Alle INI-Dateien auf Laufwerk C: werden rekursiv behandelt.</em></pre>
+
+</body>
+</html>

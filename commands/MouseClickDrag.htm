@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>MouseClickDrag</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>MouseClickDrag</h1>
+
+<p>Klickt und h&auml;lt die angegebene Maustaste gedr&uuml;ckt, bewegt die Maus zu den Zielkoordinaten und l&auml;sst die Taste wieder los.</p>
+
+<pre class="Syntax">MouseClickDrag, Taste, X1, Y1, X2, Y2 [, Geschwindigkeit, R]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td>Taste</td>
+    <td><p>Die zu klickende Taste: Left, Right, Middle (oder einfach der erste Buchstabe). Die vierte und f&uuml;nfte Maustaste werden unter Windows 2000/XP oder h&ouml;her unterst&uuml;tzt: Verwendet X1 f&uuml;r die vierte Taste und X2 f&uuml;r die f&uuml;nfte Taste. Zum Beispiel: MouseClickDrag, X1, ...</p>
+    <p>Wenn der Benutzer die linken und rechten Maustasten mittels der Systemsteuerung vertauscht hat, dann kann das automatisch mit dem <a href="Click.htm">Click-Befehl</a> ausgeglichen werden.</p></td>
+  </tr>
+  <tr>
+    <td>X1, Y1 </td>
+    <td>Die X/Y-Koordinaten der Startposition beim Ziehen, die <a href="../Variables.htm#Expressions">Ausdr&uuml;cke</a> sein k&ouml;nnen (die Maus wird direkt zu diesen Koordinaten bewegt, bevor das Ziehen beginnt). Koordinaten beziehen sich auf das aktive Fenster, es sei denn, <a href="CoordMode.htm">CoordMode</a> wurde dazu verwendet, dass zu &auml;ndern. Wenn nicht vorhanden, dann wird die aktuelle Position des Zeigers verwendet.</td>
+  </tr>
+  <tr>
+    <td>X2, Y2</td>
+    <td>Die X/Y-Koordinaten, wohin die Maus bewegt wird (w&auml;hrend die Taste gedr&uuml;ckt gehalten wird), die <a href="../Variables.htm#Expressions">Ausdr&uuml;cke</a> sein k&ouml;nnen. Koordinaten beziehen sich auf das aktive Fenster, es sei denn, <a href="CoordMode.htm">CoordMode</a> wurde dazu verwendet, dass zu &auml;ndern. </td>
+  </tr>
+  <tr>
+    <td width="15%">Geschwindigkeit</td>
+    <td width="85%"><p>Die Bewegungsgeschwindigkeit der Maus von 0 (am schnellsten) bis 100 (am langsamsten), welches auch ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein kann.&nbsp; Hinweis: mit der Geschwindigkeit von 0 wird die Maus sofort bewegt.&nbsp; Wenn weggelassen, dann wird die Standard-Geschwindigkeit von <a href="SetDefaultMouseSpeed.htm">SetDefaultMouseSpeed</a> ??(wenn nicht vorhanden, dann die 2) verwendet.</p>
+      <p><em>Geschwindigkeit</em> wird bei der <a href="SendMode.htm">SendInput- oder SendPlay-Methode</a> ignoriert: damit wird die Maus sofort bewegt (obwohl <a href="SetMouseDelay.htm">SetMouseDelay</a> einen Modus hat, der f&uuml;r SendPlay gilt). Um die Maus sichtbar langsamer zu bewegen (z. B. f&uuml;r ein Script, dass eine Demonstration f&uuml;r das Publikum vorf&uuml;hrt), verwendet <em><a href="Send.htm#Click">SendEvent {Click 100, 200}</a></em> oder <em><a href="SendMode.htm">SendMode Event</a></em> (optional in Verbindung mit <a href="BlockInput.htm">BlockInput</a>).</p></td>
+  </tr>
+  <tr>
+    <td>R</td>
+    <td><p>Wenn dieser Parameter den Buchstabe R enth&auml;lt, dann werden X1-und Y1-Koordinaten als Offsets von der aktuellen Mausposition behandelt. In anderen Worten wird der Zeiger von seiner aktuellen Position um X1 Pixel nach rechts (nach links ist negativ) und um Y1 Pixel nach unten (nach oben ist negativ) verschoben.</p>
+      <p>Ebenso werden die X2- und Y2-Koordinaten als Offsets von den X1- und Y1-Koordinaten behandelt. Das folgende Beispiel bewegt den Mauszeiger von der Startposition 5 Pixel nach unten bzw. nach rechts und dann 10 Pixel nach unten bzw. nach rechts, w&auml;hrend die Maustaste gedr&uuml;ckt gehalten wird: MouseClickDrag, Left, 5, 5, 10, 10, , R </p></td>
+  </tr>
+</table>
+
+<h3>Bemerkungen</h3>
+<p>Dieser Befehl verwendet die vordefinierte Methode von <a href="SendMode.htm">SendMode</a>.</p>
+<p>Das Ziehen kann auch mit verschiedenen Send-Befehlen durchgef&uuml;hrt werden, dass flexibler ist, weil der Modus mit dem Befehlsnamen angegeben werden kann. Zum Beispiel:</p>
+<pre>SendEvent {Click 6, 52, down}{click 45, 52, up}</pre>
+<p>Der Vorteil von dieser Methode gegen&uuml;ber MouseClickDrag ist, dass der Austausch der linken und rechten Maustaste &uuml;ber der Systemsteuerung automatisch ausgeglichen wird.</p>
+<p>Mit dem <a href="SendMode.htm">SendPlay-Modus</a> ist man in der Lage, Mausaktionen erfolgreich in einer breiteren Auswahl an Spielen durchzuf&uuml;hren. Allerdings funktioniert das Ziehen mit SendPlay m&ouml;glicherweise nicht in RichEdit-Steuerelemente (und m&ouml;glicherweise andere) wie die von WordPad und Metapad.</p>
+<p>Dar&uuml;ber hinaus k&ouml;nnen einige Anwendungen und Spiele Probleme haben, die Maus richtig zu erkennen, wenn sie zu schnell bewegt wird. Der <em>Geschwindigkeit</em>-Parameter oder <a href="SetDefaultMouseSpeed.htm">SetDefaultMouseSpeed</a> kann verwendet werden, um die Geschwindigkeit zu reduzieren (nur im <a href="SendMode.htm">Standard-SendEvent-Modus</a>).</p>
+<p>Mit dem <a href="BlockInput.htm">BlockInput</a>-Befehl ist es m&ouml;glich, Unterbrechungen von simulierten Mausaktionen durch physische Mausaktionen des Benutzers zu verhindern. Allerdings ist dieser Befehl im <a href="SendMode.htm">SendInput</a>- oder SendPlay-Modus nicht notwendig, weil die physischen Mausaktionen des Benutzers automatisch bis zum Schluss zwischengespeichert werden.</p>
+<p>Nach jeder Down- und Up-Aktion der Maus wird automatisch eine Verz&ouml;gerung erzeugt (au&szlig;er im <a href="SendMode.htm">SendInput-Modus</a>). Diese Verz&ouml;gerung tritt auch auf, nachdem die Maus w&auml;hrend des Ziehens bewegt wurde. Die Dauer der Verz&ouml;gerung kann mit <a href="SetMouseDelay.htm">SetMouseDelay</a> ge&auml;ndert werden.</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="CoordMode.htm">CoordMode</a>, <a href="SendMode.htm">SendMode</a>, <a href="SetDefaultMouseSpeed.htm">SetDefaultMouseSpeed</a>, <a href="SetMouseDelay.htm">SetMouseDelay</a>, <a href="Click.htm">Click</a>, <a href="MouseClick.htm">MouseClick</a>, <a href="MouseGetPos.htm">MouseGetPos</a>, <a href="MouseMove.htm">MouseMove</a>, <a href="BlockInput.htm">BlockInput</a></p>
+<h3>Beispiel</h3>
+<pre class="NoIndent">MouseClickDrag, left, 0, 200, 600, 400
+
+<em>; Das folgende Beispiel &ouml;ffnet MS Paint und zeichnet ein kleines Haus:</em>
+Run, mspaint.exe
+WinWaitActive, ahk_class MSPaintApp,, 2
+If ErrorLevel
+    Return
+MouseClickDrag, L, 150, 250, 150, 150
+MouseClickDrag, L, 150, 150, 200, 100
+MouseClickDrag, L, 200, 100, 250, 150
+MouseClickDrag, L, 250, 150, 150, 150
+MouseClickDrag, L, 150, 150, 250, 250
+MouseClickDrag, L, 250, 250, 250, 150
+MouseClickDrag, L, 250, 150, 150, 250
+MouseClickDrag, L, 150, 250, 250, 250</pre>
+
+</body>
+</html>

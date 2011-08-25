@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>FileSelectFolder</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>FileSelectFolder</h1>
+
+<p>Zeigt das Standard-Fenster zum Ausw&auml;hlen eines Ordner an.</p>
+
+<pre class="Syntax">FileSelectFolder, Ausgabevariable [, Startordner, Optionen, Anzeigetext]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td width="15%">Ausgabevariable</td>
+    <td width="85%"><p>Der Name der Variable, in der der ausgew&auml;hlte Ordner vom Benutzer gespeichert wird. Die Variable wird leer gemacht, wenn der Benutzer das Dialog-Fenster abbricht (wenn z. B. der Benutzer nicht die Absicht hat, einen Ordner auszuw&auml;hlen). Wenn der Benutzer ein Hauptverzeichnis ausw&auml;hlt (z. B. C:\), dann endet die <I>Ausgabevariable</I> mit einem Backslash. Ist das unerw&uuml;nscht, entfernt es wie folgt:</p>
+      <pre>FileSelectFolder, Ordner
+Ordner := RegExReplace(Ordner, "\\$")  <em>; Entfernt den Backslash am Ende, wenn vorhanden.</em></pre></td>
+  </tr>
+  <tr>
+    <td>Startordner</td>
+    <td><p>Wenn leer oder nicht vorhanden, dann beginnt die Startauswahl im Ordner "Eigene Dateien" des Benutzers (oder vielleicht auch im Arbeitsplatz/Computer). Ein <a href="../misc/CLSID-List.htm">CLSID-Ordner</a> wie <em>::{20d04fe0-3aea-1069-a2d8-08002b30309d}</em> (d. h. Arbeitsplatz/Computer) kann angegeben werden, um die Navigation bei einem bestimmten Ordner zu beginnen.</p>
+      <p>Ansonsten wird in diesem Parameter h&auml;ufig ein Sternchen verwendet, unmittelbar gefolgt von dem absoluten Pfad des Laufwerks oder eines Ordners, das am Anfang ausgew&auml;hlt sein soll. Mit <em>*C:\ </em>beginnt die Navigation auf dem C-Laufwerk. Mit <em>*C:\Eigener Ordner</em> wird am Anfang direkt dieser bestimmter Ordner ausgew&auml;hlt.</p>
+      <p>Das Sternchen bedeutet, dass der Benutzer berechtigt ist, bis zum Hauptverzeichnis zu navigieren. Ohne Sternchen darf der Benutzer nur einen Ordner innerhalb des <em>Startordners</em> (oder der <em>Startordner</em> selbst) ausw&auml;hlen. Ein Vorteil hat es: Der Verzeichnisbaum vom <em>Startordner</em> ist in diesem Fall schon aufgeklappt, d. h. der Benutzer muss nicht erst auf das Plus-Zeichen klicken.</p>
+      <p>Wenn das Sternchen vorhanden ist, dann kann die Navigation wahlweise auf einen Ordner (au&szlig;er Desktop) beschr&auml;nkt werden. Dazu wird dem Sternchen der absolute Pfad zum gew&uuml;nschten Ordner mit einem nachfolgenden Leerzeichen oder Tabulator vorangestellt. Im folgenden Beispiel kann der Benutzer nicht auf die dar&uuml;ber liegende Ebene von C:\Eigener Ordner navigieren (das Startverzeichnis selbst ist aber C:\Eigener Ordner\Projekte):<br> <em>C:\Eigener Ordner *C:\Eigener Ordner\Projekte</em></p>
+    </td>
+  </tr>
+  <tr>
+    <td>Optionen</td>
+    <td><p>Eine folgende Zahl:</p>
+      <p><strong>0</strong>: Alle unteren Optionen sind deaktiviert (au&szlig;er in Windows 2000, da ist die Schaltfl&auml;che "Neuer Ordner" noch vorhanden).</p>
+      <p><strong>1</strong> (Standard): Die Schaltfl&auml;che zum Erstellen neuer Ordner wird angezeigt. Allerdings ist die Schaltfl&auml;che nicht in Windows 95/98/NT vorhanden.</p>
+      <p>Wird die obere Zahl mit <strong>2 addiert</strong>, dann erscheint ein Edit-Feld, damit der Benutzer den Namen eines Ordners eingeben kann. Zum Beispiel wird mit einem Parameterwert von 3 sowohl ein Edit-Feld als auch die Schaltfl&auml;che "Neuer Ordner" bereitgestellt.</p>
+      <p><strong><a name="NewDialog"></a></strong>Wird die obere Zahl mit <strong>4 addiert</strong>, dann wird die Eigenschaft BIF_NEWDIALOGSTYLE ignoriert. Mit dem Hinzuf&uuml;gen der Zahl 4 wird sichergestellt, dass FileSelectFolder auch in einer vorinstallierten Umgebung (z. B. WinPE oder BartPE) funktioniert. Dadurch wird allerdings die Schaltfl&auml;che "Neuer Ordner" nicht angezeigt, zumindest unter Windows XP. ["4" ben&ouml;tigt v1.0.48+]</p>
+      <p>Wenn der Benutzer einen ung&uuml;ltigen Ordnernamen ins Edit-Feld eintr&auml;gt, dann enth&auml;lt die <I>Ausgabevariable</I> den aktuell ausgew&auml;hlten Ordner im Navigationsbereich, als die Eingabe des Benutzers, zumindest unter Windows XP.</p>
+      <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.<br>
+      </p></td>
+  </tr>
+  <tr>
+    <td>Anzeigetext</td>
+    <td>Im Fenster angezeigter Text, um den Benutzer eine Instruktion zu &uuml;bermitteln. Wenn leer oder nicht vorhanden, dann wird standardm&auml;&szlig;ig "Select Folder - %A_SCRIPTNAME%" (d. h. der Name des aktuellen Scripts) verwendet.</td>
+  </tr>
+</table>
+
+<h3>ErrorLevel</h3>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn der Benutzer das Dialog-Fenster schlie&szlig;t, ohne eine Datei ausgew&auml;hlt zu haben (wie z. B. bei Bet&auml;tigung der Schaltfl&auml;che "Abbrechen"). ErrorLevel wird auch auf 1 gesetzt, wenn das Betriebssystem das Dialog-Fenster verweigert (selten). Ansonsten auf 0.</p>
+<h3>Bemerkungen</h3>
+<p>Ein GUI-Fenster kann ein modales Dialog-Fenster mittels <a href="Gui.htm#OwnDialogs">Gui, +OwnDialogs</a> anzeigen. Ein modales Dialog-Fenster hindert den Benutzer solange daran, mit dem GUI-Fenster zu interagieren, bis das modale Dialog-Fenster wieder geschlossen wird.</p>
+<p>Bekannte Einschr&auml;nkung: Ein <a href="SetTimer.htm">Timer</a>, der w&auml;hrend der Anzeige eines Ordnerauswahlfensters gestartet wird, z&ouml;gert das Klicken des Benutzers im Fenster solange hinaus, bis der Timer endet. Um dieses Problem zu umgehen, vermeidet Timer mit Subroutinen, die eine lange Zeit brauchen, beendet zu werden, oder deaktiviert alle Timer, w&auml;hrend das Dialog-Fenster aktiv ist:</p>
+<pre><a href="Thread.htm">Thread</a>, NoTimers
+FileSelectFolder, Ausgabevariable,, 3
+Thread, NoTimers, false</pre>
+<h3>Verwandte Befehle</h3>
+<p><a href="FileSelectFile.htm">FileSelectFile</a>, <a href="MsgBox.htm">MsgBox</a>, <a href="InputBox.htm">InputBox</a>, <a href="ToolTip.htm">ToolTip</a>, <a href="Gui.htm">GUI</a>, <a href="../misc/CLSID-List.htm">CLSID-Liste</a>, <a href="FileCopyDir.htm">FileCopyDir</a>, <a href="FileMoveDir.htm">FileMoveDir</a>, <a href="SplitPath.htm">SplitPath</a></p>
+<p>Das Betriebssystem besitzt auch Standard-Fensterdialoge zum Ausw&auml;hlen von Farben, Schriftarten oder Icons. Diese Dialog-Fenster k&ouml;nnen mittels <a href="DllCall.htm">DllCall()</a> angezeigt werden, siehe dazu <a href="http://www.autohotkey.com/forum/topic17230.html">www.autohotkey.com/forum/topic17230.html</a>.</p>
+<h3>Beispiel</h3>
+<pre class="NoIndent">FileSelectFolder, Ausgabevariable, , 3
+If Ausgabevariable =
+    MsgBox, Keinen Ordner ausgew&auml;hlt.
+Else
+    MsgBox, Ordner "%Ausgabevariable%" ausgew&auml;hlt.
+
+<a href="../misc/CLSID-List.htm">CLSID</a>-Beispiel:
+FileSelectFolder, Ausgabevariable, ::{20d04fe0-3aea-1069-a2d8-08002b30309d}  <em>; Arbeitsplatz/Computer</em></pre>
+
+</body>
+</html>

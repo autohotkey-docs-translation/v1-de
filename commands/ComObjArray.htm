@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>ComObjArray()</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>ComObjArray() <span class="ver">[v1.0.91+]</span></h1>
+
+<p>Erstellt einen SafeArray f&uuml;r die Verwendung mit COM.</p>
+
+<pre class="Syntax">ArrayObj := ComObjArray(Variablentyp, Anzahl1 [, Anzahl2, ... Anzahl8])</pre>
+
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td>Variablentyp</td>
+    <td>Der Basistyp des Arrays (das VARTYPE jeden Array-Elements). Das VARTYPE ist auf eine Teilmenge der Variantentypen beschr&auml;nkt. Weder das VT_ARRAY- noch VT_BYREF-Flag kann gesetzt werden. VT_EMPTY und VT_NULL sind keine g&uuml;ltigen Basistypen f&uuml;r das Array. Alle anderen Typen sind g&uuml;ltig.
+    <p>Siehe <a href="ComObjType.htm">ComObjType</a> f&uuml;r eine Liste von m&ouml;glichen Werten.</p></td>
+  </tr>
+  <tr>
+    <td>Anzahl<i>N</i></td>
+    <td>Die Gr&ouml;&szlig;e jeder Dimension. Arrays mit bis zu 8 Dimensionen werden unterst&uuml;tzt.</td>
+  </tr>
+  <tr>
+    <td>ArrayObj</td>
+    <td>Ein Wrapper-Objekt mit dem SafeArray.</td>
+  </tr>
+</table>
+
+<h3>Methoden</h3>
+<p>Array-Wrapper-Objekte unterst&uuml;tzen die folgenden Methoden:</p>
+<p><code class="Syntax">Array.MaxIndex(n)</code>: Gibt die Obergrenze der <i>n</i>-ten Dimension zur&uuml;ck. Wenn <i>n</i> nicht vorhanden ist, dann ist 1 der Standardwert.</p>
+<p><code class="Syntax">Array.MinIndex(n)</code>: Gibt die Untergrenze der <i>n</i>-ten Dimension zur&uuml;ck. Wenn <i>n</i> nicht vorhanden ist, dann ist 1 der Standardwert.</p>
+<p><code class="Syntax">Array.Clone()</code> <span class="ver">[v1.0.96.00+]</span>: Gibt eine Kopie des Arrays zur&uuml;ck.</p>
+<p><code class="Syntax">Array._NewEnum()</code> <span class="ver">[v1.0.96.00+]</span>: Wird normalerweise nicht vom Script aufgerufen. <a href="For.htm">For-Schleifen</a> k&ouml;nnen mit SafeArrays verwendet werden.</p>
+
+<h3>Allgemeine Bemerkungen</h3>
+<p>Array-Wrapper-Objekte k&ouml;nnen auch von COM-Methoden und <a href="ComObjActive.htm">ComObjActive</a> zur&uuml;ckgegeben werden. Scripts k&ouml;nnen feststellen, ob ein Wert ein Array wie folgt ist:</p>
+<pre>If ComObjType(<i>obj</i>) & 0x2000
+    MsgBox % "Array-Subtyp: " . ComObjType(obj) & 0xfff
+Else
+    MsgBox Kein Array.</pre>
+<p>Arrays mit bis zu 8 Dimensionen werden unterst&uuml;tzt.</p>
+<p><span class="ver">[v1.0.96.00+]:</span> Da SafeArrays nicht konstruiert wurden, um mehrere Referenzen zu unterst&uuml;tzen, falls SafeArray einem Element eines anderen SafeArray zugewiesen wird, dann wird eine separate Kopie erstellt. Allerdings tritt dies nur auf, wenn das Wrapper-Objekt das F_OWNVALUE-Flag hat, dass das Objekt verantwortlich macht, denn Array zu zerst&ouml;ren. Dieses Flag kann mit <a href="ComObjFlags.htm">ComObjFlags</a> entfernt werden.</p>
+
+<h3>Verwandte Befehle</h3>
+<p><a href="ComObjType.htm">ComObjType</a>, <a href="ComObjValue.htm">ComObjValue</a>, <a href="ComObjActive.htm">ComObjActive</a>, <a href="ComObjFlags.htm">ComObjFlags</a>, <a href="http://msdn.microsoft.com/en-us/library/ms221145.aspx">Array Manipulation Functions (MSDN)</a></p>
+
+<h3>Beispiele</h3>
+<pre class="NoIndent" id="Ex1"><em>; Beispiel #1: Einfache Bedienung.</em>
+
+arr := ComObjArray(VT_VARIANT:=12, 3)
+arr[0] := "Auto"
+arr[1] := "Hot"
+arr[2] := "key"
+Loop % arr.MaxIndex() + 1
+   t .= arr[A_Index-1]
+MsgBox % t
+
+</pre>
+
+<pre class="NoIndent" id="Ex2"><em>; Beispiel #2: Mehrere Dimensionen.</em>
+
+arr := ComObjArray(VT_VARIANT:=12, 3, 4)
+
+<em>; Ermittelt die Anzahl an Dimensionen:</em>
+dim := DllCall("oleaut32\SafeArrayGetDim", "ptr", ComObjValue(arr))
+
+<em>; Ermittelt die Grenzen jeder Dimension:</em>
+Loop %dim%
+    dims .= arr.MinIndex(A_Index) " .. " arr.MaxIndex(A_Index) "`n"
+MsgBox %dims%
+
+<em>; Einfache Bedienung:</em>
+Loop 3 {
+    x := A_Index-1
+    Loop 4 {
+        y := A_Index-1
+        arr[x, y] := x * y
+    }
+}
+MsgBox % arr[2, 3]
+
+</pre>
+
+</body>
+</html>

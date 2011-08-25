@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>FileRead</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>FileRead</h1>
+
+<p>Liest den Inhalt einer Datei in eine <a href="../Variables.htm">Variable</a>.</p>
+
+<pre class="Syntax">FileRead, Ausgabevariable, Dateiname</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td>Ausgabevariable</td>
+    <td>Der Name der <a href="../Variables.htm">Variable</a>, die die ermittelten Daten enth&auml;lt. Die <em>Ausgabevariable</em> wird leer gemacht, sobald ein Problem auftritt, wenn die Datei z. B. "in Benutzung" oder nicht vorhanden ist (in diesem Fall wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt). Wird auch leer gemacht, wenn der <em>Dateiname</em> eine leere Datei ist (in diesem Fall wird ErrorLevel auf 0 gesetzt).</td>
+  </tr>
+  <tr>
+    <td width="15%">Dateiname</td>
+    <td width="85%"><p>Der Name der Datei, die sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist.</p>
+      <p><strong>Optionen</strong>: Beliebig viele folgende Strings k&ouml;nnen vor dem Dateinamen stehen. Die Optionen werden mit einem Leerzeichen oder Tabulator getrennt. Zum Beispiel: <code>*t *m5000 C:\Log Files\200601.txt</code></p>
+    <p><strong>*c</strong>: L&auml;dt eine Datei aus <a href="../misc/Clipboard.htm#ClipboardAll">ClipboardAll</a> oder andere bin&auml;re Daten. Alle anderen Optionen werden ignoriert, wenn <strong>*c</strong> vorhanden ist.</p>
+    <p><strong>*m1024</strong> <span class="ver">[v1.0.43.03+]:</span> Wenn diese Option nicht vorhanden ist, dann wird die gesamte Datei geladen, es sei denn, die Datei ist gr&ouml;&szlig;er als 1 GB, in diesem Fall wird sie nicht vollst&auml;ndig geladen. Andernfalls ersetzt 1024 mit einer Dezimal- oder Hexadezimalzahl von 1 bis 1073741824 (1 GB) Bytes. Wenn die Datei gr&ouml;&szlig;er als 1 GB ist, dann wird nur der f&uuml;hrende Teil geladen. Hinweis: Das kann dazu f&uuml;hren, dass die letzte Zeile nur mit einem CR-Zeichen (`r) endet, anstatt mit dem CR-LF-Paar (`r`n).</p>
+    <p><strong>*t</strong>: Ersetzt alle Erscheinungsformen von CR-LF-Paare (`r`n) mit einem CR-Zeichen (`n). Allerdings f&uuml;hrt diese Umsetzung zu einem Performanceverlust und ist f&uuml;r gew&ouml;hnlich nicht notwendig. Ein Text mit einem CR-LF-Paar (`r`n) beispielsweise ist bereits im richtigen Format, um ihn in einem <a href="StringReplace.htm">Edit-Steuerelement</a> einzuf&uuml;gen. Ebenso erkennt <a href="FileAppend.htm">FileAppend</a> CR-LF-Paare (`r`n), wenn eine neue Datei ge&ouml;ffnet wird. Dieser Befehl &auml;ndert nicht ein CR-LF-Paar, wenn es bereits vorhanden ist. Die folgende <a href="LoopParse.htm">Parsing-Schleife</a> funktioniert immer, unabh&auml;ngig davon, ob eine Zeile mit `r`n oder `n endet: <code>Loop, parse, Dateiinhalt, `n, `r</code></p>
+    <p><strong>*Pnnn</strong>: <span class="ver">[AHK_L 42+]:</span> &Uuml;berschreibt die Standard-Kodierung von <a href="FileEncoding.htm">FileEncoding</a>, wobei <em>nnn</em> die <a href="http://msdn.microsoft.com/en-us/library/dd317756.aspx">Kennung des Zeichensatzes</a> sein muss.</td>
+  </tr>
+</table>
+
+<h3>ErrorLevel</h3>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn das Laden erfolgreich war. ErrorLevel wird auf 1 gesetzt, sobald ein Problem auftritt: 1) Datei existiert nicht; 2) Datei ist gesperrt oder nicht zug&auml;nglich; 3) das System hat nicht gen&uuml;gend Speicher, um die Datei zu laden.</p>
+<p>Die interne Variable <a href="../Variables.htm#LastError">A_LastError</a> enth&auml;lt den R&uuml;ckgabewert der Systemfunktion GetLastError().</p>
+
+<h3 id="Binary">Lesen von Bin&auml;rdaten</h3>
+<p>Abh&auml;ngig von der Datei, den Parametern und Standardeinstellungen interpretiert FileRead die Dateidaten als Text und wandelt ihn in die <a href="../Compat.htm#Format">urspr&uuml;ngliche Kodierung</a> des Scripts um. Das d&uuml;rfte zu Problemen f&uuml;hren, wenn die Datei bin&auml;re Daten enth&auml;lt, au&szlig;er in folgenden F&auml;llen:</p>
+<ul>
+  <li>Wenn die <span class="Syntax">*C</span>-Option vorhanden ist, dann werden alle Zeichens&auml;tze und &Uuml;bersetzungen von Zeilenenden bedingungslos umgangen.</li>
+  <li>Wenn die <span class="Syntax">*P<i>nnn</i></span>-Option vorhanden ist und <i>nnn</i> der urspr&uuml;nglichen String-Kodierung entspricht, dann werden keine Zeichens&auml;tze umgewandelt.</li>
+  <li>Wenn die aktuelle <a href="FileEncoding.htm">Datei-Kodierung</a> der urspr&uuml;nglichen String-Kodierung entspricht, dann werden keine Zeichens&auml;tze umgewandelt.</li>
+</ul>
+<p>Beachtet, dass nur der Text vor der ersten bin&auml;ren Null von den meisten AutoHotkey-Befehlen und -Funktionen "gesehen" wird, sobald die Daten in die <em>Ausgabevariable</em> gelesen werden. Allerdings ist der ganze Inhalt immer noch vorhanden und kann somit durch erweiterten Methoden wie <a href="../Functions.htm#NumGet">NumGet()</a> zugegriffen werden.</p>
+<p>Schlie&szlig;lich kann <a href="FileOpen.htm">FileOpen()</a> mit <a href="../objects/File.htm#RawRead">File.RawRead()</a> oder <a href="../objects/File.htm#ReadNum">File.Read<i>Num</i>()</a> verwendet werden, um bin&auml;re Daten einzulesen, ohne dabei erst die ganze Datei in den Speicher einzulesen.</p>
+
+<h3>Bemerkungen</h3>
+<p>Wenn das Ziel darin besteht, einen gro&szlig;en Teil einer Datei in den Speicher zu laden, dann ist FileRead besser geeignet als eine <a href="LoopReadFile.htm">dateilesende Schleife</a>.</p>
+<p>Bei einer Datei gr&ouml;&szlig;er als 1 GB wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt und die <em>Ausgabevariable</em> leer gemacht, es sei denn, <strong>*m</strong> ist vorhanden, in diesem Fall wird nur der f&uuml;hrende Teil einer Datei geladen.</p>
+<p>FileRead ignoriert <a href="_MaxMem.htm">#MaxMem</a>. Wenn es Bedenken gibt, dass die Datei zu viel Speicher verwendet, dann kann die Dateigr&ouml;&szlig;e vorher mit <a href="FileGetSize.htm">FileGetSize</a> &uuml;berpr&uuml;ft werden.</p>
+<p><a href="FileOpen.htm">FileOpen()</a> unterst&uuml;tzt mehr Funktionen als FileRead, wie z. B. das Lesen oder Schreiben von Daten in der Datei, ohne dabei die gesamte Datei in den Speicher zu laden. Siehe <a href="../objects/File.htm">Datei-Objekt</a> f&uuml;r eine Liste von Funktionen.</p>
+
+<h3>Verwandte Befehle</h3>
+<p><a href="FileEncoding.htm">FileEncoding</a>, <a href="FileOpen.htm">FileOpen</a>/<a href="../objects/File.htm">File Object</a>, <a href="LoopReadFile.htm">dateilesende Schleife</a>, <a href="FileReadLine.htm">FileReadLine</a>, <a href="FileGetSize.htm">FileGetSize</a>, <a href="FileAppend.htm">FileAppend</a>, <a href="IniRead.htm">IniRead</a>, <a href="Sort.htm">Sort</a>, <a href="UrlDownloadToFile.htm">UrlDownloadToFile</a></p>
+
+<h3>Beispiele</h3>
+<pre class="NoIndent" id="ex1"><em>; Beispiel #1: Liest die Textdatei in die Ausgabevariable.</em>
+FileRead, Ausgabevariable, C:\Eigene Dokumente\Eigene Datei.txt</pre>
+<pre class="NoIndent" id="ex2"><em>; Beispiel #2: Sortiert schnell den Inhalt einer Datei. </em>
+FileRead, Inhalt, C:\Adressenliste.txt
+If not ErrorLevel  <em>; Erfolgreich geladen.</em>
+{
+    <a href="Sort.htm">Sort</a>, Inhalt
+    FileDelete, C:\Adressenliste (alphabetisch).txt
+    FileAppend, %Inhalt%, C:\Adressenliste (alphabetisch).txt
+    Inhalt =  <em>; Speicher freigeben.</em>
+}</pre>
+
+</body>
+</html>

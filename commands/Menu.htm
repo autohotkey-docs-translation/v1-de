@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Menu</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>Menu</h1>
+
+<p>Erstellt, l&ouml;scht, &auml;ndert und zeigt Men&uuml;s und Men&uuml;punkte. &Auml;ndert das Tray-Icon und dazugeh&ouml;rige ToolTip. Kontrolliert, ob das Hauptfenster eines <a href="../Scripts.htm#ahk2exe">kompilierten Scripts</a> ge&ouml;ffnet werden kann.</p>
+
+<pre class="Syntax">Menu, Men&uuml;name, Befehl [, P3, P4, P5]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td width="15%">Men&uuml;name</td>
+    <td width="85%"><p> Kann TRAY oder der Name eines benutzerdefinierten Men&uuml;s sein. Ein benutzerdefiniertes Men&uuml; wird beim ersten Mal automatisch erstellt, wenn ein beliebiger Name mit dem <em>Add</em>-Befehl verwendet wird. Zum Beispiel: Menu, EigenesMen&uuml;, Add, Element1</p>
+      <p>Einmal erstellt kann ein benutzerdefiniertes Men&uuml; mit dem <em>Show</em>-Befehl angezeigt werden. Es kann auch als Untermen&uuml; in beliebig vielen Men&uuml;s mittels dem <em>Add</em>-Befehl verwendet werden. </p></td>
+  </tr>
+  <tr>
+    <td>Befehl, P3, P4, P5 </td>
+    <td>Diese 4 Parameter sind voneinander abh&auml;ngig. Siehe untere Liste f&uuml;r die erlaubten Kombinationen. </td>
+  </tr>
+</table>
+
+<h2>Hinzuf&uuml;gen oder &Auml;ndern von Men&uuml;punkten</h2>
+<p><strong>Add [, Men&uuml;punktname, Label-oder-Untermen&uuml;, Pn]</strong>: Dieser vielseitige Befehl kann ein Men&uuml;punkt hinzuf&uuml;gen, dessen Untermen&uuml; oder Label aktualisieren oder ihn in einem Untermen&uuml; umwandeln (oder umgekehrt). Wenn der <em>Men&uuml;punktname</em> noch nicht existiert, dann wird es ins Men&uuml; eingef&uuml;gt. Ansonsten wird der <em>Men&uuml;punktname</em> mit dem neu angegebenen <em>Label-oder-Untermen&uuml;</em> aktualisiert.</p>
+<p>Um eine Trennlinie ins Men&uuml; einzuf&uuml;gen, lasst alle drei Parameter weg.</p>
+<p>Die Label-Subroutine wird als neuer <a href="../misc/Threads.htm">Thread</a> ausgef&uuml;hrt, wenn der Benutzer den Men&uuml;punkt ausw&auml;hlt (vergleichbar mit <a href="Gosub.htm">Gosub</a> und <a href="../Hotkeys.htm">Hotkey-Subroutinen</a>). Sobald das <em>Label-oder-Untermen&uuml;</em> weggelassen wird, wird der <em>Men&uuml;punktname</em> sowohl als Labelname wie auch als Men&uuml;punktname verwendet.</p>
+<p>Damit der <em>Men&uuml;punktname</em> zum Untermen&uuml; wird (ein Men&uuml;punkt, der ein neues Men&uuml; &ouml;ffnet, wenn ausgew&auml;hlt), verwendet f&uuml;r das <em>Label-oder-Untermen&uuml;</em> einen Doppelpunkt, gefolgt vom <em>Men&uuml;namen</em> eines vorhandenen benutzerdefinierten Men&uuml;s. Zum Beispiel:</p>
+<pre>Menu, EigenesUntermen&uuml;, Add, Element1
+Menu, Tray, Add, Dieser Men&uuml;punkt ist ein Untermen&uuml;, :EigenesUntermen&uuml;</pre>
+<p>Der letzte Parameter kann den Buchstaben P enthalten, gefolgt von der <a href="../misc/Threads.htm">Thread-Priorit&auml;t</a> des Men&uuml;s, z. B. P1. Wenn dieser Parameter beim Hinzuf&uuml;gen eines Men&uuml;punktes weggelassen wird, dann wird die Priorit&auml;t auf den Standardwert 0 gesetzt. Wenn dieser Parameter beim Aktualisieren eines Men&uuml;punktes weggelassen wird, dann wird die Priorit&auml;t nicht ge&auml;ndert. Um nur die Priorit&auml;t eines vorhandenen Men&uuml;punkts zu &auml;ndern, lasst den Parameter <em>Label-oder-Untermen&uuml;</em> weg. Verwendet eine Dezimalzahl (nicht hexadezimal) f&uuml;r die Priorit&auml;t.</p>
+<p><strong><a name="Delete"></a>Delete [, Men&uuml;punktname</strong>]: L&ouml;scht den <em>Men&uuml;punktnamen</em> aus dem Men&uuml;. Voreingestellte Men&uuml;punkte wie Exit k&ouml;nnen nicht einzeln gel&ouml;scht werden. Wenn der <em>Standard</em>-Men&uuml;punkt gel&ouml;scht wird, dann ist der Effekt mit der <em>NoDefault</em>-Option vergleichbar. Wenn der <em>Men&uuml;punktname</em> weggelassen wird, dann wird das ganze Men&uuml; <em>Men&uuml;name</em> gel&ouml;scht, sowie auch Men&uuml;punkte in andere Men&uuml;s, die <em>Men&uuml;name</em> als Untermen&uuml; verwenden.</p>
+<p><strong>DeleteAll</strong>: L&ouml;scht alle benutzerdefinierte Men&uuml;punkte aus dem Men&uuml; und l&auml;sst das Men&uuml; nur leer, wenn die <em>voreingestellten</em> Men&uuml;punkte vorhanden sind (siehe unten). Im Gegensatz zu einem Men&uuml;, dass komplett durch den Befehl <em>Delete</em> (siehe oben) gel&ouml;scht wurde, ist ein leeres Men&uuml; immer noch vorhanden und alle anderen Men&uuml;s, die das Men&uuml; als Untermen&uuml; verwenden, behalten solche Untermen&uuml;s.</p>
+<p><strong>Rename, Men&uuml;punktname [, Neuname]</strong>: &Auml;ndert den <em>Men&uuml;punktnamen</em> zum <em>Neuname</em> (wenn der <em>Neuname</em> leer ist, dann wird der <em>Men&uuml;punktnamen</em> in eine Trennlinie umgewandelt). Der <em>Neuname</em> darf nicht der Name eines vorhandenen benutzerdefinierten Men&uuml;punkts sein. Das aktuelle Ziel-Label oder Untermen&uuml; des Men&uuml;punkts bleibt unver&auml;ndert.</p>
+<p><strong>Check, Men&uuml;punktname</strong>: Setzt ein sichtbares H&auml;kchen neben dem <em>Men&uuml;punktnamen</em> (wenn noch nicht vorhanden).</p>
+<p><strong>Uncheck, Men&uuml;punktname</strong>: Entfernt das H&auml;kchen (falls vorhanden) von <em>Men&uuml;punktnamen</em>.</p>
+<p><strong>ToggleCheck, Men&uuml;punktname</strong>: F&uuml;gt ein H&auml;kchen hinzu, wenn noch keiner vorhanden war, ansonsten wird er entfernt.</p>
+<p><strong>Enable, Men&uuml;punktname</strong>: Erlaubt dem Benutzer den <em>Men&uuml;punktnamen</em> wieder auszuw&auml;hlen, wenn er vorher deaktiviert (grau) war.</p>
+<p><strong>Disable, Men&uuml;punktname</strong>: Der <em>Men&uuml;punktname</em> wird grau angezeigt, dadurch ist der Men&uuml;punkt nicht mehr ausw&auml;hlbar.</p>
+<p><strong>ToggleEnable, Men&uuml;punktname</strong>: Deaktiviert den <em>Men&uuml;punktnamen</em>, wenn er zuvor aktiviert war, ansonsten wird er aktiviert.</p>
+<p><strong>Default [, Men&uuml;punktname]</strong>: <em>Men&uuml;punktname</em> wird zum Standard-Men&uuml;punkt und erh&auml;lt eine fette Schrift (Das Einstellen des Standard-Men&uuml;punkts ist zurzeit nur ein kosmetischer Faktor, au&szlig;er bei TRAY). Wenn der Benutzer auf das Tray-Icon doppelt klickt, dann wird der Standard-Men&uuml;punkt ausgef&uuml;hrt. Wenn kein Standard vorhanden ist, dann hat ein Doppelklick klein Effekt. Wenn der <em>Men&uuml;punktname</em> weggelassen wird, dann wird das gleiche wie beim Verwenden der unten genannten <em>NoDefault</em>-Option bewirkt.</p>
+<p><strong>NoDefault</strong>: Beim Tray-Men&uuml;: Der urspr&uuml;ngliche voreingestellte Standard-Men&uuml;punkt wird wiederhergestellt, welches OPEN in nicht-kompilierten Scripts und keins in <a href="../Scripts.htm#ahk2exe">kompilierten Scripts</a> ist (au&szlig;er wenn die <em>MainWindow</em>-Option aktiv ist). Wenn der Men&uuml;punkt OPEN nicht vorhanden ist, weil vorher der NoStandard-Befehl verwendet wurde, dann existiert auch kein Standard und ein Doppelklick auf das Tray-Icon hat kein Effekt. Bei Men&uuml;s ohne TRAY: Jeder vorhandene voreingestellte Men&uuml;punkt erh&auml;lt eine normalisierte Schrift (nicht fett). </p>
+<p><strong>Standard</strong>: F&uuml;gt die voreingestellten Men&uuml;punkte ans untere Ende des Men&uuml;s (wenn noch nicht vorhanden). Dieser Befehl kann mit einem beliebigen Men&uuml; (auch TRAY) verwendet werden.</p>
+<p><strong>NoStandard</strong>: Entfernt alle voreingestellten Men&uuml;punkte (nicht die benutzerdefinierten) aus dem Tray-Men&uuml; (sofern sie vorhanden sind).</p>
+<h2 id="MenuIcon">Icon in einem Men&uuml;punkt setzen oder entfernen <span class="ver">[AHK_L 17 +]</span></h2>
+<p><strong>Icon, Men&uuml;punktname, Dateiname [, Iconnummer, Iconbreite]</strong>: Bestimmt das Icon vom <em>Men&uuml;punktnamen</em>. <em>Dateiname</em> ist entweder eine Icon- oder Bild-Datei in einem Format, dass von AutoHotkey unterst&uuml;tzt wird. Um eine beliebige Icon-Gruppe in einer Datei zu verwenden, verwendet die Gruppennummer in der <em>Iconnummer</em> (wenn weggelassen, dann standardm&auml;&szlig;ig eine 1). Dar&uuml;ber hinaus k&ouml;nnen negative Zahlen als <a href="../AHKL_Features.htm#icons">Ressourcen-Bezeichner</a> verwendet werden. Die gew&uuml;nschte Breite des Icons kann in der <em>Iconbreite</em> angegeben werden. Wenn die Icon-Gruppe, angezeigt in der <em>Iconnummer</em>, mehrere Gr&ouml;&szlig;en enth&auml;lt, dann wird die beste &Uuml;bereinstimmung verwendet und das Icon auf die bestimmte Gr&ouml;&szlig;e skaliert. Siehe Beispiel-Abschnitt f&uuml;r Anwendungsbeispiele.</p>
+<p>Derzeit ist es notwendig, die tats&auml;chliche Gr&ouml;&szlig;e anzugeben, wenn die Transparenz des Icons in Windows Vista oder h&ouml;her bewahrt werden soll. Zum Beispiel:</p>
+<pre>Menu, Men&uuml;name, Icon, Men&uuml;punktname, Dateiname.png,, 0</pre>
+<p>Bekannte Einschr&auml;nkung: Icons in GUI-Men&uuml;leisten werden in Windows XP und h&ouml;her falsch positioniert.</p>
+<p><strong>NoIcon, Men&uuml;punktname</strong>: Entfernt das Icon vom <em>Men&uuml;punktnamen</em>, falls vorhanden.
+<h2>Tray-Icon oder ToolTip &auml;ndern <span class="ver">(<em>Men&uuml;name</em> muss TRAY sein)</span></h2>
+<p><strong><a name="Icon"></a>Icon [, Dateiname, Iconnummer, 1]</strong>: &Auml;ndert das Icon des Scripts, dass in <em>Dateiname</em> angegeben wird. Die folgenden Dateitypen werden unterst&uuml;tzt: ICO, CUR, ANI, EXE, DLL, CPL, SCR und andere Typen, die Icon-Ressourcen enthalten. Um eine beliebige Icon-Gruppe in einer Datei zu verwenden, verwendet die Gruppennummer in der <em>Iconnummer</em> (wenn weggelassen, dann standardm&auml;&szlig;ig eine 1). Mit <strong>2</strong> beispielsweise wird das Standard-Icon aus der zweiten Icon-Gruppe verwendet. Dar&uuml;ber hinaus k&ouml;nnen in AutoHotkey_L negative Zahlen als Ressourcen-Bezeichner verwendet werden. Mit einem Sternchen (*) in <em>Dateiname</em> wird das Standard-Icon wiederhergestellt.</p>
+<p>Der letzte Parameter: Mit einer 1 im letzten Parameter wird das Icon blockiert, mit 0 wieder freigegeben (oder leer lassen, um den aktuellen Status zu belassen). Wenn das Icon blockiert wurde, dann haben <a href="Suspend.htm">Suspend</a> und <a href="Pause.htm">Pause</a> keinen Einfluss. Hinweis: Um das <em>aktuelle</em> Icon zu blockieren, verwendet eine 1 oder 0 im folgenden Beispiel: <em>Menu, Tray, Icon,,, 1</em></p>
+<p>Beim &Auml;ndern des Tray-Icons wird auch das Icon in <a href="InputBox.htm">InputBox</a>, <a href="Progress.htm">Progress</a> und danach erstellte <a href="Gui.htm">GUI</a>-Fenster ge&auml;ndert. <a href="../Scripts.htm#ahk2exe">Kompilierte Scripts</a> sind ebenfalls betroffen, selbst wenn ein benutzerdefiniertes Icon bei der Kompilierung angegeben wurde. Hinweis: Das &Auml;ndern des Icons macht das Tray-Icon nicht sichtbar, falls es vorher z. B. durch <a href="_NoTrayIcon.htm">#NoTrayIcon</a> versteckt wurde; verwendet stattdessen <em>Menu, Tray, Icon</em> (ohne Parameter).</p>
+<p><a name="distort"></a>Es k&ouml;nnen leichte Verformungen auftreten, wenn ein Icon ins Tray-Icon geladen wird, dass nicht von einer ICO-Datei stammt. Das gilt besonders f&uuml;r 16x16-Icons. Um das zu verhindern, speichert das gew&uuml;nschte Icon in eine ICO-Datei.</p>
+<p>Es gibt einige Icons in DLL- und CPL-Dateien des Betriebssystems, die n&uuml;tzlich sein k&ouml;nnten. Zum Beispiel: <em>Menu, Tray, Icon, Shell32.dll, 174 ; Den Pfad der DLL-Datei weglassen, damit es in Windows 9x auch funktioniert.</em></p>
+<p>Die internen Variablen <strong>A_IconNumber</strong> und <strong>A_IconFile</strong> enthalten die Nummer und Namen (mit vollem Pfad) des aktuellen Icons (beide sind leer, wenn Standard-Icon).</p>
+<p><strong>Icon</strong> (ohne Parameter): Erstellt das Tray-Icon, wenn noch nicht vorhanden. Dadurch wird <a href="_NoTrayIcon.htm">#NoTrayIcon</a> &uuml;berschrieben, falls im Script vorhanden.</p>
+<p><strong>NoIcon</strong>: Entfernt das Tray-Icon, wenn vorhanden. Wenn dieser Befehl ganz am Anfang des Scripts verwendet wird, dann ist das Tray-Icon m&ouml;glicherweise noch kurz sichtbar, wenn das Script gestartet wird. Um dies zu verhindern, verwendet stattdessen <a href="_NoTrayIcon.htm">#NoTrayIcon</a>. Die interne Variable <strong>A_IconHidden</strong> enth&auml;lt 1, wenn das Tray-Icon zurzeit versteckt ist, andernfalls 0.</p>
+<p><strong>Tip [, Text]</strong>: &Auml;ndert den ToolTip des Tray-Icons (wird angezeigt, wenn sich der Mauszeiger dar&uuml;ber befindet). Um einen mehrzeiligen ToolTip zu erstellen, verwendet das LF-Zeichen (`n) zwischen jeder Zeile, zum Beispiel Zeile1`nZeile2. Nur die ersten 127 Zeichen des <em>Textes</em> werden angezeigt, au&szlig;erdem wird <em>Text</em> beim ersten vorhandenen Tabulatorzeichen gek&uuml;rzt. Wenn <em>Text</em> nicht vorhanden ist, dann wird der Standard-Text wiederhergestellt. Die internen Variable <strong>A_IconTip</strong> enth&auml;lt den aktuellen Text des ToolTips (leer, wenn Standard-Text).</p>
+<h2>Verschiedene Befehle </h2>
+<p><strong><a name="Show"></a>Show [, X, Y]</strong>: Zeigt den <em>Men&uuml;namen</em> an und erlaubt dem Benutzer, ein Men&uuml;punkt mit den Pfeiltasten, Tastenkombinationen (unterstrichene Buchstaben) oder der Maus auszuw&auml;hlen. Jedes Men&uuml; kann angezeigt werden, einschlie&szlig;lich des Tray-Men&uuml;s, aber mit Ausnahme der Men&uuml;leiste des <a href="Gui.htm">GUI</a>-Fensters. Wenn sowohl X als auch Y weggelassen werden, wird das Men&uuml; an der aktuellen Position des Mauszeigers angezeigt. Wenn nur einer von denen weggelassen wird, dann wird die Position des Mauszeigers daf&uuml;r verwendet. Koordinaten beziehen sich auf das aktive Fenster. Sobald "<a href="CoordMode.htm">CoordMode</a>, Menu" davor angegeben wird, beziehen sich die Koordinaten auf dem ganzen Bildschirm.</p>
+<p><strong>Color, Farbwert [, Single]</strong>: &Auml;ndert die Hintergrundfarbe des Men&uuml;s. Der <em>Farbwert</em> enth&auml;lt eine Hauptfarbe oder einen 6-stelligen RGB-Wert (siehe <a href="Progress.htm#colors">Farbtabelle</a>). Lasst den <em>Farbwert</em> leer (oder verwendet das Wort Default), um die Standardfarbe des Men&uuml;s wiederherzustellen. Wenn das Wort Single nicht im n&auml;chsten Parameter vorhanden ist, dann werden auch die Farben aller Untermen&uuml;s in diesem Men&uuml; ge&auml;ndert. Dieser Befehl funktioniert nicht in Windows 95/NT.</p>
+<p><strong>Click, Klickanzahl</strong>: Verwendet die 1 in der <em>Klickanzahl</em>, um mit einem Klick den Standard-Men&uuml;punkt des Tray-Men&uuml;s zu aktivieren. Verwendet die 2 in der <em>Klickanzahl</em>, um das Standardverhalten wiederherzustellen (Doppelklick). Zum Beispiel: Menu, Tray, Click, 1 </p>
+<p><strong><a name="MainWindow"></a>MainWindow</strong>: Dieser Befehl beeinflusst nur <a href="../Scripts.htm#ahk2exe">kompilierte Scripts</a>. Damit kann das Hauptfenster des Scripts mittels dem Tray-Icon ge&ouml;ffnet werden, was normalerweise unm&ouml;glich ist. Dadurch werden auch Men&uuml;punkte wie "Lines most recently executed" im Hauptfenster aktiviert, womit der Quellcode des Scripts und andere Informationen eingesehen werden kann. <em>Men&uuml;name</em> muss TRAY sein. </p>
+<p><strong>NoMainWindow</strong> (Standard): Dieser Befehl beeinflusst nur <a href="../Scripts.htm#ahk2exe">kompilierte Scripts</a>. Damit wird das Standardverhalten des Scripts wiederhergestellt, das hei&szlig;t, dass das Hauptfenster nicht ge&ouml;ffnet werden kann. Selbst wenn diese Option aktiv ist, sind die folgenden Befehle immer noch in der Lage, das Hauptfenster anzuzeigen, falls sie sich w&auml;hrend der Laufzeit begegnen: <a href="ListLines.htm">ListLines</a>, <a href="ListVars.htm">ListVars</a>, <a href="ListHotkeys.htm">ListHotkeys</a> und <a href="KeyHistory.htm">KeyHistory</a>. <em>Men&uuml;name</em> muss TRAY sein.</p>
+<p><strong>UseErrorLevel [, off]</strong>: Wenn diese Option nie im Script verwendet wird, dann standardm&auml;&szlig;ig OFF. Mit OFF wird ein Dialogfenster angezeigt und der <a href="../misc/Threads.htm">aktuelle Thread</a> beendet, sobald der Men&uuml;befehl einen Fehler erzeugt. Mit <em>Menu, Tray, UseErrorLevel</em> wird das Anzeigen des Dialogfensters und das Beenden des Threads nicht durchgef&uuml;hrt, sondern <a href="../misc/ErrorLevel.htm">Errorlevel</a> bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt. Um diese Option wieder zu deaktivieren, verwendet OFF im n&auml;chsten Parameter. Diese Einstellung ist global, d. h. alle Men&uuml;s werden beeinflusst, nicht nur der <em>Men&uuml;name</em>.</p>
+<h2>Bemerkungen</h2>
+<p>Um <em>einen</em> Buchstaben in den Namen des Men&uuml;punkts zu unterstreichen, setzt ein kaufm&auml;nnisches Und (&) davor. Wenn das Men&uuml; angezeigt wird, dann kann solch ein Men&uuml;punkt ausgew&auml;hlt werden, wenn die entsprechende Taste auf der Tastatur gedr&uuml;ckt wird. Um stattdessen ein kaufm&auml;nnisches Und direkt anzuzeigen, verwendet zwei aufeinanderfolgende kaufm&auml;nnische Und-Zeichen wie in diesem Beispiel: Save && Exit</p>
+<p>Die Namen der Men&uuml;s und Men&uuml;punkte k&ouml;nnen bis zu 260 Zeichen lang sein.</p>
+<p>Bei einem vorhandenen Men&uuml; oder Men&uuml;punkt ist der Name nicht von der Gro&szlig;- und Kleinschreibung abh&auml;ngig, aber jedes kaufm&auml;nnische Und muss mit einbezogen werden. Zum Beispiel: &Open</p>
+<p>Trennlinien k&ouml;nnen hinzugef&uuml;gt werden, wenn <em>Menu, Tray, Add</em> verwendet wird (alle Parameter weglassen). Allerdings k&ouml;nnen Trennlinien derzeit nicht einzeln gel&ouml;scht werden. Verwendet als &Uuml;bergangsl&ouml;sung <em>Menu, Tray, DeleteAll</em> und f&uuml;gt danach die benutzerdefinierten Men&uuml;punkte neu hinzu. </p>
+<p>Neue Men&uuml;punkte werden immer ans untere Ende des Men&uuml;s hinzugef&uuml;gt. Beim Tray-Men&uuml;: Um die Men&uuml;punkte &uuml;ber den vorgegebenen Men&uuml;punkten anzuzeigen (nachdem die eigenen Men&uuml;punkte hinzugef&uuml;gt wurden), verwendet <em>Menu, Tray, NoStandard</em> und danach <em>Menu, Tray, Standard</em>.</p>
+<p>Die vorgegebenen Men&uuml;punkte wie "Pause Script" und "Suspend Hotkeys" k&ouml;nnen nicht von jedem Men&uuml;-Unterbefehl einzeln bearbeitet werden.</p>
+<p>Wenn ein Men&uuml; komplett leer ist (z. B. mithilfe von <em>Menu, EigenesMen&uuml;, DeleteAll</em>), dann kann es nicht angezeigt werden. Wenn das Tray-Men&uuml; leer ist, dann hat das Rechtsklicken oder das Doppelklicken auf das Tray-Icon keine Wirkung (in solchen F&auml;llen ist es normalerweise besser, <a href="_NoTrayIcon.htm">#NoTrayIcon</a> zu verwenden).</p>
+<p>Wenn die Subroutine des Men&uuml;punkts bereits l&auml;uft und der Benutzer den gleichen Men&uuml;punkt wieder ausw&auml;hlt, dann wird ein neuer <a href="../misc/Threads.htm">Thread</a> erstellt, der die gleiche Subroutine ausf&uuml;hrt und den vorherigen Thread unterbricht. Mit <a href="Critical.htm">Critical</a> auf der ersten Zeile der Subroutine k&ouml;nnen stattdessen solche Ereignisse zwischengespeichert werden (allerdings werden dadurch auch andere Threads z. B. beim Dr&uuml;cken eines Hotkeys zwischengespeichert/aufgeschoben).</p>
+<p>Sobald eine Subroutine mittels einem Men&uuml;punkt gestartet wird, werden die Standardwerte in den Einstellungen wie <a href="SendMode.htm">SendMode</a> verwendet. Diese k&ouml;nnen im <a href="../Scripts.htm#auto">automatischen Ausf&uuml;hrungsbereich</a> ge&auml;ndert werden.</p>
+<p>Die internen Variablen <a href="../Variables.htm#ThisMenuItem"><strong>A_ThisMenuItem</strong></a> und <a href="../Variables.htm#ThisMenuItemPos"><strong>A_ThisMenuItemPos</strong></a> enthalten den Namen und die Position des benutzerdefinierten Men&uuml;punkts, der zuletzt vom Benutzer ausgew&auml;hlt wurde (leer, wenn keiner ausgew&auml;hlt). Ebenso enth&auml;lt <strong>A_ThisMenu</strong> den Namen des Men&uuml;s, in dem <strong>A_ThisMenuItem</strong> ausgew&auml;hlt wurde. Diese Variablen sind n&uuml;tzlich, wenn ein Men&uuml; aufgebaut wird, dessen Inhalt nicht gleich bleibt. In einem solchen Fall ist es normalerweise am besten, dass alle diese Men&uuml;punkte auf das gleiche Label zur&uuml;ckgreifen, welches sich auf die oben genannten Variablen bezieht, um verschiedene Ma&szlig;nahmen zu ergreifen.</p>
+<p>Damit ein Script ohne Hotkey oder <a href="Gui.htm">GUI</a> aufrechterhalten wird (enth&auml;lt zum Beispiel nur benutzerdefinierte Men&uuml;s oder Men&uuml;punkte), verwendet <a href="_Persistent.htm">#Persistent</a>.</p>
+<h2>Verwandte Befehle</h2>
+<p><a href="Gui.htm">GUI</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread</a>, <a href="Critical.htm">Critical</a>, <a href="_NoTrayIcon.htm">#NoTrayIcon</a>, <a href="Gosub.htm">Gosub</a>, <a href="Return.htm">Return</a>, <a href="SetTimer.htm">SetTimer</a>, <a href="_Persistent.htm">#Persistent</a></p>
+<h2>Beispiele</h2>
+<pre class="NoIndent"><em>; BEISPIEL #1: Das ist ein funktionierendes Script, welches einen neuen Men&uuml;punkt ans Ende des Tray-Icon-Men&uuml;s hinzuf&uuml;gt.</em>
+
+#Persistent  <em>; H&auml;lt das Script aufrecht, bis der Benutzer es beendet.</em>
+Menu, Tray, Add  <em>; Erstellt eine Trennlinie.</em>
+Menu, Tray, Add, Element1, MenuHandler  <em>; Erstellt einen neuen Men&uuml;punkt.</em>
+Return
+
+MenuHandler:
+MsgBox Es wurde %A_ThisMenuItem% im Men&uuml; %A_ThisMenu% ausgew&auml;hlt.
+Return</pre>
+<p>&nbsp;</p>
+<pre class="NoIndent"><em>; BEISPIEL #2: Das ist ein funktionierendes Script, welches ein aufklappbares Men&uuml; erstellt, welches angezeigt wird, wenn der Benutzer den Hotkey Win+Z verwendet.</em>
+
+<em>; Erstellt ein aufklappbares Men&uuml; durch das Hinzuf&uuml;gen von Men&uuml;punkten.</em>
+Menu, EigenesMen&uuml;, Add, Element1, MenuHandler
+Menu, EigenesMen&uuml;, Add, Element2, MenuHandler
+Menu, EigenesMen&uuml;, Add  <em>; F&uuml;gt eine Trennlinie hinzu.</em>
+
+<em>; Erstellt ein anderes Men&uuml;, dass als Untermen&uuml; verwendet wird.</em>
+Menu, Submenu1, Add, Element1, MenuHandler
+Menu, Submenu1, Add, Element2, MenuHandler
+
+<em>; Erstellt ein Untermen&uuml; im ersten Men&uuml;punkt (mit einem nach rechts gerichteten Pfeil). Wenn der Benutzer diesen Men&uuml;punkt ausw&auml;hlt, dann wird ein zweites Men&uuml; angezeigt.</em>
+Menu, EigenesMen&uuml;, Add, Eigenes Untermen&uuml;, :Submenu1
+
+Menu, EigenesMen&uuml;, Add  <em>; F&uuml;gt eine Trennlinie unter dem Untermen&uuml; hinzu.</em>
+Menu, EigenesMen&uuml;, Add, Element3, MenuHandler  <em>; F&uuml;gt einen anderen Men&uuml;punkt unter dem Untermen&uuml; hinzu.</em>
+Return <em>; Ende des automatischen Ausf&uuml;hrungsbereichs.</em>
+
+MenuHandler:
+MsgBox Es wurde %A_ThisMenuItem% im Men&uuml; %A_ThisMenu% ausgew&auml;hlt.
+Return
+
+#z::Menu, EigenesMen&uuml;, Show  <em>; Win+Z dr&uuml;cken, um das Men&uuml; anzuzeigen.</em></pre>
+<p>&nbsp;</p>
+<pre class="NoIndent"><em>; BEISPIEL #3: Das ist ein funktionierendes Script, welches einige Men&uuml;befehle demonstriert.</em>
+
+#Persistent
+#SingleInstance
+Menu, Tray, Add <em>; Trennlinie</em>
+Menu, Tray, Add, TestToggle&Check
+
+Menu, Tray, Add, TestToggleEnable
+Menu, Tray, Add, TestDefault
+Menu, Tray, Add, TestStandard
+Menu, Tray, Add, TestDelete
+Menu, Tray, Add, TestDeleteAll
+Menu, Tray, Add, TestRename
+Menu, Tray, Add, Test
+Return
+
+<em>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</em>
+
+TestToggle&Check:
+
+Menu, Tray, ToggleCheck, TestToggle&Check
+
+Menu, Tray, Enable, TestToggleEnable <em>; Aktiviert auch den n&auml;chsten Test, da es selbst seine Deaktivierung nicht r&uuml;ckg&auml;ngig machen kann.</em>
+Menu, Tray, Add, TestDelete <em>; Das Gleiche wie oben.</em>
+Return
+
+TestToggleEnable:
+Menu, Tray, ToggleEnable, TestToggleEnable
+Return
+
+TestDefault:
+If default = TestDefault
+{
+    Menu, Tray, NoDefault
+    default =
+}
+Else
+{
+    Menu, Tray, Default, TestDefault
+    default = TestDefault
+}
+Return
+
+TestStandard:
+If standard &lt;&gt; n
+{
+    Menu, Tray, NoStandard
+    standard = n
+}
+Else
+{
+    Menu, Tray, Standard
+    standard = y
+}
+Return
+
+TestDelete:
+Menu, Tray, delete, TestDelete
+Return
+
+TestDeleteAll:
+Menu, Tray, DeleteAll
+Return
+
+TestRename:
+If Neuname &lt;&gt; renamed
+{
+    Altname = TestRename
+    Neuname = renamed
+}
+Else
+{
+    Altname = renamed
+    Neuname = TestRename
+}
+Menu, Tray, rename, %Altname%, %Neuname%
+Return
+
+Test:
+MsgBox Es wurde %A_ThisMenuItem% im Men&uuml; %A_ThisMenu% ausgew&auml;hlt.
+Return</pre>
+<pre class="NoIndent"><em>; BEISPIEL #4: Das ist ein funktionierendes Script, welches Icons in Men&uuml;punkten hinzuf&uuml;gt.</em>
+Menu, Dateimen&uuml;, Add, Script-Icon, MenuHandler
+Menu, Dateimen&uuml;, Add, Sperren-Icon, MenuHandler
+Menu, Dateimen&uuml;, Add, Pause-Icon, MenuHandler
+Menu, Dateimen&uuml;, Icon, Script-Icon, %A_AhkPath%, 2 <em>; Verwendet das 2. Icon der Datei.</em>
+Menu, Dateimen&uuml;, Icon, Sperren-Icon, %A_AhkPath%, -206 <em>; Verwendet das Icon mit dem Ressourcen-Bezeichner 206.</em>
+Menu, Dateimen&uuml;, Icon, Pause-Icon, %A_AhkPath%, -207 <em>; Verwendet das Icon mit dem Ressourcen-Bezeichner 207.</em>
+Menu, EigeneMen&uuml;leiste, Add, &Datei, :Dateimen&uuml;
+Gui, Menu, EigeneMen&uuml;leiste
+Gui, Add, Button, gExit, Dieses Beispiel beenden
+Gui, Show
+MenuHandler:
+Return
+
+Exit:
+ExitApp
+
+</pre>
+</body>
+</html>

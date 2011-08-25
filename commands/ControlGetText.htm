@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>ControlGetText</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>ControlGetText</h1>
+
+<p>Ermittelt den Text eines Steuerelements. </p>
+
+<pre class="Syntax">ControlGetText, Ausgabevariable [, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td width="15%">Ausgabevariable</td>
+    <td width="85%"><p>Der Name der Variable, die den ermittelten Text enth&auml;lt.</p>    </td>
+  </tr>
+  <tr>
+    <td>Steuerelement</td>
+    <td><p>M&ouml;glich ist entweder ClassNN (Klassenname und Instanznummer des Steuerelements) oder Name/Text des Steuerelements, die beide mit Windows Spy ermittelt werden k&ouml;nnen. Wenn Name/Text verwendet wird, wird das &Uuml;bereinstimmungsverhalten mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> bestimmt. Wenn dieser Parameter nicht vorhanden oder leer ist, dann wird das oberste Steuerelement des Fensters benutzt.</p>
+    <p>F&uuml;r das HWND eines Steuerelements (Windows Handle) wird der <em>Steuerelement</em>-Parameter leer gelassen und <em>ahk_id %SteuerelementHwnd%</em> im <em>Fenstertitel</em>-Parameter angegeben (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist). Das HWND eines Steuerelements wird &uuml;blicherweise mittels <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p></td>
+  </tr>
+  <tr>
+    <td>Fenstertitel</td>
+    <td>Der Titel oder Teiltitel des Fensters (das &Uuml;bereinstimmungsverhalten wird mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> bestimmt). Wenn dieser und die n&auml;chsten 3 Parameter nicht vorhanden sind, dann wird das <a href="../LastFoundWindow.htm">zuletzt gefundene Fenster</a> verwendet. Wenn dieser den Buchstaben A enth&auml;lt und die n&auml;chsten 3 Parameter nicht vorhanden sind, dann wird das aktive Fenster verwendet. Bei Verwendung einer Fensterklasse muss ahk_class ExakterKlassenname angegeben werden (wird von Windows Spy angezeigt). Bei Verwendung einer <a href="Process.htm">Prozess-Kennung (PID)</a> muss ahk_pid %VariableMitPID% angegeben werden. Bei Verwendung einer <a href="GroupAdd.htm">Fenstergruppe</a> muss ahk_group Gruppenname angegeben werden. Bei Verwendung einer <a href="WinGet.htm">eindeutigen ID-Nummer</a> eines Fensters muss ahk_id %VariableMitID% angegeben werden. Die Suche kann durch Angabe <a href="../LastFoundWindow.htm#multi">mehrerer Kriterien</a> eingeschr&auml;nkt werden. Zum Beispiel: <em>Eigene Datei.txt ahk_class Notepad</em></td>
+  </tr>
+  <tr>
+    <td>Fenstertext</td>
+    <td>Wenn vorhanden, dann muss dieser Parameter einen Teil der einzelnen Textelemente des Fensters enthalten (wird von Windows Spy angezeigt). Versteckte Textelemente werden erfasst, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> aktiv ist.</td>
+  </tr>
+  <tr>
+    <td>Titelausnahme</td>
+    <td>Fenstertitel mit diesem Wert werden nicht ber&uuml;cksichtigt.</td>
+  </tr>
+  <tr>
+    <td>Textausnahme</td>
+    <td>Fenstertexte mit diesem Wert werden nicht ber&uuml;cksichtigt.</td>
+  </tr>
+</table>
+
+<h3>ErrorLevel</h3>
+<p>Bei Problemen wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt, ansonsten enth&auml;lt ErrorLevel eine 0.</p>
+<h3>Bemerkungen</h3>
+<p>Hinweis: Um Text aus einem ListView-, ListBox- oder ComboBox-Steuerelement zu ermitteln, verwendet stattdessen <a href="ControlGet.htm#List">ControlGet List</a>.</p>
+<p>Wenn der ermittelte Text gek&uuml;rzt (unvollst&auml;ndig) erscheint, dann muss <a href="VarSetCapacity.htm">VarSetCapacity(Ausgabevariable, 55)</a> vor ControlGetText verwenden werden [55 sollte durch eine wesentlich gr&ouml;&szlig;ere Zahl als die L&auml;nge des Textes ersetzt werden]. Das ist notwendig, weil einige Anwendungen nicht richtig auf die WM_GETTEXTLENGTH-Nachricht reagieren, dass zur Folge hat, dass AutoHotkey die Ausgabevariable zu klein macht, um den ganzen Text zu speichern.</p>
+<p>Die Menge des ermittelten Textes ist auf die Maximalkapazit&auml;t einer Variable begrenzt (die &uuml;ber die <a href="_MaxMem.htm">#MaxMem</a>-Anweisung ge&auml;ndert werden kann). Folglich k&ouml;nnte dieser Befehl eine gro&szlig;e Menge an RAM erzeugen, wenn das Steuerelement (z. B. ein Editor mit einem ge&ouml;ffneten umfangreichen Dokument) eine gro&szlig;e Menge an Text beinhaltet. Allerdings kann der Speicher der Variable geleert werden, indem man ihr nichts zuteilt, d. h. Ausgabevariable := ""</p>
+<p>Die ermittelten Texte von den meisten Steuerelementen verwenden am Ende jeder Zeile eher CR und LF (`r`n), als ein einzelnes LF (`n).</p>
+<p>Es ist nicht notwendig, <em>SetTitleMatchMode Slow</em> zu verwenden, weil ControlGetText den Text immer mithilfe der langsamen Methode ermittelt (da es mit einem breiteren Bereich von Steuerelementarten funktioniert).</p>
+<p>Um eine Liste mit Steuerelementen von einem Fenster zu erhalten, verwendet <a href="WinGet.htm#ControlList">WinGet ControlList</a>.</p>
+<p>Fenstertitel und -texte sind von der Gro&szlig;- und Kleinschreibung abh&auml;ngig. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="ControlSetText.htm">ControlSetText</a>, <a href="WinGetText.htm">WinGetText</a>, <a href="Control.htm">Control</a>, <a href="ControlGet.htm">ControlGet</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="_MaxMem.htm">#MaxMem</a></p>
+<h3>Beispiel</h3>
+<pre class="NoIndent">ControlGetText, Ausgabevariable, Edit1, Unbenannt -</pre>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>WinGetText</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>WinGetText</h1>
+
+<p>Ermittelt den Text des angegebenen Fensters.</p>
+
+<pre class="Syntax">WinGetText, Ausgabevariable [, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td width="15%">Ausgabevariable</td>
+    <td width="85%">Der Name der Variable, die den ermittelten Text enth&auml;lt.</td>
+  </tr>
+  <tr>
+    <td>Fenstertitel</td>
+    <td>Der Titel oder Teiltitel des Fensters (das &Uuml;bereinstimmungsverhalten wird mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> bestimmt). Wenn dieser und die n&auml;chsten 3 Parameter nicht vorhanden sind, dann wird das <a href="../LastFoundWindow.htm">zuletzt gefundene Fenster</a> verwendet. Wenn dieser den Buchstaben A enth&auml;lt und die n&auml;chsten 3 Parameter nicht vorhanden sind, dann wird das aktive Fenster verwendet. Bei Verwendung einer Fensterklasse muss ahk_class ExakterKlassenname angegeben werden (wird von Windows Spy angezeigt). Bei Verwendung einer <a href="Process.htm">Prozess-Kennung (PID)</a> muss ahk_pid %VariableMitPID% angegeben werden. Bei Verwendung einer <a href="GroupAdd.htm">Fenstergruppe</a> muss ahk_group Gruppenname angegeben werden. Bei Verwendung einer <a href="WinGet.htm">eindeutigen ID-Nummer</a> eines Fensters muss ahk_id %VariableMitID% angegeben werden. Die Suche kann durch Angabe <a href="../LastFoundWindow.htm#multi">mehrerer Kriterien</a> eingeschr&auml;nkt werden. Zum Beispiel: <em>Eigene Datei.txt ahk_class Notepad</em></td>
+  </tr>
+  <tr>
+    <td>Fenstertext</td>
+    <td>Wenn vorhanden, dann muss dieser Parameter einen Teil der einzelnen Textelemente des Fensters enthalten (wird von Windows Spy angezeigt). Versteckte Textelemente werden erfasst, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> aktiv ist.</td>
+  </tr>
+  <tr>
+    <td>Titelausnahme</td>
+    <td>Fenstertitel mit diesem Wert werden nicht ber&uuml;cksichtigt.</td>
+  </tr>
+  <tr>
+    <td>Textausnahme</td>
+    <td>Fenstertexte mit diesem Wert werden nicht ber&uuml;cksichtigt.</td>
+  </tr>
+</table>
+
+<h3>ErrorLevel</h3>
+<p>Bei Problemen wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt, ansonsten enth&auml;lt ErrorLevel eine 0.</p>
+<h3>Bemerkungen</h3>
+<p>Der Text ist f&uuml;r gew&ouml;hnlich der Text, der im Windows Spy f&uuml;r das Fenster angezeigt wird. Wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> ausgeschaltet wurde, dann wird der versteckte Text in der <em>Ausgabevariable</em> weggelassen.</p>
+<p>Jedes Textelement endet mit einem CR- und LF-Zeichen, die im Script als `r`n dargestellt werden k&ouml;nnen. Um bestimmte Zeilen oder Teilstrings zu extrahieren, verwendet Befehle wie <a href="StringGetPos.htm">StringGetPos</a> und <a href="StringMid.htm">StringMid</a>. Eine <a href="LoopParse.htm">Parsing-Schleife</a> kann auch verwendet werden, um jede Zeile oder jedes Wort nacheinander zu &uuml;berpr&uuml;fen.</p>
+<p>Wenn der ermittelte Text scheinbar unvollst&auml;ndig ist, versucht es mit <a href="VarSetCapacity.htm">VarSetCapacity(Ausgabevariable, 55)</a> vor WinGetText [ersetzt 55 mit einer Gr&ouml;&szlig;e, die wesentlich l&auml;nger als der gek&uuml;rzte Text ist]. Das ist notwendig, weil einige Anwendungen nicht richtig auf die WM_GETTEXTLENGTH-Nachricht reagieren, dass zur Folge hat, dass AutoHotkey die Ausgabevariable zu klein macht, um den ganzen Text zu speichern.</p>
+<p>Die Menge des ermittelten Textes ist auf die Maximalkapazit&auml;t einer Variable begrenzt (die &uuml;ber die <a href="_MaxMem.htm">#MaxMem</a>-Anweisung ge&auml;ndert werden kann). Folglich k&ouml;nnte dieser Befehl eine gro&szlig;e Menge an RAM erzeugen, wenn das Zielfenster (z. B. ein Editor mit einem ge&ouml;ffneten umfangreichen Dokument) eine gro&szlig;e Menge an Text beinhaltet. Es ist m&ouml;glich, mit <a href="ControlGetText.htm">ControlGetText</a> nur Teile des Fenstertextes abzurufen, um dieses Problem zu umgehen. In jedem Fall kann der Speicher der Variable nach ihrer Verwendung freigegeben werden, indem man ihr nichts zuweist, z. B. Ausgabevariable =</p>
+<p>Windows 95/98/ME limitiert m&ouml;glicherweise einige Textelemente von bestimmten Fenstern auf 64 KB.</p>
+<p>Um eine Liste mit Steuerelementen von einem Fenster zu erhalten, befolgt dieses Beispiel: <a href="WinGet.htm">WinGet</a>, Ausgabevariable, Steuerelementliste, Fenstertitel</p>
+<p>Fenstertitel und -texte sind von der Gro&szlig;- und Kleinschreibung abh&auml;ngig. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
+
+<h3>Verwandte Befehle</h3>
+<p><a href="ControlGetText.htm">ControlGetText</a>, <a href="WinGetActiveStats.htm">WinGetActiveStats</a>, <a href="WinGetActiveTitle.htm">WinGetActiveTitle</a>, <a href="WinGetTitle.htm">WinGetTitle</a>, <a href="WinGetPos.htm">WinGetPos</a>, <a href="_MaxMem.htm">#MaxMem</a></p>
+<h3>Beispiel</h3>
+<pre class="NoIndent">Run, Calc.exe
+WinWait, Rechner
+WinGetText, Text <em>; Das zuletzt gefundene Fenster wird verwendet.</em>
+MsgBox, Der Text ist:`n%text%</pre>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Critical</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>Critical</h1>
+
+<p>Verhindert, dass der <a href="../misc/Threads.htm">aktuelle Thread</a> von anderen Threads unterbrochen wird.</p>
+
+<pre class="Syntax">Critical [, Off]
+Critical 50 <em>; Siehe <a href="#Interval">Bemerkungen</a>. </em></pre>
+<p>Wenn der erste Parameter nicht vorhanden ist (oder "On" enth&auml;lt), dann wird der <a href="../misc/Threads.htm">aktuelle Thread</a> kritisch gemacht, d. h. das dieser Thread nicht von anderen Threads unterbrochen werden kann. Wenn der erste Parameter "Off" enth&auml;lt (oder die Nummer 0 seit v1.0.48), dann kann der aktuelle Thread sofort unterbrochen werden, unabh&auml;ngig der Einstellungen von "<a href="Thread.htm">Thread Interrupt</a>".</p>
+<p>Im Gegensatz zu Threads mit <a href="../misc/Threads.htm">hoher Priorit&auml;t</a> werden Ereignisse w&auml;hrend eines kritischen Threads nicht verworfen. Wenn der Benutzer beispielsweise einen <a href="../Hotkeys.htm">Hotkey</a> dr&uuml;ckt, w&auml;hrend der aktuelle Thread kritisch ist, dann wird dieser Hotkey auf unbestimmte Zeit zwischengespeichert, bis der aktuelle Thread beendet oder unkritisch wird. Danach wird der Hotkey als neuer Thread ausgef&uuml;hrt.</p>
+<p>Ein kritischer Thread wird bei Notf&auml;llen unterbrochen. Notf&auml;lle sind: 1) die <a href="OnExit.htm">OnExit</a>-Subroutine; 2) irgendeine <a href="OnMessage.htm">OnMessage()</a>-Funktion, die eine Nachrichtennummer weniger als 0x312 &uuml;berwacht (oder ein <a href="RegisterCallback.htm">Callback</a>, der von so einer Nachricht ausgel&ouml;st wird); und 3) irgendein <a href="RegisterCallback.htm">Callback</a>, der indirekt vom kritischen Thread selbst ausgel&ouml;st wird (z. B. mittels <a href="PostMessage.htm">SendMessage</a> oder <a href="DllCall.htm">DllCall</a>). Um diese Unterbrechungen zu vermeiden, deaktiviert vor&uuml;bergehend solche Funktionen.</p>
+<p>Wenn zwischengespeicherte Ereignisse darauf warten, neue Threads zu starten, dann f&uuml;hrt "Critical Off" nicht zu einer sofortigen Unterbrechung des aktuellen Threads. Daher werden erst durchschnittlich 5 ms vergehen, bevor eine Unterbrechung stattfindet. Dadurch ist es zu mehr als 99,999 % wahrscheinlich, dass mindestens eine Zeile nach "Critical Off" ausgef&uuml;hrt wird, bevor eine Unterbrechung erfolgt. Unterbrechungen k&ouml;nnen sofort mithilfe einer Verz&ouml;gerung wie <a href="Sleep.htm">Sleep -1</a> oder <a href="WinWait.htm">WinWait</a> erzwungen werden.</p>
+<p>Ein kritischer Thread wird unterbrochen, wenn eine <a href="MsgBox.htm">MsgBox</a> oder ein anderes Dialogfenster angezeigt ist. Im Gegensatz zu <a href="Thread.htm">"Thread Interrupt"</a> wird der Thread wieder kritisch, nachdem der Benutzer das Dialogfenster schlie&szlig;t.</p>
+<p>Siehe <a href="../Variables.htm#IsCritical">A_IsCritical</a> f&uuml;r das Speichern und Wiederherstellen der aktuellen Einstellung von Critical. Da Critical aber eine thread-spezifische Einstellung ist, wird der nachfolgende/wieder aufgenommene Thread (sofern vorhanden) automatisch unkritisch, wenn ein kritischer Thread endet. Folglich gibt es keinen Grund "Critical Off" am Ende eines Threads einzuf&uuml;gen.</p>
+<p>Wenn Critical nicht im automatischen Ausf&uuml;hrungsbereich (oberster Teil des Scripts) ausgef&uuml;hrt wird, dann starten alle Threads unkritisch (obwohl die Einstellungen von <a href="Thread.htm">"Thread Interrupt"</a> noch verwendet werden). Wenn im Gegensatz dazu Critical im automatischen Ausf&uuml;hrungsbereich aktiviert ist, dann startet jeder neu ausgef&uuml;hrte <a href="../misc/Threads.htm">Thread</a> (z. B. <a href="../Hotkeys.htm">Hotkey</a>, <a href="Menu.htm">benutzerdefinierter Men&uuml;punkt</a> oder <a href="SetTimer.htm">zeitlich festgelegte</a> Subroutine) kritisch.</p>
+<p>Der Befehl "<a href="Thread.htm">Thread NoTimers</a>" ist vergleichbar mit Critical, au&szlig;er dass nur Unterbrechungen von <a href="SetTimer.htm">Timers</a> verhindert werden.</p>
+<p>Seit v1.0.47 tritt <a href="SetBatchLines.htm"><em>SetBatchLines -1</em></a> f&uuml;r den <a href="../misc/Threads.htm">aktuellen Thread</a> in Effekt, wenn Critical aktiviert wird.</p>
+<p><a name="Interval"></a>Seit v1.0.47 kann Critical auch aktiviert werden, wenn der erste Parameter eine positive Zahl enth&auml;lt (z. B. <em>Critical 30</em>). Dadurch wird das &Uuml;berpr&uuml;fungsintervall (in ms) in der internen Nachrichtenwarteschlange ge&auml;ndert. Wenn nicht spezifiziert, dann werden die Nachrichten bei "Critical On" alle 16 ms &uuml;berpr&uuml;ft, bei "Critical Off" alle 5 ms. Bei Erh&ouml;hung des Intervalls wird die Ankunft von Nachrichten/Ereignissen zwischengespeichert, um dem <a href="../misc/Threads.htm">aktuellen Thread</a> mehr Ausf&uuml;hrungszeit zu verschaffen. Dadurch ist die Chance gering, dass bestimmte <a href="OnMessage.htm">OnMessage()</a>- und <a href="Gui.htm#DefaultWin">GUI-Ereignisse</a> aufgrund von "Thread wird bereits ausgef&uuml;hrt" verloren gehen. Wartende Befehle (z. B. <a href="Sleep.htm">Sleep</a> und <a href="WinWait.htm">WinWait</a>) werden Nachrichten ohne R&uuml;cksicht auf diese Einstellung &uuml;berpr&uuml;fen (als &Uuml;bergangsl&ouml;sung kann <em>DllCall("Sleep", UInt, 500)</em> verwendet werden). Hinweis: Wird das Intervall der Nachrichten&uuml;berpr&uuml;fung zu stark erh&ouml;ht, dann wird die Reaktionsf&auml;higkeit von verschiedenen Ereignissen m&ouml;glicherweise reduziert (z. B. bei der grafischen Erstellung eines <a href="Gui.htm">GUI</a>-Fensters).</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="Thread.htm">Thread (Befehl), </a><a href="../misc/Threads.htm">Threads</a>, <a href="_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a>, <a href="_MaxThreadsBuffer.htm">#MaxThreadsBuffer</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="Hotkey.htm">Hotkey</a>, <a href="Menu.htm">Menu</a>, <a href="SetTimer.htm">SetTimer</a></p>
+<h3>Beispiel</h3>
+<pre class="NoIndent">#space::  <em>; Hotkey: Win+Leertaste</em>
+Critical
+ToolTip Es wird kein neuer Thread gestartet, solange dieser ToolTip nicht verschwindet.
+Sleep 3000
+ToolTip  <em>; ToolTip ausschalten.</em>
+Return  <em>; Beendet den Thread. Jeder nachfolgender Thread ist laut Definition unkritisch.</em></pre>
+
+</body>
+</html>

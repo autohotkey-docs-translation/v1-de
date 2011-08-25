@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>ComObjFlags()</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+
+<h1>ComObjFlags() <span class="ver">[v1.0.96.00+]</span></h1>
+<p>Ermittelt oder &auml;ndert Flags, die das Verhalten eines COM-Wrapper-Objekts kontrollieren.</p>
+<pre class="Syntax">Flags := ComObjFlags(ComObject [, NeueFlags, Maske])</pre>
+
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td>ComObject</td>
+    <td>Ein COM-Wrapper-Objekt.</td>
+  </tr>
+  <tr>
+    <td>NeueFlags</td>
+    <td>Neue Werte f&uuml;r die Flags, die durch die <i>Maske</i> gekennzeichnet werden, oder Flags, die hinzugef&uuml;gt oder entfernt werden.</td>
+  </tr>
+  <tr>
+    <td>Maske</td>
+    <td>Eine Bitmaske von Flags, um sie zu &auml;ndern.</td>
+  </tr>
+  <tr>
+    <td>Flags</td>
+    <td>Alle Flags von <i>ComObject</i> (nachdem <i>NeueFlags</i> angewendet wurde, falls angegeben).</td>
+  </tr>
+</table>
+
+<h3>Flags</h3>
+<table class="info">
+  <tr>
+    <td>F_OWNVALUE<br>1</td>
+    <td>Beeinflusst zurzeit nur SafeArrays. Wenn dieses Flag gesetzt wird, dann wird das SafeArray zerst&ouml;rt, wenn das Wrapper-Objekt freigegeben wird. Da SafeArrays nicht konstruiert wurden, um mehrere Referenzen zu unterst&uuml;tzen, wenn das SafeArray mit diesem Flag einem Element eines anderen SafeArray zugewiesen wird, dann wird eine separate Kopie erstellt.</td>
+  </tr>
+</table>
+
+<h3>Allgemeine Bemerkungen</h3>
+<p>Wenn die <i>Maske</i> weggelassen wird, dann bestimmt <i>NeueFlags</i> die Flags, die hinzugef&uuml;gt (falls positiv) oder entfernt (falls negativ) werden. Zum Beispiel entfernt <code>ComObjFlags(obj, -1)</code> das F_OWNVALUE-Flag. Verwendet f&uuml;r die <i>Maske</i> nur 0 oder 1, alle anderen Bits sind f&uuml;r die zuk&uuml;nftige Verwendung reserviert.</p>
+
+<h3>Verwandte Befehle</h3>
+<p><a href="ComObjActive.htm">ComObjActive</a>, <a href="ComObjArray.htm">ComObjArray</a></p>
+
+<h3>Beispiele</h3>
+<pre class="NoIndent"><em>; Beispiel: &Uuml;berpr&uuml;ft die Existenz vom F_OWNVALUE-Flag.</em>
+
+arr := ComObjArray(0xC, 1)
+If ComObjFlags(arr) & 1
+    MsgBox arr wird automatisch zerst&ouml;rt.
+Else
+    MsgBox arr wird nicht automatisch zerst&ouml;rt.
+
+</pre>
+
+<pre class="NoIndent"><em>; Beispiel: &Auml;ndert das Array-im-Array-Verhalten.</em>
+
+arr1 := ComObjArray(0xC, 3)
+arr2 := ComObjArray(0xC, 1)
+arr2[0] := "originaler Wert"
+arr1[0] := arr2         <em>; Indirekte Kopie zuweisen.</em>
+ComObjFlags(arr2, -1)   <em>; Entfernt F_OWNVALUE.</em>
+arr1[1] := arr2         <em>; Originales Array zuweisen.</em>
+arr1[2] := arr2.Clone() <em>; Direkte Kopie zuweisen.</em>
+arr2[0] := "neuer Wert"
+for arr in arr1
+    MsgBox % arr[0]
+
+arr1 := ""
+<em>; Seit arr2 == arr1[1] ung&uuml;ltig, dass zerst&ouml;rt wurde:
+;  arr2[0] := "foo"</em>
+</pre>
+
+</body>
+</html>

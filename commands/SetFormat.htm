@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>SetFormat</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>SetFormat</h1>
+
+<p>Bestimmt das Format von Integer- und und Flie&szlig;kommazahlen, die durch mathematische Operationen erzeugt wurden.</p>
+
+<pre class="Syntax">SetFormat, Zahlentyp, Format </pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td width="15%"><p>Zahlentyp</p>    </td>
+    <td width="85%"><p>Muss entweder IntegerFast, FloatFast, Integer oder Float sein (die zwei schnellen Modi ben&ouml;tigen v1.0.48+; siehe <a href="#Fast">Anmerkungen</a>).</p>    </td>
+  </tr>
+  <tr>
+    <td>Format</td>
+    <td><p>Wenn der <em>Zahlentyp</em> Integer oder IntegerFast ist, dann kann H oder HEX f&uuml;r hexadezimal, oder D f&uuml;r dezimal angegeben werden. Hexadezimalzahlen beginnen mit dem 0x-Pr&auml;fix (z. B. 0xFF). <span class="ver">[AHK_L 42+]:</span> Mit <code>h</code> werden die Ziffern von A bis F bei hexadezimalen Integer-Zahlen in Kleinbuchstaben und mit <code>H</code> in Gro&szlig;buchstaben umgewandelt.</p>
+      <p><a name="sci" id="sci"></a>Wenn der <em>Zahlentyp</em> Float oder FloatFast ist, dann kann <em>Gesamtbreite<strong>.</strong>Dezimalstellen</em> angegeben werden (z. B. 0.6). Seit v1.0.46.11 kann der Buchstabe "e" f&uuml;r die wissenschaftliche Notation verwendet werden, z.B. 0.6e oder 0.6E (wenn gro&szlig;geschrieben, dann wird ein gro&szlig;geschriebenes E in jeder Zahl erzeugt). Hinweis: In AutoHotkey 1.x muss die wissenschaftliche Notation einen Dezimalpunkt enthalten, z. B. 1.0e1, aber nicht 1e1.</p>
+      <p>Die <em>Gesamtbreite</em> ist normalerweise 0, um anzuzeigen, dass die Zahl nicht mit Nullen oder Leerzeichen aufgef&uuml;llt werden soll. Wenn ein h&ouml;herer Wert verwendet wird, dann werden Zahlen mit Leerzeichen oder Nullen aufgef&uuml;llt (siehe <a href="#Float">Bemerkungen</a>), um sie breit zumachen.</p>
+    <p><em><a name="DecimalPlaces"></a>Dezimalstellen</em> ist die Anzahl der anzuzeigenden Dezimalstellen (Rundung erfolgt). Wenn leer oder 0, dann wird weder der Dezimalteil noch der Dezimalpunkt angezeigt, das hei&szlig;t, Flie&szlig;komma-Ergebnisse werden als Integer-Zahlen und nicht als Flie&szlig;kommazahlen angezeigt. Der Standardwert ist 6.</p>
+    <p>Padding: Wenn die <em>Gesamtbreite</em> f&uuml;r das Auff&uuml;llen hoch genug ist, dann werden Leerzeichen zur linken Seite hinzugef&uuml;gt, das hei&szlig;t, jede Zahl wird rechtsb&uuml;ndig ausgerichtet. Mit einem Minuszeichen vor der <em>Gesamtbreite</em> wird die Zahl stattdessen linksb&uuml;ndig ausgerichtet. Mit einer 0 vor der <em>Gesamtbreite</em> (z. B. 06.2) wird die Zahl mit Nullen anstelle von Leerzeichen aufgef&uuml;llt.</p></td>
+  </tr>
+</table>
+
+<h3 id="Fast">Der Vergleich vom Fast- und Slow-Modus</h3>
+Seit v1.0.48 kann IntegerFast anstelle von Integer und FloatFast anstelle von Float verwendet werden.
+<ul>
+<li><strong>Vorteile</strong>: Der schnelle Modus hilft den Variablen, Integer- und Flie&szlig;kommazahlen zwischenzuspeichern, um numerisch-intensive Operationen wesentlich zu beschleunigen. Im Gegensatz dazu zwingt der langsame Modus alle numerischen Ergebnisse, sofort umgewandelt und als String gespeichert zu werden.</li>
+<li><strong><a name="FastDisadv"></a>Nachteile</strong>: Wenn eine Zahl in eine Variable gespeichert wird, dann verz&ouml;gert der schnelle Modus die Auswirkungen von SetFormat, bis das Script tats&auml;chlich eine Text/String-Version dieser Variable ben&ouml;tigt (z. B. um eine <a href="MsgBox.htm">MsgBox</a> anzuzeigen). Da m&ouml;glicherweise zurzeit ein anderes SetFormat aktiv ist (z. B. mehr oder weniger Dezimalstellen), kann dies zu unerwarteten Ergebnissen f&uuml;hren. Damit das aktuelle schnelle Format sofort wirksam wird, verwendet eine Operation wie <em>HexWert <strong>.</strong>= ""</em>, welche einen leeren String an der Zahl anf&uuml;gen, die zurzeit in <em>HexWert</em> gespeichert ist.</li>
+</ul>
+<p>Wenn der langsame Modus "Integer" oder "Float" irgendwo im Script verwendet wird, selbst wenn diese Zeile mit SetFormat nie ausgef&uuml;hrt wird, dann wird jeweils das Zwischenspeichern von Integer- oder Flie&szlig;kommazahlen beim Ausf&uuml;hren des Scripts deaktiviert.</p>
+<h3 id="Float">Flie&szlig;komma-Format</h3>
+<p>Seit v1.0.48 haben Flie&szlig;komma-Variablen eine Genauigkeit von 15 Stellen, es sei denn, <em>SetFormat Float</em> (der langsame Modus) ist irgendwo im Script vorhanden. In diesem Fall wird die Genauigkeit von Flie&szlig;kommazahlen mit den <a href="#DecimalPlaces"><em>Dezimalstellen</em></a> festgelegt (wie in den Versionen vor 1.0.48). Mit anderen Worten: Sobald ein Flie&szlig;komma-Ergebnis in eine Variable gespeichert wird, geht die zus&auml;tzliche Genauigkeit verloren und kann nicht wieder verwendet werden, ohne dabei z. B. <em>SetFormat, Float, 0.15</em> nochmals zusetzen. Um den Verlust der Genauigkeit zu verhindern, vermeidet <em>SetFormat Float</em> irgendwo im Script oder verwendet stattdessen <a href="#Fast"><em>SetFormat FloatFast</em></a>.</p>
+<p>Unabh&auml;ngig davon, ob der langsame oder schnelle Modus aktiv ist, werden Flie&szlig;komma-Ergebnisse und Variablen um <a href="#DecimalPlaces"><em>Dezimalstellen</em></a> Stellen abgerundet, sobald sie angezeigt oder in einem String umgewandelt werden (z. B. <a href="MsgBox.htm">MsgBox</a> oder <a href="FileAppend.htm">FileAppend</a>). Um die volle Pr&auml;zision zu erm&ouml;glichen, verwendet z. B. <em>SetFormat, FloatFast, 0.15</em>.</p>
+<p>Um eine Flie&szlig;kommazahl in eine Integer-Zahl umzuwandeln, verwendet <em>Variable:=<a href="../Functions.htm#Round">Round</a>(Variable)</em>, <em>Variable:=<a href="../Functions.htm#Floor">Floor</a>(Variable)</em> oder <em>Variable:=<a href="../Functions.htm#Ceil">Ceil</a>(Variable)</em>. Um eine Integer-Zahl in eine Flie&szlig;kommazahl umzuwandeln, f&uuml;gt 0.0 hinzu (z. B. Variable+=0.0) oder verwendet so etwas wie <em>EigeneFloat:=<a href="../Functions.htm#Round">Round</a>(EigeneInteger, 1)</em>.</p>
+<p>Die interne Variable <strong>A_FormatFloat</strong> enth&auml;lt das aktuelle Flie&szlig;komma-Format (z. B. 0.6).</p>
+<h3 id="Integer">Integer-Format</h3>
+<p>Integer-Ergebnisse werden normalerweise dezimal angezeigt, nicht hexadezimal. Um auf hexadezimal zu wechseln, verwendet <em>SetFormat, IntegerFast, Hex</em>. Das kann auch verwendet werden, um eine Integer in eine hexadezimale Zahl umzuwandeln (oder umgekehrt), wie im Beispiel ganz am Ende dieser Seite angezeigt.</p>
+<p>Direkt angegebene Integer-Zahlen in einem Script k&ouml;nnen hexadezimal oder dezimal sein. Hexadezimale Integer-Zahlen beginnen mit dem 0x-Pr&auml;fix (z. B. 0xA9). Sie k&ouml;nnen &uuml;berall dort eingesetzt werden, wo ein numerischer Wert erwartet wird. Zum Beispiel ist <em>Sleep 0xFF</em> gleichbedeutend mit <em>Sleep 255</em>, unabh&auml;ngig vom aktuellen Integer-Format in SetFormat.</p>
+<p>AutoHotkey unterst&uuml;tzt 64-Bit signed Integer-Zahlen von -9223372036854775808 (-0x8000000000000000) bis 9223372036854775807 (0x7FFFFFFFFFFFFFFF).</p>
+<p>Die interne Variable <strong>A_FormatInteger</strong> enth&auml;lt das aktuelle Integer-Format (H oder D).</p>
+<h3>Allgemeine Bemerkungen</h3>
+<p>Wenn SetFormat nicht im Script benutzt wird, dann verwenden Integer-Zahlen standardm&auml;&szlig;ig das Dezimalformat und Flie&szlig;kommazahlen standardm&auml;&szlig;ig 0.6 (<em>Gesamtbreite.Dezimalstellen</em>). Jeder neu gestartete <a href="../misc/Threads.htm">Thread</a> (z. B. ein <a href="../Hotkeys.htm">Hotkey</a>, ein <a href="Menu.htm">benutzerdefinierter Men&uuml;punkt</a> oder eine <a href="SetTimer.htm">zeitlich festgelegte</a> Subroutine) beginnt mit der Voreinstellung f&uuml;r diesen Befehl. Die Standardwerte k&ouml;nnen jedoch ge&auml;ndert werden, wenn SetFormat im automatischen Ausf&uuml;hrungsbereich verwendet wird (oberster Teil des Scripts).</p>
+<p>Eine Zuweisung im alten Stil wie x=%y% l&auml;sst f&uuml;hrende und nachfolgende Leerzeichen weg. Deshalb sollte <a href="AutoTrim.htm">AutoTrim</a> oder der <a href="SetExpression.htm">Doppelpunkt-Gleich-Operator</a> (z. B. x:=y) verwendet werden.</p>
+<p>Es kann mit "<a href="IfIs.htm">If Variable is number/integer/float</a>" ermittelt werden, ob eine Variable einen numerischen Wert enth&auml;lt.</p>
+<p>Um eine Integer ohne Flie&szlig;komma-Berechnung mit Nullen oder Leerzeichen aufzuf&uuml;llen, befolgt dieses Beispiel:</p>
+<pre>Variable := "          " . Variable     <em>; Das Zitat enth&auml;lt 10 Leerzeichen.  Um mit Nullen aufzuf&uuml;llen, ersetzt Leerzeichen mit Nullen.</em>
+StringRight, Variable, Variable, 10  <em>; Damit wird die Zahl in der <i>Variable</i> mit Leerzeichen aufgef&uuml;llt, bis eine L&auml;nge von max. 10 Zeichen erreicht ist.</em>
+Variable := SubStr("          " . Variable, -9)  <em>; Eine einzeilige Alternative f&uuml;r die oberen zwei Zeilen.</em></pre>
+<h3>Verwandte Befehle</h3>
+<p><a href="SetExpression.htm">Ausdruckszuweisung (:=)</a>, <a href="EnvAdd.htm">EnvAdd</a>, <a href="EnvSub.htm">EnvSub</a>, <a href="EnvMult.htm">EnvMult</a>, <a href="EnvDiv.htm">EnvDiv</a>, <a href="AutoTrim.htm">AutoTrim</a>, <a href="IfIs.htm">If Variable is Typ</a></p>
+<h3>Beispiele</h3>
+<pre class="NoIndent">Variable = 11.333333
+SetFormat, float, 6.2
+Variable -= 1  <em>; Setzt die Variable auf 10.33 mit einem Leerzeichen davor, wegen der Gesamtbreite von 6.</em>
+SetFormat, float, 0.2
+Variable += 1  <em>; Setzt die Variable auf 11.33 ohne Leerzeichen davor.</em>
+SetFormat, float, 06.0
+Variable += 0  <em>; Setzt die Variable auf 000011</em>
+
+<em>; Wandelt dezimale Integer in hexadezimal um:</em>
+SetFormat, IntegerFast, hex
+Variable += 0  <em>; Setzt die Variable (die vorher 11 enthalten hat) auf 0xb</em>.
+Variable <strong>.</strong>= ""  <em>; Wegen dem schnellen Modus notwendig.</em>
+SetFormat, IntegerFast, d</pre>
+
+</body>
+</html>

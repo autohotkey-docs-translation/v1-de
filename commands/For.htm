@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>For-Schleife</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>For-Schleife <span class="ver">[AHK_L 59+]</span></h1>
+
+<p>Wiederholt mehrere Befehle f&uuml;r jedes Schl&uuml;ssel-Wert-Paar in einem Objekt.</p>
+
+<pre class="Syntax">For Schl&uuml;ssel [, Wert] in Ausdruck</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td width="15%">Schl&uuml;ssel</td>
+    <td width="85%">Der Name der Variable, in der der Schl&uuml;ssel zu Beginn jeder Iteration (Wiederholung) gespeichert wird.</td>
+  </tr>
+  <tr>
+    <td>Wert</td>
+    <td>Der Name der Variable, in der der Wert des aktuellen Schl&uuml;ssels gespeichert wird.</td>
+  </tr>
+  <tr>
+    <td>Ausdruck</td>
+    <td>Ein <a href="../Variables.htm#Expressions">Ausdruck</a>, der auf einem Objekt hinausl&auml;uft, oder einer Variable, die ein Objekt enth&auml;lt.</td>
+  </tr>
+</table>
+
+<h3>Bemerkungen</h3>
+<p>Der <i>Ausdruck</i> wird nur einmal ausgewertet, bevor die Schleife beginnt. Ist das Ergebnis kein Objekt, springt die Ausf&uuml;hrung sofort zur Zeile nach dem Schleifenblock; ansonsten wird die <code>NewEnum()</code>-Methode des Objekts aufgerufen, um ein <a href="../objects/Enumerator.htm"><i>Enumerator</i></a>-Objekt zu erzeugen. Zu Beginn jeder Iteration wird die <a href="../objects/Enumerator.htm#Next">Next()</a>-Methode des Enumerators verwendet, um das n&auml;chste Schl&uuml;ssel-Wert-Paar zu ermitteln. Wenn Next() eine 0 oder einen leeren String zur&uuml;ckgibt, dann wird die Schleife beendet.</p>
+<p>Vorhandene Schl&uuml;ssel-Wert-Paare k&ouml;nnen w&auml;hrend der Schleife ge&auml;ndert werden, aber das Einsetzen oder Entfernen von Schl&uuml;sseln kann dazu f&uuml;hren, dass einige Datens&auml;tze &uuml;bersprungen oder mehrfach enumeriert werden. Dieses Problem kann umgangen werden, wenn zuerst eine Liste mit Schl&uuml;sseln erstellt wird, um die Schl&uuml;ssel danach mit einer zweiten Schleife wieder zu entfernen, nachdem die erste Schleife vollendet ist. Beachtet, dass mit <code><a href="../objects/Object.htm#Remove">Object.Remove</a>(<i>first</i>, <i>last</i>)</code> eine bestimmte Reihe von Schl&uuml;sseln ohne Schleife entfernt werden k&ouml;nnen.</p>
+<p>Vor der Revision 59 wurde anstelle der For-Schleife Folgendes verwendet:</p>
+<pre>_enum := (<i>Ausdruck</i>)._NewEnum()
+while _enum.Next(Schl&uuml;ssel, Wert)
+{
+    ...
+}
+
+</pre>
+<p>Nach einer For-Schleife erfolgt f&uuml;r gew&ouml;hnlich ein <a href="Block.htm">Block</a>, der eine Sammlung an Anweisungen enth&auml;lt, um den <em>Schleifenk&ouml;rper</em> zu formen. Allerdings ben&ouml;tigt eine Schleife mit nur einer Anweisung keinen Block (in diesem Fall z&auml;hlt ein "If" und das dazugeh&ouml;rige "Else" als eine Anweisung). Der One True Brace (OTB)-Stil kann optional eingesetzt werden, d. h. die &ouml;ffnende Klammer darf auf derselben Zeile des Befehls stehen. Zum Beispiel: <em>for x, y in z {</em></p>
+<p>Wie bei allen Schleifen k&ouml;nnen <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und <a href="../Variables.htm#Index">A_Index</a> verwendet werden.</p>
+
+<h3>COM-Objekte</h3>
+<p>Da der <i>Schl&uuml;ssel</i> und <i>Wert</i> direkt an die Next()-Methode des Enumerators &uuml;bergeben werden, sind die zugewiesenen Werte abh&auml;ngig vom enumerierten Objekttyp. Bei COM-Objekten enth&auml;lt der <i>Schl&uuml;ssel</i> den zur&uuml;ckgegebenen Wert von <a href="http://msdn.microsoft.com/en-us/library/ms221369.aspx">IEnumVARIANT::Next()</a> und den <i>Wert</i> eine Zahl, die den <a href="http://msdn.microsoft.com/en-us/library/cc237865.aspx">Variant-Typen</a> repr&auml;sentiert. Bei einem <a href="http://msdn.microsoft.com/en-us/library/x4k5wbx4.aspx">Scripting.Dictionary</a>-Objekt beispielsweise enth&auml;lt jeder <i>Schl&uuml;ssel</i> einen Schl&uuml;ssel aus dem Dictionary und jeder <i>Wert</i> normalerweise eine 8 f&uuml;r Strings oder eine 3 f&uuml;r Integer. Siehe <a href="ComObjType.htm">ComObjType</a> f&uuml;r eine Liste von Typen.</p>
+<p><span class="ver">[v1.0.96.00+]:</span> Beim Enumerieren eines <a href="ComObjArray.htm">SafeArray</a> enth&auml;lt der <i>Schl&uuml;ssel</i> das aktuelle Element und der <i>Wert</i> seinen Variantentyp.</p>
+
+<h3>Verwandte Befehle</h3>
+<p><a href="../objects/Enumerator.htm">Enumerator-Objekt</a>, <a href="../objects/Object.htm#NewEnum">Object.NewEnum()</a>, <a href="While.htm">While-Loop</a>, <a href="Loop.htm">Loop</a>, <a href="Until.htm">Until</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Block</a></p>
+
+<h3>Beispiele</h3>
+<pre class="NoIndent"><em>; Schl&uuml;ssel-Wert-Paare eines Objekts auflisten:</em>
+Farben := <a href="../Objects.htm#Arrays">Object</a>("Rot", 0xFF0000, "Blau", 0x0000FF, "Gr&uuml;n", 0x00FF00)
+<em>; "Farben" k&ouml;nnte direkt mit dem obigen Ausdruck ersetzt werden:</em>
+For k, v in Farben
+    s .= k "=" v "`n"
+MsgBox % s
+
+</pre>
+<pre class="NoIndent"><em>; Alle offenen Explorer- und IE-Fenster auflisten:</em>
+for window in <a href="ComObjCreate.htm">ComObjCreate</a>("<a href="http://msdn.microsoft.com/en-us/library/bb774094.aspx">Shell.Application</a>").Windows
+    Fenster .= window.<a href="http://msdn.microsoft.com/en-us/library/aa752057.aspx">LocationName</a> " :: " window.<a href="http://msdn.microsoft.com/en-us/library/aa752058.aspx">LocationURL</a> "`n"
+MsgBox % Fenster</pre>
+
+</body>
+</html>

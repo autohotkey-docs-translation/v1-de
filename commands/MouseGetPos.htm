@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>MouseGetPos</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>MouseGetPos</h1>
+
+<p>Ermittelt die aktuelle Position des Mauszeigers und optional auch das darunter liegende Fenster und Steuerelement. </p>
+
+<pre class="Syntax">MouseGetPos, [AusgabevariableX, AusgabevariableY, AusgabevariableFenster, AusgabevariableSteuerelement, 1|2|3] </pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td width="15%">AusgabevariableX/Y</td>
+    <td width="85%"><p>Die Namen der Variablen, in denen die X- und Y-Koordinaten gespeichert werden. Die abgerufenen Koordinaten beziehen sich auf das aktive Fenster, es sei denn, <a href="CoordMode.htm">CoordMode</a> wurde verwendet, um auf Bildschirmkoordinaten umzuschalten.</p>
+    </td>
+  </tr>
+  <tr>
+    <td>AusgabevariableFenster</td>
+    <td><p>Dieser optionale Parameter ist der Name der Variable, in der die <a href="WinGet.htm">eindeutige ID-Nummer</a> des Fensters gespeichert wird, welches sich unter dem Mauszeiger befindet. Wenn das Fenster nicht ermittelt werden kann, dann wird diese Variable leer gemacht.</p>
+      <p>Das Fenster muss nicht aktiv sein, um erkannt werden zu k&ouml;nnen. Versteckte Fenster k&ouml;nnen nicht erkannt werden.</p></td>
+  </tr>
+  <tr>
+    <td>AusgabevariableSteuerelement</td>
+    <td><p>Dieser optionale Parameter ist der Name der Variable, in der der Name (ClassNN) des Steuerelements gespeichert wird, welches sich unter dem Mauszeiger befindet.  Wenn das Steuerelement nicht ermittelt werden kann, dann wird diese Variable leer gemacht.</p>
+      <p>Die Namen der Steuerelemente sollten immer mit den Namen in Window Spy ab v1.0.14 &uuml;bereinstimmen (aber nicht unbedingt mit &auml;lteren Versionen von Window Spy). Doch im Gegensatz zu Window Spy muss das Fenster f&uuml;r das Steuerelement unter dem Mauszeiger nicht aktiv sein, damit es erkannt werden kann.</p></td>
+  </tr>
+  <tr>
+    <td>1|2|3</td>
+    <td><p>Wenn nicht vorhanden, dann standardm&auml;&szlig;ig eine 0. Ansonsten eine folgende Zahl angeben:</p>
+    <p><strong>1</strong>: Verwendet eine einfachere Methode, um die <em>AusgabevariableSteuerelement</em> zu ermitteln. Diese Methode ermittelt korrekt das aktive/oberste anh&auml;ngende Fenster einer Anwendung mit Multiple Document Interface (MDI), wie z. B. SysEdit oder TextPad. Allerdings ist sie f&uuml;r andere Zwecke wie beim Erkennen eines Steuerelements innerhalb eines GroupBox-Steuerelements weniger genau.</p>
+    <p><strong>2</strong> <span class="ver">[v1.0.43.06+]:</span> Speichert <a href="ControlGet.htm#Hwnd">HWND des Steuerlements</a> in <em>AusgabevariableSteuerelement</em>, anstatt ClassNN.</p>
+    <p><strong>3</strong> <span class="ver">[v1.0.43.06+]:</span> Eine Kombination von 1 und 2.</p></td>
+  </tr>
+</table>
+
+<h3>Bemerkungen</h3>
+<p>Jede Ausgabevariable kann weggelassen werden, wenn sie nicht gebraucht wird.</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="CoordMode.htm">CoordMode</a>, <a href="WinGet.htm">WinGet</a>, <a href="SetDefaultMouseSpeed.htm">SetDefaultMouseSpeed</a>, <a href="Click.htm">Click</a></p>
+<h3>Beispiel</h3>
+<pre class="NoIndent">MouseGetPos, xpos, ypos
+Msgbox, Der Zeiger befindet sich auf X%xpos% Y%ypos%.
+
+<em>; Dieses Beispiel erlaubt dem Benutzer, die Maus zu bewegen,
+; um den darunter liegenden Fenstertitel anzuzeigen:</em>
+#Persistent
+SetTimer, WatchCursor, 100
+Return
+
+WatchCursor:
+MouseGetPos, , , id, control
+WinGetTitle, title, ahk_id %id%
+WinGetClass, class, ahk_id %id%
+ToolTip, ahk_id %id%`nahk_class %class%`n%title%`Steuerelement: %control%
+Return</pre>
+
+</body>
+</html>

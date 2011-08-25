@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Process</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>Process</h1>
+
+<p>F&uuml;hrt eine folgende Operation auf einen Prozess aus: pr&uuml;ft, ob es existiert; &auml;ndert seine Priorit&auml;t; schlie&szlig;t es; wartet, bis es geschlossen wird.</p>
+
+<pre class="Syntax">Process, Befehl, PID-oder-Name [, Param3]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td width="15%">Befehl</td>
+    <td width="85%"><p>Eins der folgenden W&ouml;rter:</p>
+    <p><strong>Exist</strong>: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> enth&auml;lt die Prozess-ID (PID), wenn ein passender Prozess gefunden wird, andernfalls eine 0.  Wenn der Parameter <em>PID-oder-Name</em> leer ist, dann wird die PID des Scripts abgerufen. Als Alternative kann die einzeilige Methode <em>PID := DllCall("GetCurrentProcessId")</em> verwendet werden, um die PID des Scripts abzurufen.</p>
+    <p><strong>Close</strong>: Wenn ein passender Prozess erfolgreich beendet wird, dann enth&auml;lt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> die zuletzt verwendete Prozess-ID (PID). Andernfalls wird ErrorLevel auf 0 gesetzt (Prozess wurde nicht gefunden oder konnte nicht richtig beendet werden). Da der Prozess abrupt beendet wird (m&ouml;glicherweise wird der Prozessablauf an einem kritischen Punkt unterbrochen oder verliert nicht gespeicherte Daten im dazugeh&ouml;rigen Fenster, falls vorhanden), dann sollte diese Methode nur verwendet werden, wenn ein Prozess nicht mit <a href="WinClose.htm">WinClose</a> (auf ein Fenster) geschlossen werden kann.</p>
+    <p><strong>List</strong>: Obwohl <em>List</em> noch nicht unterst&uuml;tzt wird, demonstriert der <a href="#ListEx">Beispiele-Abschnitt</a>, wie man eine Prozessliste mit DllCall ermittelt.</p>
+    <p><strong><a name="Priority"></a>Priority</strong>: Die Priorit&auml;t (wie im Windows Task-Manager angezeigt) des ersten passenden Prozesses wird in <em>Param3</em> ge&auml;ndert und setzt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf die Prozess-ID (PID). Wenn der Parameter <em>PID-oder-Name</em> leer ist, dann wird die Priorit&auml;t des Scripts ge&auml;ndert. Andernfalls wird ErrorLevel auf 0 gesetzt (Prozess wurde nicht gefunden oder die es gab Probleme beim &Auml;ndern der Priorit&auml;t).</p>
+    <p><em>Param3</em> sollte einen folgenden Buchstaben oder ein folgendes Wort sein: L (oder Low), B (oder BelowNormal), N (oder Normal), A (oder AboveNormal), H (oder High), R (oder Realtime). Da BelowNormal und AboveNormal in Windows 95/98/Me/NT4 nicht unterst&uuml;tzt werden, werden diese automatisch mit <em>Normal</em> ersetzt. Hinweis: Jeder Prozess, der nicht darauf ausgelegt ist, in Echtzeit (Realtime) zu laufen, reduziert m&ouml;glicherweise die Systemstabilit&auml;t, wenn er auf diese Priorit&auml;t gesetzt wird.</p>
+    <p><strong>Wait</strong>: Wartet bis zu <em>Param3</em> Sekunden (kann einen Dezimalpunkt enthalten), bis ein passender Prozess vorhanden ist. Wenn <em>Param3</em> nicht vorhanden ist, dann wartet der Befehl unendlich lang. Wenn ein passender Prozess gefunden wird, dann enth&auml;lt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> die Prozess-ID (PID). Wenn der Befehl das Zeitlimit &uuml;berschreitet, dann wird ErrorLevel auf 0 gesetzt.</p>
+    <p><strong>WaitClose</strong>: Wartet bis zu <em>Param3</em> Sekunden (kann einen Dezimalpunkt enthalten), bis ALLE passenden Prozesse geschlossen sind. Wenn <em>Param3</em> nicht vorhanden ist, dann wartet der Befehl unendlich lang. Wenn alle passenden Prozesse geschlossen sind, wird <a href="../misc/ErrorLevel.htm">Errorlevel</a> auf 0 gesetzt. Wenn der Befehl das Zeitlimit &uuml;berschreitet, dann enth&auml;lt ErrorLevel die Prozess-ID (PID) des ersten passenden Prozesses, der noch existiert. </p></td>
+  </tr>
+  <tr>
+    <td>PID-oder-Name </td>
+    <td><p>Dieser Parameter enth&auml;lt entweder eine Nummer (die PID) oder einen Prozessnamen, wie unten beschrieben. Es kann auch leer gelassen werden, um die Priorit&auml;t des Scripts selbst zu &auml;ndern.</p>
+      <p>PID: Die Prozess-ID, eine Nummer, die einen bestimmten Prozess eindeutig identifiziert (diese Nummer ist nur w&auml;hrend der Laufzeit dieses Prozesses g&uuml;ltig). Die PID eines neu gestarteten Prozesses kann mit dem <a href="Run.htm">Run</a>-Befehl ermittelt werden. Ebenso kann die PID eines Fensters mit <a href="WinGet.htm">WinGet</a> abgerufen werden. Der Process-Befehl selbst kann auch verwendet werden, um eine PID zu ermitteln.</p>
+      <p>Name: Der Prozessname entspricht normalerweise dem Namen der ausf&uuml;hrbaren Datei (ohne Pfad), z. B.
+
+
+    notepad.exe oder winword.exe. Da ein Name mit mehreren laufenden Prozessen &uuml;bereinstimmen kann, wird nur der erste Prozess bearbeitet. Der Name ist nicht von der Gro&szlig;-/Kleinschreibung abh&auml;ngig.</p></td>
+  </tr>
+  <tr>
+    <td>Param3</td>
+    <td>Siehe <em>Befehl</em> oben f&uuml;r Details.</td>
+  </tr>
+</table>
+
+<h3>ErrorLevel</h3>
+<p>Siehe <em>Befehl</em> oben f&uuml;r Details.</p>
+<h3>Bemerkungen</h3>
+<p>F&uuml;r <em>Wait</em> und <em>WaitClose</em>: Prozesse werden alle 100 Millisekunden &uuml;berpr&uuml;ft; sobald die Bedingung erf&uuml;llt ist, h&ouml;rt der Befehl auf zuwarten. Mit anderen Worten: anstatt darauf zuwarten, bis die Zeit&uuml;berschreitung erfolgt, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> sofort wie oben beschrieben auf einen Wert gesetzt und die Ausf&uuml;hrung des Scripts fortgesetzt. W&auml;hrend der Befehl in einem Warte-Zustand ist, k&ouml;nnen neue <a href="../misc/Threads.htm">Threads</a> per <a href="../Hotkeys.htm">Hotkey</a>, <a href="Menu.htm">benutzerdefinierte Men&uuml;eintr&auml;ge </a>oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
+<p> Damit dieser Befehl in Windows NT4 funktioniert, wird die Datei PSAPI.DLL ben&ouml;tigt, die normalerweise schon im AutoHotkey-Installationsverzeichnis enthalten ist (d. h. es sind keine zus&auml;tzlichen Installationsschritte erforderlich). Damit jedoch ein <a href="../Scripts.htm#ahk2exe">kompiliertes Script</a> in Windows NT4 funktioniert, f&uuml;gt eine Kopie von PSAPI.DLL im selben Ordner des Scripts oder in einem der Verzeichnisse aus der PATH-Umgebungsvariable ein (obwohl einige NT4-Systeme m&ouml;glicherweise bereits &uuml;ber die DLL verf&uuml;gen).</p>
+
+<h3>Verwandte Befehle</h3>
+<p><a href="Run.htm">Run</a>, <a href="WinGet.htm">WinGet</a>, <a href="WinClose.htm">WinClose</a>, <a href="WinKill.htm">WinKill</a>, <a href="WinWait.htm">WinWait</a>, <a href="WinWaitClose.htm">WinWaitClose</a>, <a href="IfWinExist.htm">IfWinExist</a></p>
+<h3>Beispiele</h3>
+<pre class="NoIndent"><em>; Beispiel #1:</em>
+
+Run Notepad.exe, , , NewPID
+Process, priority, %NewPID%, High
+MsgBox Die PID des neu gestarteten Editors ist %NewPID%.</pre>
+<p>&nbsp;</p>
+<pre class="NoIndent"><em>; Beispiel #2:</em>
+
+Process, wait, Notepad.exe, 5.5
+NewPID = %ErrorLevel%  <em>; Speichert den Wert sofort, da ErrorLevel oft ge&auml;ndert wird.</em>
+If NewPID = 0
+{
+    MsgBox Der angegebene Prozess ist nicht innerhalb von 5.5 Sekunden aufgetaucht.
+    Return
+}
+<em>; Ansonsten:</em>
+MsgBox Ein passender Prozess wurde gefunden (Prozess-ID ist %NewPID%).
+Process, priority, %NewPID%, Low
+Process, priority, , High  <em>; Die Priorit&auml;t des Scripts selbst wird auf Hoch gesetzt.</em>
+WinClose Unbenannt - Editor
+Process, WaitClose, %NewPID%, 5
+If ErrorLevel <em>; Die PID ist noch vorhanden.</em>
+    MsgBox Der Prozess wurde nicht innerhalb von 5 Sekunden geschlossen.</pre>
+<p>&nbsp;</p>
+<pre class="NoIndent"><em>; Beispiel #3: Ein Hotkey, der die Priorit&auml;t des aktiven Fensters im Prozess &auml;ndert:</em>
+
+#z:: <em>; Hotkey: Win+Z</em>
+WinGet, aktiv_pid, PID, A
+WinGetTitle, aktiv_titel, A
+Gui, 5:Add, Text,, Dr&uuml;ckt ESCAPE, um abzubrechen, oder klickt doppelt auf`ndie Priorit&auml;tsstufe f&uuml;r das folgende Fenster:`n%aktiv_titel%
+Gui, 5:Add, ListBox, vEigeneListBox gEigeneListBox r5, Normal|High|Low|BelowNormal|AboveNormal
+Gui, 5:Add, Button, default, OK
+Gui, 5:Show,, Priorit&auml;t bestimmen
+Return
+
+5GuiEscape:
+5GuiClose:
+Gui, Destroy
+Return
+
+EigeneListBox:
+If A_GuiEvent &lt;&gt; DoubleClick
+    Return
+<em>; sonst bis zum n&auml;chsten Label springen:</em>
+5ButtonOK:
+GuiControlGet, EigeneListBox
+Gui, Destroy
+Process, Priority, %aktiv_pid%, %EigeneListBox%
+If ErrorLevel
+    MsgBox Erfolg: Die Priorit&auml;t wurde auf "%EigeneListBox%" gesetzt.
+Else
+    MsgBox Fehler: Die Priorit&auml;t wurde nicht auf "%EigeneListBox%" gesetzt.
+Return</pre>
+<p>&nbsp;</p>
+<pre class="NoIndent" id="ListEx"><em>; Beispiel #4: Ermittelt mit DllCall eine Liste aller laufenden Prozesse und zeigt sie in einer MsgBox an.</em>
+
+d := "  |  "  <em>; String-Trennzeichen</em>
+s := 4096  <em>; Puffer- und Array-Gr&ouml;&szlig;e (4 KB)</em>
+
+Process, Exist  <em>; Setzt ErrorLevel auf die PID des laufenden Scripts</em>
+<em>; Ermittelt den Handle des Scripts mit PROCESS_QUERY_INFORMATION (0x0400)</em>
+h := DllCall("OpenProcess", "UInt", 0x0400, "Int", false, "UInt", ErrorLevel, "Ptr")
+<em>; &Ouml;ffnet einen einstellbaren Zugangsschl&uuml;ssel mit diesem Prozess (TOKEN_ADJUST_PRIVILEGES = 32)</em>
+DllCall("Advapi32.dll\OpenProcessToken", "Ptr", h, "UInt", 32, "PtrP", t)
+VarSetCapacity(ti, 16, 0)  <em>; Struktur von Privilegien</em>
+NumPut(1, ti, 0, "UInt")  <em>; Ein Zugang im bevorzugten Array...</em>
+<em>; Ermittelt die lokale eindeutige Kennung des Debug-Privilegs:</em>
+DllCall("Advapi32.dll\LookupPrivilegeValue", "Ptr", 0, "Str", "SeDebugPrivilege", "Int64P", luid)
+NumPut(luid, ti, 4, "Int64")
+NumPut(2, ti, 12, "UInt")  <em>; Aktiviert dieses Privileg: SE_PRIVILEGE_ENABLED = 2</em>
+<em>; Aktualisiert die Privilegien des Prozesses mit dem neuen Zugangsschl&uuml;ssel:</em>
+DllCall("Advapi32.dll\AdjustTokenPrivileges", "Ptr", t, "Int", false, "Ptr", &ti, "UInt", 0, "Ptr", 0, "Ptr", 0)
+DllCall("CloseHandle", "Ptr", t)  <em>; Schlie&szlig;t diesen Zugangsschl&uuml;ssel-Handle, um Speicherplatz zu sparen.</em>
+DllCall("CloseHandle", "Ptr", h)  <em>; Schlie&szlig;t diesen Prozess-Handle, um Speicherplatz zu sparen.</em>
+
+hModule := DllCall("LoadLibrary", "Str", "Psapi.dll")  <em>; Erh&ouml;ht die Performance, wenn diese Bibliothek vorher geladen wird.</em>
+s := VarSetCapacity(a, s)  <em>; Ein Array, dass eine Liste von Prozess-IDs abruft:</em>
+c := 0  <em>; Z&auml;hler f&uuml;r Prozess-IDs</em>
+DllCall("Psapi.dll\EnumProcesses", "Ptr", &a, "UInt", s, "UIntP", r)
+Loop, % r // 4  <em>; Array f&uuml;r IDs parsen, als DWORDs (32 bit):</em>
+{
+   id := NumGet(a, A_Index * 4, "UInt")
+   <em>; &Ouml;ffnet Prozess mit: PROCESS_VM_READ (0x0010) | PROCESS_QUERY_INFORMATION (0x0400)</em>
+   h := DllCall("OpenProcess", "UInt", 0x0010 | 0x0400, "Int", false, "UInt", id, "Ptr")
+   If !h
+      continue
+   VarSetCapacity(n, s, 0)  <em>; ein Puffer, welcher den Basisnamen des Moduls ermittelt:</em>
+   e := DllCall("Psapi.dll\GetModuleBaseName", "Ptr", h, "Ptr", 0, "Str", n, "UInt", A_IsUnicode ? s//2 : s)
+   If !e    <em>; Zur&uuml;ckfallende Methode f&uuml;r 64-Bit-Prozesse, wenn im 32-Bit-Modus:</em>
+      If e := DllCall("Psapi.dll\GetProcessImageFileName", "Ptr", h, "Str", n, "UInt", A_IsUnicode ? s//2 : s)
+         SplitPath n, n
+   DllCall("CloseHandle", "Ptr", h)  <em>; Schlie&szlig;t diesen Prozess-Handle, um Speicherplatz zu sparen.</em>
+   If (n && e)  <em>; Wenn Abbild nicht Null ist, zur Liste hinzuf&uuml;gen:</em>
+      l .= n . d, c++
+}
+DllCall("FreeLibrary", "Ptr", hModule)  <em>; Bibliothek entladen, um Speicher freizugeben.</em>
+<em>;Sort, l, C  ; Hebt die Kommentierung dieser Zeile auf, um die Liste alphabetisch zu sortieren.</em>
+MsgBox, 0, %c% Prozesse, %l%</pre>
+<p>&nbsp;</p>
+<pre class="NoIndent" id="ListCom"><em>; Beispiel #5: Ermittelt mit COM eine Liste von laufenden Prozessen.</em>
+
+Gui, Add, ListView, x2 y0 w400 h500, Prozessname|Befehlszeile
+for Prozess in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process")
+    LV_Add("", Prozess.Name, Prozess.CommandLine)
+Gui, Show,, Prozessliste
+
+<em>; Win32_Prozess: <a href="http://msdn.microsoft.com/en-us/library/aa394372.aspx">http://msdn.microsoft.com/en-us/library/aa394372.aspx</a></em>
+</pre>
+
+</body>
+</html>

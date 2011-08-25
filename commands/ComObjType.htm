@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>ComObjType()</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>ComObjType() <span class="ver">[v1.0.91+]</span></h1>
+
+<p>Ermittelt Informationen &uuml;ber den Typ eines COM-Objekts.</p>
+
+<pre class="Syntax">Variablentyp := ComObjType(ComObject)
+Name    := ComObjType(ComObject, "Name")
+IID     := ComObjType(ComObject, "IID")</pre>
+
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td>ComObject</td>
+    <td>Ein Wrapper-Objekt mit einem COM-Objekt oder typisierten Wert.</td>
+  </tr>
+  <tr>
+    <td>Variablentyp</td>
+    <td>Ein Integer-Wert, der den Typ des Wertes kennzeichnet. Siehe unten.</td>
+  </tr>
+  <tr>
+    <td>Name</td>
+    <td>Der Typenname einer Schnittstelle.</td>
+  </tr>
+  <tr>
+    <td>IID</td>
+    <td>Eine globale eindeutige ID (GUID), die einen Schnittstellentyp repr&auml;sentiert.</td>
+  </tr>
+</table>
+
+<h3>R&uuml;ckgabewert</h3>
+<p>Wenn der zweite Parameter weggelassen wird, dann wird der Variantentyp des Wertes vom Wrapper-Objekt zur&uuml;ckgegeben.</p>
+<p>Wenn der zweite Parameter "Name" oder "IID" und das Wrapper-Objekt ein COM-Objekt enth&auml;lt (Variantentyp VT_DISPATCH), dann wird der Typenname des COM-Objekts oder die Kennung der prim&auml;ren Schnittstelle zur&uuml;ckgegeben.</p>
+<p>Wenn die Parameter ung&uuml;ltig sind oder ein Fehler auftritt, dann wird ein leerer String zur&uuml;ckgegeben.</p>
+
+<h3 id="vt">Variantentyp-Konstanten</h3>
+<pre>
+VT_EMPTY     =      0  <em>; Kein Wert</em>
+VT_NULL      =      1  <em>; Eine 0 im SQL-Stil</em>
+VT_I2        =      2  <em>; 16-Bit signed Int</em>
+VT_I4        =      3  <em>; 32-Bit signed Int</em>
+VT_R4        =      4  <em>; 32-Bit Flie&szlig;kommazahl</em>
+VT_R8        =      5  <em>; 64-Bit Flie&szlig;kommazahl</em>
+VT_CY        =      6  <em>; W&auml;hrung</em>
+VT_DATE      =      7  <em>; Datum</em>
+VT_BSTR      =      8  <em>; COM-String (Unicode-String mit L&auml;ngenpr&auml;fix)</em>
+VT_DISPATCH  =      9  <em>; COM-Objekt </em>
+VT_ERROR     =    0xA  <em>; Fehlercode (32-Bit Integer)</em>
+VT_BOOL      =    0xB  <em>; boolesches Wahr (-1) oder Falsch (0)</em>
+VT_VARIANT   =    0xC  <em>; <a href="http://msdn.microsoft.com/en-us/library/ms221627.aspx">VARIANT</a> (muss mit VT_ARRAY oder VT_BYREF kombiniert werden)</em>
+VT_UNKNOWN   =    0xD  <em>; IUnknown-Interface-Pointer</em>
+VT_DECIMAL   =    0xE  <em>; (nicht unterst&uuml;tzt)</em>
+VT_I1        =   0x10  <em>; 8-Bit signed Int</em>
+VT_UI1       =   0x11  <em>; 8-Bit unsigned Int</em>
+VT_UI2       =   0x12  <em>; 16-Bit unsigned Int</em>
+VT_UI4       =   0x13  <em>; 32-Bit unsigned Int</em>
+VT_I8        =   0x14  <em>; 64-Bit signed Int</em>
+VT_UI8       =   0x15  <em>; 64-Bit unsigned Int</em>
+VT_INT       =   0x16  <em>; Signed Maschinen-Int</em>
+VT_UINT      =   0x17  <em>; Unsigned Maschinen-Int</em>
+VT_RECORD    =   0x24  <em>; Benutzerdefinierter Typ</em>
+VT_ARRAY     = 0x2000  <em>; <a href="http://msdn.microsoft.com/en-us/library/ms221482.aspx">SAFEARRAY</a></em>
+VT_BYREF     = 0x4000  <em>; Pointer auf einem anderen Werttyp</em>
+<em>/*
+ VT_ARRAY und VT_BYREF werden mit einem anderen Wert kombiniert (verwendet bitweises OR),
+ um den exakten Typ anzugeben. Zum Beispiel ermittelt 0x2003 ein <a href="http://msdn.microsoft.com/en-us/library/ms221482.aspx">SAFEARRAY</a> mit 32-Bit signed Integers und 0x400C ein Pointer auf <a href="http://msdn.microsoft.com/en-us/library/ms221627.aspx">VARIANT</a>.
+*/</em>
+</pre>
+
+<h3>Allgemeine Bemerkungen</h3>
+<p>In den meisten F&auml;llen werden R&uuml;ckgabewerte von Methoden oder Eigenschaften von COM-Objekten in einen geeigneten Datentyp umgewandelt, der von AutoHotkey unterst&uuml;tzt wird. Nicht speziell behandelte Typen werden durch <a href="http://msdn.microsoft.com/en-us/library/ms221258.aspx">VariantChangeType</a> zu Strings erzwungen. Wenn dabei ein Fehler auftritt oder der Variantentyp das VT_ARRAY- oder VT_BYREF-Flag enth&auml;lt, dann wird stattdessen ein Objekt mit dem Wert und dessen Typ zur&uuml;ckgegeben.</p>
+<p>Wenn <code>ComObjType(x)</code> (wobei <i>x</i> eine beliebige Variable ist) ein Integer zur&uuml;ckgibt, dann enth&auml;lt <i>x</i> ein COM-Objekt-Wrapper.</p>
+
+
+<h3>Verwandte Befehle</h3>
+<p><a href="ComObjValue.htm">ComObjValue</a>, <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjActive.htm">ComObjActive</a></p>
+
+<h3>Beispiele</h3>
+<pre class="NoIndent">
+d := <a href="ComObjCreate.htm">ComObjCreate</a>("Scripting.Dictionary")
+Variablentyp := ComObjType(d)          <em>; Immer 9 bei aufrufbare Objekte f&uuml;r Scripts.</em>
+Name    := ComObjType(d, "Name")  <em>; Nur bei aufrufbare Objekte f&uuml;r Scripts g&uuml;ltig.</em>
+IID     := ComObjType(d, "IID")   <em>; Wie oben.</em>
+MsgBox Variantentyp:`t%Variablentyp%`nTypenname:`t%Name%`nSchnittstelle-ID:`t%IID%
+
+</pre>
+
+</body>
+</html>

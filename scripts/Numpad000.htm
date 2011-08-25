@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Numpad-Taste 000</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="alternate" type="application/rss+xml" title="AutoHotkey Forum RSS" href="/forum/rss.php">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>Numpad-Taste 000</h1>
+
+<p> Dieses Beispiel-Script wandelt die 000-Sondertaste bei einigen Ziffernbl&ouml;cken in eine Gleichheitstaste.  Diese Aktion kann ge&auml;ndert werden, wenn die Zeile "Send, =" je nach Bedarf mit einer anderen Zeile ersetzt wird.
+</p>
+<p><a href="Numpad000.ahk">Dieses Script herunterladen</a> &nbsp;| &nbsp;<a href="index.htm">Andere Beispiel-Scripts</a> &nbsp;| &nbsp;<a href="http://www.autohotkey.com">Home</a></p>
+
+<pre class="NoIndent">#MaxThreadsPerHotkey 5  <em>; Erlaubt mehrere Threads f&uuml;r diesen Hotkey.</em>
+$Numpad0::
+#MaxThreadsPerHotkey 1
+<em>; Oben: Mit einem $ wird der Hook erzwungen, wodurch eine
+; Endlosschleife verhindert wird, da diese Subroutine selbst Numpad0 sendet,
+; ansonsten w&uuml;rde sie sich selbst rekursiv aufrufen.</em>
+SetBatchLines, 100 <em>; Damit wird das Script ein wenig schneller ausgef&uuml;hrt.</em>
+DelayBetweenKeys = 30 <em>; Diesen Wert anpassen, falls es nicht funktionieren sollte.</em>
+if A_PriorHotkey = %A_ThisHotkey%
+{
+    if A_TimeSincePriorHotkey &lt; %DelayBetweenKeys%
+    {
+        if Numpad0Count =
+            Numpad0Count = 2 <em>; d.h. dieser Tastendruck plus vorherigen Tastendruck.</em>
+        else if Numpad0Count = 0
+            Numpad0Count = 2
+        else
+        {
+            <em>; Da wir hier sind, muss Numpad0Count wie bei</em>
+            <em>; vorherigen Aufrufen eine 2 sein, das hei&szlig;t, dass das hier</em>
+            <em>; der dritte Tastendruck ist. Daher sollte die Hotkey-Sequenz</em>
+            <em>; ausgef&uuml;hrt werden:</em>
+            Numpad0Count = 0
+            Send, = <em>; ******* Die Aktion f&uuml;r die 000-Taste</em>
+        }
+        <em>; In allen obigen F&auml;llen kehren wir ohne weitere Aktion zur&uuml;ck:</em>
+        CalledReentrantly = y
+        return
+    }
+}
+<em>; Ansonsten ist dieses Numpad0-Ereignis das erste in der Reihe
+; oder wurde zu lange nach dem ersten ausgef&uuml;hrt (z. B. h&auml;lt
+; der Benutzer die Numpad0-Taste automatisch wiederholend gedr&uuml;ckt,
+; dass wir erlauben wollen).  Deshalb werden wir nach einer kurzen Verz&ouml;gerung (w&auml;hrend ein
+; anderes Numpad0-Hotkey-Ereignis diese Subroutine
+; wiederholend aufruft), die Taste senden, falls kein weiterer Aufruf
+; erfolgt:</em>
+Numpad0Count = 0
+CalledReentrantly = n
+<em>; W&auml;hrend dieser Ruhephase kann diese Subroutine wiederholend
+; aufgerufen werden (d. h. ein simultaner "Thread", der parallel zum jetzigen
+; Aufruf ausgef&uuml;hrt wird):</em>
+Sleep, %DelayBetweenKeys%
+if CalledReentrantly = y <em>; Ein anderer "Thread" hat diesen Wert ge&auml;ndert.</em>
+{
+    <em>; Da es wiederholend aufgerufen wurde, war dieses Tastenereignis das</em>
+    <em>; erste in der Sequenz, daher sollte es unterdr&uuml;ckt werden (im System versteckt werden):</em>
+    CalledReentrantly = n
+    return
+}
+<em>; Ansonsten geh&ouml;rt es nicht zur Sequenz, daher werden wir es normal senden.
+; Mit anderen Worten wurde die *echte* Numpad0-Taste gedr&uuml;ckt, daher wollen
+; wir den normalen Effekt:</em>
+Send, {Numpad0}
+return
+
+</pre>
+</body>
+</html>

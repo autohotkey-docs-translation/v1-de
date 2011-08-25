@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Fenster in das Tray-Men&uuml; minimieren</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="alternate" type="application/rss+xml" title="AutoHotkey Forum RSS" href="/forum/rss.php">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>Fenster in das Tray-Men&uuml; minimieren</h1>
+
+<p> Dieses Script erm&ouml;glicht einem beliebigen Hotkey, ein beliebiges Fenster zu verstecken, damit es als Men&uuml;punkt am Ende des Tray-Men&uuml;s angezeigt wird.  Versteckte Fenster k&ouml;nnen dann wieder einzeln oder alle auf einmal sichtbar gemacht werden, indem der entsprechende Men&uuml;punkt ausgew&auml;hlt wird.  Falls das Script aus irgendeinem Grund beendet wird, werden alle versteckten Fenster wieder automatisch sichtbar gemacht.
+</p>
+<p><a href="MinimizeToTrayMenu.ahk">Dieses Script herunterladen</a> &nbsp;| &nbsp;<a href="index.htm">Andere Beispiel-Scripts</a> &nbsp;| &nbsp;<a href="http://www.autohotkey.com">Home</a></p>
+
+<pre class="NoIndent"><em>; &Auml;NDERUNGEN:
+; 22. Juli 2005 (bereitgestellte &Auml;nderungen von egilmour):
+; - Neuer Hotkey hinzugef&uuml;gt, um das zuletzt versteckte Fenster wieder sichtbar zu machen (Win+U)
+;
+; 3. November 2004 (bereitgestellte &Auml;nderungen von trogdor):
+; - Programm-Manager kann nicht mehr versteckt werden.
+; - Falls kein aktives Fenster vorhanden ist, dann ist der In-Tray-minimieren-Hotkey nicht aktiv,
+;   anstatt unendlich lang zu warten.
+;
+; 23. Oktober 2004:
+; - Tastleiste kann nicht mehr versteckt werden.
+; - M&ouml;gliche Probleme mit langen Fenstertiteln wurden behoben.
+; - Fenster ohne Titel k&ouml;nnen ohne Probleme versteckt werden.
+; - Wenn das Script unter AHK v1.0.22 oder h&ouml;her ausgef&uuml;hrt wird,
+;   dann wird die maximale L&auml;nge jeden Men&uuml;punkts von 100 auf 260 erh&ouml;ht.</em>
+
+<em>; KONFIGURATIONSBEREICH: &Auml;ndert die unteren Werte je nach Bedarf.</em>
+
+<em>; Die maximale Anzahl der Fenster, die versteckt werden k&ouml;nnen (hilft
+; der Performance):</em>
+mwt_MaxWindows = 50
+
+<em>; Der Hotkey, um das aktive Fenster zu verstecken:</em>
+mwt_Hotkey = #h  <em>; Win+H</em>
+
+<em>; Der Hotkey, um das zuletzt versteckte Fenster wieder sichtbar zu machen:</em>
+mwt_UnHotkey = #u  <em>; Win+U</em>
+
+<em>; Falls der Wunsch besteht, keine vorgegebenen Men&uuml;punkte
+; wie Help und Pause anzuzeigen, verwendet N.  Ansonsten Y:</em>
+mwt_StandardMenu = N
+
+<em>; Die n&auml;chsten Performance-Einstellungen helfen dabei, die Aktion innerhalb
+; der #HotkeyModifierTimeout-Periode durchzuf&uuml;hren, daher m&uuml;ssen die Modifikatoren
+; des Hotkeys nicht erst gedr&uuml;ckt und wieder losgelassen werden,
+; wenn mehr als ein Fenster gleichzeitig versteckt werden soll.  Diese Einstellungen verhindern, dass der Tastatur-Hook mithilfe von
+; #InstallKeybdHook oder &auml;hnliches manuell gesetzt werden muss:</em>
+#HotkeyModifierTimeout 100
+SetWinDelay 10
+SetKeyDelay 0
+
+#SingleInstance  <em>; Dadurch kann nur eine Instanz des Scripts ausgef&uuml;hrt werden.</em>
+
+<em>; ENDE DES KONFIGURATIONSBEREICHS (Hier danach keine &Auml;nderungen durchf&uuml;hren,
+; es sei denn, die allgemeine Funktionalit&auml;t des Scripts soll ge&auml;ndert werden).</em>
+
+Hotkey, %mwt_Hotkey%, mwt_Minimize
+Hotkey, %mwt_UnHotkey%, mwt_UnMinimize
+
+<em>; Wenn der Benutzer das Script irgendwie beendet, dann zuerst
+; alle Fenster wieder sichtbar machen:</em>
+OnExit, mwt_RestoreAllThenExit
+
+if mwt_StandardMenu = Y
+    Menu, Tray, Add
+else
+{
+    Menu, Tray, NoStandard
+    Menu, Tray, Add, &Beenden und Fenster sichtbar machen, mwt_RestoreAllThenExit
+}
+Menu, Tray, Add, &Alle versteckten Fenster sichtbar machen, mwt_RestoreAll
+Menu, Tray, Add  <em>; Eine weitere Trennlinie, um die obigen Men&uuml;punkte abzugrenzen.</em>
+
+if a_AhkVersion =   <em>; Falls leer, dann ist die Version &auml;lter als 1.0.22.</em>
+    mwt_MaxLength = 100
+else
+    mwt_MaxLength = 260  <em>; Verringern, um die Breite des Men&uuml;s zu begrenzen.</em>
+
+Return <em>; Ende des automatischen Ausf&uuml;hrungsbereichs.</em>
+
+
+mwt_Minimize:
+if mwt_WindowCount >= %mwt_MaxWindows%
+{
+    MsgBox Es k&ouml;nnen nicht mehr als %mwt_MaxWindows% gleichzeitig versteckt werden.
+    return
+}
+
+<em>; Bestimmt das zuletzt gefundene Fenster f&uuml;r die einfache Verwendung und Performance.
+; Es kann vorkommen, dass kein aktives Fenster vorhanden ist,
+; daher wurde eine Zeit&uuml;berschreitung hinzugef&uuml;gt:</em>
+WinWait, A,, 2
+if ErrorLevel &lt;&gt; 0  <em>; Zeit &uuml;berschritten, daher nichts tun.</em>
+    return
+
+<em>; Ansonsten wurde das "zuletzt gefundene Fenster" gesetzt und kann nun verwendet werden:</em>
+WinGet, mwt_ActiveID, ID
+WinGetTitle, mwt_ActiveTitle
+WinGetClass, mwt_ActiveClass
+if mwt_ActiveClass in Shell_TrayWnd,Progman
+{
+    MsgBox Der Desktop und die Taskleiste k&ouml;nnen nicht versteckt werden.
+    return
+}
+<em>; Da das Fenster beim Verstecken nicht deaktiviert wird, wird das Fenster
+; darunter aktiviert (falls vorhanden). Ich habe andere Wege ausprobiert, was aber dazu f&uuml;hrte,
+; dass die Taskleiste aktiviert wurde.  Mit diesem Weg wird das aktive Fenster (welches
+; versteckt werden soll) ans Ende des Stapels verschoben, dass scheinbar am besten ist:</em>
+Send, !{esc}
+<em>; Nun das Fenster verstecken, das mit WinGetTitle/WinGetClass verwendet wurde (da
+; standardm&auml;&szlig;ig solche Befehle keine versteckten Fenster erkennen k&ouml;nnen):</em>
+WinHide
+
+<em>; Wenn der Titel leer ist, dann wird die Klasse stattdessen verwendet.  Dies dient zwei Aufgaben:
+; 1) Ein aussagekr&auml;ftiger Name wird als Men&uuml;name verwendet.
+; 2) Damit kann der Men&uuml;punkt erstellt werden (ansonsten w&uuml;rden leere Men&uuml;punkte
+;    nicht korrekt von den unteren Routinen behandelt).</em>
+if mwt_ActiveTitle =
+    mwt_ActiveTitle = ahk_class %mwt_ActiveClass%
+<em>; Stellt sicher, dass der Titel kurz genug ist, damit er passt. mwt_ActiveTitle dient auch dazu,
+; diesen bestimmten Men&uuml;punkt eindeutig zu identifizieren.</em>
+StringLeft, mwt_ActiveTitle, mwt_ActiveTitle, %mwt_MaxLength%
+
+<em>; Neben dem Tray-Men&uuml;, dessen Men&uuml;punktnamen eindeutig sein m&uuml;ssen,
+; muss das Tray-Men&uuml; selbst auch eindeutig sein, sodass im Array nachgeschaut werden kann,
+; wenn das Fenster sp&auml;ter wieder sichtbar gemacht wird.  Daher macht das Men&uuml; eindeutig,
+; wenn noch nicht getan:</em>
+Loop, %mwt_MaxWindows%
+{
+    if mwt_WindowTitle%a_index% = %mwt_ActiveTitle%
+    {
+        <em>; &Uuml;bereinstimmung gefunden, also nicht eindeutig.</em>
+        <em>; Zuerst wird das 0x von der Hexadezimalen Zahl entfernt, um Platz im Men&uuml; zu sparen:</em>
+        StringTrimLeft, mwt_ActiveIDShort, mwt_ActiveID, 2
+        StringLen, mwt_ActiveIDShortLength, mwt_ActiveIDShort
+        StringLen, mwt_ActiveTitleLength, mwt_ActiveTitle
+        mwt_ActiveTitleLength += %mwt_ActiveIDShortLength%
+        mwt_ActiveTitleLength += 1 <em>; +1 ist das Leerzeichen zwischen Titel & ID.</em>
+        if mwt_ActiveTitleLength > %mwt_MaxLength%
+        {
+            <em>; Da die L&auml;nge der Men&uuml;punktnamen limitiert ist,</em>
+            <em>; wird der Titel am Ende gek&uuml;rzt, damit genug Platz</em>
+            <em>; f&uuml;r die kurze ID des Fensters vorhanden ist:</em>
+            TrimCount = %mwt_ActiveTitleLength%
+            TrimCount -= %mwt_MaxLength%
+            StringTrimRight, mwt_ActiveTitle, mwt_ActiveTitle, %TrimCount%
+        }
+        <em>; Eindeutigen Titel konstruieren:</em>
+        mwt_ActiveTitle = %mwt_ActiveTitle% %mwt_ActiveIDShort%
+        break
+    }
+}
+
+<em>; Zuerst sicherstellen, dass die ID noch nicht in der Liste vorhanden ist, dass
+; passieren kann, wenn ein bestimmtes Fenster extern sichtbar gemacht wurde
+; und nun wieder dabei ist, versteckt zu werden:</em>
+mwt_AlreadyExists = n
+Loop, %mwt_MaxWindows%
+{
+    if mwt_WindowID%a_index% = %mwt_ActiveID%
+    {
+        mwt_AlreadyExists = y
+        break
+    }
+}
+
+<em>; Das Element ins Array und im Men&uuml; einf&uuml;gen:</em>
+if mwt_AlreadyExists = n
+{
+    Menu, Tray, add, %mwt_ActiveTitle%, RestoreFromTrayMenu
+    mwt_WindowCount += 1
+    Loop, %mwt_MaxWindows%  <em>; Nach einer freien Stelle suchen.</em>
+    {
+        <em>; Es sollte immer eine freie Stelle gefunden werden, wenn alles richtig gemacht ist.</em>
+        if mwt_WindowID%a_index% =  <em>; Eine leere Stelle wurde gefunden.</em>
+        {
+            mwt_WindowID%a_index% = %mwt_ActiveID%
+            mwt_WindowTitle%a_index% = %mwt_ActiveTitle%
+            break
+        }
+    }
+}
+return
+
+
+RestoreFromTrayMenu:
+Menu, Tray, delete, %A_ThisMenuItem%
+<em>; Fenster finden, basierend auf dessen eindeutigen Titel, der als Men&uuml;punktname gespeichert ist:</em>
+Loop, %mwt_MaxWindows%
+{
+    if mwt_WindowTitle%a_index% = %A_ThisMenuItem%  <em>; &Uuml;bereinstimmung gefunden.</em>
+    {
+        StringTrimRight, IDToRestore, mwt_WindowID%a_index%, 0
+        WinShow, ahk_id %IDToRestore%
+        WinActivate ahk_id %IDToRestore%  <em>; Manchmal notwendig.</em>
+        mwt_WindowID%a_index% =  <em>; Leer machen, um die Stelle freizugeben.</em>
+        mwt_WindowTitle%a_index% =
+        mwt_WindowCount -= 1
+        break
+    }
+}
+return
+
+
+<em>; Damit wird das zuletzt minimierte Fenster aktiviert und sichtbar gemacht.</em>
+mwt_UnMinimize:
+<em>; Sicherstellen, dass etwas vorhanden ist, das sichtbar gemacht wird.</em>
+if mwt_WindowCount > 0
+{
+    <em>; Ermittelt die ID des zuletzt minimierten Fensters und macht es sichtbar</em>
+    StringTrimRight, IDToRestore, mwt_WindowID%mwt_WindowCount%, 0
+    WinShow, ahk_id %IDToRestore%
+    WinActivate ahk_id %IDToRestore%
+
+    <em>; Ermittelt den Men&uuml;namen des zuletzt minimierten Fensters und entfernt ihn</em>
+    StringTrimRight, MenuToRemove, mwt_WindowTitle%mwt_WindowCount%, 0
+    Menu, Tray, delete, %MenuToRemove%
+
+    <em>; Array aufr&auml;umen und Fensterz&auml;hlung verringern</em>
+    mwt_WindowID%mwt_WindowCount% =
+    mwt_WindowTitle%mwt_WindowCount% =
+    mwt_WindowCount -= 1
+}
+return
+
+
+mwt_RestoreAllThenExit:
+Gosub, mwt_RestoreAll
+ExitApp  <em>; Echtes Exit durchf&uuml;hren.</em>
+
+
+mwt_RestoreAll:
+Loop, %mwt_MaxWindows%
+{
+    if mwt_WindowID%a_index% &lt;&gt;
+    {
+        StringTrimRight, IDToRestore, mwt_WindowID%a_index%, 0
+        WinShow, ahk_id %IDToRestore%
+        WinActivate ahk_id %IDToRestore%  <em>; Manchmal notwendig.</em>
+        <em>; Diesen Weg anstelle von DeleteAll durchf&uuml;hren, sodass die Trennlinie</em>
+        <em>; und das erste Element erhalten bleiben:</em>
+        StringTrimRight, MenuToRemove, mwt_WindowTitle%a_index%, 0
+        Menu, Tray, delete, %MenuToRemove%
+        mwt_WindowID%a_index% =  <em>; Leer machen, um eine Stelle freizugeben.</em>
+        mwt_WindowTitle%a_index% =
+        mwt_WindowCount -= 1
+    }
+    if mwt_WindowCount = 0
+        break
+}
+return
+
+</pre>
+</body>
+</html>
