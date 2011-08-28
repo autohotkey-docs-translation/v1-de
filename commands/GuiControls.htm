@@ -24,7 +24,8 @@ hr {margin-bottom: 0em;}
   <li><a href="#ListBox">ListBox</a>, <a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a></li>
   <li><a href="#Hotkey">Hotkey</a>, <a href="#DateTime">DateTime</a>, <a href="#MonthCal">MonthCal</a></li>
   <li><a href="#Slider">Slider</a>, <a href="#Progress">Progress</a></li>
-  <li><a href="#GroupBox">GroupBox</a>, <a href="#Tab">Tab2</a>, <a href="#StatusBar">StatusBar</a>, <a href="#IE_Control">Steuerelement f&uuml;r Internet Explorer</a></li>
+  <li><a href="#GroupBox">GroupBox</a>, <a href="#Tab">Tab2</a>, <a href="#StatusBar">StatusBar</a></li>
+  <li><a href="#ActiveX">ActiveX</a> (z. B. Internet Explorer Control)</li>
 </ul>
 
 <h2 id="Text">Text</h2>
@@ -318,8 +319,35 @@ SB_SetText("Es sind " . RowCount . " Zeilen markiert.")</pre>
 <p><strong>Styles</strong> (selten verwendet): Siehe <a href="../misc/Styles.htm#StatusBar">Style-Tabelle der StatusBar</a>.</p>
 <p><strong>Bekannte Einschr&auml;nkungen</strong>: 1) Jedes Steuerelement, dass die Statusleiste &uuml;berdeckt, wird manchmal dr&uuml;ber gezeichnet.  Zur Vermeidung dieses Problems k&ouml;nnen solche Steuerelemente mittels <a href="Gui.htm#GuiSize">GuiSize label</a> dynamisch geschrumpft werden. 2) Jedes Fenster kann nur eine Statusleiste besitzen.</p>
 <p><strong>Beispiel</strong>: Im unteren Bereich der <a href="TreeView.htm#Examples">TreeView-Seite</a> wird eine Statusleiste mit mehreren Abschnitten demonstriert.</p>
-<h2 id="IE_Control">Steuerelement f&uuml;r Internet Explorer</h2>
-<p>Ein MSIE-Browser-Steuerelement kann in einem GUI-Fenster mittels DllCall eingebettet werden. Das Steuerelement kann eine Web-Seite oder andere browser-kompatible Inhalte anzeigen. Das wird auf <a href="http://www.autohotkey.com/wiki/index.php?title=Internet_Explorer_Control">www.autohotkey.com/wiki/index.php?title=Internet_Explorer_Control</a> demonstriert.</p>
+<h2 id="ActiveX"><a name="IE_Control"></a>ActiveX <span class="ver">[v1.1.03+]</span></h2>
+<p>ActiveX-Komponenten wie das MSIE-Browser-Steuerelement k&ouml;nnen wie folgt eingebettet werden:</p>
+<pre>Gui Add, ActiveX, w980 h640 vWB, <a href="http://msdn.microsoft.com/en-us/library/aa752085">Shell.Explorer</a>  <em>; Der letzte Parameter ist der Name der ActiveX-Komponente.</em>
+WB.<a href="http://msdn.microsoft.com/en-us/library/aa752093">Navigate</a>("http://www.autohotkey.com/forum/")  <em>; Speziell für das Web-Browser-Steuerelement.</em>
+Gui Show</pre>
+<p>Sobald das Steuerelement erstellt ist, wird ein ActiveX-Objekt in die zugewiesenen Variable des Steuerelements gespeichert, falls vorhanden. Mit <a href="GuiControlGet.htm">GuiControlGet</a> kann auch das Objekt abgerufen werden. </p>
+<p>Damit die Ereignisse des Objekts bearbeitet werden k&ouml;nnen, verwendet <a href="ComObjConnect.htm">ComObjConnect</a> wie unten gezeigt:</p>
+<pre>Gui Add, Edit, w930 r1 vURL, http://www.autohotkey.com/forum/
+Gui Add, Button, x+6 yp w44 Default, Laden
+Gui Add, ActiveX, xm w980 h640 vWB, Shell.Explorer
+<strong>ComObjConnect</strong>(WB, WB_events)  <em>; Verbindet die WB-Ereignisse mit dem Klassenobjekt WB_events.</em>
+Gui Show
+<em>; Fortfahren, um die Startseite zu laden:</em>
+ButtonLaden:
+Gui Submit, NoHide
+WB.Navigate(URL)
+return
+
+class WB_events
+{
+    <a href="http://msdn.microsoft.com/en-us/library/aa768334">NavigateComplete2</a>(wb, NewURL)
+    {
+        GuiControl,, URL, %NewURL%  <em>; URL-Edit-Steuerelement aktualisieren.</em>
+    }
+}
+
+GuiClose:
+ExitApp</pre>
+<p><a href="ComObjType.htm">ComObjType</a> kann verwendet werden, um den Typ des gespeicherten Objekts in der Steuerelementvariable zu bestimmen.</p>
 <h2>Verwandte Seiten</h2>
 <p><a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>, <a href="Gui.htm">Gui</a>, <a href="GuiControl.htm">GuiControl</a>, <a href="GuiControlGet.htm">GuiControlGet</a>, <a href="Menu.htm">Menu</a></p>
 
