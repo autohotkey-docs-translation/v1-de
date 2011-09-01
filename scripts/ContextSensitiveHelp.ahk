@@ -1,13 +1,14 @@
 ; Kontextabhängige Hilfe in einem beliebigen Editor - von Rajat
 ; http://www.autohotkey.com
 ; Damit kann mit Strg+2 (oder ein anderer Hotkey) die Hilfe-Dateiseite
-; für den markierten AutoHotkey-Befehl oder Schlüsselwort angezeigt werden. Wenn nichts markiert ist,
-; dann wird der Befehlsname vom Anfang der aktuellen Zeile extrahiert.
+; für den markierten AutoHotkey-Befehl oder Schlüsselwort angezeigt werden. 
+; Wenn nichts markiert ist, dann wird der Befehlsname vom Anfang der aktuellen 
+; Zeile extrahiert.
 
 ; Der unten genannte Hotkey nutzt die Zwischenablage, um die Kompatibilität mit
-; den meisten Editoren zu gewährleisten (da ControlGet nicht immer funktioniert).
-; Danach wird der originale Inhalt der Zwischenablage wiederhergestellt, jedoch als Klartext,
-; was immer noch besser als gar nichts ist.
+; den meisten Editoren zu gewährleisten (da ControlGet nicht immer 
+; funktioniert). Danach wird der originale Inhalt der Zwischenablage wieder-
+; hergestellt, jedoch als Klartext, was immer noch besser als gar nichts ist.
 
 $^2::
 ; Die folgenden Werte sind nur während des Hotkey-Threads wirksam.
@@ -28,7 +29,8 @@ Send, ^c
 ClipWait, 0.1
 if ErrorLevel <> 0
 {
-	; Die gesamte Zeile abrufen, weil Editoren die Cursor-Navigationstasten unterschiedlich behandeln:
+	; Die gesamte Zeile abrufen, weil Editoren die Cursor-Navigationstasten 
+	; unterschiedlich behandeln:
 	Send, {home}+{end}^c
 	ClipWait, 0.2
 	if ErrorLevel <> 0  ; Selten, daher kein Fehler melden.
@@ -37,8 +39,8 @@ if ErrorLevel <> 0
 		Return
 	}
 }
-C_Cmd = %clipboard%  ; Führende oder nachfolgende Tabulator- & Leerzeichen entfernen.
-clipboard = %C_ClipboardPrev%  ; Die ursprüngliche Zwischenablage für den Benutzer wiederherstellen.
+C_Cmd = %clipboard%  ; Tabulator- & Leerzeichen davor oder danach entfernen.
+clipboard = %C_ClipboardPrev%  ; Die vorherige Zwischenablage wiederherstellen.
 Loop, parse, C_Cmd, %A_Space%`,  ; Das erste Leerzeichen oder Komma kennzeichnet das Ende des Befehls.
 {
 	C_Cmd = %A_LoopField%
