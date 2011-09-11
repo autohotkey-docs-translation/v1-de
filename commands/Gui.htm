@@ -21,6 +21,7 @@ h1 {font-size: 200%; margin-top: 0.5em}
 <pre class="Syntax">Gui, Unterbefehl [, Param2, Param3, Param4]</pre>
 <h2>Inhaltsverzeichnis</h2>
 <ul>
+  <li><a href="#New">New</a>: Erstellt ein neues Fenster.</li>
   <li><a href="#Add">Add</a>: Erstellt ein Steuerelement wie z. B. Text, Schaltfl&auml;che oder Kontrollk&auml;stchen.</li>
   <li><a href="#Show">Show</a>: Zeigt das Fenster an. Kann ein Fenster auch minimieren, maximieren oder verschieben.</li>
   <li><a href="#Submit">Submit</a>: Speichert die Benutzerdaten und kann das Fenster versteckt.</li>
@@ -43,6 +44,17 @@ h1 {font-size: 200%; margin-top: 0.5em}
   <li>Sonstiges: <a href="#Navigate">Navigation mit der Tastatur</a> | <a href="#Appear">Fensterdarstellung</a> | <a href="#GenRemarks">Allgemeine Bemerkungen</a></li>
   <li><a href="#Examples">Beispiele</a>: Enthalten funktionierende Scripts, die GUI-Fenster und Steuerelemente darstellen.</li>
 </ul>
+
+<h2 id="New">Gui, New [, Optionen, Titel] <span class="ver">[v1.1.04]</span></h2>
+<p>Erstellt ein neues Fenster. Dieser Befehl hat zwei unterschiedliche Methoden:</p>
+<pre>Gui, New  <em>; Erstellt ein neues unbenanntes GUI, das als Standard definiert wird.</em>
+Gui, Name:New  <em>; Erstellt ein neues GUI und zerstört jedes vorhandene GUI mit diesem Namen.</em>
+</pre>
+<p>Falls kein Name angegeben ist, wird das neue Fenster als <a href="#Default">Standard</a> f&uuml;r den aktuellen Thread definiert. Spezielle <a href="#Labels">Label</a> wie <a href="#GuiClose"><em>GuiClose</em></a> verwenden das Standardpr&auml;fix &quot;Gui&quot;, es sei denn, es wird durch <a href="#PlusLabel">+Label<em>Pr&auml;fix</em></a> in den Optionen &uuml;berschrieben. Wenn das GUI, welches den aktuellen Thread gestartet hat, auf diese Weise erstellt wurde, dann enth&auml;lt <a href="../Variables.htm#Gui">A_Gui</a> ein HWND anstelle eines Namens. Wenn dar&uuml;ber hinaus <a href="#GuiHwndOutputVar">+Hwnd<em>Ausgabevariable</em></a> in den Optionen verwendet wird, dann wird das HWND des neuen Fensters in die <em>Ausgabevariable</em> gespeichert.</p>
+<p>Wenn ein Name angegeben ist, dann wird jedes vorhandene GUI mit diesem Namen <strong>zerst&ouml;rt</strong> und das <a href="#Default">Standard-GUI</a> des aktuellen Threads nicht ver&auml;ndert.</p>
+<p><em>Optionen</em> kann beliebige <a href="#Options">Optionen</a> enthalten, die vom Haupt-GUI-Befehl unterst&uuml;tzt werden.</p>
+<p>Wenn der <em>Titel</em> weggelassen wird, dann wird der Dateiname des Scripts verwendet.</p>
+<p>Auch wenn dieser Befehl nicht benutzt wird, sollte beachtet werden, dass auch mit einem anderen Gui-Unterbefehl wie <a href="#Add">Gui, Add</a> ein GUI erstellt werden kann.</p>
 
 <h2 id="Add">Gui, Add, Steuerelementart [, Optionen, Text]</h2>
 <p>F&uuml;gt einem GUI-Fenster ein Steuerelement hinzu (GUI-Fenster wird je nach Bedarf automatisch erstellt).</p>
@@ -128,7 +140,7 @@ Gui, Font,, Verdana  <em>; Bevorzugte Schriftart.</em></pre>
 Gui +LastFound  <em>; Macht das GUI-Fenster zum <a href="../LastFoundWindow.htm">zuletzt gefundenen Fenster</a>.</em>
 WinSet, TransColor, EEAA99</pre>
 <p>Um zus&auml;tzlich den Rahmen und die Titelleiste des Fensters mit einem transparenten Hintergrund zu entfernen, verwendet folgenden Befehl, <strong>nachdem</strong> das Fenster transparent gemacht wurde:</p>
-<pre>Gui -Caption  <em>; Oder "<i>Gui, 2:-Caption</i>" f&uuml;r das zweiter Fenster, usw.</em></pre>
+<pre>Gui -Caption  <em>; Oder "<i>Gui, GuiName:-Caption</i>", falls es nicht das <a href="#DefaultWin">Standardfenster</a> ist.</em></pre>
 <p>F&uuml;r eine bildliche Darstellung ist das Beispiel mit der Bildschirmanzeige (OSD) weiter unten gut geeignet.</p>
 
 <h2 id="Margin">Gui, Margin [, X, Y]</h2>
@@ -141,21 +153,22 @@ WinSet, TransColor, EEAA99</pre>
 <p>Der Effekt des Befehls ist kumulativ (summierend), das hei&szlig;t, es werden nur die direkt angegebenen Einstellungen ge&auml;ndert, alle anderen bleiben unver&auml;ndert.</p>
 <p>Mit einem Plus- oder Minuszeichen kann eine Option jeweils hinzugef&uuml;gt oder entfernt werden. Zum Beispiel:</p>
 <pre>Gui +Resize -MaximizeBox  <em>; &Auml;ndert die Einstellungen des <a href="#DefaultWin">Standard</a>-GUI-Fensters.</em>
-Gui <strong>2:</strong>+Resize -MaximizeBox  <em>; &Auml;ndert die Einstellungen des zweiten GUI-Fensters.</em></pre>
+Gui <strong>EigenesGui:</strong>+Resize -MaximizeBox  <em>; &Auml;ndert die Einstellungen des GUI's namens <i>EigenesGui</i>.</em></pre>
 <p><strong>AlwaysOnTop</strong>: Das Fenster bleibt in der Z-Rangordnung ganz oben, hat den gleichen Effekt wie "<a href="WinSet.htm">WinSet</a> AlwaysOnTop".</p>
 <p><strong>Border</strong>: Das Fenster erh&auml;lt einen d&uuml;nnen Rahmen (nicht &uuml;blich). Das ist un&uuml;blich.</p>
 <p><strong>Caption</strong> (standardm&auml;&szlig;ig vorhanden): Das Fenster erh&auml;lt eine Titelleiste und einen dicken Rahmen. Die Titelleiste sollte erst nach <a href="WinSet.htm#TransColor">WinSet TransColor</a> entfernt werden.</p>
 <p><strong><a name="Delimiter"></a>Delimiter</strong>: Erm&ouml;glicht dem Fenster die Benutzung eines anderen Trennzeichens (senkrechter Strich | ist Standard), sobald der Inhalt eines Steuerelements mittels <a href="#Add">Gui Add</a> hinzugef&uuml;gt, mittels <a href="GuiControl.htm">GuiControl</a> modifiziert oder mittels <a href="#Submit">Gui Submit</a> bzw. <a href="GuiControlGet.htm">GuiControlGet</a> ermittelt wird. Ein einzelnes Zeichen muss unmittelbar nach dem Wort Delimiter folgen. Zum Beispiel wird mit <em>Gui +Delimiter`n</em> das LF-Zeichen verwendet, welches besonders gut f&uuml;r <a href="../Scripts.htm#continuation">Fortsetzungsbereiche</a> geeignet ist. Mit <em>Gui +Delimiter|</em> wird das Standardtrennzeichen wiederhergestellt. Bei einem Leerzeichen oder Tabulator kann <em>Gui +DelimiterSpace</em> oder <em>Gui +DelimiterTab</em> verwendet werden. Wurde das Trennzeichen einmal ge&auml;ndert, beeinflusst diese Option alle existierende und nachfolgende <a href="../misc/Threads.htm">Threads</a> in diesem Fenster.</p>
 <p><strong>Disabled</strong>: Deaktiviert das Fenster und hindert den Benutzer daran, mit den Steuerelementen zu interagieren. Das wird oft bei Fenstern benutzt, die andere Fenster besitzen (siehe <a href="#Owner">Owner</a>).</p>
-<p><strong><a name="PlusLabel"></a>Label</strong> <span class="ver">[v1.0.44.09+]:</span> Erm&ouml;glicht benutzerdefinierte Namen f&uuml;r die <a href="#Labels">speziellen Label</a> des Fensters. Zum Beispiel verwendet <em>Gui 2:+LabelEigenesGUI</em> die Label EigenesGUIClose und EigenesGUISize (falls vorhanden) anstelle von 2GuiClose und 2GuiSize. Mit anderen Worten wird der String "2Gui" in jedem <a href="#Labels">speziellen Label</a> mit "EigenesGUI" ersetzt. Damit k&ouml;nnen sich auch mehrere Fenster die gleichen Label teilen (in diesem Fall enth&auml;lt <a href="../Variables.htm#Gui">A_Gui</a> das Fenster, das die Subroutine ausgef&uuml;hrt hat).</p>
+<p id="GuiHwndOutputVar"><strong>Hwnd</strong><em>Ausgabevariable</em> <span class="ver">[v1.1.04+]:</span> Diese Option speichert das Fenster-Handle (HWND) des GUIs in die <em>Ausgabevariable</em>. Zum Beispiel: <em>Gui +HwndEigenesGuiHwnd</em>. Innerhalb einer Funktion wird <em>EigenesGuiHwnd</em> als eine <a href="../Functions.htm#DynVar">dynamische Variable</a> behandelt. Das HWND eines GUIs wird oft mit <a href="PostMessage.htm">PostMessage</a>, <a href="PostMessage.htm">SendMessage</a> und <a href="DllCall.htm">DllCall</a> verwendet. Es kann auch direkt als ein <a href="../LastFoundWindow.htm#id">ahk_id-Fenstertitel</a> oder anstelle vom GUI-Namen benutzt werden; zum Beispiel <em>Gui %EigenesGuiHwnd%:Destroy</em>.</p>
+<p><strong><a name="PlusLabel"></a>Label</strong> <span class="ver">[v1.0.44.09+]:</span> Erm&ouml;glicht benutzerdefinierte Namen f&uuml;r die <a href="#Labels">speziellen Label</a> des Fensters. Zum Beispiel verwendet <em>Gui EigenesGui:+LabelEigenesGui_On</em> die Label EigenesGui_OnClose und EigenesGui_OnSize (falls vorhanden), anstatt EigenesGuiGuiClose und EigenesGuiGuiSize. Mit anderen Worten wird der String "EigenesGuiGui" in jedem <a href="#Labels">speziellen Label</a> mit "EigenesGui_On" ersetzt. Damit k&ouml;nnen sich auch mehrere Fenster die gleichen Label teilen (in diesem Fall enth&auml;lt <a href="../Variables.htm#Gui">A_Gui</a> das Fenster, das die Subroutine ausgef&uuml;hrt hat).</p>
 <p><strong><a name="LastFound"></a>LastFound</strong>: Das Fenster wird zum <a href="../LastFoundWindow.htm">zuletzt gefundenen Fenster</a> (nicht in einem <a href="#DefaultWin">GUI-Thread</a> notwendig, weil das automatisch erfolgt), damit dieses Fenster von Befehlen wie <a href="WinSet.htm">WinSet</a> bearbeitet werden kann, selbst wenn es versteckt ist (das hei&szlig;t, dass <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> nicht ben&ouml;tigt wird). Das ist besonders n&uuml;tzlich, um die Eigenschaften des Fensters zu &auml;ndern, bevor es angezeigt wird. Zum Beispiel:</p>
 <pre>Gui +LastFound
 WinSet, TransColor, %IndividualFarbe% 150
 Gui Show</pre>
 <p><strong><a name="LastFoundExist"></a>LastFoundExist</strong> <span class="ver">[v1.0.43.09+]:</span> LastFoundExist wird nur erkannt, wenn keine anderen Optionen auf derselben Zeile stehen. <em>+LastFoundExist</em> ist das Gleiche wie <em>+LastFound</em>, au&szlig;er dass das Fenster nicht erstellt wird, falls es noch nicht existiert. Diese Option wird haupts&auml;chlich verwendet, um zu erkennen, ob ein bestimmtes GUI-Fenster bereits existiert. Zum Beispiel:</p>
-<pre>Gui 2:+LastFoundExist
+<pre>Gui EigenesGui:+LastFoundExist
 IfWinExist
-    MsgBox GUI #2 existiert bereits.</pre>
+    MsgBox GUI "EigenesGui" existiert bereits.</pre>
 <p><strong>MaximizeBox</strong>: Aktiviert die Maximieren-Schaltfl&auml;che in der Titelleiste. Das geh&ouml;rt zum Teil der unteren <em>Resize</em>-Option.</p>
 <p><strong>MinimizeBox</strong> (standardm&auml;&szlig;ig vorhanden): Aktiviert die Minimieren-Schaltfl&auml;che in der Titelleiste.</p>
 <p><strong><a name="MinSize"></a>MinSize</strong> und <strong>MaxSize</strong> <span class="ver">[v1.0.44.13+]:</span> Bestimmt die minimale und/oder maximale Gr&ouml;&szlig;e des Fensters, wenn der Benutzer beispielsweise die Gr&ouml;&szlig;e des Fensters durch Ziehen an den Ecken &auml;ndern will. Wenn keine Suffixe bei den W&ouml;rtern <em>MinSize</em> und/oder <em>MaxSize</em> vorhanden sind, dann wird die aktuelle Gr&ouml;&szlig;e des Fensters verwendet (wenn das Fenster keine aktuelle Gr&ouml;&szlig;e hat, dann wird die zuerst verwendete Gr&ouml;&szlig;e von <a href="#Show">Gui Show</a> benutzt). Alternativ kann auch die Breite, gefolgt von einem "x" und der H&ouml;he angef&uuml;gt werden: <em>Gui +Resize +MinSize640x480</em>. Die Abmessungen sind in Pixel und bestimmen die Gr&ouml;&szlig;e des Client-Bereichs im Fenster (der Client-Bereich schlie&szlig;t Rahmen, Titelleiste und <a href="#Menu">Men&uuml;leiste</a> des Fensters aus). Jede Zahl muss dezimal angegeben werden.</p>
@@ -163,41 +176,30 @@ IfWinExist
 <p>Wenn <em>MinSize</em> und <em>MaxSize</em> nicht vorhanden sind, dann werden die Standardwerte des Betriebssystems verwendet (&auml;hnlich <em>Gui -MinSize -MaxSize</em>, Standardwerte werden wiederhergestellt). Hinweis: das Fenster muss <a href="#Resize">+Resize</a> enthalten, damit der Benutzer in der Lage ist, die Gr&ouml;&szlig;e zu &auml;ndern).</p>
 <p><strong><a name="OwnDialogs"></a>OwnDialogs</strong>: In jedem <a href="../misc/Threads.htm">Thread</a> (z. B. eine ButtonOK-Subroutine) sollte <em>Gui +OwnDialogs</em> angegeben werden, damit danach angezeigte <a href="MsgBox.htm">MsgBox</a>-, <a href="InputBox.htm">InputBox</a>-, <a href="FileSelectFile.htm">FileSelectFile</a>- oder <a href="FileSelectFolder.htm">FileSelectFolder</a>-Dialogfenster dem Fenster untergeordnet sind. Solche Dialogfenster werden modal, d. h. der Benutzer kann erst wieder mit dem GUI-Fenster interagieren, wenn das Dialogfenster geschlossen wird. Im Gegensatz dazu werden <a href="ToolTip.htm">ToolTip</a>, <a href="Progress.htm">Progress</a> und <a href="Progress.htm">SplashImage</a> nicht modal, selbst wenn sie untergeordnet werden; sie bleiben immer im Vordergrund. In jedem Fall werden untergeordnete Dialogfenster automatisch zerst&ouml;rt, wenn ihr GUI-Fenster <a href="#Destroy">zerst&ouml;rt</a> wird.</p>
 <p>Normalerweise muss diese Einstellung nicht wieder deaktivieren werden, weil sie andere <a href="../misc/Threads.htm">Threads</a> nicht beeinflusst. Wenn allerdings ein Thread sowohl untergeordnete als auch nicht untergeordnete Dialogfenster anzeigen muss, dann kann diese Einstellung mittels <em>Gui -OwnDialogs</em> deaktiviert werden.</p>
-<p>Wenn kein Fenstername als Pr&auml;fix angegeben ist (z. B. <em>Gui +OwnDialogs</em> anstelle von <em>Gui 2: +OwnDialogs</em>), dann werden die Dialogfenster dem <a href="#DefaultWin">Standardfenster des Threads</a> untergeordnet.</p>
+<p>Wenn kein Fenstername als Pr&auml;fix angegeben ist (z. B. <em>Gui +OwnDialogs</em> anstelle von <em>Gui EigenesGui: +OwnDialogs</em>), dann werden die Dialogfenster dem <a href="#DefaultWin">Standardfenster des Threads</a> untergeordnet.</p>
 <p><strong><a name="Owner"></a>Owner</strong>: Mit <em>+Owner</em> wird das Fenster einem Anderen zugeordnet (wenn das Fenster schon erstellt ist, hat <em>-Owner</em> keinen Effekt). Ein untergeordnetes Fenster hat standardm&auml;&szlig;ig keine eigene Schaltfl&auml;che in der Taskleiste und befindet sich immer im Vordergrund, sobald es sichtbar ist. Dieses Fenster wird automatisch zerst&ouml;rt, wenn das dazugeh&ouml;rige GUI-Fenster zerst&ouml;rt wird. <em>+Owner</em> darf erst <u>nach</u> der Erstellung des &uuml;bergeordneten Fensters, aber <u>vor</u> der Erstellung des untergeordneten Fensters verwendet werden (das hei&szlig;t vor Befehlen wie <a href="#Add">Gui Add</a>). Es gibt zwei M&ouml;glichkeiten, +Owner wie folgt zu verwenden:</p>
-<pre>Gui, 2:+Owner1  <em>; Fenster #2 wird dem Fenster #1 untergeordnet.</em>
-Gui, 2:+Owner  <em>; Fenster #2 wird dem <a href="Menu.htm#MainWindow">Hauptfenster des Scripts</a> untergeordnet, damit die Anzeige der Schaltfl&auml;che in der Taskleiste verhindert wird.</em></pre>
+<pre>Gui, EigenesGui:+OwnerAnderesGui  <em>; <i>EigenesGui</i> wird <i>AnderesGui</i> untergeordnet.</em>
+Gui, EigenesGui:+Owner  <em>; <i>EigenesGui</i> wird dem <a href="Menu.htm#MainWindow">Hauptfenster des Scripts</a> untergeordnet, damit Schaltfl&auml;che in der Taskleiste unterdrückt wird.</em></pre>
 <p><span class="ver">[v1.1.03+]:</span> Unmittelbar nach <em>+Owner</em> kann der <a href="#Name">Name</a> oder die Nummer eines vorhandenen Gui-Fensters, oder das <a href="WinGet.htm#ID">HWND</a> eines beliebigen Fensters auf h&ouml;chster Ebene erfolgen.</p>
 <p>Damit der Benutzer beim Anzeigen eines untergeordneten Fensters nicht mehr mit dem &uuml;bergeordneten Fenster interagieren kann, deaktiviert das &uuml;bergeordnete Fenster mittels <em>Gui +Disabled</em>. Sobald das untergeordnete Fenster geschlossen oder zerst&ouml;rt wird, kann das &uuml;bergeordnete Fenster wieder mittels <em>Gui -Disabled</em> aktiviert werden. Das sollte vor dem Schlie&szlig;en/Zerst&ouml;ren des Fensters geschehen, damit das &uuml;bergeordnete Fenster automatisch reaktiviert wird.</p>
 <p><strong><a name="Parent"></a>Parent</strong> <span class="ver">[v1.1.03+]</span>: Unmittelbar nach <em>+Parent</em> kann der <a href="#Name">Name</a> oder die Nummer eines vorhandenen Gui-Fensters, oder das <a href="WinGet.htm#ID">HWND</a> eines beliebigen Fensters oder Steuerelements angegeben werden, damit es diesem Fenster &uuml;bergeordnet wird. Um das Gui-Fenster wieder in einem Fenster auf h&ouml;chster Ebene umzuwandeln, verwendet <em>-Parent</em>. Im Gegensatz zu <em>+Owner</em> funktioniert diese Option auch, nachdem das Fenster erstellt wurde.</p>
 <p><strong><a name="Resize"></a>Resize</strong>: Erm&ouml;glicht das &Auml;ndern der Fenstergr&ouml;&szlig;e und aktiviert die Maximieren-Schaltfl&auml;che in der Titelleiste. Mit <em>+Resize -MaximizeBox</em> kann die Maximieren-Schaltfl&auml;che verhindert werden.</p>
 <p><strong>SysMenu</strong> (standardm&auml;&szlig;ig vorhanden): Mit <em>-SysMenu</em> wird das Systemmen&uuml; und Icon von der oberen linken Ecke des Fensters entfernt. Dadurch entfallen auch die Schaltfl&auml;chen f&uuml;rs Minimieren, Maximieren und Schlie&szlig;en.</p>
-<p><strong><a name="Theme"></a>Theme</strong>: Mit <em>-Theme</em> haben alle danach erstellten Steuerelemente im Fenster das klassische Design (nur ab Windows XP). Um Steuerelemente mit dem aktuellen Design nachtr&auml;glich hinzuzuf&uuml;gen, verwendet <em>+Theme</em>. Hinweis: Diese Option hat keine Auswirkung auf Betriebssysteme, die &auml;lter als Windows XP sind oder wenn in Windows XP das klassische Design aktiv ist. Schlie&szlig;lich k&ouml;nnen auch einzelne Steuerelemente mit dieser Option ge&auml;ndert werden.</p>
+<p><strong><a name="Theme"></a>Theme</strong>: Mit <em>-Theme</em> haben alle danach erstellten Steuerelemente im Fenster das klassische Design (nur ab Windows XP). Um Steuerelemente mit dem aktuellen Design nachtr&auml;glich hinzuzuf&uuml;gen, verwendet <em>+Theme</em>. Hinweis: Diese Option hat keine Auswirkung auf Betriebssysteme, die &auml;lter als Windows XP sind oder wenn in Windows XP das klassische Design aktiv ist. Schlie&szlig;lich k&ouml;nnen auch einzelne Steuerelemente mittels <em>+Theme</em> oder <em>-Theme</em> in deren Optionen ge&auml;ndert werden.</p>
 <p><strong>ToolWindow</strong>: Das Fenster hat eine schmale Titelleiste, aber keine Schaltfl&auml;che in der Taskleiste.</p>
 <p><strong>(Unbenannter Style)</strong>: Es kann ein Plus- oder Minuszeichen mit einer dezimalen oder hexadezimalen <a href="../misc/Styles.htm">Style-Nummer</a> angegeben werden.</p>
 <p><strong>(Unbenannter ExStyle)</strong>: Es kann ein Plus- oder Minuszeichen mit dem Buchstaben "E" und einer dezimalen oder hexadezimalen erweiterten Style-Nummer angegeben werden. <em>+E0x40000</em> beispielsweise f&uuml;gt den WS_EX_APPWINDOW-Style hinzu, um die Taskleistenschaltfl&auml;che des Fensters zu erzwingen. Weitere nicht-dokumentierte Styles findet man auf <a href="http://www.microsoft.com">www.microsoft.com</a>, z. B. mit der Suche nach WS_EX_APPWINDOW.</p>
 
 <h2 id="Menu">Gui, Menu [, Men&uuml;name]</h2>
 <p>F&uuml;gt eine Men&uuml;leiste hinzu. Mit dem <a href="Menu.htm">Menu</a>-Befehl k&ouml;nnen benutzerdefinierte Men&uuml;s erstellt werden. Zum Beispiel:</p>
-<pre>Menu, Dateimen&uuml;, Add, &Ouml;&ffnen    Strg+O, Men&uuml;Datei&Ouml;ffnen  <em>; Siehe untere Bemerkungen f&uuml;r Strg+O.</em>
+<pre>Menu, Dateimen&uuml;, Add, Ö&ffnen<a href="_EscapeChar.htm">`t</a>Ctrl+F, Men&uuml;Datei&Ouml;ffnen  <em>; Siehe untere Bemerkungen f&uuml;r Ctrl+F.</em>
 Menu, Dateimen&uuml;, Add, &Beenden, MenuHandler
 Menu, Hilfsmen&uuml;, Add, Inf&o, MenuHandler
 Menu, EigeneMen&uuml;leiste, Add, &Datei, :Dateimen&uuml;  <em>; F&uuml;gt die oben erstellten Untermen&uuml;s hinzu.</em>
 Menu, EigeneMen&uuml;leiste, Add, &?, :Hilfsmen&uuml;
 <strong>Gui, Menu, EigeneMen&uuml;leiste</strong></pre>
-<p>Wie bereits bemerkt, erfolgt nach &Ouml;&ffnen die Tastenkombination Strg+O (mit einem Tab-Zeichen dazwischen). Mit solch einer Tastenkombination kann der Benutzer auch den Men&uuml;eintrag aufrufen. Sie muss vorher jedoch &uuml;ber einen kontextabh&auml;ngigen Hotkey aktiviert werden:</p>
-<pre><a href="_IfWinActive.htm">#IfWinActive</a> Titel des GUI-Fensters ahk_class AutoHotkeyGUI
-^o::  <em>; Der Hotkey Strg+O.</em>
-Men&uuml;Datei&Ouml;ffnen:
-Gui <a href="#OwnDialogs">+OwnDialogs</a>  <em>; Zwingt den Benutzer, das Dialog-Fenster zu schlie&szlig;en, bevor er zum Hauptfenster zur&uuml;ckkehren kann.</em>
-<a href="FileSelectFile.htm">FileSelectFile</a>, Ausgew&auml;hlteDatei
-MsgBox Datei %Ausgew&auml;hlteDatei% ausgew&auml;hlt.
-Return
-
-<em>; Der folgende Teil ist nur notwendig, wenn das Script in Windows 95/98/Me ausgef&uuml;hrt wird:</em>
-#IfWinActive
-$^o::Send ^o</pre>
-<p>Mit <em>Gui Menu</em> kann die aktuelle Men&uuml;leiste des Fensters entfernt werden (der letzte Parameter ist nicht vorhanden).</p>
+<p>Wie bereits bemerkt, erfolgt nach &Ouml;&ffnen die Tastenkombination Ctrl+F (mit einem Tab-Zeichen dazwischen). Mit so einer Tastenkombination kann der Benutzer auch den Men&uuml;eintrag aufrufen. <span class="ver">[v1.1.04+]:</span> Wenn die Tastenkombination nur die Standardmodifikatortasten namens Ctrl, Alt und Shift verwendet (Anm. d. &Uuml;bers.: die deutschen Bezeichnungen Strg und Umschalt sind zurzeit nicht m&ouml;glich), dann wird sie automatisch als <em>Tastaturk&uuml;rzel</em> f&uuml;r das GUI registriert. Tastaturk&uuml;rzel mit einem Zeichen ohne Modifikatoren sind von der Gro&szlig;- und Kleinschreibung abh&auml;ngig und k&ouml;nnen durch ungew&ouml;hnliche Mitteln wie IME oder Alt+NNNN ausgel&ouml;st werden.</p>
+<p>Wenn eine bestimmte Tastenkombination nicht automatisch funktioniert, dann muss m&ouml;glicherweise ein <a href="_IfWinActive.htm">kontextabh&auml;ngiger Hotkey</a> verwendet werden. Allerdings k&ouml;nnen solche Hotkeys normalerweise nicht durch <a href="Send.htm">Send</a> ausgel&ouml;st werden, au&szlig;erdem beeintr&auml;chtigen sie eher andere Scripts, als ein Standard-Tastaturk&uuml;rzel.</p>
 <p>Ein Men&uuml;, das der Men&uuml;leiste zugewiesen ist, sollte nicht mehr als Popup-Men&uuml; oder Untermen&uuml; verwendet werden. Denn die Men&uuml;leisten ben&ouml;tigen intern ein anderes Format (allerdings gilt diese Einschr&auml;nkung nur f&uuml;r die Men&uuml;leiste selbst, nicht f&uuml;r die Untermen&uuml;s). Wenn dieses Problem umgangen werden muss, dann erstellt ein Men&uuml; f&uuml;r die Men&uuml;leiste und ein identisches Men&uuml; f&uuml;r alle anderen.</p>
 <p>Die Verwendung von destruktiven <a href="Menu.htm">Menu-Befehlen</a> (z. B. Delete und DeleteAll) bei einem Men&uuml;, das zurzeit als Men&uuml;leiste eingesetzt wird (und in einigen F&auml;llen auch deren Untermen&uuml;s) wird nicht unterst&uuml;tzt und zeigt eine Fehlermeldung an (es sei denn, <a href="Menu.htm">UseErrorLevel</a> ist aktiv). Befolgt folgende Schritte, um solche &Auml;nderungen vorzunehmen: 1) Die Men&uuml;leiste mittels <em>Gui Menu</em> entfernen (d. h. <em>Men&uuml;name</em> weglassen); 2) &Auml;nderungen vornehmen, 3) die Men&uuml;leiste mittels <em>Gui, Menu, EigeneMen&uuml;leiste</em> wieder hinzuf&uuml;gen.</p>
 
@@ -212,8 +214,8 @@ $^o::Send ^o</pre>
     Sleep, 500  <em>; Dieser Wert ist ziemlich empfindlich; &Auml;nderungen k&ouml;nnen zu unerwarteten Ergebnissen f&uuml;hren.</em>
 }</pre>
 
-<h2 id="Default">Gui, 2:Default</h2>
-<p>&Auml;ndert den <a href="#MultiWin">GUI-Standardfensternamen</a> des <a href="../misc/Threads.htm">aktuellen Threads</a>, der verwendet wird, sobald kein Fenstername f&uuml;r <a href="GuiControl.htm">GuiControl</a>, <a href="GuiControlGet.htm">GuiControlGet</a> und den Gui-Befehl selbst angegeben ist. Im folgenden Beispiel wird der Standardname des Fensters auf "2" gesetzt: <em>Gui 2:Default</em>. In "<a href="#DefaultWin">Standardnummer eines Threads</a>" k&ouml;nnen noch mehr Informationen &uuml;ber das Standardfenster gefunden werden.</p>
+<h2 id="Default">Gui, GuiName:Default</h2>
+<p>&Auml;ndert den <a href="#MultiWin">GUI-Standardfensternamen</a> des <a href="../misc/Threads.htm">aktuellen Threads</a>, der verwendet wird, sobald kein Fenstername f&uuml;r <a href="GuiControl.htm">GuiControl</a>, <a href="GuiControlGet.htm">GuiControlGet</a> und den Gui-Befehl selbst angegeben ist. Im folgenden Beispiel wird der Standardname des Fensters auf "EigenesGui" gesetzt: <em>Gui EigenesGui:Default</em>. In "<a href="#DefaultWin">Standardnummer eines Threads</a>" k&ouml;nnen noch mehr Informationen &uuml;ber das Standardfenster gefunden werden.</p>
 
 <h2 id="Position">Positionierung und Layout mittels SmartGUI Creator </h2>
 <p>Mit dem SmartGUI Creator von Rajat kann ein GUI-Fenster komplett visuell erstellt werden; d. h. "what you see is what you get (WYSIWYG)". Der SmartGUI Creator ist kostenlos und kann auf <a href="http://www.autohotkey.com/docs/SmartGUI/">www.autohotkey.com/docs/SmartGUI/</a> heruntergeladen werden.</p>
@@ -264,8 +266,8 @@ Gui, Show</pre>
 <p><strong><a name="BackgroundTrans"></a>BackgroundTrans</strong>: Damit wird der Hintergrund des Steuerelements transparent, welches sich &uuml;ber einem Text-, Picture- oder GroupBox-Steuerelement befindet. Ein transparentes Text-Steuerelement auf einem Picture-Steuerelement beispielsweise erscheint als ein Teil des Bildes. Mit "<a href="GuiControl.htm">GuiControl</a>, +Background" kann diese Option r&uuml;ckg&auml;ngig gemacht werden. Im <a href="GuiControls.htm#PicAltSubmit">AltSubmit-Abschnitt des Picture-Steuerelements</a> befinden sich weitere Informationen &uuml;ber transparente Bilder. Bekannte Einschr&auml;nkung: BackgroundTrans k&ouml;nnte mit Steuerelementen innerhalb eines <a href="GuiControls.htm#Tab">Tab-Steuerelements</a> mit einem <a href="ListView.htm">ListView</a> nicht richtig funktionieren.</p>
 <p><strong>-Background</strong>: Verwendet die Standard-Hintergrundfarbe, unabh&auml;ngig des Befehls "Gui Color". Das wird h&auml;ufig verwendet, damit ein Tab-Steuerelement die Standardfarbe anstelle der Fensterfarbe verwendet. Mit "<a href="GuiControl.htm">GuiControl</a>, +Background" kann diese Option r&uuml;ckg&auml;ngig gemacht werden.</p>
 <p><strong>Border</strong>: Das Steuerelement erh&auml;lt einen d&uuml;nnen Rahmen. Die meisten Steuerelemente ben&ouml;tigen diese Option nicht, da sie bereits einen typenspezifischen Rahmen haben. Wird ein Rahmen einem bereits <em>existierenden</em> Steuerelement hinzugef&uuml;gt, dann ist es wahrscheinlich notwendig, die Breite und H&ouml;he um 1 Pixel zu erh&ouml;hen.</p>
-<p><strong><a name="HwndOutputVar"></a>Hwnd</strong><em>Ausgabevariable</em> <span class="ver">[v1.0.46.01+]:</span> Bei Verwendung mit <a href="#Add">Gui Add</a> speichert diese Option den Fenster-Handle (HWND) eines neu erstellen Steuerelements in <em>Ausgabevariable</em>. Zum Beispiel: <em>Gui, Add, Edit, vEigenesEdit HwndEigenesEditHwnd</em> (innerhalb einer Funktion wird <em>EigenesEditHwnd</em> als eine <a href="../Functions.htm#DynVar">dynamische Funktionsvariable</a> behandelt). Das HWND eines Steuerelements wird oft bei <a href="PostMessage.htm">PostMessage</a>, <a href="PostMessage.htm">SendMessage</a> und <a href="DllCall.htm">DllCall</a> verwendet. Es kann direkt mit <a href="../LastFoundWindow.htm#id">ahk_id Fenstertitel</a> verwendet werden (welches auch mit versteckten Steuerelementen funktioniert, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist). Beachtet au&szlig;erdem, dass das HWND eines verwandten Fensters mittels <a href="#LastFoundExist">Gui 2:+LastFoundExist</a> gefolgt von <a href="../Functions.htm#WinExist">WinExist()</a> abgerufen werden kann.</p>
-<p><strong>Theme</strong>: Mit dieser Option wird das aktuelle Fenster-Design &uuml;berschrieben. Siehe <a href="#Theme">Gui + /-Theme</a> f&uuml;r Details.</p>
+<p><strong><a name="HwndOutputVar"></a>Hwnd</strong><em>Ausgabevariable</em> <span class="ver">[v1.0.46.01+]:</span> Bei Verwendung mit <a href="#Add">Gui Add</a> speichert diese Option das Fenster-Handle (HWND) eines neu erstellen Steuerelements in die <em>Ausgabevariable</em>. Zum Beispiel: <em>Gui, Add, Edit, vEigenesEdit HwndEigenesEditHwnd</em>. Innerhalb einer Funktion wird <em>EigenesEditHwnd</em> als eine <a href="../Functions.htm#DynVar">dynamische Variable</a> behandelt. Das HWND eines Steuerelements wird oft mit <a href="PostMessage.htm">PostMessage</a>, <a href="PostMessage.htm">SendMessage</a> und <a href="DllCall.htm">DllCall</a> benutzt. Es kann direkt als ein <a href="../LastFoundWindow.htm#id">ahk_id-Fenstertitel</a> (welches auch mit versteckten Steuerelementen funktioniert, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist) oder <span class="ver">[seit v1.1.04+]</span> mit GuiControl und GuiControlGet als <em>SteuerelementID</em>-Parameter verwendet werden. Dar&uuml;ber hinaus kann das HWND eines verwandten Fensters mittels <a href="#LastFoundExist">Gui EigenesGui:+HwndAusgabevariable</a> abgerufen werden kann.</p>
+<p><strong>Theme</strong>: Mit dieser Option wird das aktuelle Fenster-Design f&uuml;r das neu erstellte Steuerelement &uuml;berschrieben. Es hat keinen Effekt, wenn diese Option auf einem bereits vorhandenen Steuerelement angewendet wird; allerdings wird das m&ouml;glicherweise in einer zuk&uuml;nftigen Version ge&auml;ndert. Siehe <a href="#Theme">Gui + /-Theme</a> f&uuml;r Details.</p>
 <p><strong>(Unbenannter Style)</strong>: Es kann ein Plus- oder Minuszeichen mit einer dezimalen oder hexadezimalen <a href="../misc/Styles.htm">Style-Nummer</a> angegeben werden. Beim Fehlen des Vorzeichens wird ein Pluszeichen vermutet.</p>
 <p><strong>(Unbenannter ExStyle)</strong>: Es kann ein Plus- oder Minuszeichen mit dem Buchstaben "E" und einer dezimalen oder hexadezimalen erweiterten Style-Nummer angegeben werden. Beim Fehlen des Vorzeichens wird ein Pluszeichen vermutet. Zum Beispiel wird mit E0x200 der WS_EX_CLIENTEDGE-Style hinzugef&uuml;gt, um ein Rahmen mit abgesenktem Rand f&uuml;r entsprechende Picture-Steuerelemente bereitzustellen. Weitere nicht-dokumentierte Styles findet man auf <a href="http://www.microsoft.com">www.microsoft.com</a>, z. B. mit der Suche nach WS_EX_CLIENTEDGE.</p>
 
@@ -317,12 +319,13 @@ Loop, parse, FileList, `n
 <p>Um das Ziehen und Ablegen in einem Fenster nur vor&uuml;bergehend zu deaktivieren, entfernt den WS_EX_ACCEPTFILES-Style mittels <em>Gui -E0x10</em>. Mit <em>Gui +E0x10</em> kann es wieder aktiviert werden.</p>
 <p><strong>Erkennen von und reagieren auf andere Ereignisse</strong>: Andere Arten von GUI-Ereignissen k&ouml;nnen mittels <a href="OnMessage.htm">OnMessage()</a> erkannt und bearbeitet werden. Zum Beispiel kann eine kontextabh&auml;ngige Hilfe mittels einem ToolTip angezeigt werden, sobald der Benutzer die Maus &uuml;ber ein Steuerelement im Fenster h&auml;lt. Siehe dazu das Beispiel mit <a href="#ExToolTip">GUI-ToolTip</a>.</p>
 <h2><a name="MultiWin" id="MultiWin"></a>Mehrere GUI-Fenster erstellen</h2>
-<p>Die oben genannten Label von Fenstern au&szlig;er der Nummer 1 enthalten den Namen oder die Nummer des Fensters als Pr&auml;fix, wie zum Beispiel 2GuiEscape und 2GuiClose, die Standard-Label des Fensters Nummer 2. Siehe <a href="#PlusLabel">Gui +Label</a> f&uuml;r Informationen &uuml;ber benutzerdefinierte Labelnamen.</p>
-<p>Damit auch ein anderes Fenster neben dem <a href="#DefaultWin">Standard</a>-Fenster bearbeitet werden kann, muss dessen Name oder Nummer gefolgt von einem Doppelpunkt vor dem Unterbefehl eingef&uuml;gt werden, wie zum Beispiel:</p>
-<pre>Gui, <strong>2:</strong>Add, Text,, Text f&uuml;r das &Uuml;ber-Fenster.
-Gui, <strong>2:</strong>Show</pre>
-<p>Mit <a href="#Default">Gui 2:Default</a> k&ouml;nnen die oben genannten Pr&auml;fixe vermieden werden. Au&szlig;erdem ist das Pr&auml;fix innerhalb eines <a href="#DefaultWin">GUI-Threads</a> unn&ouml;tig, der das gleiche Fenster bearbeitet, welcher den Thread ausgef&uuml;hrt hat.</p>
-<p id="Name"><span class="ver">[v1.1.03+]:</span> Anstatt einer Zahl zwischen 1 und 99 kann ein Name oder <a href="WinGet.htm#ID">HWND</a> verwendet werden. Gui-Namen m&uuml;ssen sich nach den gleichen Regeln von <a href="../Variables.htm#Variable_names">Variablennamen</a> richten. Eine Nummer, die entweder nicht zwischen 1 und 99 liegt oder l&auml;nger als zwei Zeichen ist (wie z. B. 0x01) muss das HWND eines vorhandenen Gui-Fensters sein, ansonsten wird dieser Befehl fehlschlagen. Die Anzahl von benannten erstellbaren Fenstern ist nur durch verf&uuml;gbare Systemressourcen eingeschr&auml;nkt.</p>
+<p>Die oben genannten Label von Fenstern au&szlig;er der Nummer 1 enthalten den Namen oder die Nummer des Fensters als Pr&auml;fix (falls vorhanden), wie zum Beispiel 2GuiEscape und 2GuiClose, die Standard-Label des Fensters Nummer 2, w&auml;hrend <em>EigenesGui</em>GuiEscape und <em>EigenesGui</em>GuiClose die Standardlabels f&uuml;r <em>EigenesGui</em> sind. Siehe <a href="#PlusLabel">Gui +Label</a> f&uuml;r Informationen &uuml;ber benutzerdefinierte Labelnamen.</p>
+<p>Damit auch ein anderes Fenster neben dem <a href="#DefaultWin">Standard</a>-Fenster bearbeitet werden kann, muss dessen Name oder Nummer (oder seit v1.1.03 dessen <a href="#GuiHwndOutputVar">HWND</a>) gefolgt von einem Doppelpunkt vor dem Unterbefehl eingef&uuml;gt werden, wie zum Beispiel:</p>
+<pre>Gui, <strong>EigenesGui:</strong>Add, Text,, Text f&uuml;r das &Uuml;ber-Fenster.
+Gui, <strong>EigenesGui:</strong>Show</pre>
+<p>Mit <a href="#Default">Gui EigenesGui:Default</a> kann das oben genannte Pr&auml;fix "EigenesGui" vermieden werden. Au&szlig;erdem ist das Pr&auml;fix innerhalb eines <a href="#DefaultWin">GUI-Threads</a> unn&ouml;tig, der das gleiche Fenster bearbeitet, welcher den Thread ausgef&uuml;hrt hat.</p>
+<p id="Name"><span class="ver">[v1.1.03+]:</span> Gui-Namen m&uuml;ssen sich nach den gleichen Regeln von <a href="../Variables.htm#Variable_names">Variablennamen</a> richten. Eine Nummer, die entweder nicht zwischen 1 und 99 liegt oder l&auml;nger als zwei Zeichen ist (wie z. B. 0x01) muss das HWND eines vorhandenen Gui-Fensters sein, ansonsten wird dieser Befehl fehlschlagen. Die Anzahl von erstellbaren Fenstern ist nur durch verf&uuml;gbare Systemressourcen eingeschr&auml;nkt.</p>
+<p><span class="ver">[v1.1.04+]:</span>Es kann eine beliebige Anzahl an unbenannten GUI-Fenstern mithilfe von <a href="#New">Gui, New</a> erstellt werden.</p>
 <h2 id="DefaultWin">GUI-Ereignisse, Threads und Subroutinen</h2>
 <p>Ein <a href="../misc/Threads.htm">GUI-Thread</a> wird aufgrund einer GUI-Aktion wie jeder andere Thread behandelt. GUI-Aktionen sind das Ausw&auml;hlen von Eintr&auml;gen in einer Men&uuml;leiste oder das Ausf&uuml;hren eines <a href="#label">g-Labels</a> (z. B. beim Dr&uuml;cken einer Schaltfl&auml;che).</p>
 <p>Der <strong>Standard-<a href="#MultiWin">Fenstername</a></strong> f&uuml;r einen GUI-Thread ist von dem Fenster, das diesen Thread gestartet hat. Nicht-GUI-Threads verwenden standardm&auml;&szlig;ig die 1.</p>
@@ -551,13 +554,13 @@ ExitApp</pre>
 <pre class="NoIndent"><em>; Beispiel: Einfacher Texteditor mit Men&uuml;leiste.</em>
 
 <em>; Untermen&uuml;s f&uuml;r die Men&uuml;leiste erstellen:</em>
-Menu, Dateimen&uuml;, Add, &Neu, FileNew
-Menu, Dateimen&uuml;, Add, &&Ouml;ffnen, FileOpen
-Menu, Dateimen&uuml;, Add, &Speichern, FileSave
-Menu, Dateimen&uuml;, Add, Speichern &unter..., FileSaveAs
+Menu, Dateimen&uuml;, Add, &Neu, DateiNeu
+Menu, Dateimen&uuml;, Add, &&Ouml;ffnen, Datei&Ouml;ffnen
+Menu, Dateimen&uuml;, Add, &Speichern, DateiSpeichern
+Menu, Dateimen&uuml;, Add, Speichern &unter..., DateiSpeichernAls
 Menu, Dateimen&uuml;, Add  <em>; Trennlinie.</em>
-Menu, Dateimen&uuml;, Add, E&xit, FileExit
-Menu, Hilfsmen&uuml;, Add, &&Uuml;ber, HelpAbout
+Menu, Dateimen&uuml;, Add, E&xit, DateiBeenden
+Menu, Hilfsmen&uuml;, Add, &&Uuml;ber, Hilfe&Uuml;ber
 
 <em>; Erstellt die Men&uuml;leiste mit den Untermen&uuml;s:</em>
 Menu, EigeneMen&uuml;leiste, Add, &Datei, :Dateimen&uuml;
@@ -568,100 +571,100 @@ Gui, Menu, EigeneMen&uuml;leiste
 
 <em>; Erstellt das Edit-Steuerelement und zeigt das Fenster an:</em>
 Gui, +Resize  <em>; Gr&ouml;&szlig;e des Fensters kann angepasst werden.</em>
-Gui, Add, Edit, vMainEdit WantTab W600 R20
+Gui, Add, Edit, vHauptEdit WantTab W600 R20
 Gui, Show,, Unbenannt
-CurrentDateiname =  <em>; Keine aktuelle Datei vorhanden.</em>
+AktuellerDateiname =  <em>; Keine aktuelle Datei vorhanden.</em>
 Return
 
-FileNew:
-GuiControl,, MainEdit  <em>; Edit-Steuerelement leeren.</em>
+DateiNeu:
+GuiControl,, HauptEdit  <em>; Edit-Steuerelement leeren.</em>
 Return
 
-FileOpen:
+Datei&Ouml;ffnen:
 Gui +OwnDialogs  <em>; Zwingt den Benutzer, das FileSelectFile-Dialogfenster zu schlie&szlig;en, bevor er zum Hauptfenster zur&uuml;ckkehren kann.</em>
-FileSelectFile, SelectedDateiname, 3,, Datei &ouml;ffnen, Text-Dokumente (*.txt)
-If SelectedDateiname =  <em>; Keine Datei ausgew&auml;hlt.</em>
+FileSelectFile, Ausgew&auml;hlterDateiname, 3,, Datei &ouml;ffnen, Text-Dokumente (*.txt)
+If Ausgew&auml;hlterDateiname =  <em>; Keine Datei ausgew&auml;hlt.</em>
     Return
-Gosub FileRead
+Gosub DateiLesen
 Return
 
-FileRead:  <em>; Die Variable SelectedDateiname wurde vorher gesetzt.</em>
-FileRead, MainEdit, %SelectedDateiname%  <em>; Lie&szlig;t den Inhalt der Datei in die Variable.</em>
+DateiLesen:  <em>; Die Variable Ausgew&auml;hlterDateiname wurde vorher gesetzt.</em>
+FileRead, HauptEdit, %Ausgew&auml;hlterDateiname%  <em>; Lie&szlig;t den Inhalt der Datei in die Variable.</em>
 If ErrorLevel
 {
-    MsgBox "%SelectedDateiname%" konnte nicht ge&ouml;ffnet werden.
+    MsgBox "%Ausgew&auml;hlterDateiname%" konnte nicht ge&ouml;ffnet werden.
     Return
 }
-GuiControl,, MainEdit, %MainEdit%  <em>; F&uuml;gt den Text in das Steuerelement ein.</em>
-CurrentDateiname = %SelectedDateiname%
-Gui, Show,, %CurrentDateiname%   <em>; Zeigt den Dateinamen in der Titelleiste an.</em>
+GuiControl,, HauptEdit, %HauptEdit%  <em>; F&uuml;gt den Text in das Steuerelement ein.</em>
+AktuellerDateiname = %Ausgew&auml;hlterDateiname%
+Gui, Show,, %AktuellerDateiname%   <em>; Zeigt den Dateinamen in der Titelleiste an.</em>
 Return
 
-FileSave:
-If CurrentDateiname =   <em>; Keinen Dateinamen ausgew&auml;hlt, daher "Speichern unter...".</em>
-    Goto FileSaveAs
-Gosub SaveCurrentFile
+DateiSpeichern:
+If AktuellerDateiname =   <em>; Keinen Dateinamen ausgew&auml;hlt, daher "Speichern unter...".</em>
+    Goto DateiSpeichernAls
+Gosub AktuelleDateiSpeichern
 Return
 
-FileSaveAs:
+DateiSpeichernAls:
 Gui +OwnDialogs  <em>; Zwingt den Benutzer, das FileSelectFile-Dialogfenster zu schlie&szlig;en, bevor er zum Hauptfenster zur&uuml;ckkehren kann.</em>
-FileSelectFile, SelectedDateiname, S16,, Datei speichern, Text-Dokumente (*.txt)
-If SelectedDateiname =  <em>; Keine Datei ausgew&auml;hlt.</em>
+FileSelectFile, Ausgew&auml;hlterDateiname, S16,, Datei speichern, Text-Dokumente (*.txt)
+If Ausgew&auml;hlterDateiname =  <em>; Keine Datei ausgew&auml;hlt.</em>
     Return
-CurrentDateiname = %SelectedDateiname%
-Gosub SaveCurrentFile
+AktuellerDateiname = %Ausgew&auml;hlterDateiname%
+Gosub AktuelleDateiSpeichern
 Return
 
-SaveCurrentFile:  <em>; Es ist sichergestellt, dass CurrentDateiname nicht leer ist.</em>
-IfExist %CurrentDateiname%
+AktuelleDateiSpeichern:  <em>; Es ist sichergestellt, dass AktuellerDateiname nicht leer ist.</em>
+IfExist %AktuellerDateiname%
 {
-    FileDelete %CurrentDateiname%
+    FileDelete %AktuellerDateiname%
     If ErrorLevel
     {
-        MsgBox &Uuml;berschreiben der Datei "%CurrentDateiname%" fehlgeschlagen.
+        MsgBox &Uuml;berschreiben der Datei "%AktuellerDateiname%" fehlgeschlagen.
         Return
     }
 }
-GuiControlGet, MainEdit  <em>; Ermittelt den Inhalt des Edit-Steuerelements.</em>
-FileAppend, %MainEdit%, %CurrentDateiname%  <em>; Speichert den Inhalt der Datei.
-; Bei Erfolg den Dateinamen in der Titelleiste anzeigen (falls es mit FileSaveAs aufgerufen wurde):</em>
-Gui, Show,, %CurrentDateiname%
+GuiControlGet, HauptEdit  <em>; Ermittelt den Inhalt des Edit-Steuerelements.</em>
+FileAppend, %HauptEdit%, %AktuellerDateiname%  <em>; Speichert den Inhalt der Datei.
+; Bei Erfolg den Dateinamen in der Titelleiste anzeigen (falls es mit DateiSpeichernAls aufgerufen wurde):</em>
+Gui, Show,, %AktuellerDateiname%
 Return
 
-HelpAbout:
-Gui, 2:+owner1  <em>; Das Hauptfenster (Gui #1) wird dem Fenster "&Uuml;ber" (Gui #2) &uuml;bergeordnet.</em>
+Hilfe&Uuml;ber:
+Gui, &Uuml;ber:+owner1  <em>; Das Hauptfenster (Gui #1) wird dem Fenster "&Uuml;ber" &uuml;bergeordnet.</em>
 Gui +Disabled  <em>; Deaktiviert das Hauptfenster.</em>
-Gui, 2:Add, Text,, Beliebiger Text.
-Gui, 2:Add, Button, Default, OK
-Gui, 2:Show
+Gui, &Uuml;ber:Add, Text,, Beliebiger Text.
+Gui, &Uuml;ber:Add, Button, Default, OK
+Gui, &Uuml;ber:Show
 Return
 
-2ButtonOK:  <em>; Dieser Bereich wird vom Fenster "&Uuml;ber" benutzt.</em>
-2GuiClose:
-2GuiEscape:
+&Uuml;berButtonOK:  <em>; Dieser Bereich wird vom Fenster "&Uuml;ber" benutzt.</em>
+&Uuml;berGuiClose:
+&Uuml;berGuiEscape:
 Gui, 1:-Disabled  <em>; Reaktiviert das Hauptfenster (muss vor dem n&auml;chsten Schritt getan werden).</em>
 Gui Destroy  <em>; Das Fenster "&Uuml;ber" zerst&ouml;ren.</em>
 Return
 
 GuiDropFiles:  <em>; Unterst&uuml;tzt Ziehen & Ablegen.</em>
-Loop, parse, A_GuiEvent, `n
+Loop, Parse, A_GuiEvent, `n
 {
-    SelectedDateiname = %A_LoopField%  <em>; Nur die erste Datei nehmen (falls mehrere Dateien vorhanden sind).</em>
+    Ausgew&auml;hlterDateiname = %A_LoopField%  <em>; Nur die erste Datei nehmen (falls mehrere Dateien vorhanden sind).</em>
     break
 }
-Gosub FileRead
+Gosub DateiLesen
 Return
 
 GuiSize:
 If ErrorLevel = 1  <em>; Das Fenster wurde minimiert.  Keine Aktion notwendig.</em>
     Return
 <em>; Ansonsten wurde die Gr&ouml;&szlig;e des Fensters ge&auml;ndert oder maximiert. Die Gr&ouml;&szlig;e des Edit-Steuerelements anpassen.</em>
-NewWidth := A_GuiWidth - 20
-NewHeight := A_GuiHeight - 20
-GuiControl, Move, MainEdit, W%NewWidth% H%NewHeight%
+NeueBreite := A_GuiWidth - 20
+NeueH&ouml;he := A_GuiHeight - 20
+GuiControl, Move, HauptEdit, W%NeueBreite% H%NeueH&ouml;he%
 Return
 
-FileExit:     <em>; Benutzer hat "Exit" im Dateimen&uuml; ausgew&auml;hlt.</em>
+DateiBeenden:     <em>; Benutzer hat "Exit" im Dateimen&uuml; ausgew&auml;hlt.</em>
 GuiClose:  <em>; Benutzer hat das Fenster geschlossen.</em>
 ExitApp</pre>
 </body>
