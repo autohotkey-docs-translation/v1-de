@@ -91,31 +91,21 @@ Loop, read, C:\Datenbank-Export.csv
     }
 }</pre>
 <p>&nbsp;</p>
-<pre class="NoIndent"><em>; Das folgende Beispiel ist mit einer Parsing-Schleife vergleichbar, aber unterst&uuml;tzt zudem,
-; welches Trennzeichen verwendet wurde.</em>
+<pre class="NoIndent"><em>; Beispiel #5: Erkennung des Trennzeichens, das verwendet wurde.</em>
 
-<em>; String, der durchsucht wird.</em>
+<em>; String initialisieren, der durchsucht wird.</em>
 Farben = Rot,Gr&uuml;n|Blau;Gelb|Cyan,Magenta
-<em>; Offset-Variable mit 0 deklarieren.</em>
-Startwert := 0
-<em>; Trennzeichen deklarieren.</em>
-Trennzeichen = ,|;
-Loop
+<em>; Z&auml;hler initialisieren, um unsere Position im Auge zu behalten.</em>
+Position := 0
+
+Loop, Parse, Farben, `,|;
 {
-    <em>; Null-basierten Index des n&auml;chsten Trennzeichens finden, relativ zum Anfang des aktuellen Felds.</em>
-    Feldl&auml;nge := DllCall("shlwapi\StrCSpn", "uint", &Farben + Startwert, "uint", &Trennzeichen, "uint")
-    <em>; Feld vom String extrahieren.</em>
-    Feld := SubStr(Farben, Startwert + 1, Feldl&auml;nge)
-    <em>; Trennzeichen vom String extrahieren.</em>
-    Trennung := SubStr(Farben, Startwert + Feldl&auml;nge + 1, 1)
+    <em>; Berechnet die Position des Trennzeichens am Ende dieses Feldes.</em>
+    Position += StrLen(A_LoopField) + 1
+    <em>; Ermittelt das gefundene Trennzeichen von der Parsing-Schleife.</em>
+    Trennzeichen := SubStr(Farben, Position, 1)
 
-    MsgBox % "Feld: " Feld "`nTrennzeichen: " Trennung
-
-    <em>; Wenn Trennung leer ist, dann hat StrCSpn das Ende des Strings erreicht.</em>
-    If Trennung =
-        break
-    <em>; R&uuml;ckt zum Anfang des n&auml;chsten Feldes vor.</em>
-    Startwert += Feldl&auml;nge + 1
+    MsgBox Feld: %A_LoopField%`nTrennzeichen: %Trennzeichen%
 }</pre>
 
 </body>
