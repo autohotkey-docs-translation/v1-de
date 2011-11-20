@@ -23,8 +23,8 @@ ControlSendRaw: Die gleichen Parameter wie oben.</pre>
   </tr>
   <tr>
     <td>Tasten</td>
-    <td><p>Eine Abfolge von Tasten, die gesendet werden sollen (siehe <a href="Send.htm">Send</a>-Befehl f&uuml;r mehr Details). Um ein Komma direkt zu senden, <a href="_EscapeChar.htm">sch&uuml;tzt</a> es (`,). Die Geschwindigkeit, mit welcher die Zeichen gesendet werden, wird durch <a href="SetKeyDelay.htm">SetKeyDelay</a> beeinflusst.</p>
-    <p>Im Gegensatz zum <a href="Send.htm">Send</a>-Befehl k&ouml;nnen Mausklicks nicht mit ControlSend gesendet werden. Daf&uuml;r sollte <a href="ControlClick.htm">ControlClick</a> verwenden werden.</p></td>
+    <td><p>Eine Reihe von Tasten, die gesendet werden (siehe <a href="Send.htm">Send</a>-Befehl f&uuml;r mehr Details). Um ein direktes Komma zu senden, <a href="_EscapeChar.htm">sch&uuml;tzt</a> es (`,). Die Geschwindigkeit, mit welcher die Zeichen gesendet werden, wird durch <a href="SetKeyDelay.htm">SetKeyDelay</a> beeinflusst.</p>
+    <p>Im Gegensatz zum <a href="Send.htm">Send</a>-Befehl k&ouml;nnen Mausklicks nicht mit ControlSend gesendet werden. Verwendet stattdessen <a href="ControlClick.htm">ControlClick</a>.</p></td>
   </tr>
   <tr>
     <td>Fenstertitel</td>
@@ -48,22 +48,35 @@ ControlSendRaw: Die gleichen Parameter wie oben.</pre>
 <p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszul&ouml;sen. F&uuml;r mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p>Bei Problemen wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt, ansonsten enth&auml;lt ErrorLevel eine 0.</p>
 <h3>Bemerkungen</h3>
-<p>ControlSendRaw sendet die Tastatureingaben im <em>Tasten</em>-Parameter exakt so, wie sie dargestellt werden, anstatt z. B. {Enter} als eine ENTER-Taste, ^c als Steuerung+C, etc. zu &uuml;bersetzen.</p>
-<p>Wenn der <em>Steuerelement</em>-Parameter nicht vorhanden ist, dann versucht dieser Befehl, die Tasteneingaben direkt an das Fenster zu senden, indem es sich das oberste Steuerelement (welches oft das Richtige ist) raus sucht oder zum Fenster selbst, wenn keine Steuerelemente vorhanden sind. Das ist n&uuml;tzlich, wenn das Fenster scheinbar keine Steuerelemente hat oder sich der Einfachheit halber nicht k&uuml;mmern muss, welches Steuerelement die Tastatureingaben empfangen soll.</p>
-<p>Standardm&auml;&szlig;ig verhalten sich die Modifikatortasten (Control, Alt, Shift, und Win) wie bei dem Send-Befehl. Dadurch k&ouml;nnen Gro&szlig;buchstaben, Steuerungszeichen, etc. von Kommandozeileninterpreter und andere Konsolenfenster richtig erfasst werden. Es kann dadurch auch die Zuverl&auml;ssigkeit verbessert werden.</p>
-<p>Allerdings k&ouml;nnen diese Modifikatoren-Ereignisse in einigen F&auml;llen das aktive Fenster negativ beeintr&auml;chtigen, besonders wenn der Benutzer intensiv w&auml;hrend eines ControlSend-Befehls mit der Tastatur schreibt oder die Alt-Taste gesendet wurde (da Alt die Men&uuml;leiste im aktiven Fenster aktiviert). Diese St&ouml;rungen k&ouml;nnen verhindert werden, wenn die Up- und Down-Aktionen wie im folgenden Beispiel direkt gesendet werden:<br> ControlSend, Edit1, {Alt down}f{Alt up}, Unbenannt - Editor</p>
-<p>Die obere Methode erlaubt auch das Senden von Modifikatorentasten (Control/Alt/Shift/Win), w&auml;hrend der Arbeitsplatz gesperrt ist (gesch&uuml;tzt durch die Anmeldungsdarstellung).</p>
-<p><a href="BlockInput.htm">BlockInput</a> sollte vermieden werden, wenn ControlSend bei einem Konsolenfenster wie der Kommandozeileninterpreter verwendet wird. Dadurch k&ouml;nnen Gro&szlig;schreibungen und Modifikatorentasten wie Steuerung nicht richtig funktionieren.</p>
-<p>Die Geschwindigkeit, mit welcher die Tasten gesendet werden, wird mit <a href="SetKeyDelay.htm">SetKeyDelay</a> beeinflusst. Wenn das Fenster die Tasteneingaben nicht zuverl&auml;ssig erfasst, dann versucht man die Dr&uuml;ckdauer mit dem zweiten Parameter von <a href="SetKeyDelay.htm">SetKeyDelay</a> zu erh&ouml;hen:<br> SetKeyDelay, 10, 10<br> SetKeyDelay, 0, 10<br> SetKeyDelay, -1, 0</p>
-<p>Wenn das Fenster ein Edit-Steuerelement (oder so etwas &Auml;hnliches) ist, dann sind die folgenden Beispiele f&uuml;r gew&ouml;hnlich zuverl&auml;ssiger und schneller als ControlSend:<br> <a href="Control.htm">Control</a>, EditPaste, Dieser Text wird direkt am Tasten-Cursor angef&uuml;gt., Steuerelementname, Fenstertitel<br> <a href="ControlSetText.htm">ControlSetText</a>, Dieser Text ersetzt vollst&auml;ndig den vorherigen Text., Fenstertitel</p>
-<p>ControlSend ist f&uuml;r gew&ouml;hnlich nicht in der Lage, die Men&uuml;leiste eines Fensters zu manipulieren. Als &Uuml;bergangsl&ouml;sung dient <a href="WinMenuSelectItem.htm">WinMenuSelectItem</a>. Falls das infolge der Beschaffenheit der Men&uuml;leiste nicht m&ouml;glich ist, dann k&ouml;nnte herausgefunden werden, welche Nachricht dem gew&uuml;nschten Men&uuml;eintrag entspricht, indem das <a href="../misc/SendMessage.htm">SendMessage-Tutorial</a> befolgt wird.</p>
+<p>ControlSendRaw sendet die Tastatureingaben im <em>Tasten</em>-Parameter exakt so, wie sie angegeben wurden sind, anstatt z. B. {Enter} in eine ENTER-Taste, ^c in Steuerung+C usw. umzuwandeln.</p>
+<p>Sobald der <em>Steuerelement</em>-Parameter weggelassen wird, versucht dieser Befehl, die Tastatureingaben direkt ans Fenster zu senden. Dabei wird das oberste Steuerelement (welches oft das Richtige ist) genommen oder das Fenster selbst, falls keine Steuerelemente vorhanden sind. Das ist n&uuml;tzlich, wenn das Fenster scheinbar &uuml;berhaupt keine Steuerelemente hat oder es dem Benutzer egal ist, welchem Steuerelement die Tastatureingaben gesendet werden.</p>
+<p>Standardm&auml;&szlig;ig werden Modifikatortasten (Steuerung, Alt, Umschalt und Win) wie beim Send-Befehl normal gesendet. Dadurch k&ouml;nnen Gro&szlig;buchstaben, Steuerungszeichen usw. von der Eingabeaufforderung und von anderen Konsolenfenstern richtig erfasst werden. M&ouml;glicherweise wird dadurch die Zuverl&auml;ssigkeit auch bei anderen Dingen verbessert.</p>
+<p>In einigen F&auml;llen kann es passieren, dass diese Modifikatortasten nicht richtig im aktiven Fenster funktionieren, besonders wenn der Benutzer die Tastatur beim Ausf&uuml;hren eines ControlSend-Befehls intensiv  benutzt oder die Alt-Taste gesendet wurde (da Alt die Men&uuml;leiste im aktiven Fenster aktiviert). Das kann verhindert werden, indem die Up- und Down-Ereignisse des Modifikators wie im folgenden Beispiel direkt gesendet werden:
+<pre>ControlSend, Edit1, {Alt down}f{Alt up}, Unbenannt - Editor</pre>
+</p>
+<p>Diese Methode erlaubt es auch, Modifikatortasten (Steuerung/Alt/Umschalt/Win) zu senden, w&auml;hrend der Arbeitsplatz gesperrt ist (gesch&uuml;tzt durch die Anmeldeaufforderung).</p>
+<p><a href="BlockInput.htm">BlockInput</a> sollte vermieden werden, wenn ControlSend bei einem Konsolenfenster wie die Eingabeaufforderung verwendet wird. Denn es ist anzunehmen, dass dadurch die Gro&szlig;schreibung und Modifikatortasten wie Steuerung nicht richtig funktionieren.</p>
+<p>Die Geschwindigkeit, mit welcher die Tasten gesendet werden, wird durch <a href="SetKeyDelay.htm">SetKeyDelay</a> beeinflusst. Falls die Tastatureingaben nicht ordnungsgem&auml;&szlig; beim Zielfenster ankommen, erh&ouml;ht versuchsweise die Druckdauer mithilfe des zweiten Parameters von <a href="SetKeyDelay.htm">SetKeyDelay</a>:
+<pre>
+SetKeyDelay, 10, 10
+SetKeyDelay, 0, 10
+SetKeyDelay, -1, 0
+</pre>
+</p>
+<p>Wenn das Zielsteuerelement ein Eingabefeld oder &Auml;hnliches ist, dann sind die folgenden Befehle in der Regel zuverl&auml;ssiger und schneller als ControlSend:
+<pre>
+<a href="Control.htm">Control</a>, EditPaste, Dieser Text wird am Cursor angefügt., Steuerelementname, Fenstertitel
+<a href="ControlSetText.htm">ControlSetText</a>, Dieser Text ersetzt vollständig den aktuell vorhandenen Text., Fenstertitel
+</pre>
+</p>
+<p>ControlSend ist im Allgemeinen nicht in der Lage, die Men&uuml;leiste eines Fensters zu manipulieren. Als &Uuml;bergangsl&ouml;sung kann <a href="WinMenuSelectItem.htm">WinMenuSelectItem</a> verwendet werden. Falls das aufgrund der Beschaffenheit der Men&uuml;leiste nicht m&ouml;glich ist, dann findet heraus, welche Nachricht zum gew&uuml;nschten Men&uuml;eintrag geh&ouml;rt, indem das <a href="../misc/SendMessage.htm">SendMessage-Tutorial</a> befolgt wird.</p>
 <p>Fenstertitel und -texte sind von der Gro&szlig;- und Kleinschreibung abh&auml;ngig. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
 <h3>Verwandte Befehle</h3>
 <p><a href="SetKeyDelay.htm">SetKeyDelay</a>, <a href="_EscapeChar.htm">Schutzsequenzen (z. B. `%) </a>, <a href="Control.htm">Control</a>, <a href="ControlGet.htm">ControlGet</a>, <a href="ControlGetText.htm">ControlGetText</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlSetText.htm">ControlSetText</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="Send.htm">Send, </a><a href="../misc/Winamp.htm">Winamp automatisieren</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent">ControlSend, Edit1, Das ist eine Textzeile im Editor-Fenster., Unbenannt
 SetTitleMatchMode, 2
-ControlSend, , abc, cmd.exe  <em>; Sendet direkt an einen Kommandozeileninterpreter.</em></pre>
+ControlSend, , abc, cmd.exe  <em>; Direkt zur Eingabeaufforderung senden.</em></pre>
 
 </body>
 </html>

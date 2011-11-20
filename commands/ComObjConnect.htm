@@ -22,24 +22,24 @@
     <td>Pr&auml;fix</td>
     <td>
       <p>Ein Pr&auml;fix f&uuml;r den Ereignisnamen, um festzustellen, welche Funktion aufgerufen werden soll, wenn ein Ereignis auftritt.</p>
-      <p>Wenn nicht vorhanden, dann wird das Objekt "unterbrochen", d. h. das Script empf&auml;ngt nicht l&auml;nger Meldungen von ihren Ereignissen.</p>
-      <p><span class="ver">[v1.1.01+]:</span> Dieser Parameter kann ein definiertes Objekt vom Script sein. Sobald ein Ereignis ausgel&ouml;st wird, wird die entsprechende Methode aufgerufen. Der erste Parameter, der f&uuml;r gew&ouml;hnlich der versteckte <code>this</code>-Parameter ist, bezieht sich auf das script-definierte Objekt, nicht auf das COM-Objekt. Um alle Ereignisse abzufangen, ohne jedesmal eine Methode zu definieren, definiert eine <a href="../Objects.htm#Meta_Functions">__Call-Meta-Funktion</a>.</p>
+      <p>Wenn es weggelassen wird, dann wird das Objekt "getrennt", d. h. das Script empf&auml;ngt nicht l&auml;nger Benachrichtigungen von dessen Ereignissen.</p>
+      <p><span class="ver">[v1.1.01+]:</span> Dieser Parameter kann ein definiertes Objekt vom Script sein. Beim Ausl&ouml;sen eines Ereignisses wird die entsprechende Methode aufgerufen. Der erste Parameter, der f&uuml;r gew&ouml;hnlich der versteckte <code>this</code>-Parameter ist, bezieht sich auf das script-definierte Objekt und nicht auf das COM-Objekt. Um jedes Ereignis ohne Methodendefinition abzufangen, definiert eine <a href="../Objects.htm#Meta_Functions">__Call-Meta-Funktion</a>.</p>
     </td>
   </tr>
 </table>
 
 <h3 id="Usage">Verwendung</h3>
-<p>Um ComObjConnect effektiv zu nutzen, m&uuml;ssen zuerst Funktionen in das Script geschrieben werden, damit alle interessanten Ereignisse behandelt werden k&ouml;nnen. Solche Funktionen oder "Event-Handler" haben die folgende Struktur:</p>
+<p>Zur effektiven Nutzung von ComObjConnect m&uuml;ssen zuerst Funktionen in das Script geschrieben werden, um relevante Ereignisse zu bearbeiten. Solche Funktionen, auch "Event-Handler" genannt, haben die folgende Struktur:</p>
 <pre class="Syntax Short NoIndent"><i>Pr&auml;fix</i><b>Ereignisname</b>([<i>Parameter...</i>, ComObject])
 {
-    <i class="dull">... event-handling code ...</i>
+    <i class="dull">... Code zur Bearbeitung von Ereignissen ...</i>
     Return <i>R&uuml;ckgabewert</i>
 }</pre>
-<p>F&uuml;r <i>Pr&auml;fix</i> kann ein beliebiger Pr&auml;fix angegeben werden, w&auml;hrend der <b>Ereignisname</b> der Name des Ereignisses ist, das von der Funktion behandelt werden soll.</p>
-<p>Die <i>Parameter</i> sind die Parameter, die das Ereignis hat. Wenn das Ereignis keine Parameter hat, dann sollten die <i>Parameter</i> ganz weggelassen werden. <i>ComObject</i> ist optional und kann nur verwendet werden, wenn die korrekte Anzahl an <i>Parameter</i> definiert ist. Es enth&auml;lt eine Referenz auf das originale Wrapper-Objekt, das an ComObjConnect &uuml;bergeben wurde. "ComObject" sollte mit einem Namen ersetzt werden, der sinnvoller f&uuml;r den Kontext des Scripts ist.</p>
-<p>Beachtet, dass die Event-Handler m&ouml;glicherweise R&uuml;ckgabewerte haben. Um einen COM-spezifischen Werttyp zur&uuml;ckzugeben, benutzt <a href="ComObjActive.htm#param">ComObjParameter</a>, das auch als <code>ComObjRetVal(Typ, Wert)</code> oder einfach <code>ComObj(Typ, Wert)</code> geschrieben werden kann.</p>
-<p>Um das Event-Handling zu aktivieren, verwendet <code>ComObjConnect(BeliebigesObjekt, "<i>Pr&auml;fix</i>")</code>.</p>
-<p>Um das Objekt zu trennen (Event-Handling anhalten), verwendet <code>ComObjConnect(BeliebigesObjekt)</code>.</p>
+<p>F&uuml;r <i>Pr&auml;fix</i> kann ein beliebiger Pr&auml;fix angegeben werden, w&auml;hrend der <b>Ereignisname</b> der Name des Ereignisses ist, das von der Funktion bearbeitet werden soll.</p>
+<p><i>Parameter</i> entspricht den Parametern, die das Ereignis hat. Wenn das Ereignis keine Parameter hat, dann sollten die <i>Parameter</i> ganz weggelassen werden. <i>ComObject</i> ist optional und kann nur verwendet werden, wenn die korrekte Anzahl an <i>Parameter</i> definiert ist. Es enth&auml;lt einen Verweis auf das originale Wrapper-Objekt, das an ComObjConnect &uuml;bergeben wurde. "ComObject" sollte mit einem Namen ersetzt werden, der eher dem Kontext des Scripts entspricht.</p>
+<p>Beachtet, dass die Event-Handler m&ouml;glicherweise R&uuml;ckgabewerte haben. Damit ein COM-spezifischer Werttyp zur&uuml;ckgegeben wird, benutzt <a href="ComObjActive.htm#param">ComObjParameter</a>, das auch als <code>ComObjRetVal(Typ, Wert)</code> oder einfach als <code>ComObj(Typ, Wert)</code> geschrieben werden kann.</p>
+<p>Um die Bearbeitung von Ereignissen zu aktivieren, verwendet <code>ComObjConnect(BeliebigesObjekt, "<i>Pr&auml;fix</i>")</code>.</p>
+<p>Um das Objekt zu trennen (Ereignisbearbeitung anhalten), verwendet <code>ComObjConnect(BeliebigesObjekt)</code>.</p>
 <p>Wenn die Anzahl der Parameter unbekannt ist, dann kann eine <a href="../Functions.htm#Variadic">variadische Funktion</a> verwendet werden.</p>
 
 <h3>Verwandte Befehle</h3>
@@ -49,7 +49,7 @@
 <pre class="NoIndent">
 ie := ComObjCreate("<a href="http://msdn.microsoft.com/en-us/library/aa752084.aspx">InternetExplorer.Application</a>")
 
-<em>; Verbindet Ereignisse zu den entsprechenden Script-Funktionen mit dem Pr&auml;fix "IE_".</em>
+<em>; Verbindet Ereignisse mit entsprechenden Script-Funktionen, die den Pr&auml;fix "IE_" haben.</em>
 <b>ComObjConnect</b>(ie, "IE_")
 
 ie.Visible := true  <em>; Funktioniert bekanntlich nicht mit IE7.</em>

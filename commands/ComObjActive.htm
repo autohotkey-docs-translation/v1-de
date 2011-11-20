@@ -10,17 +10,17 @@
 
 <h1>ComObjActive() <span class="ver">[AHK_L 53+]</span></h1>
 
-<p>Ruft ein laufendes Objekt ab, das mit OLE registriert wurde.</p>
+<p>Ermittelt ein laufendes Objekt, das mit OLE registriert wurde.</p>
 <pre class="Syntax">ComObject := ComObjActive(CLSID)</pre>
 
-<p id="param">Erstellt ein Objekt, dass einen typisierten Wert repr&auml;sentiert, der als Parameter oder R&uuml;ckgabewert &uuml;bergeben wird.</p>
+<p id="param">Erstellt ein Objekt, das einen eingegebenen Wert repr&auml;sentiert, um es als Parameter oder R&uuml;ckgabewert zu &uuml;bergeben.</p>
 <pre class="Syntax">ParamObj := ComObjParameter(Variablentyp, Wert [, Flags])</pre>
 
-<p id="missing">Erstellt ein Objekt, das anstelle des Standardwertes eines optionalen Parameters verwendet wird, wenn eine Methode von einem COM-Objekt aufgerufen wird.</p>
+<p id="missing">Erstellt ein Objekt, das anstelle des Standardwertes eines optionalen Parameters verwendet werden kann, wenn eine Methode von einem COM-Objekt aufgerufen wird.</p>
 <pre class="Syntax">ParamObj := ComObjMissing()</pre>
 
 <h4>Fortgeschritten</h4>
-<p id="enwrap">Verpacken oder Auspacken eines unbearbeiteten <a href="http://msdn.microsoft.com/en-us/library/dd318520.aspx">IDispatch</a>-Pointers in einem benutzbaren Objekt.</p>
+<p id="enwrap">Packt einen unbearbeiteten <a href="http://msdn.microsoft.com/en-us/library/dd318520.aspx">IDispatch</a>-Pointer in oder aus einem verwendbaren Objekt.</p>
 <pre class="Syntax">ComObject := ComObjEnwrap(DispPtr)
 DispPtr := ComObjUnwrap(ComObject)</pre>
 
@@ -28,11 +28,11 @@ DispPtr := ComObjUnwrap(ComObject)</pre>
 <table class="info">
   <tr>
     <td>CLSID</td>
-    <td>CLSID oder eine von Menschen lesbare ProgID des COM-Objekts.</td>
+    <td>CLSID oder eine visuell lesbare ProgID des COM-Objekts.</td>
   </tr>
   <tr>
     <td>ComObject</td>
-    <td>COM-Objekt, verwendbar mit der <a href="../Objects.htm#Usage_Objects">Syntax eines Objekts</a>.</td>
+    <td>COM-Objekt, das mit der <a href="../Objects.htm#Usage_Objects">Objekt-Syntax</a> verwendet werden kann.</td>
   </tr>
   <tr>
     <td>Variablentyp</td>
@@ -40,7 +40,7 @@ DispPtr := ComObjUnwrap(ComObject)</pre>
   </tr>
   <tr>
     <td>Wert</td>
-    <td>Ein Wert, der eingebunden wird. Zurzeit werden nur Integer- oder Pointer-Werte unterst&uuml;tzt.</td>
+    <td>Ein Wert, der eingepackt wird. Zurzeit werden nur Integer- oder Pointer-Werte unterst&uuml;tzt.</td>
   </tr>
   <tr>
     <td>Flags</td>
@@ -56,7 +56,7 @@ DispPtr := ComObjUnwrap(ComObject)</pre>
 <table class="info">
   <tr>
     <td>&nbsp;0&nbsp;</td>
-    <td>Standardverhalten. <a href="http://msdn.microsoft.com/en-us/library/ms691379.aspx">AddRef</a> wird automatisch f&uuml;r IUnknown- und IDispatch-Pointer aufgerufen, daher sollte der Aufrufer <a href="ObjAddRef.htm">ObjRelease</a> verwenden, um die Kopie des Pointers je nach Bedarf freizugeben.</td>
+    <td>Standardverhalten. <a href="http://msdn.microsoft.com/en-us/library/ms691379.aspx">AddRef</a> wird automatisch bei einem IUnknown- und IDispatch-Pointer aufgerufen, daher sollte der Aufrufer <a href="ObjAddRef.htm">ObjRelease</a> verwenden, um die Kopie des Pointers je nach Bedarf freizugeben.</td>
   </tr>
   <tr>
     <td>&nbsp;1&nbsp;</td>
@@ -65,9 +65,9 @@ DispPtr := ComObjUnwrap(ComObject)</pre>
 </table>
 
 <h3 id="Remarks">Allgemeine Bemerkungen</h3>
-<p>ComObjActive ist <i>polymorph</i>, d. h. jeder Funktionsaufruf, der mit "ComObj" beginnt und nicht mit den anderen COM-Funktionen &uuml;bereinstimmt, ruft auch ComObjActive auf. Zum Beispiel sind <code>ComObj(9, DispPtr)</code> und <code>ComObjActive(DispPtr)</code> das gleiche wie <code>ComObjEnwrap(DispPtr)</code>. Dieses Verhalten k&ouml;nnte jedoch in einer zuk&uuml;nftigen Version ge&auml;ndert werden (oder neue Funktionen implementiert werden), daher ist es am besten, nur die hier aufgef&uuml;hrte Konstruktion zu verwenden, aber mit "ComObject" anstelle von ComObjEnwrap oder ComObjParameter.</p>
-<p>Wenn diese Funktion dazu verwendet wird, einen IDispatch-Pointer oder IUnknown-Schnittstelle zu verpacken oder abzurufen, dann wird standardm&auml;&szlig;ig die Referenzz&auml;hlung des COM-Objekts erh&ouml;ht. Allgemein gilt, dass die originale Kopie des Pointers eine separate Referenz ber&uuml;cksichtigt, die <a href="ObjAddRef.htm">manuell vom Script freigegeben</a> werden muss, wenn sie nicht l&auml;nger ben&ouml;tigt wird. Wenn das Wrapper-Objekt freigegeben wird, dann wird auch dessen Referenz auf das COM-Objekt freigegeben.</p>
-<p><b>Bekannte Einschr&auml;nkung:</b> Jedes Mal, wenn ein COM-Objekt ge&auml;ndert wird, wird ein neues Wrapper-Objekt erstellt. Vergleiche und Zuordnungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> behandeln die zwei Wrapper-Objekte als Einzelst&uuml;cke, selbst wenn sie das gleiche COM-Objekt enthalten.</p>
+<p>ComObjActive ist <i>polymorph</i>, d. h. jeder Funktionsaufruf, der mit "ComObj" beginnt und nicht mit den anderen COM-Funktionen &uuml;bereinstimmt, ruft auch ComObjActive auf. Zum Beispiel sind <code>ComObj(9, DispPtr)</code> und <code>ComObjActive(DispPtr)</code> das gleiche wie <code>ComObjEnwrap(DispPtr)</code>. Dieses Verhalten k&ouml;nnte jedoch in einer zuk&uuml;nftigen Version ge&auml;ndert werden (oder neue Funktionen implementiert werden), daher ist es am besten, nur die hier aufgef&uuml;hrten Formen zu verwenden, wobei zus&auml;tzlich gilt, dass "ComObject" anstelle von ComObjEnwrap oder ComObjParameter verwendet werden kann.</p>
+<p>Wenn diese Funktion dazu verwendet wird, einen IDispatch- oder eine IUnknown-Interface-Pointer einzupacken oder abzurufen, dann wird standardm&auml;&szlig;ig die Referenzz&auml;hlung des COM-Objekts erh&ouml;ht. Allgemein gilt, dass die originale Kopie des Pointers eine separate Referenz ber&uuml;cksichtigt, die <a href="ObjAddRef.htm">manuell vom Script freigegeben</a> werden muss, wenn sie nicht l&auml;nger ben&ouml;tigt wird. Wenn das Wrapper-Objekt freigegeben wird, dann wird auch dessen Referenz auf das COM-Objekt freigegeben.</p>
+<p><b>Bekannte Einschr&auml;nkung:</b> Jedes Mal, wenn ein COM-Objekt eingepackt wird, wird ein neues Wrapper-Objekt erstellt. Vergleiche und Zuweisungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> behandeln die zwei Wrapper-Objekte einzigartig, selbst wenn sie das gleiche COM-Objekt enthalten.</p>
 
 <h3 id="Related">Verwandte Befehle</h3>
 <p><a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjConnect.htm">ComObjConnect</a>, <a href="ComObjError.htm">ComObjError</a>, <a href="ComObjFlags.htm">ComObjFlags</a>, <a href="ObjAddRef.htm">ObjAddRef/ObjRelease</a>, <a href="http://msdn.microsoft.com/en-us/library/ms221467.aspx">GetActiveObject (MSDN)</a></p>
