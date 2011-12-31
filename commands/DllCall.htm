@@ -23,7 +23,8 @@
     <td>[DllDatei\]Funktion</td>
     <td>
 <p>Der Name einer DLL- oder EXE-Datei gefolgt von einem Backslash und dem Funktionsnamen. Zum Beispiel: "EigeneDLL\EigeneFunktion" (die Dateierweiterung ".dll" kann standardm&auml;&szlig;ig weggelassen werden). Solange kein absoluter Pfad angegeben ist, befindet sich die <em>DllDatei</em> im System- oder <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Pfad.</p>
-      <p><em><a name="std"></a>DllDatei</em> kann weggelassen werden, wenn eine Funktion in User32.dll, Kernel32.dll, ComCtl32.dll oder Gdi32.dll aufgerufen wird. Zum Beispiel liefert "User32\IsWindowVisible" das gleiche Ergebnis wie "IsWindowVisible". Bei solchen DLL-Standarddateien k&ouml;nnen die A-Suffixe bei einigen API-Funktionen weggelassen werden. Zum Beispiel ist "MessageBox" das gleiche wie "MessageBoxA".</p>
+      <p><em><a name="std"></a>DllDatei</em> kann weggelassen werden, wenn eine Funktion in User32.dll, Kernel32.dll, ComCtl32.dll oder Gdi32.dll aufgerufen wird. Zum Beispiel liefert "User32\IsWindowVisible" das gleiche Ergebnis wie "IsWindowVisible".</p>
+<p>Sobald keine Funktion gefunden wird, wird nach dem angegebenen Namen ein A (ANSI) oder W (Unicode) angef&uuml;gt, abh&auml;ngig davon, welche AutoHotkey-Version zurzeit l&auml;uft. Zum Beispiel ist "MessageBox" in ANSI-Versionen das gleiche wie "MessageBoxA" und in Unicode-Versionen das gleiche wie "MessageBoxW".<br></p>
       <p>Die Performance kann bei <em>wiederholenden</em> Funktionsaufrufen erheblich verbessert werden, wenn die DLL <a href="#load">vorher geladen</a> wird.</p>
     <p>Seit v1.0.46.08 kann dieser Parameter auch einen Integer-Wert enthalten, der als Adresse der Funktion interpretiert wird. Quellen f&uuml;r solche Adressen sind <a href="#COM">COM</a> und <a href="RegisterCallback.htm">RegisterCallBack()</a>.</p></td>
   </tr>
@@ -50,7 +51,7 @@
 <p><a name="str"></a>Ein String wie "Blau" oder EigeneVar. Wenn die aufgerufene Funktion den String &auml;ndert und das Argument eine leere Variable ist, dann wird der Inhalt aktualisiert. Zum Beispiel wandelt der folgende Aufruf den Inhalt von <em>EigeneVar</em> in Gro&szlig;buchstaben um: <code>DllCall("CharUpper", "Str", <i>EigeneVar</i>)</code></p>
   <p>Wenn die Funktion allerdings in der Lage ist, einen String gr&ouml;&szlig;er als die Kapazit&auml;t einer Variable zu speichern, dann muss sichergestellt werden, dass die Variable vor dem Funktionsaufruf gro&szlig; genug ist. Das kann durch den Aufruf von <a href="VarSetCapacity.htm">VarSetCapacity(<em>EigeneVar</em>, 123)</a> erreicht werden, wobei 123 die neue L&auml;nge von <em>EigeneVar</em> ist.</p>
   <p>Ein <em>Str</em>-Argument darf kein <a href="../Variables.htm#Expressions">Ausdruck</a> sein, die eine Zahl berechnet (z. B. i+1). In diesem Fall wird die Funktion nicht aufgerufen und ErrorLevel enth&auml;lt -2.</p>
-  <p>Die <a href="#asterisk">Sternchenvariable</a> "Str*" wird unterst&uuml;tzt, aber selten verwendet. Sie kann bei Funktionen verwendet werden, die etwas erwarten wie "char **" oder "LPSTR *".</p>
+  <p>Die <a href="#asterisk">Sternchenvariable</a> "Str*" wird unterst&uuml;tzt, aber selten verwendet. Sie kann bei Funktionen verwendet werden, die so etwas erwarten wie "TCHAR **" oder "LPTSTR *".</p>
   <p>Hinweis: Bei der &Uuml;bergabe eines Strings an eine Funktion muss klar sein, welchen <a href="../Compat.htm#DllCall">String-<i>Typ</i></a> die Funktion erwartet.</p></td>
 </tr>
 <tr>
@@ -100,7 +101,7 @@ DllCall("DeleteFile", Ptr, &amp;Dateiname) <em>; Die Anf&uuml;hrungszeichen bei 
   <td id="asterisk">
 <p>F&uuml;gt ein Sternchen (optional mit vorhergehendem Leerzeichen) an einen beliebigen oben genannten Typen, damit die Adresse des Arguments &uuml;bergeben wird, statt den Wert selbst (die aufgerufene Funktion muss daf&uuml;r angepasst sein). Da der Wert eines solchen Arguments durch die Funktion ge&auml;ndert ist, wird dieser Inhalt der Variable aktualisiert, sobald eine leere Variable als Argument &uuml;bergeben wird. Der folgende Aufruf beispielsweise &uuml;bergibt die Adresse von EigeneVar an EigeneFunktion und aktualisiert den Inhalt von EigeneVar, um &Auml;nderung an ihr durch EigeneFunktion widerzuspiegeln: DllCall("EigeneDLL\EigeneFunktion", "Int*", EigeneVar)</p>
     <p>In der Regel wird ein Sternchen verwendet, sobald eine Funktion ein Argumenttyp oder R&uuml;ckgabetyp hat, der mit "LP" beginnt. Das bekannteste Beispiel ist LPDWORD, ein Pointer auf DWORD. Da DWORD ein unsigned 32-Bit-Integer-Wert ist, verwendet "UInt*" oder "UintP" f&uuml;r LPDWORD. Ein Sternchen sollte nicht bei String-Typen wie LPTSTR, Pointer auf Strukturen (z. B. LPRECT) oder Arrays verwendet werden; daf&uuml;r sollte <a href="#str">"Str"</a> oder "Ptr" verwendet werden, abh&auml;ngig davon, ob eine Variable oder deren Adresse &uuml;bergeben wird.</p>
-    <p>Hinweis: "Char*" ist nicht das gleiche wie <a href="#str">"Str"</a>, weil "Char*" die Adresse einer 8-Bit-Zahl und <a href="#str">"Str"</a> die Adresse einer Zeichenreihe &uuml;bergibt. Ebenso &uuml;bergibt "UInt*" die Adresse einer 32-Bit-Zahl, dass daher nicht verwendet werden soll, wenn die Funktion eine Struktur gr&ouml;&szlig;er als 32 Bit oder ein Array mit Werten erwartet. Es ist auch nicht notwendig, <a href="VarSetCapacity.htm">VarSetCapacity</a> f&uuml;r Sternchenvariablen zu benutzen, in denen Zahlen gespeichert werden.</p></td>
+    <p>Hinweis: "Char*" ist nicht das gleiche wie <a href="#str">"Str"</a>, weil "Char*" die Adresse einer 8-Bit-Zahl &uuml;bergibt, sowie <a href="#str">"Str"</a> die Adresse einer Reihe von Zeichen &uuml;bergibt, die je nach Version 8-Bit (ANSI) oder 16-Bit (Unicode) gro&szlig; sind. Ebenso &uuml;bergibt "UInt*" die Adresse einer 32-Bit-Zahl, dass daher nicht verwendet werden soll, wenn die Funktion eine Struktur gr&ouml;&szlig;er als 32 Bit oder ein Array mit Werten erwartet. Es ist auch nicht notwendig, <a href="VarSetCapacity.htm">VarSetCapacity</a> f&uuml;r Sternchenvariablen zu benutzen, in denen Zahlen gespeichert werden.</p></td>
 </tr>
 <tr>
   <td>U (Pr&auml;fix) </td>
@@ -129,18 +130,18 @@ DllCall("DeleteFile", Ptr, &amp;Dateiname) <em>; Die Anf&uuml;hrungszeichen bei 
 
 <h3 id="load">Performance</h3>
 <p>Bei wiederholenden Aufrufen in einer DLL kann die Performance deutlich verbessert werden, indem sie direkt geladen wird (<em>das ist nicht f&uuml;r eine <a href="#std">Standard-DLL</a> wie User32 notwendig, weil diese dauerhaft im Arbeitsspeicher vorhanden ist</em>). Mit dieser Tatsache wird vermieden, dass bei jedem DllCall LoadLibrary und FreeLibrary intern aufgerufen werden. Zum Beispiel:</p>
-<pre>hModule := DllCall("<strong>LoadLibrary</strong>", "Str", "EigeneFunktionen.dll")  <em>; Verhindert, dass DllCall() die Bibliothek in der Schleife l&auml;dt.</em>
+<pre>hModule := DllCall("<strong>LoadLibrary</strong>", "Str", "EigeneFunktionen.dll", "Ptr")  <em>; Verhindert, dass das DllCall() in der Schleife die Bibliothek laden muss.</em>
 Loop, C:\Eigene Dokumente\*.*, , 1
     Ergebnis := DllCall("EigeneFunktionen\BackupFile", "Str", A_LoopFileFullPath)
 DllCall("<strong>FreeLibrary</strong>", "Ptr", hModule)  <em>; Der DLL-Speicher wird freigeben.</em></pre>
 <p>Seit v1.0.46.08 kann eine noch schnellere Performance erreicht werden, wenn die Adresse der Funktion vorher nachgeschlagen wird. Zum Beispiel:</p>
-<pre><em>; Im folgenden Beispiel sollte LoadLibrary anstelle von GetModuleHandle verwenden werden, wenn die DLL noch nicht geladen ist.</em>
-<strong>MulDivProc</strong> := DllCall("GetProcAddress", Ptr, DllCall("GetModuleHandle", Str, "<strong>kernel32</strong>"), AStr, "<strong>MulDiv</strong>")
+<pre><em>; Im folgenden Beispiel sollte LoadLibrary anstelle von GetModuleHandle verwenden werden, falls die DLL noch nicht geladen wurde.</em>
+<strong>MulDivProc</strong> := DllCall("GetProcAddress", Ptr, DllCall("GetModuleHandle", Str, "<strong>kernel32</strong>", "Ptr"), AStr, "<strong>MulDiv</strong>", "Ptr")
 Loop 500
     DllCall(<strong>MulDivProc</strong>, Int, 3, Int, 4, Int, 3)</pre>
 <p><span class="ver">[AHK_L 31+]:</span> Wenn der erste Parameter in DllCall ein direkt vorhandener String wie <code>"MulDiv"</code> ist und die DLL von der Funktion normal vor dem Scriptstart geladen wurde, dann wird der String automatisch in eine Funktionsadresse aufgel&ouml;st. Diese interne Optimierung ist effektiver als das oben gezeigte Beispiel.</p>
 <p>Auch das Hinzuf&uuml;gen der Zeile <a href="_NoEnv.htm">#NoEnv</a> irgendwo im Script verbessert die Performance, wenn Typen ohne Anf&uuml;hrungszeichen verwendet werden (z. B. Int vs. "Int").</p>
-<p>Bei der &Uuml;bergabe einer String-Variable an eine Funktion, die die L&auml;nge des Strings nicht &auml;ndert, wird die Performance verbessert, wenn die Variable als <a href="../Variables.htm#amp">Adresse</a> (z. B. &amp;EigeneVar) und nicht als "<a href="#str">str</a>" &uuml;bergeben wird (vor allem bei sehr langen Strings). Im folgenden Beispiel wird ein String in Gro&szlig;buchstaben umgewandelt: DllCall("CharUpper", <strong>Ptr</strong>, <em><strong>&amp;</strong>EigeneVar</em>)</p>
+<p>Bei der &Uuml;bergabe einer String-Variable an eine Funktion, die die L&auml;nge des Strings nicht &auml;ndert, wird die Performance verbessert, wenn die Variable als <a href="../Variables.htm#amp">Adresse</a> (z. B. &amp;EigeneVar) und nicht als "<a href="#str">str</a>" &uuml;bergeben wird (vor allem bei sehr langen Strings). Im folgenden Beispiel wird ein String in Gro&szlig;buchstaben umgewandelt: DllCall("CharUpper", <strong>Ptr</strong>, <em><strong>&amp;</strong>EigeneVar</em>, Ptr)</p>
 
 <h3 id="struct">Strukturen und Arrays</h3>
 <p>Eine Struktur ist eine Sammlung von <em>Elementen</em> (Feldern), die nebeneinander gespeichert sind. Die meisten Elemente sind Integer-Werte.</p>
@@ -243,7 +244,7 @@ If Dateiname =
     Return
 GENERIC_WRITE = 0x40000000  <em>; Datei zum Beschreiben &ouml;ffnen.</em>
 CREATE_ALWAYS = 2  <em>; Neue Datei erstellen (&Uuml;berschreibt eine vorhandene Datei).</em>
-hFile := <strong>DllCall</strong>("CreateFile", Str, Dateiname, UInt, GENERIC_WRITE, UInt, 0, Ptr, 0, UInt, CREATE_ALWAYS, UInt, 0, Ptr, 0)
+hFile := <strong>DllCall</strong>("CreateFile", Str, Dateiname, UInt, GENERIC_WRITE, UInt, 0, Ptr, 0, UInt, CREATE_ALWAYS, UInt, 0, Ptr, 0, Ptr)
 If not hFile
 {
     MsgBox Kann "%Dateiname%" nicht zum Beschreiben &ouml;ffnen.
@@ -333,8 +334,8 @@ MsgBox % "Links " . <a href="../Functions.htm#NumGet">NumGet</a>(Rect, 0, "Int")
 VarSetCapacity(Rect, 16, 0)  <em>; Setzt die Kapazit&auml;t f&uuml;r vier 4-Byte-Integer-Werte und initialisiert sie alle mit Null.</em>
 <a href="../Functions.htm#NumPut">NumPut</a>(A_ScreenWidth//2, Rect, 8, "Int")  <em>; Der dritte Integer-Wert in der Struktur ist "rect.right".</em>
 NumPut(A_ScreenHeight//2, Rect, 12, "Int") <em>; Der vierte Integer-Wert in der Struktur ist "rect.bottom".</em>
-hDC := <strong>DllCall</strong>("GetDC", "Ptr", 0, "Int")  <em>; Null &uuml;bergeben, um den Device Context vom Desktop zu erhalten.</em>
-hBrush := <strong>DllCall</strong>("CreateSolidBrush", "UInt", 0x0000FF)  <em>; Erstellt einen roten Pinsel (0x0000FF ist im BGR-Format).</em>
+hDC := <strong>DllCall</strong>("GetDC", "Ptr", 0, "Ptr")  <em>; Null &uuml;bergeben, um den Device Context vom Desktop zu erhalten.</em>
+hBrush := <strong>DllCall</strong>("CreateSolidBrush", "UInt", 0x0000FF, "Ptr")  <em>; Erstellt einen roten Pinsel (0x0000FF ist im BGR-Format).</em>
 <strong>DllCall</strong>("FillRect", "Ptr", hDC, "Ptr", &amp;Rect, "Ptr", hBrush)  <em>; Angegebenes Rechteck mit dem Pinsel f&uuml;llen.</em>
 <strong>DllCall</strong>("ReleaseDC", "Ptr", 0, "Ptr", hDC)  <em>; Speicher freigeben.</em>
 <strong>DllCall</strong>("DeleteObject", "Ptr", hBrush)  <em>; Speicher freigeben.</em></pre>
@@ -421,6 +422,4 @@ vtable(ptr, n) {
 }
 
 </pre>
-
-
 </body></html>
