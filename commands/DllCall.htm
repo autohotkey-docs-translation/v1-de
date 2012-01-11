@@ -252,27 +252,28 @@ ControlGet, ChildHWND, Hwnd,, %FocusedControl%, ahk_id %ActiveWindow%
 ToolTip % <strong>DllCall</strong>("GetScrollPos", "Ptr", ChildHWND, "Int", 1)  <em>;  Letzter Parameter: 1 f&uuml;r SB_VERT, 0 f&uuml;r SB_HORZ.</em>
 Return</pre>
 
-<pre class="NoIndent"><a name="file"></a><em>; Beispiel: Dieses Script schreibt Text in eine Datei und lie&szlig;t ihn wieder in den Speicher (ben&ouml;tigt v1.0.34+).
-; Diese Methode ist besonders n&uuml;tzlich, falls mehreren Dateien gleichzeitig beschrieben oder gelesen werden.</em>
+<pre class="NoIndent"><a name="file"></a><em>; Beispiel: Dieses Script schreibt etwas Text in eine Datei und liest diesen zur&uuml;ck in den Speicher (ben&ouml;tigt v1.0.34+).
+; Diese Methode hilft der Performance, falls mehreren Dateien gleichzeitig gelesen oder geschrieben werden m&uuml;ssen.
+; Seit AHK_L 42 kann das Gleiche mit <a href="FileOpen.htm">FileOpen</a> erreicht werden. Siehe dazu das <a href="FileOpen.htm#writeread">Beispiel</a>.</em>
 
 FileSelectFile, Dateiname, S16,, Neue Datei erstellen:
 If Dateiname =
     Return
-GENERIC_WRITE = 0x40000000  <em>; Datei zum Beschreiben &ouml;ffnen.</em>
-CREATE_ALWAYS = 2  <em>; Neue Datei erstellen (&Uuml;berschreibt eine vorhandene Datei).</em>
+GENERIC_WRITE = 0x40000000  <em>; Datei zum Schreiben &ouml;ffnen.</em>
+CREATE_ALWAYS = 2  <em>; Neue Datei erstellen (&uuml;berschreibt eine vorhandene Datei).</em>
 hFile := <strong>DllCall</strong>("CreateFile", Str, Dateiname, UInt, GENERIC_WRITE, UInt, 0, Ptr, 0, UInt, CREATE_ALWAYS, UInt, 0, Ptr, 0, Ptr)
 If not hFile
 {
-    MsgBox Kann "%Dateiname%" nicht zum Beschreiben &ouml;ffnen.
+    MsgBox Kann "%Dateiname%" nicht zum Schreiben &ouml;ffnen.
     Return
 }
-TestString = Das ist ein Teststring.`r`n  <em>; Wenn eine Datei auf diese Weise beschrieben wird, dann verwendet `r`n statt `n, um eine neue Zeile zu beginnen.</em>
-<strong>DllCall</strong>("WriteFile", Ptr, hFile, Str, TestString, UInt, StrLen(TestString), UIntP, BytesActuallyWritten, Ptr, 0)
+TestString = Das ist ein Teststring.`r`n  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
+<strong>DllCall</strong>("WriteFile", Ptr, hFile, Str, TestString, UInt, StrLen(TestString), UIntP, AktuellGeschriebeneBytes, Ptr, 0)
 <strong>DllCall</strong>("CloseHandle", Ptr, hFile)  <em>; Datei schlie&szlig;en.</em>
 
-<em>; Den Text nun wieder in den Speicher lesen.</em>
+<em>; Nachdem die Datei geschrieben wurde, soll deren Inhalt zur&uuml;ck in den Speicher gelesen werden.</em>
 GENERIC_READ = 0x80000000  <em>; Datei zum Lesen &ouml;ffnen.</em>
-OPEN_EXISTING = 3  <em>; Datei muss existieren, damit sie ge&ouml;ffnet werden kann.</em>
+OPEN_EXISTING = 3  <em>; Datei muss existieren, bevor sie ge&ouml;ffnet werden kann.</em>
 FILE_SHARE_READ = 0x1 <em>; Diese und die n&auml;chste Variable bestimmen, ob andere Prozesse die Datei &ouml;ffnen k&ouml;nnen.</em>
 FILE_SHARE_WRITE = 0x2
 hFile := <strong>DllCall</strong>("CreateFile", Str, Dateiname, UInt, GENERIC_READ, UInt, FILE_SHARE_READ|FILE_SHARE_WRITE, Ptr, 0, UInt, OPEN_EXISTING, UInt, 0, Ptr, 0)
@@ -281,9 +282,9 @@ If not hFile
     MsgBox Kann "%Dateiname%" nicht zum Lesen &ouml;ffnen.
     Return
 }
-<em>; Macht die Variable f&uuml;r weitere Testzwecke leer, stellt aber sicher, das gen&uuml;gend Kapazit&auml;t zur Verf&uuml;gung steht:</em>
-BytesToRead := VarSetCapacity(TestString, StrLen(TestString))
-<strong>DllCall</strong>("ReadFile", Ptr, hFile, Str, TestString, UInt, BytesToRead, UIntP, BytesActuallyRead, Ptr, 0)
+<em>; Macht die Variable f&uuml;r weitere Testzwecke leer, aber stellt sicher, das gen&uuml;gend Kapazit&auml;t zur Verf&uuml;gung steht:</em>
+ZuLesendeBytes := VarSetCapacity(TestString, StrLen(TestString))
+<strong>DllCall</strong>("ReadFile", Ptr, hFile, Str, TestString, UInt, ZuLesendeBytes, UIntP, AktuellGeleseneBytes, Ptr, 0)
 <strong>DllCall</strong>("CloseHandle", Ptr, hFile)  <em>; Datei schlie&szlig;en.</em>
 MsgBox Der folgende String wurde aus der Datei gelesen: %TestString%</pre>
 
