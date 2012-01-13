@@ -1,10 +1,9 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title>PostMessage / SendMessage</title>
-<meta name="description" content="Send messages to a window with this free macro program. PostMessage puts a message in the window's message queue, but SendMessage waits for a reply.">
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta name="description" content="Sendet mit dieser freien Scriptsprache Nachrichten an ein Fenster. PostMessage f&uuml;gt eine Nachricht zur Nachrichtenwarteschlange des Fensters hinzu, w&auml;hrend SendMessage auf eine Antwort wartet.">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="../css/default.css" rel="stylesheet" type="text/css">
 <script type="text/javascript">
 
@@ -33,7 +32,8 @@
 SendMessage, Nachricht [, wParam, lParam, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme]</pre>
 <h3>Parameter</h3>
 <table class="info">
-  <tr>
+  <tbody>
+<tr>
     <td>Nachricht</td>
     <td>Die zu sendende Nummer der Nachricht, die auch ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein kann. Siehe <a href="../misc/SendMessageList.htm">Nachrichtenliste</a>, um die Nummer zu ermitteln. </td>
   </tr>
@@ -47,7 +47,8 @@ SendMessage, Nachricht [, wParam, lParam, Steuerelement, Fenstertitel, Fensterte
   </tr>
   <tr>
     <td>Steuerelement</td>
-    <td><p>Wenn dieser Parameter leer oder nicht vorhanden ist, dann wird die Nachricht direkt ans Zielfenster gesendet, anstatt ans Steuerelement. M&ouml;glich ist entweder ClassNN (Klassenname und Instanznummer des Steuerelements) oder Name/Text des Steuerelements, die beide mit Windows Spy ermittelt werden k&ouml;nnen. Wenn Name/Text verwendet wird, wird das &Uuml;bereinstimmungsverhalten mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> bestimmt.</p>
+    <td>
+<p>Wenn dieser Parameter leer oder nicht vorhanden ist, dann wird die Nachricht direkt ans Zielfenster gesendet, anstatt ans Steuerelement. M&ouml;glich ist entweder ClassNN (Klassenname und Instanznummer des Steuerelements) oder Name/Text des Steuerelements, die beide mit Windows Spy ermittelt werden k&ouml;nnen. Wenn Name/Text verwendet wird, wird das &Uuml;bereinstimmungsverhalten mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> bestimmt.</p>
     <p>F&uuml;r das HWND eines Steuerelements (Windows Handle) wird der <em>Steuerelement</em>-Parameter leer gelassen und <em>ahk_id %SteuerelementHwnd%</em> im <em>Fenstertitel</em>-Parameter angegeben (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist). Das HWND eines Steuerelements wird &uuml;blicherweise mittels <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p>
     </td>
   </tr>
@@ -67,7 +68,7 @@ SendMessage, Nachricht [, wParam, lParam, Steuerelement, Fenstertitel, Fensterte
     <td>Textausnahme</td>
     <td>Fenstertexte mit diesem Wert werden nicht ber&uuml;cksichtigt.</td>
   </tr>
-</table>
+</tbody></table>
 
 <h3>ErrorLevel</h3>
 <p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszul&ouml;sen. F&uuml;r mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
@@ -77,10 +78,10 @@ SendMessage, Nachricht [, wParam, lParam, Steuerelement, Fenstertitel, Fensterte
 <p>Diese Befehle sollten mit Vorsicht verwendet werden, da das Senden einer Nachricht an das falsche Fenster (oder das Senden einer ung&uuml;ltigen Nachricht) zu unerwartetem Verhalten oder sogar zum Absturz der Zielanwendung f&uuml;hren k&ouml;nnte. Denn die meisten Anwendungen sind nicht daf&uuml;r entworfen, um bestimmte Arten von Nachrichten aus externen Quellen zu erwarten.</p>
 <p>PostMessage platziert die Nachricht in der Warteschlange, die dem Zielfenster zugeordnet ist. Es wartet nicht auf eine Best&auml;tigung oder Antwort. SendMessage hingegen wartet bis zu 5 Sekunden auf das Zielfenster, um die Nachricht zu verarbeiten. Wenn die Nachricht nicht innerhalb dieser Zeit verarbeitet wird, dann wird der Befehl beendet und ErrorLevel auf FAIL gesetzt.</p>
 <p>Die Parameter <em>Nachricht</em>, <em>wParam</em> und <em>lParam</em> sollten Integer-Werte zwischen -2147483648 und 4294967295 (0xFFFFFFFF) enthalten. Wie bei allen Integer-Werten in AutoHotkey kennzeichnet das 0x-Pr&auml;fix einen Hex-Wert. Zum Beispiel entspricht 0xFF der Zahl 255.</p>
-<p>Ein String kann mit <em>wParam</em> oder <em>lParam</em> gesendet werden, wenn die Adresse einer Variable angegeben wird. Im folgenden Beispiel wird daf&uuml;r der <a href="../Variables.htm#amp">Adressoperator (&)</a> verwendet:</p>
-<pre>SendMessage, 0xC, 0, <strong>&EigeneVar</strong>, ClassNN, Fenstertitel  <em>; 0XC ist WM_SETTEXT</em></pre>
-<p>Seit v1.0.43.06 wird ein String in EigeneVar, welcher vom Empf&auml;nger eingef&uuml;gt wurde, wahrscheinlich ohne zus&auml;tzliche Schritte erkannt. Dies funktioniert jedoch nur, wenn das erste Zeichen im Parameter ein kaufm&auml;nnisches Und (&) ist. Zum Beispiel funktioniert <em>5+&EigeneVar</em> nicht, aber <em>&EigeneVar</em> oder <em>&EigeneVar+5</em> funktionieren.</p>
-<p>Ein direkt vorhandener String in Anf&uuml;hrungszeichen kann auch wie im folgenden Beispiel gesendet werden (der &-Operator sollte in diesem Fall nicht verwendet werden):</p>
+<p>Ein String kann mit <em>wParam</em> oder <em>lParam</em> gesendet werden, wenn die Adresse einer Variable angegeben wird. Im folgenden Beispiel wird daf&uuml;r der <a href="../Variables.htm#amp">Adressoperator (&amp;)</a> verwendet:</p>
+<pre>SendMessage, 0xC, 0, <strong>&amp;EigeneVar</strong>, ClassNN, Fenstertitel  <em>; 0XC ist WM_SETTEXT</em></pre>
+<p>Seit v1.0.43.06 wird ein String in EigeneVar, welcher vom Empf&auml;nger eingef&uuml;gt wurde, wahrscheinlich ohne zus&auml;tzliche Schritte erkannt. Dies funktioniert jedoch nur, wenn das erste Zeichen im Parameter ein kaufm&auml;nnisches Und (&amp;) ist. Zum Beispiel funktioniert <em>5+&amp;EigeneVar</em> nicht, aber <em>&amp;EigeneVar</em> oder <em>&amp;EigeneVar+5</em> funktionieren.</p>
+<p>Ein direkt vorhandener String in Anf&uuml;hrungszeichen kann auch wie im folgenden Beispiel gesendet werden (der &amp;-Operator sollte in diesem Fall nicht verwendet werden):</p>
 <pre>Run Notepad
 WinWaitActive Unbenannt - Editor
 SendMessage, 0xC, 0, <strong>"Neuer Editor-Titel"</strong>  <em>; 0XC ist WM_SETTEXT</em></pre>
@@ -130,6 +131,4 @@ SetTitleMatchMode, 2
 DetectHiddenWindows, on
 SendMessage, 0x44, 0x405, 0, , BeliebigesScript.ahk - AutoHotkey v
 MsgBox %ErrorLevel% ist die Prozess-ID.</pre>
-
-</body>
-</html>
+</body></html>

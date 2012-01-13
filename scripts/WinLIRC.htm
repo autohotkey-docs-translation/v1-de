@@ -1,12 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title>WinLIRC-Client</title>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<link rel="alternate" type="application/rss+xml" title="AutoHotkey Forum RSS" href="/forum/rss.php">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="../css/default.css" rel="stylesheet" type="text/css">
-<meta name="description" content="This open-source WinLIRC client can perform keystrokes, mouse clicks, and other actions in response to buttons you press on your remote control.">
+<meta name="description" content="Dieser frei zug&auml;ngliche WinLIRC-Client f&uuml;hrt Tastatureingaben, Mausklicks und andere Aktion durch, abh&auml;ngig davon, welche Tasten auf der Fernbedienung gedr&uuml;ckt werden.">
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -180,7 +178,7 @@ ConnectToAddress(IPAddress, Port)
 ; Gibt bei Misserfolg eine -1 (INVALID_SOCKET) und bei Erfolg die Sockel-ID zur&uuml;ck.</em>
 {
     VarSetCapacity(wsaData, 400)
-    result := DllCall("Ws2_32\WSAStartup", "UShort", 0x0002, "UInt", &wsaData) <em>; Winsock 2.0 (0x0002) anfordern</em>
+    result := DllCall("Ws2_32\WSAStartup", "UShort", 0x0002, "UInt", &amp;wsaData) <em>; Winsock 2.0 (0x0002) anfordern</em>
     <em>; Da WSAStartup() wahrscheinlich die erste aufgerufene Winsock-Funktion des Scripts ist,</em>
     <em>; wird ErrorLevel &uuml;berpr&uuml;ft, ob Winsock 2.0 verf&uuml;gbar ist:</em>
     if ErrorLevel
@@ -212,7 +210,7 @@ ConnectToAddress(IPAddress, Port)
     InsertInteger(DllCall("Ws2_32\inet_addr", "AStr", IPAddress), SocketAddress, 4, 4)   <em>; sin_addr.s_addr</em>
 
     <em>; Verbindungsversuch:</em>
-    if DllCall("Ws2_32\connect", "UInt", socket, "UInt", &SocketAddress, "Int", SizeOfSocketAddress)
+    if DllCall("Ws2_32\connect", "UInt", socket, "UInt", &amp;SocketAddress, "Int", SizeOfSocketAddress)
     {
         MsgBox % "connect() kennzeichnet Winsock-Fehler " . DllCall("Ws2_32\WSAGetLastError") . ". Wird WinLIRC ausgef&uuml;hrt?"
         return -1
@@ -259,7 +257,7 @@ ReceiveData(wParam, lParam)
                 ButtonName := A_LoopField
         global DelayBetweenButtonRepeats  <em>; Globale Variablen deklarieren, damit sie f&uuml;r diese Funktion verf&uuml;gbar sind.</em>
         static PrevButtonName, PrevButtonTime, RepeatCount  <em>; Diese Variablen merken sich ihre Werte zwischen den Aufrufen.</em>
-        if (ButtonName != PrevButtonName || A_TickCount - PrevButtonTime > DelayBetweenButtonRepeats)
+        if (ButtonName != PrevButtonName || A_TickCount - PrevButtonTime &gt; DelayBetweenButtonRepeats)
         {
             if IsLabel(ButtonName)  <em>; Es ist eine Subroutine vorhanden, die sich auf diese Taste bezieht.</em>
                 Gosub %ButtonName%  <em>; Die Subroutine starten.</em>
@@ -293,7 +291,7 @@ InsertInteger(pInteger, ByRef pDest, pOffset = 0, pSize = 4)
 ; wird nur die Anzahl an Bytes in pSize beginnend bei pOffset ge&auml;ndert.</em>
 {
     Loop %pSize%  <em>; Jeden Byte im Integer als unbearbeitete Bin&auml;rdaten in die Struktur kopieren.</em>
-        DllCall("RtlFillMemory", "UInt", &pDest + pOffset + A_Index-1, "UInt", 1, "UChar", pInteger >> 8*(A_Index-1) & 0xFF)
+        DllCall("RtlFillMemory", "UInt", &amp;pDest + pOffset + A_Index-1, "UInt", 1, "UChar", pInteger &gt;&gt; 8*(A_Index-1) &amp; 0xFF)
 }
 
 
@@ -305,5 +303,4 @@ DllCall("Ws2_32\WSACleanup")
 ExitApp
 
 </pre>
-</body>
-</html>
+</body></html>
