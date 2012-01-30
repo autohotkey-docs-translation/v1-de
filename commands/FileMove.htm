@@ -1,10 +1,9 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title>FileMove</title>
 <meta name="keywords" content="Befehl, Datei">
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="../css/default.css" rel="stylesheet" type="text/css">
 <script type="text/javascript">
 
@@ -27,37 +26,46 @@
 
 <h1>FileMove</h1>
 
-<p>Verschiebt oder benennt beliebig viele Dateien um.</p>
+<p>Verschiebt oder benennt eine oder mehrere Dateien um.</p>
 
 <pre class="Syntax">FileMove, Quellmuster, Zielmuster [, Flag]</pre>
 <h3>Parameter</h3>
 <table class="info">
-  <tr>
+  <tbody>
+<tr>
     <td>Quellmuster</td>
     <td>Der Name einer Datei oder eine musterbasierte Suche wie C:\Temp\*.tmp. Das <em>Quellmuster</em> befindet sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis, solange kein absoluter Pfad angegeben ist.</td>
   </tr>
   <tr>
     <td>Zielmuster</td>
-    <td>Der Name oder Muster des Ziels, das sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist.  Damit beim Verschieben von Dateien die Namen beibehalten werden, darf nur der Ordnernamen wie in den folgenden Beispielen angegeben werden:<br> FileMove, C:\*.txt, C:\Eigener Ordner<br> FileMove, C:\*.txt, C:\Eigener Ordner\*.*</td>
+    <td>Der Name oder Muster des Ziels, das sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist. Um eine einfache Verschiebung durchzuf&uuml;hren (vorhandene Dateinamen beibehalten), sollte nur der Ordnername angegeben werden. Siehe dazu folgende Beispiele, die funktional identisch sind:
+
+
+<pre>FileMove, C:\*.txt, C:\Eigener Ordner
+FileMove, C:\*.txt, C:\Eigener Ordner\*.*</pre></td>
   </tr>
   <tr>
     <td width="15%">Flag</td>
-    <td width="85%"><p>(Optional) Mit diesem Parameter wird bestimmt, ob Dateien &uuml;berschrieben werden, wenn sie bereits vorhanden sind:</p>
+    <td width="85%">
+<p>(Optional) Dieser Parameter bestimmt, ob Dateien &uuml;berschrieben werden d&uuml;rfen, falls sie bereits vorhanden sind:</p>
       <p>0 = (Standard) vorhandene Dateien nicht &uuml;berschreiben<br>1 = vorhandene Dateien &uuml;berschreiben</p>
-      <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> oder True bzw. False sein (intern auch als 1 bzw. 0 gespeichert).</p></td>
+      <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein, auch einer, der als wahr oder falsch gewertet wird (weil True und False intern als 1 und 0 gespeichert sind).</p></td>
   </tr>
-</table>
+</tbody></table>
 
 <h3>ErrorLevel</h3>
 <p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszul&ouml;sen. F&uuml;r mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
-<p>Bei Problemen enth&auml;lt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> die Anzahl an Dateien, die nicht verschoben werden konnten, ansonsten wird ErrorLevel auf 0 gesetzt. Allerdings wird ErrorLevel auf 0 gesetzt, wenn die Quelldatei eine einzelne Datei (ohne Platzhalter) ist und nicht existiert. Zur &Uuml;berpr&uuml;fung dieser Bedingung kann <a href="IfExist.htm">IfExist</a> oder <a href="../Functions.htm#FileExist">FileExist()</a> mit der Quelldatei verwendet werden, bevor sie verschoben wird.</p>
-<p>Im Gegensatz zu <a href="FileCopy.htm">FileCopy</a> wird das Verschieben einer Datei auf sich selbst immer als Erfolg betrachtet, auch wenn der &Uuml;berschreibmodus nicht aktiv ist.</p>
-<p>Wenn Dateien gefunden wurden, enth&auml;lt <a href="../Variables.htm#LastError">A_LastError</a> eine Null oder den R&uuml;ckgabewert der Systemfunktion GetLastError()-Funktion unmittelbar nach dem letzten Fehler. Ansonsten enth&auml;lt A_LastError einen Fehlercode, der darauf hinweist, warum keine Dateien gefunden wurden.</p>
+<p>Bei Problemen enth&auml;lt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> die Anzahl an Dateien, die nicht verschoben werden konnten, ansonsten wird ErrorLevel auf 0 gesetzt. Allerdings wird ErrorLevel auch auf 0 gesetzt, wenn die Quelldatei eine einzelne Datei (ohne Platzhalter) ist und nicht existiert. Um diesen Zustand zu erkennen, bevor die Quelldatei verschoben wird, verwendet <a href="IfExist.htm">IfExist</a> oder <a href="../Functions.htm#FileExist">FileExist()</a>.</p>
+<p>Im Gegensatz zu <a href="FileCopy.htm">FileCopy</a> wird das Verschieben einer Datei auf sich selbst immer als Erfolg angesehen, selbst wenn der &Uuml;berschreibmodus nicht aktiv ist.</p>
+<p>Falls Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a>
+ auf 0 gesetzt, oder auf den aktuellsten R&uuml;ckgabewert der Systemfunktion
+ GetLastError(). Ansonsten enth&auml;lt A_LastError einen Fehlercode, der 
+darauf hinweist, warum keine Dateien gefunden wurden.</p>
 
 <h3>Bemerkungen</h3>
-<p>FileMove verschiebt nur Dateien. Um stattdessen den Inhalt eines Ordners zu verschieben (alle Dateien und Unterordner), sieht die Beispiele weiter unten. Mit <a href="FileMoveDir.htm">FileMoveDir</a> k&ouml;nnen einzelne Ordner verschoben oder umbenannt werden.</p>
-<p>Die Operation wird fortgesetzt, selbst wenn Fehler auftreten.</p>
-<p>Obwohl dieser Befehl in der Lage ist, Dateien auf andere Datentr&auml;ger zu verschieben, dauert der Vorgang l&auml;nger als das Verschieben auf dem gleichen Datentr&auml;ger. Denn das Verschieben auf dem gleichen Datentr&auml;ger ist das gleiche wie Umbenennen, was bedeutend schneller ist.</p>
+<p>FileMove verschiebt nur Dateien. Um stattdessen den Inhalt eines Ordners zu verschieben (alle Dateien und Unterordner), sieht die Beispiele weiter unten. Um einen einzelnen Ordner zu verschieben oder umzubenennen, verwendet <a href="FileMoveDir.htm">FileMoveDir</a>.</p>
+<p>Die Operation wird auch dann fortgesetzt, wenn Fehler auftreten.</p>
+<p>Dieser Befehl in der Lage ist, Dateien auf andere Datentr&auml;ger zu verschieben. Beachtet jedoch, dass das Verschieben auf gleichen Datentr&auml;gern schneller ist, als auf unterschiedlichen Datentr&auml;gern, weil die Dateien hierbei nur umbenannt werden.</p>
 <h3>Verwandte Befehle</h3>
 <p><a href="FileCopy.htm">FileCopy</a>, <a href="FileCopyDir.htm">FileCopyDir</a>, <a href="FileMoveDir.htm">FileMoveDir</a>, <a href="FileDelete.htm">FileDelete</a></p>
 <h3>Beispiele</h3>
@@ -66,7 +74,7 @@ FileMove, C:\Datei bevor.txt, C:\Datei danach.txt  <em>; Benennt eine Datei um.<
 FileMove, C:\Ordner1\*.txt, D:\Neuer Ordner\*.bkp  <em>; Verschiebt und benennt die Erweiterung der Dateien um.</em></pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Das folgende Beispiel verschiebt alle Dateien und Unterordner in einem anderen Ordner:</em>
-Fehlerz&auml;hlung := MoveFilesAndFolders("C:\Eigener Ordner\*.*", "D:\Zielordner f&uuml;r Dateien & Ordner")
+Fehlerz&auml;hlung := MoveFilesAndFolders("C:\Eigener Ordner\*.*", "D:\Zielordner f&uuml;r Dateien &amp; Ordner")
 If Fehlerz&auml;hlung &lt;&gt; 0
     MsgBox %Fehlerz&auml;hlung% Dateien/Ordner konnten nicht verschoben werden.
 
@@ -89,6 +97,4 @@ MoveFilesAndFolders(Quellmuster, Zielordner, &Uuml;berschreiben = false)
     }
     Return Fehlerz&auml;hlung
 }</pre>
-
-</body>
-</html>
+</body></html>
