@@ -97,7 +97,7 @@ Return
 
 ; Die oben genannten Beispiele geben einen Eindruck davon, wie häufige Aufgaben durchgeführt werden.
 ; Um die Grundlagen von AutoHotkey zu lernen, siehe Schnellstart-Tutorial
-; auf http://www.autohotkey.com/docs/Tutorial.htm
+; auf http://de.autohotkey.com/docs/Tutorial.htm
 
 ; ----------------------------
 ; ENDE DES KONFIGURATIONSBEREICHS
