@@ -1,9 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
 <title>Clipboard, ClipboardAll und OnClipboardChange</title>
 <meta name="keywords" content="Grundlage">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="../css/default.css" rel="stylesheet" type="text/css">
 <script type="text/javascript">
 
@@ -22,65 +22,67 @@
 
 <body>
 <div id="wrapper">
-<div id="content">
-<script src="../navbar/NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
-<script language="JavaScript1.2" type="text/javascript">WriteNavLink(1);</script>
-
-<h1>Clipboard, ClipboardAll und OnClipboardChange</h1>
-
-<p><em>Clipboard</em> ist eine interne <a href="../Variables.htm">Variable</a>, die den aktuellen Inhalt der Windows-Zwischenablage enth&auml;lt, falls dieser in Textform ist. <a href="#ClipboardAll"><em>ClipboardAll</em></a> hingegen enth&auml;lt alles von der Zwischenablage, wie z. B. Bilder und Formatierung.</p>
-<p><a name="CopiedFiles"></a>Jede Textzeile in <em>Clipboard</em> endet normalerweise mit einem CR- und LF-Zeichen, die im Script als <code>`r`n</code> ausgedr&uuml;ckt werden k&ouml;nnen. Dateien (die beispielsweise mit <kbd>Strg</kbd>+<kbd>C</kbd> kopiert wurden) gelten als Text: Sie werden automatisch in ihren Dateinamen umgewandelt (mit vollst&auml;ndigem Pfad), sobald <em>Clipboard</em> im Script verwendet wird. Um die Dateien einzeln zu extrahieren, befolgt dieses Beispiel:</p>
-<pre>Loop, parse, clipboard, `n, `r
+  <div id="content"> 
+    <script src="../navbar/NavScript.js" type="text/javascript"></script> 
+    <script type="text/javascript">WriteNavLink(1);</script>
+    <h1>Clipboard, ClipboardAll und OnClipboardChange</h1>
+    <p><em>Clipboard</em> ist eine interne <a href="../Variables.htm">Variable</a>, die den aktuellen Inhalt der Windows-Zwischenablage enth&auml;lt, falls dieser in Textform ist. <a href="#ClipboardAll"><em>ClipboardAll</em></a> hingegen enth&auml;lt alles von der Zwischenablage, wie z. B. Bilder und Formatierung.</p>
+    <p id="CopiedFiles">Jede Textzeile in <em>Clipboard</em> endet normalerweise mit einem CR- und LF-Zeichen, die im Script als <code>`r`n</code> ausgedr&uuml;ckt werden k&ouml;nnen. Dateien (die beispielsweise mit <kbd>Strg</kbd>+<kbd>C</kbd> kopiert wurden) gelten als Text: Sie werden automatisch in ihren Dateinamen umgewandelt (mit vollst&auml;ndigem Pfad), sobald <em>Clipboard</em> im Script verwendet wird. Um die Dateien einzeln zu extrahieren, befolgt dieses Beispiel:</p>
+    <pre>Loop, parse, clipboard, `n, `r
 {
     MsgBox, 4, , Dateinummer %A_Index% ist %A_LoopField%.`n`nWeiter?
     IfMsgBox, No, break
 }</pre>
-<p>Um die Dateinamen in alphabetischer Reihenfolge zu sortieren, verwendet den <a href="../commands/Sort.htm">Sort</a>-Befehl. Um die Dateinamen von der Zwischenablage in eine Datei zu schreiben, verwendet <code><a href="../commands/FileAppend.htm">FileAppend</a>, %clipboard%`r`n, C:\Eigene Datei.txt</code>. Um die Versuchsdauer zu &auml;ndern, wie oft die Zwischenablage ge&ouml;ffnet werden soll (wenn sie beispielsweise von einer anderen Anwendung benutzt wird), verwendet <a href="../commands/_ClipboardTimeout.htm">#ClipboardTimeOut</a>.</p>
-<strong>Einfache Beispiele:</strong>
-<pre>clipboard = eigener Text   <em>; Ersetzt die Zwischenablage mit neuem Inhalt.</em>
+    <p>Um die Dateinamen in alphabetischer Reihenfolge zu sortieren, verwendet den <a href="../commands/Sort.htm">Sort</a>-Befehl. Um die Dateinamen von der Zwischenablage in eine Datei zu schreiben, verwendet <code><a href="../commands/FileAppend.htm">FileAppend</a>, %clipboard%`r`n, C:\Eigene Datei.txt</code>. Um die Versuchsdauer zu &auml;ndern, wie oft die Zwischenablage ge&ouml;ffnet werden soll (wenn sie beispielsweise von einer anderen Anwendung benutzt wird), verwendet <a href="../commands/_ClipboardTimeout.htm">#ClipboardTimeOut</a>.</p>
+    <strong>Einfache Beispiele:</strong>
+    <pre>clipboard = eigener Text   <em>; Ersetzt die Zwischenablage mit neuem Inhalt.</em>
 clipboard =   <em>; Leert die Zwischenablage.</em>
 clipboard = %clipboard%   <em>; Wandelt jede kopierte Datei, HTML oder anders formatierter Text in Klartext um.</em>
 clipboard = %clipboard% angef&uuml;gter Text.   <em>; F&uuml;gt etwas Text an die Zwischenablage.</em>
 StringReplace, clipboard, clipboard, ABC, DEF, All   <em>; Ersetzt alle Vorkommen von ABC mit DEF (und wandelt die Zwischenablage in Klartext um).</em></pre>
-
-<p><strong>ClipWait verwenden, um die Zuverl&auml;ssigkeit des Scripts zu verbessern:</strong></p>
-<pre>clipboard =  <em>; Beginnt leer, damit ClipWait erkennt, wenn der Text angekommen ist.</em>
+    <p><strong>ClipWait verwenden, um die Zuverl&auml;ssigkeit des Scripts zu verbessern:</strong></p>
+    <pre>clipboard =  <em>; Beginnt leer, damit ClipWait erkennt, wenn der Text angekommen ist.</em>
 Send ^c
 <a href="../commands/ClipWait.htm">ClipWait</a>  <em>; Wartet, bis die Zwischenablage Text enth&auml;lt.</em>
 MsgBox Steuerung+C hat folgenden Inhalt in die Zwischenablage kopiert:`n`n%clipboard%</pre>
-<h2 id="ClipboardAll">ClipboardAll<span class="ver"> (alles in der Zwischenablage speichern und wiederherstellen)</span></h2>
-<p><em>ClipboardAll</em> enth&auml;lt alles von der Zwischenablage (z. B. Bilder und Formatierung). Diese Variable wird h&auml;ufig verwendet, um den aktuellen Inhalt der Zwischenablage zu sichern, damit die Zwischenablage vor&uuml;bergehend f&uuml;r eine andere Operation verwendet werden kann. Sobald die Operation abgeschlossen wurde, kann der originale Inhalt der Zwischenablage wie folgt wiederhergestellt werden:</p>
-<pre>ClipSicherung := ClipboardAll   <em>; Speichert die gesamte Zwischenablage in eine beliebige Variable.
+    <h2 id="ClipboardAll">ClipboardAll<span class="ver"> (alles in der Zwischenablage speichern und wiederherstellen)</span></h2>
+    <p><em>ClipboardAll</em> enth&auml;lt alles von der Zwischenablage (z. B. Bilder und Formatierung). Diese Variable wird h&auml;ufig verwendet, um den aktuellen Inhalt der Zwischenablage zu sichern, damit die Zwischenablage vor&uuml;bergehend f&uuml;r eine andere Operation verwendet werden kann. Sobald die Operation abgeschlossen wurde, kann der originale Inhalt der Zwischenablage wie folgt wiederhergestellt werden:</p>
+    <pre>ClipSicherung := ClipboardAll   <em>; Speichert die gesamte Zwischenablage in eine beliebige Variable.
 ; ... hier kann vor&uuml;bergehend die Zwischenablage anderweitig verwendet werden, z. B. das Einf&uuml;gen von Unicode-Text mit <a href="../commands/Transform.htm#Unicode">Transform Unicode</a> ...</em>
 Clipboard := ClipSicherung   <em>; Originale Zwischenablage wiederherstellen. Beachtet, dass <i>Clipboard</i> verwendet wird (nicht <i>ClipboardAll</i>).</em>
 ClipSicherung =   <em>; Speicher freigeben, falls die Zwischenablage sehr gro&szlig; war.</em></pre>
-<p><em>ClipboardAll</em> k&ouml;nnte auch in einer Datei gespeichert werden (im diesen Modus wird FileAppend die vorhandene Datei immer &uuml;berschreiben):</p>
-<pre><a href="../commands/FileAppend.htm">FileAppend</a>, %ClipboardAll%, C:\Firmenlogo.clip <em>; Die Dateierweiterung spielt hierbei keine Rolle.</em></pre>
-<p>Um die Datei sp&auml;ter wieder in die Zwischenablage zu laden (oder in eine Variable), befolgt dieses Beispiel:</p>
-<pre><a href="../commands/FileRead.htm">FileRead</a>, Clipboard, <strong>*c</strong> C:\Firmenlogo.clip <em>; Beachtet, dass *c vor dem Dateinamen stehen muss. </em></pre>
-<h3>Hinweise</h3>
-<p><em>ClipboardAll</em> ist leer, sobald es nicht wie oben beschrieben verwendet wird. Dar&uuml;ber hinaus wird <em>ClipboardAll</em> nicht in <a href="../Variables.htm#comma">kommagetrennten Ausdr&uuml;cken</a> unterst&uuml;tzt; das hei&szlig;t, dass diese Variable alleine auf einer Zeile stehen muss, wie z. B. <code>ClipSicherung := ClipboardAll</code>.</p>
-<p>Variablen, denen <em>ClipboardAll</em> zugewiesen wurden ist, sind im Bin&auml;rformat und werden  z. B. in einer <a href="../commands/MsgBox.htm">MsgBox</a> als Kauderwelsch angezeigt. Zudem wird eine Variable mit bin&auml;rer Zwischenablage in eine normale Variable zur&uuml;ckverwandelt, sobald sie in irgendeiner Form ver&auml;ndert wird (z. B. durch <a href="../commands/StringReplace.htm">StringReplace</a>), wodurch sie folglich ihre Daten von der Zwischenablage verliert. Seit v1.0.46 k&ouml;nnen Variablen mit bin&auml;rer Zwischenablage als Wert an einer <a href="../Functions.htm#ByRef">Funktion</a> &uuml;bergeben werden (vorher hat das nur mit <a href="../Functions.htm#ByRef">ByRef</a> funktioniert).</p>
-<p><span style="font-style: italic;"></span>Falls <em>ClipboardAll</em> nicht in der Lage ist, eine oder mehrere Datenobjekte (Formate) von der Zwischenablage abzurufen, werden die Objekte ausgelassen und die restlichen gespeichert. Die H&auml;ufigkeit der Abfrage ist von <a href="../commands/_ClipboardTimeout.htm">#ClipboardTimeOut</a> abh&auml;ngig (anstatt es nur einmal zu versuchen).</p>
-<p>Eine Variable, die Daten von der Zwischenablage enth&auml;lt, kann wie folgt in eine andere Variable kopiert werden: <code>ClipSicherung2 := ClipSicherung</code></p>
-<p>Mit <a href="../commands/ClipWait.htm">ClipWait</a> kann festgestellt werden, wann die Zwischenablage Daten enth&auml;lt (wahlweise auch Daten, die kein Text sind).</p>
-<p><a href="../commands/StringLen.htm">StringLen</a> oder <a href="../Functions.htm#StrLen">StrLen</a> k&ouml;nnen dazu verwendet werden, die Gesamtgr&ouml;&szlig;e einer Variable zu ermitteln, der <em>ClipboardAll</em> zugewiesen wurden ist. Um die Gr&ouml;&szlig;e bei den Unicode-Versionen von AutoHotkey abzurufen  (in Bytes), muss die L&auml;nge mit 2 multipliziert werden. Mithilfe von <a href="../Variables.htm#IsUnicode">A_IsUnicode</a> k&ouml;nnen ANSI- und Unicode-Versionen wie folgt unterst&uuml;tzt werden: <code>Gr&ouml;&szlig;e := StrLen(ClipSicherung) * (A_IsUnicode ? 2 : 1)</code></p>
-<p>Variablen, denen <em>ClipboardAll</em> zugewiesen wurden ist, k&ouml;nnen mit den Operatoren "&lt;&gt;" und "=" miteinander verglichen werden (aber nicht direkt mit <em>ClipboardAll</em>). Im folgenden Beispiel wird zun&auml;chst die L&auml;nge jeder Variable &uuml;berpr&uuml;ft. Falls das nicht reicht, k&ouml;nnen die Variablen noch wie folgt verglichen werden:</p>
-<pre>If ClipSicherung1 &lt;&gt; %ClipSicherung2%   <em>; <u>Muss</u> eine IF-Anweisung im alten Stil sein, kein Ausdruck.</em>
+    <p><em>ClipboardAll</em> k&ouml;nnte auch in einer Datei gespeichert werden (im diesen Modus wird FileAppend die vorhandene Datei immer &uuml;berschreiben):</p>
+    <pre><a href="../commands/FileAppend.htm">FileAppend</a>, %ClipboardAll%, C:\Firmenlogo.clip <em>; Die Dateierweiterung spielt hierbei keine Rolle.</em></pre>
+    <p>Um die Datei sp&auml;ter wieder in die Zwischenablage zu laden (oder in eine Variable), befolgt dieses Beispiel:</p>
+    <pre><a href="../commands/FileRead.htm">FileRead</a>, Clipboard, <strong>*c</strong> C:\Firmenlogo.clip <em>; Beachtet, dass *c vor dem Dateinamen stehen muss. </em></pre>
+    <h3>Hinweise</h3>
+    <p><em>ClipboardAll</em> ist leer, sobald es nicht wie oben beschrieben verwendet wird. Dar&uuml;ber hinaus wird <em>ClipboardAll</em> nicht in <a href="../Variables.htm#comma">kommagetrennten Ausdr&uuml;cken</a> unterst&uuml;tzt; das hei&szlig;t, dass diese Variable alleine auf einer Zeile stehen muss, wie z. B. <code>ClipSicherung := ClipboardAll</code>.</p>
+    <p>Variablen, denen <em>ClipboardAll</em> zugewiesen wurden ist, sind im Bin&auml;rformat und werden  z. B. in einer <a href="../commands/MsgBox.htm">MsgBox</a> als Kauderwelsch angezeigt. Zudem wird eine Variable mit bin&auml;rer Zwischenablage in eine normale Variable zur&uuml;ckverwandelt, sobald sie in irgendeiner Form ver&auml;ndert wird (z. B. durch <a href="../commands/StringReplace.htm">StringReplace</a>), wodurch sie folglich ihre Daten von der Zwischenablage verliert. Seit v1.0.46 k&ouml;nnen Variablen mit bin&auml;rer Zwischenablage als Wert an einer <a href="../Functions.htm#ByRef">Funktion</a> &uuml;bergeben werden (vorher hat das nur mit <a href="../Functions.htm#ByRef">ByRef</a> funktioniert).</p>
+    <p><span style="font-style: italic;"></span>Falls <em>ClipboardAll</em> nicht in der Lage ist, eine oder mehrere Datenobjekte (Formate) von der Zwischenablage abzurufen, werden die Objekte ausgelassen und die restlichen gespeichert. Die H&auml;ufigkeit der Abfrage ist von <a href="../commands/_ClipboardTimeout.htm">#ClipboardTimeOut</a> abh&auml;ngig (anstatt es nur einmal zu versuchen).</p>
+    <p>Eine Variable, die Daten von der Zwischenablage enth&auml;lt, kann wie folgt in eine andere Variable kopiert werden: <code>ClipSicherung2 := ClipSicherung</code></p>
+    <p>Mit <a href="../commands/ClipWait.htm">ClipWait</a> kann festgestellt werden, wann die Zwischenablage Daten enth&auml;lt (wahlweise auch Daten, die kein Text sind).</p>
+    <p><a href="../commands/StringLen.htm">StringLen</a> oder <a href="../Functions.htm#StrLen">StrLen</a> k&ouml;nnen dazu verwendet werden, die Gesamtgr&ouml;&szlig;e einer Variable zu ermitteln, der <em>ClipboardAll</em> zugewiesen wurden ist. Um die Gr&ouml;&szlig;e bei den Unicode-Versionen von AutoHotkey abzurufen  (in Bytes), muss die L&auml;nge mit 2 multipliziert werden. Mithilfe von <a href="../Variables.htm#IsUnicode">A_IsUnicode</a> k&ouml;nnen ANSI- und Unicode-Versionen wie folgt unterst&uuml;tzt werden: <code>Gr&ouml;&szlig;e := StrLen(ClipSicherung) * (A_IsUnicode ? 2 : 1)</code></p>
+    <p>Variablen, denen <em>ClipboardAll</em> zugewiesen wurden ist, k&ouml;nnen mit den Operatoren "&lt;&gt;" und "=" miteinander verglichen werden (aber nicht direkt mit <em>ClipboardAll</em>). Im folgenden Beispiel wird zun&auml;chst die L&auml;nge jeder Variable &uuml;berpr&uuml;ft. Falls das nicht reicht, k&ouml;nnen die Variablen noch wie folgt verglichen werden:</p>
+    <pre>If ClipSicherung1 &lt;&gt; %ClipSicherung2%   <em>; <u>Muss</u> eine IF-Anweisung im alten Stil sein, kein Ausdruck.</em>
     MsgBox Die zwei gespeicherten Zwischenablagen sind unterschiedlich.</pre>
-<p>Das Speichern von <em>ClipboardAll</em> in eine Variable wird nicht durch den Speicherlimit von <a href="../commands/_MaxMem.htm">#MaxMem</a> beeinflusst.</p>
-<p>Eine intern gespeicherte Zwischenablagedatei besteht aus mehreren Teilen: Die ersten 4 Bytes enthalten den Formattyp, die n&auml;chsten 4 Bytes die Datenblockgr&ouml;&szlig;e und zum Schluss den Datenblock des Formats. Falls die Zwischenablage mehr als ein Format enth&auml;lt (dass fast immer der Fall ist), werden diese drei Elemente so oft wiederholt, bis alle Formate enthalten sind. Anschlie&szlig;end endet die Datei mit einem Formattyp (4 Byte gro&szlig;), wobei jedoch eine 0 enthalten ist.</p>
-<p>Bekannte Einschr&auml;nkung: Sobald <em>ClipboardAll</em> abgerufen wird, w&auml;hrend Zellen von MS Excel enthalten sind, kann es passieren, dass in Excel ein Dialogfenster mit "Keine Drucker" angezeigt wird.</p>
-<p>Zwischenablage-Programme, die mit AutoHotkey programmiert wurden:</p>
-<ul>
-  <li>Deluxe Clipboard: Erm&ouml;glicht eine unbegrenzte Anzahl an privaten, benannten Zwischenablagen, um einen markierten Text zu kopieren, auszuschneiden, einzuf&uuml;gen, anzuh&auml;ngen oder auszuschneiden und anzuh&auml;ngen.<br><a href="http://www.autohotkey.com/forum/topic2665.html">www.autohotkey.com/forum/topic2665.html</a></li>
-  <li>ClipStep: Kontrolliert mehrere Zwischenablagen nur mithilfe von <kbd>Strg</kbd>+<kbd>X</kbd>/<kbd>C</kbd>/<kbd>V</kbd>.<br><a href="http://www.autohotkey.com/forum/topic4836.html">www.autohotkey.com/forum/topic4836.html</a></li>
-</ul>
-<h2 id="OnClipboardChange">OnClipboardChange</h2>
-<p>Ein Label namens OnClipboardChange wird automatisch gestartet (falls vorhanden), sobald eine beliebige Anwendung (auch das Script selbst) den Inhalt der Zwischenablage ge&auml;ndert hat. Das Label wird zudem beim Starten des Scripts einmal ausgef&uuml;hrt.</p>
-<p>Die interne Variable A_EventInfo enth&auml;lt:<br> 0, falls die Zwischenablage leer ist;<br> 1, falls etwas enthalten ist, das in Textform ist (einschlie&szlig;lich <a href="#CopiedFiles">kopierte Dateien</a>);<br> 2, falls etwas enthalten ist, das kein Text ist, wie z. B. ein Bild.</p>
-<p>Sobald das folgende Beispiel ausgef&uuml;hrt wird, wird bei jeder &Auml;nderung der Zwischenablage kurz ein ToolTip angezeigt.</p>
-<pre>#Persistent
+    <p>Das Speichern von <em>ClipboardAll</em> in eine Variable wird nicht durch den Speicherlimit von <a href="../commands/_MaxMem.htm">#MaxMem</a> beeinflusst.</p>
+    <p>Eine intern gespeicherte Zwischenablagedatei besteht aus mehreren Teilen: Die ersten 4 Bytes enthalten den Formattyp, die n&auml;chsten 4 Bytes die Datenblockgr&ouml;&szlig;e und zum Schluss den Datenblock des Formats. Falls die Zwischenablage mehr als ein Format enth&auml;lt (dass fast immer der Fall ist), werden diese drei Elemente so oft wiederholt, bis alle Formate enthalten sind. Anschlie&szlig;end endet die Datei mit einem Formattyp (4 Byte gro&szlig;), wobei jedoch eine 0 enthalten ist.</p>
+    <p>Bekannte Einschr&auml;nkung: Sobald <em>ClipboardAll</em> abgerufen wird, w&auml;hrend Zellen von MS Excel enthalten sind, kann es passieren, dass in Excel ein Dialogfenster mit "Keine Drucker" angezeigt wird.</p>
+    <p>Zwischenablage-Programme, die mit AutoHotkey programmiert wurden:</p>
+    <ul>
+      <li>Deluxe Clipboard: Erm&ouml;glicht eine unbegrenzte Anzahl an privaten, benannten Zwischenablagen, um einen markierten Text zu kopieren, auszuschneiden, einzuf&uuml;gen, anzuh&auml;ngen oder auszuschneiden und anzuh&auml;ngen.<br>
+        <a href="http://www.autohotkey.com/forum/topic2665.html">www.autohotkey.com/forum/topic2665.html</a></li>
+      <li>ClipStep: Kontrolliert mehrere Zwischenablagen nur mithilfe von <kbd>Strg</kbd>+<kbd>X</kbd>/<kbd>C</kbd>/<kbd>V</kbd>.<br>
+        <a href="http://www.autohotkey.com/forum/topic4836.html">www.autohotkey.com/forum/topic4836.html</a></li>
+    </ul>
+    <h2 id="OnClipboardChange">OnClipboardChange</h2>
+    <p>Ein Label namens OnClipboardChange wird automatisch gestartet (falls vorhanden), sobald eine beliebige Anwendung (auch das Script selbst) den Inhalt der Zwischenablage ge&auml;ndert hat. Das Label wird zudem beim Starten des Scripts einmal ausgef&uuml;hrt.</p>
+    <p>Die interne Variable A_EventInfo enth&auml;lt:<br>
+      0, falls die Zwischenablage leer ist;<br>
+      1, falls etwas enthalten ist, das in Textform ist (einschlie&szlig;lich <a href="#CopiedFiles">kopierte Dateien</a>);<br>
+      2, falls etwas enthalten ist, das kein Text ist, wie z. B. ein Bild.</p>
+    <p>Sobald das folgende Beispiel ausgef&uuml;hrt wird, wird bei jeder &Auml;nderung der Zwischenablage kurz ein ToolTip angezeigt.</p>
+    <pre>#Persistent
 Return
 
 OnClipboardChange:
@@ -88,9 +90,10 @@ ToolTip Datentyp der Zwischenablage: %A_EventInfo%
 Sleep 1000
 ToolTip  <em>; ToolTip deaktivieren.</em>
 Return</pre>
-<p>Wenn die Zwischenablage ge&auml;ndert wird, w&auml;hrend das Label OnClipboardChange l&auml;uft, geht das Benachrichtigungsereignis verloren. Falls das unerw&uuml;nscht ist, verwendet <a href="../commands/Critical.htm">Critical</a> in der ersten Zeile des Labels. Allerdings werden dadurch auch andere <a href="../misc/Threads.htm">Threads</a> zwischengespeichert/aufgeschoben (z. B. das Dr&uuml;cken eines Hotkeys), w&auml;hrend der OnClipboardChange-Thread l&auml;uft.</p>
-<p>Sobald das Script selbst die Zwischenablage &auml;ndert, wird das OnClipboardChange-Label normalerweise nicht sofort ausgef&uuml;hrt. Das hei&szlig;t, dass Befehle unterhalb des Befehls, der die Zwischenablage ge&auml;ndert hat, wahrscheinlich vorher ausgef&uuml;hrt werden. Um die sofortige Ausf&uuml;hrung des Labels zu erzwingen, verwendet eine kurze Verz&ouml;gerung wie beispielsweise <a href="../commands/Sleep.htm">Sleep 20</a>, nachdem die Zwischenablage ge&auml;ndert wurde.</p>
-<p>Verwandte Befehle: <a href="../commands/OnExit.htm">OnExit</a>, <a href="../commands/OnMessage.htm">OnMessage()</a>, <a href="../commands/RegisterCallback.htm">RegisterCallback()</a></p>
+    <p>Wenn die Zwischenablage ge&auml;ndert wird, w&auml;hrend das Label OnClipboardChange l&auml;uft, geht das Benachrichtigungsereignis verloren. Falls das unerw&uuml;nscht ist, verwendet <a href="../commands/Critical.htm">Critical</a> in der ersten Zeile des Labels. Allerdings werden dadurch auch andere <a href="../misc/Threads.htm">Threads</a> zwischengespeichert/aufgeschoben (z. B. das Dr&uuml;cken eines Hotkeys), w&auml;hrend der OnClipboardChange-Thread l&auml;uft.</p>
+    <p>Sobald das Script selbst die Zwischenablage &auml;ndert, wird das OnClipboardChange-Label normalerweise nicht sofort ausgef&uuml;hrt. Das hei&szlig;t, dass Befehle unterhalb des Befehls, der die Zwischenablage ge&auml;ndert hat, wahrscheinlich vorher ausgef&uuml;hrt werden. Um die sofortige Ausf&uuml;hrung des Labels zu erzwingen, verwendet eine kurze Verz&ouml;gerung wie beispielsweise <a href="../commands/Sleep.htm">Sleep 20</a>, nachdem die Zwischenablage ge&auml;ndert wurde.</p>
+    <p>Verwandte Befehle: <a href="../commands/OnExit.htm">OnExit</a>, <a href="../commands/OnMessage.htm">OnMessage()</a>, <a href="../commands/RegisterCallback.htm">RegisterCallback()</a></p>
+  </div>
 </div>
-</div>
-</body></html>
+</body>
+</html>

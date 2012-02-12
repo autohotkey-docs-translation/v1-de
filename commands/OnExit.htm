@@ -1,10 +1,9 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
 <title>OnExit</title>
 <meta name="keywords" content="Befehl, Ablaufsteuerung">
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="../css/default.css" rel="stylesheet" type="text/css">
 <script type="text/javascript">
 
@@ -22,72 +21,66 @@
 </head>
 <body>
 <div id="wrapper">
-<div id="content">
-<script src="../navbar/NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
-<script language="JavaScript1.2" type="text/javascript">WriteNavLink(1);</script>
-
-
-<h1>OnExit</h1>
-
-<p>F&uuml;hrt automatisch eine <a href="Gosub.htm">Subroutine</a> aus, wenn das Script beendet wird.</p>
-
-<pre class="Syntax">OnExit [, Label]</pre>
-<h3>Parameter</h3>
-<table class="info">
-  <tr>
-    <td width="15%">Label</td>
-    <td width="85%">Wenn weggelassen, dann wird das Script normal beendet. Verwendet ansonsten den Namen des <a href="../misc/Labels.htm">Labels</a>, der ausgef&uuml;hrt wird (als neuer <a href="../misc/Threads.htm">Thread</a>), wenn das Script beendet wird.</td>
-  </tr>
-</table>
-
-<p><strong>WICHTIG:</strong> Da die angegebene Subroutine aufgerufen wird, anstatt das Script zu beenden, dann muss die Subroutine den Befehl <a href="ExitApp.htm">ExitApp</a> je nach Bedarf verwenden. Alternativ (wie in den Beispielen weiter unten) kann die OnExit-Subroutine eine <a href="MsgBox.htm">MsgBox</a> anzeigen, um die Best&auml;tigung des Benutzers einzufordern - nur wenn der Benutzer Ja dr&uuml;ckt, wird ExitApp ausgef&uuml;hrt, um sich selbst zu schlie&szlig;en.</p>
-<h3>Bemerkungen</h3>
-<p>Die OnExit-Subroutine wird aufgerufen, wenn das Script mit allen Mitteln beendet wird (au&szlig;er wenn es z. B. von  "Task beenden" gewaltsam beendet wird). Es wird auch aufgerufen, sobald die Befehle <a href="_SingleInstance.htm">#SingleInstance</a> und <a href="Reload.htm">Reload</a> eine vorherige Instanz beenden.</p>
-<p>Ein Script kann die Abmeldung oder Abschaltung des Systems mittels <a href="OnMessage.htm#shutdown">OnMessage(0x11, "WM_QUERYENDSESSION")</a> erkennen und optional abbrechen.</p>
-<p>Der OnExit-<a href="../misc/Threads.htm">Thread</a> ber&uuml;cksichtigt nicht <a href="_MaxThreads.htm">#MaxThreads</a> (er wird immer gestartet, wenn n&ouml;tig). Dar&uuml;ber hinaus kann er nicht von einem anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen werden, w&auml;hrend er ausgef&uuml;hrt wird, einschlie&szlig;lich <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Men&uuml;punkte</a> und <a href="SetTimer.htm">zeitlich festgelegte Subroutinen</a>. Allerdings wird der Thread unterbrochen (und das Script beendet), wenn der Benutzer Exit im Tray-Men&uuml; oder Hauptmen&uuml; ausw&auml;hlt, oder das Script aufgrund von <a href="Reload.htm">Reload</a> oder <a href="_SingleInstance.htm">#SingleInstance</a> beendet wird. Aus diesem Grund sollte die OnExit-Subroutine so gestaltet werden, dass sie schnell beendet wird, solange dem Benutzer nicht bewusst ist, was er tut.</p>
-<p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> auf einen Fehler wie z. B. Laufzeitfehler st&ouml;&szlig;t, dann wird das Script beendet. Dadurch kann es nicht passieren, dass das Script nicht beendet werden kann.</p>
-<p>Falls die OnExit-Subroutine aufgrund eines <a href="Exit.htm">Exit</a>- oder <a href="ExitApp.htm">ExitApp</a>-Befehls mit einem Exitcode aufgerufen wurde, dann ist dieser Code nicht l&auml;nger relevant und verf&uuml;gbar. Ein neuer Exit-Code kann in der OnExit-Subroutine angegeben werden, wenn <a href="ExitApp.htm">ExitApp</a> aufgerufen wird.</p>
-<p>Sobald die OnExit-Subroutine von einem Exit-Versuch aufgerufen wird, werden die Standardwerte in den Einstellungen wie <a href="SendMode.htm">SendMode</a> verwendet. Diese k&ouml;nnen im <a href="../Scripts.htm#auto">automatischen Ausf&uuml;hrungsbereich</a> ge&auml;ndert werden.</p>
-<p>Die interne Variable <strong>A_ExitReason</strong> bleibt leer, solange die OnExit-Subroutine nicht ausgef&uuml;hrt wird oder noch nicht mindestens einmal von einem vorherigen Exit-Versuch aufgerufen wurde. Wenn nicht leer, dann ein folgendes Wort:</p>
-<table class="info">
-  <tr>
-    <td>Logoff</td>
-    <td><a name="logoff"></a>Der Benutzer meldet sich ab.</td>
-  </tr>
-  <tr>
-    <td>Shutdown</td>
-    <td>Das System wird heruntergefahren oder neu gestartet (z. B. mit dem <a href="Shutdown.htm">Shutdown</a>-Befehl). </td>
-  </tr>
-  <tr>
-    <td>Close</td>
-    <td>Das Script hat eine WM_CLOSE- oder WM_QUIT-Nachricht empfangen, hatte einen kritischen Fehler, oder wurde auf eine andere Weise geschlossen. Obwohl allesamt ungew&ouml;hnlich sind, wird WM_CLOSE verursacht, wenn <a href="WinClose.htm">WinClose</a> auf das Hauptfenster des Scripts angewendet wird. Um das zu verhindern, schlie&szlig;t das Hauptfenster mit <em>Send, !{F4}</em>.</td>
-  </tr>
-  <tr>
-    <td>Error</td>
-    <td>Ein Laufzeitfehler entsteht, wenn das Script keine Hotkeys hat und nicht <a href="_Persistent.htm">persistent</a> ist. Ein Laufzeitfehler tritt zum Beispiel auf, wenn <a href="Run.htm">Run/RunWait</a> nicht in der Lage ist, das angegebene Programm oder Dokument zu &ouml;ffnen.</td>
-  </tr>
-  <tr>
-    <td>Menu</td>
-    <td>Der Benutzer hat Exit im Men&uuml; des Hauptfensters oder im Standard-Tray-Men&uuml; ausgew&auml;hlt.</td>
-  </tr>
-  <tr>
-    <td>Exit</td>
-    <td>Die Befehle <a href="Exit.htm">Exit</a> oder <a href="ExitApp.htm">ExitApp</a> wurden verwendet (einschlie&szlig;lich <a href="Menu.htm">benutzerdefinierte Men&uuml;punkte</a>). </td>
-  </tr>
-  <tr>
-    <td>Reload</td>
-    <td>Das Script wird mittels dem <a href="Reload.htm">Reload</a>-Befehl oder -Men&uuml;punkt neu geladen.</td>
-  </tr>
-  <tr>
-    <td>Single</td>
-    <td>Das Script wird aufgrund von <a href="_SingleInstance.htm">#SingleInstance</a> mit einer neuen Instanz von sich selbst ersetzt. </td>
-  </tr>
-</table>
-
-<h3>Verwandte Befehle</h3>
-<p><a href="OnMessage.htm">OnMessage()</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="../misc/Clipboard.htm#OnClipboardChange">OnClipboardChange</a>, <a href="ExitApp.htm">ExitApp</a>, <a href="Shutdown.htm">Shutdown</a>, <a href="_Persistent.htm">#Persistent</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Gosub.htm">Gosub</a>, <a href="Return.htm">Return</a>, <a href="Menu.htm">Menu</a></p>
-<h3>Beispiel</h3>
-<pre class="NoIndent">#Persistent  <em>; F&uuml;r Demonstrationszwecke wird das Script aufrecht erhalten, wenn der Benutzer "Nein" ausgew&auml;hlt hat.</em>
+  <div id="content"> 
+    <script src="../navbar/NavScript.js" type="text/javascript"></script> 
+    <script type="text/javascript">WriteNavLink(1);</script>
+    <h1>OnExit</h1>
+    <p>F&uuml;hrt automatisch eine <a href="Gosub.htm">Subroutine</a> aus, wenn das Script beendet wird.</p>
+    <pre class="Syntax">OnExit [, Label]</pre>
+    <h3>Parameter</h3>
+    <table class="info">
+      <tr>
+        <td style="width: 15%;">Label</td>
+        <td style="width: 85%;">Wenn weggelassen, dann wird das Script normal beendet. Verwendet ansonsten den Namen des <a href="../misc/Labels.htm">Labels</a>, der ausgef&uuml;hrt wird (als neuer <a href="../misc/Threads.htm">Thread</a>), wenn das Script beendet wird.</td>
+      </tr>
+    </table>
+    <p><strong>WICHTIG:</strong> Da die angegebene Subroutine aufgerufen wird, anstatt das Script zu beenden, dann muss die Subroutine den Befehl <a href="ExitApp.htm">ExitApp</a> je nach Bedarf verwenden. Alternativ (wie in den Beispielen weiter unten) kann die OnExit-Subroutine eine <a href="MsgBox.htm">MsgBox</a> anzeigen, um die Best&auml;tigung des Benutzers einzufordern - nur wenn der Benutzer Ja dr&uuml;ckt, wird ExitApp ausgef&uuml;hrt, um sich selbst zu schlie&szlig;en.</p>
+    <h3>Bemerkungen</h3>
+    <p>Die OnExit-Subroutine wird aufgerufen, wenn das Script mit allen Mitteln beendet wird (au&szlig;er wenn es z. B. von  "Task beenden" gewaltsam beendet wird). Es wird auch aufgerufen, sobald die Befehle <a href="_SingleInstance.htm">#SingleInstance</a> und <a href="Reload.htm">Reload</a> eine vorherige Instanz beenden.</p>
+    <p>Ein Script kann die Abmeldung oder Abschaltung des Systems mittels <a href="OnMessage.htm#shutdown">OnMessage(0x11, "WM_QUERYENDSESSION")</a> erkennen und optional abbrechen.</p>
+    <p>Der OnExit-<a href="../misc/Threads.htm">Thread</a> ber&uuml;cksichtigt nicht <a href="_MaxThreads.htm">#MaxThreads</a> (er wird immer gestartet, wenn n&ouml;tig). Dar&uuml;ber hinaus kann er nicht von einem anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen werden, w&auml;hrend er ausgef&uuml;hrt wird, einschlie&szlig;lich <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Men&uuml;punkte</a> und <a href="SetTimer.htm">zeitlich festgelegte Subroutinen</a>. Allerdings wird der Thread unterbrochen (und das Script beendet), wenn der Benutzer Exit im Tray-Men&uuml; oder Hauptmen&uuml; ausw&auml;hlt, oder das Script aufgrund von <a href="Reload.htm">Reload</a> oder <a href="_SingleInstance.htm">#SingleInstance</a> beendet wird. Aus diesem Grund sollte die OnExit-Subroutine so gestaltet werden, dass sie schnell beendet wird, solange dem Benutzer nicht bewusst ist, was er tut.</p>
+    <p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> auf einen Fehler wie z. B. Laufzeitfehler st&ouml;&szlig;t, dann wird das Script beendet. Dadurch kann es nicht passieren, dass das Script nicht beendet werden kann.</p>
+    <p>Falls die OnExit-Subroutine aufgrund eines <a href="Exit.htm">Exit</a>- oder <a href="ExitApp.htm">ExitApp</a>-Befehls mit einem Exitcode aufgerufen wurde, dann ist dieser Code nicht l&auml;nger relevant und verf&uuml;gbar. Ein neuer Exit-Code kann in der OnExit-Subroutine angegeben werden, wenn <a href="ExitApp.htm">ExitApp</a> aufgerufen wird.</p>
+    <p>Sobald die OnExit-Subroutine von einem Exit-Versuch aufgerufen wird, werden die Standardwerte in den Einstellungen wie <a href="SendMode.htm">SendMode</a> verwendet. Diese k&ouml;nnen im <a href="../Scripts.htm#auto">automatischen Ausf&uuml;hrungsbereich</a> ge&auml;ndert werden.</p>
+    <p>Die interne Variable <strong>A_ExitReason</strong> bleibt leer, solange die OnExit-Subroutine nicht ausgef&uuml;hrt wird oder noch nicht mindestens einmal von einem vorherigen Exit-Versuch aufgerufen wurde. Wenn nicht leer, dann ein folgendes Wort:</p>
+    <table class="info">
+      <tr>
+        <td>Logoff</td>
+        <td id="logoff">Der Benutzer meldet sich ab.</td>
+      </tr>
+      <tr>
+        <td>Shutdown</td>
+        <td>Das System wird heruntergefahren oder neu gestartet (z. B. mit dem <a href="Shutdown.htm">Shutdown</a>-Befehl). </td>
+      </tr>
+      <tr>
+        <td>Close</td>
+        <td>Das Script hat eine WM_CLOSE- oder WM_QUIT-Nachricht empfangen, hatte einen kritischen Fehler, oder wurde auf eine andere Weise geschlossen. Obwohl allesamt ungew&ouml;hnlich sind, wird WM_CLOSE verursacht, wenn <a href="WinClose.htm">WinClose</a> auf das Hauptfenster des Scripts angewendet wird. Um das zu verhindern, schlie&szlig;t das Hauptfenster mit <em>Send, !{F4}</em>.</td>
+      </tr>
+      <tr>
+        <td>Error</td>
+        <td>Ein Laufzeitfehler entsteht, wenn das Script keine Hotkeys hat und nicht <a href="_Persistent.htm">persistent</a> ist. Ein Laufzeitfehler tritt zum Beispiel auf, wenn <a href="Run.htm">Run/RunWait</a> nicht in der Lage ist, das angegebene Programm oder Dokument zu &ouml;ffnen.</td>
+      </tr>
+      <tr>
+        <td>Menu</td>
+        <td>Der Benutzer hat Exit im Men&uuml; des Hauptfensters oder im Standard-Tray-Men&uuml; ausgew&auml;hlt.</td>
+      </tr>
+      <tr>
+        <td>Exit</td>
+        <td>Die Befehle <a href="Exit.htm">Exit</a> oder <a href="ExitApp.htm">ExitApp</a> wurden verwendet (einschlie&szlig;lich <a href="Menu.htm">benutzerdefinierte Men&uuml;punkte</a>). </td>
+      </tr>
+      <tr>
+        <td>Reload</td>
+        <td>Das Script wird mittels dem <a href="Reload.htm">Reload</a>-Befehl oder -Men&uuml;punkt neu geladen.</td>
+      </tr>
+      <tr>
+        <td>Single</td>
+        <td>Das Script wird aufgrund von <a href="_SingleInstance.htm">#SingleInstance</a> mit einer neuen Instanz von sich selbst ersetzt. </td>
+      </tr>
+    </table>
+    <h3>Verwandte Befehle</h3>
+    <p><a href="OnMessage.htm">OnMessage()</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="../misc/Clipboard.htm#OnClipboardChange">OnClipboardChange</a>, <a href="ExitApp.htm">ExitApp</a>, <a href="Shutdown.htm">Shutdown</a>, <a href="_Persistent.htm">#Persistent</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Gosub.htm">Gosub</a>, <a href="Return.htm">Return</a>, <a href="Menu.htm">Menu</a></p>
+    <h3>Beispiel</h3>
+    <pre class="NoIndent">#Persistent  <em>; F&uuml;r Demonstrationszwecke wird das Script aufrecht erhalten, wenn der Benutzer "Nein" ausgew&auml;hlt hat.</em>
 OnExit, ExitSub
 Return
 
@@ -99,7 +92,7 @@ If A_ExitReason not in Logoff,Shutdown  <em>; Vermeidet Leerzeichen um Kommas in
         Return
 }
 ExitApp  <em>; Damit ein OnExit-Script sich selbst schlie&szlig;en kann, muss ExitApp in der OnExit-Subroutine verwendet werden.</em></pre>
-</div>
+  </div>
 </div>
 </body>
 </html>
