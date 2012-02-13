@@ -5,24 +5,41 @@
 <meta name="keywords" content="Befehl, Hotkey, Hotstring, Tastatur, Maus">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="../css/default.css" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-28224374-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
 </head>
 <body>
 <div id="wrapper">
-  <div id="content">
+  <div id="content"> 
+    <script src="../navbar/NavScript.js" type="text/javascript"></script> 
+    <script type="text/javascript">WriteNavLink(1);</script>
     <h1>SendLevel <span class="ver">[v1.1.06+]</span></h1>
     <p>Bestimmt, welche k&uuml;nstliche Tastatur- oder Mausereignisse von Hotkeys und Hotstrings ignoriert werden.</p>
-    <pre class="Syntax">SendLevel</pre>
+    <pre class="Syntax">SendLevel, Stufe</pre>
     <h3>Parameter</h3>
     <table class="info">
       <tr>
-        <td style="width: 15%;">Level</td>
+        <td style="width: 15%;">Stufe</td>
         <td>Ein Integer zwischen 0 und 100, das ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein kann.</td>
       </tr>
     </table>
     <h3>Bemerkungen</h3>
-    <p>Tastatur- und Mausereignisse mit angegebenem Sendelevel l&ouml;sen keine Hotkeys oder Hotstrings auf gleichem oder niedrigerem <a href="_InputLevel.htm">Eingabelevel</a> aus. Dieser Befehl bestimmt den Sendelevel f&uuml;r alle Tastatur- und Mausereignisse, die vom Script erzeugt werden, au&szlig;er durch <a href="ControlSend.htm">ControlSend</a> (das nie Hotkeys oder Hotstrings ausl&ouml;st) und einzeiligen <a href="../Hotstrings.htm">Hotstrings</a> (die immer mit Sendelevel 0 arbeiten).</p>
-    <p>Level-0-Hotkeys k&ouml;nnen mit der <a href="ListHotkeys.htm">Reg-Methode</a> implementiert werden. In diesem Fall werden sie m&ouml;glicherweise durch k&uuml;nstliche Eingaben jeden Levels ausgel&ouml;st (selbst Level 0).</p>
-    <p>Jeder neu gestartete Hotkey- oder Hotstring-<a href="../misc/Threads.htm">Thread</a> beginnt mit einem Sendelevel, das mit dem <a href="_InputLevel.htm">Eingabelevel</a> vom Hotkey oder Hotstring &uuml;bereinstimmt. Jeder andere neu gestartete <a href="../misc/Threads.htm">Thread</a> (z. B. ein <a href="../Hotkeys.htm">Hotkey</a>, ein <a href="Menu.htm">benutzerdefinierter Men&uuml;punkt</a> oder eine <a href="SetTimer.htm">zeitlich festgelegte</a> Subroutine) beginnt mit der Standardeinstellung des Befehls (in diesem Fall eine 0). Diese Standardeinstellung kann ge&auml;ndert werden, indem dieser Befehl im <a href="../Scripts.htm#auto">Automatischen Ausf&uuml;hrungsbereich</a> (am Anfang des Scripts) verwendet wird.</p>
+    <p>Standardm&auml;&szlig;ig ignorieren <a href="_UseHook.htm">Hook</a>-<a href="../Hotkeys.htm">Hotkeys</a> und -<a href="../Hotstrings.htm">Hotstrings</a> Tastatur- und Mausereignisse, die vom einem AutoHotkey-Script erzeugt werden. In einigen F&auml;llen ist es sinnvoll, dieses Verhalten zu &uuml;berschreiben, um zum Beispiel eine neubelegte Taste dazu zu bringen, andere Hotkeys auszul&ouml;sen. SendLevel und <a href="_InputLevel.htm">#InputLevel</a> stellen die Mittel bereit, um das zu erreichen.</p>
+    <p>SendLevel bestimmt die Stufe f&uuml;r Ereignisse, die vom aktuellen <a href="../misc/Threads.htm">Script-Thread</a> erzeugt werden, w&auml;hrend #InputLevel die Stufe f&uuml;r jeden nachfolgenden Hotkey und Hotstring bestimmt. Die Sendestufe eines Ereignisses, das von einem Script erzeugt wird, muss h&ouml;her als die Eingabestufe des Hotkeys oder Hotstrings sein, um einen Hook-Hotkey oder -Hotstring ausl&ouml;sen zu k&ouml;nnen.</p>
+    <p>Hotkeys, die die Methode<a href="ListHotkeys.htm"> &quot;reg&quot;</a> verwenden, sind unf&auml;hig, physische und k&uuml;nstliche Eingaben zu unterscheiden, deshalb werden sie nicht von SendLevel beeinflusst. Allerdings verwenden Hotkeys &uuml;ber Stufe 0 immer den Tastatur- oder Maus-Hook.</p>
+    <p>Einzeilige <a href="../Hotstrings.htm">Hotstrings</a> (Automatisches Ersetzen) erzeugen immer Tastatureingaben der Stufe 0, denn es ist normalerweise nicht erw&uuml;nscht, dass der Ersatztext einen anderen Hotstring oder Hotkey ausl&ouml;st. Als &Uuml;bergangsl&ouml;sung kann ein mehrzeiliger Hotstring mit dem Send-Befehl verwendet werden.</p>
+    <p>Jeder neu gestartete Hotkey- oder Hotstring-<a href="../misc/Threads.htm">Thread</a> beginnt mit einer Sendestufe, die der <a href="_InputLevel.htm">Eingabestufe</a> des Hotkeys oder Hotstrings entspricht. Jeder andere neu gestartete <a href="../misc/Threads.htm">Thread</a> (z. B. ein <a href="../Hotkeys.htm">Hotkey</a>, ein <a href="Menu.htm">benutzerdefinierter Men&uuml;punkt</a> oder eine <a href="SetTimer.htm">zeitlich festgelegte</a> Subroutine) beginnt mit der Standardeinstellung des Befehls (in diesem Fall eine 0). Diese Standardeinstellung kann ge&auml;ndert werden, indem dieser Befehl im <a href="../Scripts.htm#auto">Automatischen Ausf&uuml;hrungsbereich</a> (am Anfang des Scripts) verwendet wird.</p>
     <p>Falls SendLevel im <a href="../Scripts.htm#auto">Automatischen Ausf&uuml;hrungsbereich</a> verwendet wird, beeinflusst diese Direktive zudem die <a href="../misc/Remap.htm">Neubelegung von Tasten</a>.</p>
     <p>AutoHotkey-Versionen &auml;lter als v1.1.06 verhalten sich so, als w&auml;re #InputLevel 0 und SendLevel 0 wirksam.</p>
     <h3>Verwandte Befehle</h3>
@@ -33,7 +50,7 @@ SendLevel 1
 Send bzw{Space} <em>; Erzeugt "beziehungsweise ".</em>
 
 <em>; Folgendes kann in einem anderen Script definiert werden:</em>
-::btw::by the way
+::bzw::beziehungsweise
 </pre>
   </div>
 </div>
