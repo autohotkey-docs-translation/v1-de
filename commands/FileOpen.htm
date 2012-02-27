@@ -26,7 +26,7 @@
     <script type="text/javascript">WriteNavLink(1);</script>
     <h1>FileOpen <span class="ver">[AHK_L 42+]</span></h1>
     <p>&Ouml;ffnet eine Datei.</p>
-    <pre class="Syntax">Datei := FileOpen(Dateiname, Flags [, Kodierung])</pre>
+    <pre class="Syntax">File := FileOpen(Dateiname, Flags [, Kodierung])</pre>
     <h3>Parameter</h3>
     <table class="info">
       <tr>
@@ -73,7 +73,7 @@
       <tr>
         <td class="fopt">h</td>
         <td><br></td>
-        <td>Bewirkt, dass <i>Dateiname</i> ein Datei-Handle ist, der in ein Objekt eingebunden werden kann. Freigabemodus-Flags werden ignoriert. Das Datei-Handle wird <b>nicht</b> automatisch geschlossen, wenn das Datei-Objekt gel&ouml;scht wird oder das Aufrufen von <a href="../objects/File.htm#Close">Close</a> keine Wirkung hat. Beachtet, dass <a href="../objects/File.htm#Seek">Seek</a>, <a href="../objects/File.htm#Tell">Tell</a> und <a href="../objects/File.htm#Length">Length</a> nicht verwendet werden sollten, wenn <i>Dateiname</i> ein Handle f&uuml;r ein nicht-suchendes Device wie Pipe- oder Kommunikation-Device ist.</td>
+        <td>Bewirkt, dass <i>Dateiname</i> ein Datei-Handle ist, der in ein Objekt eingebunden werden kann. Freigabemodus-Flags werden ignoriert. Das Datei-Handle wird <b>nicht</b> automatisch geschlossen, wenn das File-Objekt gel&ouml;scht wird oder das Aufrufen von <a href="../objects/File.htm#Close">Close</a> keine Wirkung hat. Beachtet, dass <a href="../objects/File.htm#Seek">Seek</a>, <a href="../objects/File.htm#Tell">Tell</a> und <a href="../objects/File.htm#Length">Length</a> nicht verwendet werden sollten, wenn <i>Dateiname</i> ein Handle f&uuml;r ein nicht-suchendes Device wie Pipe- oder Kommunikation-Device ist.</td>
       </tr>
       <tr>
         <th><br></th>
@@ -122,13 +122,13 @@
       </tr>
     </table>
     <h3>R&uuml;ckgabewert</h3>
-    <p>Wenn die Datei erfolgreich ge&ouml;ffnet wurde, ist der R&uuml;ckgabewert ein <a href="../objects/File.htm">Datei-Objekt</a>.</p>
+    <p>Wenn die Datei erfolgreich ge&ouml;ffnet wurde, ist der R&uuml;ckgabewert ein <a href="../objects/File.htm">File-Objekt</a>.</p>
     <p>Wenn die Funktion fehlschl&auml;gt, wird der R&uuml;ckgabewert eine 0 sein und <a href="../Variables.htm#LastError">A_LastError</a> seit <span class="ver">[AHK_L 54]</span> einen Fehlercode enthalten.</p>
-    <p>Verwendet <code>If Datei</code> oder <code>IsObject(Datei)</code>, um zu &uuml;berpr&uuml;fen, ob die Funktion erfolgreich war. </p>
+    <p>Verwendet <code>If File</code> oder <code>IsObject(File)</code>, um zu &uuml;berpr&uuml;fen, ob die Funktion erfolgreich war. </p>
     <h3>Bemerkungen</h3>
     <p>Beim Erstellen einer UTF-8- oder UTF-16-Datei wird eine Bytereihenfolge-Markierung (BOM) in die Datei geschrieben, <b>es sei denn</b>, die <i>Kodierung</i> (oder <a href="FileEncoding.htm">A_FileEncoding</a>, falls <i>Kodierung</i> weggelassen wird) enth&auml;lt "UTF-8-RAW" oder "UTF-16-RAW".</p>
     <h3>Verwandte Befehle</h3>
-    <p><a href="FileEncoding.htm">FileEncoding</a>, <a href="../objects/File.htm">Datei-Objekt</a>, <a href="FileRead.htm">FileRead</a></p>
+    <p><a href="FileEncoding.htm">FileEncoding</a>, <a href="../objects/File.htm">File-Objekt</a>, <a href="FileRead.htm">FileRead</a></p>
     <h3>Beispiele</h3>
     <pre class="NoIndent" id="writeread"><em>; Beispiel: Dieses Script schreibt etwas Text in eine Datei und liest diesen zur&uuml;ck in den Speicher.
 ; Es stellt die gleiche Funktionalit&auml;t wie dieses <a href="DllCall.htm#file">DllCall-Beispiel</a> bereit.</em>
@@ -136,31 +136,31 @@
 FileSelectFile, Dateiname, S16,, Neue Datei erstellen:
 if (Dateiname = "")
 	return
-Datei := <a href="FileOpen.htm">FileOpen</a>(Dateiname, "w")
-if !IsObject(Datei)
+File := <a href="FileOpen.htm">FileOpen</a>(Dateiname, "w")
+if !IsObject(File)
 {
 	MsgBox Kann "%Dateiname%" nicht zum Schreiben &ouml;ffnen.
 	return
 }
 TestString := "Das ist ein Teststring.`r`n"  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
-Datei.Write(TestString)
-Datei.Close()
+File.Write(TestString)
+File.Close()
 
 <em>; Nachdem die Datei geschrieben wurde, soll deren Inhalt zur&uuml;ck in den Speicher gelesen werden.</em>
-Datei := FileOpen(Dateiname, "r-d") <em>; Datei lesen ("r"), Alle Zugriffe au&szlig;er L&ouml;schen freigeben ("-d")</em>
-if !IsObject(Datei)
+File := FileOpen(Dateiname, "r-d") <em>; Datei lesen ("r"), Alle Zugriffe au&szlig;er L&ouml;schen freigeben ("-d")</em>
+if !IsObject(File)
 {
 	MsgBox Kann "%Dateiname%" nicht zum Lesen &ouml;ffnen.
 	return
 }
 ZuLesendeZeichen := StrLen(TestString)
-TestString := Datei.Read(ZuLesendeZeichen)
-Datei.Close()
+TestString := File.Read(ZuLesendeZeichen)
+File.Close()
 MsgBox Der folgende String wurde aus der Datei gelesen: %TestString%
 </pre>
     <pre class="NoIndent"><em>; &Ouml;ffnet das Script im Schreibschutzmodus und lie&szlig;t die erste Zeile:</em>
-Datei := FileOpen(A_ScriptFullPath, "r")
-MsgBox % Datei.ReadLine()
+File := FileOpen(A_ScriptFullPath, "r")
+MsgBox % File.ReadLine()
 
 <em>; &Ouml;ffnet ein Konsolenfenster f&uuml;r diese Demonstration:</em>
 DllCall("AllocConsole")
