@@ -84,7 +84,7 @@ function WriteOpenFooter(prefix) {
           +'<h4>Ressourcen</h4>'
           +'<ul>'
           +'<li><a href="'+prefix+'../download/index.htm">Downloads</a></li>'
-          +'<li><a href="'+prefix+'../docs/AHKL_Changelog.htm">Changelog</a></li>'
+          +'<li><a href="'+prefix+'../docs/AHKL_ChangeLog.htm">Changelog</a></li>'
           +'<li><a href="https://github.com/Lexikos/AutoHotkey_L">Quellcode</a></li>'
           +'<li><a href="'+prefix+'../support/index.htm">Support</a></li>'
           +'</ul>'
