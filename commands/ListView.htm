@@ -29,215 +29,215 @@ hr {
 <div id="content">
   <section>
     <article>
-    <h1>ListView</h1>
-    <h2>Inhaltsverzeichnis</h2>
-    <ul>
-      <li><a href="#Intro">Einf&uuml;hrung und einfaches Beispiel</a></li>
-      <li><a href="#Options">Optionen und Styles</a></li>
-      <li><a href="#View">Anzeigemethoden</a>: Report (Standard), Icon, Tile, Small-Icon und List.</li>
-      <li><a href="#BuiltIn">Interne Funktionen</a>:
-        <ul>
-          <li><a href="#bifRow">Reihen-Funktionen (Hinzuf&uuml;gen, &Auml;ndern und L&ouml;schen von Reihen)</a></li>
-          <li><a href="#bifCol">Spalten-Funktionen</a></li>
-          <li><a href="#bifGet">Daten aus einer ListView bekommen</a></li>
-        </ul>
-      </li>
-      <li><a href="#notify">g-Label-Meldungen</a></li>
-      <li><a href="#IL">Bildlisten</a> (Icons zur ListView hinzuf&uuml;gen)</li>
-      <li><a href="#Remarks">ListView-Bemerkungen</a></li>
-      <li><a href="#Examples">Beispiele</a></li>
-    </ul>
-    <h2 id="Intro">Einf&uuml;hrung und einfaches Beispiel</h2>
-    <p>ListView ist eins der aufw&auml;ndigsten Steuerelemente, dass vom Betriebssystem zur Verf&uuml;gung gestellt wird. Die bekannteste Form davon ist die tabellarische Ansicht mit Reihen und Spalten. Das bekannteste Beispiel daf&uuml;r ist die Explorer-Liste f&uuml;r Dateien und Ordner (Detailansicht).</p>
-    <p>Obwohl es aufwendig erscheint, sind die grundlegenden Funktionen einfach zu bedienen. Die Syntax zur Erstellung eines ListView ist:</p>
-    <strong id="GuiAdd">Gui, Add, ListView, <em>Optionen</em>, Spaltentitel1|Spaltentitel2|...</strong>
-    <p>Hier ist ein funktionierendes Script, dass eine ListView erstellt und anzeigt, die eine Liste mit Dateien aus dem Benutzerordner "Eigene Dokumente" beinhaltet:</p>
-    <pre><em>; Erstellt eine ListView mit zwei Spalten, Name und Gr&ouml;&szlig;e:</em>
+      <h1>ListView</h1>
+      <h2>Inhaltsverzeichnis</h2>
+      <ul>
+        <li><a href="#Intro">Einf&uuml;hrung und einfaches Beispiel</a></li>
+        <li><a href="#Options">Optionen und Styles</a></li>
+        <li><a href="#View">Anzeigemethoden</a>: Report (Standard), Icon, Tile, Small-Icon und List.</li>
+        <li><a href="#BuiltIn">Interne Funktionen</a>:
+          <ul>
+            <li><a href="#bifRow">Reihen-Funktionen (Hinzuf&uuml;gen, &Auml;ndern und L&ouml;schen von Reihen)</a></li>
+            <li><a href="#bifCol">Spalten-Funktionen</a></li>
+            <li><a href="#bifGet">Daten aus einer ListView bekommen</a></li>
+          </ul>
+        </li>
+        <li><a href="#notify">g-Label-Meldungen</a></li>
+        <li><a href="#IL">Bildlisten</a> (Icons zur ListView hinzuf&uuml;gen)</li>
+        <li><a href="#Remarks">ListView-Bemerkungen</a></li>
+        <li><a href="#Examples">Beispiele</a></li>
+      </ul>
+      <h2 id="Intro">Einf&uuml;hrung und einfaches Beispiel</h2>
+      <p>ListView ist eines der umfangreichsten Steuerelemente, das vom Betriebssystem zur Verf&uuml;gung gestellt wird. Die bekannteste Form davon ist die tabellarische Ansicht mit Reihen und Spalten. Das bekannteste Beispiel daf&uuml;r ist die Explorer-Liste f&uuml;r Dateien und Ordner (Detailansicht).</p>
+      <p>Obwohl es aufwendig erscheint, sind die grundlegenden Funktionen einfach zu bedienen. Die Syntax zur Erstellung eines ListViews ist:</p>
+      <strong id="GuiAdd">Gui, Add, ListView, <em>Optionen</em>, Spaltentitel1|Spaltentitel2|...</strong>
+      <p>Mit dem nachfolgenden Script wird ein ListView erstellt und angezeigt, das eine Liste mit Dateien aus dem Benutzerordner "Eigene Dokumente" enth&auml;lt:</p>
+      <pre><em>; Erstellt ein ListView mit zwei Spalten - Name und Gr&ouml;&szlig;e:</em>
 Gui, Add, ListView, r20 w700 gEigenesListView, Name|Gr&ouml;&szlig;e (KB)
 
-<em>; Eine Liste mit Dateinamen von einem Ordner erstellen und diese in eine ListView einf&uuml;gen:</em>
+<em>; Eine Liste mit Dateinamen von einem Ordner erstellen und diese im ListView einf&uuml;gen:</em>
 Loop, %A_MyDocuments%\*.*
     <a href="#LV_Add">LV_Add</a>("", A_LoopFileName, A_LoopFileSizeKB)
 
-<a href="#LV_ModifyCol">LV_ModifyCol</a>()  <em>; Die Gr&ouml;&szlig;e jeder Spalte automatisch anpassen, damit der Inhalt passt.</em>
+<a href="#LV_ModifyCol">LV_ModifyCol</a>()  <em>; Die Gr&ouml;&szlig;e jeder Spalte an deren Inhalt automatisch anpassen.</em>
 LV_ModifyCol(2, "Integer")  <em>; Aus Sortierungsgr&uuml;nden wird Spalte 2 als Integer gekennzeichnet.</em>
 
-<em>; Zeigt das Fenster und zur&uuml;ck. Das Script wird benachrichtigt, sobald der Benutzer eine Reihe doppelt klickt.</em>
+<em>; Fenster anzeigen und in den Leerlauf gehen. Das Script wird benachrichtigt, sobald der Benutzer eine Reihe zweimal anklickt.</em>
 Gui, Show
 Return
 
 EigenesListView:
 If A_GuiEvent = DoubleClick
 {
-    <a href="#LV_GetText">LV_GetText</a>(Reihentext, A_EventInfo)  <em>; Den Text aus dem ersten Feld der Reihe abrufen.</em>
-    ToolTip Die Reihe %A_EventInfo% wurde doppelt geklickt. Text: "%Reihentext%"
+    <a href="#LV_GetText">LV_GetText</a>(Reihentext, A_EventInfo)  <em>; Den Text aus dem ersten Reihenfeld abrufen.</em>
+    ToolTip Die Reihe %A_EventInfo% wurde zweimal angeklickt. Text: "%Reihentext%"
 }
 Return
 
-GuiClose:  <em>; Schlie&szlig;t das Script automatisch, wenn das Fenster geschlossen wird.</em>
+GuiClose:  <em>; Script automatisch schlie&szlig;en, wenn das Fenster geschlossen wird.</em>
 ExitApp</pre>
-    <h2 id="Options">Optionen und Styles f&uuml;r "<em>Gui, Add, ListView, <u>Optionen</u></em>"</h2>
-    <p id="AltSubmit"><strong>AltSubmit:</strong> Teilt dem Script mehr ListView-Ereignisse als normal mit. Das hei&szlig;t, dass das g-Label &ouml;fters aufgerufen wird. Siehe <a href="#notify">ListView-Meldungen</a> f&uuml;r Details.</p>
-    <p><strong>Hintergrund:</strong> Nach dem Wort Background erfolgt der Name einer Farbe (siehe <a href="Progress.htm#colors">Farbtabelle</a>) oder ein RGB-Wert (der 0x-Pr&auml;fix ist optional). Beispiele: BackgroundSilver, BackgroundFFDD99. Wenn diese Option nicht vorhanden ist, dann wird zun&auml;chst die Hintergrundfarbe von <a href="Gui.htm#Color">Gui, Color</a> verwendet (wenn nicht verwendet, dann die Standard-Hintergrundfarbe vom Betriebssystem). Mit BackgroundDefault wird die Standard-Hintergrundfarbe des Betriebssystems erzwungen (in der Regel wei&szlig;). Mittels <em>GuiControl, +BackgroundDefault, EigenesListView</em> wird beispielsweise die Standardfarbe wiederhergestellt.</p>
-    <p><strong>C</strong>: Textfarbe. Nach dem Buchstaben C erfolgt der Name einer Farbe (siehe <a href="Progress.htm#colors">Farbtabelle</a>) oder ein RGB-Wert (das 0x-Pr&auml;fix ist optional). Beispiele: cRed, cFF2211, c0xFF2211, cDefault</p>
-    <p id="Checked"><strong>Checked:</strong> Erm&ouml;glicht eine CheckBox auf der linken Seite jeder Zeile. Beim <a href="#LV_Add">Hinzuf&uuml;gen</a> einer Zeile wird mit dem Wort <em>Check</em> in den Optionen die CheckBox markiert. Der Benutzer kann die Reihe aktivieren oder deaktivieren, wenn er auf die CheckBox klickt oder die Leertaste dr&uuml;ckt.</p>
-    <p id="Count"><strong>Count:</strong> Das Wort Count, unmittelbar gefolgt von der Gesamtzahl der Reihen, die ListView letztendlich enthalten wird. Dies ist nicht der Grenzwert: Reihen dar&uuml;ber k&ouml;nnen weiterhin hinzugef&uuml;gt werden. Stattdessen wird mit dieser Option der Speicher des Steuerelements nur einmal bereitgestellt, anstatt bei jeder hinzugef&uuml;gten Zeile, d. h. die Performance beim Hinzuf&uuml;gen neuer Reihen wird deutlich verbessert (es kann auch die Performance beim Sortieren verbessert werden). Um die Performance noch mehr zu verbessern, verwendet <em>GuiControl, -Redraw, EigenesListView</em>, bevor eine gro&szlig;e Anzahl an Reihen hinzugef&uuml;gt wird. Danach <em>GuiControl, + Redraw, EigenesListView</em>, um das Neuzeichnen wieder zu aktivieren (das auch das Steuerelement neu zeichnet).</p>
-    <p><strong>Grid:</strong> Erm&ouml;glicht horizontale und vertikale Linien, um die Abgrenzungen zwischen den Reihen und Spalten hervorzuheben.</p>
-    <p><strong>Hdr:</strong> Mit -Hdr wird die spezielle oberste Reihe weggelassen, die Spalten&uuml;berschriften enth&auml;lt. Um sie sp&auml;ter wieder sichtbar zumachen, verwendet <em>GuiControl, +Hdr, EigenesListView</em>.</p>
-    <p><strong>LV:</strong> Der String LV, unmittelbar gefolgt von der Nummer eines <a href="../misc/Styles.htm#ListView">erweiterten ListView-Styles</a>. Diese Styles unterscheiden sich vollst&auml;ndig von den gew&ouml;hnlichen erweiterten Styles. Mit <strong>-E</strong>0x200 wird beispielsweise der allgemeine erweiterte Style WS_EX_CLIENTEDGE entfernt, um den Standardrahmen des Steuerelements zu beseitigen. Mit <strong>-LV</strong>0x20 wird der der Style <a href="#frs">LVS_EX_FULLROWSELECT</a> hingegen entfernt.</p>
-    <p><strong>LV0x10</strong>: Mit -LV0x10 wird der Benutzer daran gehindert, die Spalten&uuml;berschriften nach links oder rechts zu verschieben, um sie neu anzuordnen. Allerdings ist das normalerweise nicht notwendig, weil die physische Neuanordnung der Spalten nicht die Spaltenanordnung beeinflusst, die vom Script gesehen wird. Die erste Spalte ist zum Beispiel immer Spalte 1 aus Sicht des Scripts, selbst wenn der Benutzer die Spalte physisch nach rechts verschoben hat.</p>
-    <p id="frs"><strong>LV0x20</strong>: Mit -LV0x20 wird erzwungen, dass auf das erste Feld einer Reihe geklickt werden muss, um diese zu markieren (normalerweise wird mit einem Klick auf ein <em>beliebiges</em> Feld eine Reihe markiert). Vorteil: Der Benutzer hat es einfacher, ein Rechteck auf eine Gruppe mit Reihen zuziehen, um sie zu markieren.</p>
-    <p><strong>Multi:</strong> Mit -Multi wird der Benutzer daran gehindert, mehrere Reihen zu markieren.</p>
-    <p><strong>NoSortHdr:</strong> Verhindert, dass die Spalten&uuml;berschrift anklickbar ist. Au&szlig;erdem erscheint sie flacher, anstatt wie eine normale Schaltfl&auml;che. Im Gegensatz zu den meisten anderen ListView-Styles kann diese nicht ge&auml;ndert werden, nachdem das ListView erstellt wurde.</p>
-    <p id="NoSort"><strong>NoSort:</strong> Deaktiviert die automatische Sortierung, wenn der Benutzer auf eine Spalten&uuml;berschrift klickt. Allerdings sieht die Spalten&uuml;berschrift weiterhin wie eine Schaltfl&auml;che aus (es sei denn, NoSortHdr wurde angegeben). Dar&uuml;ber hinaus erh&auml;lt g-Label weiterhin die <a href="#ColClick">ColClick-Meldung</a>, um z. B. ein benutzerdefiniertes Sortieren zu erm&ouml;glichen.</p>
-    <p id="ReadOnly"><strong>ReadOnly:</strong> Mit -ReadOnly kann der Text in der ersten Spalte jeder Reihe bearbeitet werden. Durch das Dr&uuml;cken der <a href="#WantF2">F2-Taste</a> kann die Reihe bearbeitet werden. Alternativ kann die Reihe auch einmal angeklickt werden, um sie zu markieren und nach einer halben Sekunde nochmal, um sie zu bearbeiten.</p>
-    <p><strong>R</strong>: Reihen-H&ouml;he (bei der Erstellung). Mit dem Buchstaben R, unmittelbar gefolgt von der Anzahl der Zeilen, wird Platz innerhalb des Steuerelements geschaffen. Zum Beispiel macht R10 das Steuerelement 10 Reihen hoch. Wenn das ListView mit einem <a href="#View">Ansichtsmodus</a> au&szlig;er der Report-Ansicht erstellt wurde, dann ist die Reihenh&ouml;he von der Iconh&ouml;he und nicht von der Texth&ouml;he abh&auml;ngig. Hinweis: Das Hinzuf&uuml;gen von <a href="#IL">Icons</a> zu einer ListView-Reihe erh&ouml;ht die H&ouml;he jeder Zeile, dass diese Option ungenau macht.</p>
-    <p id="Sort"><strong>Sort:</strong> Das Steuerelement wird alphabetisch nach dem Inhalt der ersten Spalte sortiert.</p>
-    <p id="SortDesc"><strong>SortDesc:</strong> Wie oben, nur in absteigender Reihenfolge.</p>
-    <p id="WantF2"><strong>WantF2</strong> <span class="ver">[v1.0.44+]:</span> Mit -WantF2 wird verhindert, dass die F2-Taste gedr&uuml;ckt werden kann, um die aktuell fokussierte Reihe zu <a href="#ReadOnly">bearbeiten</a>. Diese Einstellung wird ignoriert, es sei denn, <a href="#ReadOnly">-ReadOnly</a> ist aktiv. Unabh&auml;ngig dieser Einstellung erh&auml;lt g-Label weiterhin <a href="#NotifyK">F2-Meldungen</a>.</p>
-    <p><strong>(Unbenannte numerische Styles):</strong> Styles, die selten verwendet werden, haben keine Namen. Siehe <a href="../misc/Styles.htm#ListView">Style-Tabelle der ListView</a>.</p>
-    <h2 id="View">Anzeigemethoden</h2>
-    <p>Ein ListView hat f&uuml;nf Anzeigemethoden, von denen die Report-Ansicht am h&auml;ufigsten verwendet wird (das ist die Standardeinstellung). Eine bestimmte Ansicht kann verwendet werden, indem der Name in den Optionen angegeben wird. Die Ansicht kann auch ge&auml;ndert werden, nachdem das Steuerelement erstellt wurde. Zum Beispiel: <em>GuiControl, +IconSmall, EigenesListView</em></p>
-    <p><strong>Icon:</strong> Zeigt eine Ansicht mit gro&szlig;en Icons. In allen Ansichten (au&szlig;er <em>Report</em>) ist der Text in den Spalten mit Ausnahme der Ersten nicht sichtbar. Um Icons in dieser Methode anzuzeigen, muss dem ListView-Steuerelement eine <a href="#IL">Bildliste</a> mit gro&szlig;en Icons zugewiesen werden.</p>
-    <p><strong>Tile</strong>: Zeigt eine Ansicht mit gro&szlig;en Icons, aber mit ergonomischen Unterschieden wie das Anzeigen des Elementtextes auf auf der rechten Seite des Icons, anstatt darunter. <a href="#Checked">Checkbox</a>-Steuerelemente funktionieren nicht in dieser Ansicht. Auch der Versuch, diese Ansicht auf Betriebssystemen &auml;lter als Windows XP anzuzeigen, hat keine Wirkung.</p>
-    <p><strong>IconSmall:</strong> Zeigt eine Ansicht mit kleinen Icons.</p>
-    <p><strong>List:</strong> Zeigt eine Ansicht mit kleinen Icons im Listenformat, wodurch die Icons in Spalten dargestellt werden. Die Anzahl der Spalten h&auml;ngt von der Breite des Steuerelements und der Breite des breitesten Texteintrags ab.</p>
-    <p><strong>Report:</strong> Schaltet auf die Report-Ansicht um, welches die anf&auml;ngliche Standardeinstellung ist. Zum Beispiel: <em>GuiControl, +Report, EigenesListView</em></p>
-    <h2 id="BuiltIn">Interne Funktionen</h2>
-    <p>Alle ListView-Funktionen laufen im <a href="Gui.htm#DefaultWin">Standard-GUI-Fenster</a> des aktuellen Threads (kann mittels <em><a href="Gui.htm#Default">Gui, 2:Default</a></em> ge&auml;ndert werden). Wenn das Standard-Fenster weder vorhanden ist noch ListView-Steuerelemente hat, dann geben alle Funktionen eine 0 zur&uuml;ck, um auf ein Problem hinzuweisen.</p>
-    <p id="GuiLV">Wenn das Fenster mehrere ListView-Steuerelemente hat, dann arbeiten die Funktionen standardm&auml;&szlig;ig mit dem zuletzt hinzugef&uuml;gten Steuerelement. Um dies zu &auml;ndern, verwendet <em>Gui, ListView, ListViewName</em>, wobei <em>ListViewName</em> der Name der <a href="Gui.htm#var">zugewiesenen Variable</a>, ClassNN (wie von Windows Spy gezeigt) oder HWND (seit v1.1.04) ist. Einmal ge&auml;ndert verwenden alle bestehenden und zuk&uuml;nftigen <a href="../misc/Threads.htm">Threads</a> das angezeigte ListView.</p>
-    <p id="RowNumber">Wenn der Begriff "Reihennummer" auf dieser Seite verwendet wird, dann bezieht er sich auf die aktuelle Position einer Reihe innerhalb des ListViews. Die oberste Reihe ist 1, die zweite Reihe ist 2 und so weiter. Nachdem einer Reihe hinzugef&uuml;gt wurde, dann &auml;ndert sich wahrscheinlich deren Reihennummer, wenn sie sortiert, gel&ouml;scht oder von anderen Reihen ersetzt wird. Daher ist es besser, <a href="#LV_GetText">LV_GetText()</a> in einer Schleife zu verwenden, um bestimmte Reihen auf Basis ihres Inhalts zu lokalisieren.</p>
-    <h2 id="bifRow">Reihen-Funktionen</h2>
-    <p id="LV_Add"><strong>LV_Add([Optionen, Feld1, Feld2, ...]):</strong> F&uuml;gt eine neue Zeile ans untere Ende der Liste hinzu. Die Parameter <em>Feld1</em> und danach sind die Spalten der neuen Reihe, als Text oder numerisch (einschlie&szlig;lich numerische Ergebnisse von <a href="../Variables.htm#Expressions">Ausdr&uuml;cken</a>). Um ein beliebiges Feld leer zumachen, verwendet "" oder Gleichwertiges. Wenn zu wenig Felder angegeben sind, um alle Spalten zu f&uuml;llen, dann werden die Spalten am Ende leer gelassen. Wenn zu viele Felder angegeben sind, dann werden die Felder am Ende v&ouml;llig ignoriert.</p>
-    <p>Bei Misserfolg gibt LV_Add() eine 0 zur&uuml;ck. Bei Erfolg gibt diese Funktion die neue <a href="#RowNumber">Reihennummer</a> zur&uuml;ck, die nicht unbedingt die letzte Reihe sein muss, wenn ListView den <a href="#Sort">Sort</a>- oder <a href="#SortDesc">SortDesc</a>-Style verwendet.</p>
-    <p id="RowOptions"><span class="greenbold">Reihen-Optionen:</span> Der <em>Optionen</em>-Parameter ist ein String, der beliebig viele W&ouml;rter von der unteren Liste enth&auml;lt (nicht abh&auml;ngig von der Gro&szlig;-/Kleinschreibung). Die W&ouml;rter m&uuml;ssen mit einem Leerzeichen oder Tabulator getrennt werden. Mit einem Minuszeichen wird eine Option entfernt. Mit einem Pluszeichen wird eine Option hinzugef&uuml;gt (nicht unbedingt erforderlich).</p>
-    <p><strong>Check</strong>: Zeigt ein H&auml;kchen in der Reihe (wenn das ListView <a href="#Checked">Checkbox</a>-Steuerelemente hat). Um das H&auml;kchen sp&auml;ter zu entfernen, verwendet <em>LV_Modify(Reihennummer, "-Check")</em>.</p>
-    <p id="ColN"><strong>Col</strong>: Mit dem Wort Col, unmittelbar gefolgt von der Spaltennummer, wird festgelegt, ab welche <em>Spalte1</em> und so weiter zugewiesen werden. Das wird meistens mit <a href="#LV_Modify">LV_Modify()</a> verwendet, um einzelne Felder in einer Zeile zu &auml;ndern, ohne dabei die Felder auf der linken Seite zu beeinflussen.</p>
-    <p id="Focus"><strong>Focus</strong>: Setzt den Tastaturfokus auf eine Reihe (wird oft in Verbindung mit Select verwendet). Um den Fokus sp&auml;ter zu entfernen, verwendet <em>LV_Modify(Reihennummer, "-Focus")</em>.</p>
-    <p><strong>Icon</strong>: Mit dem Wort Icon, unmittelbar gefolgt von der Nummer des Icons, wird das Icon auf der linken Seite der ersten Spalte angezeigt. Wenn diese Option fehlt, dann wird das erste Icon in der <a href="#IL">Bildliste</a> verwendet. Um ein leeres Icon darzustellen, verwendet eine Nummer, die gr&ouml;&szlig;er als die Anzahl der Icons in der Bildliste ist. Wenn dem Steuerelement eine Bildliste mit kleinen Icons fehlt, dann wird kein Icon angezeigt, sowie kein Speicher daf&uuml;r in der <a href="#View">Report-Ansicht</a> reserviert.</p>
-    <p><strong>Select</strong>: W&auml;hlt die Reihe aus. Um die Auswahl sp&auml;ter aufzuheben, verwendet <em>LV_Modify(Reihennummer, "-Select")</em>. Wenn Reihen ausgew&auml;hlt werden, dann sollte man sicherstellen, dass mindestens eine Reihe immer die <a href="#Focus">Fokus-Eigenschaft</a> hat, weil somit das <a href="Gui.htm#GuiContextMenu">Kontextmen&uuml;</a> (falls vorhanden) mit der Men&uuml;-Taste in der N&auml;he der fokussierten Reihe angezeigt werden kann. Nach dem Wort <em>Select</em> kann auch eine 0 oder 1 f&uuml;r den Anfangsstatus erfolgen. Das hei&szlig;t, dass sowohl <em>"Select"</em> als auch <em>"Select" <strong>.</strong> VarEnh&auml;ltEins</em> identisch sind (der verwendete Punkt ist ein <a href="../Variables.htm#concat">Verkettungsoperator</a>). Diese Technik funktioniert auch mit <em>Focus</em> und <em>Check</em>.</p>
-    <p id="Vis"><strong>Vis</strong> [1.0.44+]: Sorgt daf&uuml;r, dass die angegebene Reihe beim Scrollen des ListViews je nach Bedarf vollst&auml;ndig sichtbar ist. Das funktioniert nur mit LV_Modify(). Zum Beispiel: <em>LV_Modify(Reihennummer, "Vis")</em></p>
-    <p id="LV_Insert"><strong>LV_Insert(Reihennummer [, Optionen, Spalte1, Spalte2, ...]):</strong> Verh&auml;lt sich identisch zu LV_Add(), mit Ausnahme des ersten Parameters, welche die Reihennummer der zu ersetzenden Reihe enth&auml;lt. Alle Reihen auf oder unter der <em>Reihennummer</em> werden nach unten verschoben, um Platz f&uuml;r die neue Reihe zu schaffen. Wenn die <em>Reihennummer</em> gr&ouml;&szlig;er als die Anzahl der Reihen in der Liste ist (sogar so hoch wie 2147483647), dann wird eine neue Reihe ans unter Ende der Liste hinzugef&uuml;gt. F&uuml;r <em>Optionen</em> siehe <a href="#RowOptions">Reihe-Optionen</a>.</p>
-    <p id="LV_Modify"><strong>LV_Modify(Reihennummer, Optionen [, NeueSpalte1, NeueSpalte2, ...]):</strong> &Auml;ndert die Attribute und/oder Text einer Reihe, und gibt 1 bei Erfolg und 0 bei Misserfolg zur&uuml;ck. Wenn die <em>Reihennummer</em> eine 0 ist, dann werden <u>alle</u> Reihen im Steuerelement ge&auml;ndert (in diesem Fall gibt die Funktion eine 1 bei vollem Erfolg zur&uuml;ck und eine 0, wenn ein Teil der Operation fehlgeschlagen ist). Wenn nur die ersten beiden Parameter vorhanden sind, dann werden nur die Attribute und nicht der Text der Reihe ge&auml;ndert. Wenn zu wenig Parameter angegeben sind, um alle Spalten zu f&uuml;llen, dann werden die Spalten am Ende nicht ge&auml;ndert. Mit der <a href="#ColN">ColN-Option</a> k&ouml;nnen bestimmte Spalten aktualisiert werden, ohne dabei andere zu beeinflussen. F&uuml;r andere Optionen siehe <a href="#RowOptions">Reihe-Optionen</a>.</p>
-    <p id="LV_Delete"><strong>LV_Delete([Reihennummer]):</strong> Wird der Parameter weggelassen, dann werden <strong>alle</strong> Reihen im ListView gel&ouml;scht. Andernfalls wird nur die angegebene die <em>Reihennummer</em> gel&ouml;scht. Diese Funktion gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zur&uuml;ck.</p>
-    <h2 id="bifCol">Spalten-Funktionen</h2>
-    <p id="LV_ModifyCol"><strong>LV_ModifyCol([Spaltennummer, Optionen, Spaltentitel]):</strong> &Auml;ndert die Attribute und/oder Text der angegebenen Spalte und der dazugeh&ouml;rigen Spalten&uuml;berschrift.  Die erste Spalte ist die Nummer 1 (nicht 0). Wenn alle Parameter weggelassen werden, dann wird die Breite jeder Spalte an den Inhalt der Reihen angepasst. Wenn nur der erste Parameter vorhanden ist, dann wird nur die Gr&ouml;&szlig;e der angegebenen Spalte automatisch angepasst. Die automatische Anpassung hat keine Wirkung, wenn die Report-Ansicht (Details) nicht verwendet wird. Diese Funktion gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zur&uuml;ck.</p>
-    <p id="ColOptions"><span class="greenbold">Spalten-Optionen:</span> Der <em>Optionen</em>-Parameter ist ein String, der beliebig viele W&ouml;rter von der unteren Liste enth&auml;lt (nicht abh&auml;ngig von der Gro&szlig;-/Kleinschreibung). Die W&ouml;rter m&uuml;ssen mit einem Leerzeichen oder Tabulator getrennt werden. Mit einem Minuszeichen wird eine Option entfernt. Mit einem Pluszeichen wird eine Option hinzugef&uuml;gt (nicht unbedingt erforderlich).</p>
-    <p><span class="greenbold">Spalten-Optionen: Allgemein</span></p>
-    <p><strong>N</strong>: Mit N kann die neue Breite der Spalte (in Pixel) bestimmt werden. Diese Nummer muss nicht in Anf&uuml;hrungszeichen sein, wenn sie allein ist. Zum Beispiel sind beide Anweisungen g&uuml;ltig: LV_ModifyCol(1, 50) .... LV_ModifyCol(1, "50 Integer").</p>
-    <p><strong>Auto</strong>: Passt die Breite der Spalte an dem Inhalt an. Hat keine Wirkung, wenn die Report-Ansicht (Details) nicht verwendet wird.</p>
-    <p><strong>AutoHdr</strong>: Passt die Breite der Spalte an dem Inhalt und der Spalten&uuml;berschrift an, welche breiter ist. Wenn dies an die letzte Spalte angewendet wurde, dann ist sie mindestens so breit wie der verbleibende Platz im ListView. Es ist normalerweise am besten, diese Einstellung anzuwenden, nachdem die Reihen hinzugef&uuml;gt wurden, weil somit jede neu angekommene vertikale Bildlaufleiste ber&uuml;cksichtigt wird, wenn die Gr&ouml;&szlig;e der letzten Spalte ge&auml;ndert wird. Hat keine Wirkung, wenn die Report-Ansicht (Details) nicht verwendet wird.</p>
-    <p><strong>Icon</strong>: Mit dem Wort Icon, unmittelbar gefolgt von der Nummer des Icons aus der <a href="#IL">Bildliste</a>, wird das Icon neben dem Text der Spalten&uuml;berschrift angezeigt. Mit -Icon wird jedes vorhandene Icon entfernt. In Windows 95/NT4 ben&ouml;tigen Spalten-Icons Internet Explorer 3.0 oder h&ouml;her.</p>
-    <p><strong>IconRight</strong>: Setzt das Icon an die rechte Seite der Spalte, anstatt an die linke Seite.</p>
-    <p><span class="greenbold">Spalten-Optionen: Datentyp</span></p>
-    <p><strong>Float</strong>: Aus Sortierungsgr&uuml;nden enth&auml;lt diese Spalte Flie&szlig;kommazahlen (hexadezimales Format wird nicht unterst&uuml;tzt). Die Performance f&uuml;r die Sortierung von Flie&szlig;kommazahl- und Text-Spalten ist 25-mal langsamer, als f&uuml;r Integer-Werte.</p>
-    <p id="Integer"><strong>Integer</strong>: Aus Sortierungsgr&uuml;nden enth&auml;lt diese Spalte Integer-Werte. Damit richtig sortiert wird, muss jede Integer 32-bit sein, d. h. in dem Bereich von -2147483648 bis 2147483647. Wenn einer der Werte kein Integer ist, dann werden sie beim Sortieren als 0 angesehen (sofern sie nicht mit einer Nummer beginnen, in diesem Fall wird die Nummer verwendet). Die Zahlen k&ouml;nnen entweder dezimal oder hexadezimal (z. B. 0xF9E0) sein.</p>
-    <p id="Text"><strong>Text</strong>: Schaltet die Sortierung auf dem Text-Modus um, welches die anf&auml;ngliche Standardeinstellung f&uuml;r jede Spalte ist. Nur die ersten 8190 Zeichen im Text sind f&uuml;r die Sortierung von Bedeutung (au&szlig;er f&uuml;r die <a href="#Logical"><em>Logical</em>-Option</a>, in diesem Fall liegt die Grenze bei 4094).</p>
-    <p><span class="greenbold">Spalten-Optionen: Ausrichtung</span></p>
-    <p><strong>Center</strong>: Zentriert den Text in der Spalte. Um eine Integer- oder Flie&szlig;kommazahl-Spalte zu zentrieren, verwendet das Wort Center nach dem Wort Integer oder Float.</p>
-    <p><strong>Left</strong>: Der Text in der Spalte ist linksb&uuml;ndig, welches die anf&auml;ngliche Standardeinstellung f&uuml;r jede Spalte ist. Auf &auml;lteren Betriebssystemen k&ouml;nnte in der ersten Spalte die linksb&uuml;ndige Ausrichtung erzwungen werden.</p>
-    <p><strong>Right</strong>: Der Text in der Spalte ist rechtsb&uuml;ndig. Dieses Attribut muss nicht f&uuml;r Integer- und Float-Spalten angegeben werden, weil sie standardm&auml;&szlig;ig rechtsb&uuml;ndig sind. Diese Standardeinstellung kann z. B. mit "Integer Left" oder "Float Center" &uuml;berschrieben werden.</p>
-    <p><span class="greenbold">Spalten-Optionen: Sortierung</span></p>
-    <p id="Case"><strong>Case</strong>: Die Sortierung der Spalte ist von der Gro&szlig;-und Kleinschreibung abh&auml;ngig (betrifft nur <a href="#Text">Text</a>-Spalten). Wenn die Optionen <em>Case</em>, <em>CaseLocale</em> und <em>Logical</em> weggelassen werden, dann sind die Gro&szlig;buchstaben A-Z aus Sortierungsgr&uuml;nden identisch mit ihren Kleinbuchstaben.</p>
-    <p><strong>CaseLocale</strong> <span class="ver">[v1.0.43.03+]:</span> Die Sortierung der Spalte ist auf Basis des aktuellen Gebietsschemas des Benutzers nicht von der Gro&szlig;-und Kleinschreibung abh&auml;ngig (betrifft nur <a href="#Text">Text</a>-Spalten). Bei den meisten englischen und westeurop&auml;ischen Gebietsschemen sind die Gro&szlig;buchstaben A-Z und Buchstaben wie &Auml; und &Uuml; identisch mit ihren Kleinbuchstaben. Diese Methode behandelt W&ouml;rter wie "coop" und "co-op" gleichwertig (Bindestriche und Apostrophe).</p>
-    <p id="Desc"><strong>Desc</strong>: Absteigende Reihenfolge. Die Spalte beginnt in absteigender Reihenfolge, wenn der Benutzer die Spalte das erste Mal sortiert.</p>
-    <p id="Logical"><strong>Logical</strong> <span class="ver">[v1.0.44.12+]:</span> Das Gleiche wie <em>CaseLocale</em>, nur mit der Ausnahme, dass alle Ziffern im Text als wahre Zahlen behandelt werden. Zum Beispiel ist der String T33 gr&ouml;&szlig;er als T4. <em>Logical</em> ben&ouml;tigt Windows XP oder h&ouml;her (auf &auml;lteren Betriebssystemen wird stattdessen <em>CaseLocale</em> automatisch verwendet). Dar&uuml;ber hinaus schlie&szlig;en sich <em>Logical</em> und <em>Case</em> gegenseitig aus: Nur das zuletzt angegebene Wort tritt in Effekt.</p>
-    <p><strong>NoSort</strong>: Hindert den Benutzer daran, die Spalte automatisch zu sortieren, wenn er auf die Spalte klickt. Um die Sortierung f&uuml;r alle Spalten zu deaktivieren, verwendet <a href="#NoSort">NoSort</a> in den Optionen des ListViews. Wenn das ListView ein g-Label hat, dann werden <a href="#ColClick">ColClick-Meldung</a> weiterhin empfangen, wenn der Benutzer auf eine nicht-sortierte Spalte klickt.</p>
-    <p><strong>Sort</strong>: Sortiert die Spalte sofort in aufsteigender Reihenfolge (selbst wenn Option <a href="#Desc">Desc</a> aktiv ist).</p>
-    <p><strong>SortDesc</strong>: Sortiert die Spalte sofort in absteigender Reihenfolge.</p>
-    <p><strong>Uni</strong>: Einseitige Sortierung. Verhindert einen zweiten Klick auf derselben Spalte, um die Sortierungsrichtung um zukehren.</p>
-    <p id="LV_InsertCol"><strong>LV_InsertCol(Spaltennummer [, Optionen, Spaltentitel]):</strong> Erstellt eine neue Spalte und wird als <em>Spaltennummer</em> eingef&uuml;gt (verschiebt andere Spalten nach rechts, um Platz zu machen). Die erste Spalte ist die Nummer 1 (nicht 0). Wenn die <em>Spaltennummer</em> gr&ouml;&szlig;er als die Anzahl der Spalten im Steuerelement ist, dann wird die neue Spalte ans untere Ende der Liste hinzugef&uuml;gt. Die neue Spalte wird mit leerem Inhalt darunter eingef&uuml;gt. Ist sie jedoch die erste Spalte, erbt sie den Inhalt der alten ersten Spalte, wobei die alte erste Spalte leer gemacht wird. Die Attribute der neuen Spalte (z. B. <a href="#Integer">Integer-Sortierung</a>) beginnen immer mit ihren Standardwerten, es sei denn, sie wurden in den <a href="#ColOptions"><em>Optionen</em></a> ge&auml;ndert. Diese Funktion gibt die neue Positionsnummer der Spalte zur&uuml;ck (oder 0 bei Misserfolg). Die maximale Anzahl von Spalten in einem ListView ist 200.</p>
-    <p id="LV_DeleteCol"><strong>LV_DeleteCol(Spaltennummer):</strong> Entfernt die angegebene Spalte und deren Inhalt. Diese Funktion gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zur&uuml;ck. Sobald eine Spalte gel&ouml;scht wird, werden die Spaltennummern der rechts liegenden Spalten um 1 reduziert. Wenn zum Beispiel LV_DeleteCol(2) zweimal aufgerufen wird, dann wird die zweite und dritte Spalte gel&ouml;scht. Bei Betriebssystemen &auml;lter als Windows XP schl&auml;gt wahrscheinlich das L&ouml;schen der ersten Spalte fehl und gibt 0 zur&uuml;ck.</p>
-    <h2 id="bifGet">Daten aus einer ListView bekommen</h2>
-    <p id="LV_GetCount"><strong>LV_GetCount(["Selected | Column"]):</strong> Wenn der Parameter weggelassen wird, dann gibt die Funktion die Anzahl der Reihen im Steuerelement zur&uuml;ck. Wenn der Parameter "S" oder "Select" enth&auml;lt, dann werden nur die ausgew&auml;hlten/hervorgehobenen Reihen gez&auml;hlt. Wenn der Parameter "Col" oder "Column" enth&auml;lt, dann gibt die Funktion die Anzahl der Spalten im Steuerelement zur&uuml;ck. Diese Funktion wird ohne Verz&ouml;gerung ausgef&uuml;hrt, weil das Steuerelement diese Z&auml;hlungen im Auge beh&auml;lt.</p>
-    <p>Diese Funktion wird h&auml;ufig in der obersten Zeile einer Schleife verwendet, in diesem Fall wird die Funktion nur einmal aufgerufen (vor der ersten Iteration). Zum Beispiel:</p>
-    <pre>Loop % LV_GetCount()
+      <h2 id="Options">Optionen und Styles f&uuml;r "<em>Gui, Add, ListView, <u>Optionen</u></em>"</h2>
+      <p id="AltSubmit"><strong>AltSubmit:</strong> Teilt dem Script mehr ListView-Ereignisse als normal mit. Das hei&szlig;t, dass das g-Label &ouml;fters aufgerufen wird. Siehe <a href="#notify">ListView-Meldungen</a> f&uuml;r Details.</p>
+      <p><strong>Background:</strong> Nach dem Wort Background erfolgt der Name einer Farbe (siehe <a href="Progress.htm#colors">Farbtabelle</a>) oder ein RGB-Wert (der 0x-Pr&auml;fix ist optional). Beispiele: BackgroundSilver, BackgroundFFDD99. Ist diese Option nicht vorhanden, wird zun&auml;chst die Hintergrundfarbe von <a href="Gui.htm#Color">Gui, Color</a> verwendet (wurde diese nicht bestimmt, die Standard-Hintergrundfarbe vom Betriebssystem). Mit BackgroundDefault wird die Standard-Hintergrundfarbe des Betriebssystems erzwungen (in der Regel wei&szlig;). Zum Beispiel kann die Standardfarbe von ListView mit <code>GuiControl, +BackgroundDefault, EigenesListView</code> wiederhergestellt werden.</p>
+      <p><strong>C</strong>: Textfarbe. Nach dem Buchstaben C erfolgt der Name einer Farbe (siehe <a href="Progress.htm#colors">Farbtabelle</a>) oder ein RGB-Wert (das 0x-Pr&auml;fix ist optional). Beispiele: cRed, cFF2211, c0xFF2211, cDefault</p>
+      <p id="Checked"><strong>Checked:</strong> Erm&ouml;glicht ein Kontrollk&auml;stchen auf der linken Seite jeder Reihe. Beim <a href="#LV_Add">Hinzuf&uuml;gen</a> einer Reihe kann das Wort <em>Check</em> in den Optionen angegeben werden, um das Kontrollk&auml;stchen zu markieren. Durch Anklicken des Kontrollk&auml;stchens oder Dr&uuml;cken der Leertaste kann der Benutzer ein H&auml;kchen bei der Reihe setzen oder entfernen.</p>
+      <p id="Count"><strong>Count:</strong> Nach dem Wort Count erfolgt die Gesamtanzahl der Reihen, die ListView letztendlich enthalten wird. Das ist nicht der Grenzwert: es k&ouml;nnen weiterhin neue Reihen hinzugef&uuml;gt werden. Stattdessen dient diese Option eher als Hinweis, dass das Steuerelement den Speicher nur einmal bereitstellen muss, anstatt jedesmal, wenn eine neue Reihe hinzugef&uuml;gt wird. Dadurch erh&ouml;ht sich deutlich die Performance beim Hinzuf&uuml;gen neuer Reihen (kann auch die Performance beim Sortieren verbessern). Um die Performance weiter zu erh&ouml;hen, kann <code>GuiControl, -Redraw, EigenesListView</code> benutzt werden, bevor eine gro&szlig;e Anzahl an Reihen hinzugef&uuml;gt wird, und danach <code>GuiControl, +Redraw, EigenesListView</code>, um das Neuzeichnen wieder zu aktivieren (wodurch auch das Steuerelement neugezeichnet wird).</p>
+      <p><strong>Grid:</strong> Erm&ouml;glicht horizontale und vertikale Linien, um die Abgrenzungen zwischen den Reihen und Spalten hervorzuheben.</p>
+      <p><strong>Hdr:</strong> Die Angabe von -Hdr bewirkt, dass die oberste Reihe mit den Spalten&uuml;berschriften weggelassen wird. Um diese sp&auml;ter wieder sichtbar zumachen, kann <code>GuiControl, +Hdr, EigenesListView</code> verwendet werden.</p>
+      <p><strong>LV:</strong> Nach dem String LV erfolgt die Nummer eines <a href="../misc/Styles.htm#ListView">erweiterten ListView-Styles</a>. Diese Styles unterscheiden sich vollst&auml;ndig von den gew&ouml;hnlichen erweiterten Styles. Zum Beispiel w&uuml;rde mit <strong>-E</strong>0x200 der allgemeine erweiterte Style WS_EX_CLIENTEDGE entfernt werden, um den Standardrahmen des Steuerelements zu beseitigen. Mit <strong>-LV</strong>0x20 w&uuml;rde hingegen <a href="#frs">LVS_EX_FULLROWSELECT</a> entfernt.</p>
+      <p><strong>LV0x10</strong>: Die Angabe von -LV0x10 bewirkt, dass der Benutzer die Spalten&uuml;berschriften nicht l&auml;nger nach links oder rechts verschieben kann, um diese neu anzuordnen. Normalerweise ist das nicht notwendig, da das physische Sortieren der Spalten nicht die Spaltenanordnung beeinflusst, die vom Script gesehen wird. Zum Beispiel ist aus Sicht des Scripts die erste Spalte immer Spalte 1, auch dann, wenn der Benutzer die Spalte physisch nach rechts verschiebt.</p>
+      <p id="frs"><strong>LV0x20</strong>: Die Angabe von -LV0x20 bewirkt, dass das erste Feld angeklickt werden muss, um die Reihe zu markieren (normalerweise ist es egal, welches Feld in der Reihe angeklickt wird). Der Vorteil davon ist, dass der Benutzer es einfacher hat, ein Rechteck auf mehrere Reihen zuziehen, um diese zu markieren.</p>
+      <p><strong>Multi:</strong> Die Angabe von -Multi bewirkt, dass der Benutzer nicht mehr als eine Reihe markieren kann.</p>
+      <p><strong>NoSortHdr:</strong> Verhindert, dass die Spalten&uuml;berschriften anklickbar sind. Au&szlig;erdem werden diese flacher dargestellt, anstatt als normale Schaltfl&auml;chen. Im Gegensatz zu den meisten anderen ListView-Styles kann dieser Style nicht ge&auml;ndert werden, nachdem das ListView erstellt wurde.</p>
+      <p id="NoSort"><strong>NoSort:</strong> Deaktiviert die automatische Sortierung, die durchgef&uuml;hrt wird, sobald der Benutzer auf eine Spalten&uuml;berschrift klickt. Allerdings sieht die Spalten&uuml;berschrift weiterhin wie eine Schaltfl&auml;che aus (sofern NoSortHdr nicht vorhanden ist). Dar&uuml;ber hinaus empf&auml;ngt das g-Label weiterhin die <a href="#ColClick">ColClick-Meldung</a>, um z. B. benutzerdefiniertes Sortieren zu erm&ouml;glichen.</p>
+      <p id="ReadOnly"><strong>ReadOnly:</strong> Die Angabe von -ReadOnly bewirkt, dass der Text in der ersten Spalte nachtr&auml;glich bearbeitet werden kann. Um die Reihe bearbeiten zu k&ouml;nnen, muss der Benutzer die Reihe zuerst anklicken und danach die <a href="#WantF2">F2-Taste</a> dr&uuml;cken. Alternativ kann der Benutzer die Reihe anklicken und in einer halben Sekunde nochmal, um den gleichen Effekt zu erzielen.</p>
+      <p><strong>R</strong>: Reihenh&ouml;he (beim Erstellen). Nach dem Buchstaben R erfolgt die Anzahl der Zeilen, f&uuml;r die Platz innerhalb des Steuerelements geschaffen wird. Zum Beispiel w&auml;re mit R10 das Steuerelement 10 Reihen hoch. Falls das ListView mit einer <a href="#View">Anzeigemethode</a>, au&szlig;er Report, erstellt wurde, wird die Gr&ouml;&szlig;e des Steuerelements angepasst, so dass Iconreihen anstelle von Textreihen hineinpassen. Hinweis: Sobald <a href="#IL">Icons</a> in den Reihen eines ListViews nachtr&auml;glich eingef&uuml;gt werden, erh&ouml;ht sich die H&ouml;he jeder Reihe - folglich wird diese Option ungenau.</p>
+      <p id="Sort"><strong>Sort:</strong> Das Steuerelement wird alphabetisch sortiert, basierend auf dem Inhalt der ersten Spalte.</p>
+      <p id="SortDesc"><strong>SortDesc:</strong> Wie oben, nur in absteigender Reihenfolge.</p>
+      <p id="WantF2"><strong>WantF2</strong> <span class="ver">[v1.0.44+]:</span> Die Angabe von -WantF2 bewirkt, dass die F2-Taste nicht mehr verwendet werden kann, um die aktuell fokussierte Reihe zu <a href="#ReadOnly">bearbeiten</a>. Diese Einstellung ist nur wirksam, wenn <a href="#ReadOnly">-ReadOnly</a> aktiv ist. Unabh&auml;ngig davon empf&auml;ngt das g-Label weiterhin <a href="#NotifyK">F2-Meldungen</a>.</p>
+      <p><strong>(Unbenannte numerische Styles):</strong> Selten verwendete Styles haben keine Namen. Siehe <a href="../misc/Styles.htm#ListView">Style-Tabelle von ListView</a>.</p>
+      <h2 id="View">Anzeigemethoden</h2>
+      <p>Ein ListView hat f&uuml;nf Anzeigemethoden, von denen die Report-Ansicht am h&auml;ufigsten verwendet wird (Standardeinstellung). Um eine der anderen Ansichten zu verwenden, muss deren Name in den Optionen angegeben werden. Die Ansicht kann auch ge&auml;ndert werden, nachdem das Steuerelement erstellt wurde. Zum Beispiel: <code>GuiControl, +IconSmall, EigenesListView</code></p>
+      <p><strong>Icon:</strong> Ansicht mit gro&szlig;en Icons. In dieser und allen anderen Ansichten - au&szlig;er <em>Report</em> - sind nur die Texte der ersten Spalte sichtbar. Damit Icons in dieser Methode angezeigt werden k&ouml;nnen, muss dem ListView eine <a href="#IL">Bildliste</a> mit gro&szlig;en Icons zugewiesen werden.</p>
+      <p><strong>Tile</strong>: Ansicht mit gro&szlig;en Icons, aber zum Beispiel mit ergonomischen Unterschieden, dass der Text des Elements auf der rechten Seite des Icons angezeigt wird, anstatt darunter. <a href="#Checked">Checkbox</a>-Steuerelemente funktionieren nicht in dieser Ansicht. Auch der Versuch, diese Ansicht auf Betriebssystemen &auml;lter als Windows XP anzuzeigen, hat keine Wirkung.</p>
+      <p><strong>IconSmall:</strong> Ansicht mit kleinen Icons.</p>
+      <p><strong>List:</strong> Ansicht mit kleinen Icons im Listenformat, in der die Icons in Spalten dargestellt werden. Die Anzahl der Spalten h&auml;ngt von der Breite des Steuerelements und der Breite des l&auml;ngsten Texteintrags ab.</p>
+      <p><strong>Report:</strong> Wechselt wieder zur Report-Ansicht, die zu Beginn die Standardeinstellung ist. Zum Beispiel: <code>GuiControl, +Report, EigenesListView</code></p>
+      <h2 id="BuiltIn">Interne Funktionen</h2>
+      <p>Alle ListView-Funktionen beziehen sich auf das <a href="Gui.htm#DefaultWin">Standard-GUI-Fenster</a> des aktuellen Threads (das mit <code><a href="Gui.htm#Default">Gui, 2:Default</a></code> ge&auml;ndert werden kann). Wenn das Standardfenster weder vorhanden ist noch ListView-Steuerelemente hat, geben alle Funktionen eine 0 zur&uuml;ck, um das Problem zu kennzeichnen.</p>
+      <p id="GuiLV">Wenn das Fenster mehrere ListView-Steuerelemente hat, beziehen sich die Funktionen standardm&auml;&szlig;ig auf das zuletzt hinzugef&uuml;gte Steuerelement. Um das zu &auml;ndern, muss <code>Gui, ListView, ListViewName</code> verwendet werden, wobei <em>ListViewName</em> der Name der <a href="Gui.htm#var">zugewiesenen Variable</a>, ClassNN (wie von Windows Spy gezeigt) oder HWND (seit v1.1.04) ist. Einmal ge&auml;ndert verwenden alle bestehenden und zuk&uuml;nftigen <a href="../misc/Threads.htm">Threads</a> das angezeigte ListView.</p>
+      <p id="RowNumber">Der auf diese Seite verwendete Begriff "Reihennummer" bezieht sich auf die aktuelle Position einer Reihe innerhalb des ListViews. Die oberste Reihe ist 1, die zweite Reihe ist 2 und so weiter. Nachdem eine Reihe hinzugef&uuml;gt wurde, &auml;ndert sich wahrscheinlich deren Reihennummer, wenn sie sortiert, gel&ouml;scht oder von anderen Reihen ersetzt wird. Um daher eine oder mehrere Reihen auf Basis ihrer Inhalte zu lokalisieren, ist es meist das Beste, <a href="#LV_GetText">LV_GetText()</a> in einer Schleife zu verwenden.</p>
+      <h2 id="bifRow">Reihen-Funktionen</h2>
+      <p id="LV_Add"><strong>LV_Add([Optionen, Feld1, Feld2, ...]):</strong> F&uuml;gt eine neue Reihe ans untere Ende der Liste hinzu. Die Parameter <em>Feld1</em> und so weiter sind die Spalten der neuen Reihe, die Text oder numerisch sein k&ouml;nnen (einschlie&szlig;lich numerische Ergebnisse von <a href="../Variables.htm#Expressions">Ausdr&uuml;cken</a>). Um ein beliebiges Feld leer zumachen, muss "" oder Gleichwertiges verwendet werden. Falls zu wenig Felder zum F&uuml;llen der Spalten vorhanden sind, bleiben die Spalten am Ende leer. Zuviel angegebene Felder werden einfach ignoriert.</p>
+      <p>Bei Misserfolg gibt LV_Add() eine 0 zur&uuml;ck. Bei Erfolg wird die neue <a href="#RowNumber">Reihennummer</a> zur&uuml;ckgegeben. Allerdings repr&auml;sentiert diese Nummer nicht unbedingt die letzte Reihe, wenn ListView den <a href="#Sort">Sort</a>- oder <a href="#SortDesc">SortDesc</a>-Style verwendet.</p>
+      <p id="RowOptions"><span class="greenbold">Reihen-Optionen:</span> Der <em>Optionen</em>-Parameter kann beliebig viele W&ouml;rter von der unteren Liste enthalten (nicht abh&auml;ngig von der Gro&szlig;-/Kleinschreibung). Die W&ouml;rter m&uuml;ssen mit einem Leer- oder Tabulatorzeichen getrennt werden. Mit einem Minuszeichen wird eine Option entfernt. Mit einem Pluszeichen wird eine Option hinzugef&uuml;gt (nicht unbedingt erforderlich).</p>
+      <p><strong>Check</strong>: Zeigt ein H&auml;kchen in der Reihe (wenn das ListView <a href="#Checked">Kontrollk&auml;stchen</a> hat). Mit <em>LV_Modify(Reihennummer, "-Check")</em> kann das H&auml;kchen sp&auml;ter entfernt werden.</p>
+      <p id="ColN"><strong>Col</strong>: Nach dem Wort Col erfolgt die Spaltennummer als Startpunkt, an der die Parameter <em>Spalte1</em> und so weiter zugewiesen werden. Das wird h&auml;ufig in Verbindung mit <a href="#LV_Modify">LV_Modify()</a> verwendet, um einzelne Felder in einer Reihe zu &auml;ndern, ohne dabei links befindliche Felder zu beeinflussen.</p>
+      <p id="Focus"><strong>Focus</strong>: Setzt den Tastaturfokus auf eine Reihe (wird oft in Verbindung mit Select verwendet). Mit <em>LV_Modify(Reihennummer, "-Focus")</em> kann der Fokus sp&auml;ter entfernt werden.</p>
+      <p><strong>Icon</strong>: Nach dem Wort Icon erfolgt die Nummer des Icons, das auf der linken Seite der ersten Spalte angezeigt wird. Falls diese Option fehlt, wird das erste Icon aus der <a href="#IL">Bildliste</a> verwendet. Um ein leeres Icon darzustellen, kann eine Nummer angegeben werden, die gr&ouml;&szlig;er ist als die Anzahl der Icons in der Bildliste. Wenn dem Steuerelement eine Bildliste mit kleinen Icons fehlt, wird weder ein Icon angezeigt noch daf&uuml;r Speicher in der <a href="#View">Report-Ansicht</a> reserviert.</p>
+      <p><strong>Select</strong>: W&auml;hlt die Reihe aus. Mit <em>LV_Modify(Reihennummer, "-Select")</em> kann die Auswahl sp&auml;ter aufgehoben werden. Beim Ausw&auml;hlen der Reihen sollte sichergestellt werden, dass immer mindestens eine Reihe die <a href="#Focus">Fokus-Eigenschaft</a> hat. Dadurch kann die Men&uuml;-Taste ihr <a href="Gui.htm#GuiContextMenu">Kontextmen&uuml;</a> (falls vorhanden) in der N&auml;he der fokussierten Reihe anzeigen. Optional kann nach dem Wort <em>Select</em> eine 0 oder 1 erfolgen, um den Anfangsstatus zu kennzeichnen. Das hei&szlig;t, dass sowohl <em>"Select"</em> als auch <em>"Select" <strong>.</strong> VarEnh&auml;ltEins</em> identisch sind (der hier verwendete Punkt ist ein <a href="../Variables.htm#concat">Verkettungsoperator</a>). Diese Vorgehensweise funktioniert auch mit <em>Focus</em> und <em>Check</em>.</p>
+      <p id="Vis"><strong>Vis</strong> [1.0.44+]: Sorgt daf&uuml;r, dass die angegebene Reihe beim Scrollen des ListViews sichtbar gemacht wird, falls notwendig. Das funktioniert nur mit LV_Modify(). Zum Beispiel: <code>LV_Modify(Reihennummer, "Vis")</code></p>
+      <p id="LV_Insert"><strong>LV_Insert(Reihennummer [, Optionen, Spalte1, Spalte2, ...]):</strong> Verh&auml;lt sich genauso wie LV_Add(), aber mit dem Unterschied, dass der erste Parameter die neue Position bestimmt, auf der eine neue Reihe eingef&uuml;gt wird. Jede Reihe, auf oder unterhalb der <em>Reihennummer</em>, wird nach unten verschoben, um Platz f&uuml;r die neue Reihe zu schaffen. Falls die <em>Reihennummer</em> gr&ouml;&szlig;er als die Anzahl der Reihen in der Liste ist (sogar so hoch wie 2147483647), wird die neue Reihe ans untere Ende der Liste gesetzt. Siehe <a href="#RowOptions">Reihe-Optionen</a> (oben) f&uuml;r weitere Optionen.</p>
+      <p id="LV_Modify"><strong>LV_Modify(Reihennummer, Optionen [, NeueSpalte1, NeueSpalte2, ...]):</strong> &Auml;ndert die Attribute und/oder den Text einer Reihe, und gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zur&uuml;ck. Ist die <em>Reihennummer</em> eine 0, werden <u>alle</u> Reihen im Steuerelement ge&auml;ndert (in diesem Fall gibt die Funktion eine 1 bei Erfolg zur&uuml;ck und eine 0, sobald die Operation bei einer Reihe fehlschl&auml;gt). Sind nur die ersten beiden Parameter vorhanden, werden nur die Attribute der Reihe ge&auml;ndert, aber nicht der Text. Falls zu wenig Parameter zum F&uuml;llen der Spalten vorhanden sind, bleiben die Spalten am Ende unver&auml;ndert. Die <a href="#ColN">ColN-Option</a> kann dazu verwendet werden, bestimmte Spalten zu aktualisieren, ohne dabei andere zu beeinflussen. Siehe <a href="#RowOptions">Reihe-Optionen</a> (oben) f&uuml;r weitere Optionen.</p>
+      <p id="LV_Delete"><strong>LV_Delete([Reihennummer]):</strong> Sobald der Parameter weggelassen wird, werden <strong>alle</strong> Reihen im ListView gel&ouml;scht. Andernfalls wird nur die angegebene <em>Reihennummer</em> gel&ouml;scht. Diese Funktion gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zur&uuml;ck.</p>
+      <h2 id="bifCol">Spalten-Funktionen</h2>
+      <p id="LV_ModifyCol"><strong>LV_ModifyCol([Spaltennummer, Optionen, Spaltentitel]):</strong> &Auml;ndert die Attribute und/oder den Text der angegebenen Spalte und der dazugeh&ouml;rigen Spalten&uuml;berschrift. Die erste Spalte beginnt bei 1 (nicht 0). Sobald alle Parameter weggelassen werden, wird die Breite jeder Spalte an den Inhalt der Reihen angepasst. Ist nur der erste Parameter vorhanden, wird nur die Gr&ouml;&szlig;e der angegebenen Spalte automatisch angepasst. Die automatische Gr&ouml;&szlig;enanpassung funktioniert nur in der Report-Ansicht (Details). Diese Funktion gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zur&uuml;ck.</p>
+      <p id="ColOptions"><span class="greenbold">Spalten-Optionen:</span> Der <em>Optionen</em>-Parameter kann beliebig viele W&ouml;rter von der unteren Liste enthalten (nicht abh&auml;ngig von der Gro&szlig;-/Kleinschreibung). Die W&ouml;rter m&uuml;ssen mit einem Leer- oder Tabulatorzeichen getrennt werden. Mit einem Minuszeichen wird eine Option entfernt. Mit einem Pluszeichen wird eine Option hinzugef&uuml;gt (nicht unbedingt erforderlich).</p>
+      <p><span class="greenbold">Spalten-Optionen: Allgemein</span></p>
+      <p><strong>N</strong>: F&uuml;r N kann die neue Breite der Spalte (in Pixel) angegeben werden. Diese Nummer muss nicht in Anf&uuml;hrungszeichen gesetzt werden, wenn sie die einzige Option ist. Zum Beispiel sind beide folgenden Anweisungen g&uuml;ltig: LV_ModifyCol(1, 50) .... LV_ModifyCol(1, "50 Integer").</p>
+      <p><strong>Auto</strong>: Passt die Breite der Spalte am Inhalt an. Diese Option funktioniert nur in der Report-Ansicht (Details).</p>
+      <p><strong>AutoHdr</strong>: Passt die Breite der Spalte am Inhalt und an der Spalten&uuml;berschrift an - je nachdem, was breiter ist. Bei der letzten Spalte bewirkt diese Option, dass deren Breite mindestens so gro&szlig; ist wie der restliche Platz des ListViews. Am Besten sollte diese Einstellung nur verwendet werden, nachdem die Reihen hinzugef&uuml;gt wurden. Dadurch kann jede neu aufgetauchte vertikale Bildlaufleiste einbezogen werden, sobald die Gr&ouml;&szlig;e der letzten Spalte ge&auml;ndert wird. Diese Option funktioniert nur in der Report-Ansicht (Details).</p>
+      <p><strong>Icon</strong>: Nach dem Wort Icon erfolgt die Nummer des Icons aus der <a href="#IL">Bildliste</a>, das neben der Spalten&uuml;berschrift angezeigt wird. Mit -Icon wird jedes vorhandene Icon entfernt. In Windows 95/NT4 ben&ouml;tigen Spalten-Icons Internet Explorer 3.0 oder h&ouml;her.</p>
+      <p><strong>IconRight</strong>: Setzt das Icon auf die rechte Seite der Spalte, anstatt auf die linke Seite.</p>
+      <p><span class="greenbold">Spalten-Optionen: Datentyp</span></p>
+      <p><strong>Float</strong>: Aus Sortierungsgr&uuml;nden enth&auml;lt diese Spalte Flie&szlig;kommazahlen (hexadezimales Format wird nicht unterst&uuml;tzt). Die Performance ist beim Sortieren von Flie&szlig;kommazahl- und Text-Spalten im Gegensatz zu Integer-Spalten 25-mal langsamer.</p>
+      <p id="Integer"><strong>Integer</strong>: Aus Sortierungsgr&uuml;nden enth&auml;lt diese Spalte Integer-Werte. Damit die Spalte richtig sortiert wird, muss jeder Integer 32-bit gro&szlig; sein - im Bereich von -2147483648 bis 2147483647. Sobald einer der Werte kein Integer ist, wird dieser beim Sortieren als 0 angesehen (falls dieser Wert jedoch mit einer Zahl beginnt, wird stattdessen die Zahl verwendet). Die Zahlen k&ouml;nnen entweder dezimal oder hexadezimal (z. B. 0xF9E0) sein.</p>
+      <p id="Text"><strong>Text</strong>: Wechselt den Sortierungsmodus wieder auf Text (Standardeinstellung). Nur die ersten 8190 Zeichen im Text sind f&uuml;r die Sortierung von Bedeutung (au&szlig;er bei der <a href="#Logical"><em>Logical</em>-Option</a>, hierbei liegt der Grenzwert bei 4094).</p>
+      <p><span class="greenbold">Spalten-Optionen: Ausrichtung</span></p>
+      <p><strong>Center</strong>: Zentriert den Spaltentext. Um eine Integer- oder Flie&szlig;kommazahl-Spalte zu zentrieren, muss das Wort Center nach dem Wort Integer oder Float erfolgen.</p>
+      <p><strong>Left</strong>: Der Spaltentext wird linksb&uuml;ndig ausgerichtet (Standardeinstellung). Bei &auml;lteren Betriebssystemen k&ouml;nnte die linksb&uuml;ndige Ausrichtung in der ersten Spalte erzwungen sein.</p>
+      <p><strong>Right</strong>: Der Spaltentext wird rechtsb&uuml;ndig ausgerichtet. Dieses Attribut muss bei Integer- und Float-Spalten nicht angegeben werden, weil diese standardm&auml;&szlig;ig rechtsb&uuml;ndig ausgerichtet werden. Dieses Standardverhalten kann &uuml;berschrieben werden, wenn so etwas wie "Integer Left" oder "Float Center" angegeben wird.</p>
+      <p><span class="greenbold">Spalten-Optionen: Sortierung</span></p>
+      <p id="Case"><strong>Case</strong>: Die Sortierung der Spalte ist von der Gro&szlig;- und Kleinschreibung abh&auml;ngig (betrifft nur <a href="#Text">Text</a>-Spalten). Sind die Optionen <em>Case</em>, <em>CaseLocale</em> und <em>Logical</em> nicht vorhanden, werden die Gro&szlig;buchstaben A-Z beim Sortieren wie ihre Kleinbuchstaben behandelt.</p>
+      <p><strong>CaseLocale</strong> <span class="ver">[v1.0.43.03+]:</span> Die Sortierung der Spalte ist nicht von der Gro&szlig;- und Kleinschreibung, sondern vom aktuellen Gebietsschema des Benutzers abh&auml;ngig (betrifft nur <a href="#Text">Text</a>-Spalten). Bei den meisten englischen und westeurop&auml;ischen Gebietsschemen werden die Gro&szlig;buchstaben A-Z und ANSI-Zeichen wie &Auml; und &Uuml; wie ihre Kleinbuchstaben behandelt. Diese Methode verwendet zudem eine "Wortsortierung", dabei werden W&ouml;rter wie "coop" und "co-op" gleichwertig behandelt (Bindestriche und Apostrophe).</p>
+      <p id="Desc"><strong>Desc</strong>: Absteigende Reihenfolge. Die Spalte beginnt in absteigender Reihenfolge, sobald der Benutzer die Spalte das erste Mal sortiert.</p>
+      <p id="Logical"><strong>Logical</strong> <span class="ver">[v1.0.44.12+]:</span> Das Gleiche wie <em>CaseLocale</em>, aber mit der Ausnahme, dass alle Ziffern im Text als richtige Zahlen angesehen werden, anstatt als gew&ouml;hnliche Zeichen. Zum Beispiel w&uuml;rde der String T33 gr&ouml;&szlig;er als T4 angesehen. <em>Logical</em> ben&ouml;tigt Windows XP oder h&ouml;her (bei &auml;lteren Betriebssystemen wird stattdessen automatisch <em>CaseLocale</em> verwendet). Dar&uuml;ber hinaus schlie&szlig;en sich <em>Logical</em> und <em>Case</em> gegenseitig aus: nur das zuletzt angegebene Wort tritt in Effekt.</p>
+      <p><strong>NoSort</strong>: Verhindert, dass die Spalte beim Anklicken automatisch sortiert wird. Um das Sortieren stattdessen bei allen Spalten zu deaktivieren, muss <a href="#NoSort">NoSort</a> in den Optionen des ListViews angegeben werden. Falls das ListView ein g-Label hat, werden <a href="#ColClick">ColClick-Meldungen</a> weiterhin empfangen, sobald der Benutzer eine NoSort-Spalte anklickt.</p>
+      <p><strong>Sort</strong>: Sortiert die Spalte sofort in aufsteigender Reihenfolge (selbst wenn die Option <a href="#Desc">Desc</a> aktiv ist).</p>
+      <p><strong>SortDesc</strong>: Sortiert die Spalte sofort in absteigender Reihenfolge.</p>
+      <p><strong>Uni</strong>: Einseitige Sortierung. Verhindert, dass die Sortierungsrichtung durch einen zweiten Klick auf derselben Spalte umgekehrt wird.</p>
+      <p id="LV_InsertCol"><strong>LV_InsertCol(Spaltennummer [, Optionen, Spaltentitel]):</strong> Erstellt eine neue Spalte bei der angegebenen <em>Spaltennummer</em> (verschiebt andere Spalten nach rechts, um Platz zu schaffen). Die erste Spalte beginnt bei Nummer 1 (nicht 0). Falls die <em>Spaltennummer</em> gr&ouml;&szlig;er als die Anzahl der Spalten im Steuerelement ist, wird die neue Spalte ans untere Ende der Liste hinzugef&uuml;gt. Die neue hinzugef&uuml;gte Spalte beginnt mit leerem Inhalt, es sei denn, sie ist die erste Spalte, in diesem Fall erbt sie den Inhalt der vorherigen ersten Spalte, wobei die alte erste Spalte leer gemacht wird. Die Attribute der neuen Spalte (z. B. <a href="#Integer">Integer-Sortierung</a>) beginnen immer mit ihren Standardwerten, sofern diese nicht in den <a href="#ColOptions"><em>Optionen</em></a> ge&auml;ndert wurden. Diese Funktion gibt die neue Positionsnummer der Spalte zur&uuml;ck (oder 0 bei Misserfolg). Es k&ouml;nnen maximal 200 Spalten in einem ListView erstellt werden.</p>
+      <p id="LV_DeleteCol"><strong>LV_DeleteCol(Spaltennummer):</strong> Entfernt die angegebene Spalte und deren Inhalt. Diese Funktion gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zur&uuml;ck. Sobald eine Spalte gel&ouml;scht wird, werden die Spaltennummern der rechts befindlichen Spalten um 1 reduziert. Folglich w&uuml;rde das zweimalige Aufrufen von LV_DeleteCol(2) bewirken, dass die zweite und dritte Spalte gel&ouml;scht wird. Bei Betriebssystemen &auml;lter als Windows XP ist es m&ouml;glich, dass das Entfernen der originalen ersten Spalte fehlschlagen und eine 0 zur&uuml;ckgeben wird.</p>
+      <h2 id="bifGet">Daten aus einer ListView bekommen</h2>
+      <p id="LV_GetCount"><strong>LV_GetCount(["Selected | Column"]):</strong> Wenn der Parameter weggelassen wird, gibt die Funktion die Anzahl der Reihen im Steuerelement zur&uuml;ck. Wenn der Parameter "S" oder "Select" enth&auml;lt, werden nur die ausgew&auml;hlten/markierten Reihen gez&auml;hlt. Wenn der Parameter "Col" oder "Column" enth&auml;lt, gibt die Funktion die Anzahl der Spalten im Steuerelement zur&uuml;ck. Diese Funktion wird immer ohne Verz&ouml;gerung ausgef&uuml;hrt, weil das Steuerelement solche Z&auml;hlungen protokolliert.</p>
+      <p>Diese Funktion wird h&auml;ufig in der obersten Zeile einer Schleife verwendet, wodurch die Funktion nur einmal aufgerufen werden w&uuml;rde (vor dem ersten Durchlauf). Zum Beispiel:</p>
+      <pre>Loop % LV_GetCount()
 {
-    LV_GetText(RetrievedText, A_Index)
-    If InStr(RetrievedText, "beliebiger Filter-Text")
-        LV_Modify(A_Index, "Select")  <em>; W&auml;hlt jede Reihe aus, deren erstes Feld den Filter-Text enth&auml;lt.</em>
+    LV_GetText(AbgerufenerText, A_Index)
+    If InStr(AbgerufenerText, "beliebiger Filtertext")
+        LV_Modify(A_Index, "Select")  <em>; Markiert jede Reihe, deren erstes Feld den Filtertext enth&auml;lt.</em>
 }</pre>
-    <p>Um die Breiten der Spalten zu ermitteln (um sie beispielsweise in einer INI-Datei zu speichern, damit sie zwischen den Sitzungen gemerkt werden), befolgt dieses Beispiel:</p>
-    <pre>Gui +LastFound
+      <p>Mit dem folgenden Beispiel k&ouml;nnen die Breiten der Spalten ermittelt werden (um diese beispielsweise in einer INI-Datei zwischenzuspeichern):</p>
+      <pre>Gui +LastFound
 Loop % LV_GetCount("Column")
 {
     SendMessage, 4125, A_Index - 1, 0, SysListView321  <em>; 4125 ist LVM_GETCOLUMNWIDTH.</em>
-    MsgBox Die Breite der Spalte %A_Index% ist %ErrorLevel%.
+    MsgBox Die Spalte %A_Index% hat eine Breite von %ErrorLevel%.
 }</pre>
-    <p id="LV_GetNext"><strong>LV_GetNext([Startreihennummer, "Checked | Focused"]):</strong> Ermittelt die Reihennummer der n&auml;chsten ausgew&auml;hlten, aktivierten oder fokussierten Reihe. Wenn keine Reihe gefunden wird, dann wird 0 zur&uuml;ckgegeben. Wenn die <em>Startreihennummer</em> weggelassen wird oder kleiner als 1 ist, dann beginnt die Suche am Anfang der Liste. Andernfalls beginnt die Suche bei der Reihe nach der <em>Startreihennummer</em>. Wenn der zweite Parameter weggelassen wird, dann sucht die Funktion die n&auml;chste ausgew&auml;hlte/aktivierte Reihe. Andernfalls wird mit "C" oder "Checked" die n&auml;chste aktivierte Reihe gefunden; oder mit "F" oder "Focused" die fokussierte Reihe (es gibt nie mehr als eine fokussierte Reihe, auch ist manchmal &uuml;berhaupt keine vorhanden). Im folgenden Beispiel werden alle ausgew&auml;hlten Reihen im ListView gemeldet:</p>
-    <pre>Reihennummer = 0  <em>; Damit beginnt die Suche am Anfang der Liste in der ersten Schleifeniteration.</em>
+      <p id="LV_GetNext"><strong>LV_GetNext([Startreihennummer, "Checked | Focused"]):</strong> Ermittelt die Reihennummer der n&auml;chsten ausgew&auml;hlten, aktivierten oder fokussierten Reihe. Kann keine Reihe gefunden werden, wird 0 zur&uuml;ckgegeben. Ist die <em>Startreihennummer</em> nicht vorhanden oder kleiner als 1, beginnt die Suche am Anfang der Liste. Andernfalls beginnt die Suche bei der Reihe nach <em>Startreihennummer</em>. Sobald der zweite Parameter weggelassen wird, sucht die Funktion die n&auml;chste ausgew&auml;hlte/aktivierte Reihe. Andernfalls wird mit "C" oder "Checked" die n&auml;chste Reihe gefunden, bei der ein H&auml;kchen gesetzt ist; oder mit "F" oder "Focused" die fokussierte Reihe (es kann immer nur eine Reihe fokussiert sein, manchmal ist gar keine Reihe fokussiert). Im folgenden Beispiel werden alle ausgew&auml;hlten Reihen im ListView gemeldet:</p>
+      <pre>Reihennummer = 0  <em>; Bewirkt, dass der erste Schleifendurchlauf beim Listenanfang beginnt.</em>
 Loop
 {
-    Reihennummer := LV_GetNext(Reihennummer)  <em>; Setzt die Suche bei der Reihe fort, die nach der vorherigen Iteration gefunden wird.</em>
-    If not Reihennummer  <em>; Die obige Funktion gibt eine 0 zur&uuml;ck, da keine weiteren Reihen ausgew&auml;hlten sind.</em>
+    Reihennummer := LV_GetNext(Reihennummer)  <em>; Setzt die Suche bei der n&auml;chsten Reihe fort.</em>
+    If not Reihennummer  <em>; Wenn die obige Funktion eine 0 zur&uuml;ckgibt, ist keine weitere Reihe ausgew&auml;hlt.</em>
         break
     LV_GetText(Text, Reihennummer)
-    MsgBox Die ausgew&auml;hlte Reihe ist #%Reihennummer%, dessen erstes Feld "%Text%" enth&auml;lt.
+    MsgBox Die n&auml;chste Reihe ist #%Reihennummer%, deren erstes Feld "%Text%" enth&auml;lt.
 }</pre>
-    <p>Eine alternative Methode, um herauszufinden, ob eine bestimmte Reihennummer ausgew&auml;hlt ist:</p>
-    <pre>Gui +LastFound
-SendMessage, 4140, <i>Reihennummer</i> - 1, 0xF000, SysListView321  <em>; 4140 ist LVM_GETITEMSTATE.  0xF000 ist LVIS_STATEIMAGEMASK.</em>
-IsChecked := (ErrorLevel &gt;&gt; 12) - 1  <em>; Setzt IsChecked auf wahr, wenn die <i>Reihennummer</i> ausgew&auml;hlt ist, ansonsten auf falsch.</em></pre>
-    <p id="LV_GetText"><strong>LV_GetText(Ausgabevariable, Reihennummer [, Spaltennummer]):</strong> Ermittelt den Text der angegebenen <em>Reihennummer</em> und <em>Spaltennummer</em> und speichert es in <em>Ausgabevariable</em>.  Wenn die <em>Spaltennummer</em> weggelassen wird, dann wird standardm&auml;&szlig;ig eine 1 verwendet (der Text in der ersten Spalte). Wenn die <em>Reihennummer</em> eine 0 ist, dann wird die Spalten&uuml;berschrift abgerufen. Wenn der Text l&auml;nger als 8191 ist, dann werden nur die ersten 8191 Zeichen abgerufen. Diese Funktion gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zur&uuml;ck. Bei Misserfolg wird <em>Ausgabevariable</em> leer gemacht.</p>
-    <p>Die vom Script gesehenen Spaltennummern werden nicht ge&auml;ndert, wenn die Spalten vom Benutzer verschoben werden. Zum Beispiel ist die urspr&uuml;ngliche erste Spalte immer noch die Nummer 1, selbst wenn der Benutzer diese Spalte nach rechts verschiebt.</p>
-    <h2 id="notify">g-Label-Meldungen (Prim&auml;r) </h2>
-    <p>Ein <a href="Gui.htm#label">g-Label</a> wie <em><strong>g</strong>EigeneSubroutine</em> kann in den Optionen des Steuerelements angegeben werden. Damit wird <em>EigeneSubroutine</em> automatisch ausgef&uuml;hrt, sobald der Benutzer eine Aktion im Steuerelement macht. Diese Subroutine kann auf die internen Variablen <a href="../Variables.htm#Gui">A_Gui</a> und <a href="../Variables.htm#GuiControl">A_GuiControl</a> zur&uuml;ckgreifen, um herauszufinden, welches Fenster oder ListView das Ereignis erzeugt hat. Noch wichtiger ist, dass sie auf <strong>A_GuiEvent</strong> zur&uuml;ckgreifen kann, die einen der folgenden Strings enthalten kann (f&uuml;r die Kompatibilit&auml;t mit zuk&uuml;nftigen Versionen sollte ein Script nicht davon ausgehen, dass das die einzigen m&ouml;glichen Werte sind):</p>
-    <p><strong>DoubleClick</strong>: Der Benutzer hat auf einer Reihe doppelt geklickt. Die interne Variable A_EventInfo enth&auml;lt die Reihennummer.</p>
-    <p><strong>R</strong>: Der Benutzer hat mit der rechten Maustaste <em>doppelt</em> auf das Steuerelement geklickt. Die interne Variable A_EventInfo enth&auml;lt die fokussierte Reihennummer.</p>
-    <p id="ColClick"><strong>ColClick</strong>: Der Benutzer hat auf eine Spalten&uuml;berschrift geklickt. Die interne Variable A_EventInfo enth&auml;lt die Spaltennummer, die urspr&uuml;nglich der Spalte bei der Erstellung zugewiesen wurde; das hei&szlig;t, das Ziehen &amp; Ablegen des Benutzers hat keinen Einfluss. Eine m&ouml;gliche Reaktion auf einem Spaltenklick ist das Sortieren einer versteckten Spalte (0 Breite), die Daten im sortierfreundlichen Format enth&auml;lt (z. B. ein Integer-Datum YYYYMMDD). So eine versteckte Spalte kann eine andere Spalte widerspiegeln, die die gleichen Daten in einem freundlicheren Format (z. B. MM/DD/YY) zeigt. Ein Script kann beispielsweise mittels <a href="#LV_ModifyCol">LV_ModifyCol(3, 0)</a> die Spalte 3 verstecken und dann die automatische Sortierung in der sichtbaren Spalte 2 mittels LV_ModifyCol(2, "NoSort") deaktivieren. Dann, als Reaktion auf die ColClick-Meldung der Spalte 2, wird das ListView von der versteckten Spalte mittels LV_ModifyCol(3, "Sort") sortiert.</p>
-    <p id="Drag"><strong>D</strong>: Der Benutzer hat angefangen, eine Reihe oder Icon zu verschieben (es gibt derzeit keine interne Unterst&uuml;tzung f&uuml;r das Verschieben von Reihen oder Icons). Die interne Variable A_EventInfo enth&auml;lt die fokussierte Reihennummer. Seit v1.0.44 erscheint diese Meldung auch ohne <a href="#AltSubmit">AltSubmit</a>.</p>
-    <p><strong>d</strong>: Wie oben, nur mit der Ausnahme, dass eine Reihe oder Icon mit der rechten Maustaste verschoben wird.</p>
-    <p><strong>e</strong>: Der Benutzer hat die Bearbeitung des ersten Feldes in der Reihe beendet (der Benutzer kann es nur bearbeiten, wenn <a href="#ReadOnly"><strong>-</strong>ReadOnly</a> in den Optionen vorhanden ist). Die interne Variable A_EventInfo enth&auml;lt die Reihennummer.</p>
-    <h2>g-Label-Meldungen (Sekund&auml;r)</h2>
-    <p>Wenn das Wort AltSubmit in den <a href="#Options">Optionen</a> vorhanden ist, dann wird g-Label &ouml;fters aufgerufen und <strong>A_GuiEvent</strong> kann folgende Werte enthalten:</p>
-    <p><strong>Normal</strong>: Der Benutzer hat mit der linken Maustaste auf einer Reihe geklickt. Die interne Variable A_EventInfo enth&auml;lt die fokussierte Reihennummer.</p>
-    <p><strong>RightClick</strong>: Der Benutzer hat mit der rechten Maustaste auf einer Reihe geklickt. Die interne Variable A_EventInfo enth&auml;lt die fokussierte Reihennummer. In den meisten F&auml;llen ist es am besten, ein Men&uuml; nicht als Reaktion darauf anzuzeigen. Verwendet stattdessen das <a href="Gui.htm#GuiContextMenu">GuiContextMenu-Label</a>, weil es auch die Men&uuml;-Taste erkennt. Zum Beispiel:</p>
-    <pre>GuiContextMenu:  <em>; Wird als Reaktion auf einen Rechtsklick oder das Dr&uuml;cken der Men&uuml;-Taste ausgef&uuml;hrt.</em>
-If A_GuiControl &lt;&gt; EigenesListView  <em>; Diese &Uuml;berpr&uuml;fung ist optional. Das Men&uuml; wird nur angezeigt, wenn in das ListView geklickt wird.</em>
+      <p>Eine alternative Methode, um herauszufinden, ob bei einer bestimmten Reihennummer ein H&auml;kchen gesetzt wurde:</p>
+      <pre>Gui +LastFound
+SendMessage, 4140, <i>Reihennummer</i> - 1, 0xF000, SysListView321  <em>; 4140 ist LVM_GETITEMSTATE. 0xF000 ist LVIS_STATEIMAGEMASK.</em>
+IsChecked := (ErrorLevel &gt;&gt; 12) - 1  <em>; Setzt IsChecked auf wahr, wenn bei <i>Reihennummer</i> ein H&auml;kchen gesetzt wurde, ansonsten auf falsch.</em></pre>
+      <p id="LV_GetText"><strong>LV_GetText(Ausgabevariable, Reihennummer [, Spaltennummer]):</strong> Ermittelt den Text bei der angegebenen <em>Reihennummer</em> und <em>Spaltennummer</em> und speichert ihn in die <em>Ausgabevariable</em>. Ist die <em>Spaltennummer</em> nicht vorhanden, wird standardm&auml;&szlig;ig eine 1 verwendet (der Text in der ersten Spalte). Wenn die <em>Reihennummer</em> eine 0 ist, wird die Spalten&uuml;berschrift abgerufen. Es werden nur die ersten 8191 Zeichen des Textes abgerufen. Diese Funktion gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zur&uuml;ck. Bei Misserfolg wird die <em>Ausgabevariable</em> leer gemacht.</p>
+      <p>Die vom Script gesehene Spaltennummerierung &auml;ndert sich nicht, wenn die Spalten vom Benutzer verschoben werden. Zum Beispiel ist die originale erste Spalte auch dann weiterhin die Nummer 1, wenn der Benutzer diese nach rechts verschiebt.</p>
+      <h2 id="notify">g-Label-Meldungen (Prim&auml;r) </h2>
+      <p>Es ist m&ouml;glich, ein <a href="Gui.htm#label">g-Label</a> wie <em><strong>g</strong>EigeneSubroutine</em> in den Optionen des Steuerelements anzugeben. Dadurch wird <em>EigeneSubroutine</em> automatisch ausgef&uuml;hrt, sobald der Benutzer eine Aktion im Steuerelement durchf&uuml;hrt. Diese Subroutine kann auf die internen Variablen <a href="../Variables.htm#Gui">A_Gui</a> und <a href="../Variables.htm#GuiControl">A_GuiControl</a> zur&uuml;ckgreifen, um herauszufinden, welches Fenster oder ListView das Ereignis erzeugt hat. Noch wichtiger ist, dass sie auf <strong>A_GuiEvent</strong> zur&uuml;ckgreifen kann, die einen der folgenden Strings enthalten kann (f&uuml;r die Kompatibilit&auml;t mit zuk&uuml;nftigen Versionen sollte ein Script nicht davon ausgehen, dass das die einzigen m&ouml;glichen Werte sind):</p>
+      <p><strong>DoubleClick</strong>: Der Benutzer hat eine Reihe zweimal angeklickt. Die interne Variable A_EventInfo enth&auml;lt die Reihennummer.</p>
+      <p><strong>R</strong>: Der Benutzer hat das Steuerelement <em>zweimal</em> mit der rechten Maustaste angeklickt. Die interne Variable A_EventInfo enth&auml;lt die fokussierte Reihennummer.</p>
+      <p id="ColClick"><strong>ColClick</strong>: Der Benutzer hat eine Spalten&uuml;berschrift angeklickt. Die interne Variable A_EventInfo enth&auml;lt die Spaltennummer, die urspr&uuml;nglich beim Erstellen der Spalte zugewiesen wurden ist; das hei&szlig;t, dass Ziehen &amp; Ablegen keinen Einfluss darauf hat. Zum Beispiel kann beim Anklicken der Spalte eine Sortierung durch eine versteckte Spalte (Breite 0) erfolgen, die Daten im sortierfreundlichen Format enth&auml;lt (z. B. als Integer-Datum im YYYYMMDD-Format). Diese versteckte Spalte spiegelt dann eine andere Spalte wieder, die die gleichen Daten im freundlicheren Format (z. B. DD.MM.YY) darstellt. Zum Beispiel k&ouml;nnte ein Script die dritte Spalte mittels <a href="#LV_ModifyCol">LV_ModifyCol(3, 0)</a> verstecken und danach die automatische Sortierung in der sichtbaren zweiten Spalte mittels LV_ModifyCol(2, "NoSort") deaktivieren. Dann, als Reaktion auf die ColClick-Meldung der Spalte 2, wird das ListView von der versteckten Spalte mittels LV_ModifyCol(3, "Sort") sortiert.</p>
+      <p id="Drag"><strong>D</strong>: Der Benutzer hat den Versuch gestartet, eine Reihe oder ein Icon zu verschieben (es gibt derzeit keine interne Unterst&uuml;tzung f&uuml;r das Verschieben von Reihen oder Icons). Die interne Variable A_EventInfo enth&auml;lt die fokussierte Reihennummer. Seit v1.0.44 erscheint diese Meldung auch ohne <a href="#AltSubmit">AltSubmit</a>.</p>
+      <p><strong>d</strong>: Wie oben, aber mit der rechten Maustaste.</p>
+      <p><strong>e</strong>: Der Benutzer hat die Bearbeitung des ersten Feldes in der Reihe beendet (der Benutzer kann dieses Feld nur bearbeiten, wenn <a href="#ReadOnly"><strong>-</strong>ReadOnly</a> in den Optionen vorhanden ist). Die interne Variable A_EventInfo enth&auml;lt die Reihennummer.</p>
+      <h2>g-Label-Meldungen (Sekund&auml;r)</h2>
+      <p>Wenn das Wort AltSubmit in den <a href="#Options">Optionen</a> vorhanden ist, wird g-Label &ouml;fters aufgerufen und <strong>A_GuiEvent</strong> zus&auml;tzlich folgende Werte enthalten:</p>
+      <p><strong>Normal</strong>: Der Benutzer hat eine Reihe mit der linken Maustaste angeklickt. Die interne Variable A_EventInfo enth&auml;lt die fokussierte Reihennummer.</p>
+      <p><strong>RightClick</strong>: Der Benutzer hat eine Reihe mit der rechten Maustaste angeklickt. Die interne Variable A_EventInfo enth&auml;lt die fokussierte Reihennummer. Als Reaktion darauf sollte besser nicht ein Men&uuml; angezeigt werden. Verwendet stattdessen das <a href="Gui.htm#GuiContextMenu">GuiContextMenu-Label</a>, weil es auch die Men&uuml;-Taste erkennt. Zum Beispiel:</p>
+      <pre>GuiContextMenu:  <em>; Wird ausgef&uuml;hrt, sobald die rechte Maustaste oder die Men&uuml;-Taste gedr&uuml;ckt wird.</em>
+If A_GuiControl &lt;&gt; EigenesListView  <em>; Diese &Uuml;berpr&uuml;fung ist optional. Das Men&uuml; wird nur angezeigt, wenn das ListView angeklickt wird.</em>
     Return
-<em>; Zeigt das Men&uuml; auf den angegebenen Koordinaten A_GuiX und A_GuiY.  Diese sollten verwendet werden,
-; weil sie die richtigen Koordinaten bereitstellen, selbst wenn der Benutzer die Men&uuml;-Taste dr&uuml;ckt:</em>
+<em>; &Ouml;ffnet das Men&uuml; auf den angegebenen Koordinaten A_GuiX und A_GuiY.  Diese sollten verwendet werden,
+; weil sie die richtigen Koordinaten bereitstellen, auch dann, wenn der Benutzer die Men&uuml;-Taste dr&uuml;ckt:</em>
 Menu, Kontextmen&uuml;, Show, %A_GuiX%, %A_GuiY%
 Return</pre>
-    <p><strong>A</strong>: Eine Reihe wurde aktiviert, was standardm&auml;&szlig;ig auftritt, wenn sie doppelt geklickt wird. Die interne Variable A_EventInfo enth&auml;lt die Reihennummer.</p>
-    <p><strong>C</strong>: Das ListView hat die Mauserfassung losgelassen.</p>
-    <p><strong>E</strong>: Der Benutzer hat die Bearbeitung des ersten Feldes in der Reihe begonnen (der Benutzer kann es nur bearbeiten, wenn <a href="#ReadOnly">-ReadOnly</a> in den Optionen vorhanden ist). Die interne Variable A_EventInfo enth&auml;lt die Reihennummer.</p>
-    <p><strong>F</strong>: Das ListView hat den Tastaturfokus erhalten.</p>
-    <p><strong>f</strong>: Das ListView hat den Tastaturfokus verloren.</p>
-    <p id="ItemChanged"><strong>I</strong>: Reihe ge&auml;ndert. Eine Reihe wird ge&auml;ndert, wenn sie die Auswahl, Markierung usw. erh&auml;lt oder verliert. Wenn der Benutzer eine neue Reihe ausw&auml;hlt, dann werden mindestens zwei solcher Meldungen empfangen: eine, wenn die vorherige Reihe abgew&auml;hlt wird, und eine, wenn die neue Reihe ausgew&auml;hlt wird. Seit v1.0.44 enth&auml;lt die interne Variable A_EventInfo die Reihennummer. Seit v1.0.46.10 enth&auml;lt ErrorLevel beliebig viele Buchstaben, wie die Reihe ge&auml;ndert wurde: S (ausgew&auml;hlt) oder s (abgew&auml;hlt), und/oder F (fokussiert) oder f (Fokus aufgehoben), und/oder C (aktiviert) oder c (deaktiviert). Zum Beispiel bedeutet SF, dass die Reihe ausgew&auml;hlt und fokussiert wurde. Um festzustellen, ob ein bestimmter Buchstabe vorhanden ist, verwendet eine <a href="LoopParse.htm">Parsing-Schleife</a> oder die Zeichengenauigkeit-Option der Funktion <a href="../Functions.htm#InStr">InStr()</a>. Zum Beispiel: <em>InStr(ErrorLevel, "S", true)</em>. Hinweis: F&uuml;r die Kompatibilit&auml;t mit zuk&uuml;nftigen Versionen sollte ein Script nicht davon ausgehen, das "SsFfCc" die einzigen m&ouml;glichen Werte sind. Auch die Angabe von <a href="Critical.htm">Critical</a> in der ersten Zeile von <a href="Gui.htm#label">g-Label</a> stellt sicher, dass alle "I"-Meldungen empfangen werden k&ouml;nnen (sonst k&ouml;nnen einige verloren gehen, wenn das Script nicht mithalten kann).</p>
-    <p id="NotifyK"><strong>K</strong>: Der Benutzer hat eine Taste gedr&uuml;ckt, w&auml;hrend das ListView den Fokus hat. A_EventInfo enth&auml;lt den virtuellen Tastencode der Taste, eine Zahl zwischen 1 und 255. Wenn die Taste alphabetisch ist, kann sie in den meisten Tastaturbelegungen mittels <a href="../Functions.htm#Chr">Chr(A_EventInfo)</a> in das entsprechende Zeichen umgewandelt werden. F2-Eingaben werden erkannt, unabh&auml;ngig von <a href="#WantF2">WantF2</a>. Allerdings wird die Enter-Taste nicht empfangen; um sie zu empfangen, verwendet eine Standard-Schaltfl&auml;che, wie <a href="#Enter">unten</a> beschrieben.</p>
-    <p><strong>M</strong>: Auswahlrechteck. Der Benutzer hat damit begonnen, ein Auswahlrechteck um eine Gruppe von Reihen oder Icons zuziehen.</p>
-    <p><strong>S</strong>: Der Benutzer hat damit begonnen, das ListView zu scrollen.</p>
-    <p><strong>s</strong>: Der Benutzer ist damit fertig, das ListView zu scrollen.</p>
-    <h2 id="IL">Bildliste<span class="ver"> (Icons zur ListView hinzuf&uuml;gen)</span></h2>
-    <p>Eine Bildliste ist eine Gruppe von gleich gro&szlig;en Icons, die im Speicher abgelegt ist. Bei der Erstellung ist jede Bildliste leer. Das Script ruft IL_Add() mehrmals auf, um Icons zur Liste hinzuzuf&uuml;gen. Jedem Icon wird eine fortlaufende Nummer zugeordnet, beginnend mit 1. Mit dieser Nummer kann ein bestimmtes Icon in einer Reihe oder Spalten&uuml;berschrift angezeigt werden. Hier ist ein funktionierendes Beispiel, wie man Icons in Reihen einf&uuml;gen kann:</p>
-    <pre>Gui, Add, ListView, h200 w180, Icon &amp; Nummer|Beschreibung  <em>; Erstellt ein ListView.</em>
+      <p><strong>A</strong>: Eine Reihe wurde aktiviert. Erfolgt standardm&auml;&szlig;ig, wenn die Reihe zweimal angeklickt wird. Die interne Variable A_EventInfo enth&auml;lt die Reihennummer.</p>
+      <p><strong>C</strong>: Das ListView hat die Mauserfassung ausgel&ouml;st.</p>
+      <p><strong>E</strong>: Der Benutzer hat die Bearbeitung des ersten Feldes in der Reihe begonnen (der Benutzer kann das Feld nur bearbeiten, wenn <a href="#ReadOnly">-ReadOnly</a> in den Optionen vorhanden ist). Die interne Variable A_EventInfo enth&auml;lt die Reihennummer.</p>
+      <p><strong>F</strong>: Das ListView hat den Tastaturfokus erhalten.</p>
+      <p><strong>f</strong>: Das ListView hat den Tastaturfokus verloren.</p>
+      <p id="ItemChanged"><strong>I</strong>: Eine Reihe wurde durch Ausw&auml;hlen/Abw&auml;hlen, H&auml;kchen setzen/entfernen und so weiter ge&auml;ndert. Sobald der Benutzer eine neue Reihe ausw&auml;hlt, werden mindestens zwei solcher Meldungen empfangen: eine Meldung durch Abw&auml;hlen der vorherigen Reihe und eine Meldung durch Ausw&auml;hlen der neuen Reihe. Seit v1.0.44 enth&auml;lt die interne Variable A_EventInfo die Reihennummer. Seit v1.0.46.10 enth&auml;lt ErrorLevel beliebig viele folgende Buchstaben, auf welche Weise die Reihe ge&auml;ndert wurde: S (ausgew&auml;hlt) oder s (abgew&auml;hlt), und/oder F (fokussiert) oder f (Fokus aufgehoben), und/oder C (H&auml;kchen gesetzt) oder c (H&auml;kchen entfernt). Zum Beispiel bedeutet SF, dass die Reihe ausgew&auml;hlt und fokussiert wurde. Mithilfe einer <a href="LoopParse.htm">Parsing-Schleife</a> oder der Zeichengenauigkeit-Option der Funktion <a href="../Functions.htm#InStr">InStr()</a> kann festgestellt werden, ob ein bestimmter Buchstabe vorkommt. Zum Beispiel: <code>InStr(ErrorLevel, "S", true)</code>. Hinweis: F&uuml;r die Kompatibilit&auml;t mit zuk&uuml;nftigen Versionen sollte ein Script nicht davon ausgehen, das "SsFfCc" die einzigen m&ouml;glichen Werte sind. Auch die Angabe von <a href="Critical.htm">Critical</a> in der ersten Zeile von <a href="Gui.htm#label">g-Label</a> stellt sicher, dass alle "I"-Meldungen empfangen werden k&ouml;nnen (sonst k&ouml;nnten einige verloren gehen, falls das Script nicht mithalten kann).</p>
+      <p id="NotifyK"><strong>K</strong>: Der Benutzer hat eine Taste gedr&uuml;ckt, w&auml;hrend das ListView den Fokus hatte. A_EventInfo enth&auml;lt den virtuellen Tastencode der Taste - eine Zahl zwischen 1 und 255. Wenn die Taste alphabetisch ist, kann sie bei den meisten Tastaturbelegungen mittels <a href="../Functions.htm#Chr">Chr(A_EventInfo)</a> in das entsprechende Zeichen umgewandelt werden. F2-Eingaben werden auch erkannt, unabh&auml;ngig von <a href="#WantF2">WantF2</a>. Die Enter-Taste wird jedoch nicht erkannt; als &Uuml;bergangsl&ouml;sung kann eine Standard-Schaltfl&auml;che verwendet werden, wie <a href="#Enter">unten</a> beschrieben.</p>
+      <p><strong>M</strong>: Auswahlrechteck. Der Benutzer hat damit begonnen, ein Auswahlrechteck auf mehrere Reihen oder Icons zuziehen.</p>
+      <p><strong>S</strong>: Der Benutzer hat damit begonnen, das ListView zu scrollen.</p>
+      <p><strong>s</strong>: Der Benutzer ist damit fertig, das ListView zu scrollen.</p>
+      <h2 id="IL">Bildliste<span class="ver"> (Icons zur ListView hinzuf&uuml;gen)</span></h2>
+      <p>Eine Bildliste ist eine Gruppe von gleich gro&szlig;en Icons, die im Speicher abgelegt ist. Beim Erstellen ist jede Bildliste leer. Das Script ruft IL_Add() mehrmals auf, um Icons zur Liste hinzuzuf&uuml;gen. Jedem Icon wird dabei eine fortlaufende Nummer zugeordnet, beginnend bei 1. Das ist die Nummer, auf die das Script verweist, um ein bestimmtes Icon in einer Reihe oder Spalten&uuml;berschrift anzuzeigen. Nachfolgend ein Beispiel, wie man Icons in den Reihen einf&uuml;gen kann:</p>
+      <pre>Gui, Add, ListView, h200 w180, Icon &amp; Nummer|Beschreibung  <em>; Erstellt ein ListView.</em>
 BildlisteID := <a href="#IL_Create">IL_Create</a>(10)  <em>; Erstellt eine Bildliste, die 10 kleine Icons umfasst.</em>
-<a href="#LV_SetImageList">LV_SetImageList</a>(BildlisteID)  <em>; Bildliste wird dem aktuellen ListView zugewiesen.</em>
-Loop 10  <em>; Die Bildliste wird mit mehreren Icons aus der DLL beladen.</em>
-    <a href="#IL_Add">IL_Add</a>(BildlisteID, "shell32.dll", A_Index)  <em>; Den Pfad der DLL-Datei weglassen, damit es in Windows 9x auch funktioniert.</em>
-Loop 10  <em>; Reihen in der ListView hinzuf&uuml;gen (f&uuml;r Demonstrationszwecke hat jedes Icon eine Reihe).</em>
+<a href="#LV_SetImageList">LV_SetImageList</a>(BildlisteID)  <em>; Weist die obige Bildliste dem aktuellen ListView zu.</em>
+Loop 10  <em>; L&auml;dt die Bildliste mit mehreren Icons von der DLL.</em>
+    <a href="#IL_Add">IL_Add</a>(BildlisteID, "shell32.dll", A_Index)  <em>; Den Pfad der DLL-Datei weglassen, damit das Beispiel auch in Windows 9x funktioniert.</em>
+Loop 10  <em>; F&uuml;gt Reihen zur ListView hinzu (zur Veranschaulichung hat jedes Icon eine Reihe).</em>
     LV_Add("Icon" . A_Index, A_Index, "n/a")
 LV_ModifyCol("Hdr")  <em>; Passt die Breite der Spalte automatisch an.</em>
 Gui Show
 Return
 
-GuiClose:  <em>; Beendet das Script, wenn der Benutzer das GUI-Fenster schlie&szlig;t.</em>
+GuiClose:  <em>; Beendet das Script, sobald der Benutzer das GUI-Fenster schlie&szlig;t.</em>
 ExitApp</pre>
-    <p id="IL_Create"><strong>IL_Create([Anfangsanzahl, Steigerungsanzahl, Gro&szlig;eIcons?]):</strong> Erstellt eine neue Bildliste, die zun&auml;chst leer ist und die eindeutige ID der Bildliste zur&uuml;ckgibt (oder 0 bei Misserfolg). <em>Anfangsanzahl</em> ist die zu erwartende Anzahl der Icons, die sofort in die Liste eingef&uuml;gt werden (wenn weggelassen, dann standardm&auml;&szlig;ig die 2). <em>Steigerungsanzahl</em> ist die Anzahl der Icons, die die Liste jedes Mal erh&ouml;hen, wenn die aktuelle Kapazit&auml;t der Liste &uuml;berschritten wird (wenn weggelassen, dann standardm&auml;&szlig;ig die 5). <em>Gro&szlig;eIcons</em> ist ein numerischer Wert: Wenn dieser Wert keine 0 ist, dann enth&auml;lt die Bildliste gro&szlig;e Icons. Wenn dieser Wert eine 0 ist, dann enth&auml;lt sie kleine Icons (dies ist die Standardeinstellung, wenn weggelassen). Die eingef&uuml;gten Icons werden automatisch skaliert, damit sie den Abmessungen f&uuml;r kleine und gro&szlig;e Icons entsprechen.</p>
-    <p id="LV_SetImageList"><strong>LV_SetImageList(BildlisteID [, 0|1|2]):</strong> Diese Funktion wird normalerweise aufgerufen, bevor Reihen zum ListView hinzugef&uuml;gt werden. Diese Funktion stellt die <a href="#IL">Bildliste</a> zur Verf&uuml;gung, deren Icons in den Reihen der ListView angezeigt werden (und optional dessen Spalten). BildlisteID ist die Nummer, die von <a href="#IL_Create">IL_Create()</a> zur&uuml;ckgegeben wird. Wenn der zweite Parameter ausgelassen wird, dann wird der Icon-Typ in der Bildliste automatisch als gro&szlig;es oder kleines Icon erkannt. Andernfalls verwendet eine 0 f&uuml;r gro&szlig;e Icons, 1 f&uuml;r kleine Icons und 2 f&uuml;r Status-Icons (Status-Icons werden noch nicht direkt unterst&uuml;tzt, aber sie k&ouml;nnen mittels <a href="PostMessage.htm">SendMessage</a> verwendet werden).</p>
-    <p>Ein ListView kann bis zu zwei Bildlisten haben: kleine Icons und/oder gro&szlig;e Icons. Das ist n&uuml;tzlich, wenn das Script dem Benutzer erm&ouml;glicht, zwischen den Icon-Ansichten zu wechseln. Um mehrere Bildlisten zu einem ListView hinzuzuf&uuml;gen, verwendet LV_SetImageList() ein zweites Mal, um die BildlisteID der zweiten Liste anzugeben. Ein ListView mit sowohl einer gro&szlig;en als auch kleinen Bildliste sollte sicherstellen, dass beide Listen die Icons in der gleichen Reihenfolge enthalten. Denn es werden die gleichen ID-Nummern verwendet, um sowohl auf die gro&szlig;en als auch kleinen Versionen von bestimmten Icons zu verweisen.</p>
-    <p>Obwohl traditionell in allen <a href="#View">Anzeigemethoden</a> (au&szlig;er Icon und Tile) kleine Icons angezeigt werden, kann dies &uuml;berschrieben werden, wenn eine Liste mit gro&szlig;en Icons an LV_SetImageList und eine 1 (kleine Icons) an dem zweiten Parameter &uuml;bergeben wird. Dadurch erh&ouml;ht sich auch die H&ouml;he jeder Reihe im ListView, damit die gro&szlig;en Icons passen.</p>
-    <p>Bei Erfolg gibt LV_SetImageList() die BildlisteID zur&uuml;ck, die vorher dem ListView zugewiesen wurde (oder 0 bei Misserfolg). So eine alleinstehende Bildliste sollte normalerweise mittels <a href="#IL_Destroy">IL_Destroy(BildlisteID)</a> zerst&ouml;rt werden.</p>
-    <p id="IL_Add"><strong>IL_Add(BildlisteID, Dateiname [, Iconnummer, BildSkalieren?]):</strong> F&uuml;gt ein Icon oder Bild zur angegebenen <em>BildlisteID</em> hinzu und gibt den neuen Index des Icons zur&uuml;ck (1 f&uuml;r das erste Icon, 2 f&uuml;r das zweite Icon und so weiter). <em>Dateiname</em> enth&auml;lt den Namen einer Icon-Datei (.ICO), einer Cursor-Datei (.CUR) oder einer animierten Cursor-Datei (.ANI) (animierte Cursor werden zurzeit nicht in dem ListView animiert). Andere Quellen von Icons k&ouml;nnen sein: EXE, DLL, CPL, SCR und andere Typen, die Icon-Ressourcen enthalten. Um eine beliebige Icon-Gruppe in einer Datei zu verwenden, verwendet die Gruppennummer in der <em>Iconnummer</em>. Im folgenden Beispiel wird das Standard-Icon aus der zweiten Icon-Gruppe verwendet: <em>IL_Add(BildlisteID, "C:\Eigene Anwendung.exe", 2)</em>.</p>
-    <p>Bilder wie BMP, GIF und JPG k&ouml;nnen ebenfalls geladen werden. Doch in diesem Fall sollten die beiden letzten Parameter festgelegt werden, um das richtige Verhalten sicherzustellen: Die <em>Iconnummer</em> sollte die Farbnummer der Maske/Transparenz enthalten (0xFFFFFF [die Farbe wei&szlig;] ist f&uuml;r die meisten Bilder das Beste); und <em>BildSkalieren</em> sollte keine 0 sein, damit das Bild zu einem einzelnen Icon skaliert wird; oder 0, um das Bild in mehreren Icons aufzuteilen.</p>
-    <p>Alle Betriebssysteme unterst&uuml;tzen GIF, JPG, BMP, ICO, CUR und ANI-Bilder. In Windows XP (oder h&ouml;her) werden zus&auml;tzliche Bildformate wie PNG, TIF, Exif, WMF und EMF unterst&uuml;tzt. Betriebssysteme &auml;lter als XP k&ouml;nnen unterst&uuml;tzt werden, wenn die freie GDIPlus.dll von Microsoft in den Ordner der AutoHotkey.exe kopiert wird (im Falle eines <a href="../Scripts.htm#ahk2exe">kompilierten Scripts</a> muss die DLL-Datei in den Ordner des Scripts). Um die DLL herunterzuladen, sucht in <a href="http://www.microsoft.com">www.microsoft.com</a> mit folgenden Begriffen: gdi redistributable</p>
-    <p id="IL_Destroy"><strong>IL_Destroy(BildlisteID):</strong> L&ouml;scht die angegebene Bildliste und gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zur&uuml;ck. Dies ist normalerweise nicht notwendig, weil sie automatisch zerst&ouml;rt werden, wenn das dazugeh&ouml;rige ListView oder Fenster auch zerst&ouml;rt wird. Wenn sich ein ListView allerdings eine Bildliste mit anderen ListViews teilt (wenn 0x40 in den Optionen ist), dann sollte das Script die Bildliste direkt zerst&ouml;ren, nachdem alle ListViews zerst&ouml;rt wurden. Auch wenn das Script eine alte Bildliste mit einer Neuen ersetzt, sollte ausdr&uuml;cklich die alte Bildliste zerst&ouml;ren werden.</p>
-    <h2 id="Remarks">ListView-Bemerkungen</h2>
-    <p>Der Befehl <a href="Gui.htm#Submit">Gui Submit</a> hat keine Auswirkung auf ein ListView-Steuerelement. Daher kann das Script die <a href="Gui.htm#var">zugewiesene Variable</a> (falls vorhanden) verwenden, um andere Daten zu speichern, ohne Sorge, dass sie jemals &uuml;berschrieben wird.</p>
-    <p>Nachdem eine Spalte sortiert wurde (wenn der Benutzer entweder auf die Spalten&uuml;berschrift klickt oder das Script <a href="#LV_ModifyCol">LV_ModifyCol(1, "Sort")</a> aufruft), erscheinen alle danach hinzugef&uuml;gten Reihen am unteren Ende der Liste, anstatt der Sortierungsreihenfolge zu gehorchen. Die Ausnahme machen die Styles <a href="#Sort">Sort</a> und <a href="#SortDesc">SortDesc</a>, da sie neu hinzugef&uuml;gte Reihen an die korrekte Position verschieben.</p>
-    <p id="Enter">Um festzustellen, ob der Benutzer die Enter-Taste gedr&uuml;ckt hat, w&auml;hrend ein ListView den Fokus hat, verwendet eine <a href="GuiControls.htm#DefaultButton">Standard-Schaltfl&auml;che</a> (die je nach Bedarf versteckt werden kann). Zum Beispiel:</p>
-    <pre>Gui, Add, Button, Hidden Default, OK
+      <p id="IL_Create"><strong>IL_Create([Anfangsanzahl, Steigerungsanzahl, Gro&szlig;eIcons?]):</strong> Erstellt eine neue Bildliste, die zun&auml;chst leer ist und die eindeutige ID der Bildliste zur&uuml;ckgibt (oder bei Misserfolg eine 0). <em>Anfangsanzahl</em> ist die zu erwartende Anzahl der Icons, die sofort in die Liste eingef&uuml;gt werden (falls weggelassen, standardm&auml;&szlig;ig 2). <em>Steigerungsanzahl</em> ist die Anzahl der Icons, mit denen die Liste jedes Mal erweitert wird, sobald deren aktuelle Kapazit&auml;t &uuml;berschritten wird (falls weggelassen, standardm&auml;&szlig;ig 5). <em>Gro&szlig;eIcons</em> sollte ein numerischer Wert sein: Ist dieser ungleich 0, wird die Bildliste gro&szlig;e Icons enthalten. Falls dieser Wert eine 0 ist, wird die Bildliste kleine Icons enthalten (Standardeinstellung, falls weggelassen). Die zur Liste hinzugef&uuml;gten Icons werden automatisch auf die Standardgr&ouml;&szlig;en des Betriebssystems f&uuml;r kleine und gro&szlig;e Icons skaliert.</p>
+      <p id="LV_SetImageList"><strong>LV_SetImageList(BildlisteID [, 0|1|2]):</strong> Diese Funktion wird normalerweise aufgerufen, bevor Reihen in das ListView eingef&uuml;gt werden. Damit wird die <a href="#IL">Bildliste</a> bestimmt, deren Icons von den ListView-Reihen angezeigt werden (und optional dessen Spalten). BildlisteID ist die Nummer, die von <a href="#IL_Create">IL_Create()</a> zur&uuml;ckgegeben wurde. Falls der zweite Parameter nicht vorhanden ist, werden die Icon-Typen in der Bildliste automatisch als gro&szlig;e oder kleine Icons erkannt. Ansonsten kann eine 0 f&uuml;r gro&szlig;e Icons, eine 1 f&uuml;r kleine Icons und eine 2 f&uuml;r Status-Icons angegeben werden (obwohl Status-Icons nicht direkt unterst&uuml;tzt werden, k&ouml;nnen diese mittels <a href="PostMessage.htm">SendMessage</a> verwendet werden).</p>
+      <p>Ein ListView kann bis zu zwei Bildlisten haben: kleine Icons und/oder gro&szlig;e Icons. Das ist n&uuml;tzlich, wenn das Script dem Benutzer erm&ouml;glicht, zwischen den Icon-Ansichten zu wechseln. Um mehr als eine Bildliste zum ListView hinzuzuf&uuml;gen, muss LV_SetImageList() ein zweites Mal aufgerufen werden - mit der BildlisteID der zweiten Liste. Bei einem ListView mit Bildlisten f&uuml;r gro&szlig;e und kleine Icons sollte sichergestellt werden, dass beide Listen die Icons in der gleichen Reihenfolge enthalten. Das kommt daher, dass die gleiche ID-Nummer verwendet wird, die sowohl auf die gro&szlig;e als auch auf die kleine Version eines bestimmten Icons verweist.</p>
+      <p>Traditionell zeigen alle <a href="#View">Anzeigemethoden</a> (au&szlig;er Icon und Tile) kleine Icons an. Dieses Verhalten kann jedoch &uuml;berschrieben werden, wenn eine Liste f&uuml;r gro&szlig;e Icons an LV_SetImageList &uuml;bergeben und eine 1 (kleine Icons) im zweiten Parameter angegeben wird. Dadurch erh&ouml;ht sich auch die H&ouml;he jeder Reihe im ListView, damit die gro&szlig;en Icons passen.</p>
+      <p>Bei Erfolg gibt LV_SetImageList() die BildlisteID zur&uuml;ck, die zuvor dem ListView zugewiesen wurden ist (oder eine 0 bei Misserfolg). Jede einzelne Bildliste sollte mit <a href="#IL_Destroy">IL_Destroy(BildlisteID)</a> zerst&ouml;rt werden.</p>
+      <p id="IL_Add"><strong>IL_Add(BildlisteID, Dateiname [, Iconnummer, BildSkalieren?]):</strong> F&uuml;gt ein Icon oder Bild zur <em>BildlisteID</em> hinzu und gibt den neuen Index des Icons zur&uuml;ck (1 ist das erste Icon, 2 das zweite Icon und so weiter). <em>Dateiname</em> ist der Name einer Icon-Datei (.ICO), einer Cursor-Datei (.CUR) oder einer animierten Cursor-Datei (.ANI) (animierte Cursor werden zurzeit nicht im ListView animiert). Andere Quellen von Icons k&ouml;nnen sein: EXE, DLL, CPL, SCR und andere Typen, die Icon-Ressourcen enthalten. Um anstelle der ersten Icon-Gruppe eine andere zu verwenden, kann deren Nummer bei <em>Iconnummer</em> angegeben werden. Im folgenden Beispiel wird das Standard-Icon von der zweiten Icon-Gruppe verwendet: <code>IL_Add(BildlisteID, "C:\Eigene Anwendung.exe", 2)</code>.</p>
+      <p>Bilder wie BMP, GIF und JPG k&ouml;nnen ebenfalls geladen werden. Im diesem Fall sollten die letzten beiden Parameter mit angegeben werden, um das richtige Verhalten zu gew&auml;hrleisten: <em>Iconnummer</em> sollte die Nummer der Farbmaske/Transparenzfarbe sein (meistens 0xFFFFFF [die Farbe wei&szlig;]); und <em>BildSkalieren</em> sollte ungleich 0 sein, damit das Bild in ein einzelnes Icon verwandelt wird; oder 0, um das Bild in mehrere Icons aufzuteilen.</p>
+      <p>Alle Betriebssysteme unterst&uuml;tzen GIF, JPG, BMP, ICO, CUR und ANI-Bilder. In Windows XP oder h&ouml;her werden zus&auml;tzliche Bildformate wie PNG, TIF, Exif, WMF und EMF unterst&uuml;tzt. Betriebssysteme &auml;lter als XP k&ouml;nnen unterst&uuml;tzt werden, wenn die freie GDIPlus.dll von Microsoft in den Ordner der AutoHotkey.exe kopiert wird (bei einem <a href="../Scripts.htm#ahk2exe">kompilierten Script</a> muss die DLL-Datei in den Ordner des Scripts kopiert werden). Die DLL kann mit folgenden Suchbegriffen bei <a href="http://www.microsoft.com">www.microsoft.com</a> heruntergeladen werden: gdi redistributable</p>
+      <p id="IL_Destroy"><strong>IL_Destroy(BildlisteID):</strong> Entfernt die angegebene Bildliste und gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zur&uuml;ck. Normalerweise ist es nicht notwendig, Bildlisten zu zerst&ouml;ren - sind die Bildlisten bereits zugewiesen, werden diese automatisch zerst&ouml;rt, sobald das ListView oder &uuml;bergeordnete Fenster auch zerst&ouml;rt wird. Wenn das ListView sich allerdings eine Bildliste mit anderen ListViews teilt (wenn 0x40 in den Optionen ist), sollte das Script die Bildliste direkt zerst&ouml;ren, nachdem alle ListViews zerst&ouml;rt wurden. Falls das Script eine alte Bildliste mit einer neuen ersetzt, sollte ausdr&uuml;cklich die alte Bildliste zerst&ouml;rt werden.</p>
+      <h2 id="Remarks">ListView-Bemerkungen</h2>
+      <p>Der Befehl <a href="Gui.htm#Submit">Gui Submit</a> hat keine Auswirkung auf ein ListView-Steuerelement. Daher kann das Script dessen <a href="Gui.htm#var">zugewiesene Variable</a> verwenden (falls vorhanden), um andere Daten zu speichern, ohne Sorge, dass diese jemals &uuml;berschrieben wird.</p>
+      <p>Nach dem Sortieren einer Spalte (durch Anklicken der Spalten&uuml;berschrift oder Aufrufen von <a href="#LV_ModifyCol">LV_ModifyCol(1, "Sort")</a>) erscheinen alle danach hinzugef&uuml;gten Reihen am unteren Ende der Liste, anstatt die  aktuelle Sortierungsreihenfolge zu beachten. Die Ausnahme machen die Styles <a href="#Sort">Sort</a> und <a href="#SortDesc">SortDesc</a>, da sie neu hinzugef&uuml;gte Reihen an die korrekte Position verschieben.</p>
+      <p id="Enter">Um das Dr&uuml;cken von Enter festzustellen, w&auml;hrend ein ListView den Fokus hat, kann eine <a href="GuiControls.htm#DefaultButton">Standard-Schaltfl&auml;che</a> verwendet werden (die je nach Bedarf versteckt werden kann). Zum Beispiel:</p>
+      <pre>Gui, Add, Button, Hidden Default, OK
 ...
 ButtonOK:
 GuiControlGet, FokussiertesSteuerelement, FocusV
@@ -245,31 +245,32 @@ If FokussiertesSteuerelement &lt;&gt; EigenesListView
     Return
 MsgBox % "Enter wurde gedr&uuml;ckt. Die fokussierte Reihennummer ist " . LV_GetNext(0, "Focused")
 Return</pre>
-    <p>Um zus&auml;tzlich mit der Tastatur von Reihe zu Reihe zu navigieren, kann der Benutzer eine inkrementelle Suche durchf&uuml;hren, wenn er die ersten Zeichen der ersten Spalte eingibt. Dadurch springt die Auswahl auf die n&auml;chste passende Reihe.</p>
-    <p>Obwohl ein Text mit beliebiger L&auml;nge in jedem Feld eines ListView gespeichert werden kann, werden nur die ersten 260 Zeichen angezeigt.</p>
-    <p>Obwohl die maximale Anzahl der Reihen in einem ListView nur von dem verf&uuml;gbaren Systemspeicher begrenzt wird, kann die Performance beim Sortieren verbessert werden, wie es in der <a href="#Count">Count</a>-Option beschrieben wird.</p>
-    <p>Ein Bild kann als Hintergrund um ein ListView verwendet werden. Erstellt dazu ein <a href="GuiControls.htm#Picture">Bild-Steuerelement</a> nach dem ListView und f&uuml;gt 0x4000000 (WS_CLIPSIBLINGS) in den <em>Optionen</em> des Bild-Steuerelements ein.</p>
-    <p>Ein Script kann pro Fenster mehrere ListViews erstellen. Um mit einem ListView zu arbeiten, dass nicht das Standard-ListView ist, siehe <a href="#BuiltIn">interne Funktionen</a>.</p>
-    <p>Am besten sollten Spalten nicht direkt mit <a href="PostMessage.htm">SendMessage</a> eingef&uuml;gt oder gel&ouml;scht werden. Denn das Programm unterh&auml;lt eine Sammlung von <a href="#Integer">Sortier-Einstellungen</a> f&uuml;r jede Spalte, wodurch sie dann nicht mehr synchron sind. Verwendet stattdessen die <a href="#bifCol">internen Spalten-Funktionen</a>.</p>
-    <p>Um Aktionen wie Skalieren, Verstecken oder &Auml;ndern der Schrift im ListView durchzuf&uuml;hren, verwendet <a href="GuiControl.htm">GuiControl</a>.</p>
-    <p>Um Text aus externen ListViews zu extrahieren (die nicht dem Script geh&ouml;ren), verwendet "<a href="ControlGet.htm#List">ControlGet List</a>".</p>
-    <p>Windows 95 und NT4: Wenn dem System die Version 4.70 oder h&ouml;her von Comctl32.dll, Shell32.dll und Shlwapi.dll fehlt, die durch verschiedene Updates und Anwendungen (z. B. Internet Explorer 3.0 oder h&ouml;her) ver&ouml;ffentlicht wurden, dann sind die ListViews eingeschr&auml;nkt und einige Funktionen verhalten sich m&ouml;glicherweise nicht wie erwartet.</p>
-    <h2>Verwandte Befehle</h2>
-    <p><a href="TreeView.htm">TreeView</a>, <a href="GuiControls.htm">Andere Steuerelementarten</a>, <a href="Gui.htm">Gui</a>, <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a>, <a href="GuiControl.htm">GuiControl</a>, <a href="GuiControlGet.htm">GuiControlGet</a>, <a href="../misc/Styles.htm#ListView">Style-Tabelle des ListViews</a></p>
-    <h2 id="Examples">Beispiele</h2>
-    <pre class="NoIndent"><em>; Alle Reihen aus- oder abw&auml;hlen, wenn die 0 als Reihennummer verwendet wird:</em>
+      <p>Neben der Navigation mit der Tastatur von Reihe zu Reihe kann der Benutzer auch eine inkrementelle Suche durchf&uuml;hren, indem er die ersten Zeichen eines Feldes aus der ersten Spalte eingibt. Dadurch springt die Auswahl auf die n&auml;chste passende Reihe.</p>
+      <p>Obwohl Texte mit beliebiger L&auml;nge in den Feldern eines ListViews gespeichert werden k&ouml;nnen, werden nur die ersten 260 Zeichen angezeigt.</p>
+      <p>Obwohl die maximale Reihenanzahl nur vom verf&uuml;gbaren Systemspeicher begrenzt wird, kann die Performance beim Sortieren verbessert werden, wie es bei der <a href="#Count">Count</a>-Option geschrieben steht.</p>
+      <p>Ein Bild kann als Hintergrund um ein ListView verwendet werden (das hei&szlig;t, um das ListView damit einzurahmen). Erstellt dazu ein <a href="GuiControls.htm#Picture">Bild-Steuerelement</a> nach dem ListView und f&uuml;gt 0x4000000 (WS_CLIPSIBLINGS) in den <em>Optionen</em> des Bild-Steuerelements ein.</p>
+      <p>Ein Script kann pro Fenster mehrere ListViews erstellen. Um anstelle des Standard-ListViews ein anderes zu bearbeiten, siehe <a href="#BuiltIn">interne Funktionen</a>.</p>
+      <p>Am besten sollten Spalten nicht direkt mit <a href="PostMessage.htm">SendMessage</a> eingef&uuml;gt oder entfernt werden. Das liegt daran, dass das Programm mehrere <a href="#Integer">Sortier-Einstellungen</a> f&uuml;r jede Spalte verwaltet, wodurch dann die Synchronisation verloren gehen w&uuml;rde. Stattdessen k&ouml;nnen die <a href="#bifCol">internen Spalten-Funktionen</a> verwendet werden.</p>
+      <p>Mit <a href="GuiControl.htm">GuiControl</a> k&ouml;nnen beim ListView Aktionen wie Skalieren, Verstecken oder &Auml;ndern der Schriftart durchgef&uuml;hrt werden.</p>
+      <p>Mit "<a href="ControlGet.htm#List">ControlGet List</a>" k&ouml;nnen Texte aus externe ListViews extrahiert werden (die nicht zum Script geh&ouml;ren).</p>
+      <p>Windows 95 und NT4: Sollte im Betriebssystem die Version 4.70 oder h&ouml;her von Comctl32.dll, Shell32.dll und Shlwapi.dll fehlen (bereitgestellt von verschiedenen Updates und Anwendungen wie Internet Explorer 3.0 oder h&ouml;her), k&ouml;nnten einige Funktionen nicht wie erwartet funktionieren.</p>
+      <h2>Verwandte Befehle</h2>
+      <p><a href="TreeView.htm">TreeView</a>, <a href="GuiControls.htm">Andere Steuerelementarten</a>, <a href="Gui.htm">Gui</a>, <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a>, <a href="GuiControl.htm">GuiControl</a>, <a href="GuiControlGet.htm">GuiControlGet</a>, <a href="../misc/Styles.htm#ListView">Style-Tabelle von ListView</a></p>
+      <h2 id="Examples">Beispiele</h2>
+      <pre class="NoIndent"><em>; Alle Reihen aus- oder abw&auml;hlen durch Angabe von 0 als Reihennummer:</em>
 <a href="#LV_Modify">LV_Modify</a>(0, "Select")   <em>; Alle ausw&auml;hlen.</em>
 LV_Modify(0, "-Select")  <em>; Alle abw&auml;hlen.</em>
 LV_Modify(0, "-Check")  <em>; Alle <a href="#Checked">Kontrollk&auml;stchen</a> deaktivieren.</em>
 
-<em>; Gr&ouml;&szlig;e der Spalten anpassen, damit der Inhalt passt:</em>
+<em>; Breite der Spalten an den Inhalt der Reihen anpassen:</em>
 <a href="#LV_ModifyCol">LV_ModifyCol</a>()  <em>; In diesem Modus sind keine Parameter vorhanden.</em></pre>
-    <p>&nbsp;</p>
-    <pre class="NoIndent"><em>; HAUPTBEISPIEL
-; Das folgende funktionierende Script ist viel aufwendiger als das oben genannte Beispiel am Anfang der Seite.
-; Es zeigt Dateien eines Ordners, dass vom Benutzer ausgew&auml;hlt wurde, wobei jeder Datei ihr Icon zugewiesen wird. Der Benutzer kann auf eine Datei doppelt klicken oder beliebig viele Dateien mit der rechten Maustaste anklicken, um das Kontextmen&uuml; anzuzeigen.</em>
+      <p>&nbsp;</p>
+      <pre class="NoIndent"><em>; HAUPTBEISPIEL
+; Das folgende Script ist viel aufwendiger als das am Seitenanfang befindliche Beispiel.
+; Es zeigt Dateien eines ausgew&auml;hlten Ordners, dessen Dateien ihr Icon zugewiesen bekommen.
+; Der Benutzer kann eine Datei zweimal anklicken oder beliebig viele Dateien mit der rechten Maustaste anklicken, um das Kontextmen&uuml; anzuzeigen.</em>
 
-<em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder die Gr&ouml;&szlig;e beliebig anzupassen.</em>
+<em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder dessen Gr&ouml;&szlig;e beliebig anzupassen.</em>
 Gui +Resize
 
 <em>; Einige Schaltfl&auml;chen erstellen:</em>
@@ -285,7 +286,7 @@ Gui, Add, Button, x+20, Ansicht wechseln
 BildlisteID1 := <a href="#IL_Create">IL_Create</a>(10)
 BildlisteID2 := IL_Create(10, 10, true)  <em>; Eine Liste mit gro&szlig;en Icons, verbunden mit den kleinen Icons.</em>
 
-<em>; Verbindet die Bildlisten mit dem ListView, damit sp&auml;ter einige Icons angezeigt werden k&ouml;nnen:</em>
+<em>; Verbindet die Bildlisten mit dem ListView, damit sp&auml;ter die Icons angezeigt werden k&ouml;nnen:</em>
 <a href="#LV_SetImageList">LV_SetImageList</a>(BildlisteID1)
 LV_SetImageList(BildlisteID2)
 
@@ -295,20 +296,20 @@ Menu, Kontextmen&uuml;, Add, Eigenschaften, KontextEigenschaften
 Menu, Kontextmen&uuml;, Add, Von ListView entfernen, KontextReihenLeeren
 Menu, Kontextmen&uuml;, Default, &Ouml;ffnen  <em>; "&Ouml;ffnen" ist fett geschrieben, das hei&szlig;t, dass ein Doppelklick dasselbe bewirkt.</em>
 
-<em>; Zeigt das Fenster und zur&uuml;ck. Das Betriebssystem benachrichtigt das Script, sobald der Benutzer
-; eine berechtigte Aktion ausf&uuml;hrt:</em>
+<em>; Fenster anzeigen und in den Leerlauf gehen. Das Script wird benachrichtigt, wenn der Benutzer
+; eine g&uuml;ltige Aktion ausf&uuml;hrt:</em>
 Gui, Show
 Return
 
 
 Schaltfl&auml;cheOrdnerLaden:
-Gui +OwnDialogs  <em>; Zwingt den Benutzer, das folgende Dialogfenster zu schlie&szlig;en, bevor er zum Hauptfenster zur&uuml;ckkehren kann.</em>
+Gui +OwnDialogs  <em>; Zwingt den Benutzer, das folgende Dialogfenster zu schlie&szlig;en, bevor das Hauptfenster verwendet werden kann.</em>
 FileSelectFolder, Ordner,, 3, Ordner ausw&auml;hlen, um einzulesen:
 If not Ordner  <em>; Der Benutzer hat das Dialogfenster abgebrochen.</em>
     Return
 
-<em>; &Uuml;berpr&uuml;ft, ob das letzte Zeichen im Ordnernamen ein Backslash ist, der h&auml;ufig in
-; Wurzelverzeichnissen wie C:\ vorkommt. In diesem Fall wird das Zeichen entfernt, um doppelte Backslashs sp&auml;ter zu vermeiden.</em>
+<em>; &Uuml;berpr&uuml;ft, ob das letzte Zeichen im Ordnernamen ein Backslash ist, dass bei Wurzelverzeichnissen
+; wie C:\ vorkommt. In diesem Fall wird das Zeichen entfernt, um doppelte Backslashs sp&auml;ter zu vermeiden.</em>
 StringRight, LetztesZeichen, Ordner, 1
 If LetztesZeichen = \
     StringTrimRight, Ordner, Ordner, 1  <em>; Nachfolgenden Backslash entfernen.</em>
@@ -318,13 +319,13 @@ sfi_size := A_PtrSize + 8 + (A_IsUnicode ? 680 : 340)
 VarSetCapacity(sfi, sfi_size)
 
 <em>; Sammelt eine Liste mit Dateinamen vom ausgew&auml;hlten Ordner und f&uuml;gt sie an der ListView an:</em>
-GuiControl, -Redraw, EigenesListView  <em>; Verbessert die Performance, wenn das Neuzeichnen deaktiviert wird, w&auml;hrend es l&auml;dt.</em>
+GuiControl, -Redraw, EigenesListView  <em>; Verbessert die Performance, indem das Neuzeichnen beim Laden deaktiviert wird.</em>
 Loop %Ordner%\*.*
 {
     Dateiname := A_LoopFileFullPath  <em>; Muss in eine schreibbare Variable gespeichert werden, damit sie unten verwendet werden kann.</em>
 
     <em>; Erstellt eine eindeutige Erweiterungs-ID, um Zeichen zu vermeiden, die in einem Variablennamen illegal sind,</em>
-    <em>; wie z. B. Bindestriche.  Diese Methode mit der eindeutigen ID wird auch besser ausgef&uuml;hrt, weil das Suchen eines Elements</em>
+    <em>; wie z. B. Bindestriche. Zudem wird diese Methode besser durchgef&uuml;hrt, weil das Suchen eines Elements</em>
     <em>; in einem Array keine Such-Schleife erfordert.</em>
     SplitPath, Dateiname,,, Erweiterung  <em>; Ermittelt die Dateierweiterung.</em>
     If Erweiterung in EXE,ICO,ANI,CUR
@@ -332,10 +333,10 @@ Loop %Ordner%\*.*
         ErweiterungID := Erweiterung  <em>; Spezial-ID als Platzhalter.</em>
         Iconnummer = 0  <em>; Als "nicht gefunden" markieren, damit jeder Typ ein einzigartiges Icon erh&auml;lt.</em>
     }
-    Else  <em>; Andere Erweiterung/Dateityp, um deren eindeutige ID zu berechnen.</em>
+    Else  <em>; Andere Erweiterung/Dateityp, daher dessen eindeutige ID berechnen.</em>
     {
-        ErweiterungID = 0  <em>; Initialisieren, um mit Erweiterungen zu hantieren, die k&uuml;rzer als andere sind.</em>
-        Loop 7     <em>; Die Erweiterung auf 7 Zeichen beschr&auml;nken, damit es in einem 64-Bit-Wert passt.</em>
+        ErweiterungID = 0  <em>; Initialisieren, um Erweiterungen zu behandeln, die k&uuml;rzer als andere sind.</em>
+        Loop 7     <em>; Die Erweiterung auf 7 Zeichen beschr&auml;nken, damit diese in einem 64-Bit-Wert passt.</em>
         {
             StringMid, Erweiterungszeichen, Erweiterung, A_Index, 1
             If not Erweiterungszeichen  <em>; Keine weiteren Zeichen.</em>
@@ -344,49 +345,49 @@ Loop %Ordner%\*.*
             ErweiterungID := ErweiterungID | (Asc(Erweiterungszeichen) &lt;&lt; (8 * (A_Index - 1)))
         }
         <em>; &Uuml;berpr&uuml;fen, ob die Dateierweiterung bereits ein Icon in den Bildlisten hat. Wenn ja,</em>
-        <em>; dann k&ouml;nnen mehrere Aufrufe vermieden und die Lade-Performance stark verbessert werden,</em>
+        <em>; k&ouml;nnen mehrere Aufrufe vermieden und die Lade-Performance stark verbessert werden,</em>
         <em>; besonders bei einem Ordner mit mehreren hundert Dateien:</em>
         Iconnummer := IconArray%ErweiterungID%
     }
-    If not Iconnummer  <em>; Es existiert noch keine beliebige Erweiterung, also laden.</em>
+    If not Iconnummer  <em>; Diese Erweiterung hat noch kein Icon, daher kann es geladen werden.</em>
     {
-        <em>; Ermittelt die qualitativ hochwertigen kleinen Icons, die mit dieser Dateierweiterung verbunden sind:</em>
+        <em>; Ermittelt die qualitativ hochwertigen kleinen Icons, die zu dieser Dateierweiterung geh&ouml;ren:</em>
         If not DllCall("Shell32\SHGetFileInfo" . (A_IsUnicode ? "W":"A"), "str", Dateiname
             , "uint", 0, "str", sfi, "uint", sfi_size, "uint", 0x101)  <em>; 0x101 ist SHGFI_ICON+SHGFI_SMALLICON</em>
-            Iconnummer = 9999999  <em>; Auf hohen Wert setzen, um ein leeres Icon anzuzeigen.</em>
+            Iconnummer = 9999999  <em>; Auf einen Wert au&szlig;erhalb des Bereichs setzen, um ein leeres Icon anzuzeigen.</em>
         Else <em>; Icon erfolgreich geladen.</em>
         {
             <em>; hIcon-Element aus der Struktur extrahieren:</em>
             hIcon := NumGet(sfi, 0)
             <em>; F&uuml;gt das HICON direkt in die Listen f&uuml;r kleine und gro&szlig;e Icons.</em>
-            <em>; Unten wird +1 verwendet, um den zur&uuml;ckgegebenen Index von 0-basiert auf 1-basiert zu konvertieren:</em>
+            <em>; In der n&auml;chsten Zeile wird +1 verwendet, um den 0-basierten Index in einen 1-basierten umzuwandeln:</em>
             Iconnummer := DllCall("ImageList_ReplaceIcon", "ptr", BildlisteID1, "int", -1, "ptr", hIcon) + 1
             DllCall("ImageList_ReplaceIcon", "ptr", BildlisteID2, "int", -1, "ptr", hIcon)
-            <em>; Nachdem das in die Bildlisten kopiert wurde, kann das Original zerst&ouml;rt werden:</em>
+            <em>; Da das nun in die Bildlisten kopiert wurde, sollte das Original zerst&ouml;rt werden:</em>
             DllCall("DestroyIcon", "ptr", hIcon)
-            <em>; Icon zwischenspeichern, um Speicher und Lade-Performance zu sparen.</em>
+            <em>; Icon zwischenspeichern, um Speicher zu sparen und Lade-Performance zu erh&ouml;hen.</em>
             IconArray%ErweiterungID% := Iconnummer
         }
     }
 
-    <em>; Erstellt eine neue Reihe in dem ListView, der die oben bestimmte Icon-Nummer zugewiesen wird:</em>
+    <em>; Erstellt eine neue Reihe im ListView, die die oben festgestellte Icon-Nummer zugewiesen bekommt:</em>
     <a href="#LV_Add">LV_Add</a>("Icon" . Iconnummer, A_LoopFileName, A_LoopFileDir, A_LoopFileSizeKB, Erweiterung)
 }
-GuiControl, +Redraw, EigenesListView  <em>; Neuzeichnen wieder aktivieren (das vorher deaktiviert war).</em>
-LV_ModifyCol()  <em>; Die Gr&ouml;&szlig;e jeder Spalte automatisch anpassen, damit der Inhalt passt.</em>
-LV_ModifyCol(3, 60) <em>; Macht die Spalte "Gr&ouml;&szlig;e" etwas breiter, um die Spalten&uuml;berschrift aufzudecken.</em>
+GuiControl, +Redraw, EigenesListView  <em>; Neuzeichnen wieder aktivieren (das weiter oben deaktiviert wurde).</em>
+LV_ModifyCol()  <em>; Breite der Spalten an den Inhalt der Reihen anpassen.</em>
+LV_ModifyCol(3, 60) <em>; Macht die Spalte "Gr&ouml;&szlig;e" etwas breiter, damit die Spalten&uuml;berschrift vollst&auml;ndig sichtbar ist.</em>
 Return
 
 
 Schaltfl&auml;cheLeeren:
-<a href="#LV_Delete">LV_Delete</a>()  <em>; ListView leeren, aber den Icon-Cache erhalten.</em>
+<a href="#LV_Delete">LV_Delete</a>()  <em>; ListView leeren, aber Icon-Cache beibehalten.</em>
 Return
 
 Schaltfl&auml;cheAnsichtWechseln:
 If not IconView
     GuiControl, +Icon, EigenesListView    <em>; Zur Icon-Ansicht wechseln.</em>
 Else
-    GuiControl, +Report, EigenesListView  <em>; Zur Detail-Ansicht wechseln.</em>
+    GuiControl, +Report, EigenesListView  <em>; Wieder zur Detail-Ansicht wechseln.</em>
 Iconansicht:= not Iconansicht            <em>; Umkehren, in Vorbereitung auf das n&auml;chste Mal.</em>
 Return
 
@@ -401,10 +402,10 @@ If A_GuiEvent = DoubleClick  <em>; Es gibt noch viele andere Werte, die das Scri
 }
 Return
 
-<a href="Gui.htm#GuiContextMenu">GuiContextMenu</a>:  <em>; Wird als Reaktion auf einen Rechtsklick oder das Dr&uuml;cken der Men&uuml;-Taste ausgef&uuml;hrt.</em>
-If A_GuiControl &lt;&gt; EigenesListView  <em>; Das Men&uuml; wird nur angezeigt, wenn in das ListView geklickt wird.</em>
+<a href="Gui.htm#GuiContextMenu">GuiContextMenu</a>:  <em>; Wird durch Rechtsklick oder Dr&uuml;cken der Men&uuml;-Taste ausgef&uuml;hrt.</em>
+If A_GuiControl &lt;&gt; EigenesListView  <em>; Das Men&uuml; wird nur bei Klicks innerhalb des ListViews angezeigt.</em>
     Return
-<em>; Zeigt das Men&uuml; auf den angegebenen Koordinaten A_GuiX und A_GuiY.  Diese sollten verwendet werden,
+<em>; Zeigt das Men&uuml; auf den angegebenen Koordinaten A_GuiX und A_GuiY. Diese sollten verwendet werden,
 ; weil sie die richtigen Koordinaten bereitstellen, selbst wenn der Benutzer die Men&uuml;-Taste dr&uuml;ckt:</em>
 Menu, Kontextmen&uuml;, Show, %A_GuiX%, %A_GuiY%
 Return
@@ -413,10 +414,10 @@ KontextDatei&Ouml;ffnen:  <em>; Der Benutzer hat "&Ouml;ffnen" im Kontextmen&uum
 KontextEigenschaften:  <em>; Der Benutzer hat "Eigenschaften" im Kontextmen&uuml; ausgew&auml;hlt.
 ; Der Einfachheit halber nur die fokussierte Reihe bearbeiten, anstatt alle ausgew&auml;hlte Reihen:</em>
 FokussierteReihennummer := <a href="#LV_GetNext">LV_GetNext</a>(0, "F")  <em>; Die fokussierte Reihe finden.</em>
-If not FokussierteReihennummer  <em>; Keine Reihe ist fokussiert.</em>
+If not FokussierteReihennummer  <em>; Keine Reihe fokussiert.</em>
     Return
-LV_GetText(Dateiname, FokussierteReihennummer, 1) <em>; Den Text des ersten Felds ermitteln.</em>
-LV_GetText(Dateiverzeichnis, FokussierteReihennummer, 2)  <em>; Den Text des zweiten Felds ermitteln.</em>
+LV_GetText(Dateiname, FokussierteReihennummer, 1) <em>; Den Text des ersten Feldes ermitteln.</em>
+LV_GetText(Dateiverzeichnis, FokussierteReihennummer, 2)  <em>; Den Text des zweiten Feldes ermitteln.</em>
 IfInString A_ThisMenuItem, &Ouml;ffnen <em>; Der Benutzer hat "&Ouml;ffnen" im Kontextmen&uuml; ausgew&auml;hlt.</em>
     Run %Dateiverzeichnis%\%Dateiname%,, UseErrorLevel
 Else  <em>; Der Benutzer hat "Eigenschaften" im Kontextmen&uuml; ausgew&auml;hlt.</em>
@@ -426,29 +427,29 @@ If ErrorLevel
 Return
 
 KontextReihenLeeren:  <em>; Der Benutzer hat "Leeren" im Kontextmen&uuml; ausgew&auml;hlt.</em>
-Reihennummer = 0  <em>; Damit beginnt die Suche am Anfang der Liste in der ersten Schleifeniteration.</em>
+Reihennummer = 0  <em>; Bewirkt beim ersten Durchlauf, dass die Suche oben beginnt.</em>
 Loop
 {
     <em>; Da das L&ouml;schen einer Reihe die Reihennummer aller anderen Reihen dar&uuml;ber reduziert,</em>
-    <em>; subtrahiert mit 1, damit die Suche die gleiche Reihe mit einbezieht,</em>
-    <em>; die vorher gefunden wurde (falls die benachbarten Reihen ausgew&auml;hlt sind):</em>
+    <em>; sollte diese um 1 subtrahiert werden, damit die Suche die gleiche Reihennummer mit einbezieht,</em>
+    <em>; die zuvor gefunden wurde (falls die benachbarten Reihen ausgew&auml;hlt sind):</em>
     Reihennummer := LV_GetNext(Reihennummer - 1)
-    If not Reihennummer  <em>; Die obige Funktion gibt 0 zur&uuml;ck, d. h. keine weitere ausgew&auml;hlten Reihen.</em>
+    If not Reihennummer  <em>; Wenn die obige Funktion eine 0 zur&uuml;ckgibt, sind keine weiteren Reihen ausgew&auml;hlt.</em>
         break
     LV_Delete(Reihennummer)  <em>; Die Reihe des ListViews leeren.</em>
 }
 Return
 
-GuiSize:  <em>; Dehnt oder schrumpft das ListView , wenn der Benutzer die Gr&ouml;&szlig;e des Fensters anpasst.</em>
-If A_EventInfo = 1  <em>; Das Fenster wurde minimiert.  Keine Aktion notwendig.</em>
+GuiSize:  <em>; Vergr&ouml;&szlig;ert oder verkleinert das ListView, w&auml;hrend der Benutzer die Fenstergr&ouml;&szlig;e &auml;ndert.</em>
+If A_EventInfo = 1  <em>; Das Fenster wurde minimiert. Keine Aktion notwendig.</em>
     Return
-<em>; Ansonsten wurde die Gr&ouml;&szlig;e des Fensters ge&auml;ndert oder maximiert. Die Gr&ouml;&szlig;e des ListViews anpassen.</em>
+<em>; Ansonsten wurde die Fenstergr&ouml;&szlig;e ge&auml;ndert oder maximiert. Die Gr&ouml;&szlig;e des ListViews anpassen.</em>
 GuiControl, Move, EigenesListView, % "W" . (A_GuiWidth - 20) . " H" . (A_GuiHeight - 40)
 Return
 
-GuiClose:  <em>; Wenn das Fenster geschlossen wird, dann wird das Script automatisch beendet:</em>
+GuiClose:  <em>; Beim Schlie&szlig;en des Fensters das Script automatisch beenden:</em>
 ExitApp</pre>
-  </article>
+    </article>
   </section>
 </div>
 <script type="text/javascript">WriteFooter(1);</script>
