@@ -25,93 +25,93 @@
 <div id="content">
   <section>
     <article>
-    <h1>Run / RunWait</h1>
-    <p>F&uuml;hrt ein externes Programm aus. Im Gegensatz zu Run wird RunWait warten, bis das Programm beendet wird.</p>
-    <pre class="Syntax">Run, Ziel [, Arbeitsverzeichnis, Max|Min|Hide|UseErrorLevel, AusgabevariablePID]</pre>
-    <h3>Parameter</h3>
-    <table class="info">
-      <tr>
-        <td style="width: 15%;">Ziel</td>
-        <td style="width: 85%;"><p>Ein Dokument, eine URL, eine ausf&uuml;hrbare Datei (.exe, .com, .bat und so weiter), eine Verkn&uuml;pfung (.lnk) oder ein <a href="#verbs">Systemverb</a> (siehe Bemerkungen). Wenn das <em>Ziel</em> eine lokale Datei ist und kein Pfad angegeben wurde, dann wird <a href="../Variables.htm#WorkingDir">A_WorkingDir</a> zuerst durchsucht. Wenn keine passende Datei gefunden wird, dann sucht das System nach ihr und f&uuml;hrt die Datei aus, wenn sie integriert ("bekannt") ist, z. B. befindet sie sich in einem der Ordner aus der PATH-Umgebungsvariable.</p>
-          <p>Um Parameter zu &uuml;bergeben, f&uuml;gt sie unmittelbar nach dem Programm- oder Dokumentnamen an. Wenn ein Parameter Leerzeichen enth&auml;lt, dann umschlie&szlig;t ihn zur Sicherheit mit Anf&uuml;hrungszeichen (selbst wenn es in einigen F&auml;llen ohne sie funktioniert).</p></td>
-      </tr>
-      <tr>
-        <td>Arbeitsverzeichnis</td>
-        <td>Das Arbeitsverzeichnis, wo das Ziel ausgef&uuml;hrt wird. Umschlie&szlig;t den Namen nicht in Anf&uuml;hrungszeichen, selbst wenn Leerzeichen enthalten sind. Wenn weggelassen, dann wird das Arbeitsverzeichnis vom Script selbst (<a href="../Variables.htm#WorkingDir">A_WorkingDir</a>) verwendet. </td>
-      </tr>
-      <tr>
-        <td>Max|Min|Hide<br>
-          UseErrorLevel</td>
-        <td><p>Wenn weggelassen, dann wird das <em>Ziel</em> normal ausgef&uuml;hrt. Alternativ k&ouml;nnen beliebig viele der folgenden W&ouml;rter enthalten sein:</p>
-          <p><strong>Max</strong>: maximiert ausf&uuml;hren</p>
-          <p><strong>Min</strong>: minimiert ausf&uuml;hren</p>
-          <p><strong>Hide</strong>: versteckt ausf&uuml;hren (kann nicht in Kombination mit den oben genannten W&ouml;rtern verwenden werden)</p>
-          <p>Hinweis: Einige Anwendungen (z. B. Calc.exe) ber&uuml;cksichtigen nicht den angeforderten Status und ignorieren somit Max/Min/Hide.</p>
-          <p id="UseErrorLevel"><strong>UseErrorLevel</strong>: UseErrorLevel kann einzeln oder in Kombination mit einem oben genannten Wort verwendet werden (jeweils durch Leerzeichen getrennt). Wenn der Start fehlschl&auml;gt, dann &uuml;berspringt diese Option die Warnmeldung, setzt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort ERROR und f&uuml;hrt den <a href="../misc/Threads.htm">aktuellen Thread</a> weiter aus. Wenn der Start gelingt, dann enth&auml;lt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> bei RunWait den Exitcode des Programms und bei Run eine 0.</p>
-          <p id="LastError">Wenn UseErrorLevel angegeben ist, dann enth&auml;lt die interne Variable <strong>A_LastError</strong> den R&uuml;ckgabewert der Systemfunktion GetLastError(). A_LastError enth&auml;lt eine Nummer zwischen 0 und 4294967295 (immer als Dezimalzahl). Null (0) bedeutet Erfolg, eine andere Zahl jedoch, dass der Start fehlgeschlagen ist. Jede Nummer entspricht einer bestimmten Fehlerbedingung (sucht auf <a href="http://www.microsoft.com">www.microsoft.com</a> nach "system error codes", um eine Liste zu erhalten). Wie bei <a href="../misc/ErrorLevel.htm">ErrorLevel</a> gilt A_LastError jeweils nur f&uuml;r einen Thread, das hei&szlig;t, dass Unterbrechungen durch andere <a href="../misc/Threads.htm">Threads</a> den Wert nicht &auml;ndern k&ouml;nnen. Allerdings wird A_LastError auch von <a href="DllCall.htm#LastError">DllCall</a> ge&auml;ndert.</p></td>
-      </tr>
-      <tr>
-        <td>AusgabevariablePID</td>
-        <td><p>Der Name der Variable, in der die eindeutige <a href="Process.htm">Process ID (PID)</a> eines neu gestarteten Programms gespeichert wird. Die Variable wird leer gemacht, wenn die PID nicht ermittelt werden kann, dass f&uuml;r gew&ouml;hnlich nur passiert, wenn ein Systemverb, ein Dokument oder eine Verkn&uuml;pfung, aber keine ausf&uuml;hrbare Datei, gestartet wird. RunWait unterst&uuml;tzt auch diesen Parameter, obwohl <em>AusgabevariablePID</em> in einem <a href="../misc/Threads.htm">anderen Thread</a> &uuml;berpr&uuml;ft werden muss (sonst wird die PID ung&uuml;ltig, weil der Prozess beendet wird, bis die Zeile nach RunWait ausgef&uuml;hrt wird).</p>
-          <p>Nachdem der Run-Befehl eine PID ermittelt hat, existiert m&ouml;glicherweise noch kein Fenster, dass von einem Prozess erstellt wurde. Um darauf zuwarten, bis zumindestens ein Fenster erstellt wird, verwendet <em><a href="WinWait.htm">WinWait</a> ahk_pid %AusgabevariablePID%</em>.</p></td>
-      </tr>
-    </table>
-    <h3>ErrorLevel</h3>
-    <p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszul&ouml;sen. F&uuml;r mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
-    <p>Run: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird nur festgelegt, wenn UseErrorLevel (oben) aktiv ist, in diesem Fall wird ErrorLevel bei Misserfolg auf das Wort ERROR und bei Erfolg auf 0 gesetzt.</p>
-    <p>RunWait: ErrorLevel enth&auml;lt den Exitcode eines Programms (eine signed 32-Bit-Integer). Wenn UseErrorLevel aktiv und der Start fehlgeschlagen ist, dann wird das Wort ERROR gespeichert.</p>
-    <h3>Bemerkungen</h3>
-    <p>Im Gegensatz zu Run wartet RunWait, bis das <em>Ziel</em> geschlossen oder beendet wird, damit <a href="../misc/ErrorLevel.htm">ErrorLevel</a> danach den Exitcode des Programms enth&auml;lt (eine signed 32-Bit-Integer). Einige Programme geben scheinbar sofort einen Exitcode zur&uuml;ck, selbst wenn sie noch laufen. Diese Programme erzeugen einen anderen Prozess.</p>
-    <p>Wenn das <em>Ziel</em> Kommas enth&auml;lt, dann m&uuml;ssen sie <a href="_EscapeChar.htm">gesch&uuml;tzt</a> werden, wie dreimal im folgenden Beispiel angezeigt:</p>
-    <pre>Run rundll32.exe shell32.dll<span class="style3">`,</span>Control_RunDLL desk.cpl<span class="style3">`,`,</span> 3  <em>; &Ouml;ffnet "Eigenschaften von Anzeige - Einstellungen" bzw. ab Windows Vista "Fensterfarbe und -darstellung"</em></pre>
-    <p>Wenn ein Programm mit <a href="../Variables.htm#ComSpec">Comspec</a> (cmd.exe) ausgef&uuml;hrt wird, um z. B. die Ein- oder Ausgabe des Programms umzuleiten, dann sollte der ganze String mit &auml;u&szlig;eren Anf&uuml;hrungszeichen umschlossen werden, wenn der Pfad oder Name der ausf&uuml;hrbaren Datei Leerzeichen enth&auml;lt. Im folgenden Beispiel werden die &auml;u&szlig;eren Anf&uuml;hrungszeichen in Rot und alle inneren Anf&uuml;hrungszeichen in Schwarz dargestellt:</p>
-    <pre>Run %comspec% /c <span class="style3">"</span>"C:\Eigenes Tool.exe" "param 1" "second param" >"C:\Eigene Datei.txt"<span class="style3">"</span></pre>
-    <p>Falls das <em>Ziel</em> nicht gestartet werden kann, wird ein Fenster mit einer Fehlermeldung angezeigt, wonach sich das Script verh&auml;lt, als ob der <a href="Exit.htm">Exit</a>-Befehl ausgef&uuml;hrt wurde. Um das zu verhindern, f&uuml;gt den String <strong>UseErrorLevel</strong> im dritten Parameter ein.</p>
-    <p>Die Performance kann ein wenig verbessert werden, wenn das <em>Ziel</em> einen genauen Pfad enth&auml;lt, z. B. <code>Run, C:\Windows\Notepad.exe "C:\Eigene Dokumente\Test.txt"</code> anstelle von <code>Run, C:\Eigene Dokumente\Test.txt</code>.</p>
-    <p>Es k&ouml;nnen auch besondere <a href="../misc/CLSID-List.htm">CLSID-Ordner</a> mit Run ge&ouml;ffnet werden. Zum Beispiel:</p>
-    <pre>Run ::{20d04fe0-3aea-1069-a2d8-08002b30309d}  <em>; &Ouml;ffnet den Arbeitsplatz/Computer.</em>
+      <h1>Run / RunWait</h1>
+      <p>F&uuml;hrt ein externes Programm aus. Im Gegensatz zu Run wird RunWait warten, bis das Programm beendet wird.</p>
+      <pre class="Syntax">Run, Ziel [, Arbeitsverzeichnis, Max|Min|Hide|UseErrorLevel, AusgabevariablePID]</pre>
+      <h3>Parameter</h3>
+      <table class="info">
+        <tr>
+          <td style="width: 15%;">Ziel</td>
+          <td style="width: 85%;"><p>Ein Dokument, eine URL, eine ausf&uuml;hrbare Datei (.exe, .com, .bat und so weiter), eine Verkn&uuml;pfung (.lnk) oder ein <a href="#verbs">Systemverb</a> (siehe Bemerkungen). Wenn das <em>Ziel</em> eine lokale Datei ohne Pfad ist, wird <a href="../Variables.htm#WorkingDir">A_WorkingDir</a> zuerst durchsucht. Ist sie dort nicht auffindbar, wird die Datei im System gesucht und gegebenenfalls ausgef&uuml;hrt, wenn sie integriert ("bekannt") ist. Zum Beispiel k&ouml;nnte sich die Datei in einem der Ordner von der PATH-Umgebungsvariable befinden.</p>
+            <p>Parameter, die &uuml;bergeben werden sollen, m&uuml;ssen unmittelbar nach dem Programm- oder Dokumentnamen erfolgen. Falls ein Parameter Leerzeichen enth&auml;lt, ist es am sichersten, diesen in Anf&uuml;hrungszeichen zu setzen (selbst wenn es in einigen F&auml;llen auch ohne geht).</p></td>
+        </tr>
+        <tr>
+          <td>Arbeitsverzeichnis</td>
+          <td>Das Arbeitsverzeichnis, in dem <em>Ziel</em> ausgef&uuml;hrt wird. Auch wenn der Name Leerzeichen enth&auml;lt, sollte dieser nicht in Anf&uuml;hrungszeichen gesetzt werden. Ist dieser Parameter nicht vorhanden, wird das Arbeitsverzeichnis vom Script selbst verwendet (<a href="../Variables.htm#WorkingDir">A_WorkingDir</a>). </td>
+        </tr>
+        <tr>
+          <td>Max|Min|Hide<br>
+            UseErrorLevel</td>
+          <td><p>Ist dieser Parameter nicht vorhanden, wird <em>Ziel</em> normal ausgef&uuml;hrt. Ansonsten k&ouml;nnen ein oder mehr der folgenden W&ouml;rter angegeben werden:</p>
+            <p><strong>Max</strong>: maximiert ausf&uuml;hren</p>
+            <p><strong>Min</strong>: minimiert ausf&uuml;hren</p>
+            <p><strong>Hide</strong>: versteckt ausf&uuml;hren (kann nicht in Kombination mit den oben genannten W&ouml;rtern verwenden werden)</p>
+            <p>Hinweis: Einige Anwendungen (z. B. Calc.exe) ignorieren den angeforderten Anfangsstatus.</p>
+            <p id="UseErrorLevel"><strong>UseErrorLevel</strong>: UseErrorLevel kann einzeln oder in Kombination mit einem oben genannten Wort verwendet werden (jeweils durch Leerzeichen getrennt). Falls der Start fehlschl&auml;gt, wird die Warnmeldung &uuml;bersprungen, <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf ERROR gesetzt und der <a href="../misc/Threads.htm">aktuelle Thread</a> fortgesetzt. War der Start erfolgreich, wird RunWait den <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf den Exitcode des Programms setzen und Run den ErrorLevel auf 0 setzen.</p>
+            <p id="LastError">Wenn UseErrorLevel angegeben ist, enth&auml;lt <strong>A_LastError</strong> den R&uuml;ckgabewert der Systemfunktion GetLastError() - eine Zahl zwischen 0 und 4294967295 (immer im Dezimalformat). Eine 0 signalisiert Erfolg, jede andere Zahl Misserfolg. Jede Zahl entspricht dabei einen bestimmten Fehlerzustand (eine ensprechende Liste dazu befindet sich auf <a href="http://www.google.de/search?q=site%3Amsdn.microsoft.com+%22System+Error+Codes%22">msdn.microsoft.com</a>). Wie <a href="../misc/ErrorLevel.htm">ErrorLevel</a> gilt A_LastError jeweils nur f&uuml;r einen Thread. Das hei&szlig;t, dass Unterbrechungen durch andere <a href="../misc/Threads.htm">Threads</a> den Wert nicht &auml;ndern k&ouml;nnen. Allerdings wird A_LastError auch von <a href="DllCall.htm#LastError">DllCall</a> gesetzt.</p></td>
+        </tr>
+        <tr>
+          <td>AusgabevariablePID</td>
+          <td><p>Der Name der Variable, in der die eindeutige <a href="Process.htm">Prozess-ID (PID)</a> des neu gestarteten Programms gespeichert wird. Die Variable wird leer gemacht, wenn die PID nicht ermittelt werden kann, dass normalerweise nur passiert, wenn ein Systemverb, ein Dokument oder eine Verkn&uuml;pfung gestartet wird, anstatt eine ausf&uuml;hrbare Datei. RunWait unterst&uuml;tzt auch diesen Parameter, obwohl dessen <em>AusgabevariablePID</em> in einem <a href="../misc/Threads.htm">anderen Thread</a> &uuml;berpr&uuml;ft werden muss (ansonsten wird die PID ung&uuml;ltig sein, weil der Prozess beendet ist, sobald die Ausf&uuml;hrung auf die nachfolgende Zeile springt).</p>
+            <p>Nachdem der Run-Befehl eine PID ermittelt hat, kann es sein, dass das vom Prozess zu erstellende Fenster noch nicht vorhanden ist. Daher ist es sinnvoll, mit <code><a href="WinWait.htm">WinWait</a> ahk_pid %AusgabevariablePID%</code> zuerst auf die Erstellung eines Fensters zu warten, bevor weiter gemacht wird.</p></td>
+        </tr>
+      </table>
+      <h3>ErrorLevel</h3>
+      <p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszul&ouml;sen. F&uuml;r mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
+      <p>Run: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird nicht gesetzt. Wenn UseErrorLevel (oben) aktiv ist, wird ErrorLevel bei Misserfolg auf ERROR und bei Erfolg auf 0 gesetzt.</p>
+      <p>RunWait: ErrorLevel wird auf den Exitcode des Programms gesetzt (ein vorzeichenbehafteter 32-Bit-Integer). Wenn UseErrorLevel aktiv ist und der Start fehlgeschl&auml;gt, wird ErrorLevel auf ERROR gesetzt.</p>
+      <h3>Bemerkungen</h3>
+      <p>Im Gegensatz zu Run wird RunWait darauf warten, bis <em>Ziel</em> geschlossen oder beendet wird, dabei wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf den Exitcode des Programms gesetzt (ein vorzeichenbehafteter 32-Bit-Integer). Einige Programme geben scheinbar sofort einen Exitcode zur&uuml;ck, w&auml;hrend sie noch laufen. Diese Programme erschaffen einen weiteren Prozess.</p>
+      <p>Falls <em>Ziel</em> Kommas enth&auml;lt, m&uuml;ssen diese wie folgt <a href="_EscapeChar.htm">gesch&uuml;tzt</a> werden:</p>
+      <pre>Run rundll32.exe shell32.dll<span class="style3">`,</span>Control_RunDLL desk.cpl<span class="style3">`,`,</span> 3  <em>; &Ouml;ffnet Systemsteuerung > Anzeige > Einstellungen</em></pre>
+      <p>Wenn ein Programm mit <a href="../Variables.htm#ComSpec">Comspec</a> (cmd.exe) ausgef&uuml;hrt wird, um z. B. die Ein- oder Ausgabe des Programms umzuleiten, sollte, wenn Leerzeichen im Pfad oder Namen enthalten sind, der ganze String mit &auml;u&szlig;eren Anf&uuml;hrungszeichen umschlossen werden. Im folgenden Beispiel werden die &auml;u&szlig;eren Anf&uuml;hrungszeichen in Rot und alle inneren Anf&uuml;hrungszeichen in Schwarz dargestellt:</p>
+      <pre>Run %comspec% /c <span class="style3">"</span>"C:\Eigenes Tool.exe" "param 1" "zweiter param" >"C:\Eigene Datei.txt"<span class="style3">"</span></pre>
+      <p>Falls <em>Ziel</em> nicht gestartet werden kann, wird ein Fenster mit einer Fehlermeldung angezeigt, danach verh&auml;lt sich das Script so, als h&auml;tte es den <a href="Exit.htm">Exit</a>-Befehl erreicht. Um das zu verhindern, kann im dritten Parameter der String <strong>UseErrorLevel</strong> eingef&uuml;gt werden.</p>
+      <p>Die Performance kann ein wenig verbessert werden, wenn <em>Ziel</em> ein genauer Pfad ist, z. B. <code>Run, C:\Windows\Notepad.exe "C:\Eigene Dokumente\Test.txt"</code> anstelle von <code>Run, C:\Eigene Dokumente\Test.txt</code>.</p>
+      <p>Es ist m&ouml;glich, mit Run spezielle <a href="../misc/CLSID-List.htm">CLSID-Ordner</a> zu &ouml;ffnen. Zum Beispiel:</p>
+      <pre>Run ::{20d04fe0-3aea-1069-a2d8-08002b30309d}  <em>; &Ouml;ffnet den Arbeitsplatz/Computer.</em>
 Run ::{645ff040-5081-101b-9f08-00aa002f954e}  <em>; &Ouml;ffnet den Papierkorb.</em></pre>
-    <p id="verbs">Die Systemverben sind mit den Aktionen vergleichbar, die in einem Men&uuml; verf&uuml;gbar sind, dass per Rechtsklick auf eine Datei ge&ouml;ffnet wurde. Wenn eine Datei ohne Verb ausgef&uuml;hrt wird, dann wird das Standard-Verb (f&uuml;r gew&ouml;hnlich "&Ouml;ffnen") f&uuml;r diesen bestimmten Dateityp verwendet. Wenn angegeben, dann erfolgt nach dem Verb der Name der Zieldatei. Die folgenden Verben werden zurzeit unterst&uuml;tzt:</p>
-    <table class="info">
-      <tr>
-        <td>*<i>verb</i></td>
-        <td><span class="ver">[AHK_L 57+]:</span> Beliebiges systemdefiniertes oder benutzerdefiniertes Verb. Zum Beispiel: <code>Run *Compile %A_ScriptFullPath%</code><br>
-          In Windows Vista und h&ouml;her kann das <i>*RunAs</i>-Verb anstelle des Men&uuml;punkts "<i>Als Administrator ausf&uuml;hren</i>" verwendet werden.</td>
-      </tr>
-      <tr>
-        <td>properties</td>
-        <td>Zeigt das Eigenschaftsfenster der angegebenen Datei an. Zum Beispiel: <code>Run, properties "C:\Eigene Datei.txt"</code><br>
-          Hinweis: Das Eigenschaftsfenster wird automatisch geschlossen, wenn das Script beendet wird. Um das zu verhindern, verwendet <a href="WinWait.htm">WinWait</a>, bis das Fenster angezeigt wird, dann verwendet <a href="WinWaitClose.htm">WinWaitClose</a>, bis der Benutzer das Fenster schlie&szlig;t.</td>
-      </tr>
-      <tr>
-        <td>find</td>
-        <td>&Ouml;ffnet eine Instanz des Such-Assistenten oder Suchergebnisse f&uuml;r den angegebenen Ordner. Zum Beispiel: <code>Run, find D:\</code></td>
-      </tr>
-      <tr>
-        <td>explore</td>
-        <td>&Ouml;ffnet eine Instanz des Windows-Explorers f&uuml;r den angegebenen Ordner. Zum Beispiel: <code>Run, explore %A_ProgramFiles%</code></td>
-      </tr>
-      <tr>
-        <td>edit</td>
-        <td>&Ouml;ffnet die angegebene Datei, um sie zu bearbeiten. Funktioniert m&ouml;glicherweise nicht, wenn dem angegebenen Dateityp keine "edit"-Aktion zugeordnet ist. Zum Beispiel: <code>Run, edit "C:\Eigene Datei.txt"</code></td>
-      </tr>
-      <tr>
-        <td>open</td>
-        <td>&Ouml;ffnet die angegebene Datei (normalerweise nicht notwendig, weil es die Standard-Aktion f&uuml;r die meisten Dateitypen ist). Zum Beispiel: <code>Run, open "Eigene Datei.txt"</code></td>
-      </tr>
-      <tr>
-        <td>print</td>
-        <td>Druckt die angegebene Datei mit der verkn&uuml;pften Anwendung, wenn vorhanden. Zum Beispiel: <code>Run, print "Eigene Datei.txt"</code></td>
-      </tr>
-    </table>
-    <p>W&auml;hrend RunWait in einem Warte-Zustand ist, k&ouml;nnen neue <a href="../misc/Threads.htm">Threads</a> per <a href="../Hotkeys.htm">Hotkey</a>, <a href="Menu.htm">benutzerdefinierte Men&uuml;eintr&auml;ge</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
-    <h3>Verwandte Befehle</h3>
-    <p><a href="RunAs.htm">RunAs</a>, <a href="Process.htm">Process</a>, <a href="Exit.htm">Exit</a>, <a href="../misc/CLSID-List.htm">CLSID-Liste</a>, <a href="DllCall.htm">DllCall</a></p>
-    <h3>Beispiele</h3>
-    <pre class="NoIndent">Run, Notepad.exe, C:\Eigene Dokumente, max
+      <p id="verbs">Systemverben beziehen sich auf Aktionen, die im Rechtsklickmen&uuml; einer Datei innerhalb des Explorers verf&uuml;gbar sind. Wenn eine Datei ohne Verb ausgef&uuml;hrt wird, wird das Standardverb (&uuml;blicherweise "open") f&uuml;r diesen bestimmten Dateityp wirksam. Wenn angegeben, sollte nach dem Verb der Name der Zieldatei erfolgen. Die folgenden Verben werden zurzeit unterst&uuml;tzt:</p>
+      <table class="info">
+        <tr>
+          <td>*<i>verb</i></td>
+          <td><span class="ver">[AHK_L 57+]:</span> Beliebiges systemdefiniertes oder benutzerdefiniertes Verb. Zum Beispiel: <code>Run *Compile %A_ScriptFullPath%</code><br>
+            In Windows Vista und h&ouml;her kann das Verb <i>*RunAs</i> an Stelle des Rechtsklickmen&uuml;punktes "<i>Als Administrator ausf&uuml;hren</i>" verwendet werden.</td>
+        </tr>
+        <tr>
+          <td>properties</td>
+          <td>&Ouml;ffnet das Explorer-Eigenschaftsfenster f&uuml;r die angegebene Datei. Zum Beispiel: <code>Run, properties "C:\Eigene Datei.txt"</code><br>
+            Hinweis: Das Eigenschaftsfenster wird automatisch geschlossen, sobald das Script beendet wird. Um das zu verhindern, sollte mit <a href="WinWait.htm">WinWait</a> darauf gewartet werden, bis das Fenster angezeigt wird, und danach <a href="WinWaitClose.htm">WinWaitClose</a>, um darauf zu warten, dass der Benutzer dieses Fenster schlie&szlig;t.</td>
+        </tr>
+        <tr>
+          <td>find</td>
+          <td>&Ouml;ffnet eine Instanz des Such-Assistenten oder Suchergebnisfensters f&uuml;r den angegebenen Ordner. Zum Beispiel: <code>Run, find D:\</code></td>
+        </tr>
+        <tr>
+          <td>explore</td>
+          <td>&Ouml;ffnet eine Instanz des Windows-Explorers f&uuml;r den angegebenen Ordner. Zum Beispiel: <code>Run, explore %A_ProgramFiles%</code></td>
+        </tr>
+        <tr>
+          <td>edit</td>
+          <td>&Ouml;ffnet die angegebene Datei zur Bearbeitung. M&ouml;glicherweise funktioniert das nicht, wenn der Typ der angegebenen Datei keine zugewiesene "edit"-Aktion hat. Zum Beispiel: <code>Run, edit "C:\Eigene Datei.txt"</code></td>
+        </tr>
+        <tr>
+          <td>open</td>
+          <td>&Ouml;ffnet die angegebene Datei (normalerweise nicht notwendig, weil das die Standardaktion f&uuml;r die meisten Dateitypen ist). Zum Beispiel: <code>Run, open "Eigene Datei.txt"</code></td>
+        </tr>
+        <tr>
+          <td>print</td>
+          <td>Druckt die angegebene Datei mit der entsprechenden Anwendung, falls vorhanden. Zum Beispiel: <code>Run, print "Eigene Datei.txt"</code></td>
+        </tr>
+      </table>
+      <p>W&auml;hrend RunWait im Wartezustand ist, k&ouml;nnen neue <a href="../misc/Threads.htm">Threads</a> per <a href="../Hotkeys.htm">Hotkey</a>, <a href="Menu.htm">benutzerdefinierte Men&uuml;eintr&auml;ge</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
+      <h3>Verwandte Befehle</h3>
+      <p><a href="RunAs.htm">RunAs</a>, <a href="Process.htm">Process</a>, <a href="Exit.htm">Exit</a>, <a href="../misc/CLSID-List.htm">CLSID-Liste</a>, <a href="DllCall.htm">DllCall</a></p>
+      <h3>Beispiele</h3>
+      <pre class="NoIndent">Run, Notepad.exe, C:\Eigene Dokumente, max
 
-Run, mailto:someone@domain.com?subject=Das ist die Betreffzeile.&amp;body=Das ist die zu &uuml;bermittelnde Nachricht.
-Run, ReadMe.doc, , Max UseErrorLevel  <em>; Startet maximiert und zeigt keine Dialogfenster an, wenn es fehlschl&auml;gt.</em>
+Run, mailto:someone@domain.com?subject=Das ist die Betreffzeile.&amp;body=Das ist der Haupttext der Nachricht.
+Run, ReadMe.doc, , Max UseErrorLevel  <em>; Maximiert starten und kein Dialogfenster anzeigen, wenn es fehlschl&auml;gt.</em>
 If ErrorLevel = ERROR
     MsgBox Das Dokument konnte nicht ge&ouml;ffnet werden.
 
@@ -120,16 +120,16 @@ Run, c:\DirTest.txt
 Run, properties c:\DirTest.txt
 
 Run, www.autohotkey.com <em>; jede URL kann ge&ouml;ffnet werden.</em>
-Run, mailto:someone@somedomain.com  <em>; &Ouml;ffnet normalerweise die Standard-E-Mail-Anwendung.</em>
+Run, mailto:someone@somedomain.com  <em>; Das sollte die Standard-E-Mail-Anwendung &ouml;ffnen.</em>
 
 Run ::{20d04fe0-3aea-1069-a2d8-08002b30309d}  <em>; &Ouml;ffnet den Arbeitsplatz/Computer.</em>
 Run ::{645ff040-5081-101b-9f08-00aa002f954e}  <em>; &Ouml;ffnet den Papierkorb.</em>
 
-<em>; Um nacheinander mehrere Befehle auszuf&uuml;hren, verwendet jeweils "&amp;&amp;" dazwischen:</em>
-Run, %comspec% /c dir /b &gt; C:\list.txt &amp;&amp; type C:\list.txt &amp;&amp; pause
+<em>; Mit "&amp;&amp;" k&ouml;nnen mehrere Befehle hintereinander ausgef&uuml;hrt werden:</em>
+Run, %comspec% /c dir /b &gt; C:\Liste.txt &amp;&amp; type C:\Liste.txt &amp;&amp; pause
 
 </pre>
-  </article>
+    </article>
   </section>
 </div>
 <script type="text/javascript">WriteFooter(1);</script>

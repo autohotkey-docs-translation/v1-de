@@ -17,90 +17,90 @@
 <div id="content">
   <section>
     <article>
-    <h1>Loop (Registrierung)</h1>
-    <p>Ermittelt nacheinander den Inhalt des angegebenen Unterschl&uuml;ssels.</p>
-    <pre class="Syntax">Loop, Hauptschl&uuml;ssel [, Schl&uuml;ssel, Unterschl&uuml;sselEinbeziehen?, Rekursiv?]</pre>
-    <h3>Parameter</h3>
-    <table class="info">
-      <tr>
-        <td style="width: 15%;">Hauptschl&uuml;ssel</td>
-        <td style="width: 85%;"><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC).</p>
-          <p>Um auf eine entfernt liegende Registrierung zuzugreifen, stellt den Computernamen und ein Doppelpunkt voran, wie in diesem Beispiel: \\workstation01:HKEY_LOCAL_MACHINE</p></td>
-      </tr>
-      <tr>
-        <td>Schl&uuml;ssel</td>
-        <td>Der Name des Schl&uuml;ssels (z. B. Software\BeliebigeAnwendung). Ist dieser Parameter leer oder nicht vorhanden, wird der Inhalt vom <em>Hauptschl&uuml;ssel</em> abgerufen.</td>
-      </tr>
-      <tr>
-        <td>Unterschl&uuml;sselEinbeziehen?</td>
-        <td><p>0 (Standard) Unterschl&uuml;ssel innerhalb vom <em>Schl&uuml;ssel</em> werden nicht abgerufen (nur die Werte).<br>
-            1 Alle Werte und Unterschl&uuml;ssel werden abgerufen.<br>
-            2 Nur die Unterschl&uuml;ssel werden abgerufen (nicht die Werte).</p></td>
-      </tr>
-      <tr>
-        <td>Rekursiv?</td>
-        <td>0 (Standard) Unterschl&uuml;ssel werden nicht rekursiv behandelt.<br>
-          1 Unterschl&uuml;ssel werden rekursiv behandelt, damit alle Werte und Unterschl&uuml;ssel darin abgerufen werden.</td>
-      </tr>
-    </table>
-    <h3>Bemerkungen</h3>
-    <p>Eine Registrierung-Schleife ist n&uuml;tzlich, wenn der Benutzer eine Sammlung von Werten und Unterschl&uuml;ssel bearbeiten will. Die Werte und Unterschl&uuml;ssel werden in umgekehrter Reihenfolge abgerufen (von unten nach oben), damit <a href="RegDelete.htm">RegDelete</a> ohne Unterbrechung innerhalb der Schleife verwendet werden kann.</p>
-    <p>Die folgenden Variablen gibt es innerhalb jeder Registrierung-Schleife. Wenn eine innere Registrierung-Schleife durch eine &auml;u&szlig;ere Registrierung-Schleife eingeschlossen ist, dann hat der Eintrag innerhalb der Schleife Vorrang.</p>
-    <table class="info">
-      <tr>
-        <td>A_LoopRegName</td>
-        <td>Name des aktuell abgerufenen Eintrags, welcher der Name des Wertes oder des Unterschl&uuml;ssels ist. Der im Registrierungs-Editor angezeigte Wertname "(Standard)" wird abgerufen, wenn ihm ein Wert zugewiesen wurde, aber A_LoopRegName bleibt daf&uuml;r leer. </td>
-      </tr>
-      <tr>
-        <td>A_LoopRegType</td>
-        <td>Der Typ des aktuell abgerufenen Eintrags kann sein: KEY (d. h. der aktuell abgerufene Eintrag ist ein Unterschl&uuml;ssel, nicht ein Wert), REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ, REG_DWORD, REG_QWORD, REG_BINARY, REG_LINK, REG_RESOURCE_LIST, REG_FULL_RESOURCE_DESCRIPTOR, REG_RESOURCE_REQUIREMENTS_LIST, REG_DWORD_BIG_ENDIAN (wahrscheinlich selten in den meisten Betriebssystemen). Diese Variable ist leer, wenn der aktuell abgerufene Eintrag ein unbekannter Typ ist. </td>
-      </tr>
-      <tr>
-        <td>A_LoopRegKey</td>
-        <td>Der Name des zurzeit verwendeten Hauptschl&uuml;ssels (HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG). Beim Zugriff auf eine entfernt liegende Registrierung enth&auml;lt dieser Wert <strong>nicht</strong> den Namen des Computers. </td>
-      </tr>
-      <tr>
-        <td>A_LoopRegSubKey</td>
-        <td>Der Name des aktuellen Unterschl&uuml;ssels. Das wird nur das Gleiche wie der <em>Schl&uuml;ssel</em>-Parameter sein, wenn der <em>Rekursiv</em>-Parameter verwendet wird, um andere Unterschl&uuml;ssel rekursiv zu durchsuchen. In diesem Fall enth&auml;lt die Variable den vollst&auml;ndigen Pfad des aktuell abgerufenen Eintrags ohne den Hauptschl&uuml;ssel. Zum Beispiel: Software\BeliebigeAnwendung\EigenerUnterschl&uuml;ssel</td>
-      </tr>
-      <tr>
-        <td>A_LoopRegTimeModified</td>
-        <td>Wann der aktuelle Unterschl&uuml;ssel zuletzt bearbeitet wurde. <a href="FileSetTime.htm">YYYYMMDDHH24MISS</a>-Format. Diese Variable ist leer, wenn der aktuell abgerufene Eintrag kein Unterschl&uuml;ssel ist (d. h. <em>A_LoopRegType</em> enth&auml;lt nicht das Wort KEY) oder wenn das Betriebssystem Win9x ist (da Win9x diese Info nicht verfolgt). </td>
-      </tr>
-    </table>
-    <p>Wenn folgende Befehle innerhalb einer Registrierung-Schleife verwendet werden, dann k&ouml;nnen diese auf einfacherem Wege verwendet werden:</p>
-    <table class="info">
-      <tr>
-        <td style="width: 21%;"><a href="RegRead.htm">RegRead</a>, Ausgabevariable</td>
-        <td style="width: 79%;">Liest den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Schl&uuml;ssel ist, dann wird Errorlevel auf 1 gesetzt und die <em>Ausgabevariable</em> leer gemacht. </td>
-      </tr>
-      <tr>
-        <td><a href="RegWrite.htm">RegWrite</a> [, Wert]</td>
-        <td>Schreibt in den aktuellen Eintrag. Wenn der <em>Wert</em> nicht vorhanden ist, dann wird der Eintrag je nach Typ auf 0 gesetzt oder leer gemacht. Wenn der aktuelle Eintrag ein Schl&uuml;ssel ist, dann wird ErrorLevel auf 1 gesetzt. </td>
-      </tr>
-      <tr>
-        <td><a href="RegDelete.htm">RegDelete</a></td>
-        <td>L&ouml;scht den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Schl&uuml;ssel ist, dann wird er mit all seinen Unterschl&uuml;sseln und Werten gel&ouml;scht. </td>
-      </tr>
-    </table>
-    <p>Beim Zugriff auf eine entfernt liegende Registrierung (mit dem <em>Hauptschl&uuml;ssel</em>-Parameter, wie oben beschrieben) gelten folgende Hinweise:</p>
-    <ul>
-      <li>Auf dem Zielrechner muss der Dienst "Remote Registry" laufen, bzw. (in Windows Me/98/95) installiert werden (kann von Microsoft bezogen werden).</li>
-      <li>Der Zugriff auf eine entfernt liegende Registrierung kann fehlschlagen, wenn der Zielcomputer nicht zur Dom&auml;ne des Benutzers geh&ouml;rt oder jeweils der Benutzername nicht gen&uuml;gend Berechtigungen hat (siehe unten f&uuml;r m&ouml;gliche &Uuml;bergangsl&ouml;sungen). </li>
-      <li>Abh&auml;ngig von der Dom&auml;ne, der Arbeitsgruppe und/oder den Berechtigungen kann es sein, dass sich der Benutzer mit einem freigegebenen Ger&auml;t erst verbinden muss (z. B. durch eine Laufwerkszuordnung), bevor der Remotezugriff auf die Registrierung erfolgt. Bei so einer Verbindung (mit Benutzernamen, Passwort und genug Berechtigungen zur Bearbeitung der Registrierung) k&ouml;nnte als Nebeneffekt der Remotezugriff auf die Registrierung aktiviert werden.</li>
-      <li>Wenn der Benutzer bereits mit einem anderen Benutzernamen auf dem Zielcomputer angemeldet ist (z. B. als Gast auf ein zugeordnetes Laufwerk), dann kann es sein, dass der Benutzer sich erst abmelden muss, damit die entfernt liegende Registrierung sich neu verbinden kann und den Benutzer wieder mit seinem eigenen angemeldeten Benutzernamen authentifiziert.</li>
-      <li>F&uuml;r Windows Server 2003 und Windows XP Professional hei&szlig;t es in MSDN: "Wenn der [Server der Registrierung] Computer mit einer Arbeitsgruppe verbunden ist und die Sicherheitsrichtlinie <em>Einfache Dateifreigabe</em> aktiviert ist, dann schl&auml;gt die Funktion fehl. Beachten Sie, dass diese Sicherheitsrichtlinie standardm&auml;&szlig;ig aktiviert ist, wenn der Computer mit einer Arbeitsgruppe verbunden ist. "</li>
-      <li>F&uuml;r Windows XP Home Edition wei&szlig;t MSDN darauf hin, dass "diese Funktion immer fehlschl&auml;gt". In der Home Edition fehlt f&uuml;r die Registrierung sowohl der Server als auch der Client, jedoch kann der Client aus einer CAB-Datei des Betriebssystems extrahiert werden.</li>
-    </ul>
-    <p>Siehe <a href="Loop.htm">Loop</a> f&uuml;r Informationen &uuml;ber <a href="Block.htm">Blocks</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (die gibt es in jeder Schleifenvariante).</p>
-    <h3>Verwandte Befehle</h3>
-    <p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blocks</a>, <a href="RegRead.htm">RegRead</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="RegDelete.htm">RegDelete</a></p>
-    <h3>Beispiele</h3>
-    <pre class="NoIndent"><em>; Beispiel: L&ouml;scht den Link-Verlauf im Internet Explorer.</em>
+      <h1>Loop (Registrierung)</h1>
+      <p>Ermittelt nacheinander den Inhalt des angegebenen Unterschl&uuml;ssels.</p>
+      <pre class="Syntax">Loop, Hauptschl&uuml;ssel [, Schl&uuml;ssel, Unterschl&uuml;sselEinbeziehen?, Rekursiv?]</pre>
+      <h3>Parameter</h3>
+      <table class="info">
+        <tr>
+          <td style="width: 15%;">Hauptschl&uuml;ssel</td>
+          <td style="width: 85%;"><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC).</p>
+            <p>Um den Zugriff auf eine Remote-Registrierung zu erm&ouml;glichen, muss der Computername und ein Doppelpunkt wie im folgenden Beispiel vorangestellt werden: \\workstation01:HKEY_LOCAL_MACHINE</p></td>
+        </tr>
+        <tr>
+          <td>Schl&uuml;ssel</td>
+          <td>Der Name des Schl&uuml;ssels (z. B. Software\BeliebigeAnwendung). Ist dieser Parameter leer oder nicht vorhanden, wird der Inhalt vom <em>Hauptschl&uuml;ssel</em> abgerufen.</td>
+        </tr>
+        <tr>
+          <td>Unterschl&uuml;sselEinbeziehen?</td>
+          <td><p>0 (Standard) Unterschl&uuml;ssel innerhalb vom <em>Schl&uuml;ssel</em> werden nicht abgerufen (nur die Werte).<br>
+              1 Alle Werte und Unterschl&uuml;ssel werden abgerufen.<br>
+              2 Nur die Unterschl&uuml;ssel werden abgerufen (nicht die Werte).</p></td>
+        </tr>
+        <tr>
+          <td>Rekursiv?</td>
+          <td>0 (Standard) Unterschl&uuml;ssel werden nicht durchsucht.<br>
+            1 Unterschl&uuml;ssel werden auch durchsucht, so dass darin enthaltene Werte und Unterschl&uuml;ssel ermittelt werden.</td>
+        </tr>
+      </table>
+      <h3>Bemerkungen</h3>
+      <p>Eine Registrierungs-Schleife ist n&uuml;tzlich, wenn mehrere Werte und Unterschl&uuml;ssel nacheinander bearbeitet werden sollen. Die Werte und Unterschl&uuml;ssel werden in umgekehrter Reihenfolge abgerufen (von unten nach oben), damit <a href="RegDelete.htm">RegDelete</a> ohne Unterbrechung innerhalb der Schleife verwendet werden kann.</p>
+      <p>Die folgenden Variablen k&ouml;nnen nur innerhalb einer Registrierungs-Schleife verwendet werden. Wenn eine innere Registrierungs-Schleife von einer &auml;u&szlig;eren Registrierungs-Schleife umschlossen ist, wird der Eintrag von der innersten Schleife Vorrang haben.</p>
+      <table class="info">
+        <tr>
+          <td>A_LoopRegName</td>
+          <td>Name des aktuell ermittelten Eintrags, der entweder ein Wertname oder der Name eines Unterschl&uuml;ssels sein kann. Der im Registrierungs-Editor angezeigte Wertname "(Standard)" wird abgerufen, wenn ihm ein Wert zugewiesen wurde - A_LoopRegName selbst wird aber leer sein. </td>
+        </tr>
+        <tr>
+          <td>A_LoopRegType</td>
+          <td>Der Typ des aktuell ermittelten Eintrags, der eins der folgenden W&ouml;rter sein kann: KEY (bedeutet, dass der aktuell ermittelte Eintrag ein Unterschl&uuml;ssel ist, aber kein Wert), REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ, REG_DWORD, REG_QWORD, REG_BINARY, REG_LINK, REG_RESOURCE_LIST, REG_FULL_RESOURCE_DESCRIPTOR, REG_RESOURCE_REQUIREMENTS_LIST, REG_DWORD_BIG_ENDIAN (wahrscheinlich selten in den meisten Betriebssystemen). Diese Variable ist leer, wenn der aktuell ermittelte Eintrag ein unbekannter Typ ist. </td>
+        </tr>
+        <tr>
+          <td>A_LoopRegKey</td>
+          <td>Der Name des zurzeit verwendeten Hauptschl&uuml;ssels (HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG). Beim Zugriff auf eine Remote-Registrierung enth&auml;lt dieser Wert <strong>nicht</strong> den Namen des Computers. </td>
+        </tr>
+        <tr>
+          <td>A_LoopRegSubKey</td>
+          <td>Der Name des aktuellen Unterschl&uuml;ssels. Ist das gleiche wie der <em>Schl&uuml;ssel</em>-Parameter, solange der <em>Rekursiv</em>-Parameter nicht dazu verwendet wird, andere Unterschl&uuml;ssel zu durchsuchen. In diesem Fall enth&auml;lt die Variable den vollst&auml;ndigen Pfad des aktuell ermittelten Eintrags, ohne Hauptschl&uuml;ssel. Zum Beispiel: Software\BeliebigeAnwendung\EigenerUnterschl&uuml;ssel</td>
+        </tr>
+        <tr>
+          <td>A_LoopRegTimeModified</td>
+          <td>Wann der aktuelle Unterschl&uuml;ssel oder seine Werte zuletzt bearbeitet wurden. <a href="FileSetTime.htm">YYYYMMDDHH24MISS</a>-Format. Diese Variable wird leer sein, wenn der aktuell ermittelte Eintrag kein Unterschl&uuml;ssel ist (d. h. <em>A_LoopRegType</em> ist nicht das Wort KEY) oder wenn das Betriebssystem Win9x ist (da Win9x diese Information nicht protokolliert). </td>
+        </tr>
+      </table>
+      <p>Innerhalb einer Registrierungs-Schleife k&ouml;nnen folgende Befehle auf einfachere Weise verwendet werden, um den aktuell ermittelten Eintrag zu bearbeiten:</p>
+      <table class="info">
+        <tr>
+          <td style="width: 21%;"><a href="RegRead.htm">RegRead</a>, Ausgabevariable</td>
+          <td style="width: 79%;">Liest den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Schl&uuml;ssel ist, wird Errorlevel auf 1 gesetzt und <em>Ausgabevariable</em> leer gemacht. </td>
+        </tr>
+        <tr>
+          <td><a href="RegWrite.htm">RegWrite</a> [, Wert]</td>
+          <td>Schreibt in den aktuellen Eintrag. Falls <em>Wert</em> nicht vorhanden ist, wird der Eintrag je nach Typ auf 0 gesetzt oder leer gemacht. Wenn der aktuelle Eintrag ein Schl&uuml;ssel ist, wird ErrorLevel auf 1 gesetzt.</td>
+        </tr>
+        <tr>
+          <td><a href="RegDelete.htm">RegDelete</a></td>
+          <td>L&ouml;scht den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Schl&uuml;ssel ist, wird dieser mit all seinen Unterschl&uuml;sseln und Werten gel&ouml;scht. </td>
+        </tr>
+      </table>
+      <p>Beim Zugriff auf eine Remote-Registrierung (&uuml;ber den <em>Hauptschl&uuml;ssel</em>-Parameter, wie oben beschrieben) gelten folgende Hinweise:</p>
+      <ul>
+        <li>Auf dem Zielrechner muss der Dienst "Remote Registry" laufen, bzw. (in Windows Me/98/95) installiert werden (kann von Microsoft bezogen werden).</li>
+        <li>Der Zugriff auf eine Remote-Registrierung kann fehlschlagen, wenn der Zielcomputer nicht zur Dom&auml;ne des Benutzers geh&ouml;rt oder der Benutzername nicht gen&uuml;gend Berechtigungen hat (siehe unten f&uuml;r m&ouml;gliche &Uuml;bergangsl&ouml;sungen). </li>
+        <li>Abh&auml;ngig von der Dom&auml;ne, der Arbeitsgruppe und/oder den Berechtigungen kann es sein, dass sich der Benutzer mit einem freigegebenen Ger&auml;t erst verbinden muss (z. B. durch eine Laufwerkszuordnung), bevor der Remotezugriff auf die Registrierung erfolgt. Bei so einer Verbindung (mit Benutzernamen, Passwort und genug Berechtigungen zur Bearbeitung der Registrierung) k&ouml;nnte als Nebeneffekt der Remotezugriff auf die Registrierung aktiviert werden.</li>
+        <li>Wenn der Benutzer bereits mit einem anderen Benutzernamen auf dem Zielcomputer angemeldet ist (z. B. als Gast auf ein zugeordnetes Laufwerk), dann kann es sein, dass der Benutzer sich erst abmelden muss, damit die Remote-Registrierung sich neu verbinden kann und den Benutzer wieder mit seinem eigenen angemeldeten Benutzernamen authentifiziert.</li>
+        <li>F&uuml;r Windows Server 2003 und Windows XP Professional hei&szlig;t es in MSDN: "Wenn der [Server der Registrierung] Computer mit einer Arbeitsgruppe verbunden ist und die Sicherheitsrichtlinie <em>Einfache Dateifreigabe</em> aktiviert ist, dann schl&auml;gt die Funktion fehl. Beachten Sie, dass diese Sicherheitsrichtlinie standardm&auml;&szlig;ig aktiviert ist, wenn der Computer mit einer Arbeitsgruppe verbunden ist."</li>
+        <li>F&uuml;r Windows XP Home Edition wei&szlig;t MSDN darauf hin, dass "diese Funktion immer fehlschl&auml;gt". In der Home Edition fehlt f&uuml;r die Registrierung sowohl der Server als auch der Client, jedoch kann der Client aus einer CAB-Datei des Betriebssystems extrahiert werden.</li>
+      </ul>
+      <p>Auf der <a href="Loop.htm">Loop</a>-Seite k&ouml;nnen Informationen zu <a href="Block.htm">Blocks</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index gefunden werden (weil diese in jeder Schleifenvariante vorkommen).</p>
+      <h3>Verwandte Befehle</h3>
+      <p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blocks</a>, <a href="RegRead.htm">RegRead</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="RegDelete.htm">RegDelete</a></p>
+      <h3>Beispiele</h3>
+      <pre class="NoIndent"><em>; Beispiel: L&ouml;scht den Link-Verlauf im Internet Explorer.</em>
 Loop, HKEY_CURRENT_USER, Software\Microsoft\Internet Explorer\TypedURLs
     RegDelete</pre>
-    <p>&nbsp;</p>
-    <pre class="NoIndent"><em>; Beispiel: Ein funktionierendes Testscript:</em>
+      <p>&nbsp;</p>
+      <pre class="NoIndent"><em>; Beispiel: Ein funktionierendes Testscript:</em>
 Loop, HKEY_CURRENT_USER, Software\Microsoft\Windows, 1, 1
 {
     If a_LoopRegType = key
@@ -114,8 +114,8 @@ Loop, HKEY_CURRENT_USER, Software\Microsoft\Windows, 1, 1
     MsgBox, 4, , %a_LoopRegName% = %Wert% (%a_LoopRegType%)`n`nWeiter?
     IfMsgBox, NO, break
 }</pre>
-    <p>&nbsp;</p>
-    <pre class="NoIndent"><em>; Beispiel: Ein funktionierendes Beispiel, um die komplette Registrierung
+      <p>&nbsp;</p>
+      <pre class="NoIndent"><em>; Beispiel: Ein funktionierendes Beispiel, um die komplette Registrierung
 ; rekursiv nach einem bestimmten Wert zu durchsuchen.</em>
 SetBatchLines, -1  <em>; F&uuml;hrt die Operation mit maximaler Geschwindigkeit aus.</em>
 RegSuchziel = Notepad  <em>; Teilt der Subroutine mit, was gesucht wird.</em>
@@ -160,7 +160,7 @@ IfInString, RegWert, %RegSuchziel%
         RegSucheFortfahren = n  <em>; Stoppt uns.</em>
 }
 Return</pre>
-  </article>
+    </article>
   </section>
 </div>
 <script type="text/javascript">WriteFooter(1);</script>

@@ -18,120 +18,118 @@
 <div id="content">
   <section>
     <article>
-    <h1>SetTimer</h1>
-    <p>F&uuml;hrt eine Subroutine mehrmals automatisch in bestimmten Zeitintervallen aus.</p>
-    <pre class="Syntax">SetTimer [, Label, Periode|On|Off, Priorit&auml;t]</pre>
-    <h3>Parameter</h3>
-    <table class="info">
-      <tr>
-        <td style="width: 15%;">Label</td>
-        <td style="width: 85%;"><p>Name des <a href="../misc/Labels.htm">Labels</a> (auch <a href="../Hotkeys.htm">Hotkey</a>- oder Hotstring-Label), das ausgef&uuml;hrt werden soll, bis ein <em>Return</em> oder <a href="Return.htm">Exit</a> erreicht wird. Wie bei den meisten Parametern von Befehlen kann <em>Label</em> einen <a href="../Variables.htm">Variablenverweis</a> enthalten (z. B. %EigenesLabel%). In diesem Fall wird der Name in der Variable als Ziel benutzt.</p>
-          <p><span class="ver">[v1.1.01+]:</span> Wenn <em>Label</em> weggelassen wird, dann wird <a href="../Variables.htm#ThisLabel">A_ThisLabel</a> verwendet. Zum Beispiel kann <code>SetTimer,, Off</code> innerhalb einer Timer-Subroutine verwendet werden, um den Timer zu deaktivieren.</p></td>
-      </tr>
-      <tr>
-        <td>Periode|On|Off</td>
-        <td><p><strong>On</strong>: Aktiviert wieder einen vorher deaktivierten Timer mit der ehemaligen <em>Periode</em>. Wenn der Timer nicht existiert, dann wird er erstellt (mit einer Standardperiode von 250). Wenn der Timer vorhanden ist, der aber vorher auf den <a href="#once">Modus f&uuml;r einmaliges Ausf&uuml;hren</a> gesetzt wurde, dann wird er wieder nur einmal gestartet.</p>
-          <p><strong>Off</strong>: Deaktiviert einen vorhandenen Timer.</p>
-          <p><strong>Periode</strong>: Erstellt oder aktualisiert ein Timer mit diesem Parameter, der die <a href="#Precision"><em>ungef&auml;hre</em></a> Anzahl an Millisekunden enth&auml;lt, die gewartet werden m&uuml;ssen. Wenn diese Zeitmenge verstrichen ist, dann wird <em>Label</em> erneut ausgef&uuml;hrt (solange das Label nicht noch vom letzten Mal l&auml;uft). Der Timer wird automatisch aktiviert. Um das zu verhindern, ruft diesen Befehl unmittelbar danach ein zweites Mal auf, aber mit OFF.</p>
-          <p>Wenn dieser Parameter leer ist und:</p>
-          <ul>
-            <li>der Timer nicht existiert,  wird der Timer mit einer Periode von 250 erstellt.</li>
-            <li>der Timer bereits vorhanden ist,  wird er aktiviert und dessen <em>Periode</em> auf den vorherigen Wert <a href="#reset">zur&uuml;ckgesetzt</a>, sofern die <em>Priorit&auml;t</em> noch nicht bestimmt wurde.</li>
-          </ul>
-          <p id="once"><strong>Nur einmal ausf&uuml;hren</strong> <span class="ver">[v1.0.46.16+]:</span> Mit einer negativen <em>Periode</em> wird der Timer nur einmal ausgef&uuml;hrt. Zum Beispiel wird der Timer mit -100 nach 100 ms ausgef&uuml;hrt und dann deaktiviert, als ob <em>SetTimer, Label, Off</em> verwendet wurde.<br>
-          </p></td>
-      </tr>
-      <tr>
-        <td>Priorit&auml;t</td>
-        <td><p>Dieser optionale Parameter ist ein Integer zwischen -2147483648 und 2147483647 (oder ein <a href="../Variables.htm#Expressions">Ausdruck</a>), um die Thread-Priorit&auml;t des Timers zu bestimmen. Wenn nicht vorhanden, dann wird 0 verwendet. Siehe <a href="../misc/Threads.htm">Threads</a> f&uuml;r weitere Details.</p>
-          <p>Um die Priorit&auml;t eines vorhandenen Timers zu &auml;ndern, ohne es dabei anderweitig zu beeinflussen, lasst den Parameter davor leer.</p></td>
-      </tr>
-    </table>
-    <h3>Bemerkungen</h3>
-    <p>Timer sind n&uuml;tzlich, weil sie asynchron ausgef&uuml;hrt werden, das hei&szlig;t, sie werden in einem bestimmten Intervall (Frequenz) ausgef&uuml;hrt, selbst wenn das Script auf ein Fenster wartet, ein Dialogfenster anzeigt oder mit einer anderen Aufgabe besch&auml;ftigt ist. Anwendungsbeispiele: Aktion ausf&uuml;hren, wenn der Benutzer abwesend ist (in Verbindung mit <a href="../Variables.htm#TimeIdle">A_TimeIdle</a>) oder unerw&uuml;nschte Fenster schlie&szlig;en, sobald sie erscheinen.</p>
-    <p>Obwohl Timer vort&auml;uschen k&ouml;nnen, dass das Script mehrere Aufgaben gleichzeitig durchf&uuml;hrt, ist dies nicht der Fall. Stattdessen werden zeitlich festgelegte Subroutinen wie andere Threads behandelt: sie k&ouml;nnen einen anderen Thread wie z.B. eine <a href="../Hotkeys.htm">Hotkey-Subroutine</a> unterbrechen von davon unterbrochen werden. Siehe <a href="../misc/Threads.htm">Threads</a> f&uuml;r weitere Details.</p>
-    <p>Sobald ein Timer erstellt, wieder aktiviert oder mit einer neuen <em>Periode</em> aktualisiert wird, wird die Subroutine nicht sofort ausgef&uuml;hrt, weil die <em>Periode</em> zuerst verstreichen muss. Damit die erste Ausf&uuml;hrung des Timers sofort erfolgt, verwendet <a href="Gosub.htm">Gosub</a>, um die Subroutine des Timers auszuf&uuml;hren (allerdings wird keiner neuer Thread gestartet, wie es der Timer selbst macht, daher beginnen Einstellungen wie <a href="SendMode.htm">SendMode</a> nicht mit ihren Standardwerten).</p>
-    <p id="reset">Wenn SetTimer auf einen vorhandenen Timer verwendet wird und der zweite Parameter das Wort ON enth&auml;lt (oder weggelassen wird), dann wird die interne "neueste Ausf&uuml;hrungszeit" auf die aktuelle Zeit zur&uuml;ckgesetzt. Au&szlig;erdem muss die Gesamtheit der Periode verstreichen, bevor die Subroutine wieder ausgef&uuml;hrt werden kann.</p>
-    <p id="Precision"><strong>Genauigkeit des Timers</strong>: Durch die Granularit&auml;t (k&ouml;rnige Beschaffenheit) der Zeiterfassung im Betriebssystem wird die <em>Periode</em> m&ouml;glicherweise auf das n&auml;chstm&ouml;gliche Vielfache von 10 oder 15.6 Millisekunden aufgerundet (abh&auml;ngig vom Typ der installierten Hardware und Treiber). Zum Beispiel ist eine Periode zwischen 1 und 10 in Windows NT/2000/XP (Windows 9x verwendet ~55ms) gleichbedeutend mit 10 oder 15.6. Eine k&uuml;rzere Verz&ouml;gerung kann mittels Loop+Sleep erreicht werden, wie in <a href="Sleep.htm#ShorterSleep">DllCall+<span class="NoIndent">timeBeginPeriod</span>+Sleep</a> demonstriert.</p>
-    <p>Ein Timer l&auml;uft m&ouml;glicherweise unter den folgenden Bedingungen nicht so oft wie angegeben:</p>
-    <ol>
-      <li>Andere Anwendungen belasten die CPU ziemlich stark.</li>
-      <li> Die Timer-Subroutine braucht l&auml;nger als die angebende Periode oder es gibt zu viele konkurrierende Timer (das &Auml;ndern von <a href="SetBatchLines.htm">SetBatchLines</a> kann helfen).</li>
-      <li>Der Timer wurde von einem anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen, dazu z&auml;hlen andere zeitlich festgelegte Subroutinen, <a href="../Hotkeys.htm">Hotkey-Subroutinen</a> oder <a href="Menu.htm">benutzerdefinierte Men&uuml;punkte</a> (kann mittels <a href="Critical.htm">Critical</a> verhindert werden). Wenn dies geschieht und die Unterbrechung etwas dauert, dann wird der unterbrochene Timer tats&auml;chlich f&uuml;r die Dauer deaktiviert. Allerdings werden andere Timer fortgesetzt, indem sie den <a href="../misc/Threads.htm">Thread</a> unterbrechen, der den ersten Timer unterbrochen hat.</li>
-      <li>Das Script wird aufgrund von <a href="Critical.htm">Critical</a> oder <a href="Thread.htm">Thread Interrupt/Priority</a> unterbrechungsfrei. In solchen Zeiten werden Timer nicht ausgef&uuml;hrt. Wenn das Script sp&auml;ter wieder unterbrechbar wird, dann wird jeder &uuml;berf&auml;llige Timer sobald wie m&ouml;glich einmal ausgef&uuml;hrt und ihren normalen Ablauf wieder fortgesetzt.</li>
-    </ol>
-    <p>Obwohl Timer auch laufen werden, sobald das Script <a href="Suspend.htm">gesperrt</a> ist, werden sie nicht mehr ausgef&uuml;hrt, wenn der <a href="../misc/Threads.htm">aktuelle Thread</a> <a href="Thread.htm">Thread NoTimers</a> aktiviert hat oder sobald ein Thread <a href="Pause.htm">angehalten</a> wird. Dar&uuml;ber hinaus laufen sie nicht, wenn der Benutzer durch ein Men&uuml; des Scripts navigiert (z. B. Tray-Icon-Men&uuml; oder eine Men&uuml;leiste).</p>
-    <p>Da Timer durch die aktuelle T&auml;tigkeit des Scripts vor&uuml;bergehend unterbrochen werden, sollten ihre Subroutinen kurz gehalten werden (damit sie schnell beendet werden k&ouml;nnen), sobald eine lange Unterbrechung unerw&uuml;nscht ist.</p>
-    <p>Timer, die w&auml;hrend eines Scripts aktiv bleiben, sollten f&uuml;r gew&ouml;hnlich im <a href="../Scripts.htm#auto">automatischen Ausf&uuml;hrungsbereich</a> erstellt werden. Tempor&auml;re Timer hingegen deaktivieren sich oft selbst (siehe Beispiele weiter unten).</p>
-    <p>Sobald eine zeitlich festgelegte Subroutine ausgef&uuml;hrt wird, werden die Standardwerte in den Einstellungen wie <a href="SendMode.htm">SendMode</a> verwendet. Diese k&ouml;nnen im <a href="../Scripts.htm#auto">automatischen Ausf&uuml;hrungsbereich</a> ge&auml;ndert werden.</p>
-    <p>Wenn die <a href="../Hotkeys.htm">Hotkey</a>-Reaktionszeit von entscheidender Bedeutung ist (z. B. bei Spielen) und das Script beliebige Timer enth&auml;lt, deren Subroutinen l&auml;nger als 5 ms Ausf&uuml;hrungszeit brauchen, dann verwendet den folgenden Befehl, um jede Chance einer Verz&ouml;gerung von 15 ms zu vermeiden. So eine Verz&ouml;gerung wird sonst auftreten, wenn ein Hotkey genau in dem Moment gedr&uuml;ckt wird, wenn sich ein Timer-Thread in der unterbrechungsfreien Phase befindet:</p>
-    <pre><a href="Thread.htm">Thread</a>, interrupt, 0  <em>; Alle Threads sind unterbrechbar.</em></pre>
-    <p>Wenn ein Timer w&auml;hrend einer laufenden Subroutine deaktiviert ist, dann wird diese Subroutine fortgesetzt, bis sie abgearbeitet wurde.</p>
-    <p>Die <a href="KeyHistory.htm">KeyHistory</a>-Funktion zeigt, wie viele Timer vorhanden und zurzeit aktiviert sind.</p>
-    <p>Die Periode eines Timers kann nicht gr&ouml;&szlig;er als 4294967295 Millisekunden sein (49.7 Tage).</p>
-    <p>Damit ein Script aufrecht erhalten wird (das zum Beispiel nur Timer enth&auml;lt), verwendet <a href="_Persistent.htm">#Persistent</a>.</p>
-    <h3>Verwandte Befehle</h3>
-    <p><a href="Gosub.htm">Gosub</a>, <a href="Return.htm">Return</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread (Befehl)</a>, <a href="Critical.htm">Critical</a>, <a href="../Functions.htm#IsLabel">IsLabel()</a>, <a href="Menu.htm">Menu</a>, <a href="_Persistent.htm">#Persistent</a></p>
-    <h3>Beispiele</h3>
-    <pre class="NoIndent"><em>; Beispiel #1: Schlie&szlig;t unerw&uuml;nschte Fenster, sobald sie auftauchen:</em>
+      <h1>SetTimer</h1>
+      <p>Bewirkt, dass eine Subroutine in bestimmten Zeitintervallen automatisch und wiederholend ausgef&uuml;hrt wird.</p>
+      <pre class="Syntax">SetTimer [, Label, Periode|On|Off, Priorit&auml;t]</pre>
+      <h3>Parameter</h3>
+      <table class="info">
+        <tr>
+          <td style="width: 15%;">Label</td>
+          <td style="width: 85%;"><p>Name des <a href="../misc/Labels.htm">Labels</a> oder <a href="../Hotkeys.htm">Hotkey</a>-Labels, der angesprungen wird, um die Befehle unterhalb von <em>Label</em> bis zu einem <em>Return</em> oder <a href="Return.htm">Exit</a> auszuf&uuml;hren. <em>Label</em> kann, wie Parameter und die meisten anderen Befehle auch, einen <a href="../Variables.htm">Variablenverweis</a> wie %EigenesLabel% enthalten, um den gespeicherten Namen in der Variable als Ziel zu verwenden.</p>
+            <p><span class="ver">[v1.1.01+]:</span> Ist dieser Parameter nicht vorhanden, gilt stattdessen <a href="../Variables.htm#ThisLabel">A_ThisLabel</a>. Zum Beispiel kann <code>SetTimer,, Off</code> innerhalb einer Timer-Subroutine verwendet werden, um den Timer zu deaktivieren.</p></td>
+        </tr>
+        <tr>
+          <td>Periode|On|Off</td>
+          <td><p><strong>On</strong>: Reaktiviert einen zuvor deaktivierten Timer mit der vorherigen <em>Periode</em>. Falls der Timer noch nicht vorhanden ist, wird er erstellt (mit einer Standardperiode von 250). Ist der Timer vorhanden, aber dazu bestimmt, <a href="#once">nur einmal ausgef&uuml;hrt zu werden</a>, wird er auch dieses Mal nur einmal ausgef&uuml;hrt.</p>
+            <p><strong>Off</strong>: Deaktiviert einen vorhandenen Timer.</p>
+            <p><strong>Periode</strong>: Erstellt oder aktualisiert ein Timer mit der <a href="#Precision"><em>ungef&auml;hren</em></a> Wartezeit in Millisekunden, bevor die <em>Label</em>-Subroutine ausgef&uuml;hrt wird. Sobald diese Zeit vertrichen ist, wird <em>Label</em> nochmals ausgef&uuml;hrt (sofern das vorherige Label fertig ausgef&uuml;hrt wurde). Um zu verhindern, dass dabei der Timer automatisch aktiviert wird, muss der Befehl unmittelbar danach ein weiteres Mal aufgerufen und f&uuml;r diesen Parameter OFF angegeben werden.</p>
+            <p>Wenn dieser Parameter leer ist und:</p>
+            <ul>
+              <li>der Timer nicht existiert, wird der Timer mit einer Periode von 250 erstellt.</li>
+              <li>der Timer bereits vorhanden ist, wird er aktiviert und dessen <em>Periode</em> auf den vorherigen Wert <a href="#reset">zur&uuml;ckgesetzt</a>, sofern die <em>Priorit&auml;t</em> noch nicht bestimmt wurde.</li>
+            </ul>
+            <p id="once"><strong>Nur einmal ausf&uuml;hren</strong> <span class="ver">[v1.0.46.16+]:</span> Eine negative <em>Periode</em> bewirkt, dass der Timer nur einmal ausgef&uuml;hrt wird. Zum Beispiel wird mit -100 der Timer nach 100 ms einmal ausgef&uuml;hrt und danach deaktiviert, als ob <code>SetTimer, Label, Off</code> verwendet wurde.<br>
+            </p></td>
+        </tr>
+        <tr>
+          <td>Priorit&auml;t</td>
+          <td><p>Dieser optionale Parameter ist ein Integer zwischen -2147483648 und 2147483647 (oder ein <a href="../Variables.htm#Expressions">Ausdruck</a>), um die Thread-Priorit&auml;t des Timers zu bestimmen. Ist dieser Parameter nicht vorhanden, wird 0 verwendet. Siehe <a href="../misc/Threads.htm">Threads</a> f&uuml;r weitere Details.</p>
+            <p>Um die Priorit&auml;t eines vorhandenen Timers zu &auml;ndern, ohne ihn dabei anderweitig zu beeinflussen, sollte der Parameter davor leergelassen werden.</p></td>
+        </tr>
+      </table>
+      <h3>Bemerkungen</h3>
+      <p>Timer sind n&uuml;tzlich, weil sie asynchron laufen, das hei&szlig;t, dass sie in einem bestimmten Intervall (Frequenz) ausgef&uuml;hrt werden, auch dann, wenn das Script auf ein Fenster wartet, ein Dialogfenster anzeigt oder mit einer anderen Aufgabe besch&auml;ftigt ist. Unter anderem kann der Timer dazu verwendet werden, eine Aktion duchzuf&uuml;hren, wenn der Benutzer abwesend wird (in Verbindung mit <a href="../Variables.htm#TimeIdle">A_TimeIdle</a>) oder unerw&uuml;nschte Fenster zu schlie&szlig;en, sobald sie erscheinen.</p>
+      <p>Obwohl Timer die Illusion erzeugen, dass das Script mehrere Aufgaben gleichzeitig durchf&uuml;hren kann, ist das nicht der Fall. Stattdessen werden zeitlich festgelegte Subroutinen einfach wie andere Threads behandelt: sie sind in der Lage, zu unterbrechen oder von anderen Threads unterbrochen zu werden, wie z. B. eine <a href="../Hotkeys.htm">Hotkey-Subroutine</a>. Siehe <a href="../misc/Threads.htm">Threads</a> f&uuml;r weitere Details.</p>
+      <p>Sobald ein Timer erstellt, reaktiviert oder mit einer neuen <em>Periode</em> aktualisiert wird, wird dessen Subroutine nicht sofort ausgef&uuml;hrt - zuerst muss die angegebene <em>Periode</em> verstreichen. Muss die erste Ausf&uuml;hrung des Timers sofort erfolgen, sollte <a href="Gosub.htm">Gosub</a> verwendet werden, um die Subroutine des Timers auszuf&uuml;hren (allerdings wird nicht ein neuer Thread gestartet, wie es der Timer selbst macht, folglich haben Einstellungen wie <a href="SendMode.htm">SendMode</a> zu Beginn nicht ihre Standardwerte).</p>
+      <p id="reset">Wenn SetTimer sich auf einen bereits vorhandenen Timer bezieht und der zweite Parameter eine Zahl oder das Wort ON ist (oder weggelassen wird), wird die interne "zuvor verwendete Zeit" auf die aktuelle Zeit zur&uuml;ckgesetzt. Au&szlig;erdem muss dessen Periode einmal komplett verstreichen, bevor die Subroutine wieder ausgef&uuml;hrt wird.</p>
+      <p id="Precision"><strong>Genauigkeit des Timers</strong>: Durch die Granularit&auml;t (Ungenauigkeit) der Zeiterfassung im Betriebssystem wird <em>Periode</em> m&ouml;glicherweise auf das n&auml;chstm&ouml;gliche Vielfache von 10 oder 15.6 Millisekunden aufgerundet (abh&auml;ngig vom Typ der installierten Hardware und Treiber). Zum Beispiel ist eine Periode zwischen 1 und 10 in Windows NT/2000/XP (Windows 9x verwendet ~55ms) gleichbedeutend mit 10 oder 15.6. Eine k&uuml;rzere Verz&ouml;gerung kann mittels Loop+Sleep erreicht werden, wie in <a href="Sleep.htm#ShorterSleep">DllCall+<span class="NoIndent">timeBeginPeriod</span>+Sleep</a> demonstriert.</p>
+      <p>Es ist m&ouml;glich, dass ein Timer unter folgenden Bedingungen unregelm&auml;&szlig;ig l&auml;uft:</p>
+      <ol>
+        <li>Andere Anwendungen belasten die CPU ziemlich stark.</li>
+        <li> Die Timer-Subroutine braucht l&auml;nger als die angebende Periode oder es gibt zu viele konkurrierende Timer (das &Auml;ndern von <a href="SetBatchLines.htm">SetBatchLines</a> kann helfen).</li>
+        <li>Der Timer wurde von einem anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen, dazu z&auml;hlen andere zeitlich festgelegte Subroutinen, <a href="../Hotkeys.htm">Hotkey-Subroutinen</a> oder <a href="Menu.htm">benutzerdefinierte Men&uuml;punkte</a> (kann mit <a href="Critical.htm">Critical</a> verhindert werden). Falls das passiert und die Unterbrechung etwas dauert, wird der unterbrochene Timer in dieser Zeitspanne deaktiviert. Allerdings werden andere Timer fortgesetzt, indem sie den <a href="../misc/Threads.htm">Thread</a> unterbrechen, der den ersten Timer unterbrochen hat.</li>
+        <li>Das Script ist aufgrund von <a href="Critical.htm">Critical</a> oder <a href="Thread.htm">Thread Interrupt/Priority</a> unterbrechungsfrei. In solchen Zeiten werden Timer nicht ausgef&uuml;hrt. Wenn das Script sp&auml;ter wieder unterbrochen werden kann, wird jeder &uuml;berf&auml;llige Timer sobald wie m&ouml;glich einmal ausgef&uuml;hrt und danach deren normaler Ablauf fortgesetzt.</li>
+      </ol>
+      <p>Obwohl Timer auch laufen, w&auml;hrend das Script <a href="Suspend.htm">gesperrt</a> ist, werden sie nicht laufen, wenn im <a href="../misc/Threads.htm">aktuelle Thread</a> der Befehl <code><a href="Thread.htm">Thread</a> NoTimers</code> aktiv ist oder ein Thread <a href="Pause.htm">angehalten</a> wird. Dar&uuml;ber hinaus laufen sie nicht, wenn der Benutzer durch ein Men&uuml; des Scripts navigiert (wie z. B. das Tray-Icon-Men&uuml; oder eine Men&uuml;leiste).</p>
+      <p>Da Timer auch laufen, w&auml;hrend die aktuelle Script-Aktivit&auml;t vor&uuml;bergehend unterbrochen wird, sollten ihre Subroutinen kurz gehalten werden (sodass sie schnell beendet werden k&ouml;nnen), falls eine lange Unterbrechung unerw&uuml;nscht ist.</p>
+      <p>Timer, die w&auml;hrend eines Scripts aktiv bleiben, sollten f&uuml;r gew&ouml;hnlich im <a href="../Scripts.htm#auto">automatischen Ausf&uuml;hrungsbereich</a> erstellt werden. Tempor&auml;re Timer hingegen deaktivieren sich oft selbst (siehe Beispiele weiter unten).</p>
+      <p>Sobald eine zeitlich festgelegte Subroutine ausgef&uuml;hrt wird, werden die Standardwerte in den Einstellungen wie <a href="SendMode.htm">SendMode</a> verwendet. Diese k&ouml;nnen im <a href="../Scripts.htm#auto">automatischen Ausf&uuml;hrungsbereich</a> ge&auml;ndert werden.</p>
+      <p>Wenn die <a href="../Hotkeys.htm">Hotkey</a>-Reaktionszeit von entscheidender Bedeutung ist (z. B. bei Spielen) und das Script bestimmte Timer enth&auml;lt, deren Subroutinen zum Ausf&uuml;hren mehr als 5 ms brauchen, dann sollte der folgende Befehl verwendet werden, um eine m&ouml;gliche Verz&ouml;gerung von 15 ms zu unterbinden. So eine Verz&ouml;gerung w&uuml;rde ansonsten auftreten, falls ein Hotkey genau in dem Moment gedr&uuml;ckt wird, wenn sich ein Timer-Thread in der unterbrechungsfreien Phase befindet:</p>
+      <pre><a href="Thread.htm">Thread</a>, interrupt, 0  <em>; Alle Threads sind jederzeit unterbrechbar.</em></pre>
+      <p>Wenn ein Timer w&auml;hrend der Ausf&uuml;hrung seiner Subroutine deaktiviert wird, wird diese Subroutine bis zum Ende fortgesetzt.</p>
+      <p>Die <a href="KeyHistory.htm">KeyHistory</a>-Funktion zeigt, wie viele Timer vorhanden und wie viele zurzeit aktiviert sind.</p>
+      <p>Eine Timer-Periode kann nicht l&auml;nger als 4294967295 Millisekunden dauern (49.7 Tage).</p>
+      <p>Zur Aufrechterhaltung eines Scripts (das zum Beispiel nur Timer enth&auml;lt) kann <a href="_Persistent.htm">#Persistent</a> verwendet werden.</p>
+      <h3>Verwandte Befehle</h3>
+      <p><a href="Gosub.htm">Gosub</a>, <a href="Return.htm">Return</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread (Befehl)</a>, <a href="Critical.htm">Critical</a>, <a href="../Functions.htm#IsLabel">IsLabel()</a>, <a href="Menu.htm">Menu</a>, <a href="_Persistent.htm">#Persistent</a></p>
+      <h3>Beispiele</h3>
+      <pre class="NoIndent"><em>; Beispiel #1: Schlie&szlig;t unerw&uuml;nschte Fenster, sobald sie auftauchen:</em>
 #Persistent
-SetTimer, CloseMailWarnings, 250
+SetTimer, MailWarnungenSchlie&szlig;en, 250
 Return
 
-CloseMailWarnings:
+MailWarnungenSchlie&szlig;en:
 WinClose, Microsoft Outlook, W&auml;hrend der Kommunikation mit dem Server wurde das Zeitlimit &uuml;berschritten
 WinClose, Microsoft Outlook, Es konnte keine Verbindung aufgebaut werden
 Return</pre>
-    <p>&nbsp;</p>
-    <pre class="NoIndent"><em>; Beispiel #2: Wartet, bis ein bestimmtes Fenster auftaucht und alarmiert dann den Benutzer:</em>
+      <pre class="NoIndent"><em>; Beispiel #2: Wartet auf ein bestimmtes Fenster und alarmiert danach den Benutzer:</em>
 #Persistent
-SetTimer, Alert1, 500
+SetTimer, Alarm1, 500
 Return
 
-Alert1:
+Alarm1:
 IfWinNotExist, Video-Konvertierung, Prozess abgeschlossen
     Return
 <em>; Ansonsten:</em>
-SetTimer, Alert1, Off  <em>; d. h. der Timer deaktiviert sich selbst.</em>
+SetTimer, Alarm1, Off  <em>; d. h. der Timer deaktiviert sich selbst.</em>
 SplashTextOn, , , Die Video-Konvertierung wurde abgeschlossen.
 Sleep, 3000
 SplashTextOff
 Return</pre>
-    <p>&nbsp;</p>
-    <pre class="NoIndent"><em>; Beispiel #3: Erkennen, ob ein Hotkey einmal, zweimal oder dreimal gedr&uuml;ckt wurde. Dadurch
-; kann ein Hotkey verschiedene Operationen durchf&uuml;hren,
-; abh&auml;ngig davon, wie oft er gedr&uuml;ckt wurde:</em>
+      <pre class="NoIndent"><em>; Beispiel #3: Erkennt, ob ein Hotkey einmal, zweimal oder dreimal gedr&uuml;ckt wurde. Dadurch
+; kann ein Hotkey eine unterschiedliche Operation durchf&uuml;hren,
+; je nachdem, wie oft er gedr&uuml;ckt wurde:</em>
 #c::
-If winc_presses &gt; 0 <em>; SetTimer bereits gestartet, somit wird der Tastendruck protokolliert.</em>
+If winc_anzahl &gt; 0 <em>; Da SetTimer bereits gestartet wurde, wird stattdessen der Tastendruck protokolliert.</em>
 {
-    winc_presses += 1
+    winc_anzahl += 1
     Return
 }
-<em>; Ansonsten ist das der erste Tastendruck einer neuen Serie. Setzt die Z&auml;hlung auf 1 und
-; startet den Timer:</em>
-winc_presses = 1
-SetTimer, KeyWinC, 400 <em>; Wartet auf noch mehr Tastendr&uuml;cke innerhalb von 400 Millisekunden.</em>
+<em>; Ansonsten ist das der erste Tastendruck einer neuen Serie.
+; Z&auml;hlung wird auf 1 gesetzt und der Timer gestartet:</em>
+winc_anzahl = 1
+SetTimer, TasteWinC, 400 <em>; Wartet bis zu 400 Millisekunden, dass der Hotkey nochmal gedr&uuml;ckt wird.</em>
 Return
 
-KeyWinC:
-SetTimer, KeyWinC, off
-If winc_presses = 1 <em>; Die Taste wurde einmal gedr&uuml;ckt.</em>
+TasteWinC:
+SetTimer, TasteWinC, off
+If winc_anzahl = 1 <em>; Die Taste wurde einmal gedr&uuml;ckt.</em>
 {
     Run, m:\  <em>; &Ouml;ffnet einen Ordner.</em>
 }
-Else If winc_presses = 2 <em>; Die Taste wurde zweimal gedr&uuml;ckt.</em>
+Else If winc_anzahl = 2 <em>; Die Taste wurde zweimal gedr&uuml;ckt.</em>
 {
     Run, m:\multimedia  <em>; &Ouml;ffnet einen anderen Ordner.</em>
 }
-Else If winc_presses &gt; 2
+Else If winc_anzahl &gt; 2
 {
     MsgBox, Drei oder mehr Klicks erkannt.
 }
-<em>; Unabh&auml;ngig von der ausgel&ouml;sten Aktion wird die Z&auml;hlung zur&uuml;ckgesetzt,
+<em>; Unabh&auml;ngig von der zuvor ausgel&ouml;sten Aktion wird die Z&auml;hlung zur&uuml;ckgesetzt,
 ; um die n&auml;chste Serie von Tastendr&uuml;cken vorzubereiten:</em>
-winc_presses = 0
+winc_anzahl = 0
 Return</pre>
-  </article>
+    </article>
   </section>
 </div>
 <script type="text/javascript">WriteFooter(1);</script>
