@@ -21,7 +21,7 @@ function GetTest() {
 function WriteOpenNavLink(navLink, prefix) {
   var ss = '<nav>'
           +'<section>'
-          +'<div id="download-container"><a class="download" href="'+prefix+'../download/AutoHotkey_L_Install.exe" title="Herunterladen und in Sekunden installieren">AutoHotkey herunterladen</a></div>'
+          +'<div id="download-container"><a class="download" href="http://l.autohotkey.net/AutoHotkey_L_Install.exe" title="Herunterladen und in Sekunden installieren">AutoHotkey herunterladen</a></div>'
           +'<ul>'
           +'<li><a href="'+prefix+'../download/index.htm">Downloads</a></li>'
           +'<li><a href="'+prefix+'../docs/AutoHotkey.htm">Dokumentation</a></li>'
@@ -44,7 +44,7 @@ function WriteOpenHeader(navLink, prefix) {
           +'<a href="http://github.com/AutoHotkey" id="forkme"><img src="'+prefix+'static/forkme.png" alt="Fork me on GitHub" /></a></div>'
           +'<nav>'
           +'<section>'
-          +'<div id="download-container"><a class="download" href="'+prefix+'../download/AutoHotkey_L_Install.exe" title="Herunterladen und in Sekunden installieren">AutoHotkey herunterladen</a></div>'
+          +'<div id="download-container"><a class="download" href="http://l.autohotkey.net/AutoHotkey_L_Install.exe" title="Herunterladen und in Sekunden installieren">AutoHotkey herunterladen</a></div>'
           +'<ul>'
           +'<li><a href="'+prefix+'../download/index.htm">Downloads</a></li>'
           +'<li><a href="'+prefix+'AutoHotkey.htm">Dokumentation</a></li>'
