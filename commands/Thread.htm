@@ -17,37 +17,37 @@
 <div id="content">
   <section>
     <article>
-    <h1>Thread</h1>
-    <p>Bestimmt die Priorit&auml;t oder Unterbrechbarkeit von <a href="../misc/Threads.htm">Threads</a>. Kann vor&uuml;bergehend auch alle <a href="SetTimer.htm">Timer</a> deaktivieren.</p>
-    <pre class="Syntax">Thread, NoTimers [, false]
+      <h1>Thread</h1>
+      <p>Bestimmt die Priorit&auml;t oder Unterbrechbarkeit von <a href="../misc/Threads.htm">Threads</a>. Zudem kann dieser Befehl vor&uuml;bergehend alle <a href="SetTimer.htm">Timer</a> deaktivieren.</p>
+      <pre class="Syntax">Thread, NoTimers [, false]
 Thread, Priority, n
 Thread, Interrupt [, Dauer, Zeilenanzahl]</pre>
-    <br>
-    <p><strong>Thread, NoTimers [, false]</strong>: Verhindert Unterbrechungen von jedem <a href="SetTimer.htm">Timer</a>, bis der <a href="../misc/Threads.htm">aktuelle Thread</a> entweder endet, "<em>Thread, NoTimers, false</em>" ausgef&uuml;hrt wird oder von einem anderen Thread unterbrochen wird, der Timer erlaubt (in diesem Fall k&ouml;nnen Timer den unterbrechenden Thread unterbrechen, bis er endet).</p>
-    <p>Wenn "<em>Thread NoTimers</em>" nicht im automatischen Ausf&uuml;hrungsbereich (oberster Teil des Scripts) ausgef&uuml;hrt wird, dann sind alle Threads anf&auml;nglich von Timer unterbrechbar (obwohl die Einstellungen von "Thread Interrupt" [unten] noch verwenden werden). Wenn hingegen <em>NoTimers</em> im automatischen Ausf&uuml;hrungsbereich aktiviert wird, dann ist jeder neu ausgef&uuml;hrte <a href="../misc/Threads.htm">Thread</a> (z. B. <a href="../Hotkeys.htm">Hotkey</a>, <a href="Menu.htm">benutzerdefinierter Men&uuml;punkt</a> oder <a href="SetTimer.htm">Timer</a>) immun gegen Unterbrechungen vom Timer.</p>
-    <p>Unabh&auml;ngig von der Standardeinstellung werden Timer immer funktionieren, auch wenn das Script keine Threads mehr hat (es sei denn, <a href="Pause.htm">Pause</a> wurde aktiviert).</p>
-    <p>"<em>Thread, NoTimers</em>" ist gleichbedeutend mit "<em>Thread, NoTimers, true</em>". Da dar&uuml;ber hinaus der True/False-Parameter ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein kann, wird True zu 1 und False zu 0 aufgel&ouml;st.</p>
-    <br>
-    <p id="Priority"><strong>Thread, Priority, n</strong>: Verwendet f&uuml;r <strong>n</strong> ein Integer zwischen -2147483648 und 2147483647 (oder ein <a href="../Variables.htm#Expressions">Ausdruck</a>), um die Priorit&auml;t des aktuellen Threads zu bestimmen. Das hat keine Auswirkung auf andere Threads. Siehe <a href="../misc/Threads.htm">Threads</a> f&uuml;r weitere Details.</p>
-    <p>Aufgrund der F&auml;higkeit Ereignisse zwischenzuspeichern, ist <a href="Critical.htm">"Critical"</a> dem Befehl "Thread Priority" generell &uuml;berlegen.</p>
-    <p>Beachtet zudem, dass die Priorit&auml;tsstufe des ganzen Scripts wie folgt ge&auml;ndert werden kann: <code><a href="Process.htm">Process</a>, Priority,, High</code>.</p>
-    <br>
-    <p><strong>Thread, Interrupt [, Dauer, Zeilenanzahl]</strong>: Dieser Befehl sollte sparsam verwendet werden, da die meisten Scripts konsequenter mit Einstellungen ausgef&uuml;hrt werden, die dicht bei den Standardwerten liegen.</p>
-    <p>Standardm&auml;&szlig;ig ist jeder neu ausgef&uuml;hrte Thread f&uuml;r eine <em>Dauer</em> von 15 Millisekunden oder bei einer <em>Zeilenanzahl</em> von 1000 Zeilen unterbrechungsfrei, je nachdem, was zuerst kommt. Damit kann der Thread zum Abschluss kommen, anstatt sofort von einem anderen Thread unterbrochen zu werden, der darauf wartet, ausgef&uuml;hrt werden zu k&ouml;nnen (z. B. ein zwischengespeicherter <a href="../Hotkeys.htm">Hotkey</a> oder mehrere <a href="SetTimer.htm">zeitlich festgelegte Subroutinen</a>, die zur Ausf&uuml;hrung eingef&uuml;hrt werden).</p>
-    <p>Wenn einer der beiden Komponenten 0 ist, dann wird jeder neu ausgef&uuml;hrte Thread sofort unterbrochen. Wenn einer der beiden Komponenten -1 ist, dann kann der Thread aufgrund der Komponente nicht unterbrochen werden. Der H&ouml;chstwert beider Komponenten ist 2147483647.</p>
-    <p>Die Interrupt-Einstellung ist global, welche von allen nachfolgenden Threads ber&uuml;cksichtigt wird, selbst wenn die Einstellung au&szlig;erhalb vom <a href="../Scripts.htm#auto">automatischen Ausf&uuml;hrungsbereich</a> ge&auml;ndert wird. Allerdings bleiben <a href="../misc/Threads.htm">unterbrochene Threads</a> unber&uuml;hrt, weil ihre Unterbrechbarkeit bereits verwirkt ist. Der <a href="../misc/Threads.htm">aktuelle Thread</a> wird ebenfalls nicht beeinflusst, es sei denn, es ist beim &Auml;ndern der <em>Zeilenanzahl</em>-Komponente unterbrechungsfrei, wobei in diesem Fall die neue <em>Zeilenanzahl</em> aktiv wird.</p>
-    <p>Wenn ein <a href="../Hotkeys.htm">Hotkey</a> gedr&uuml;ckt oder ein <a href="Menu.htm">benutzerdefinierter Men&uuml;punkt</a> ausgew&auml;hlt wird, w&auml;hrend der <a href="../misc/Threads.htm">aktuelle Thread</a> unterbrechungsfrei ist, dann wird das Ereignis zwischengespeichert. Das hei&szlig;t, dass das Ereignis ausgef&uuml;hrt wird, wenn der aktuelle Thread beendet oder unterbrechbar wird, je nachdem, was zuerst kommt. Aber nicht, wenn der aktuelle Thread unterbrechbar wird, bevor er endet, und eine h&ouml;here <a href="#Priority">Priorit&auml;t</a> als das zwischengespeicherte Ereignis hat. In diesem Fall wird das zwischengespeicherte Ereignis verworfen.</p>
-    <p>Unabh&auml;ngig von dieser Einstellung wird ein Thread unterbrechbar, wenn ein <a href="MsgBox.htm">MsgBox</a>-, <a href="InputBox.htm">InputBox</a>-, <a href="FileSelectFile.htm">FileSelectFile</a>- oder <a href="FileSelectFolder.htm">FileSelectFolder</a>-Dialogfenster angezeigt wird.</p>
-    <p>Einer der Parameter kann leer gelassen werden, um dessen &Auml;nderung zu vermeiden.</p>
-    <h3>Bemerkungen</h3>
-    <p>Wegen der gr&ouml;&szlig;eren Flexibilit&auml;t und der F&auml;higkeit, Ereignisse zwischenzuspeichern, ist der Befehl <a href="Critical.htm">"Critical"</a> generell n&uuml;tzlicher als "Thread Interrupt" und "Thread Priority".</p>
-    <h3>Verwandte Befehle</h3>
-    <p><a href="Critical.htm">Critical</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Hotkey.htm">Hotkey</a>, <a href="Menu.htm">Menu</a>, <a href="SetTimer.htm">SetTimer</a>, <a href="Process.htm">Process</a></p>
-    <h3>Beispiel</h3>
-    <pre class="NoIndent">Thread, priority, 1 <em>; Stellt die Priorit&auml;t des aktuellen Threads etwas &uuml;ber dem Durchschnitt.</em>
-Thread, interrupt, 0  <em>; Jeder neu ausgef&uuml;hrte Thread ist sofort unterbrechbar.</em>
-Thread, interrupt, 50, 2000  <em>; Jeder Thread wird nach 50ms oder 2000 Zeilen unterbrechbar, je nachdem, was zuerst kommt.</em></pre>
-  </article>
+      <br>
+      <p><strong>Thread, NoTimers [, false]</strong>: Verhindert Unterbrechungen von jedem <a href="SetTimer.htm">Timer</a>, bis der <a href="../misc/Threads.htm">aktuelle Thread</a> entweder endet, <code>Thread, NoTimers, false</code> ausgef&uuml;hrt wird oder von einem anderen Thread unterbrochen wird, der Timer erlaubt (in diesem Fall k&ouml;nnen Timer den unterbrechenden Thread unterbrechen, bis er endet).</p>
+      <p>Solange <code>Thread NoTimers</code> nicht im automatischen Ausf&uuml;hrungsbereich (oberster Teil des Scripts) vorkommt, k&ouml;nnen alle Threads von Anfang an unterbrochen werden (obwohl die Einstellungen von "Thread Interrupt" [unten] weiterhin gelten). Wenn der automatische Ausf&uuml;hrungsbereich hingegen <em>NoTimers</em> aktiviert, aber nicht mehr deaktiviert, ist jeder neu gestartete <a href="../misc/Threads.htm">Thread</a> (z. B. <a href="../Hotkeys.htm">Hotkey</a>, <a href="Menu.htm">benutzerdefinierter Men&uuml;punkt</a> oder <a href="SetTimer.htm">Timer</a>) immun gegen Unterbrechungen von Timer.</p>
+      <p>Unabh&auml;ngig von der Standardeinstellung laufen Timer auch dann, wenn das Script keine Threads hat (sofern <a href="Pause.htm">Pause</a> nicht aktiviert wurde).</p>
+      <p><code>Thread, NoTimers</code> ist das gleiche wie <code>Thread, NoTimers, true</code>. Da der True/False-Parameter au&szlig;erdem ein <a href="../Variables.htm#Expressions">Ausdruck</a> ist, wird True in 1 und False in 0 aufgel&ouml;st.</p>
+      <br>
+      <p id="Priority"><strong>Thread, Priority, n</strong>: Verwende f&uuml;r <strong>n</strong> ein Integer zwischen -2147483648 und 2147483647 (oder ein <a href="../Variables.htm#Expressions">Ausdruck</a>), um eine neue Priorit&auml;t f&uuml;r den aktuellen Thread zu bestimmen. Andere Threads werden davon nicht beeinflusst. Siehe <a href="../misc/Threads.htm">Threads</a> f&uuml;r weitere Details.</p>
+      <p>Da der <a href="Critical.htm">Critical</a>-Befehl in der Lage ist, Ereignisse zwischenzuspeichern, ist dieser generell besser als "Thread Priority".</p>
+      <p>In diesem Zusammenhang kann die Priorit&auml;tsstufe des ganzen Scripts wie folgt ge&auml;ndert werden: <code><a href="Process.htm">Process</a>, Priority,, High</code>.</p>
+      <br>
+      <p><strong>Thread, Interrupt [, Dauer, Zeilenanzahl]</strong>: Dieser Befehl sollte sparsam verwendet werden, weil die meisten Scripts stabiler laufen, wenn sie Einstellungen haben, die dicht bei den Standardwerten liegen.</p>
+      <p>Standardm&auml;&szlig;ig ist jeder neu gestartete Thread f&uuml;r eine <em>Dauer</em> von 15 Millisekunden oder bei einer <em>Zeilenanzahl</em> von 1000 Zeilen unterbrechungsfrei, je nachdem, was zuerst kommt. Dadurch hat der Thread die Chance, sich selbst zu beenden, anstatt von einem anderen wartenden Thread sofort unterbrochen zu werden (z. B. ein zwischengespeicherter <a href="../Hotkeys.htm">Hotkey</a> oder mehrere <a href="SetTimer.htm">zeitlich festgelegte Subroutinen</a>, die darauf warten, ausgef&uuml;hrt zu werden).</p>
+      <p>Sobald eine der beiden Komponenten eine 0 ist, wird jeder neu gestartete Thread sofort unterbrochen. Sobald eine der beiden Komponenten -1 ist, kann der Thread aufgrund dieser Komponente nicht mehr unterbrochen werden. Der H&ouml;chstwert beider Komponenten ist 2147483647.</p>
+      <p>Die Interrupt-Einstellung ist global - das hei&szlig;t, dass sie von allen nachfolgenden Threads ber&uuml;cksichtigt wird, auch dann, wenn die Einstellung au&szlig;erhalb vom <a href="../Scripts.htm#auto">automatischen Ausf&uuml;hrungsbereich</a> ge&auml;ndert wird. Allerdings sind <a href="../misc/Threads.htm">unterbrochene Threads</a> davon nicht betroffen, weil deren Zeit, in der sie nicht unterbrochen werden konnten, bereits abgelaufen ist. Auch der <a href="../misc/Threads.htm">aktuelle Thread</a> ist davon nicht betroffen, es sei denn, er ist unterbrechungsfrei, w&auml;hrend die <em>Zeilenanzahl</em>-Komponente ge&auml;ndert wird - in diesem Fall wird die neue <em>Zeilenanzahl</em> f&uuml;r diesen Thread wirksam.</p>
+      <p>Falls ein <a href="../Hotkeys.htm">Hotkey</a> gedr&uuml;ckt oder ein <a href="Menu.htm">benutzerdefinierter Men&uuml;punkt</a> ausgew&auml;hlt wird, w&auml;hrend der <a href="../misc/Threads.htm">aktuelle Thread</a> unterbrechungsfrei ist, wird dieses Ereignis zwischengespeichert. Das hei&szlig;t, dass dieses Ereignis gestartet wird, sobald der aktuelle Thread beendet oder unterbrechbar gemacht wird, je nachdem, was zuerst kommt. Dabei gilt folgende Ausnahme: Falls der Thread vor seiner Beendigung unterbrechbar gemacht wird und eine h&ouml;here <a href="#Priority">Priorit&auml;t</a> als das zwischengespeicherte Ereignis hat, wird das zwischengespeicherte Ereignis verworfen.</p>
+      <p>Unabh&auml;ngig davon wird ein Thread immer unterbrechbar gemacht, sobald dieser ein <a href="MsgBox.htm">MsgBox</a>-, <a href="InputBox.htm">InputBox</a>-, <a href="FileSelectFile.htm">FileSelectFile</a>- oder <a href="FileSelectFolder.htm">FileSelectFolder</a>-Dialogfenster anzeigt.</p>
+      <p>Jeder Parameter kann leer gelassen werden, um diesen nicht zu &auml;ndern.</p>
+      <h3>Bemerkungen</h3>
+      <p>Da der <a href="Critical.htm">Critical</a>-Befehl flexibel einsetzbar ist und in der Lage ist, Ereignisse zwischenzuspeichern, ist dieser generell besser als "Thread Interrupt" und "Thread Priority".</p>
+      <h3>Verwandte Befehle</h3>
+      <p><a href="Critical.htm">Critical</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Hotkey.htm">Hotkey</a>, <a href="Menu.htm">Menu</a>, <a href="SetTimer.htm">SetTimer</a>, <a href="Process.htm">Process</a></p>
+      <h3>Beispiel</h3>
+      <pre class="NoIndent">Thread, priority, 1 <em>; Setzt die Priorit&auml;t des aktuellen Threads etwas h&ouml;her als normal.</em>
+Thread, interrupt, 0  <em>; Jeder neu gestartete Thread ist sofort unterbrechbar.</em>
+Thread, interrupt, 50, 2000  <em>; Jeder Thread wird nach 50 ms oder 2000 Zeilen unterbrechbar, je nachdem, was zuerst kommt.</em></pre>
+    </article>
   </section>
 </div>
 <script type="text/javascript">WriteFooter(1);</script>

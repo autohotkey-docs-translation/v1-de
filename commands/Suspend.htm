@@ -17,31 +17,36 @@
 <div id="content">
   <section>
     <article>
-    <h1>Suspend</h1>
-    <p>Deaktiviert oder aktiviert alle oder ausgew&auml;hlte <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a>.</p>
-    <pre class="Syntax">Suspend [, Modus]</pre>
-    <h3>Parameter</h3>
-    <table class="info">
-      <tr>
-        <td style="width: 15%;">Modus</td>
-        <td style="width: 85%;"><p>On: Unterbricht alle <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a>, nur nicht solche, die in den Bemerkungen erw&auml;hnt werden.</p>
-          <p>Off: Aktiviert wieder die Hotkeys und Hotstrings, die vorher deaktiviert waren.</p>
-          <p>Toggle (Standard): Jeweils auf dem entgegengesetzten Zustand setzen (On oder Off).</p>
-          <p>Permit: Markiert nur die aktuelle Subroutine, um sie von der Unterbrechung auszuschlie&szlig;en.</p></td>
-      </tr>
-    </table>
-    <h3>Bemerkungen</h3>
-    <p>Jede Hotkey/Hotstring-Subroutine mit Suspend (au&szlig;er "Suspend On") in der ersten Zeile wird von der Unterbrechung ausgeschlossen. Das hei&szlig;t, dass der Hotkey selbst dann aktiviert bleibt, wenn die Unterbrechung aktiv ist. Dadurch kann die Unterbrechung mit diesem Hotkey deaktiviert werden.</p>
-    <p>Um ausgew&auml;hlte Hotkeys oder Hotstring automatisch auf Basis des vorhandenen Fenstertyps zu deaktivieren, verwendet <a href="_IfWinActive.htm">#IfWinActive/Exist</a>.</p>
-    <p>Die Unterbrechung von Hotkeys stoppt nicht bereits laufende <a href="../misc/Threads.htm">Threads</a> im Script (falls vorhanden), verwendet stattdessen <a href="Pause.htm">Pause</a>.</p>
-    <p>Wenn die Hotkeys unterbrochen werden, dann &auml;ndert sich das Tray-Icon zu einem S. Das kann aber mit dem Blockieren des Icons verhindert werden, indem eine 1 im letzten Parameter des Menu-Befehls angegeben wird. Zum Beispiel:</p>
-    <pre><a href="Menu.htm">Menu</a>, Tray, Icon, C:\Eigenes Icon.ico, , 1</pre>
-    <p>Die interne Variable A_IsSuspended enth&auml;lt 1, wenn das Script unterbrochen ist, andernfalls 0.</p>
-    <h3>Verwandte Befehle</h3>
-    <p><a href="_IfWinActive.htm">#IfWinActive/Exist</a>, <a href="Pause.htm">Pause</a>, <a href="Menu.htm">Menu</a>, <a href="ExitApp.htm">ExitApp</a></p>
-    <h3>Beispiel</h3>
-    <pre class="NoIndent">^!s::Suspend  <em>; Dem Hotkey eine Umschaltfunktion von Suspend zuweisen.</em></pre>
-  </article>
+      <h1>Suspend</h1>
+      <p>Deaktiviert oder aktiviert alle oder bestimmte <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a>.</p>
+      <pre class="Syntax">Suspend [, Modus]</pre>
+      <h3>Parameter</h3>
+      <table class="info">
+        <tr>
+          <td style="width: 15%;">Modus</td>
+          <td style="width: 85%;"><p>On: Sperrt alle <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a> (siehe Bemerkungen f&uuml;r Ausnahmen).</p>
+            <p>Off: Aktiviert die zuvor deaktivierten Hotkeys und Hotstrings.</p>
+            <p>Toggle (Standard): Setzt den Zustand jeweils auf die entgegengesetzte Seite (On oder Off).</p>
+            <p>Permit: Markiert die aktuelle Subroutine, um diese von der Sperrung auszuschlie&szlig;en.</p></td>
+        </tr>
+      </table>
+      <h3>Bemerkungen</h3>
+      <p>Jede Hotkey/Hotstring-Subroutine, die auf der ersten Zeile Suspend (au&szlig;er "Suspend On") stehen hat, wird von der Sperrung ausgeschlossen. Das hei&szlig;t, dass der Hotkey weiterhin aktiviert bleibt, auch dann, wenn die Sperrung aktiv ist. Dadurch ist es m&ouml;glich, die Sperrung mit solch einem Hotkey aufzuheben.</p>
+      <p>Mit <a href="_IfWinActive.htm">#IfWinActive/Exist</a> k&ouml;nnen bestimmte Hotkeys oder Hotstrings auf Basis des vorhandenen Fenstertyps automatisch deaktiviert werden.</p>
+      <p><a href="../misc/Threads.htm">Threads</a>, die bereits laufen, k&ouml;nnen von Suspend nicht gestoppt werden - dazu ist nur der <a href="Pause.htm">Pause</a>-Befehl in der Lage.</p>
+      <p>Sobald Hotkeys mit dem Suspend-Befehl gesperrt werden, wird ein S im Tray-Icon angezeigt. Um das zu verhindern, kann das Icon "eingefroren" werden, indem eine 1 im letzten Parameter des Menu-Befehls angegeben wird. Zum Beispiel:</p>
+      <pre><a href="Menu.htm">Menu</a>, Tray, Icon, C:\Eigenes Icon.ico, , 1</pre>
+      <p>Die interne Variable A_IsSuspended enth&auml;lt eine 1, wenn das Script mit Suspend gesperrt wurde, ansonsten 0.</p>
+      <h3>Verwandte Befehle</h3>
+      <p><a href="_IfWinActive.htm">#IfWinActive/Exist</a>, <a href="Pause.htm">Pause</a>, <a href="Menu.htm">Menu</a>, <a href="ExitApp.htm">ExitApp</a></p>
+      <h3>Beispiel</h3>
+      <pre class="NoIndent">^!s::Suspend  <em>; Weist einem Hotkey die Umschaltfunktion von Suspend zu.</em></pre>
+      <pre id="PostMessage" class="NoIndent"><em>; Sendet einen Suspend-Befehl zu einem anderen Script.</em>
+<a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>, On
+WM_COMMAND := 0x111
+ID_FILE_SUSPEND := 65404
+<a href="PostMessage.htm">PostMessage</a>, WM_COMMAND, ID_FILE_SUSPEND,,, C:\DeinScript.ahk ahk_class AutoHotkey</pre>
+    </article>
   </section>
 </div>
 <script type="text/javascript">WriteFooter(1);</script>
