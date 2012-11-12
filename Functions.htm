@@ -24,6 +24,7 @@
         <li><a href="#intro">Einf&uuml;hrung und einfache Beispiele</a></li>
         <li><a href="#param">Parameter</a></li>
         <li><a href="#optional">Optionale Parameter</a></li>
+        <li><a href="#return">R&uuml;ckgabewerte an den Aufrufer</a></li>
         <li><a href="#Variadic">Variadische Funktionen</a></li>
         <li><a href="#Locals">Lokale Variablen</a></li>
         <li><a href="#DynCall">Dynamisches Aufrufen einer Funktion </a></li>
@@ -74,18 +75,69 @@
         <li>Wenn bei einem Funktionsaufruf ein Parameter in eine Variable aufgel&ouml;st wird (z. B. <code>Var</code> oder <code>++Var</code> oder <code>Var*=2</code>), kann sich diese Variable durch links und rechts befindliche Parameter noch &auml;ndern, bevor sie an die Funktion &uuml;bergeben wird. Zum Beispiel wird mit <code>Funktion(Var, Var++)</code> unerwartet eine 0 und 1 &uuml;bergeben, wenn <em>Var</em> anfangs eine 0 enth&auml;lt, selbst wenn der erste Parameter der Funktion kein <em>ByRef</em> ist. Dieses unvorteilhafte Verhalten wird m&ouml;glicherweise in einer zuk&uuml;nftigen Version ge&auml;ndert.</li>
       </ul>
       <h2 id="optional">Optionale Parameter</h2>
-      <p>Beim Definieren einer Funktion k&ouml;nnen beliebig viele Parameter als optional gekennzeichnet werden. Dazu muss ein Gleichheitszeichen gefolgt von einem Standardwert angef&uuml;gt werden. Im folgenden Beispiel ist der Z-Parameter als optional gekennzeichnet:</p>
-      <pre>Addieren(X, Y, Z=0) {
+      <p>Beim Definieren einer Funktion k&ouml;nnen beliebig viele Parameter als optional gekennzeichnet werden. Dazu muss ein Gleichheitszeichen (oder seit v1.1.09 <code>:=</code>) gefolgt von einem Standardwert angef&uuml;gt werden. Im folgenden Beispiel ist der Z-Parameter als optional gekennzeichnet:</p>
+      <pre>Addieren(X, Y, Z:=0) {
     Return X + Y + Z
 }</pre>
+      <p>Seit v1.1.09 wird sowohl <code>=</code> als auch <code>:=</code> unterst&uuml;tzt. Das Letztere ist aus Gr&uuml;nden der Vereinheitlichung von Ausdruckszuweisungen und Kompatibilit&auml;t mit zuk&uuml;nftigen Versionen von AutoHotkey empfohlen.</p>
       <p>Wenn der Aufrufer <strong>drei</strong> Parameter an die obere Funktion &uuml;bergibt, wird der Standardwert von Z ignoriert. Wenn der Aufrufer allerdings nur <strong>zwei</strong> Parameter &uuml;bergibt, erh&auml;lt Z automatisch den Wert 0.</p>
       <p>Es ist nicht m&ouml;glich, alleinstehende optionale Parameter in der Mitte der Parameterliste zu verwenden. Das hei&szlig;t, dass alle Parameter, die sich rechts vom ersten optionalen Parameter befinden, auch als optional gekennzeichnet werden m&uuml;ssen. <span class="ver">[AHK_L 31+]:</span> Optionale Parameter k&ouml;nnen beim Funktionsaufruf in der Mitte der Parameterliste weggelassen werden, solange der Funktionsaufruf nicht dynamisch ist:</p>
       <pre>Funktion(1,, 3)
-Funktion(X, Y=2, Z=0) {  <em>; Beachtet, dass Z in diesem Fall weiterhin optional sein muss.</em>
+Funktion(X, Y:=2, Z:=0) {  <em>; Beachtet, dass Z in diesem Fall weiterhin optional sein muss.</em>
     MsgBox %X%, %Y%, %Z%
 }</pre>
       <p id="OptionalByRef">Seit v1.0.46.13 unterst&uuml;tzen <a href="#ByRef">ByRef-Parameter</a> auch Standardwerte; zum Beispiel: <code>Funktion(ByRef p1 = "")</code>. Sobald der Aufrufer einen solchen Parameter wegl&auml;sst, erstellt die Funktion eine lokale Variable, die einen Standardwert enth&auml;lt; das hei&szlig;t, dass das Schl&uuml;sselwort "ByRef" ignoriert wird.</p>
       <p>F&uuml;r den Standardwert eines Parameters sind folgende Werte zul&auml;ssig: true, false, ein direkter Integer, eine direkte Flie&szlig;kommazahl oder ein direkter String wie "fox" oder "" (aber vor v1.0.46.13 unterst&uuml;tzen Strings nur "").</p>
+      <h2 id="return">R&uuml;ckgabewerte an den Aufrufer</h2>
+      <p>Wie oben bereits in der <a href="#intro">Einf&uuml;hrung</a> beschrieben kann eine Funktion wahlweise einen Wert an ihren Aufrufer <a href="commands/Return.htm">zur&uuml;ckgeben</a>.</p>
+      <pre>
+Test := returnTest()
+MsgBox % Test
+
+returnTest() {
+  return 123
+}
+</pre>
+      <p>Wenn du zus&auml;tzlich Ergebnisse von einer Funktion zur&uuml;ckgeben willst, kannst du auch <a href="#ByRef">ByRef</a> verwenden:</p>
+      <pre>
+returnByRef(A,B,C)
+MsgBox % A "," B "," C
+
+returnByRef(ByRef val1, ByRef val2, ByRef val3)
+{
+  val1 := "A"
+  val2 := 100
+  val3 := 1.1
+  return
+}
+</pre>
+      <p><span class="ver">[v1.0.97+]:</span> Es k&ouml;nnen <a href="Objects.htm#Usage_Objects">Objekte</a> und <a href="Objects.htm#Usage_Simple_Arrays">Arrays</a> verwendet werden, um mehrere Werte oder sogar benannte Werte zur&uuml;ckzugeben:</p>
+      <pre>
+Test1 := returnArray1()
+MsgBox % Test1[1] "," Test1[2]
+
+Test2 := returnArray2()
+MsgBox % Test2[1] "," Test2[2]
+
+Test3 := returnObject()
+MsgBox % Test3.id "," Test3.val
+
+returnArray1() {
+  Test := [123,"ABC"]
+  return Test
+}
+
+returnArray2() {
+  x := 456
+  y := "EFG"
+  return [x, y]
+}
+
+returnObject() {
+  Test := {id: 789, val: "HIJ"}
+  return Test
+}
+</pre>
       <h2 id="Variadic">Variadische Funktionen <span class="ver">[AHK_L 60+]</span></h2>
       <p>Beim Definieren einer Funktion kann ein Sternchen nach dem letzten Parameter angegeben werden, um die Funktion als variadisch zu kennzeichnen, wodurch sie eine beliebige Anzahl an Parametern akzeptiert:</p>
       <pre>Verbinden(sep, <b class="blue">params*</b>) {
@@ -284,7 +336,7 @@ Pfad-der-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.</em></pre>
       <p id="ATan"><strong>ATan(Zahl)</strong>: Gibt den Arkustangens (die Zahl, deren Tangens die <em>Zahl</em> ist) als Bogenma&szlig; zur&uuml;ck.</p>
       <p><strong>Hinweis:</strong> Um Bogenma&szlig; in Grad umzuwandeln, multipliziert es mit 180/pi (ungef&auml;hr 57.29578). Um Grad in Bogenma&szlig; umzuwandeln, multipliziert es mit pi/180 (ungef&auml;hr 0.01745329252). Der Wert von pi (ungef&auml;hr 3,141592653589793) ist viermal der Arcustangens von 1.</p>
       <h3>Weitere Funktionen</h3>
-      <p><a href="http://file.autohotkey.net/Titan/functions.html">Befehlsfunktionen von Titan</a>: Erm&ouml;glicht eine aufrufbare Funktion f&uuml;r jeden AutoHotkey-Befehl mit einer Ausgabevariable. Diese Bibliothek kann mithilfe von <a href="commands/_Include.htm">#Include</a> in jedem Script eingef&uuml;gt werden.</p>
+      <p><a href="http://www.autohotkey.net/~polyethene/#functions">Befehlsfunktionen von Polyethene</a>: Erm&ouml;glicht eine aufrufbare Funktion f&uuml;r jeden AutoHotkey-Befehl mit einer Ausgabevariable. Diese Bibliothek kann mithilfe von <a href="commands/_Include.htm">#Include</a> in jedem Script eingef&uuml;gt werden.</p>
     </article>
   </section>
 </div>
