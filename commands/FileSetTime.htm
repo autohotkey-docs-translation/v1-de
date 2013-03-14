@@ -24,13 +24,13 @@
       <table class="info">
         <tr>
           <td style="width: 15%;">YYYYMMDDHH24MISS</td>
-          <td style="width: 85%;"><p>Ist dieser Parameter leer oder nicht vorhanden, wird standardm&auml;&szlig;ig die aktuelle Zeit verwendet. Ansonsten kann eine bestimmte Zeit f&uuml;r diese Operation angegeben werden (siehe Bemerkungen zum Format). Jahre vor 1601 werden nicht unterst&uuml;tzt.</p>
-            <p>Dieser Parameter ist ein <a href="../Variables.htm#Expressions">Ausdruck</a>. Wenn daher mehrere Variablen zu einem Zeitstempel verkettet werden m&uuml;ssen, sollte der <a href="../Variables.htm#concat">Punkt-Operator</a> anstelle des Prozentzeichens verwendet werden. Zum Beispiel: <code>FileSetTime, Jahr <strong>.</strong> Monat <strong>.</strong> Tag, C:\Eigene Datei.txt</code></p></td>
+          <td style="width: 85%;"><p>Ist dieser Parameter leer oder nicht vorhanden, gilt standardm&auml;&szlig;ig die aktuelle Zeit. Ansonsten kann eine Zeit angegeben werden, die f&uuml;r diese Operation verwendet werden soll (siehe Bemerkungen zum Format). Jahre vor 1601 werden nicht unterst&uuml;tzt.</p>
+            <p>Dieser Parameter ist ein <a href="../Variables.htm#Expressions">Ausdruck</a>. Das hei&szlig;t, m&uuml;ssen mehrere Variablen zu einem Zeitstempel verkettet werden, sollte der <a href="../Variables.htm#concat">Punkt-Operator</a> anstatt das Prozentzeichen verwendet werden. Zum Beispiel: <code>FileSetTime, Jahr <strong>.</strong> Monat <strong>.</strong> Tag, C:\Eigene Datei.txt</code></p></td>
         </tr>
         <tr>
           <td style="width: 15%;">Dateimuster</td>
-          <td style="width: 85%;"><p>Der Name einer Datei, eines Ordners oder einer musterbasierten Suche wie C:\Temp\*.tmp. Das <em>Dateimuster</em> befindet sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis, solange kein absoluter Pfad angegeben ist.</p>
-            <p>Ist dieser Parameter nicht vorhanden, wird die aktuelle Datei von der innersten <a href="LoopFile.htm">dateilesenden Schleife</a> verwendet.</p></td>
+          <td style="width: 85%;"><p>Name einer Datei, eines Ordners oder einer musterbasierten Suche wie C:\Temp\*.tmp. <em>Dateimuster</em> befindet sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis, solange kein absoluter Pfad angegeben ist.</p>
+            <p>Ist dieser Parameter nicht vorhanden, wird die aktuelle Datei vom innersten <a href="LoopFile.htm">Loop (Dateien & Ordner)</a> verwendet.</p></td>
         </tr>
         <tr>
           <td>Zeitstempeltyp</td>
@@ -42,10 +42,10 @@
         <tr>
           <td>OrdnerEinbeziehen?</td>
           <td><p>0 (Standard) Ordner werden nicht mit einbezogen (nur Dateien). <br>
-              1 Alle Dateien und Ordner, die der musterbasierten Suche entsprechen, werden mit einbezogen.<br>
+              1 Alle Dateien und Ordner, die mit der musterbasierten Suche &uuml;bereinstimmen, werden mit einbezogen.<br>
               2 Nur Ordner werden mit einbezogen (keine Dateien).</p>
-            <p>Hinweis: Wenn das <i>Dateimuster</i> ein einzelner Ordner anstelle einer musterbasierten Suche ist, wird dieser immer mit einbezogen, unabh&auml;ngig dieser Einstellung.</p>
-            <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p></td>
+            <p>Hinweis: Falls <i>Dateimuster</i> ein einzelner Ordner anstatt eine musterbasierte Suche ist, wird er immer mit einbezogen, unabh&auml;ngig von dieser Einstellung.</p>
+          <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p></td>
         </tr>
         <tr>
           <td>Rekursiv?</td>
@@ -56,7 +56,7 @@
       </table>
       <h3>ErrorLevel</h3>
       <p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszul&ouml;sen. F&uuml;r mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
-      <p>Bei <u>Problemen</u> enth&auml;lt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> die Anzahl an Dateien, die nicht ge&auml;ndert werden konnten, ansonsten 0. Wenn der angegebene Zeitstempel ung&uuml;ltig ist oder <em>Dateimuster</em> in einen leeren Wert aufgel&ouml;st wird, wird ErrorLevel auf 1 gesetzt.</p>
+      <p>Bei <u>Misserfolg</u> wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf die Anzahl der Dateien gesetzt, die nicht ge&auml;ndert werden konnten, ansonsten auf 0. Wenn der angegebene Zeitstempel ung&uuml;ltig ist oder <em>Dateimuster</em> in einen leeren Wert aufgel&ouml;st wird, wird ErrorLevel auf 1 gesetzt.</p>
       <p>Falls Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> auf 0 gesetzt, oder auf den aktuellsten R&uuml;ckgabewert der Systemfunktion GetLastError(). Ansonsten enth&auml;lt A_LastError einen Fehlercode, der darauf hinweist, warum keine Dateien gefunden wurden.</p>
       <h3>Bemerkungen</h3>
       <p>In Windows 95/98/ME wird das &Auml;ndern des Zeitstempels von Ordnern nicht unterst&uuml;tzt. Solche Versuche werden ignoriert.</p>
@@ -88,11 +88,11 @@
           <td>2-stellige Sekunde (00-59)</td>
         </tr>
       </table>
-      <p>Bei einem Datum im YYYYMMDDHH24MISS-Format k&ouml;nnen nachfolgende Elemente weggelassen werden, um diese mit Standardwerten zu ersetzen. Element MM wird mit 01 ersetzt, DD mit 01, HH24 mit 00, MI mit 00 und SS mit 00.</p>
+      <p>Falls der YYYYMMDDHH24MISS-String nur teilweise angegeben ist (z. B. 200403), werden die restlichen Elemente, welche weggelassen worden sind, mit folgenden Standardwerten ersetzt: 01 f&uuml;r MM, 01 f&uuml;r DD, 00 f&uuml;r HH24, 00 f&uuml;r MI und 00 f&uuml;r SS.</p>
       <p>Die interne Variable <a href="../Variables.htm#Now">A_Now</a> enth&auml;lt die aktuelle Ortszeit im YYYYMMDDHH24MISS-Format. Ebenso enth&auml;lt <a href="../Variables.htm#NowUTC">A_NowUTC</a> die aktuelle koordinierte Weltzeit.</p>
-      <p><strong>Hinweis:</strong> Datum-Zeit-Werte k&ouml;nnen mit <a href="EnvAdd.htm">EnvAdd</a> und <a href="EnvSub.htm">EnvSub</a> verglichen, addiert oder subtrahiert werden. Au&szlig;erdem sollte besser nicht "gr&ouml;&szlig;er als" oder "kleiner als" f&uuml;r den Vergleich von Zeiten verwendet werden, solange beide nicht die gleiche Stringl&auml;nge haben. Denn sie w&uuml;rden als Zahlen verglichen werden. Zum Beispiel ist 20040201 aus numerischer Sicht immer kleiner (aber chronologisch gr&ouml;&szlig;er) als 200401010533. Verwendet stattdessen <a href="EnvSub.htm">EnvSub</a>, um herauszufinden, ob die Differenz zwischen ihnen positiv oder negativ ist.</p>
+      <p><strong>Hinweis:</strong> Datum-Zeit-Werte k&ouml;nnen per <a href="EnvAdd.htm">EnvAdd</a> und <a href="EnvSub.htm">EnvSub</a> verglichen, addiert oder subtrahiert werden. Haben die Zeitwerte beim Vergleich unterschiedliche Stringl&auml;ngen, sollten diese nicht mit "gr&ouml;&szlig;er als" oder "kleiner als" verglichen werden, weil sie in diesem Fall als Zahlen behandelt werden. Zum Beispiel ist 20040201 aus numerischer Sicht immer kleiner (aber chronologisch gr&ouml;&szlig;er) als 200401010533. Verwende stattdessen <a href="EnvSub.htm">EnvSub</a>, um herauszufinden, ob die Differenz zwischen denen positiv oder negativ ist.</p>
       <h3>Verwandte Befehle</h3>
-      <p><a href="FileGetTime.htm">FileGetTime</a>, <a href="FileGetAttrib.htm">FileGetAttrib</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileGetSize.htm">FileGetSize</a>, <a href="FileGetVersion.htm">FileGetVersion</a>, <a href="FormatTime.htm">FormatTime</a>, <a href="LoopFile.htm">dateilesende Schleife</a>, <a href="EnvAdd.htm">EnvAdd</a>, <a href="EnvSub.htm">EnvSub</a></p>
+      <p><a href="FileGetTime.htm">FileGetTime</a>, <a href="FileGetAttrib.htm">FileGetAttrib</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileGetSize.htm">FileGetSize</a>, <a href="FileGetVersion.htm">FileGetVersion</a>, <a href="FormatTime.htm">FormatTime</a>, <a href="LoopFile.htm">Loop (Dateien & Ordner)</a>, <a href="EnvAdd.htm">EnvAdd</a>, <a href="EnvSub.htm">EnvSub</a></p>
       <h3>Beispiel</h3>
       <pre class="NoIndent"><em>; Stellt das &Auml;nderungsdatum aller &uuml;bereinstimmenden Dateien auf das aktuelle Datum um:</em>
 FileSetTime, , C:\temp\*.txt

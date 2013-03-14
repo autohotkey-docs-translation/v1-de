@@ -18,7 +18,7 @@
   <section>
     <div id="article">
     <h1>ComObjQuery() <span class="ver">[v1.0.96.00+]</span></h1>
-    <p>Abfragen eines COM-Objekts f&uuml;r eine Schnittstelle oder Dienst.</p>
+    <p>Fragt die Schnittstelle oder den Dienst eines COM-Objekts ab.</p>
     <pre class="Syntax">InterfacePointer := ComObjQuery(ComObject, [SID,] IID)</pre>
     <h3>Parameter</h3>
     <table class="info">
@@ -36,7 +36,7 @@
       </tr>
     </table>
     <h3>Allgemeine Bemerkungen</h3>
-    <p>Im 2-Parameter-Modus ist diese Funktion mit <a href="http://msdn.microsoft.com/en-us/library/ms682521.aspx">IUnknown::QueryInterface</a> vergleichbar. Sobald SID als auch IID angegeben sind, wird die Funktion intern die <a href="http://msdn.microsoft.com/en-us/library/cc678965.aspx">IServiceProvider</a>-Schnittstelle abrufen und danach <a href="http://msdn.microsoft.com/en-us/library/cc678966.aspx">IServiceProvider::QueryService</a> aufrufen. In jedem Fall ist der R&uuml;ckgabewert entweder eine 0 oder ein Pointer auf die angeforderte Schnittstelle. Im Allgemeinen muss der Pointer <a href="ObjAddRef.htm">freigegeben</a> werden, sobald das Script damit fertig ist.</p>
+    <p>Im 2-Parameter-Modus ist diese Funktion vergleichbar mit <a href="http://msdn.microsoft.com/en-us/library/ms682521.aspx">IUnknown::QueryInterface</a>. Ist sowohl SID als auch IID angegeben, wird sie intern die <a href="http://msdn.microsoft.com/en-us/library/cc678965.aspx">IServiceProvider</a>-Schnittstelle abfragen und danach <a href="http://msdn.microsoft.com/en-us/library/cc678966.aspx">IServiceProvider::QueryService</a> aufrufen. In jedem Fall ist der R&uuml;ckgabewert entweder eine 0 oder ein Pointer auf die angeforderte Schnittstelle. Im Allgemeinen muss der Pointer <a href="ObjAddRef.htm">freigegeben</a> werden, sobald das Script damit fertig ist.</p>
     <h3>Verwandte Befehle</h3>
     <a href="ObjAddRef.htm">ObjRelease</a>, <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjActive.htm">ComObjActive</a>, <a href="ComObjError.htm">ComObjError</a>
     <h3>Beispiele</h3>
@@ -48,23 +48,23 @@ MsgBox % "Schnittstellenname: " ComObjType(obj, "name")
 
 IID_IProvideClassInfo := "{B196B283-BAB4-101A-B69C-00AA00341D07}"
 
-<em>; Anfordern eines Pointers auf die IProvideClassInfo-Schnittstelle des Objekts.</em>
+<em>; Fordert ein Pointer an, der auf die IProvideClassInfo-Schnittstelle des Objekts verweist.</em>
 If !(pci := ComObjQuery(obj, IID_IProvideClassInfo))
 {
     MsgBox IProvideClassInfo-Schnittstelle wird nicht unterst&uuml;tzt.
     Return
 }
 
-<em>; GetClassInfo aufrufen, um einen Pointer auf die ITypeInfo-Schnittstelle zu ermitteln.</em>
+<em>; Ruft GetClassInfo auf, um einen Pointer auf die ITypeInfo-Schnittstelle zu ermitteln.</em>
 DllCall(vtable(pci, 3), "ptr", pci, "ptr*", ti)
 
-<em>; Ruft GetDocumentation auf, um den vollst&auml;ndigen Typennamen des Objekts zu erhalten.</em>
+<em>; Ruft GetDocumentation auf, um den vollst&auml;ndigen Typennamen des Objekts zu ermitteln.</em>
 DllCall(vtable(ti, 12), "ptr", ti, "int", -1, "ptr*", name, "ptr", 0, "ptr", 0, "ptr", 0)
 
-<em>; Wandelt den BSTR-Pointer in einem brauchbaren String um.</em>
+<em>; Wandelt den BSTR-Pointer in einen brauchbaren String um.</em>
 name := StrGet(name, "UTF-16")
 
-<em>; Unbearbeiteten Interface-Pointer freigeben.</em>
+<em>; Gibt unbearbeitete Interface-Pointer frei.</em>
 ObjRelease(ti)
 ObjRelease(pci)
 
@@ -88,7 +88,7 @@ Return
 
 GetWebBrowser()
 {
-    <em>; Unbearbeiteter Pointer auf das Dokument-Objekt des obersten IE-Fensters ermitteln.</em>
+    <em>; Ermittelt einen unbearbeiteten Pointer auf das Dokument-Objekt des obersten IE-Fensters.</em>
     static msg := DllCall("RegisterWindowMessage", "str", "WM_HTML_GETOBJECT")
     SendMessage msg, 0, 0, Internet Explorer_Server1, ahk_class IEFrame
     If ErrorLevel = FAIL
@@ -98,16 +98,16 @@ GetWebBrowser()
         , "ptr", GUID(IID_IHTMLDocument2,"{332C4425-26CB-11D0-B483-00C04FD90119}")
         , "ptr", 0, "ptr*", pdoc)
 
-    <em>; Nach dem WebBrowserApp-Dienst abfragen. Im diesen bestimmten Fall sind
-    ; die SID und IID gleichwertig, aber es ist nicht immer so.</em>
+    <em>; Fragt den WebBrowserApp-Dienst ab. Im diesen bestimmten Fall sind
+    ; die SID und IID gleichwertig, das aber nicht immer so ist.</em>
     static IID_IWebBrowserApp := "{0002DF05-0000-0000-C000-000000000046}"
     static SID_SWebBrowserApp := IID_IWebBrowserApp
     pweb := ComObjQuery(pdoc, SID_SWebBrowserApp, IID_IWebBrowserApp)
 
-    <em>; Den Dokument-Objekt-Pointer freigeben.</em>
+    <em>; Gibt den Dokument-Objekt-Pointer frei.</em>
     ObjRelease(pdoc)
 
-    <em>; Gibt das WebBrowser-Objekt zur&uuml;ck, welches zuerst angepasst wird:</em>
+    <em>; Gibt das WebBrowser-Objekt zur&uuml;ck, das zuerst angepasst wird:</em>
     static VT_DISPATCH := 9, F_OWNVALUE := 1
     Return ComObject(VT_DISPATCH, pweb, F_OWNVALUE)
 }
