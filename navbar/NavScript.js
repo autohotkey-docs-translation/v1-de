@@ -38,7 +38,7 @@ function WriteOpenNavLink(navLink, prefix) {
 function WriteOpenHeader(navLink, prefix) {
   var ss = '<div id="top">'
           +'<section>'
-          +'<div id="languages"><a href="http://www.autohotkey.com"><img src="'+prefix+'static/flags/en.png" alt="English" /></a>&nbsp;<a href="http://cn.autohotkey.com"><img src="'+prefix+'static/flags/cn.png" alt="Chinese" /></a></div>'
+          +'<div id="languages"><a href="http://www.autohotkey.com"><img src="'+prefix+'static/flags/en.png" alt="English" /></a>&nbsp;<a href="http://ahkcn.sourceforge.jp"><img src="'+prefix+'static/flags/cn.png" alt="Chinese" /></a></div>'
           +'<h1><a href="'+prefix+'../index.htm"><img src="'+prefix+'static/ahk_logo.png" width="518" height="81" alt="AutoHotkey" /></a></h1>'
           +'</section>'
           +'<a href="http://github.com/AutoHotkey" id="forkme"><img src="'+prefix+'static/forkme.png" alt="Fork me on GitHub" /></a></div>'

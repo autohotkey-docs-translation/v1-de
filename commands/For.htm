@@ -45,7 +45,7 @@ if IsObject(_enum)<br>    while _enum.Next(Schl&uuml;ssel, Wert)
     }
 </pre>
     <p>Vorhandene Schl&uuml;ssel-Wert-Paare k&ouml;nnen ge&auml;ndert werden, w&auml;hrend die Schleife l&auml;uft. Allerdings f&uuml;hrt das Einf&uuml;gen oder Entfernen von Schl&uuml;sseln dazu, dass einige Elemente &uuml;bersprungen oder mehrfach enumeriert werden. Du kannst dieses Problem umgehen, wenn du zuerst eine Liste mit Schl&uuml;sseln erstellst, die entfernt werden sollen, und danach eine zweite Schleife verwendest, um die Schl&uuml;ssel nach dem ersten Schleifendurchlauf zu entfernen. Beachte, dass du <code><a href="../objects/Object.htm#Remove">Object.Remove</a>(<i>ErsterSchl&uuml;ssel</i>, <i>LetzterSchlüssel</i>)</code> verwenden kannst, um eine bestimmte Auswahl von Schl&uuml;sseln ohne Schleife zu entfernen.</p>
-    <p>Nach einer For-Schleife erfolgt &uuml;blicherweise ein <a href="Block.htm">Block</a> mit mehreren Anweisungen, die den <em>Schleifenk&ouml;rper</em> bilden. Hat die Schleife nur eine Anweisung, ist ein Block nicht notwendig (in diesem Fall z&auml;hlt ein "If" und das dazugeh&ouml;rige "Else" als eine Anweisung). Bei Bedarf kannst du den "One True Brace Style" (OTB) verwenden. Das hei&szlig;t, dass die &ouml;ffnende Klammer neben dem Befehl vorkommen darf. Zum Beispiel: <em>for x, y in z {</em></p>
+    <p>Nach einer For-Schleife erfolgt &uuml;blicherweise ein <a href="Block.htm">Block</a> mit mehreren Anweisungen, die den <em>Schleifenk&ouml;rper</em> bilden. Hat die Schleife nur eine Anweisung, ist ein Block nicht notwendig (in diesem Fall z&auml;hlt ein "If" und das dazugeh&ouml;rige "Else" als eine Anweisung). Bei Bedarf kannst du den "One True Brace Style" (OTB) verwenden. Das hei&szlig;t, dass die &ouml;ffnende Klammer neben dem Befehl vorkommen darf. Zum Beispiel: <code>For x, y in z {</code>.</p>
     <p>Wie bei allen Schleifen k&ouml;nnen <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und <a href="../Variables.htm#Index">A_Index</a> verwendet werden.</p>
     <h3>COM-Objekte</h3>
     <p>Da <i>Schl&uuml;ssel</i> und <i>Wert</i> direkt an die Next()-Methode des Enumerators &uuml;bergeben werden, sind die zugewiesenen Werte abh&auml;ngig davon, welcher Objekttyp gerade enumeriert wird. Bei COM-Objekten enth&auml;lt <i>Schl&uuml;ssel</i> den Wert, der von <a href="http://msdn.microsoft.com/en-us/library/ms221369.aspx">IEnumVARIANT::Next()</a> zur&uuml;ckgegeben wurde, und <i>Wert</i> eine Zahl, die den <a href="http://msdn.microsoft.com/en-us/library/cc237865.aspx">Variant-Typen</a> repr&auml;sentiert. Bei einem <a href="http://msdn.microsoft.com/en-us/library/x4k5wbx4.aspx">Scripting.Dictionary</a>-Objekt beispielsweise wird jeder <i>Schl&uuml;ssel</i> einen Schl&uuml;ssel aus dem Dictionary enthalten und jeder <i>Wert</i> bei Strings eine 8 und bei Integer eine 3 sein. Siehe <a href="ComObjType.htm">ComObjType</a> f&uuml;r eine Liste von Typen.</p>
@@ -58,13 +58,71 @@ Farben := <a href="../Objects.htm#Usage_Associative_Arrays">Object</a>("Rot", 0x
 <em>; "Farben" k&ouml;nnte direkt mit dem obigen Ausdruck ersetzt werden:</em>
 For k, v in Farben
     s .= k "=" v "`n"
-MsgBox % s
-
-</pre>
+MsgBox % s</pre>
     <pre class="NoIndent"><em>; Listet alle offenen Explorer- und IE-Fenster auf:</em>
 for window in <a href="ComObjCreate.htm">ComObjCreate</a>("<a href="http://msdn.microsoft.com/en-us/library/bb774094.aspx">Shell.Application</a>").Windows
     Fenster .= window.<a href="http://msdn.microsoft.com/en-us/library/aa752057.aspx">LocationName</a> " :: " window.<a href="http://msdn.microsoft.com/en-us/library/aa752058.aspx">LocationURL</a> "`n"
 MsgBox % Fenster</pre>
+    <pre class="NoIndent"><em>/*
+Class: CEnumerator
+
+Generisches Enumerator-Objekt, das verwendet werden kann, um &uuml;ber numerische Schl&uuml;ssel zu iterieren.
+Das Array darf beim Iterieren nicht ver&auml;ndert werden, weil der iterierte Bereich ansonsten ung&uuml;ltig werden w&uuml;rde.
+Es ist m&ouml;glich, benutzerdefinierte MaxIndex()-Funktionen f&uuml;r die Array-Grenzen zu definieren.
+Befinden sich fehlende Array-Elemente zwischen 1 und Max-Index, werden diese iteriert, aber einen Wert von &quot;&quot; haben.
+Das bedeutet, dass dieser Enumerator keine realen Sparse-Arrays unterst&uuml;tzt.
+Damit ein Objekt diesen Iterator verwenden kann, sollte diese Funktion in die Klassendefinition eingef&uuml;gt werden:
+
+    _NewEnum()
+    {
+    	return new CEnumerator(this)
+    }
+
+Quelle: http://www.autohotkey.com/board/topic/2667-suggestions-on-documentation-improvements/?p=531509
+*/</em>
+
+<em>; Iteriert &uuml;ber den Enumerator</em>
+For k, v in Test
+	MsgBox %k%=%v%
+
+<em>; Test-Klasse, um die Verwendung zu demonstrieren</em>
+class Test
+{
+	static Data := ["abc", "def", "ghi"]
+
+	_NewEnum()
+	{
+		return new CEnumerator(this.Data)
+	}
+}
+
+class CEnumerator
+{
+	__New(Object)
+	{
+		this.Object := Object
+		this.first := true
+		<em>; F&uuml;r die Geschwindigkeit zwischenspeichern. N&uuml;tzlich, falls benutzerdefinierte MaxIndex()-Funktionen schlechte Performance haben.</em>
+		<em>; Das bedeutet aber auch, dass keine Schl&uuml;ssel-Wert-Paare beim Iterieren eingef&uuml;gt werden k&ouml;nnen, weil der Bereich ansonsten ung&uuml;ltig werden w&uuml;rde.</em>
+		this.ObjMaxIndex := Object.MaxIndex()
+	}
+
+	Next(ByRef key, ByRef value)
+	{
+		if (this.first)
+		{
+			this.Remove("first")
+			key := 1
+		}
+		else
+			key ++
+		if (key &lt;= this.ObjMaxIndex)
+			value := this.Object[key]
+		else
+			key := ""
+		return key != ""
+	}
+}</pre>
   </div>
   </section>
 </div>
