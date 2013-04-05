@@ -24,29 +24,6 @@ function WriteOpenNavLink(navLink, prefix) {
           +'<div id="download-container"><a class="download" href="http://l.autohotkey.net/AutoHotkey_L_Install.exe" title="Herunterladen und in Sekunden installieren">AutoHotkey herunterladen</a></div>'
           +'<ul>'
           +'<li><a href="'+prefix+'../download/index.htm">Downloads</a></li>'
-          +'<li><a href="'+prefix+'../docs/AutoHotkey.htm">Dokumentation</a></li>'
-          +'<li><a href="'+prefix+'../docs/Tutorial.htm">Tutorial</a></li>'
-          +'<li><a href="http://www.autohotkey.com/board/index.php?showforum=62">Forum</a></li>'
-          +'<li><a href="'+navLink+'">Inhaltsverzeichnis</a></li>'
-          +'</ul>'
-          +'</section>'
-          +'</nav>';
-
-  document.write(ss);
-}
-
-function WriteOpenHeader(navLink, prefix) {
-  var ss = '<div id="top">'
-          +'<section>'
-          +'<div id="languages"><a href="http://www.autohotkey.com"><img src="'+prefix+'static/flags/en.png" alt="English" /></a>&nbsp;<a href="http://ahkcn.sourceforge.jp"><img src="'+prefix+'static/flags/cn.png" alt="Chinese" /></a></div>'
-          +'<h1><a href="'+prefix+'../index.htm"><img src="'+prefix+'static/ahk_logo.png" width="518" height="81" alt="AutoHotkey" /></a></h1>'
-          +'</section>'
-          +'<a href="http://github.com/AutoHotkey" id="forkme"><img src="'+prefix+'static/forkme.png" alt="Fork me on GitHub" /></a></div>'
-          +'<nav>'
-          +'<section>'
-          +'<div id="download-container"><a class="download" href="http://l.autohotkey.net/AutoHotkey_L_Install.exe" title="Herunterladen und in Sekunden installieren">AutoHotkey herunterladen</a></div>'
-          +'<ul>'
-          +'<li><a href="'+prefix+'../download/index.htm">Downloads</a></li>'
           +'<li><a href="'+prefix+'AutoHotkey.htm">Dokumentation</a></li>'
           +'<li><a href="'+prefix+'Tutorial.htm">Tutorial</a></li>'
           +'<li><a href="http://www.autohotkey.com/board/index.php?showforum=62">Forum</a></li>'
@@ -56,6 +33,18 @@ function WriteOpenHeader(navLink, prefix) {
           +'</nav>';
   document.write(ss);
 }
+
+function WriteOpenHeader(navLink, prefix) {
+  var ss = '<div id="top">'
+          +'<section>'
+          +'<div id="languages"><a href="http://www.autohotkey.com"><img src="'+prefix+'static/flags/en.png" alt="English" /></a>&nbsp;<a href="http://ahkcn.sourceforge.jp"><img src="'+prefix+'static/flags/cn.png" alt="Chinese" /></a></div>'
+          +'<h1><a href="'+prefix+'../index.htm"><img src="'+prefix+'static/ahk_logo.png" width="518" height="81" alt="AutoHotkey" /></a></h1>'
+          +'</section>'
+          +'<a href="http://github.com/AutoHotkey" id="forkme"><img src="'+prefix+'static/forkme.png" alt="Fork me on GitHub" /></a></div>';
+  document.write(ss);
+  WriteOpenNavLink(navLink, prefix);
+}
+
 function WriteOpenFooter(prefix) {
   var ss = '<div id="end">'
           +'<div id="footer">'
