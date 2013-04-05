@@ -14,11 +14,13 @@
 //*  11-July-2008: 1.01 RWC - Now detects if inside CHM Help file. IsInsideChm()
 //*
 
-function GetTest() {
+function GetTest()
+{
    alert( window.location );
 }
 
-function WriteOpenNavLink(navLink, prefix) {
+function WriteOpenNavBar(navLink, prefix, curFileName)
+{
   var ss = '<nav>'
           +'<section>'
           +'<div id="download-container"><a class="download" href="http://l.autohotkey.net/AutoHotkey_L_Install.exe" title="Herunterladen und in Sekunden installieren">AutoHotkey herunterladen</a></div>'
@@ -27,14 +29,31 @@ function WriteOpenNavLink(navLink, prefix) {
           +'<li><a href="'+prefix+'AutoHotkey.htm">Dokumentation</a></li>'
           +'<li><a href="'+prefix+'Tutorial.htm">Tutorial</a></li>'
           +'<li><a href="http://www.autohotkey.com/board/index.php?showforum=62">Forum</a></li>'
-          +'<li><a href="'+navLink+'">Inhaltsverzeichnis</a></li>'
           +'</ul>'
           +'</section>'
-          +'</nav>';
+          +'</nav>'
+          +'<div id="help">'
+          +'<section>'
+          +'<a href="http://l.autohotkey.net/docs/'+curFileName+'" style="float: right;">Originalseite</a>'
+          +'<a href="'+navLink+'">Navigationsleiste anzeigen</a>'
+          +'</section>'
+          +'</div>';
   document.write(ss);
 }
 
-function WriteOpenHeader(navLink, prefix) {
+function WriteOpenHelpBar(curFileName)
+{
+  var ss = '<div id="help">'
+          +'<section>'
+          +'<a href="http://l.autohotkey.net/docs/'+curFileName+'" style="float: right;">Originalseite</a>'
+          +'Permalink: <a href="http://ragnar-f.github.com/docs/'+curFileName+'">http://ragnar-f.github.com/docs/'+curFileName+'</a>'
+          +'</section>'
+          +'</div>';
+  document.write(ss);
+}
+
+function WriteOpenHeader(navLink, prefix, curFileName)
+{
   var ss = '<div id="top">'
           +'<section>'
           +'<div id="languages"><a href="http://www.autohotkey.com"><img src="'+prefix+'static/flags/en.png" alt="English" /></a>&nbsp;<a href="http://ahkcn.sourceforge.jp"><img src="'+prefix+'static/flags/cn.png" alt="Chinese" /></a></div>'
@@ -42,10 +61,11 @@ function WriteOpenHeader(navLink, prefix) {
           +'</section>'
           +'<a href="http://github.com/AutoHotkey" id="forkme"><img src="'+prefix+'static/forkme.png" alt="Fork me on GitHub" /></a></div>';
   document.write(ss);
-  WriteOpenNavLink(navLink, prefix);
+  WriteOpenNavBar(navLink, prefix, curFileName);
 }
 
-function WriteOpenFooter(prefix) {
+function WriteOpenFooter(prefix)
+{
   var ss = '<div id="end">'
           +'<div id="footer">'
           +'<section>'
@@ -105,56 +125,65 @@ function WriteOpenFooter(prefix) {
   document.write(ss);
 }
 
-function IsNavOpen() {
+function IsNavOpen()
+{
   if ((top.right == null) || (top.right == undefined) || (top.right.location == null) || (top.right.location == undefined) || (typeof(top.right.location.href) != "string") || (top.right.location.href == ""))
     return false;  //no nav found
   else
     return true;  //nav found
 }
 
-function IsInsideChm() {   //returns true if current file is inside a CHM Help File
+function IsInsideChm() //returns true if current file is inside a CHM Help File
+{
   var ra = /::/;
   return (location.href.search(ra) > 0); //If found then then we are in a CHM
-  }
+}
 
+function GetInfos(aDirLevel)
+{
+    var prefix = "";
+    for (var n=0; n < aDirLevel; n++)
+      prefix = prefix + "../";
+
+    //find last back slash in path
+    var x = location.href.lastIndexOf("/");       // get last splash of "path/dir/name.htm"
+    for (var n=0; n < aDirLevel; n++)
+      x = location.href.lastIndexOf("/", x-1);    // get 2nd last slash etc
+    var curFileName = location.href.substr(x+1);
+    var navLink = prefix + "goto.htm#" + curFileName
+    return {navLink:navLink,prefix:prefix,curFileName:curFileName};
+
+}
 // pass in the directory level. 0 = if this HTML is same level as hh_goto.hh; 1 = of one level down etc
-function WriteNavLink(aDirLevel) {
+function WriteNavBar(aDirLevel)
+{
   if ((!IsNavOpen()) && (!IsInsideChm()))
   {
-    var prefix = "";
-    for (var n=0; n < aDirLevel; n++)
-      prefix = prefix + "../";
-
-    //find last back slash in path
-    var x = location.href.lastIndexOf("/");       // get last splash of "path/dir/name.htm"
-    for (var n=0; n < aDirLevel; n++)
-      x = location.href.lastIndexOf("/", x-1);    // get 2nd last slash etc
-    var curFileName = location.href.substr(x+1);
-
-    var navLink = prefix + "goto.htm#" + curFileName
-    WriteOpenNavLink(navLink, prefix);
+    var g = GetInfos(aDirLevel);
+    WriteOpenNavBar(g.navLink, g.prefix, g.curFileName);
   }
 }
 
-function WriteHeader(aDirLevel) {
-  if ((!IsNavOpen()) && (!IsInsideChm()))
+function WriteHelpBar(aDirLevel)
+{
+  if ((IsNavOpen()) || (IsInsideChm()))
   {
-    var prefix = "";
-    for (var n=0; n < aDirLevel; n++)
-      prefix = prefix + "../";
-
-    //find last back slash in path
-    var x = location.href.lastIndexOf("/");       // get last splash of "path/dir/name.htm"
-    for (var n=0; n < aDirLevel; n++)
-      x = location.href.lastIndexOf("/", x-1);    // get 2nd last slash etc
-    var curFileName = location.href.substr(x+1);
-
-    var navLink = prefix + "goto.htm#" + curFileName
-    WriteOpenHeader(navLink, prefix);
+    var g = GetInfos(aDirLevel);
+    WriteOpenHelpBar(g.curFileName);
   }
 }
 
-function WriteFooter(aDirLevel) {
+function WriteHeader(aDirLevel)
+{
+  var g = GetInfos(aDirLevel);
+  if ((!IsNavOpen()) && (!IsInsideChm()))
+    WriteOpenHeader(g.navLink, g.prefix, g.curFileName);
+  else
+    WriteOpenHelpBar(g.curFileName);
+}
+
+function WriteFooter(aDirLevel)
+{
   if ((!IsNavOpen()) && (!IsInsideChm()))
   {
     var prefix = "";
