@@ -46,7 +46,7 @@ function WriteOpenHelpBar(curFileName)
   var ss = '<div id="help">'
           +'<section>'
           +'<a href="http://l.autohotkey.net/docs/'+curFileName+'" style="float: right;">Originalseite</a>'
-          +'Permalink: <a href="http://ragnar-f.github.com/docs/'+curFileName+'">http://ragnar-f.github.com/docs/'+curFileName+'</a>'
+          +'Permalink: <a href="http://ragnar-f.github.io/docs/'+curFileName+'">http://ragnar-f.github.io/docs/'+curFileName+'</a>'
           +'</section>'
           +'</div>';
   document.write(ss);
@@ -106,8 +106,8 @@ function WriteOpenFooter(prefix)
           +'</tr>'
           +'<tr>'
           +'<td><select name="sitesearch">'
-          +'<option value="ragnar-f.github.com" selected="selected">Alles</option>'
-          +'<option value="ragnar-f.github.com/docs">Dokumentation</option>'
+          +'<option value="ragnar-f.github.io" selected="selected">Alles</option>'
+          +'<option value="ragnar-f.github.io/docs">Dokumentation</option>'
           +'<option value="www.autohotkey.com/board">Forum</option>'
           +'</select></td>'
           +'<td style="text-align: right;"><input value="Suchen" type="submit"></td>'
