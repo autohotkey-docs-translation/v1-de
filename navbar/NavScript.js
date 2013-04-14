@@ -32,7 +32,7 @@ function WriteOpenNavBar(navLink, prefix, curFileName)
           +'</ul>'
           +'</section>'
           +'</nav>'
-          +'<div id="help">'
+          +'<div id="helpbar">'
           +'<section>'
           +'<a href="http://l.autohotkey.net/docs/'+curFileName+'" style="float: right;">Originalseite</a>'
           +'<a href="'+navLink+'">Navigationsleiste anzeigen</a>'
@@ -43,7 +43,7 @@ function WriteOpenNavBar(navLink, prefix, curFileName)
 
 function WriteOpenHelpBar(curFileName)
 {
-  var ss = '<div id="help">'
+  var ss = '<div id="helpbar">'
           +'<section>'
           +'<a href="http://l.autohotkey.net/docs/'+curFileName+'" style="float: right;">Originalseite</a>'
           +'Permalink: <a href="http://ragnar-f.github.io/docs/'+curFileName+'">http://ragnar-f.github.io/docs/'+curFileName+'</a>'
