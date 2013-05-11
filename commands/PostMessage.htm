@@ -21,7 +21,7 @@
       <h1>PostMessage / SendMessage</h1>
       <p>Sendet eine Nachricht an ein Fenster oder Steuerelement (SendMessage wartet zus&auml;tzlich auf eine Best&auml;tigung).</p>
       <pre class="Syntax">PostMessage, Nachricht [, wParam, lParam, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme]
-SendMessage, Nachricht [, wParam, lParam, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme]</pre>
+SendMessage, Nachricht [, wParam, lParam, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme, Zeit&uuml;berschreitung]</pre>
       <h3>Parameter</h3>
       <table class="info">
         <tr>
@@ -57,15 +57,19 @@ SendMessage, Nachricht [, wParam, lParam, Steuerelement, Fenstertitel, Fensterte
           <td>Textausnahme</td>
           <td>Ignoriert Fenster, deren Textelemente diesen Wert enthalten.</td>
         </tr>
+        <tr>
+          <td>Zeit&uuml;berschreitung</td>
+          <td><span class="ver">[AHK_L 42+]:</span> Die maximale Anzahl der zu wartenden Millisekunden, bis das Zielfenster die Nachricht durchgef&uuml;hrt hat. Ist dieser Parameter nicht vorhanden, gilt standardm&auml;&szlig;ig 5000 (Millisekunden), das auch das Standardverhalten in &auml;lteren Versionen von AutoHotkey ist, die diesen Parameter noch nicht unterst&uuml;tzten. Kann die Nachricht innerhalb dieser Zeit nicht durchgef&uuml;hrt werden, wird der Befehl beendet und  ErrorLevel auf das Wort FAIL gesetzt. Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</td>
+        </tr>
       </table>
       <h3>ErrorLevel</h3>
       <p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszul&ouml;sen. F&uuml;r mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
       <p>PostMessage: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei einem Problem auf 1 gesetzt, z. B. wenn das Zielfenster oder Steuerelement nicht vorhanden ist. Ansonsten wird es auf 0 gesetzt.</p>
-      <p>SendMessage: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei einem Problem auf FAIL gesetzt. Ansonsten ist das numerische Ergebnis der Nachricht enthalten, das manchmal eine "Antwort" sein kann, je nach Beschaffenheit der Nachricht und dessen Zielfenster. Dieses Ergebnis ist ein Integer zwischen 0 und 4294967295. Falls das Ergebnis als vorzeichenbehafteter Integer vorgesehen ist, kann eine negative Zahl wie folgt offenbart werden:</p>
+      <p>SendMessage: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei einem Problem oder bei Zeit&uuml;berschreitung auf FAIL gesetzt. Ansonsten ist das numerische Ergebnis der Nachricht enthalten, das manchmal eine "Antwort" sein kann, je nach Beschaffenheit der Nachricht und dessen Zielfenster. Dieses Ergebnis ist ein Integer zwischen 0 und 4294967295. Falls das Ergebnis als vorzeichenbehafteter Integer vorgesehen ist, kann eine negative Zahl wie folgt offenbart werden:</p>
       <pre>Nachrichtenantwort := ErrorLevel &gt; 0x7FFFFFFF ? -(~ErrorLevel) - 1 : ErrorLevel</pre>
       <h3>Bemerkungen</h3>
       <p>Diese Befehle sollten mit Vorsicht verwendet werden, da das Senden einer Nachricht an das falsche Fenster (oder das Senden einer ung&uuml;ltigen Nachricht) zu unerwartetem Verhalten oder sogar zum Absturz der Zielanwendung f&uuml;hren kann. Das liegt daran, dass die meisten Anwendungen nicht dazu entworfen worden sind, bestimmte Nachrichtenarten von externen Quellen zu erwarten.</p>
-      <p>PostMessage setzt die Nachricht in die Warteschlange des Zielfensters. Es wartet nicht auf eine Best&auml;tigung oder Antwort. SendMessage hingegen wartet bis zu 5 Sekunden auf das Zielfenster, um die Nachricht verarbeiten zu k&ouml;nnen. Wird die Nachricht innerhalb dieser Zeitspanne nicht verarbeitet, wird der Befehl beendet und ErrorLevel auf FAIL gesetzt.</p>
+      <p>PostMessage setzt die Nachricht in die Warteschlange des Zielfensters. Es wartet nicht auf eine Best&auml;tigung oder Antwort. SendMessage hingegen wartet darauf, dass das Zielfenster die Nachricht durchf&uuml;hren kann, bis die Zeit&uuml;berschreitung abl&auml;uft.</p>
       <p>Die Parameter <em>Nachricht</em>, <em>wParam</em> und <em>lParam</em> sollten Integer zwischen -2147483648 und 4294967295 (0xFFFFFFFF) sein. Wie bei allen Integer-Werten in AutoHotkey kennzeichnet das 0x-Pr&auml;fix einen Hex-Wert. Zum Beispiel ist 0xFF das gleiche wie 255.</p>
       <p>Ein String kann &uuml;ber <em>wParam</em> oder <em>lParam</em> gesendet werden, wenn die Adresse einer Variable angegeben wird. Im folgenden Beispiel wird daf&uuml;r der <a href="../Variables.htm#amp">Adressoperator (&amp;)</a> verwendet:</p>
       <pre>SendMessage, 0xC, 0, <strong>&amp;EigeneVar</strong>, ClassNN, Fenstertitel  <em>; 0XC ist WM_SETTEXT</em></pre>
