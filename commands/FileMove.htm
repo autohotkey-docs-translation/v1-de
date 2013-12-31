@@ -52,16 +52,16 @@ FileMove, C:\*.txt, C:\Eigener Ordner\*.*</pre></td>
     <h3>Verwandte Befehle</h3>
     <p><a href="FileCopy.htm">FileCopy</a>, <a href="FileCopyDir.htm">FileCopyDir</a>, <a href="FileMoveDir.htm">FileMoveDir</a>, <a href="FileDelete.htm">FileDelete</a></p>
     <h3>Beispiele</h3>
-    <pre class="NoIndent">FileMove, C:\Eigene Dokumente\Liste1.txt, D:\Hauptsicherung\  <em>; Verschiebt die Datei, ohne sie umzubenennen.</em>
-FileMove, C:\Datei bevor.txt, C:\Datei danach.txt  <em>; Benennt eine Datei um.</em>
+    <pre class="NoIndent">FileMove, C:\Eigene Dokumente\Liste1.txt, D:\Backup\  <em>; Verschiebt die Datei, ohne sie umzubenennen.</em>
+FileMove, C:\Datei vorher.txt, C:\Datei nachher.txt  <em>; Benennt eine Datei um.</em>
 FileMove, C:\Ordner1\*.txt, D:\Neuer Ordner\*.bkp  <em>; Verschiebt und benennt die Erweiterung der Dateien um.</em></pre>
     <p>&nbsp;</p>
     <pre class="NoIndent"><em>; Das folgende Beispiel verschiebt alle Dateien und Unterordner in einem anderen Ordner:</em>
-Fehlerz&auml;hlung := MoveFilesAndFolders("C:\Eigener Ordner\*.*", "D:\Zielordner f&uuml;r Dateien &amp; Ordner")
-If Fehlerz&auml;hlung &lt;&gt; 0
-    MsgBox %Fehlerz&auml;hlung% Dateien/Ordner konnten nicht verschoben werden.
+Fehleranzahl := VerschiebeDateienUndOrdner("C:\Eigener Ordner\*.*", "D:\Zielordner f&uuml;r Dateien &amp; Ordner")
+If Fehleranzahl &lt;&gt; 0
+    MsgBox %Fehleranzahl% Dateien/Ordner konnten nicht verschoben werden.
 
-MoveFilesAndFolders(Quellmuster, Zielordner, &Uuml;berschreiben = false)
+VerschiebeDateienUndOrdner(Quellmuster, Zielordner, &Uuml;berschreiben = false)
 <em>; Verschiebt alle Dateien und Ordner vom Quellmuster in dem Zielordner und
 ; gibt die Anzahl an Dateien/Ordnern zur&uuml;ck, die nicht verschoben werden konnten. Diese Funktion ben&ouml;tigt v1.0.38+, weil der 2. Modus von FileMoveDir verwendet wird.</em>
 {
@@ -69,16 +69,16 @@ MoveFilesAndFolders(Quellmuster, Zielordner, &Uuml;berschreiben = false)
         &Uuml;berschreiben = 2  <em>; Siehe <a href="FileMoveDir.htm">FileMoveDir</a> f&uuml;r die Beschreibung vom 1. und 2. Modus.</em>
     <em>; Zuerst alle Dateien verschieben (aber nicht die Ordner):</em>
     FileMove, %Quellmuster%, %Zielordner%, %&Uuml;berschreiben%
-    Fehlerz&auml;hlung := ErrorLevel
+    Fehleranzahl := ErrorLevel
     <em>; Jetzt alle Ordner verschieben:</em>
     Loop, %Quellmuster%, 2  <em>; 2 bedeutet "nur Ordner".</em>
     {
         FileMoveDir, %A_LoopFileFullPath%, %Zielordner%\%A_LoopFileName%, %&Uuml;berschreiben%
-        Fehlerz&auml;hlung += ErrorLevel
+        Fehleranzahl += ErrorLevel
         If ErrorLevel  <em>; Jeden Problemordner mit Namen anzeigen.</em>
-            MsgBox %A_LoopFileFullPath% kann nicht nach  %Zielordner% verschoben werden.
+            MsgBox %A_LoopFileFullPath% kann nicht nach %Zielordner% verschoben werden.
     }
-    Return Fehlerz&auml;hlung
+    Return Fehleranzahl
 }</pre>
   </div>
   </section>
