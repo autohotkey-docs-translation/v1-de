@@ -18,7 +18,7 @@
   <section>
     <div id="article">
     <h1>ComObjQuery() <span class="ver">[v1.0.96.00+]</span></h1>
-    <p>Fragt die Schnittstelle oder den Dienst eines COM-Objekts ab.</p>
+    <p>Fordert ein Interface oder Service eines COM-Objekts an.</p>
     <pre class="Syntax">InterfacePointer := ComObjQuery(ComObject, [SID,] IID)</pre>
     <h3>Parameter</h3>
     <table class="info">
@@ -28,34 +28,34 @@
       </tr>
       <tr>
         <td>IID</td>
-        <td>Eine Schnittstellenkennung (GUID) im Format "{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}".</td>
+        <td>Eine Interface-Kennung (GUID) im Format "{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}".</td>
       </tr>
       <tr>
         <td>SID</td>
-        <td>Eine Dienstkennung im gleichen Format wie IID. Beim Weglassen des Parameters entf&auml;llt auch das Komma.</td>
+        <td>Eine Service-Kennung im IID-Format. L&auml;sst man diesen Parameter weg, muss auch das Komma weggelassen werden.</td>
       </tr>
     </table>
     <h3>Allgemeine Bemerkungen</h3>
-    <p>Im 2-Parameter-Modus ist diese Funktion vergleichbar mit <a href="http://msdn.microsoft.com/en-us/library/ms682521.aspx">IUnknown::QueryInterface</a>. Ist sowohl SID als auch IID angegeben, wird sie intern die <a href="http://msdn.microsoft.com/en-us/library/cc678965.aspx">IServiceProvider</a>-Schnittstelle abfragen und danach <a href="http://msdn.microsoft.com/en-us/library/cc678966.aspx">IServiceProvider::QueryService</a> aufrufen. In jedem Fall ist der R&uuml;ckgabewert entweder eine 0 oder ein Pointer auf die angeforderte Schnittstelle. Im Allgemeinen muss der Pointer <a href="ObjAddRef.htm">freigegeben</a> werden, sobald das Script damit fertig ist.</p>
+    <p>Wenn diese Funktion mit zwei Parametern verwendet wird, ist sie das &Auml;quivalent zu <a href="http://msdn.microsoft.com/en-us/library/ms682521.aspx">IUnknown::QueryInterface</a>. Sind sowohl SID als auch IID angegeben, wird diese Funktion das <a href="http://msdn.microsoft.com/en-us/library/cc678965.aspx">IServiceProvider</a>-Interface anfordern und danach <a href="http://msdn.microsoft.com/en-us/library/cc678966.aspx">IServiceProvider::QueryService</a> aufrufen. In jedem Fall ist der R&uuml;ckgabewert entweder eine 0 oder ein Pointer, der auf das angeforderte Interface verweist. In der Regel muss dieser Pointer <a href="ObjAddRef.htm">freigegeben</a> werden, wenn er vom Script nicht l&auml;nger ben&ouml;tigt wird.</p>
     <h3>Verwandte Befehle</h3>
     <a href="ObjAddRef.htm">ObjRelease</a>, <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjActive.htm">ComObjActive</a>, <a href="ComObjError.htm">ComObjError</a>
     <h3>Beispiele</h3>
-    <pre id="ExClassName" class="NoIndent"><em>; Beispiel: Bestimmt den Klassennamen eines Objekts.</em>
+    <pre id="ExClassName" class="NoIndent"><em>; Beispiel: Ermittelt den Klassennamen eines Objekts.</em>
 
 obj := ComObjCreate("Scripting.Dictionary")
 
-MsgBox % "Schnittstellenname: " ComObjType(obj, "name")
+MsgBox % "Interface-Name: " ComObjType(obj, "name")
 
 IID_IProvideClassInfo := "{B196B283-BAB4-101A-B69C-00AA00341D07}"
 
-<em>; Fordert ein Pointer an, der auf die IProvideClassInfo-Schnittstelle des Objekts verweist.</em>
+<em>; Fordert einen Pointer an, der auf das IProvideClassInfo-Interface des Objekts verweist.</em>
 If !(pci := ComObjQuery(obj, IID_IProvideClassInfo))
 {
-    MsgBox IProvideClassInfo-Schnittstelle wird nicht unterst&uuml;tzt.
+    MsgBox IProvideClassInfo-Interface wird nicht unterst&uuml;tzt.
     Return
 }
 
-<em>; Ruft GetClassInfo auf, um einen Pointer auf die ITypeInfo-Schnittstelle zu ermitteln.</em>
+<em>; Ruft GetClassInfo auf, um einen Pointer zu ermitteln, der auf das ITypeInfo-Interface verweist.</em>
 DllCall(vtable(pci, 3), "ptr", pci, "ptr*", ti)
 
 <em>; Ruft GetDocumentation auf, um den vollst&auml;ndigen Typennamen des Objekts zu ermitteln.</em>
@@ -74,7 +74,7 @@ MsgBox % "Klassenname: " name
 vtable(ptr, n) {
     <em>; NumGet(ptr+0) gibt die Adresse der virtuellen Funktionstabelle
     ; des Objekts zur&uuml;ck (kurz: vtable). Der Rest des Ausdrucks ermittelt
-    ; die Adresse der n-ten Funktionsadresse von der vtable.</em>
+    ; die Adresse der n-ten Funktionadresse von der vtable.</em>
     Return NumGet(NumGet(ptr+0), n*A_PtrSize)
 }
 
@@ -88,26 +88,26 @@ Return
 
 GetWebBrowser()
 {
-    <em>; Ermittelt einen unbearbeiteten Pointer auf das Dokument-Objekt des obersten IE-Fensters.</em>
+    <em>; Ermittelt einen unbearbeiteten Pointer, der auf das Document-Objekt des obersten IE-Fensters verweist.</em>
     static msg := DllCall("RegisterWindowMessage", "str", "WM_HTML_GETOBJECT")
     SendMessage msg, 0, 0, Internet Explorer_Server1, ahk_class IEFrame
     If ErrorLevel = FAIL
-        Return  ; IE nicht gefunden.
+        Return  <em>; IE nicht gefunden.</em>
     lResult := ErrorLevel
     DllCall("oleacc\ObjectFromLresult", "ptr", lResult
         , "ptr", GUID(IID_IHTMLDocument2,"{332C4425-26CB-11D0-B483-00C04FD90119}")
         , "ptr", 0, "ptr*", pdoc)
 
-    <em>; Fragt den WebBrowserApp-Dienst ab. Im diesen bestimmten Fall sind
-    ; die SID und IID gleichwertig, das aber nicht immer so ist.</em>
+    <em>; Fordert den WebBrowserApp-Service an. In diesem bestimmten Fall sind
+    ; SID und IID das gleiche, das aber nicht immer so ist.</em>
     static IID_IWebBrowserApp := "{0002DF05-0000-0000-C000-000000000046}"
     static SID_SWebBrowserApp := IID_IWebBrowserApp
     pweb := ComObjQuery(pdoc, SID_SWebBrowserApp, IID_IWebBrowserApp)
 
-    <em>; Gibt den Dokument-Objekt-Pointer frei.</em>
+    <em>; Gibt den Document-Objekt-Pointer frei.</em>
     ObjRelease(pdoc)
 
-    <em>; Gibt das WebBrowser-Objekt zur&uuml;ck, das zuerst angepasst wird:</em>
+    <em>; Gibt das WebBrowser-Objekt in verwendbarer Form zur&uuml;ck:</em>
     static VT_DISPATCH := 9, F_OWNVALUE := 1
     Return ComObject(VT_DISPATCH, pweb, F_OWNVALUE)
 }

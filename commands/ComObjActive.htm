@@ -20,12 +20,12 @@
     <h1>ComObjActive() <span class="ver">[AHK_L 53+]</span></h1>
     <p>Ermittelt ein laufendes Objekt, das mit OLE registriert wurde.</p>
     <pre class="Syntax">ComObject := ComObjActive(CLSID)</pre>
-    <p id="param">Erstellt ein Objekt als Eingabewert, der als Parameter oder R&uuml;ckgabewert &uuml;bergeben werden soll.</p>
-    <pre class="Syntax">ParamObj := ComObjParameter(Variablentyp, Wert [, Flags])</pre>
-    <p id="missing">Erstellt ein Objekt, das beim Aufrufen einer COM-Objekt-Methode anstelle des Standardwertes eines optionalen Parameters verwendet werden kann.</p>
+    <p id="param">Erstellt ein Objekt, das in typisierter Form als Parameter oder R&uuml;ckgabewert &uuml;bergeben werden kann.</p>
+    <pre class="Syntax">ParamObj := ComObjParameter(VarTyp, Wert [, Flags])</pre>
+    <p id="missing">Erstellt ein Objekt, das stellvertretend f&uuml;r den Standardwert eines optionalen Parameters verwendet werden kann, wenn eine Methode eines COM-Objekts aufgerufen wird.</p>
     <pre class="Syntax">ParamObj := ComObjMissing()</pre>
     <h4>Fortgeschritten</h4>
-    <p id="enwrap">Packt einen unbearbeiteten <a href="http://msdn.microsoft.com/en-us/library/dd318520.aspx">IDispatch</a>-Pointer in oder aus einem verwendbaren Objekt.</p>
+    <p id="enwrap">Wrappt oder entwrappt einen unbearbeiteten <a href="http://msdn.microsoft.com/en-us/library/dd318520.aspx">IDispatch</a>-Pointer in ein brauchbares Objekt.</p>
     <pre class="Syntax">ComObject := ComObjEnwrap(DispPtr)
 DispPtr := ComObjUnwrap(ComObject)</pre>
     <h3>Parameter</h3>
@@ -39,12 +39,12 @@ DispPtr := ComObjUnwrap(ComObject)</pre>
         <td>COM-Objekt, das mit der <a href="../Objects.htm#Usage_Objects">Objekt-Syntax</a> verwendbar ist.</td>
       </tr>
       <tr>
-        <td>Variablentyp</td>
+        <td>VarTyp</td>
         <td>Ein Integer-Wert, der den Typ des Wertes kennzeichnet. Siehe <a href="ComObjType.htm#vt">ComObjType()</a> f&uuml;r eine Liste von Typen.</td>
       </tr>
       <tr>
         <td>Wert</td>
-        <td>Der Wert, der eingepackt werden soll. Zurzeit werden nur Integer- oder Pointer-Werte unterst&uuml;tzt.</td>
+        <td>Der Wert, der gewrappt werden soll. Zurzeit werden nur Integer- oder Pointer-Werte unterst&uuml;tzt.</td>
       </tr>
       <tr>
         <td>Flags</td>
@@ -59,22 +59,22 @@ DispPtr := ComObjUnwrap(ComObject)</pre>
     <table class="info">
       <tr>
         <td>&nbsp;0&nbsp;</td>
-        <td>Standardverhalten. <a href="http://msdn.microsoft.com/en-us/library/ms691379.aspx">AddRef</a> wird bei einem IUnknown- und IDispatch-Pointer automatisch aufgerufen, daher sollte der Aufrufer <a href="ObjAddRef.htm">ObjRelease</a> verwenden, um deren Kopie des Pointers je nach Bedarf wieder freizugeben.</td>
+        <td>Standardverhalten. <a href="http://msdn.microsoft.com/en-us/library/ms691379.aspx">AddRef</a> wird bei einem IUnknown- und IDispatch-Pointer automatisch aufgerufen, daher sollte der Aufrufer <a href="ObjAddRef.htm">ObjRelease</a> verwenden, um deren Kopie des Pointers bei Bedarf wieder freizugeben.</td>
       </tr>
       <tr>
         <td>&nbsp;1&nbsp;</td>
-        <td>&Uuml;bernimmt einen IUnknown-, IDispatch- oder SAFEARRAY-Pointer. AddRef wird nicht aufgerufen. Enth&auml;lt das Wrapper-Objekt einen SAFEARRAY (ohne VT_BYREF), wird bei Freigabe des Wrapper-Objekts <a href="http://msdn.microsoft.com/en-us/library/ms221702.aspx">SafeArrayDestroy</a> automatisch aufgerufen.</td>
+        <td>Ergreift Besitz von einem IUnknown-, IDispatch- oder SAFEARRAY-Pointer. AddRef wird nicht aufgerufen. Enth&auml;lt das Wrapper-Objekt einen SAFEARRAY (ohne VT_BYREF), wird beim Freigeben des Wrapper-Objekts <a href="http://msdn.microsoft.com/en-us/library/ms221702.aspx">SafeArrayDestroy</a> automatisch aufgerufen.</td>
       </tr>
     </table>
     <h3 id="Remarks">Allgemeine Bemerkungen</h3>
-    <p>ComObjActive ist <i>polymorph</i>. Das hei&szlig;t, dass jeder Funktionsaufruf, der mit "ComObj" beginnt und nicht mit den anderen COM-Funktionen &uuml;bereinstimmt, eigentlich ComObjActive aufrufen wird. Zum Beispiel sind <code>ComObj(9, DispPtr)</code> und <code>ComObjActive(DispPtr)</code> das gleiche wie <code>ComObjEnwrap(DispPtr)</code>. Dieses Verhalten k&ouml;nnte jedoch in einer zuk&uuml;nftigen Version ge&auml;ndert werden (oder neue Funktionen implementiert werden), daher ist es am besten, nur die hier aufgef&uuml;hrten Formen zu verwenden, mit dem Zusatz, dass "ComObject" anstelle von ComObjEnwrap oder ComObjParameter verwendet werden kann.</p>
-    <p>Wenn diese Funktion dazu verwendet wird, einen IDispatch- oder eine IUnknown-Interface-Pointer einzupacken oder abzurufen, wird standardm&auml;&szlig;ig die Referenzz&auml;hlung des COM-Objekts erh&ouml;ht. Allgemein gilt, dass die originale Kopie des Pointers einen separaten Verweis ber&uuml;cksichtigt, der <a href="ObjAddRef.htm">manuell vom Script freigegeben</a> werden muss, wenn sie nicht l&auml;nger ben&ouml;tigt wird. Beim Freigeben des Wrapper-Objekts wird auch dessen Verweis auf das COM-Objekt freigegeben.</p>
-    <p><b>Bekannte Einschr&auml;nkung:</b> Jedes Mal, wenn ein COM-Objekt eingepackt wird, wird ein neues Wrapper-Objekt erstellt. Vergleiche und Zuweisungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> behandeln die zwei Wrapper-Objekte einzigartig, selbst wenn sie das gleiche COM-Objekt enthalten.</p>
+    <p>ComObjActive ist <i>polymorph</i>. Das hei&szlig;t, dass jeder Funktionsaufruf, der mit "ComObj" beginnt und nicht mit den anderen COM-Funktionen &uuml;bereinstimmt, tats&auml;chlich ComObjActive aufrufen wird. Zum Beispiel sind <code>ComObj(9, DispPtr)</code> und <code>ComObjActive(DispPtr)</code> das gleiche wie <code>ComObjEnwrap(DispPtr)</code>. Da allerdings dieses Verhalten in einer sp&auml;teren Version ge&auml;ndert werden k&ouml;nnte (oder neue Funktionen implementiert werden k&ouml;nnten), ist es am besten, nur die auf dieser Seite gezeigten Formen zu verwenden, mit dem Zusatz, dass "ComObject" anstelle von ComObjEnwrap oder ComObjParameter verwendet werden kann.</p>
+    <p>Wenn mit dieser Funktion ein IDispatch- oder IUnknown-Interface-Pointer gewrappt oder abgerufen wurde, erh&ouml;ht sich standardm&auml;&szlig;ig die Referenzz&auml;hlung des COM-Objekts. Allgemein gilt, dass die originale Kopie des Pointers einen separaten Verweis ber&uuml;cksichtigt, der <a href="ObjAddRef.htm">manuell vom Script freigegeben</a> werden muss, wenn sie nicht l&auml;nger ben&ouml;tigt wird. Beim Freigeben des Wrapper-Objekts wird auch dessen Verweis auf das COM-Objekt freigegeben.</p>
+    <p><b>Bekannte Einschr&auml;nkung:</b> Jedes Mal, wenn ein COM-Objekt gewrappt wurde, wird ein neues Wrapper-Objekt erstellt. Vergleiche und Zuweisungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> behandeln die zwei Wrapper-Objekte einzigartig, selbst wenn sie das gleiche COM-Objekt enthalten.</p>
     <h3 id="Related">Verwandte Befehle</h3>
     <p><a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjConnect.htm">ComObjConnect</a>, <a href="ComObjError.htm">ComObjError</a>, <a href="ComObjFlags.htm">ComObjFlags</a>, <a href="ObjAddRef.htm">ObjAddRef/ObjRelease</a>, <a href="ComObjQuery.htm">ComObjQuery</a>, <a href="http://msdn.microsoft.com/en-us/library/ms221467.aspx">GetActiveObject (MSDN)</a></p>
     <h3>Beispiele</h3>
     <p>ComObjUnwrap: Siehe <a href="ComObjConnect.htm#Examples">ComObjConnect</a>.</p>
-    <pre class="NoIndent" id="ByRefEx"><em>; Beispiel: &Uuml;bergibt VARIANT ByRef an die COM-Funktion.</em>
+    <pre class="NoIndent" id="ByRefEx"><em>; Beispiel: &Uuml;bergibt ein VARIANT per Verweis an eine COM-Funktion.</em>
 
 code =
 (
@@ -90,22 +90,22 @@ var[] := "Eingabewert"
 sc.Run("Beispiel", var.ref)
 MsgBox % var[]
 
-<em>; ComVar: Erstellt ein Objekt, das zur &Uuml;bergabe eines ByRef-Wertes verwendet wird.
+<em>; ComVar: Erstellt ein Objekt, mit dem ein Wert per Verweis &uuml;bergeben werden kann.
 ;   ComVar[] ermittelt den Wert.
 ;   ComVar[] := Wert bestimmt den Wert.
-;   ComVar.ref ermittelt ein ByRef-Objekt, damit es zur COM-Funktion &uuml;bergeben werden kann.</em>
+;   ComVar.ref empf&auml;ngt ein ByRef-Objekt f&uuml;r die &Uuml;bergabe an eine COM-Funktion.</em>
 ComVar(Type=0xC)
 {
     static <a href="../Objects.htm#Custom_Objects">base</a> := { __Get: "ComVarGet", __Set: "ComVarSet", __Delete: "ComVarDel" }
-    <em>; Erstellt ein Array von 1 VARIANT.  Diese Methode erlaubt dem eingebauten Code,
-    ; auf alle Konvertierungen zwischen VARIANT und ahk-interne Typen zu achten.</em>
+    <em>; Erstellt ein Array von 1 VARIANT. Diese Methode erlaubt es, dass sich interner Code
+    ; um alle Konvertierungen zwischen VARIANT und ahk-interne Typen k&uuml;mmern darf.</em>
     arr := <a href="ComObjArray.htm">ComObjArray</a>(Type, 1)
     <em>; Sperrt das Array und ermittelt einen Pointer auf VARIANT.</em>
     DllCall("oleaut32\SafeArrayAccessData", "ptr", <a href="ComObjValue.htm">ComObjValue</a>(arr), "ptr*", arr_data)
-    <em>; Speichert das Array und ein Objekt, die an VARIANT-ByRef &uuml;bergeben werden k&ouml;nnen.</em>
+    <em>; Speichert das Array und ein Objekt, mit dem VARIANT per Verweis &uuml;bergeben werden kann.</em>
     Return { ref: ComObjParameter(0x4000|Type, arr_data), _: arr, base: base }
 }
-ComVarGet(cv, <a href="../Functions.htm#Variadic">p*</a>) { <em>; Wird aufgerufen, wenn das Script auf einem unbekannten Feld zugreift.</em>
+ComVarGet(cv, <a href="../Functions.htm#Variadic">p*</a>) { <em>; Wird aufgerufen, wenn das Script auf ein unbekanntes Feld zugreift.</em>
     If p.MaxIndex() = "" <em>; Keine Namen/Parameter, also cv[]</em>
         Return cv._[0]
 }
@@ -114,7 +114,7 @@ ComVarSet(cv, v, p*) { <em>; Wird aufgerufen, wenn das Script ein unbekanntes Fe
         Return cv._[0] := v
 }
 ComVarDel(cv) { <em>; Wird aufgerufen, wenn das Objekt freigegeben wird.
-    ; Das muss gemacht werden, damit das interne Array freigegebenen werden kann.</em>
+    ; Das muss gemacht werden, damit das interne Array freigegeben werden kann.</em>
     DllCall("oleaut32\SafeArrayUnaccessData", "ptr", ComObjValue(cv._))
 }
 
