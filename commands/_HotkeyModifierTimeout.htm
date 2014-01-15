@@ -18,29 +18,29 @@
   <section>
     <div id="article">
       <h1>#HotkeyModifierTimeout</h1>
-      <p>Beeinflusst das Verhalten von <a href="../Hotkeys.htm">Hotkey</a>-Modifikatoren: CTRL, ALT, WIN und SHIFT.</p>
+      <p>Beeinflusst das Verhalten der <a href="../Hotkeys.htm">Hotkey</a>-Modifikatoren: STRG, ALT, WIN und UMSCHALT.</p>
       <pre class="Syntax">#HotkeyModifierTimeout Millisekunden</pre>
       <h3>Parameter</h3>
       <table class="info">
         <tr>
           <td style="width: 15%;">Millisekunden</td>
-          <td style="width: 85%;">Die Länge des Intervalls in Millisekunden. Der Wert kann -1 sein, so dass es nie zur Zeitüberschreitung kommt (Modifikatortasten werden nach Send immer wieder nach unten gedrückt), oder 0, so dass immer eine Zeitüberschreitung erfolgt (Modifikatortasten werden nicht wieder nach unten gedrückt). </td>
+          <td style="width: 85%;">Die Länge des Intervalls in Millisekunden. Enthält dieser Parameter -1, kommt es niemals zum Timeout (Modifikatortasten werden dem Senden immer wieder nach unten gedrückt). Enthält dieser Parameter eine 0, erfolgt immer ein Timeout (Modifikatortasten werden niemals wieder nach unten gedrückt). </td>
         </tr>
       </table>
       <h3>Bemerkungen</h3>
       <p>Diese Direktive <strong>muss nicht</strong> verwendet werden, wenn:</p>
       <ul>
-        <li>Hotkeys ihre Tastatureingaben mit den Methoden <a href="Send.htm#SendInput">SendInput</a> oder <a href="Send.htm#SendPlay">SendPlay</a> senden. Das liegt daran, dass solche Methoden das physische Drücken und Loslassen der Tasten aufschieben, bis der Send-Befehl durchgeführt wurde.</li>
-        <li>das Script den Tastatur-Hook installiert hat (kann mit "View->Key history" in der Menüleiste des Hauptfensters oder mit dem <a href="KeyHistory.htm">KeyHistory</a>-Befehl überprüft werden). Das liegt daran, dass der Hook nachverfolgen kann, welche Modifikatortasten (ALT/STRG/WIN/UMSCHALT) der Benutzer physisch gedrückt hält, ohne die Zeitüberschreitung verwenden zu müssen.</li>
+        <li>Hotkeys ihre Tastatureingaben mit den Methoden <a href="Send.htm#SendInput">SendInput</a> oder <a href="Send.htm#SendPlay">SendPlay</a> senden. Das liegt daran, dass solche Methoden das physische Drücken und Loslassen der Tasten solange nach hinten verschieben, bis der Send-Befehl durchgeführt wurde.</li>
+        <li>das Script den Tastatur-Hook installiert hat (kann mit "View-&gt;Key history" in der Menüleiste des Hauptfensters oder mit dem <a href="KeyHistory.htm">KeyHistory</a>-Befehl überprüft werden). Das liegt daran, dass der Hook nachverfolgen kann, welche Modifikatortasten (ALT/STRG/WIN/UMSCHALT) der Benutzer physisch gedrückt hält, ohne das Timeout verwenden zu müssen.</li>
       </ul>
-      <p>Zur Veranschaulichung dieser Direktive wird folgendes Beispiel in Betracht gezogen: <code>^!a::Send, abc</code>.</p>
-      <p>Beim Ausführen des <a href="Send.htm">Send</a>-Befehls wird als erstes die STRG- und ALT-Taste losgelassen, so dass die Zeichen richtig gesendet werden können. Der Befehl hat danach keine Ahnung, ob er STRG und ALT sicher wieder nach unten drücken kann (um damit übereinzustimmen, ob der Benutzer diese Tasten weiterhin gedrückt hält). Wenn allerdings weniger als die angegebene Anzahl von Millisekunden vergangen sind, nimmt der Befehl an, dass der Benutzer nicht die Chance hatte, die Tasten loszulassen und wird sie daher wieder nach unten drücken, damit sie ihrem physischen Status entsprechen. Ansonsten werden die Modifikatortasten nicht wieder nach unten gedrückt. Das heißt, dass der Benutzer solche Tasten loslassen und erneut drücken muss, damit sie die gleiche oder eine andere Taste modifizieren können.</p>
-      <p>Die Zeitüberschreitung sollte auf einen Wert gesetzt werden, der kleiner ist als die vom Benutzer benötigte Zeit, Modifikatortasten eines Hotkeys zu drücken, bevor diese wieder losgelassen werden. Ansonsten werden die Modifikatortasten auf die gedrückte Position zurückgesetzt (bleiben stecken), auch dann, wenn der Benutzer diese nicht physisch gedrückt hält.</p>
-      <p>Die Notwendigkeit dieser Direktive kann wie folgt reduziert oder beseitigt werden:</p>
+      <p>Am folgenden Beispiel wird gezeigt, wie diese Direktive funktioniert: <code>^!a::Send, abc</code>.</p>
+      <p>Der <a href="Send.htm">Send</a>-Befehl wird zuallererst, sobald er ausgeführt wird, die STRG- und ALT-Taste loslassen, so dass die Zeichen richtig gesendet werden können. Nachdem die Tasten gesendet wurden, hat der Befehl keine Möglichkeit zu erkennen, ob er STRG und ALT sicher wieder nach unten drücken kann (falls der Benutzer diese Tasten weiterhin gedrückt hält). Ist die vergangene Zeit kleiner als die angegebenen Millisekunden, wird der Befehl annehmen, dass der Benutzer keine Chance hatte, die Modifikatortasten loszulassen. Deshalb wird der Befehl sie wieder nach unten drücken, damit sie ihrem physischen Status entsprechen. Ansonsten werden die Modifikatortasten nicht wieder nach unten gedrückt. Der Benutzer muss diese Tasten loslassen und erneut drücken, wenn sie die gleiche oder eine andere Taste modifizieren sollen.</p>
+      <p>Das Timeout sollte auf einen Wert gesetzt werden, der kleiner ist als die Zeitmenge, die der Benutzer üblicherweise benötigt, um Modifikatortasten eines Hotkeys gedrückt zu halten. Ansonsten könnte es passieren, dass die Modifikatortasten wieder auf die gedrückte Position gesetzt werden (stecken bleiben), auch dann, wenn der Benutzer sie nicht physisch gedrückt hält.</p>
+      <p>Es ist möglich, die Notwendigkeit dieser Direktive wie folgt auf ein Minimum zu reduzieren oder vollständig zu entfernen:</p>
       <ul>
-        <li>Installiere den Tastatur-Hook durch Hinzufügen der Zeile <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> irgendwo im Script (allerdings wird dieser Hook nicht in Win9x unterstützt).</li>
+        <li>Installiere den Tastatur-Hook durch Hinzufügen der Zeile <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> irgendwo im Script (allerdings wird dieser Hook in Win9x nicht unterstützt).</li>
         <li>Verwende die Methoden <a href="Send.htm#SendInput">SendInput</a> oder <a href="Send.htm#SendPlay">SendPlay</a>, anstatt die traditionelle <a href="Send.htm#SendEvent">SendEvent</a>-Methode.</li>
-        <li>Reduziere bei Benutzung der traditionellen <a href="Send.htm#SendEvent">SendEvent</a>-Methode <a href="SetKeyDelay.htm">SetKeyDelay</a> auf 0 oder -1, das dabei helfen sollte, die Tastatureingaben schneller zu senden.</li>
+        <li>Wenn du die traditionelle <a href="Send.htm#SendEvent">SendEvent</a>-Methode verwendest, könnte es helfen <a href="SetKeyDelay.htm">SetKeyDelay</a> auf 0 oder -1 zu setzen, um die Tastatureingaben schneller zu senden.</li>
       </ul>
       <p>Ist diese Direktive im Script nicht angegeben, gilt standardmäßig 50.</p>
       <h3>Verwandte Befehle</h3>
