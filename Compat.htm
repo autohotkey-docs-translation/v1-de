@@ -36,6 +36,10 @@
         <li><a href="#LastError">A_LastError wird von noch mehr Befehlen geändert</a></li>
         <li><a href="#MsgBox">MsgBox behandelt Kommas konsequenter</a></li>
         <li><a href="#GuiOwner">Gui +Owner überschreibt zusätzliche Styles</a></li>
+        <li><a href="#DPIScale">DPI-Skalierung ist für GUIs standardmäßig aktiviert</a></li>
+        <li><a href="#VistaSound">SoundSet und SoundGet funktionieren besser in Vista und höher</a></li>
+        <li><a href="#Tilde">Tilde (~) hat Einfluss darauf, wie benutzerdefinierte Modifikatortasten funktionieren</a></li>
+        <li><a href="#ComboUpDown"><code>x &amp; y::</code> bewirkt, dass sowohl <code>x::</code> als auch <code>x up::</code> ausgelöst werden, sobald x losgelassen wird</a></li>
       </ul>
       <p>Niedrige Auswirkung:</p>
       <ul>
@@ -50,11 +54,11 @@
       <h3>Erweitert</h3>
       <ul>
         <li><a href="#Format">Unicode vs. ANSI</a>
-          <ul>
-            <li><a href="#VarSetCapacity">VarSetCapacity</a></li>
-            <li><a href="#DllCall">DllCall</a></li>
-            <li><a href="#NumPutGet">NumPut / NumGet</a></li>
-          </ul>
+        <ul>
+          <li><a href="#VarSetCapacity">VarSetCapacity</a></li>
+          <li><a href="#DllCall">DllCall</a></li>
+          <li><a href="#NumPutGet">NumPut / NumGet</a></li>
+        </ul>
         </li>
         <li><a href="#ptr">Pointer-Größe</a></li>
       </ul>
@@ -81,9 +85,7 @@
       <p>Die Zeichen <code>[</code>, <code>]</code> und <code>?</code> sind für <a href="Variables.htm#Expressions">Ausdrücke</a> reserviert und daher nicht länger in Variablennamen gültig. Folglich benötigt <code>?</code> (das für ternären Operationen gilt) nicht länger ein Leerzeichen auf jeder Seite. Siehe auch <a href="Objects.htm#Usage">Objektsyntax</a>.</p>
       <p>Fehler können oder können nicht automatisch erkannt werden:</p>
       <ul>
-        <li>Falls ein Script solche Zeichen in Variablennamen innerhalb eines Ausdrucks verwendet, wird das Script ohne Fehlermeldung ausgeführt, aber sich falsch verhalten, da diese Zeichen als Operatoren interpretiert werden, anstatt als Teil eines Variablennamens.
-          </p>
-        </li>
+        <li>Falls ein Script solche Zeichen in Variablennamen innerhalb eines Ausdrucks verwendet, wird das Script ohne Fehlermeldung ausgeführt, aber sich falsch verhalten, da diese Zeichen als Operatoren interpretiert werden, anstatt als Teil eines Variablennamens.</li>
         <li>Falls diese Zeichen in einer <a href="Variables.htm#ref">Doppelderefenzierung</a> verwendet werden (z. B. <code>Array%n%</code>, bei der <em>n</em> eins der oben genannten Zeichen enthält), wird eine Fehlermeldung angezeigt, sobald die Doppeldereferenzierung beim Ausführen des Scripts ausgewertet wird.</li>
         <li>Falls diese Zeichen in einem anderen Kontext verwendet werden (zum Beispiel auf der linken Seite einer Zuweisung, im Namen der Eingabe-/Ausgabevariable eines Befehls oder zwischen %Prozentzeichen%), wird eine Fehlermeldung angezeigt und der Start des Scripts verhindert.</li>
       </ul>
@@ -118,6 +120,18 @@ MsgBox,, Titel
 	</pre>
       <h3 id="GuiOwner">Gui +Owner</h3>
       <p>Sobald die Option <a href="commands/Gui.htm#Owner">+Owner</a> auf ein Gui angewendet wird, wird der WS_CHILD-Style entfernt und der WS_POPUP-Style gesetzt. Das kann Scripts negativ beeinflussen, die mit <code>+Owner</code> das übergeordnete Fenster setzten, <em>nachdem</em> die Styles festgelegt wurden.</p>
+      <h3 id="DPIScale">DPI-Skalierung</h3>
+      <p><a href="commands/Gui.htm#DPIScale">DPI-Skalierung</a> ist für GUIs standardmäßig aktiviert. Dies wird Scripts betreffen, wenn die DPI-Einstellung des Systems nicht 96 (100%) ist. Mit <code>Gui -DPIScale</code> kann die Skalierung deaktiviert werden.</p>
+      <h3 id="VistaSound">Sound-Befehle in Windows Vista oder höher</h3>
+      <p><a href="commands/SoundSet.htm">SoundSet</a>, <a href="commands/SoundGet.htm">SoundGet</a>, <a href="commands/SoundSetWaveVolume.htm">SoundSetWaveVolume</a> und <a href="commands/SoundGetWaveVolume.htm">SoundGetWaveVolume</a> werden in Windows Vista oder höher besser unterstützt. Typische Veränderungen im Verhalten sind:</p>
+      <ul>
+        <li>Scripts haben Auswirkungen auf das ganze System (so wie es sein soll), anstatt nur auf das Script selbst.</li>
+        <li>Geräte werden unterschiedlich nummeriert - jeder Ausgang oder Eingang wird als seperates Gerät angesehen.</li>
+      </ul>
+      <h3 id="Tilde">Tilde (~) und Hotkeys mit benutzerdefinierten Tastenkombationen</h3>
+      <p>Seit v1.1.14 hat das <a href="Hotkeys.htm#Tilde">Tilde-Präfix</a> Einfluss darauf, wie eine Taste funktioniert, wenn sie als Modifikatortaste in einer benutzerdefinierten Tastenkombination verwendet wird.</p>
+      <h3 id="ComboUpDown">Benutzerdefinierte Tastenkombinationen und Down/Up-Hotkeys</h3>
+      <p>Wenn ein KeyDown- und KeyUp-Hotkey für eine benutzerdefinierte Modifikatortaste definiert wurde, werden beide beim Loslassen der Taste ausgelöst (sofern das Tilde-Präfix nicht vorhanden ist). Zum Beispiel würde <code>x &amp; y::</code> bewirken, dass <code>x::</code> und <code>x up::</code> erst ausgelöst werden, wenn x losgelassen wird.</p>
       <h3 id="IfIs">If <em>Var</em> is <em>Typ</em></h3>
       <p><a href="commands/IfIs.htm">If <em>Var</em> is <em>Typ</em></a> ignoriert das Gebietsschema des Betriebssystems, sofern <code><a href="commands/StringCaseSense.htm">StringCaseSense, Locale</a></code> nicht verwendet wird.</p>
       <h3 id="Window_Groups">Fenstergruppen</h3>
@@ -172,20 +186,20 @@ VarSetCapacity(native_var,  t_size(capacity_in_chars))  <em>; siehe <a href="#Nu
           <th>Kodierung</th>
         </tr>
         <tr>
-          <td class="Syntax" style="text-align:center">WStr</td>
-          <td style="text-align:center">16-Bit</td>
+          <td class="Syntax" style="text-align: center">WStr</td>
+          <td style="text-align: center">16-Bit</td>
           <td>wchar_t*, WCHAR*, LPWSTR, LPCWSTR</td>
           <td>UTF-16</td>
         </tr>
         <tr>
-          <td class="Syntax" style="text-align:center">AStr</td>
-          <td style="text-align:center">8-Bit</td>
+          <td class="Syntax" style="text-align: center">AStr</td>
+          <td style="text-align: center">8-Bit</td>
           <td>char*, CHAR*, LPSTR, LPCSTR</td>
           <td>ANSI (der Standard-ANSI-Zeichensatz des Systems)</td>
         </tr>
         <tr>
-          <td class="Syntax" style="text-align:center">Str</td>
-          <td style="text-align:center">--</td>
+          <td class="Syntax" style="text-align: center">Str</td>
+          <td style="text-align: center">--</td>
           <td>TCHAR*, LPTSTR, LPCTSTR</td>
           <td>Entspricht <b>WStr</b> in Unicode-Versionen und <b>AStr</b> in ANSI-Versionen.</td>
         </tr>
@@ -196,14 +210,13 @@ VarSetCapacity(native_var,  t_size(capacity_in_chars))  <em>; siehe <a href="#Nu
       <p>Wenn ein Script über DllCall eine Funktion aufruft, die einen String als Parameter akzeptiert, muss eins der folgenden Ansätze berücksichtigt werden:</p>
       <ol>
         <li>Existiert sowohl eine Unicode- (W) als auch ANSI-Version (A) von der Funktion, sollte die jeweils aufgerufen werden, die zur aktuellen AutoHotkey_L-Version passt. Im folgenden Beispiel ist "DeleteFile" intern als "DeleteFileA" oder "DeleteFileW" bekannt. Da "DeleteFile" selbst nicht wirklich existiert, versucht DllCall automatisch, "A" oder "W" je nach aktuelle Version zu setzen:
-          <pre>DllCall("DeleteFile", "Ptr", &amp;Dateiname)
+        <pre>DllCall("DeleteFile", "Ptr", &amp;Dateiname)
 DllCall("DeleteFile", "Str", Dateiname)</pre>
-          <p>In diesem Beispiel wird <code>&amp;Dateiname</code> die Adresse des Strings so übergeben, wie sie ist, damit die Funktion einen String im gleichen Format wie der "Str"-Typ erwarten muss. Beachte, dass in AutoHotkey Basic "UInt" anstelle von "Ptr" verwendet werden muss, aber der resultierende Code möglicherweise nicht 64-Bit-kompatibel ist.
-          
-          <p><b>Hinweis:</b> Wenn die angegebene Funktion nicht sofort gefunden werden kann, wird AutoHotkey_L das "A"- oder "W"-Suffix anfügen, unabhängig davon, welche DLL angegeben wurde. AutoHotkey Basic hingegen wird den "A"-Suffix nur bei Funktionen anfügen, die in User32.dll, Kernel32.dll, ComCtl32.dll oder Gdi32.dll vorkommen.</p>
+        <p>In diesem Beispiel wird <code>&amp;Dateiname</code> die Adresse des Strings so übergeben, wie sie ist, damit die Funktion einen String im gleichen Format wie der "Str"-Typ erwarten muss. Beachte, dass in AutoHotkey Basic "UInt" anstelle von "Ptr" verwendet werden muss, aber der resultierende Code möglicherweise nicht 64-Bit-kompatibel ist.</p>
+        <p><b>Hinweis:</b> Wenn die angegebene Funktion nicht sofort gefunden werden kann, wird AutoHotkey_L das "A"- oder "W"-Suffix anfügen, unabhängig davon, welche DLL angegeben wurde. AutoHotkey Basic hingegen wird den "A"-Suffix nur bei Funktionen anfügen, die in User32.dll, Kernel32.dll, ComCtl32.dll oder Gdi32.dll vorkommen.</p>
         </li>
         <li>Wenn die Funktion nur einen bestimmten Stringtyp als Eingabevariable akzeptiert, könnte das Script jeweils den passenden Stringtyp verwenden:
-          <pre>DllCall("DeleteFileA", "AStr", Dateiname)
+        <pre>DllCall("DeleteFileA", "AStr", Dateiname)
 DllCall("DeleteFileW", "WStr", Dateiname)</pre>
         </li>
         <li>Wenn die Funktion einen String modifizieren muss (in einem nicht-nativen Format), muss das Script einen Puffer wie <a href="#VarSetCapacity">oben</a> beschrieben bereitstellen und dessen Adresse an die Funktion übergeben. Wenn der Parameter eine Eingabevariable akzeptiert, muss das Script den Eingabestring zudem in das passende Format umwandeln - mithilfe von <a href="commands/StrPutGet.htm">StrPut</a>.</li>
@@ -250,22 +263,7 @@ dwProcessId := NumGet(pi, A_PtrSize*2,     "UInt")
 dwProcessId := NumGet(pi, A_PtrSize*2 + 4, "UInt")
 
 </pre>
-      <br>
-      <br>
-      <br>
-      <br>
-      <br>
-      <br>
-      <br>
-      <br>
-      <br>
-      <br>
-      <br>
-      <br>
-      <br>
-      <br>
-      <br>
-    </div>
+      <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></div>
   </section>
 </div>
 <script type="text/javascript">WriteFooter(0);</script>

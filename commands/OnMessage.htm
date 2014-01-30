@@ -31,8 +31,7 @@
           <td>Der Name einer <a href="../Functions.htm">Funktion</a>, der in Anführungszeichen gesetzt werden muss, falls dieser ein direkter String ist. Diese Funktion wird automatisch aufgerufen, sobald das Script die <em>Nachrichtennummer</em> empfängt. Entfällt dieser und der nächste Parameter, wird der Name der Funktion ermittelt, die gerade <em>Nachrichtennummer</em> überwacht (leer, wenn nicht vorhanden). Mit einem leeren String ("") oder einer leeren Variable wird die Überwachung der <em>Nachrichtennummer</em> deaktiviert.</td>
         </tr>
         <tr>
-          <td>MaxThreads<br>
-            <span class="ver">[v1.0.47+]</span></td>
+          <td>MaxThreads<br><span class="ver">[v1.0.47+]</span></td>
           <td id="MaxThreads">Dieser Integer wird normalerweise weggelassen, um die Überwachungsfunktion jeweils auf einen einzigen <a href="../misc/Threads.htm">Thread</a> zu begrenzen. Diese Einstellung wird empfohlen, weil andere Werte dazu führen würden, dass die Nachrichten nicht mehr in chronologischer Reihenfolge abgearbeitet werden, sobald sich die Überwachungsfunktion selbst unterbricht. Als Alternative zu <em>MaxThreads</em> sollte daher <em>Critical</em> in Betracht gezogen werden (siehe <a href="#Critical">unten</a>).</td>
         </tr>
       </table>
@@ -43,7 +42,7 @@
       <ul>
         <li>nicht existiert (vielleicht wegen fehlender Anführungszeichen um <em>Funktionsnamen</em>).</li>
         <li>mehr als 4 Parameter akzeptiert.</li>
-        <li><a href="../Functions.htm#ByRef">ByRef</a>- oder <a href="../Functions.htm#optional">optionale</a> Parameter hat.</li>
+        <li>v1.0.48.05 oder älter: <a href="../Functions.htm#ByRef">ByRef</a>- oder <a href="../Functions.htm#optional">optionale</a> Parameter hat.</li>
       </ul>
       <p>Es schlägt auch fehl, wenn das Script versucht, eine neue Nachricht zu überwachen, in dem bereits 500 Nachrichten überwacht werden.</p>
       <h3>Die Parameter der Funktion</h3>
@@ -53,27 +52,25 @@
     ... Funktionsbereich ...
 }</pre>
       <p>Obwohl die Namensgebung für die Parameter keine Rolle spielt, werden folgende Informationen der Reihe nach zugewiesen:</p>
-      <p>Parameter #1: WPARAM-Wert - ein Integer zwischen 0 und 4294967295.<br>
-        Parameter #2: LPARAM-Wert - ein Integer zwischen 0 und 4294967295.<br>
-        Parameter #3: Nachrichtennummer - nützlich, falls die Funktion mehrere Nachrichten überwacht.<br>
-        Parameter #4: HWND (eindeutige ID) des Fensters oder Steuerelements, zu dem die Nachricht gesendet wurde. Das HWND kann mit  <a href="../misc/WinTitle.htm#ahk_id">ahk_id</a> verwendet werden.</p>
-      <p>Falls bestimmte Informationen nicht benötigt werden, können entsprechende Parameter am Listenende weggelassen werden. Zum Beispiel würde eine Funktion, definiert als <code>EigeneNachrichtenüberwachung(wParam, lParam)</code>, nur die ersten zwei Parameter empfangen. Eine Funktion, definiert als <code>EigeneNachrichtenüberwachung()</code>, würde hingegen keine Parameter empfangen.</p>
-      <p>Wenn ein eingehender WPARAM oder LPARAM als signed Integer vorgesehen ist, können negative Zahlen zum Beispiel wie folgt offenbart werden:</p>
-      <pre>If wParam &gt; 0x7FFFFFFF
+      <p>Parameter #1: WPARAM-Wert der Nachricht.<br>Parameter #2: LPARAM-Wert der Nachricht.<br>Parameter #3: Nachrichtennummer - nützlich, falls die Funktion mehrere Nachrichten überwacht.<br>Parameter #4: HWND (eindeutige ID) des Fensters oder Steuerelements, zu dem die Nachricht gesendet wurde. Das HWND kann mit <a href="../misc/WinTitle.htm#ahk_id">ahk_id</a> verwendet werden.</p>
+      <p>WPARAM und LPARAM sind vorzeichenlose 32-Bit-Integer (von 0 bis 2<sup>32</sup>-1) oder vorzeichenbehaftete 64-Bit-Integer (von -2<sup>63</sup> bis 2<sup>63</sup>-1), abhängig davon, ob die EXE-Datei, die das Script ausführt, 32- oder 64-Bit ist. Wenn bei 32-Bit-Scripts ein eingehender Parameter als vorzeichenbehafteter Integer vorgesehen ist, können negative Zahlen zum Beispiel wie folgt offenbart werden:</p>
+      <pre>If (A_PtrSize = 4 &amp;&amp; wParam &gt; 0x7FFFFFFF)  <em>; Das Überprüfen von <a href="../Variables.htm#PtrSize">A_PtrSize</a> stellt sicher, dass das Script 32-Bit ist.</em>
     wParam := -(~wParam) - 1</pre>
+      <p>Falls bestimmte Informationen nicht benötigt werden, können entsprechende Parameter am Listenende weggelassen werden. Zum Beispiel würde eine Funktion, definiert als <code>EigeneNachrichtenüberwachung(wParam, lParam)</code>, nur die ersten zwei Parameter empfangen. Eine Funktion, definiert als <code>EigeneNachrichtenüberwachung()</code>, würde hingegen keine Parameter empfangen.</p>
       <h3>Weitere verfügbare Informationen für die Funktion</h3>
       <p>Zusätzlich zu den oben genannten Parametern kann die Funktion auch auf die Werte der folgenden internen Variablen zurückgreifen:</p>
       <ul>
         <li><a href="../Variables.htm#Gui">A_Gui</a>: Leer, es sei denn, die Nachricht wurde an ein GUI-Fenster oder Steuerelement gesendet, in diesem Fall enthält A_Gui die <a href="Gui.htm#MultiWin">Nummer des GUI-Fensters</a> (dieses Fenster wird auch das <a href="Gui.htm#DefaultWin">Standard-GUI-Fenster</a> der Funktion sein).</li>
-        <li> <a href="../Variables.htm#GuiControl">A_GuiControl</a>: Leer, es sei denn, die Nachricht wurde an ein GUI-Steuerelement gesendet, in diesem Fall enthält A_GuiControl den Variablennamen des Steuerelements oder andere Werte wie in <a href="../Variables.htm#GuiControl">A_GuiControl</a> beschrieben. Einige Steuerelemente können bestimmte Nachrichtentypen nie empfangen. Sobald der Benutzer beispielsweise ein <a href="GuiControls.htm#Text">Text-Steuerelement</a> anklickt, sendet das Betriebssystem WM_LBUTTONDOWN eher an das übergeordnete Fenster, als an das Steuerelement (folglich ist A_GuiControl leer).</li>
-        <li> <a href="../Variables.htm#GuiX">A_GuiX</a> und <a href="../Variables.htm#GuiX">A_GuiY</a>: Beide enthalten -2147483648, falls die eingehende Nachricht mit <a href="PostMessage.htm">SendMessage</a> gesendet wurde. Wenn die Nachricht mit <a href="PostMessage.htm">PostMessage</a> gesendet wurde, enthalten beide Variablen die Koordinaten des Mauszeigers (relativ zum Bildschirm).</li>
-        <li> <a href="../Variables.htm#EventInfo">A_EventInfo</a>: Enthält 0, wenn die eingehende Nachricht mit SendMessage gesendet wurde. Wenn die Nachricht mit PostMessage gesendet wurde, ist der <a href="../Variables.htm#TickCount">Tick-Count-Zeitpunkt</a> der Sendung enthalten.</li>
+        <li><a href="../Variables.htm#GuiControl">A_GuiControl</a>: Leer, es sei denn, die Nachricht wurde an ein GUI-Steuerelement gesendet, in diesem Fall enthält A_GuiControl den Variablennamen des Steuerelements oder andere Werte wie in <a href="../Variables.htm#GuiControl">A_GuiControl</a> beschrieben. Einige Steuerelemente können bestimmte Nachrichtentypen nie empfangen. Sobald der Benutzer beispielsweise ein <a href="GuiControls.htm#Text">Text-Steuerelement</a> anklickt, sendet das Betriebssystem WM_LBUTTONDOWN eher an das übergeordnete Fenster, als an das Steuerelement (folglich ist A_GuiControl leer).</li>
+        <li><a href="../Variables.htm#GuiX">A_GuiX</a> und <a href="../Variables.htm#GuiX">A_GuiY</a>: Beide enthalten -2147483648, falls die eingehende Nachricht mit <a href="PostMessage.htm">SendMessage</a> gesendet wurde. Wenn die Nachricht mit <a href="PostMessage.htm">PostMessage</a> gesendet wurde, enthalten beide Variablen die Koordinaten des Mauszeigers (relativ zum Bildschirm).</li>
+        <li><a href="../Variables.htm#EventInfo">A_EventInfo</a>: Enthält 0, wenn die eingehende Nachricht mit SendMessage gesendet wurde. Wenn die Nachricht mit PostMessage gesendet wurde, ist der <a href="../Variables.htm#TickCount">Tick-Count-Zeitpunkt</a> der Sendung enthalten.</li>
       </ul>
       <p>Das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> einer Überwachungsfunktion ist zu Beginn das übergeordnete Fenster, zu dem die Nachricht gesendet wurde (auch dann, wenn die Nachricht an das Steuerelement gesendet wurde). Ist das Fenster versteckt, aber kein GUI-Fenster (z. B. das Hauptfenster des Scripts), muss <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> aktiviert werden, bevor es verwendet werden kann. Zum Beispiel:</p>
       <pre>DetectHiddenWindows On
 MsgParentWindow := WinExist()  <em>; Speichert die eindeutige ID des Fensters, zum dem die Nachricht gesendet wurde.</em></pre>
-      <h3>Was die Funktion zurückgeben sollte (<em>Return</em>)</h3>
-      <p>Wenn eine Überwachungsfunktion <a href="Return.htm">Return</a> ohne Parameter verwendet oder ein leerer Wert wie "" angegeben ist (oder Return überhaupt nicht verwendet), wird die eingehende Nachricht normal verarbeitet, sobald die Funktion beendet wird. Das Gleiche passiert, wenn die Funktion mit <a href="Exit.htm">Exit</a> beendet wird oder einen Laufzeitfehler verursacht, wie z. B. das <a href="Run.htm">Ausführen</a> einer nicht vorhandenen Datei. Die Rückgabe eines Integers zwischen -2147483648 und 4294967295 bewirkt hingegen, dass die Nummer sofort als Antwort gesendet wird. Das heißt, dass das Programm die Nachricht nicht weiter verarbeiten wird. Zum Beispiel könnte eine Funktion, die WM_LBUTTONDOWN (0x201) überwacht, ein Integer zurückgeben, um das Zielfenster daran zu hindern, benachrichtigt zu werden, dass ein Mausklick erfolgt ist. In vielen Fällen (z. B. der Nachrichtenempfang über <a href="PostMessage.htm">PostMessage</a>) spielt es keine Rolle, welcher Integer zurückgegeben wird; im Zweifelsfall ist eine 0 aber am sichersten.</p>
+      <h3>Was die Funktion per <em>Return</em> zurückgeben sollte</h3>
+      <p>Wenn eine Überwachungsfunktion <a href="Return.htm">Return</a> ohne Parameter verwendet oder ein leerer Wert wie "" angegeben ist (oder Return überhaupt nicht verwendet), wird die eingehende Nachricht normal verarbeitet, sobald die Funktion beendet wird. Das Gleiche passiert, wenn die Funktion mit <a href="Exit.htm">Exit</a> beendet wird oder einen Laufzeitfehler verursacht, wie z. B. das <a href="Run.htm">Ausführen</a> einer nicht vorhandenen Datei. Die Rückgabe eines Integers bewirkt hingegen, dass dieser sofort als Antwort gesendet wird. Das heißt, dass das Programm die Nachricht nicht weiter verarbeiten wird. Zum Beispiel könnte eine Funktion, die WM_LBUTTONDOWN (0x201) überwacht, ein Integer zurückgeben, um das Zielfenster daran zu hindern, benachrichtigt zu werden, dass ein Mausklick erfolgt ist. In vielen Fällen (z. B. der Nachrichtenempfang über <a href="PostMessage.htm">PostMessage</a>) spielt es keine Rolle, welcher Integer zurückgegeben wird; im Zweifelsfall ist eine 0 aber am sichersten.</p>
+      <p>Der Bereich von gültigen Rückgabewerten ist abhängig davon, ob die EXE-Datei, die das Script ausführt, 32- oder 64-Bit ist. Rückgabewerte ungleich 0 müssen bei 32-Bit-Scripts (<code><a href="../Variables.htm#PtrSize">A_PtrSize</a> = 4</code>) zwischen -2<sup>31</sup> und 2<sup>32</sup>-1 liegen, und bei 64-Bit-Scripts&nbsp; (<code><a href="../Variables.htm#PtrSize">A_PtrSize</a> = 8</code>) zwischen -2<sup>63</sup> und 2<sup>63</sup>-1.</p>
       <h3 id="Remarks">Allgemeine Bemerkungen</h3>
       <p>Im Gegensatz zu einem normalen Funktionsaufruf ruft der Empfang einer überwachten Nachricht die Funktion als neuen <a href="../misc/Threads.htm">Thread</a> auf. Aus diesem Grund beginnt die Funktion mit den Standardwerten für Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>. Diese können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
       <p>Nachrichten, die mit SendMessage (anstatt mit PostMessage) zu einem Steuerelement gesendet wurden, werden nicht überwacht, weil diese direkt und unauffällig an das Steuerelement weitergeleitet werden. Auf systemgesteuerte Nachrichten trifft das nicht zu, weil die meisten von ihnen mit PostMessage gesendet werden.</p>
@@ -99,7 +96,7 @@ Return
 
 WM_LBUTTONDOWN(wParam, lParam)
 {
-    X := lParam & 0xFFFF
+    X := lParam &amp; 0xFFFF
     Y := lParam &gt;&gt; 16
     If A_GuiControl
         Steuerelement := "`n(im Steuerelement " . A_GuiControl . ")"
@@ -108,7 +105,7 @@ WM_LBUTTONDOWN(wParam, lParam)
 
 GuiClose:
 ExitApp</pre>
-      <pre class="NoIndent" id="shutdown"><em>; Beispiel: Das folgende Script erkennt das Abmelden/Herunterfahren des Systems und erlaubt dem Benutzer, es abzubrechen (funktioniert NICHT in Windows Vista und höher).
+      <pre id="shutdown" class="NoIndent"><em>; Beispiel: Das folgende Script erkennt das Abmelden/Herunterfahren des Systems und erlaubt dem Benutzer, es abzubrechen (funktioniert NICHT in Windows Vista und höher).
 ; Verwandtes Thema: <a href="OnExit.htm">OnExit</a></em>
 
 <em>; Der folgende Aufruf von DllCall ist optional: dem OS wird mitgeteilt, <i>zuerst</i> das Script zu beenden (vor allen anderen Anwendungen).
@@ -120,7 +117,7 @@ Return
 WM_QUERYENDSESSION(wParam, lParam)
 {
     ENDSESSION_LOGOFF = 0x80000000
-    If (lParam & ENDSESSION_LOGOFF)  <em>; Benutzer meldet sich ab.</em>
+    If (lParam &amp; ENDSESSION_LOGOFF)  <em>; Benutzer meldet sich ab.</em>
         Ereignis = Abmeldung
     Else  <em>; System wird entweder heruntergefahren oder neu gestartet.</em>
         Ereignis = Herunterfahren
@@ -149,7 +146,7 @@ DetectHiddenWindows On
 If WinExist("Empfänger.ahk ahk_class AutoHotkey")
     PostMessage, 0x5555, 11, 22  <em>; Die Nachricht wird aufgrund von WinExist() an das "<a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>" gesendet.</em>
 DetectHiddenWindows Off  <em>; Muss nicht deaktiviert werden, bis nach PostMessage.</em></pre>
-      <pre class="NoIndent" id="SendString"><em>; Beispiel: Sendet einen String mit beliebiger Länge von einem Script zum anderen. Das ist ein funktionierendes Beispiel.
+      <pre id="SendString" class="NoIndent"><em>; Beispiel: Sendet einen String mit beliebiger Länge von einem Script zum anderen. Das ist ein funktionierendes Beispiel.
 ; Um es zu verwenden, müssen beide folgende Scripts gespeichert und ausgeführt und danach WIN+LEERTASTE gedrückt werden,
 ; um eine InputBox anzuzeigen, die den Benutzer auffordert, einen String einzugeben.</em>
 
