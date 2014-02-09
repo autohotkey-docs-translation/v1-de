@@ -10,67 +10,63 @@
 <script src="../static/ga.js" type="text/javascript"></script>
 <script src="../navbar/NavScript.js" type="text/javascript"></script>
 </head>
-
 <body>
 <script type="text/javascript">WriteHeader(1);</script>
 <div id="content">
   <section>
     <article>
-    <h1>Nachrichten an ein Fenster oder Steuerelement senden - <span class="small80">von Rajat</span></h1>
-    <p>Auf dieser Seite werden die Befehle <a href="../commands/PostMessage.htm">PostMessage</a> und <a href="../commands/PostMessage.htm">SendMessage</a> näher beschrieben und dabei einige Fragen geklärt:</p>
-    <p>"Wie kann ich bei einem minimierten Fenster eine Schaltfläche drücken?" <br>
-      "Wie kann ich einen Menüpunkt auswählen, falls <a href="../commands/WinMenuSelectItem.htm">WinMenuSelectItem</a> nicht funktioniert?!"<br>
-      "Das ist ein Fenster mit anpassbarem Skin ... wie sende ich einen Befehl, der immer funktioniert?"<br>
-      "und was ist mit <strong>versteckten</strong> Fenstern?!" </p>
-    <h2>Verwendung</h2>
-    <p>Anforderungen: AutoHotkey v1.0.09+ und Winspector Spy (<a href="http://www.softpedia.com/get/Security/Security-Related/Winspector.shtml">http://www.softpedia.com/get/Security/Security-Related/Winspector.shtml</a>)</p>
-    <p>Beachtet beim ersten Beispiel, dass <a href="../commands/WinMenuSelectItem.htm">WinMenuSelectItem</a> nicht mit der Menüleiste des Outlook-Fensters "Neue Nachricht" funktioniert. Das heißt, dass das folgende Beispiel nicht funktionieren wird:</p>
-    <pre>WinMenuSelectItem, Neue Nachricht,, E&amp;infügen, &amp;Bild...</pre>
-    <p>Mit <a href="../commands/PostMessage.htm">PostMessage</a> funktioniert das ohne Probleme:</p>
-    <pre>PostMessage, 0x111, 40239, 0, , Neue Nachricht</pre>
-    <p>Das klappt hervorragend! Aber was zum Teufel ist das? 0x111 ist der hexadezimale Code für die Nachricht <a href="SendMessageList.htm">WM_COMMAND</a>. Der Code 40239 bewirkt, dass bei diesem bestimmten Fenster der Menüpunkt 'Einfügen Bild' ausgewählt wird. Dieser Wert kann wie folgt ermittelt werden:</p>
-    <ol>
-      <li>Öffnet 'Winspector Spy' und das Fenster "Neue Nachricht".</li>
-      <li>Zieht das Fadenkreuz von 'Winspector Spy' zur Titelleiste des Fensters 'Neue Nachricht'.</li>
-      <li>Klickt mit der rechten Maustaste auf das ausgewählte Fenster in der Liste und wählt 'Messages' aus.</li>
-      <li>Klickt mit der rechten Maustaste auf das leere Fenster und wählt 'Edit message filter' aus.</li>
-      <li>Drückt die Schaltfläche 'filter all' und klickt in der linken Liste doppelt auf 'WM_COMMAND'. Auf diese Weise wird nur diese Nachricht überwacht.</li>
-      <li>Wählt in der Menüleiste des Fensters 'Neue Nachricht' folgenden Menüpunkt aus: Einfügen -&gt; Bild.</li>
-      <li>Geht zurück zu 'Winspector Spy' und drückt die Ampel-Schaltfläche, um die Überwachung zu pausieren.</li>
-      <li>Klappt die angesammelten WM_COMMAND-Nachrichten auf (alle anderen ignorieren, falls vorhanden).</li>
-      <li>Sucht in diesem Fall eine Nachricht mit Code 0. Manchmal sind auch WM_COMMAND-Nachrichten vorhanden, die so etwas wie 'win activated' oder 'win destroyed' melden ... einfach ignorieren. Irgendwann findet man eine Nachricht mit 'Control ID: 40239' ... Fertig!</li>
-      <li>Setzt anschließend diese Zahl in den oberen Befehl. Das ist der wParam-Wert.</li>
-    </ol>
-    <p>Für das nächste Beispiel habe ich Paint genommen, das wahrscheinlich jeder hat. Sagen wir mal, es ist eine Anwendung, in der ein Werkzeug in der Werkzeugleiste mithilfe von AutoHotkey ausgewählt werden muss, wie z. B. die Farbauswahl.</p>
-    <p>Was muss getan werden? Höchstwahrscheinlich ein Mausklick auf die Schaltfläche der Werkzeugleiste, oder? Aber viele Werkzeugleisten, wie auch die von Paint, können verschoben und versteckt werden! In diesem Fall würde unser Script fehlschlagen. Mit dem folgenden Befehl würde das aber weiterhin funktionieren:</p>
-    <pre> PostMessage, 0x111, 639,,, Unbenannt - Paint</pre>
-    <p>Ein weiterer Vorteil von <a href="../commands/PostMessage.htm">PostMessage</a> ist, dass sich das Fenster im Hintergrund befinden kann. Mausklicks hingegen benötigen ein aktiviertes Fenster. </p>
-    <h3>Beispiele</h3>
-    <p>Hinweis: Ich verwende WinXP Pro (SP1) ... Falls sich euer Betriebssystem von meinem unterscheidet, könnten die benötigten Parameter abweichen (gilt nur bei Windows-Anwendungen wie Wordpad und Editor, bei anderen Anwendungen müssten die Parameter gleich sein):</p>
-    <pre><em>; Ermöglicht das Schreiben in türkiser Farbe im Worpad </em>
+      <h1>Nachrichten an ein Fenster oder Steuerelement senden - <span class="small80">von Rajat</span></h1>
+      <p>Auf dieser Seite werden die Befehle <a href="../commands/PostMessage.htm">PostMessage</a> und <a href="../commands/PostMessage.htm">SendMessage</a> näher beschrieben und dabei einige Fragen geklärt:</p>
+      <p>"Wie kann ich bei einem minimierten Fenster eine Schaltfläche drücken?" <br>"Wie kann ich einen Menüpunkt auswählen, falls <a href="../commands/WinMenuSelectItem.htm">WinMenuSelectItem</a> nicht funktioniert?!"<br>"Das ist ein Fenster mit anpassbarem Skin ... wie sende ich einen Befehl, der immer funktioniert?"<br>"und was ist mit <strong>versteckten</strong> Fenstern?!" </p>
+      <h2>Verwendung</h2>
+      <p>Anforderungen: AutoHotkey v1.0.09+ und Winspector Spy (<a href="http://www.softpedia.com/get/Security/Security-Related/Winspector.shtml">http://www.softpedia.com/get/Security/Security-Related/Winspector.shtml</a>)</p>
+      <p>Beachtet beim ersten Beispiel, dass <a href="../commands/WinMenuSelectItem.htm">WinMenuSelectItem</a> nicht mit der Menüleiste des Outlook-Fensters "Neue Nachricht" funktioniert. Das heißt, dass das folgende Beispiel nicht funktionieren wird:</p>
+      <pre>WinMenuSelectItem, Neue Nachricht,, E&amp;infügen, &amp;Bild...</pre>
+      <p>Mit <a href="../commands/PostMessage.htm">PostMessage</a> funktioniert das ohne Probleme:</p>
+      <pre>PostMessage, 0x111, 40239, 0, , Neue Nachricht</pre>
+      <p>Das klappt hervorragend! Aber was zum Teufel ist das? 0x111 ist der hexadezimale Code für die Nachricht <a href="SendMessageList.htm">WM_COMMAND</a>. Der Code 40239 bewirkt, dass bei diesem bestimmten Fenster der Menüpunkt 'Einfügen Bild' ausgewählt wird. Dieser Wert kann wie folgt ermittelt werden:</p>
+      <ol>
+        <li>Öffnet 'Winspector Spy' und das Fenster "Neue Nachricht".</li>
+        <li>Zieht das Fadenkreuz von 'Winspector Spy' zur Titelleiste des Fensters 'Neue Nachricht'.</li>
+        <li>Klickt mit der rechten Maustaste auf das ausgewählte Fenster in der Liste und wählt 'Messages' aus.</li>
+        <li>Klickt mit der rechten Maustaste auf das leere Fenster und wählt 'Edit message filter' aus.</li>
+        <li>Drückt die Schaltfläche 'filter all' und klickt in der linken Liste doppelt auf 'WM_COMMAND'. Auf diese Weise wird nur diese Nachricht überwacht.</li>
+        <li>Wählt in der Menüleiste des Fensters 'Neue Nachricht' folgenden Menüpunkt aus: Einfügen -&gt; Bild.</li>
+        <li>Geht zurück zu 'Winspector Spy' und drückt die Ampel-Schaltfläche, um die Überwachung zu pausieren.</li>
+        <li>Klappt die angesammelten WM_COMMAND-Nachrichten auf (alle anderen ignorieren, falls vorhanden).</li>
+        <li>Sucht in diesem Fall eine Nachricht mit Code 0. Manchmal sind auch WM_COMMAND-Nachrichten vorhanden, die so etwas wie 'win activated' oder 'win destroyed' melden ... einfach ignorieren. Irgendwann findet man eine Nachricht mit 'Control ID: 40239' ... Fertig!</li>
+        <li>Setzt anschließend diese Zahl in den oberen Befehl. Das ist der wParam-Wert.</li>
+      </ol>
+      <p>Für das nächste Beispiel habe ich Paint genommen, das wahrscheinlich jeder hat. Sagen wir mal, es ist eine Anwendung, in der ein Werkzeug in der Werkzeugleiste mithilfe von AutoHotkey ausgewählt werden muss, wie z. B. die Farbauswahl.</p>
+      <p>Was muss getan werden? Höchstwahrscheinlich ein Mausklick auf die Schaltfläche der Werkzeugleiste, oder? Aber viele Werkzeugleisten, wie auch die von Paint, können verschoben und versteckt werden! In diesem Fall würde unser Script fehlschlagen. Mit dem folgenden Befehl würde das aber weiterhin funktionieren:</p>
+      <pre> PostMessage, 0x111, 639,,, Unbenannt - Paint</pre>
+      <p>Ein weiterer Vorteil von <a href="../commands/PostMessage.htm">PostMessage</a> ist, dass sich das Fenster im Hintergrund befinden kann. Mausklicks hingegen benötigen ein aktiviertes Fenster. </p>
+      <h3>Beispiele</h3>
+      <p>Hinweis: Ich verwende WinXP Pro (SP1) ... Falls sich euer Betriebssystem von meinem unterscheidet, könnten die benötigten Parameter abweichen (gilt nur bei Windows-Anwendungen wie Wordpad und Editor, bei anderen Anwendungen müssten die Parameter gleich sein):</p>
+      <pre><em>; Ermöglicht das Schreiben in türkiser Farbe im Worpad </em>
 <a href="../commands/PostMessage.htm">PostMessage</a>, 0x111, 32788, 0, , Dokument - WordPad</pre>
-    <pre><em>; Öffnet das Info-Fenster vom Editor </em>
+      <pre><em>; Öffnet das Info-Fenster vom Editor </em>
 <a href="../commands/PostMessage.htm">PostMessage</a>, 0x111, 65, 0, , Unbenannt - Editor</pre>
-    <pre><em>; Schaltet Zeilenumbruch im Editor um </em>
+      <pre><em>; Schaltet Zeilenumbruch im Editor um </em>
 <a href="../commands/PostMessage.htm">PostMessage</a>, 0x111, 32, 0, , Unbenannt - Editor</pre>
-    <pre><em>; Wiedergabe/Anhalten im Windows Media Player </em>
+      <pre><em>; Wiedergabe/Anhalten im Windows Media Player </em>
 <a href="../commands/PostMessage.htm">PostMessage</a>, 0x111, 32808, 0, , Windows Media Player</pre>
-    <pre><em>; Sperrt die Hotkeys eines laufenden AHK-Scripts!</em>
+      <pre><em>; Sperrt die Hotkeys eines laufenden AHK-Scripts!</em>
 DetectHiddenWindows, on<br> SetTitleMatchMode, 2
 PostMessage, 0x111, 65305,,, EigenesScript.ahk - AutoHotkey <em>; Verwendet 65306 für Pause anstelle von Suspend.</em></pre>
-    <h3>SendMessage</h3>
-    <p>Das oben genannte galt für PostMessage. <a href="../commands/PostMessage.htm">SendMessage</a> funktioniert nicht nur auf dieselbe Weise, sondern wartet zusätzlich auf einen Rückgabewert, mit dem zum Beispiel der aktuelle Track von Winamp abgerufen werden kann (siehe <a href="Winamp.htm">Winamp automatisieren</a> für ein Beispiel).</p>
-    <h2>Bemerkungen</h2>
-    <p>Der oben genannte Hinweis in Bezug auf Windows XP und das Ändern der Nachrichtenwerte dient nur als Warnung. Falls ihr eine Nachricht findet, die auf eurem Betriebssystem funktioniert (mit einer bestimmten Software-Version), dann könnt ihr euch sicher sein, dass diese Nachricht auch auf andere Systeme mit der gleichen Software-Version funktionieren wird. Darüber hinaus sind die Nachrichtenwerte bei den meisten Anwendungen gleich, sogar bei unterschiedlichen Versionen (z. B. Windows Media Player und Winamp).</p>
-    <p>Falls ihr den Filter gesetzt habt, um nur WM_COMMAND im 'Winspector Spy' anzuzeigen, aber dabei weiterhin eine Flut an Nachrichten erhaltet, dann klickt mit der rechten Maustaste auf diese ungewollte Nachricht und wählt hide (msg name) aus.</p>
-    <p>Die Pfeile nach rechts im Winspector Spy kennzeichnen die Nachrichtenwerte und die verschwommenen Pfeile nach links die Rückgabewerte. Ein 0-Wert kann standardmäßig ohne Bedenken als 'kein Fehler' genommen werden (bei SendMessage befindet sich der Rückgabewert in <a href="ErrorLevel.htm">ErrorLevel</a>).</p>
-    <p>Mithilfe von <code>SetTitleMatchMode 2</code> kann eine PostMessage-Nachricht auch dann an ein Fenster gesendet werden, falls die Titel nur teilweise übereinstimmen.</p>
-    <p>Mithilfe von <code>DetectHiddenWindows On</code> kann eine PostMessage-Nachricht auch dann an ein Fenster gesendet werden, falls das Fenster versteckt ist.</p>
-    <p>Es gibt Anwendungen, bei denen diese Technik nicht funktioniert. Ich hatte gemischtes Glück bei VB- und Delphi-Anwendungen. Diese Technik sollte am besten bei Anwendungen benutzt werden, die mit C oder C++ programmiert wurden. Bei VB-Anwendungen wird der "LParam" vom gleichnamigen Befehl daran gehindert, von einer Ausführung zur nächsten zu wechseln. Bei einigen Delphi-Anwendungen verwendet ein GUI nicht einmal WM_COMMAND. Es verwendet wahrscheinlich Positionen und Klicks der Maus.</p>
-    <p>Geht und erkundet .... und teilt eure Erfahrungen mit der Community von AutoHotkey. Feedbacks sind erwünscht!</p>
-    <p>Diese Einführung ist nicht für totale Anfänger gedacht (nichts für ungut), da diese Befehle als erweiterte Funktionen betrachtet werden. Also, wenn ihr daraus nicht schlau werdet, vergesst es.</p>
-    <p>- Rajat</p>
-  </article>
+      <h3>SendMessage</h3>
+      <p>Das oben genannte galt für PostMessage. <a href="../commands/PostMessage.htm">SendMessage</a> funktioniert nicht nur auf dieselbe Weise, sondern wartet zusätzlich auf einen Rückgabewert, mit dem zum Beispiel der aktuelle Track von Winamp abgerufen werden kann (siehe <a href="Winamp.htm">Winamp automatisieren</a> für ein Beispiel).</p>
+      <h2>Bemerkungen</h2>
+      <p>Der oben genannte Hinweis in Bezug auf Windows XP und das Ändern der Nachrichtenwerte dient nur als Warnung. Falls ihr eine Nachricht findet, die auf eurem Betriebssystem funktioniert (mit einer bestimmten Software-Version), dann könnt ihr euch sicher sein, dass diese Nachricht auch auf andere Systeme mit der gleichen Software-Version funktionieren wird. Darüber hinaus sind die Nachrichtenwerte bei den meisten Anwendungen gleich, sogar bei unterschiedlichen Versionen (z. B. Windows Media Player und Winamp).</p>
+      <p>Falls ihr den Filter gesetzt habt, um nur WM_COMMAND im 'Winspector Spy' anzuzeigen, aber dabei weiterhin eine Flut an Nachrichten erhaltet, dann klickt mit der rechten Maustaste auf diese ungewollte Nachricht und wählt hide (msg name) aus.</p>
+      <p>Die Pfeile nach rechts im Winspector Spy kennzeichnen die Nachrichtenwerte und die verschwommenen Pfeile nach links die Rückgabewerte. Ein 0-Wert kann standardmäßig ohne Bedenken als 'kein Fehler' genommen werden (bei SendMessage befindet sich der Rückgabewert in <a href="ErrorLevel.htm">ErrorLevel</a>).</p>
+      <p>Mithilfe von <code>SetTitleMatchMode 2</code> kann eine PostMessage-Nachricht auch dann an ein Fenster gesendet werden, falls die Titel nur teilweise übereinstimmen.</p>
+      <p>Mithilfe von <code>DetectHiddenWindows On</code> kann eine PostMessage-Nachricht auch dann an ein Fenster gesendet werden, falls das Fenster versteckt ist.</p>
+      <p>Es gibt Anwendungen, bei denen diese Technik nicht funktioniert. Ich hatte gemischtes Glück bei VB- und Delphi-Anwendungen. Diese Technik sollte am besten bei Anwendungen benutzt werden, die mit C oder C++ programmiert wurden. Bei VB-Anwendungen wird der "LParam" vom gleichnamigen Befehl daran gehindert, von einer Ausführung zur nächsten zu wechseln. Bei einigen Delphi-Anwendungen verwendet ein GUI nicht einmal WM_COMMAND. Es verwendet wahrscheinlich Positionen und Klicks der Maus.</p>
+      <p>Geht und erkundet .... und teilt eure Erfahrungen mit der Community von AutoHotkey. Feedbacks sind erwünscht!</p>
+      <p>Diese Einführung ist nicht für totale Anfänger gedacht (nichts für ungut), da diese Befehle als erweiterte Funktionen betrachtet werden. Also, wenn ihr daraus nicht schlau werdet, vergesst es.</p>
+      <p>- Rajat</p>
+    </article>
   </section>
 </div>
 <script type="text/javascript">WriteFooter(1);</script>

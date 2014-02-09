@@ -22,34 +22,38 @@
       <table class="info">
         <tr>
           <td style="width: 15%;">Warnungstyp</td>
-          <td style="width: 85%;"><p>Die Art der Warnung, die aktiviert oder deaktiviert werden soll. Ist dieser Parameter nicht vorhanden, gilt standardmäßig <i>All</i>.</p>
-            <p><strong>UseUnsetLocal</strong> oder <strong>UseUnsetGlobal</strong>: Warnen, wenn das Script eine Variable liest, die keinen zugewiesenen Wert hat oder per <a href="VarSetCapacity.htm">VarSetCapacity</a> initialisiert wurde. Wenn die Variable absichtlich leer sein soll, muss ihr ein leerer String zugewiesen werden, um diese Warnung zu unterdrücken.</p>
-            <p>Warum ist dieser Warnungstyp in Lokal und Global aufgeteilt? Aufgrund der persistenten und scriptweiten Art von globalen Variablen ist es unüblich, diese vorher mit einem Wert zu initialisieren. Deshalb gibt es die Möglichkeit, diesen Warnungstyp für lokale Variablen zu aktivieren, und für globale Variablen zu deaktivieren.</p>
-            <pre>#Warn
+          <td style="width: 85%;">
+          <p>Die Art der Warnung, die aktiviert oder deaktiviert werden soll. Ist dieser Parameter nicht vorhanden, gilt standardmäßig <i>All</i>.</p>
+          <p><strong>UseUnsetLocal</strong> oder <strong>UseUnsetGlobal</strong>: Warnen, wenn das Script eine Variable liest, die keinen zugewiesenen Wert hat oder per <a href="VarSetCapacity.htm">VarSetCapacity</a> initialisiert wurde. Wenn die Variable absichtlich leer sein soll, muss ihr ein leerer String zugewiesen werden, um diese Warnung zu unterdrücken.</p>
+          <p>Warum ist dieser Warnungstyp in Lokal und Global aufgeteilt? Aufgrund der persistenten und scriptweiten Art von globalen Variablen ist es unüblich, diese vorher mit einem Wert zu initialisieren. Deshalb gibt es die Möglichkeit, diesen Warnungstyp für lokale Variablen zu aktivieren, und für globale Variablen zu deaktivieren.</p>
+          <pre>#Warn
 <em>;y := ""  ; Das hier würde die Warnung unterdrücken.</em>
 x := y    <em>; y enthält keinen zugewiesenen Wert.</em></pre>
-            <p><strong>UseEnv</strong>: Warnen, wenn das Script eine leere Variable als Umgebungsvariable verwendet. Das kann passieren, wenn der Name einer Umgebungsvariable zufällig mit dem Namen einer Script-Variable übereinstimmt. Diese Warnung erscheint, sobald das Script auf die Variable zugreift. Mit <a href="_NoEnv.htm">#NoEnv</a> kann dieses Verhalten unterdrückt werden (empfohlen).</p>
-            <pre>#Warn
+          <p><strong>UseEnv</strong>: Warnen, wenn das Script eine leere Variable als Umgebungsvariable verwendet. Das kann passieren, wenn der Name einer Umgebungsvariable zufällig mit dem Namen einer Script-Variable übereinstimmt. Diese Warnung erscheint, sobald das Script auf die Variable zugreift. Mit <a href="_NoEnv.htm">#NoEnv</a> kann dieses Verhalten unterdrückt werden (empfohlen).</p>
+          <pre>#Warn
 <em>;#NoEnv             ; Behandelt "temp" nicht als Umgebungsvariable.</em>
 <em>;EnvGet temp, TEMP  ; Kopiert den Wert der Umgebungsvariable in eine Script-Variable.</em>
 temp := ""          <em>; Trotz dieser Zeile hat temp scheinbar weiterhin einen Wert.</em>
 MsgBox % temp       <em>; Diese Zeile greift auf die Umgebungsvariable "TEMP" zu.</em></pre>
-            <p><strong>LocalSameAsGlobal</strong>: Bevor das Script anfängt zu laufen, wird bei jeder <em>undeklarierten</em> lokalen Variable eine Warnung angezeigt, die den gleichen Namen hat wie eine globale Variable. Diese Warnung soll darauf hinweisen, dass eine globale Variable innerhalb einer Funktion deklariert werden sollte, bevor sie verwendet wird, um Fehler zu vermeiden. Wenn die globale Variable tatsächlich lokal sein soll, kann die Warnung mit einer Deklaration wie <code>local x</code> oder <code>static y</code> unterdrückt werden.</p>
-            <pre>#Warn
+          <p><strong>LocalSameAsGlobal</strong>: Bevor das Script anfängt zu laufen, wird bei jeder <em>undeklarierten</em> lokalen Variable eine Warnung angezeigt, die den gleichen Namen hat wie eine globale Variable. Diese Warnung soll darauf hinweisen, dass eine globale Variable innerhalb einer Funktion deklariert werden sollte, bevor sie verwendet wird, um Fehler zu vermeiden. Wenn die globale Variable tatsächlich lokal sein soll, kann die Warnung mit einer Deklaration wie <code>local x</code> oder <code>static y</code> unterdrückt werden.</p>
+          <pre>#Warn
 g := 1
 ShowG() {       <em>; Die Warnung wird auch angezeigt, wenn die Funktion nicht aufgerufen wird.</em>
     <em>;global g   ; &lt;-- Notwendig, um die globale Variable zu verwenden.</em>
     MsgBox % g  <em>; Ohne Deklaration ist "g" eine leere lokale Variable.</em>
 }</pre>
-            <p><strong>All</strong>: Wendet den angegebenen <em>Warnungsmodus</em> auf alle unterstützten Warnungstypen an.</p>
+          <p><strong>All</strong>: Wendet den angegebenen <em>Warnungsmodus</em> auf alle unterstützten Warnungstypen an.</p>
+          </td>
         </tr>
         <tr>
           <td style="width: 15%;">Warnungsmodus</td>
-          <td style="width: 85%;"><p>Ein Wert, der angibt, wie Warnungen übermittelt werden sollen. Ist dieser Parameter nicht vorhanden, gilt standardmäßig <em>MsgBox</em>.</p>
-            <p><strong>MsgBox</strong>: Zeigt ein Hinweisfenster an, das die Warnung beschreibt. Beachte, dass, sobald das Fenster geschlossen wird, das Script wie gewohnt weiterläuft.</p>
-            <p><strong>StdOut</strong> <span class="ver">[v1.1.04+]</span>: Sendet eine Beschreibung der Warnung zur Standardausgabe (stdout), einschließlich Dateiname und Zeilennummer. Dadurch können originelle Editoren wie SciTE die Warnungen abfangen, ohne das Script zu unterbrechen - der Benutzer kann später über den Editor-Bereich &quot;Ausgabe&quot; zu allen fehlerhaften Zeilen springen.</p>
-            <p><strong>OutputDebug</strong>: Sendet eine Beschreibung der Warnung zum Debugger (falls vorhanden). Für weitere Details, siehe <a href="OutputDebug.htm">OutputDebug</a>.</p>
-            <p><strong>Off</strong>: Deaktiviert alle Warnungen für den angegebenen <em>Warnungstyp</em>.</p></td>
+          <td style="width: 85%;">
+          <p>Ein Wert, der angibt, wie Warnungen übermittelt werden sollen. Ist dieser Parameter nicht vorhanden, gilt standardmäßig <em>MsgBox</em>.</p>
+          <p><strong>MsgBox</strong>: Zeigt ein Hinweisfenster an, das die Warnung beschreibt. Beachte, dass, sobald das Fenster geschlossen wird, das Script wie gewohnt weiterläuft.</p>
+          <p><strong>StdOut</strong> <span class="ver">[v1.1.04+]</span>: Sendet eine Beschreibung der Warnung zur Standardausgabe (stdout), einschließlich Dateiname und Zeilennummer. Dadurch können originelle Editoren wie SciTE die Warnungen abfangen, ohne das Script zu unterbrechen - der Benutzer kann später über den Editor-Bereich &quot;Ausgabe&quot; zu allen fehlerhaften Zeilen springen.</p>
+          <p><strong>OutputDebug</strong>: Sendet eine Beschreibung der Warnung zum Debugger (falls vorhanden). Für weitere Details, siehe <a href="OutputDebug.htm">OutputDebug</a>.</p>
+          <p><strong>Off</strong>: Deaktiviert alle Warnungen für den angegebenen <em>Warnungstyp</em>.</p>
+          </td>
         </tr>
       </table>
       <h3>Bemerkungen</h3>
