@@ -408,16 +408,24 @@ function OpenResultListDoc() {
     iSelect = 0;
 
   //Open the selected file
+
+  var URL = document.forms['searchform'].SearchResultList.options[iSelect].value;
+
   if (window.navigator.userAgent.indexOf("Netscape") > 0) {
-    top.right.location.href = document.forms['searchform'].SearchResultList.options[iSelect].value;
+    top.right.location.href = URL;
     targetWin = top.right.window;
   }
   else //all other browsers
-    targetWin = open(document.forms['searchform'].SearchResultList.options[iSelect].value, PARAM_TargetWindow);
+    targetWin = open(URL, PARAM_TargetWindow);
 
   //Highlight search hits on a delay
   if (targetWin)
     setTimeout('HighlightTopic()',1000);
+
+  //Set correct link into address bar
+  var el = document.createElement('a');
+  el.href = URL;
+  top.history.pushState({id: '1'}, '', el.href);
 }
 
 

@@ -34,7 +34,7 @@ function WriteOpenNavBar(navLink, prefix, curFileName)
           +'</nav>'
           +'<div id="helpbar">'
           +'<section>'
-          +'<a href="http://ahkscript.org/docs/'+curFileName+'" style="float: right;">Originalseite</a>'
+          +'<a href="http://ahkscript.org/docs/'+curFileName+'" style="float: right;">Englische Originalseite &ouml;ffnen</a>'
           +'<a href="'+navLink+'">Navigationsleiste anzeigen</a>'
           +'</section>'
           +'</div>';
@@ -45,8 +45,8 @@ function WriteOpenHelpBar(curFileName)
 {
   var ss = '<div id="helpbar">'
           +'<section>'
-          +'<a href="http://ahkscript.org/docs/'+curFileName+'" style="float: right;">Originalseite</a>'
-          +'Permalink: <a href="http://ragnar-f.github.io/docs/'+curFileName+'">http://ragnar-f.github.io/docs/'+curFileName+'</a>'
+          +'<a href="http://ahkscript.org/docs/'+curFileName+'" style="float: right;">Englische Originalseite &ouml;ffnen</a>'
+          +'&nbsp;'
           +'</section>'
           +'</div>';
   document.write(ss);
