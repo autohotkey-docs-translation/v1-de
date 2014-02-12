@@ -150,7 +150,7 @@ function GetInfos(aDirLevel)
     for (var n=0; n < aDirLevel; n++)
       x = location.href.lastIndexOf("/", x-1);    // get 2nd last slash etc
     var curFileName = location.href.substr(x+1);
-    var navLink = prefix + "goto.htm#" + curFileName
+    var navLink = prefix + "index.htm#" + curFileName
     return {navLink:navLink,prefix:prefix,curFileName:curFileName};
 
 }
