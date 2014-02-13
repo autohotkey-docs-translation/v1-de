@@ -1,33 +1,33 @@
-; IntelliSense -- von Rajat (benötigt XP/2k/NT)
+ï»¿; IntelliSense -- von Rajat (benÃ¶tigt XP/2k/NT)
 ; http://www.autohotkey.com
-; Dieses Script überwacht die Benutzereingaben beim Bearbeiten eines AutoHotkey-Scripts.  Sobald ein Befehl
+; Dieses Script Ã¼berwacht die Benutzereingaben beim Bearbeiten eines AutoHotkey-Scripts.  Sobald ein Befehl
 ; gefolgt von einem Komma oder eines Leerzeichens eingegeben wird,
-; dann wird als Hilfe die Parameterliste des Befehls angezeigt.  Darüber hinaus kann Strg+F1 (oder
-; ein anderer Hotkey) gedrückt werden, um die Befehlsseite in der Hilfe-Datei anzuzeigen.
-; Um die Parameterliste zu schließen, drückt Escape oder Enter.
+; dann wird als Hilfe die Parameterliste des Befehls angezeigt.  DarÃ¼ber hinaus kann Strg+F1 (oder
+; ein anderer Hotkey) gedrÃ¼ckt werden, um die Befehlsseite in der Hilfe-Datei anzuzeigen.
+; Um die Parameterliste zu schlieÃŸen, drÃ¼ckt Escape oder Enter.
 
-; Benötigt v1.0.41+
+; BenÃ¶tigt v1.0.41+
 
 ; KONFIGURATIONSBEREICH: Passt das Script mit den folgenden Variablen an.
 
-; Der unten genannte Hotkey wird gedrückt, um die aktuelle Befehlsseite in der
+; Der unten genannte Hotkey wird gedrÃ¼ckt, um die aktuelle Befehlsseite in der
 ; Hilfedatei anzuzeigen:
 I_HelpHotkey = ^F1
 
 ; Der nachfolgende String muss irgendwo im Titel des aktiven Fensters vorkommen,
 ; damit IntelliSense bei der Benutzereingabe wirksam wird.  Macht sie leer,
-; damit IntelliSense alle Fenster bearbeitet.  Wenn sie Pad enthält,
+; damit IntelliSense alle Fenster bearbeitet.  Wenn sie Pad enthÃ¤lt,
 ; dann werden Editoren wie Metapad, Notepad und Textpad bearbeitet.  Falls .ahk vorhanden ist,
 ; dann ist IntelliSense nur wirksam, wenn eine .ahk-Datei im Editor offen ist.
 I_Editor = pad
 
-; Wenn der Wunsch besteht, ein anderes Icon für dieses Script zu verwenden,
+; Wenn der Wunsch besteht, ein anderes Icon fÃ¼r dieses Script zu verwenden,
 ; damit es sich von anderen Scripts unterscheidet, gebt unten den Dateinamen an
-; (leer lassen für kein Icon). Zum Beispiel: E:\stuff\Pics\icons\GeoIcons\Information.ico
+; (leer lassen fÃ¼r kein Icon). Zum Beispiel: E:\stuff\Pics\icons\GeoIcons\Information.ico
 I_Icon = 
 
-; ENDE DES KONFIGURATIONSBEREICHS (Hier danach keine Änderungen durchführen,
-; es sei denn, die allgemeine Funktionalität des Scripts soll geändert werden).
+; ENDE DES KONFIGURATIONSBEREICHS (Hier danach keine Ã„nderungen durchfÃ¼hren,
+; es sei denn, die allgemeine FunktionalitÃ¤t des Scripts soll geÃ¤ndert werden).
 
 SetKeyDelay, 0
 #SingleInstance
@@ -35,14 +35,14 @@ SetKeyDelay, 0
 if I_HelpHotkey <>
 	Hotkey, %I_HelpHotkey%, I_HelpHotkey
 
-; Tray-Icon ändern (falls ein Icon im Konfigurationsbereich angegeben wurde):
+; Tray-Icon Ã¤ndern (falls ein Icon im Konfigurationsbereich angegeben wurde):
 if I_Icon <>
 	IfExist, %I_Icon%
 		Menu, Tray, Icon, %I_Icon%
 
 ; Standort von AutoHotkey ermitteln:
 RegRead, ahk_dir, HKEY_LOCAL_MACHINE, SOFTWARE\AutoHotkey, InstallDir
-if ErrorLevel  ; Nichts gefunden, so in anderen häufigen Standorten nachschauen.
+if ErrorLevel  ; Nichts gefunden, so in anderen hÃ¤ufigen Standorten nachschauen.
 {
 	if A_AhkPath
 		SplitPath, A_AhkPath,, ahk_dir
@@ -83,15 +83,15 @@ Loop, Read, %ahk_dir%\Extras\Editors\Syntax\Commands.txt
 	StringReplace, I_FullCmd, I_FullCmd, ``n, `n, All
 	StringReplace, I_FullCmd, I_FullCmd, ``t, `t, All
 	
-	; Arrays mit Befehlsnamen und vollständige Befehlssyntax erstellen:
+	; Arrays mit Befehlsnamen und vollstÃ¤ndige Befehlssyntax erstellen:
 	I_Cmd%A_Index% = %I_CurrCmd%
 	I_FullCmd%A_Index% = %I_FullCmd%
 }
 
-; Input-Befehl verwenden, um die eingegebenen Befehle des Benutzers zu überwachen:
+; Input-Befehl verwenden, um die eingegebenen Befehle des Benutzers zu Ã¼berwachen:
 Loop
 {
-	; Editor-Fenster überprüfen:
+	; Editor-Fenster Ã¼berprÃ¼fen:
 	WinGetTitle, ActiveTitle, A
 	IfNotInString, ActiveTitle, %I_Editor%
 	{
@@ -104,14 +104,14 @@ Loop
 	Input, I_Word, V, {enter}{escape}{space}`,
 	I_EndKey = %ErrorLevel%
 	
-	; ToolTip wird in folgenden Fällen versteckt:
+	; ToolTip wird in folgenden FÃ¤llen versteckt:
 	if I_EndKey in EndKey:Enter,EndKey:Escape
 	{
 		ToolTip
 		Continue
 	}
 
-	; Nochmals Editor-Fenster überprüfen!
+	; Nochmals Editor-Fenster Ã¼berprÃ¼fen!
 	WinGetActiveTitle, ActiveTitle
 	IfNotInString, ActiveTitle, %I_Editor%
 	{
@@ -119,7 +119,7 @@ Loop
 		Continue
 	}
 
-	; Jede vorhandene Einrückung ersetzen:
+	; Jede vorhandene EinrÃ¼ckung ersetzen:
 	StringReplace, I_Word, I_Word, %A_Space%,, All
 	StringReplace, I_Word, I_Word, %A_Tab%,, All
 	if I_Word =
@@ -127,15 +127,15 @@ Loop
 	
 	; Kommentierte Zeile untersuchen:
 	StringLeft, I_Check, I_Word, 1
-	if (I_Check = ";" or I_Word = "If")  ; "If" ist scheinbar ein wenig störend, um dafür den ToolTip anzuzeigen.
+	if (I_Check = ";" or I_Word = "If")  ; "If" ist scheinbar ein wenig stÃ¶rend, um dafÃ¼r den ToolTip anzuzeigen.
 		Continue
 
-	; Wort stimmt mit Befehl überein:
+	; Wort stimmt mit Befehl Ã¼berein:
 	I_Index =
 	Loop
 	{
-		; Es hilft der Performance, wenn dynamische Variablen nur einmal aufgelöst werden.
-		; Darüber hinaus wird der eingefügte Wert in I_ThisCmd auch von der
+		; Es hilft der Performance, wenn dynamische Variablen nur einmal aufgelÃ¶st werden.
+		; DarÃ¼ber hinaus wird der eingefÃ¼gte Wert in I_ThisCmd auch von der
 		; I_HelpHotkey-Subroutine verwendet:
 		I_ThisCmd := I_Cmd%A_Index%
 		if I_ThisCmd =
@@ -148,11 +148,11 @@ Loop
 		}
 	}
 	
-	; Falls keine Übereinstimmung erfolgt, dann Benutzereingabe weiter überwachen:
+	; Falls keine Ãœbereinstimmung erfolgt, dann Benutzereingabe weiter Ã¼berwachen:
 	if I_Index =
 		Continue
 	
-	; Übereinstimmende Befehle anzeigen, um den Benutzer zu führen:
+	; Ãœbereinstimmende Befehle anzeigen, um den Benutzer zu fÃ¼hren:
 	I_ThisFullCmd := I_FullCmd%I_Index%
 	ToolTip, %I_ThisFullCmd%, A_CaretX, A_CaretY + 20
 }
@@ -163,9 +163,9 @@ I_HelpHotkey:
 WinGetTitle, ActiveTitle, A
 IfNotInString, ActiveTitle, %I_Editor%, Return
 
-ToolTip  ; Syntaxhelfer deaktivieren, da er zurzeit nicht benötigt wird.
+ToolTip  ; Syntaxhelfer deaktivieren, da er zurzeit nicht benÃ¶tigt wird.
 
-SetTitleMatchMode, 1  ; Falls es 3 ist. Diese Einstellung gilt nur für diesen Thread.
+SetTitleMatchMode, 1  ; Falls es 3 ist. Diese Einstellung gilt nur fÃ¼r diesen Thread.
 IfWinNotExist, AutoHotkey Help
 {
 	IfNotExist, %ahk_help_file%
@@ -183,6 +183,6 @@ if I_ThisCmd =  ; Stattdessen wird die aktuellste Benutzereingabe verwendet.
 ; Der obere Befehl bestimmt das "zuletzt gefundene" Fenster, das unten verwendet wird:
 WinActivate
 WinWaitActive
-StringReplace, I_ThisCmd, I_ThisCmd, #, {#}  ; Führende # ersetzen, falls vorhanden.
+StringReplace, I_ThisCmd, I_ThisCmd, #, {#}  ; FÃ¼hrende # ersetzen, falls vorhanden.
 Send, !n{home}+{end}%I_HelpOn%{enter}
 Return

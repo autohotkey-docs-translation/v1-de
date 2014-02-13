@@ -1,29 +1,29 @@
-; Joystick-Test-Script
+Ôªø; Joystick-Test-Script
 ; http://www.autohotkey.com
 ; Dieses Script hilft dabei, die Tastennummern und andere Attribute
-; des aktuellen Joysticks zu bestimmen. Es kˆnnte auch erkennen lassen, ob der aktuelle Joystick
-; kalibriert werden muss; das heiﬂt, ob der Bewegungsbereich jeder
+; des aktuellen Joysticks zu bestimmen. Es k√∂nnte auch erkennen lassen, ob der aktuelle Joystick
+; kalibriert werden muss; das hei√üt, ob der Bewegungsbereich jeder
 ; Achse von 0 bis 100 Prozent ist. Falls eine Kalibrierung erforderlich ist,
 ; verwendet die Systemsteuerung des Betriebssystems oder die mitgelieferte
 ; Software des aktuellen Joysticks.
 
-; 6. Juli 2005: Automatische Erkennung der Joystick-Nummer hinzugef¸gt.
-; 8. Mai 2005: Fehler behoben: JoyAxes wird nicht l‰nger abgefragt, das heiﬂt,
+; 6. Juli 2005: Automatische Erkennung der Joystick-Nummer hinzugef√ºgt.
+; 8. Mai 2005: Fehler behoben: JoyAxes wird nicht l√§nger abgefragt, das hei√üt,
 ; ob der Joystick angeschlossen ist.  Einige Joysticks sind
 ; Gamepads und haben keine einzige Achse.
 
-; Wenn unbedingt der Bedarf besteht, eine bestimmte Joystick-Nummer zu verwenden, ‰ndert
+; Wenn unbedingt der Bedarf besteht, eine bestimmte Joystick-Nummer zu verwenden, √§ndert
 ; den folgenden Wert von 0 auf eine Joystick-Nummer (1-16).
 ; Bei einem Wert von 0 wird die Joystick-Nummer automatisch erkannt:
 JoystickNumber = 0
 
-; ENDE DES KONFIGURATIONSBEREICHS. ; Hier danach keine ƒnderungen durchf¸hren, es sei denn,
-; die allgemeine Funktionalit‰t des Scripts soll ge‰ndert werden.
+; ENDE DES KONFIGURATIONSBEREICHS. ; Hier danach keine √Ñnderungen durchf√ºhren, es sei denn,
+; die allgemeine Funktionalit√§t des Scripts soll ge√§ndert werden.
 
 ; Joystick-Nummer automatisch erkennen, falls gefordert:
 if JoystickNumber <= 0
 {
-	Loop 16  ; Jede Joystick-Nummer auf Existenz ¸berpr¸fen.
+	Loop 16  ; Jede Joystick-Nummer auf Existenz √ºberpr√ºfen.
 	{
 		GetKeyState, JoyName, %A_Index%JoyName
 		if JoyName <>
@@ -82,7 +82,7 @@ Loop
 		GetKeyState, joyp, %JoystickNumber%JoyPOV
 		axis_info = %axis_info%%a_space%%a_space%POV%joyp%
 	}
-	ToolTip, %joy_name% (#%JoystickNumber%):`n%axis_info%`nGedr¸ckte Tasten: %buttons_down%`n`n(Zum Beenden Rechtsklick auf Tray-Icon)
+	ToolTip, %joy_name% (#%JoystickNumber%):`n%axis_info%`nGedr√ºckte Tasten: %buttons_down%`n`n(Zum Beenden Rechtsklick auf Tray-Icon)
 	Sleep, 100
 }
 Return

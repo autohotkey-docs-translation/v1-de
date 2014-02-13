@@ -1,18 +1,18 @@
-; Kontextabh‰ngige Hilfe in einem beliebigen Editor - von Rajat
+Ôªø; Kontextabh√§ngige Hilfe in einem beliebigen Editor - von Rajat
 ; http://www.autohotkey.com
 ; Damit kann mit Strg+2 (oder ein anderer Hotkey) die Hilfe-Dateiseite
-; f¸r den markierten AutoHotkey-Befehl oder Schl¸sselwort angezeigt werden. 
+; f√ºr den markierten AutoHotkey-Befehl oder Schl√ºsselwort angezeigt werden. 
 ; Wenn nichts markiert ist, dann wird der Befehlsname vom Anfang der aktuellen 
 ; Zeile extrahiert.
 
-; Der unten genannte Hotkey nutzt die Zwischenablage, um die Kompatibilit‰t mit
-; den meisten Editoren zu gew‰hrleisten (da ControlGet nicht immer 
+; Der unten genannte Hotkey nutzt die Zwischenablage, um die Kompatibilit√§t mit
+; den meisten Editoren zu gew√§hrleisten (da ControlGet nicht immer 
 ; funktioniert). Danach wird der originale Inhalt der Zwischenablage wieder-
 ; hergestellt, jedoch als Klartext, was immer noch besser als gar nichts ist.
 
 $^2::
-; Die folgenden Werte sind nur w‰hrend des Hotkey-Threads wirksam.
-; Deshalb ist es nicht notwendig, deren urspr¸ngliche Werte wiederherzustellen,
+; Die folgenden Werte sind nur w√§hrend des Hotkey-Threads wirksam.
+; Deshalb ist es nicht notwendig, deren urspr√ºngliche Werte wiederherzustellen,
 ; weil das automatisch geschieht, sobald der Thread endet:
 SetWinDelay 10
 SetKeyDelay 0
@@ -44,13 +44,13 @@ clipboard = %C_ClipboardPrev%  ; Die vorherige Zwischenablage wiederherstellen.
 Loop, parse, C_Cmd, %A_Space%`,  ; Das erste Leerzeichen oder Komma kennzeichnet das Ende des Befehls.
 {
 	C_Cmd = %A_LoopField%
-	break ; d.h. wir benˆtigen nur einen Durchlauf.
+	break ; d.h. wir ben√∂tigen nur einen Durchlauf.
 }
 IfWinNotExist, AutoHotkey Help
 {
 	; Standort von AutoHotkey ermitteln:
 	RegRead, ahk_dir, HKEY_LOCAL_MACHINE, SOFTWARE\AutoHotkey, InstallDir
-	if ErrorLevel  ; Nichts gefunden, so in anderen h‰ufigen Standorten nachschauen.
+	if ErrorLevel  ; Nichts gefunden, so in anderen h√§ufigen Standorten nachschauen.
 	{
 		if A_AhkPath
 			SplitPath, A_AhkPath,, ahk_dir

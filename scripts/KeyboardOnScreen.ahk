@@ -1,40 +1,40 @@
-; Bildschirmtastatur (benötigt XP/2k/NT) -- von Jon
+ï»¿; Bildschirmtastatur (benÃ¶tigt XP/2k/NT) -- von Jon
 ; http://www.autohotkey.com
 ; Dieses Script erstellt eine nachgebildete Tastatur am unteren Rand des Bildschirms,
-; das die gedrückten Tasten in Echtzeit anzeigt. Das hat mir geholfen, Eingaben zu machen,
-; ohne dabei auf die Tastatur zu schauen.  Die Größe der Bildschirmtastatur
-; kann im oberen Bereich des Scripts angepasst werden. Außerdem kann
+; das die gedrÃ¼ckten Tasten in Echtzeit anzeigt. Das hat mir geholfen, Eingaben zu machen,
+; ohne dabei auf die Tastatur zu schauen.  Die GrÃ¶ÃŸe der Bildschirmtastatur
+; kann im oberen Bereich des Scripts angepasst werden. AuÃŸerdem kann
 ; die Tastatur angezeigt oder versteckt werden, wenn das Tray-Icon doppelt angeklickt wird.
 
-;---- Konfigurationsbereich: Die Größe der Bildschirmtastatur und
+;---- Konfigurationsbereich: Die GrÃ¶ÃŸe der Bildschirmtastatur und
 ; andere Optionen anpassen.
 
-; Beim Verändern der Schriftgröße wird die gesamte Bildschirmtastatur
-; größer oder kleiner:
+; Beim VerÃ¤ndern der SchriftgrÃ¶ÃŸe wird die gesamte Bildschirmtastatur
+; grÃ¶ÃŸer oder kleiner:
 k_FontSize = 10
 k_FontName = Verdana  ; Kann leer sein, um die Standardschriftart des Systems zu verwenden.
 k_FontStyle = Bold    ; Alternatives Beispiel: Italic Underline
 
-; Namen der Tray-Menüpunkte:
+; Namen der Tray-MenÃ¼punkte:
 k_MenuItemHide = &Bildschirmtastatur verstecken
 k_MenuItemShow = &Bildschirmtastatur anzeigen
 
-; Damit die Tastatur nicht nur auf den primären Monitor angezeigt wird, verwendet
-; eine Zahl wie 2 für die folgende Variable.  Lasst sie leer, um den
-; primären Monitor zu verwenden:
+; Damit die Tastatur nicht nur auf den primÃ¤ren Monitor angezeigt wird, verwendet
+; eine Zahl wie 2 fÃ¼r die folgende Variable.  Lasst sie leer, um den
+; primÃ¤ren Monitor zu verwenden:
 k_Monitor = 
 
-;---- Ende des Konfigurationsbereichs.  Hier danach keine Änderungen durchführen,
-; es sei denn, die allgemeine Funktionalität des Scripts soll geändert werden.
+;---- Ende des Konfigurationsbereichs.  Hier danach keine Ã„nderungen durchfÃ¼hren,
+; es sei denn, die allgemeine FunktionalitÃ¤t des Scripts soll geÃ¤ndert werden.
 
 
-;---- Tray-Icon-Menü ändern:
+;---- Tray-Icon-MenÃ¼ Ã¤ndern:
 Menu, Tray, Add, %k_MenuItemHide%, k_ShowHide
 Menu, Tray, Add, &Exit, k_MenuExit
 Menu, Tray, Default, %k_MenuItemHide%
 Menu, Tray, NoStandard
 
-;---- Abmessungen der Objekte berechnen, basierend auf der ausgewählten Schriftgröße:
+;---- Abmessungen der Objekte berechnen, basierend auf der ausgewÃ¤hlten SchriftgrÃ¶ÃŸe:
 k_KeyWidth = %k_FontSize%
 k_KeyWidth *= 3
 k_KeyHeight = %k_FontSize%
@@ -49,14 +49,14 @@ k_KeyWidthHalf /= 2
 k_KeySize = w%k_KeyWidth% h%k_KeyHeight%
 k_Position = x+%k_KeyMargin% %k_KeySize%
 
-;---- Ein GUI-Fenster für die Bildschirmtastatur erstellen:
+;---- Ein GUI-Fenster fÃ¼r die Bildschirmtastatur erstellen:
 Gui, Font, s%k_FontSize% %k_FontStyle%, %k_FontName%
 Gui, -Caption +E0x200 +ToolWindow
 TransColor = F1ECED
-Gui, Color, %TransColor%  ; Diese Farbe wird später transparent gemacht.
+Gui, Color, %TransColor%  ; Diese Farbe wird spÃ¤ter transparent gemacht.
 
-;---- Für jede Taste eine Schaltfläche hinzufügen. Die erste Schaltfläche wird mit absoluten
-; Koordinaten positioniert, sodass alle anderen Schaltflächen sich darauf beziehen:
+;---- FÃ¼r jede Taste eine SchaltflÃ¤che hinzufÃ¼gen. Die erste SchaltflÃ¤che wird mit absoluten
+; Koordinaten positioniert, sodass alle anderen SchaltflÃ¤chen sich darauf beziehen:
 Gui, Add, Button, section %k_KeySize% xm+%k_KeyWidth%, 1
 Gui, Add, Button, %k_Position%, 2
 Gui, Add, Button, %k_Position%, 3
@@ -99,7 +99,7 @@ Gui, Add, Button, %k_Position%, `;
 Gui, Add, Button, %k_Position%, '
 Gui, Add, Button, x+%k_KeyMargin% h%k_KeyHeight%, Enter  ; Automatische Breite.
 
-; Die erste untere Schaltfläche enthält am Ende %A_Space%, um sie etwas breiter zu machen,
+; Die erste untere SchaltflÃ¤che enthÃ¤lt am Ende %A_Space%, um sie etwas breiter zu machen,
 ; damit das Layout der Tasten daneben mehr einer echten Tastatur entspricht:
 Gui, Add, Button, xm y+%k_KeyMargin% h%k_KeyHeight%, Shift%A_Space%%A_Space%
 Gui, Add, Button, %k_Position%, Z
@@ -126,16 +126,16 @@ k_IsVisible = y
 WinGet, k_ID, ID, A   ; Fenster-ID abrufen.
 WinGetPos,,, k_WindowWidth, k_WindowHeight, A
 
-;---- Tastatur am unteren Rand des Bildschirms positionieren (unter Berücksichtigung
+;---- Tastatur am unteren Rand des Bildschirms positionieren (unter BerÃ¼cksichtigung
 ; der Position der Taskleiste):
 SysGet, k_WorkArea, MonitorWorkArea, %k_Monitor%
 
 ; X-Position des Fensters berechnen:
 k_WindowX = %k_WorkAreaRight%
-k_WindowX -= %k_WorkAreaLeft%  ; Nun enthält k_WindowX die Breite des Monitors.
+k_WindowX -= %k_WorkAreaLeft%  ; Nun enthÃ¤lt k_WindowX die Breite des Monitors.
 k_WindowX -= %k_WindowWidth%
 k_WindowX /= 2  ; Position berechnen, um sie horizontal zu zentrieren.
-; Das Folgende wird durchgeführt, falls sich das Fenster nicht auf den primären Monitor befindet
+; Das Folgende wird durchgefÃ¼hrt, falls sich das Fenster nicht auf den primÃ¤ren Monitor befindet
 ; oder wenn die Taskleiste auf der linken Seite des Bildschirms verankert ist:
 k_WindowX += %k_WorkAreaLeft%
 
@@ -156,19 +156,19 @@ Loop
 {
 	Transform, k_char, Chr, %k_ASCII%
 	StringUpper, k_char, k_char
-	if k_char not in <,>,^,~,,`,
+	if k_char not in <,>,^,~,Â,`,
 		Hotkey, ~*%k_char%, k_KeyPress
-		; Mit dem oberen Sternchenpräfix wird die Taste erkannt, unabhängig davon,
-		; ob der Benutzer die Modifikatortasten wie Steuerung und Umschalt gedrückt hält.
+		; Mit dem oberen SternchenprÃ¤fix wird die Taste erkannt, unabhÃ¤ngig davon,
+		; ob der Benutzer die Modifikatortasten wie Steuerung und Umschalt gedrÃ¼ckt hÃ¤lt.
 	if k_ASCII = 93
 		break
 	k_ASCII++
 }
 
-Return ; Ende des automatischen Ausführungsbereichs.
+Return ; Ende des automatischen AusfÃ¼hrungsbereichs.
 
 
-;---- Beim Tastendruck die entsprechende Schaltfläche auf dem Bildschirm drücken:
+;---- Beim Tastendruck die entsprechende SchaltflÃ¤che auf dem Bildschirm drÃ¼cken:
 
 ~*Backspace::
 ControlClick, Bk, ahk_id %k_ID%, , LEFT, 1, D
@@ -178,10 +178,10 @@ Return
 
 
 ; LShift und RShift werden anstelle von "Shift" verwendet, denn als Hotkey
-; würde "Shift" beim Loslassen der Taste standardmäßig ausgeführt (in älteren AHK-Versionen):
+; wÃ¼rde "Shift" beim Loslassen der Taste standardmÃ¤ÃŸig ausgefÃ¼hrt (in Ã¤lteren AHK-Versionen):
 ~*LShift::
 ~*RShift::
-~*LCtrl::  ; Ctrl muss anstelle von Control verwendet werden, damit es mit dem Schaltflächennamen übereinstimmt.
+~*LCtrl::  ; Ctrl muss anstelle von Control verwendet werden, damit es mit dem SchaltflÃ¤chennamen Ã¼bereinstimmt.
 ~*RCtrl::
 ~*LAlt::
 ~*RAlt::
@@ -202,7 +202,7 @@ Return
 k_KeyPress:
 StringReplace, k_ThisHotkey, A_ThisHotkey, ~
 StringReplace, k_ThisHotkey, k_ThisHotkey, *
-SetTitleMatchMode, 3  ; Verhindert, dass die Tasten T und B nicht mit Tabulator und Rücktaste (Backspace) verwechselt werden.
+SetTitleMatchMode, 3  ; Verhindert, dass die Tasten T und B nicht mit Tabulator und RÃ¼cktaste (Backspace) verwechselt werden.
 ControlClick, %k_ThisHotkey%, ahk_id %k_ID%, , LEFT, 1, D
 KeyWait, %k_ThisHotkey%
 ControlClick, %k_ThisHotkey%, ahk_id %k_ID%, , LEFT, 1, U

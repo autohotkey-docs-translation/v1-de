@@ -1,16 +1,16 @@
-; Numpad-Taste 000
+ï»¿; Numpad-Taste 000
 ; http://www.autohotkey.com
 ; Dieses Beispiel-Script wandelt die 000-Sondertaste
-; bei einigen Ziffernblöcken in eine Gleichheitstaste.  Diese Aktion kann geändert werden,
+; bei einigen ZiffernblÃ¶cken in eine Gleichheitstaste.  Diese Aktion kann geÃ¤ndert werden,
 ; wenn die Zeile "Send, =" je nach Bedarf mit einer anderen Zeile ersetzt wird.
 
-#MaxThreadsPerHotkey 5  ; Erlaubt mehrere Threads für diesen Hotkey.
+#MaxThreadsPerHotkey 5  ; Erlaubt mehrere Threads fÃ¼r diesen Hotkey.
 $Numpad0::
 #MaxThreadsPerHotkey 1
 ; Oben: Mit einem $ wird der Hook erzwungen, wodurch eine
 ; Endlosschleife verhindert wird, da diese Subroutine selbst Numpad0 sendet,
-; ansonsten würde sie sich selbst rekursiv aufrufen.
-SetBatchLines, 100 ; Damit wird das Script ein wenig schneller ausgeführt.
+; ansonsten wÃ¼rde sie sich selbst rekursiv aufrufen.
+SetBatchLines, 100 ; Damit wird das Script ein wenig schneller ausgefÃ¼hrt.
 DelayBetweenKeys = 30 ; Diesen Wert anpassen, falls es nicht funktionieren sollte.
 if A_PriorHotkey = %A_ThisHotkey%
 {
@@ -23,39 +23,39 @@ if A_PriorHotkey = %A_ThisHotkey%
 		Else
 		{
 			; Da wir hier sind, muss Numpad0Count wie bei
-			; vorherigen Aufrufen eine 2 sein, das heißt, dass das hier
+			; vorherigen Aufrufen eine 2 sein, das heiÃŸt, dass das hier
 			; der dritte Tastendruck ist. Daher sollte die Hotkey-Sequenz
-			; ausgeführt werden:
+			; ausgefÃ¼hrt werden:
 			Numpad0Count = 0
-			Send, = ; ******* Die Aktion für die 000-Taste
+			Send, = ; ******* Die Aktion fÃ¼r die 000-Taste
 		}
-		; In allen obigen Fällen kehren wir ohne weitere Aktion zurück:
+		; In allen obigen FÃ¤llen kehren wir ohne weitere Aktion zurÃ¼ck:
 		CalledReentrantly = y
 		Return
 	}
 }
 ; Ansonsten ist dieses Numpad0-Ereignis das erste in der Reihe
-; oder wurde zu lange nach dem ersten ausgeführt (z. B. hält
-; der Benutzer die Numpad0-Taste automatisch wiederholend gedrückt,
-; dass wir erlauben wollen).  Deshalb werden wir nach einer kurzen Verzögerung (während ein
+; oder wurde zu lange nach dem ersten ausgefÃ¼hrt (z. B. hÃ¤lt
+; der Benutzer die Numpad0-Taste automatisch wiederholend gedrÃ¼ckt,
+; dass wir erlauben wollen).  Deshalb werden wir nach einer kurzen VerzÃ¶gerung (wÃ¤hrend ein
 ; anderes Numpad0-Hotkey-Ereignis diese Subroutine
 ; wiederholend aufruft), die Taste senden, falls kein weiterer Aufruf
 ; erfolgt:
 Numpad0Count = 0
 CalledReentrantly = n
-; Während dieser Ruhephase kann diese Subroutine wiederholend
+; WÃ¤hrend dieser Ruhephase kann diese Subroutine wiederholend
 ; aufgerufen werden (d. h. ein simultaner "Thread", der parallel zum jetzigen
-; Aufruf ausgeführt wird):
+; Aufruf ausgefÃ¼hrt wird):
 Sleep, %DelayBetweenKeys%
-if CalledReentrantly = y ; Ein anderer "Thread" hat diesen Wert geändert.
+if CalledReentrantly = y ; Ein anderer "Thread" hat diesen Wert geÃ¤ndert.
 {
 	; Da es wiederholend aufgerufen wurde, war dieses Tastenereignis das
-	; erste in der Sequenz, daher sollte es unterdrückt werden (im System versteckt werden):
+	; erste in der Sequenz, daher sollte es unterdrÃ¼ckt werden (im System versteckt werden):
 	CalledReentrantly = n
 	Return
 }
-; Ansonsten gehört es nicht zur Sequenz, daher werden wir es normal senden.
-; Mit anderen Worten wurde die *echte* Numpad0-Taste gedrückt, daher wollen
+; Ansonsten gehÃ¶rt es nicht zur Sequenz, daher werden wir es normal senden.
+; Mit anderen Worten wurde die *echte* Numpad0-Taste gedrÃ¼ckt, daher wollen
 ; wir den normalen Effekt:
 Send, {Numpad0}
 Return

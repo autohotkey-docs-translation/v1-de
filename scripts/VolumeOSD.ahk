@@ -1,25 +1,25 @@
-; Lautstärke-Bildschirmanzeige (OSD) -- von Rajat
+ï»¿; LautstÃ¤rke-Bildschirmanzeige (OSD) -- von Rajat
 ; http://www.autohotkey.com
-; Dieses Script ermöglicht beliebige Hotkeys, die Gesamt- und/oder Wave-Lautstärke
-; zu erhöhen oder zu verringern.  ; Beide Lautstärken werden als Balkendiagramme
+; Dieses Script ermÃ¶glicht beliebige Hotkeys, die Gesamt- und/oder Wave-LautstÃ¤rke
+; zu erhÃ¶hen oder zu verringern.  ; Beide LautstÃ¤rken werden als Balkendiagramme
 ; mit unterschiedlichen Farben angezeigt.
 
 ;_________________________________________________ 
 ;_______Benutzereinstellungen_____________________________ 
 
-; Nur in diesem Bereich oder Hotkey-Bereich Änderungen durchführen!! 
+; Nur in diesem Bereich oder Hotkey-Bereich Ã„nderungen durchfÃ¼hren!! 
 
-; Der Prozentwert, um wieviel die Lautstärke jedes Mal erhöht oder verringert wird:
+; Der Prozentwert, um wieviel die LautstÃ¤rke jedes Mal erhÃ¶ht oder verringert wird:
 vol_Step = 4
 
-; Wie lange die Balkendiagramme der Lautstärken angezeigt werden sollen:
+; Wie lange die Balkendiagramme der LautstÃ¤rken angezeigt werden sollen:
 vol_DisplayTime = 2000
 
-; Balkenfarbe der Gesamtlautstärke (siehe Hilfe-Datei, um präzisere
-; Farbtöne anzugeben):
+; Balkenfarbe der GesamtlautstÃ¤rke (siehe Hilfe-Datei, um prÃ¤zisere
+; FarbtÃ¶ne anzugeben):
 vol_CBM = Red
 
-; Balkenfarbe der Wave-Lautstärke
+; Balkenfarbe der Wave-LautstÃ¤rke
 vol_CBW = Blue
 
 ; Hintergrundfarbe
@@ -31,8 +31,8 @@ vol_PosY = -1
 vol_Width = 150  ; Balkenbreite
 vol_Thick = 12   ; Balkendicke
 
-; Wenn die aktuelle Tastatur Multimedia-Tasten für die Lautstärke hat, dann
-; kannst du versuchen, die unteren Hotkeys so zu ändern, dass sie
+; Wenn die aktuelle Tastatur Multimedia-Tasten fÃ¼r die LautstÃ¤rke hat, dann
+; kannst du versuchen, die unteren Hotkeys so zu Ã¤ndern, dass sie
 ; Volume_Up, ^Volume_Up, Volume_Down und ^Volume_Down verwenden:
 HotKey, #Up, vol_MasterUp      ; Win+Pfeil nach oben
 HotKey, #Down, vol_MasterDown
@@ -41,14 +41,14 @@ HotKey, +#Down, vol_WaveDown
 
 
 ;___________________________________________ 
-;_____automatischer Ausführungsbereich_________ 
+;_____automatischer AusfÃ¼hrungsbereich_________ 
 
-; HIER DANACH KEINE ÄNDERUNGEN DURCHFÜHREN (es sei denn, du weißt, was du tust).
+; HIER DANACH KEINE Ã„NDERUNGEN DURCHFÃœHREN (es sei denn, du weiÃŸt, was du tust).
 
 vol_BarOptionsMaster = 1:B ZH%vol_Thick% ZX0 ZY0 W%vol_Width% CB%vol_CBM% CW%vol_CW%
 vol_BarOptionsWave   = 2:B ZH%vol_Thick% ZX0 ZY0 W%vol_Width% CB%vol_CBW% CW%vol_CW%
 
-; Wenn die X-Position angegeben wurde, dann wird sie zu den Optionen hinzugefügt.
+; Wenn die X-Position angegeben wurde, dann wird sie zu den Optionen hinzugefÃ¼gt.
 ; Ansonsten wird sie weggelassen, um den Balken horizontal zu zentrieren:
 if vol_PosX >= 0
 {
@@ -56,8 +56,8 @@ if vol_PosX >= 0
 	vol_BarOptionsWave   = %vol_BarOptionsWave% X%vol_PosX%
 }
 
-; Wenn die Y-Position angegeben wurde, dann wird sie zu den Optionen hinzugefügt.
-; Ansonsten wird sie weggelassen, um sie später zu berechnen:
+; Wenn die Y-Position angegeben wurde, dann wird sie zu den Optionen hinzugefÃ¼gt.
+; Ansonsten wird sie weggelassen, um sie spÃ¤ter zu berechnen:
 if vol_PosY >= 0
 {
 	vol_BarOptionsMaster = %vol_BarOptionsMaster% Y%vol_PosY%
@@ -94,17 +94,17 @@ Gosub, vol_ShowBars
 Return
 
 vol_ShowBars:
-; Um den Blinkeffekt zu unterdrücken, wird nur das Balkenfenster erstellt,
+; Um den Blinkeffekt zu unterdrÃ¼cken, wird nur das Balkenfenster erstellt,
 ; falls noch nicht vorhanden:
 IfWinNotExist, vol_Wave
 	Progress, %vol_BarOptionsWave%, , , vol_Wave
 IfWinNotExist, vol_Master
 {
-	; Falls sich die Bildschirmauflösung ändert, wird hier die Position berechnet,
-	; während das Script läuft:
+	; Falls sich die BildschirmauflÃ¶sung Ã¤ndert, wird hier die Position berechnet,
+	; wÃ¤hrend das Script lÃ¤uft:
 	if vol_PosY < 0
 	{
-		; Wave-Balken direkt über den Balken der Gesamtlautstärke erstellen:
+		; Wave-Balken direkt Ã¼ber den Balken der GesamtlautstÃ¤rke erstellen:
 		WinGetPos, , vol_Wave_Posy, , , vol_Wave
 		vol_Wave_Posy -= %vol_Thick%
 		Progress, %vol_BarOptionsMaster% Y%vol_Wave_Posy%, , , vol_Master
@@ -112,7 +112,7 @@ IfWinNotExist, vol_Master
 	Else
 		Progress, %vol_BarOptionsMaster%, , , vol_Master
 }
-; Sobald beide Lautstärken vom Benutzer oder von einem externen Programm geändert werden, werden die neuen Lautstärken abgerufen:
+; Sobald beide LautstÃ¤rken vom Benutzer oder von einem externen Programm geÃ¤ndert werden, werden die neuen LautstÃ¤rken abgerufen:
 SoundGet, vol_Master, Master
 SoundGet, vol_Wave, Wave
 Progress, 1:%vol_Master%
