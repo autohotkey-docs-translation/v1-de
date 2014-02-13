@@ -27,10 +27,15 @@ $(document).ready(function() {
 
     // Ensures correct address display of links when site is framed
 
-    if(IsInFrame())
-    {
-        $('a').on('click', function() {
-            top.history.pushState({id: '1'}, '', this.href);
-        });
-    }
+    var cache = false;
+    $(top.right).on('load', function() {
+        if (jQuery.type(top.history.state) !== 'null')
+            cache = top.history.state.url;
+        var url = window.location.href;
+        // console.log(cache + '\n' + url);
+        if (cache != url) {
+            top.history.replaceState({url: url}, null, url);
+        }
+    });
 });
+
