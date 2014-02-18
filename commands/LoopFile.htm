@@ -6,149 +6,144 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<link href="../static/font.css" rel="stylesheet" type="text/css" />
-<script src="../static/jquery-1.11.0.min.js" type="text/javascript"></script>
+<script src="../static/jquery.js" type="text/javascript"></script>
+<script src="../static/tree.jquery.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
-<script src="../navbar/NavScript.js" type="text/javascript"></script>
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
 <body>
-<script type="text/javascript">WriteHeader(1);</script>
-<div id="content">
-  <section>
-    <article>
-      <h1>Loop (Dateien &amp; Ordner)</h1>
-      <p>Ermittelt nacheinander die angegebenen Dateien oder Ordner.</p>
-      <pre class="Syntax">Loop, Dateimuster [, OrdnerEinbeziehen?, Rekursiv?] </pre>
-      <h3>Parameter</h3>
-      <table class="info">
-        <tr>
-          <td style="width: 15%;">Dateimuster</td>
-          <td style="width: 85%;">
-          <p>Der Name einer Datei, eines Ordners oder einer musterbasierten Suche wie <code>C:\Temp\*.tmp</code>. <em>Dateimuster</em> befindet sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis, solange kein absoluter Pfad angegeben ist.</p>
-          <p>Sowohl Sternchen als auch Fragezeichen werden als Platzhalter unterstützt. Eine Übereinstimmung erfolgt, wenn das Muster mit dem langen/normalen oder <a href="#LoopFileShortName">8.3-kurzen</a> Dateinamen übereinstimmt.</p>
-          <p>Wenn dieser Parameter eine Datei oder einen Ordner enthält (also ohne Platzhalter) und <em>Rekursiv</em> auf 1 gesetzt ist, werden mehrere Übereinstimmungen gefunden, sobald der angegebene Dateiname in mehreren Ordnern vorkommt.</p>
-          </td>
-        </tr>
-        <tr>
-          <td>OrdnerEinbeziehen?</td>
-          <td>
-          <p>Eine der folgenden Ziffern, oder leer lassen, um den Standardwert zu verwenden:<br>0 (Standard) Ordner werden nicht ermittelt (nur Dateien).<br>1 Alle Dateien und Ordner, die der musterbasierten Suche entsprechen, werden ermittelt.<br>2 Nur Ordner werden ermittelt (keine Dateien).</p>
-          </td>
-        </tr>
-        <tr>
-          <td>Rekursiv?</td>
-          <td>Eine der folgenden Ziffern, oder leer lassen, um den Standardwert zu verwenden:<br>0 (Standard) Unterordner werden nicht durchsucht.<br>1 Unterordner werden auch durchsucht, so dass darin enthaltene Dateien und Unterordner ermittelt werden, die mit <em>Dateimuster</em> übereinstimmen. Alle Unterordner werden durchsucht, nicht nur solche, deren Namen mit <em>Dateimuster</em> übereinstimmen. </td>
-        </tr>
-      </table>
-      <h3>Spezielle Variablen innerhalb einer Datei-Schleife</h3>
-      <p>Folgende Variablen existieren innerhalb einer dateilesenden Schleife. Wenn eine innere Datei-Schleife von einer äußeren Datei-Schleife umschlossen ist, hat die Datei von der innersten Schleife Vorrang.</p>
-      <table class="info">
-        <tr>
-          <td>A_LoopFileName</td>
-          <td id="LoopFileName">Der aktuell ermittelte Datei- oder Ordnername (ohne Pfad).</td>
-        </tr>
-        <tr>
-          <td id="LoopFileExt">A_LoopFileExt</td>
-          <td>Die Dateierweiterung (z. B. TXT, DOC oder EXE). Der Punkt (.) ist nicht inbegriffen.</td>
-        </tr>
-        <tr>
-          <td>A_LoopFileFullPath</td>
-          <td id="LoopFileFullPath">Der Pfad und Name von Dateien oder Ordnern, die gerade abgerufen werden. Wenn <em>Dateimuster</em> anstelle eines absoluten Pfads einen relativen Pfad enthält, ist dieser Pfad hier auch relativ. Darüber hinaus werden kurze (8.3) Ordnernamen in <em>Dateimuster</em> weiterhin kurz sein (siehe nächsten Punkt, um die lange Version zu erhalten). </td>
-        </tr>
-        <tr>
-          <td>A_LoopFileLongPath</td>
-          <td id="LoopFileLongPath">
-          <p>Diese Variable unterscheidet sich von A_LoopFileFullPath wie folgt:</p>
-          <ul>
-            <li>Sie enthält immer den absoluten/kompletten Pfad der Datei, auch dann, wenn <em>Dateimuster</em> einen relativen Pfad enthält</li>
-            <li>Jeder kurze (8.3) Ordnername in <em>Dateimuster</em> wird in einem langen Namen umgewandelt</li>
-            <li>Die Zeichen in <em>Dateimuster</em> werden an die Groß- oder Kleinschreibung angepasst, wie sie aktuell im Dateisystem gespeichert sind. Das ist nützlich, um Dateinamen (die zum Beispiel als Befehlszeilenparameter übergeben wurden) in ihre exakten Pfadnamen umzuwandeln, wie sie vom Explorer angezeigt werden.</li>
-          </ul>
-          </td>
-        </tr>
-        <tr>
-          <td>A_LoopFileShortPath</td>
-          <td>
-          <p id="LoopFileShortPath">Der aktuell ermittelte Datei- oder Ordnername mit Pfad im 8.3-Format. Zum Beispiel: C:\EIGENE~1\ADRESS~1.TXT. Wenn <em>Dateimuster</em> anstelle eines absoluten Pfads einen relativen Pfad enthält, ist dieser Pfad hier auch relativ.</p>
-          <p>Um den kompletten Pfad und Namen im 8.3-Format von einer einzelnen Datei oder Ordners abzurufen, muss deren Name wie folgt in <em>Dateimuster</em> angegeben werden:</p>
-          <pre>Loop, C:\Eigene Dokumente\Adressliste.txt
+<h1>Loop (Dateien &amp; Ordner)</h1>
+<p>Ermittelt nacheinander die angegebenen Dateien oder Ordner.</p>
+<pre class="Syntax">Loop, Dateimuster [, OrdnerEinbeziehen?, Rekursiv?] </pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td style="width: 15%;">Dateimuster</td>
+    <td style="width: 85%;">
+    <p>Der Name einer Datei, eines Ordners oder einer musterbasierten Suche wie <code>C:\Temp\*.tmp</code>. <em>Dateimuster</em> befindet sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis, solange kein absoluter Pfad angegeben ist.</p>
+    <p>Sowohl Sternchen als auch Fragezeichen werden als Platzhalter unterstützt. Eine Übereinstimmung erfolgt, wenn das Muster mit dem langen/normalen oder <a href="#LoopFileShortName">8.3-kurzen</a> Dateinamen übereinstimmt.</p>
+    <p>Wenn dieser Parameter eine Datei oder einen Ordner enthält (also ohne Platzhalter) und <em>Rekursiv</em> auf 1 gesetzt ist, werden mehrere Übereinstimmungen gefunden, sobald der angegebene Dateiname in mehreren Ordnern vorkommt.</p>
+    </td>
+  </tr>
+  <tr>
+    <td>OrdnerEinbeziehen?</td>
+    <td>
+    <p>Eine der folgenden Ziffern, oder leer lassen, um den Standardwert zu verwenden:<br>0 (Standard) Ordner werden nicht ermittelt (nur Dateien).<br>1 Alle Dateien und Ordner, die der musterbasierten Suche entsprechen, werden ermittelt.<br>2 Nur Ordner werden ermittelt (keine Dateien).</p>
+    </td>
+  </tr>
+  <tr>
+    <td>Rekursiv?</td>
+    <td>Eine der folgenden Ziffern, oder leer lassen, um den Standardwert zu verwenden:<br>0 (Standard) Unterordner werden nicht durchsucht.<br>1 Unterordner werden auch durchsucht, so dass darin enthaltene Dateien und Unterordner ermittelt werden, die mit <em>Dateimuster</em> übereinstimmen. Alle Unterordner werden durchsucht, nicht nur solche, deren Namen mit <em>Dateimuster</em> übereinstimmen. </td>
+  </tr>
+</table>
+<h3>Spezielle Variablen innerhalb einer Datei-Schleife</h3>
+<p>Folgende Variablen existieren innerhalb einer dateilesenden Schleife. Wenn eine innere Datei-Schleife von einer äußeren Datei-Schleife umschlossen ist, hat die Datei von der innersten Schleife Vorrang.</p>
+<table class="info">
+  <tr>
+    <td>A_LoopFileName</td>
+    <td id="LoopFileName">Der aktuell ermittelte Datei- oder Ordnername (ohne Pfad).</td>
+  </tr>
+  <tr>
+    <td id="LoopFileExt">A_LoopFileExt</td>
+    <td>Die Dateierweiterung (z. B. TXT, DOC oder EXE). Der Punkt (.) ist nicht inbegriffen.</td>
+  </tr>
+  <tr>
+    <td>A_LoopFileFullPath</td>
+    <td id="LoopFileFullPath">Der Pfad und Name von Dateien oder Ordnern, die gerade abgerufen werden. Wenn <em>Dateimuster</em> anstelle eines absoluten Pfads einen relativen Pfad enthält, ist dieser Pfad hier auch relativ. Darüber hinaus werden kurze (8.3) Ordnernamen in <em>Dateimuster</em> weiterhin kurz sein (siehe nächsten Punkt, um die lange Version zu erhalten). </td>
+  </tr>
+  <tr>
+    <td>A_LoopFileLongPath</td>
+    <td id="LoopFileLongPath">
+    <p>Diese Variable unterscheidet sich von A_LoopFileFullPath wie folgt:</p>
+    <ul>
+      <li>Sie enthält immer den absoluten/kompletten Pfad der Datei, auch dann, wenn <em>Dateimuster</em> einen relativen Pfad enthält</li>
+      <li>Jeder kurze (8.3) Ordnername in <em>Dateimuster</em> wird in einem langen Namen umgewandelt</li>
+      <li>Die Zeichen in <em>Dateimuster</em> werden an die Groß- oder Kleinschreibung angepasst, wie sie aktuell im Dateisystem gespeichert sind. Das ist nützlich, um Dateinamen (die zum Beispiel als Befehlszeilenparameter übergeben wurden) in ihre exakten Pfadnamen umzuwandeln, wie sie vom Explorer angezeigt werden.</li>
+    </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>A_LoopFileShortPath</td>
+    <td>
+    <p id="LoopFileShortPath">Der aktuell ermittelte Datei- oder Ordnername mit Pfad im 8.3-Format. Zum Beispiel: C:\EIGENE~1\ADRESS~1.TXT. Wenn <em>Dateimuster</em> anstelle eines absoluten Pfads einen relativen Pfad enthält, ist dieser Pfad hier auch relativ.</p>
+    <p>Um den kompletten Pfad und Namen im 8.3-Format von einer einzelnen Datei oder Ordners abzurufen, muss deren Name wie folgt in <em>Dateimuster</em> angegeben werden:</p>
+    <pre>Loop, C:\Eigene Dokumente\Adressliste.txt
     KurzerPfadname = %A_LoopFileShortPath%</pre>
-          <p>HINWEIS: Diese Variable wird <strong>leer</strong> sein, wenn die Datei keinen kurzen Namen hat. Das passiert zum Beispiel, wenn NtfsDisable8dot3NameCreation in der Registrierung vorhanden ist. Sie ist auch leer, wenn <em>Dateimuster</em> einen relativen Pfad enthält und der Schleifenkörper <a href="SetWorkingDir.htm">SetWorkingDir</a> verwendet, um vom eigentlichen Arbeitsverzeichnis der Schleife selbst wegzuschalten.</p>
-          </td>
-        </tr>
-        <tr>
-          <td>A_LoopFileShortName</td>
-          <td id="LoopFileShortName">Der 8.3-Kurzname, oder alternative Name der Datei. Falls die Datei keinen Kurznamen hat (weil der lange Name kürzer als der 8.3-Name ist oder die Kurznamengenerierung auf einem NTFS-Dateisystem deaktiviert ist), wird stattdessen <em>A_LoopFileName</em> abgerufen. </td>
-        </tr>
-        <tr>
-          <td>A_LoopFileDir</td>
-          <td id="LoopFileDir">Der Pfad des Verzeichnisses, in der sich <em>A_LoopFileName</em> befindet. Wenn <em>Dateimuster</em> anstelle eines absoluten Pfads einen relativen Pfad enthält, dann ist dieser Pfad hier auch relativ. Ein Hauptverzeichnis wird keinen nachfolgenden Backslash enthalten. Zum Beispiel: C:</td>
-        </tr>
-        <tr>
-          <td>A_LoopFileTimeModified</td>
-          <td id="LoopFileTimeModified">Wann die Datei zuletzt bearbeitet wurde. <a href="FileSetTime.htm">YYYYMMDDHH24MISS</a>-Format.</td>
-        </tr>
-        <tr>
-          <td>A_LoopFileTimeCreated</td>
-          <td id="LoopFileTimeCreated">Wann die Datei erstellt wurde. <a href="FileSetTime.htm">YYYYMMDDHH24MISS</a>-Format.</td>
-        </tr>
-        <tr>
-          <td>A_LoopFileTimeAccessed</td>
-          <td id="LoopFileTimeAccessed">Wann die Datei zuletzt aufgerufen wurde. <a href="FileSetTime.htm">YYYYMMDDHH24MISS</a>-Format.</td>
-        </tr>
-        <tr>
-          <td>A_LoopFileAttrib</td>
-          <td id="LoopFileAttrib">Die <a href="FileGetAttrib.htm">Attribute</a> der aktuell ermittelten Datei.</td>
-        </tr>
-        <tr>
-          <td>A_LoopFileSize</td>
-          <td id="LoopFileSize">Die Größe in Bytes der aktuell ermittelten Datei. Dateien größer als 4 Gigabyte werden ebenfalls unterstützt.</td>
-        </tr>
-        <tr>
-          <td>A_LoopFileSizeKB</td>
-          <td id="LoopFileSizeKB">Die Größe in Kilobytes der aktuell ermittelten Datei, abgerundet auf den nächsten Integer.</td>
-        </tr>
-        <tr>
-          <td>A_LoopFileSizeMB</td>
-          <td id="LoopFileSizeMB">Die Größe in Megabytes der aktuell ermittelten Datei, abgerundet auf den nächsten Integer.</td>
-        </tr>
-      </table>
-      <h3>Bemerkungen</h3>
-      <p>Eine Datei-Schleife ist nützlich, wenn mehrere Dateien und/oder Ordner nacheinander bearbeitet werden sollen.</p>
-      <p>Alle übereinstimmenden Dateien werden ermittelt, einschließlich versteckte Dateien. OS-Funktionen wie der DIR-Befehl lassen hingegen versteckte Dateien standardmäßig weg. Um die Bearbeitung von versteckten, schreibgeschützten und/oder System-Dateien zu vermeiden, kann folgendes Beispiel innerhalb der Schleife verwendet werden:</p>
-      <pre>If A_LoopFileAttrib contains H,R,S  <em>; Jede Datei überspringen, die H (versteckt), R (schreibgeschützt) oder S (vom System) ist. Hinweis: Keine Leerzeichen in "H,R,S".</em>
+    <p>HINWEIS: Diese Variable wird <strong>leer</strong> sein, wenn die Datei keinen kurzen Namen hat. Das passiert zum Beispiel, wenn NtfsDisable8dot3NameCreation in der Registrierung vorhanden ist. Sie ist auch leer, wenn <em>Dateimuster</em> einen relativen Pfad enthält und der Schleifenkörper <a href="SetWorkingDir.htm">SetWorkingDir</a> verwendet, um vom eigentlichen Arbeitsverzeichnis der Schleife selbst wegzuschalten.</p>
+    </td>
+  </tr>
+  <tr>
+    <td>A_LoopFileShortName</td>
+    <td id="LoopFileShortName">Der 8.3-Kurzname, oder alternative Name der Datei. Falls die Datei keinen Kurznamen hat (weil der lange Name kürzer als der 8.3-Name ist oder die Kurznamengenerierung auf einem NTFS-Dateisystem deaktiviert ist), wird stattdessen <em>A_LoopFileName</em> abgerufen. </td>
+  </tr>
+  <tr>
+    <td>A_LoopFileDir</td>
+    <td id="LoopFileDir">Der Pfad des Verzeichnisses, in der sich <em>A_LoopFileName</em> befindet. Wenn <em>Dateimuster</em> anstelle eines absoluten Pfads einen relativen Pfad enthält, dann ist dieser Pfad hier auch relativ. Ein Hauptverzeichnis wird keinen nachfolgenden Backslash enthalten. Zum Beispiel: C:</td>
+  </tr>
+  <tr>
+    <td>A_LoopFileTimeModified</td>
+    <td id="LoopFileTimeModified">Wann die Datei zuletzt bearbeitet wurde. <a href="FileSetTime.htm">YYYYMMDDHH24MISS</a>-Format.</td>
+  </tr>
+  <tr>
+    <td>A_LoopFileTimeCreated</td>
+    <td id="LoopFileTimeCreated">Wann die Datei erstellt wurde. <a href="FileSetTime.htm">YYYYMMDDHH24MISS</a>-Format.</td>
+  </tr>
+  <tr>
+    <td>A_LoopFileTimeAccessed</td>
+    <td id="LoopFileTimeAccessed">Wann die Datei zuletzt aufgerufen wurde. <a href="FileSetTime.htm">YYYYMMDDHH24MISS</a>-Format.</td>
+  </tr>
+  <tr>
+    <td>A_LoopFileAttrib</td>
+    <td id="LoopFileAttrib">Die <a href="FileGetAttrib.htm">Attribute</a> der aktuell ermittelten Datei.</td>
+  </tr>
+  <tr>
+    <td>A_LoopFileSize</td>
+    <td id="LoopFileSize">Die Größe in Bytes der aktuell ermittelten Datei. Dateien größer als 4 Gigabyte werden ebenfalls unterstützt.</td>
+  </tr>
+  <tr>
+    <td>A_LoopFileSizeKB</td>
+    <td id="LoopFileSizeKB">Die Größe in Kilobytes der aktuell ermittelten Datei, abgerundet auf den nächsten Integer.</td>
+  </tr>
+  <tr>
+    <td>A_LoopFileSizeMB</td>
+    <td id="LoopFileSizeMB">Die Größe in Megabytes der aktuell ermittelten Datei, abgerundet auf den nächsten Integer.</td>
+  </tr>
+</table>
+<h3>Bemerkungen</h3>
+<p>Eine Datei-Schleife ist nützlich, wenn mehrere Dateien und/oder Ordner nacheinander bearbeitet werden sollen.</p>
+<p>Alle übereinstimmenden Dateien werden ermittelt, einschließlich versteckte Dateien. OS-Funktionen wie der DIR-Befehl lassen hingegen versteckte Dateien standardmäßig weg. Um die Bearbeitung von versteckten, schreibgeschützten und/oder System-Dateien zu vermeiden, kann folgendes Beispiel innerhalb der Schleife verwendet werden:</p>
+<pre>If A_LoopFileAttrib contains H,R,S  <em>; Jede Datei überspringen, die H (versteckt), R (schreibgeschützt) oder S (vom System) ist. Hinweis: Keine Leerzeichen in "H,R,S".</em>
     continue  <em>; Diese Datei überspringen und zur Nächsten gehen</em></pre>
-      <p>Um anstelle der absoluten Pfade die relativen Pfade von den Dateien beim rekursiven Suchen zu ermitteln, muss mit <a href="SetWorkingDir.htm">SetWorkingDir</a> der Basisordner geändert werden, bevor die Schleife erfolgt. Danach muss in der Schleife selbst der Pfad weggelassen werden (z. B. <code>Loop, *.*, 0, 1</code>). Das bewirkt, dass <a href="#LoopFileFullPath">A_LoopFileFullPath</a> den relativen Pfad für den Basisordner der Datei enthält.</p>
-      <p>Eine Datei-Schleife kann sich selbst unterbrechen, wenn sie Dateien oder Ordner innerhalb der eigenen Zuständigkeit erstellt oder umbenennt. Wenn die Dateien in der Schleife zum Beispiel mit <a href="FileMove.htm">FileMove</a> umbenannt werden, kann es passieren, dass diese jeweils zweimal gefunden werden: einmal mit dem alten Namen und nochmal mit dem neuen Namen. Als Übergangslösung sollten die Dateien nur umbenannt werden, nachdem eine Liste von denen erstellt wurde. Zum Beispiel:</p>
-      <pre>Dateiliste =
+<p>Um anstelle der absoluten Pfade die relativen Pfade von den Dateien beim rekursiven Suchen zu ermitteln, muss mit <a href="SetWorkingDir.htm">SetWorkingDir</a> der Basisordner geändert werden, bevor die Schleife erfolgt. Danach muss in der Schleife selbst der Pfad weggelassen werden (z. B. <code>Loop, *.*, 0, 1</code>). Das bewirkt, dass <a href="#LoopFileFullPath">A_LoopFileFullPath</a> den relativen Pfad für den Basisordner der Datei enthält.</p>
+<p>Eine Datei-Schleife kann sich selbst unterbrechen, wenn sie Dateien oder Ordner innerhalb der eigenen Zuständigkeit erstellt oder umbenennt. Wenn die Dateien in der Schleife zum Beispiel mit <a href="FileMove.htm">FileMove</a> umbenannt werden, kann es passieren, dass diese jeweils zweimal gefunden werden: einmal mit dem alten Namen und nochmal mit dem neuen Namen. Als Übergangslösung sollten die Dateien nur umbenannt werden, nachdem eine Liste von denen erstellt wurde. Zum Beispiel:</p>
+<pre>Dateiliste =
 Loop *.jpg
    Dateiliste = %Dateiliste%%A_LoopFileName%`n
 Loop, parse, Dateiliste, `n
    FileMove, %A_LoopField%, unbenannt_%A_LoopField%</pre>
-      <p>Dateien in einem NTFS-Dateisystem werden wahrscheinlich immer in alphabetischer Reihenfolge abgerufen. Dateien in anderen Dateisystemen werden in keiner bestimmten Reihenfolge abgerufen. Um eine bestimmte Reihenfolge sicherzustellen, sollte der <a href="Sort.htm">Sort</a>-Befehl verwendet werden, wie unten im Abschnitt "Beispiele" gezeigt.</p>
-      <p>Dateien und Ordner mit einem kompletten Pfad länger als 259 Zeichen werden ignoriert, als würde sie nicht existieren. Solche Dateien sind normalerweise selten, weil das Betriebssystem nicht erlaubt, dass diese erstellt werden können.</p>
-      <p>Auf der <a href="Loop.htm">Loop</a>-Seite können Informationen zu <a href="Block.htm">Blocks</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index gefunden werden (weil diese in jeder Schleifenvariante vorkommen).</p>
-      <h3>Verwandte Befehle</h3>
-      <p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blocks</a>, <a href="SplitPath.htm">SplitPath</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
-      <h3>Beispiele</h3>
-      <pre class="NoIndent"><em>; Beispiel #1:</em>
+<p>Dateien in einem NTFS-Dateisystem werden wahrscheinlich immer in alphabetischer Reihenfolge abgerufen. Dateien in anderen Dateisystemen werden in keiner bestimmten Reihenfolge abgerufen. Um eine bestimmte Reihenfolge sicherzustellen, sollte der <a href="Sort.htm">Sort</a>-Befehl verwendet werden, wie unten im Abschnitt "Beispiele" gezeigt.</p>
+<p>Dateien und Ordner mit einem kompletten Pfad länger als 259 Zeichen werden ignoriert, als würde sie nicht existieren. Solche Dateien sind normalerweise selten, weil das Betriebssystem nicht erlaubt, dass diese erstellt werden können.</p>
+<p>Auf der <a href="Loop.htm">Loop</a>-Seite können Informationen zu <a href="Block.htm">Blocks</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index gefunden werden (weil diese in jeder Schleifenvariante vorkommen).</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blocks</a>, <a href="SplitPath.htm">SplitPath</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
+<h3>Beispiele</h3>
+<pre class="NoIndent"><em>; Beispiel #1:</em>
 Loop, %A_ProgramFiles%\*.txt, , 1  <em>; Unterordner auch durchsuchen (rekursiv).</em>
 {
     MsgBox, 4, , Dateiname = %A_LoopFileFullPath%`n`nFortfahren?
     IfMsgBox, No
         break
 }</pre>
-      <p>&nbsp;</p>
-      <pre class="NoIndent"><em>; Beispiel #2: Berechnet die Größe des Ordners, einschließlich die Dateien seiner Unterordner:</em>
+<p>&nbsp;</p>
+<pre class="NoIndent"><em>; Beispiel #2: Berechnet die Größe des Ordners, einschließlich die Dateien seiner Unterordner:</em>
 SetBatchLines, -1  <em>; Führt die Operation mit maximaler Geschwindigkeit aus.</em>
 OrdnerGrößeKB = 0
 FileSelectFolder, Ordner  <em>; Fordert den Benutzer auf, einen Ordner auszuwählen.</em>
 Loop, %Ordner%\*.*, , 1
     OrdnerGrößeKB += %A_LoopFileSizeKB%
 MsgBox Der Ordner %Ordner% hat eine Größe von %OrdnerGrößeKB% KB.</pre>
-      <p>&nbsp;</p>
-      <pre class="NoIndent"><em>; Beispiel #3: Ermittelt Dateinamen, die nach Name sortiert sind (siehe nächstes Beispiel, wie nach Datum sortiert werden kann):</em>
+<p>&nbsp;</p>
+<pre class="NoIndent"><em>; Beispiel #3: Ermittelt Dateinamen, die nach Name sortiert sind (siehe nächstes Beispiel, wie nach Datum sortiert werden kann):</em>
 Dateiliste =  <em>; Leere Variable initialisieren.</em>
 Loop, C:\*.*
     Dateiliste = %Dateiliste%%A_LoopFileName%`n
@@ -161,8 +156,8 @@ Loop, parse, Dateiliste, `n
     IfMsgBox, No
         break
 }</pre>
-      <p>&nbsp;</p>
-      <pre class="NoIndent"><em>; Beispiel #4: Ermittelt Dateinamen, die nach Änderungsdatum sortiert sind:</em>
+<p>&nbsp;</p>
+<pre class="NoIndent"><em>; Beispiel #4: Ermittelt Dateinamen, die nach Änderungsdatum sortiert sind:</em>
 Dateiliste =
 Loop, %A_MyDocuments%\Fotos\*.*, 1
     Dateiliste = %Dateiliste%%A_LoopFileTimeModified%`t%A_LoopFileName%`n
@@ -176,8 +171,8 @@ Loop, parse, Dateiliste, `n
     IfMsgBox, No
         break
 }</pre>
-      <p>&nbsp;</p>
-      <pre class="NoIndent"><em>; Beispiel #5: Kopiert nur Quelldateien ins Ziel, die neuer sind als ihr Gegenstück:</em>
+<p>&nbsp;</p>
+<pre class="NoIndent"><em>; Beispiel #5: Kopiert nur Quelldateien ins Ziel, die neuer sind als ihr Gegenstück:</em>
 KopierenWennNeuer:
 <em>; Die Variablen KopieQuellmuster und KopieZiel wurden vorher gesetzt.</em>
 Loop, %KopieQuellmuster%
@@ -200,8 +195,8 @@ Loop, %KopieQuellmuster%
     }
 }
 Return</pre>
-      <p>&nbsp;</p>
-      <pre class="NoIndent"><em>; Beispiel #6: Konvertiert Dateinamen, die mittels Kommandozeilen-Parameter übergeben wurden, in lange Namen,
+<p>&nbsp;</p>
+<pre class="NoIndent"><em>; Beispiel #6: Konvertiert Dateinamen, die mittels Kommandozeilen-Parameter übergeben wurden, in lange Namen,
 ; vervollständigt den Pfad und korrigiert die Groß- und Kleinbuchstaben, wie sie im Dateisystem gespeichert sind.</em>
 Loop %0%  <em>; Für jede Datei, die auf das Script abgelegt wurde (oder als Parameter übergeben wurde).</em>
 {
@@ -210,9 +205,5 @@ Loop %0%  <em>; Für jede Datei, die auf das Script abgelegt wurde (oder als Par
         LangerPfad = %A_LoopFileLongPath%
     MsgBox Der zeichengenaue lange Pfadname der Datei `n%Pfadangabe%`n ist:`n%LangerPfad%
 }</pre>
-    </article>
-  </section>
-</div>
-<script type="text/javascript">WriteFooter(1);</script>
 </body>
 </html>

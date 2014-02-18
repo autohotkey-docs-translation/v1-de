@@ -6,91 +6,82 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<link href="../static/font.css" rel="stylesheet" type="text/css" />
-<script src="../static/jquery-1.11.0.min.js" type="text/javascript"></script>
+<script src="../static/jquery.js" type="text/javascript"></script>
+<script src="../static/tree.jquery.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
-<script src="../navbar/NavScript.js" type="text/javascript"></script>
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
 <body>
-<script type="text/javascript">WriteHeader(1);</script>
-<div id="content">
-  <section>
-    <article>
-      <h1>RegExReplace() <span class="ver">[v1.0.45+]</span></h1>
-      <p>Ersetzt Vorkommen eines Musters (regulärer Ausdruck) innerhalb eines Strings.</p>
-      <pre class="Syntax">NeuerStr := RegExReplace(Heuhaufen, NadelRegEx [, Ersatz = "", AusgabeVarAnzahl = "", Limit = -1, Startposition = 1])</pre>
-      <h3>Parameter</h3>
-      <table class="info">
-        <tr>
-          <td style="width: 15%;">NeuerStr</td>
-          <td style="width: 85%;">RegExReplace() gibt eine ersetzte Version des <em>Heuhaufens</em> zurück. Falls nichts ersetzt wurde, wird <em>Heuhaufen</em> unverändert zurückgegeben. Wenn ein Fehler auftritt (z. B. ein Syntaxfehler innerhalb von <em>NadelRegEx</em>), wird <em>Heuhaufen</em> unverändert zurückgegeben (in den Versionen vor 1.0.46.06 wurde stattdessen ein leerer String zurückgegeben) und ErrorLevel auf einen der <a href="#ErrorLevel">unteren</a> Werte gesetzt, anstatt auf 0.</td>
-        </tr>
-        <tr>
-          <td>Heuhaufen</td>
-          <td>Der String, dessen Inhalt durchsucht und ersetzt wird. </td>
-        </tr>
-        <tr>
-          <td>NadelRegEx</td>
-          <td>Das zu suchende Muster, welches ein Perl-kompatibler regulärer Ausdruck (PCRE) ist. Die <a href="../misc/RegEx-QuickRef.htm">Optionen</a> des Ausdrucks (falls vorhanden) müssen am Anfang des Strings stehen, gefolgt von einer schließenden Klammer. Zum Beispiel wird mit dem Ausdruck "<span class="red">i)</span>abc.*123" die Unterscheidung von Groß- und Kleinschreibung deaktiviert und "abc" gesucht, gefolgt von null oder mehr beliebige Zeichen, gefolgt von "123". Wenn keine Optionen vorhanden sind, ist das ")" optional; zum Beispiel ist ")abc" das gleiche wie "abc".</td>
-        </tr>
-        <tr>
-          <td>Ersatz</td>
-          <td>
-          <p id="BackRef">Ein String in Klartext (kein regulärer Ausdruck), mit dem jede Übereinstimmung ersetzt wird. Dieser String kann Rückverweise enthalten, wie z. B. $1, das dazu dient, den im ersten <a href="../misc/RegEx-QuickRef.htm#subpat">Teilausdruck</a> gefundenen Teilstring aus dem <em>Heuhaufen</em> einzufügen. Die einfachsten Rückverweise sind $0 bis $9, wobei $0 der gefundene Teilstring des kompletten Ausdrucks ist, $1 der gefundene Teilstring des ersten Teilausdrucks ist, $2 des zweiten Teilausdrucks ist, und so weiter. Zweistellige (und optional auch einstellige) Rückverweisnummern sowie <a href="RegExMatch.htm#NamedSubPat">Namen von benannten Teilausdrücken</a> müssen in geschweiften Klammern gesetzt werden, zum Beispiel: ${10}, ${11}, ${Teilausdrucksname}. Mit $$ kann ein $ direkt angegeben werden (das ist das einzige Zeichen, das eine Sonderbehandlung benötigt; Backslash-Zeichen werden hier nicht benötigt).</p>
-          <p>Um die Schreibung eines Teilausdrucks umzuwandeln, kann nach $ eines der folgenden Zeichen erfolgen: U oder u (Großschreibung), L oder l (Kleinschreibung), T oder t (Titelschreibung; nur erstes Zeichen von jedem Wort großschreiben). Zum Beispiel bewirken sowohl $U1 als auch $U{1}, dass der Teilstring vom ersten Teilausdruck großgeschrieben wird.</p>
-          <p>Nicht vorhandene Rückverweise und solche, die überhaupt keine Übereinstimmung im <em>Heuhaufen</em> haben, wie einer der Teilausdrücke in "(abc)|(xyz)", werden als leere Strings übertragen.</p>
-          </td>
-        </tr>
-        <tr>
-          <td>AusgabeVarAnzahl</td>
-          <td>Name der Variable ohne Anführungszeichen, in der die Anzahl gespeichert werden soll, wie oft der Heuhaufen ersetzt wurde (0, wenn nicht).</td>
-        </tr>
-        <tr>
-          <td>Limit</td>
-          <td>Ist dieser Parameter nicht vorhanden, wird standardmäßig -1 verwendet, um <strong>alle</strong> gefundenen Vorkommen des Musters im <em>Heuhaufen</em> zu ersetzen. Ansonsten kann angegeben werden, wie oft der <em>Heuhaufen</em> ersetzt werden soll. Der Bereich des <em>Heuhaufens</em> rechts neben dem letzten Ersatz bleibt unverändert.</td>
-        </tr>
-        <tr>
-          <td>Startposition</td>
-          <td>
-          <p>Ist dieser Parameter nicht vorhanden, wird standardmäßig eine 1 verwendet (der Anfang von <em>Heuhaufen</em>). Ansonsten beginnt die Suche mit einer 2 beim zweiten Zeichen, mit einer 3 beim dritten Zeichen und so weiter. Wenn <em>Startposition</em> die Länge von <em>Heuhaufen</em> überschreitet, beginnt die Suche bei einem leeren String am Ende des <em>Heuhaufens</em> (das natürlich zur Folge hat, dass nichts ersetzt wird).</p>
-          <p>Sobald <em>Startposition</em> kleiner als 1 ist, wird dieser Parameter als Offset vom Ende des <em>Heuhaufens</em> angesehen. Zum Beispiel beginnt die Suche mit einer 0 beim letzten Zeichen und mit -1 beim vorletzten Zeichen. Wenn <em>Startposition</em> das linke Ende des <em>Heuhaufens</em> überschreitet, wird alles vom <em>Heuhaufen</em> durchsucht.</p>
-          <p>Unabhängig von <em>Startposition</em> ist der Rückgabewert immer eine komplette Kopie vom <em>Heuhaufen</em>. Der einzige Unterschied ist, dass mehr von der linken Seite unverändert bleibt, verglichen mit dem, was passieren könnte, wenn die <em>Startposition</em> eine 1 enthält.</p>
-          </td>
-        </tr>
-      </table>
-      <h3 id="ErrorLevel">ErrorLevel</h3>
-      <p><span class="ver">[v1.1.04+]</span> Diese Funktion ist in der Lage, bei Misserfolg eine Ausnahme auszulösen (nicht zu verwechseln mit "keine Übereinstimmung gefunden"). Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
-      <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> kann Folgendes enthalten:</p>
-      <ul>
-        <li>Eine 0 - das heißt, dass keine Fehler aufgetreten sind.</li>
-        <li>Einen String in folgender Form: <em>Compile error N at offset M: Beschreibung</em>. In diesem String ist <em>N</em> die PCRE-Fehlernummer, <em>M</em> die Position des betroffenen Zeichens innerhalb des regulären Ausdrucks und <em>Beschreibung</em> ein Text, der den Fehler beschreibt.</li>
-        <li>Eine negative Zahl - das heißt, dass ein Fehler beim <em>Ausführen</em> des regulären Ausdrucks aufgetreten ist. Obwohl solche Fehler selten sind, sind die am häufigsten auftretenden Fehler "zu viele mögliche Übereinstimmungen mit leeren Strings" (-22), "Rekursion zu tief" (-21) und "Limit der Übereinstimmung erreicht" (-8). In so einem Fall sollte das Muster restriktiver gemacht werden. Zum Beispiel kann je nach Möglichkeit das Sternchen (*) mit einem Fragezeichen (?), Pluszeichen (+) oder einer Begrenzung wie {0,3} ersetzen werden.</li>
-      </ul>
-      <h3>Optionen</h3>
-      <p>Siehe <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> für Modifikatoren wie "<span class="red">i)</span>abc", die die Unterscheidung von Groß- und Kleinschreibung im Muster "abc" deaktiviert.</p>
-      <h3>Performance</h3>
-      <p>Um einfache Teilstrings zu ersetzen, ist es besser, <a href="StringReplace.htm">StringReplace</a> zu verwenden, weil es schneller als RegExReplace() ist.</p>
-      <p>Wenn bekannt ist, wie oft der String ersetzt wird, erscheint es sinnvoll, diese Anzahl zur Erhöhung der Performance im <em>Limit</em>-Parameter anzugeben, weil dadurch die Suche früher gestoppt werden kann (das auch die Speicherauslastung auf dem System während der Operation reduzieren kann). Zum Beispiel kann eine 1 angegeben werden, wenn bekannt ist, dass nur eine Übereinstimmung am Anfang eines langen Strings vorkommen kann.</p>
-      <p>Zur Verbesserung der Performance werden die 100 aktuellsten regulären Ausdrücke im Speicher zwischengespeichert (in kompilierter Form).</p>
-      <p>Die <a href="../misc/RegEx-QuickRef.htm#Study">S-Option</a> kann mitunter dabei helfen, die Performance eines häufig benutzten regulären Ausdrucks zu verbessern (z. B. in einer Schleife).</p>
-      <h3>Bemerkungen</h3>
-      <p>Die meisten Zeichen wie abc123 können direkt in einem regulären Ausdruck verwendet werden. Die Zeichen <strong>\.*?+[{|()^$</strong> müssen allerdings mit einem Backslash vorangestellt werden, um auch diese direkt verwenden zu können. Zum Beispiel wird <strong>\.</strong> als direkt vorhandener Punkt und <strong>\\</strong> als direkt vorhandener Backslash angesehen. Diese Zeichen müssen nicht mit einem Escapezeichen versehen werden, wenn \Q...\E verwendet wird. Zum Beispiel: <code>\QDirekt vorhandener Text\E</code>.</p>
-      <p>Innerhalb eines regulären Ausdrucks können bestimmte Sonderzeichen wie Tabulatorzeichen und Zeilenumbrüche sowohl mit einem Akzent- (`) als auch mit einem Backslash-Zeichen (\) escaped werden. Zum Beispiel ist `t das gleiche wie \t.</p>
-      <p>Um die Grundlagen von regulären Ausdrücken kennenzulernen (oder das Gedächtnis ein wenig aufzufrischen), siehe <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>.</p>
-      <h3>Verwandte Befehle</h3>
-      <p><a href="RegExMatch.htm">RegExMatch()</a>, <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>, <a href="../misc/RegExCallout.htm">Callouts in regulären Ausdrücken</a>, <a href="StringReplace.htm">StringReplace</a>, <a href="../Functions.htm#InStr">InStr()</a></p>
-      <p>Häufige Quellen von Textdaten: <a href="FileRead.htm">FileRead</a>, <a href="URLDownloadToFile.htm">UrlDownloadToFile</a>, <a href="../misc/Clipboard.htm">Clipboard</a>, <a href="GuiControls.htm#Edit">GUI-Eingabefelder</a></p>
-      <h3>Beispiele</h3>
-      <pre class="NoIndent">NeuerStr := RegExReplace("abc123123", "123$", "xyz")  <em>; Gibt "abc123xyz" zurück, weil das $ die Übereinstimmung dazu zwingt, am Ende vorzukommen.</em>
+<h1>RegExReplace() <span class="ver">[v1.0.45+]</span></h1>
+<p>Ersetzt Vorkommen eines Musters (regulärer Ausdruck) innerhalb eines Strings.</p>
+<pre class="Syntax">NeuerStr := RegExReplace(Heuhaufen, NadelRegEx [, Ersatz = "", AusgabeVarAnzahl = "", Limit = -1, Startposition = 1])</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td style="width: 15%;">NeuerStr</td>
+    <td style="width: 85%;">RegExReplace() gibt eine ersetzte Version des <em>Heuhaufens</em> zurück. Falls nichts ersetzt wurde, wird <em>Heuhaufen</em> unverändert zurückgegeben. Wenn ein Fehler auftritt (z. B. ein Syntaxfehler innerhalb von <em>NadelRegEx</em>), wird <em>Heuhaufen</em> unverändert zurückgegeben (in den Versionen vor 1.0.46.06 wurde stattdessen ein leerer String zurückgegeben) und ErrorLevel auf einen der <a href="#ErrorLevel">unteren</a> Werte gesetzt, anstatt auf 0.</td>
+  </tr>
+  <tr>
+    <td>Heuhaufen</td>
+    <td>Der String, dessen Inhalt durchsucht und ersetzt wird. </td>
+  </tr>
+  <tr>
+    <td>NadelRegEx</td>
+    <td>Das zu suchende Muster, welches ein Perl-kompatibler regulärer Ausdruck (PCRE) ist. Die <a href="../misc/RegEx-QuickRef.htm">Optionen</a> des Ausdrucks (falls vorhanden) müssen am Anfang des Strings stehen, gefolgt von einer schließenden Klammer. Zum Beispiel wird mit dem Ausdruck "<span class="red">i)</span>abc.*123" die Unterscheidung von Groß- und Kleinschreibung deaktiviert und "abc" gesucht, gefolgt von null oder mehr beliebige Zeichen, gefolgt von "123". Wenn keine Optionen vorhanden sind, ist das ")" optional; zum Beispiel ist ")abc" das gleiche wie "abc".</td>
+  </tr>
+  <tr>
+    <td>Ersatz</td>
+    <td>
+    <p id="BackRef">Ein String in Klartext (kein regulärer Ausdruck), mit dem jede Übereinstimmung ersetzt wird. Dieser String kann Rückverweise enthalten, wie z. B. $1, das dazu dient, den im ersten <a href="../misc/RegEx-QuickRef.htm#subpat">Teilausdruck</a> gefundenen Teilstring aus dem <em>Heuhaufen</em> einzufügen. Die einfachsten Rückverweise sind $0 bis $9, wobei $0 der gefundene Teilstring des kompletten Ausdrucks ist, $1 der gefundene Teilstring des ersten Teilausdrucks ist, $2 des zweiten Teilausdrucks ist, und so weiter. Zweistellige (und optional auch einstellige) Rückverweisnummern sowie <a href="RegExMatch.htm#NamedSubPat">Namen von benannten Teilausdrücken</a> müssen in geschweiften Klammern gesetzt werden, zum Beispiel: ${10}, ${11}, ${Teilausdrucksname}. Mit $$ kann ein $ direkt angegeben werden (das ist das einzige Zeichen, das eine Sonderbehandlung benötigt; Backslash-Zeichen werden hier nicht benötigt).</p>
+    <p>Um die Schreibung eines Teilausdrucks umzuwandeln, kann nach $ eines der folgenden Zeichen erfolgen: U oder u (Großschreibung), L oder l (Kleinschreibung), T oder t (Titelschreibung; nur erstes Zeichen von jedem Wort großschreiben). Zum Beispiel bewirken sowohl $U1 als auch $U{1}, dass der Teilstring vom ersten Teilausdruck großgeschrieben wird.</p>
+    <p>Nicht vorhandene Rückverweise und solche, die überhaupt keine Übereinstimmung im <em>Heuhaufen</em> haben, wie einer der Teilausdrücke in "(abc)|(xyz)", werden als leere Strings übertragen.</p>
+    </td>
+  </tr>
+  <tr>
+    <td>AusgabeVarAnzahl</td>
+    <td>Name der Variable ohne Anführungszeichen, in der die Anzahl gespeichert werden soll, wie oft der Heuhaufen ersetzt wurde (0, wenn nicht).</td>
+  </tr>
+  <tr>
+    <td>Limit</td>
+    <td>Ist dieser Parameter nicht vorhanden, wird standardmäßig -1 verwendet, um <strong>alle</strong> gefundenen Vorkommen des Musters im <em>Heuhaufen</em> zu ersetzen. Ansonsten kann angegeben werden, wie oft der <em>Heuhaufen</em> ersetzt werden soll. Der Bereich des <em>Heuhaufens</em> rechts neben dem letzten Ersatz bleibt unverändert.</td>
+  </tr>
+  <tr>
+    <td>Startposition</td>
+    <td>
+    <p>Ist dieser Parameter nicht vorhanden, wird standardmäßig eine 1 verwendet (der Anfang von <em>Heuhaufen</em>). Ansonsten beginnt die Suche mit einer 2 beim zweiten Zeichen, mit einer 3 beim dritten Zeichen und so weiter. Wenn <em>Startposition</em> die Länge von <em>Heuhaufen</em> überschreitet, beginnt die Suche bei einem leeren String am Ende des <em>Heuhaufens</em> (das natürlich zur Folge hat, dass nichts ersetzt wird).</p>
+    <p>Sobald <em>Startposition</em> kleiner als 1 ist, wird dieser Parameter als Offset vom Ende des <em>Heuhaufens</em> angesehen. Zum Beispiel beginnt die Suche mit einer 0 beim letzten Zeichen und mit -1 beim vorletzten Zeichen. Wenn <em>Startposition</em> das linke Ende des <em>Heuhaufens</em> überschreitet, wird alles vom <em>Heuhaufen</em> durchsucht.</p>
+    <p>Unabhängig von <em>Startposition</em> ist der Rückgabewert immer eine komplette Kopie vom <em>Heuhaufen</em>. Der einzige Unterschied ist, dass mehr von der linken Seite unverändert bleibt, verglichen mit dem, was passieren könnte, wenn die <em>Startposition</em> eine 1 enthält.</p>
+    </td>
+  </tr>
+</table>
+<h3 id="ErrorLevel">ErrorLevel</h3>
+<p><span class="ver">[v1.1.04+]</span> Diese Funktion ist in der Lage, bei Misserfolg eine Ausnahme auszulösen (nicht zu verwechseln mit "keine Übereinstimmung gefunden"). Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> kann Folgendes enthalten:</p>
+<ul>
+  <li>Eine 0 - das heißt, dass keine Fehler aufgetreten sind.</li>
+  <li>Einen String in folgender Form: <em>Compile error N at offset M: Beschreibung</em>. In diesem String ist <em>N</em> die PCRE-Fehlernummer, <em>M</em> die Position des betroffenen Zeichens innerhalb des regulären Ausdrucks und <em>Beschreibung</em> ein Text, der den Fehler beschreibt.</li>
+  <li>Eine negative Zahl - das heißt, dass ein Fehler beim <em>Ausführen</em> des regulären Ausdrucks aufgetreten ist. Obwohl solche Fehler selten sind, sind die am häufigsten auftretenden Fehler "zu viele mögliche Übereinstimmungen mit leeren Strings" (-22), "Rekursion zu tief" (-21) und "Limit der Übereinstimmung erreicht" (-8). In so einem Fall sollte das Muster restriktiver gemacht werden. Zum Beispiel kann je nach Möglichkeit das Sternchen (*) mit einem Fragezeichen (?), Pluszeichen (+) oder einer Begrenzung wie {0,3} ersetzen werden.</li>
+</ul>
+<h3>Optionen</h3>
+<p>Siehe <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> für Modifikatoren wie "<span class="red">i)</span>abc", die die Unterscheidung von Groß- und Kleinschreibung im Muster "abc" deaktiviert.</p>
+<h3>Performance</h3>
+<p>Um einfache Teilstrings zu ersetzen, ist es besser, <a href="StringReplace.htm">StringReplace</a> zu verwenden, weil es schneller als RegExReplace() ist.</p>
+<p>Wenn bekannt ist, wie oft der String ersetzt wird, erscheint es sinnvoll, diese Anzahl zur Erhöhung der Performance im <em>Limit</em>-Parameter anzugeben, weil dadurch die Suche früher gestoppt werden kann (das auch die Speicherauslastung auf dem System während der Operation reduzieren kann). Zum Beispiel kann eine 1 angegeben werden, wenn bekannt ist, dass nur eine Übereinstimmung am Anfang eines langen Strings vorkommen kann.</p>
+<p>Zur Verbesserung der Performance werden die 100 aktuellsten regulären Ausdrücke im Speicher zwischengespeichert (in kompilierter Form).</p>
+<p>Die <a href="../misc/RegEx-QuickRef.htm#Study">S-Option</a> kann mitunter dabei helfen, die Performance eines häufig benutzten regulären Ausdrucks zu verbessern (z. B. in einer Schleife).</p>
+<h3>Bemerkungen</h3>
+<p>Die meisten Zeichen wie abc123 können direkt in einem regulären Ausdruck verwendet werden. Die Zeichen <strong>\.*?+[{|()^$</strong> müssen allerdings mit einem Backslash vorangestellt werden, um auch diese direkt verwenden zu können. Zum Beispiel wird <strong>\.</strong> als direkt vorhandener Punkt und <strong>\\</strong> als direkt vorhandener Backslash angesehen. Diese Zeichen müssen nicht mit einem Escapezeichen versehen werden, wenn \Q...\E verwendet wird. Zum Beispiel: <code>\QDirekt vorhandener Text\E</code>.</p>
+<p>Innerhalb eines regulären Ausdrucks können bestimmte Sonderzeichen wie Tabulatorzeichen und Zeilenumbrüche sowohl mit einem Akzent- (`) als auch mit einem Backslash-Zeichen (\) escaped werden. Zum Beispiel ist `t das gleiche wie \t.</p>
+<p>Um die Grundlagen von regulären Ausdrücken kennenzulernen (oder das Gedächtnis ein wenig aufzufrischen), siehe <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>.</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="RegExMatch.htm">RegExMatch()</a>, <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>, <a href="../misc/RegExCallout.htm">Callouts in regulären Ausdrücken</a>, <a href="StringReplace.htm">StringReplace</a>, <a href="../Functions.htm#InStr">InStr()</a></p>
+<p>Häufige Quellen von Textdaten: <a href="FileRead.htm">FileRead</a>, <a href="URLDownloadToFile.htm">UrlDownloadToFile</a>, <a href="../misc/Clipboard.htm">Clipboard</a>, <a href="GuiControls.htm#Edit">GUI-Eingabefelder</a></p>
+<h3>Beispiele</h3>
+<pre class="NoIndent">NeuerStr := RegExReplace("abc123123", "123$", "xyz")  <em>; Gibt "abc123xyz" zurück, weil das $ die Übereinstimmung dazu zwingt, am Ende vorzukommen.</em>
 NeuerStr := RegExReplace("abc123", "i)^ABC")  <em>; Gibt 123 zurück, da eine Übereinstimmung durch i-Option (keine Unterscheidung zwischen Groß- und Kleinschreibung) gefunden wurde.</em>
 NeuerStr := RegExReplace("abcXYZ123", "abc<span class="red">(.*)</span>123", "aaa<span class="red">$1</span>zzz")  <em>; Gibt "aaaXYZzzz" zurück durch den <a href="#BackRef">Rückverweis</a> <span class="red">$1</span>.</em>
 NeuerStr := RegExReplace("abc123abc456", "abc\d+", "", Ersatzanzahl)  <em>; Gibt ein leeren String zurück und speichert eine 2 in Ersatzanzahl.</em>
 
 <em>; Allgemeine RegEx-Beispiele können in der <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a> gefunden werden.</em></pre>
-    </article>
-  </section>
-</div>
-<script type="text/javascript">WriteFooter(1);</script>
 </body>
 </html>

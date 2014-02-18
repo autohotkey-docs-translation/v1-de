@@ -6,53 +6,47 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<link href="../static/font.css" rel="stylesheet" type="text/css" />
-<script src="../static/jquery-1.11.0.min.js" type="text/javascript"></script>
+<script src="../static/jquery.js" type="text/javascript"></script>
+<script src="../static/tree.jquery.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
-<script src="../navbar/NavScript.js" type="text/javascript"></script>
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
 <body>
-<script type="text/javascript">WriteHeader(1);</script>
-<div id="content">
-  <section>
-    <article>
-      <h1>ComObjConnect() <span class="ver">[AHK_L 53+]</span></h1>
-      <p>Verbindet die Ereignisquellen eines COM-Objekts mit Funktionen, die einen vorgegeben Präfix enthalten.</p>
-      <pre class="Syntax">ComObjConnect(ComObject [, Präfix])</pre>
-      <h3>Parameter</h3>
-      <table class="info">
-        <tr>
-          <td>ComObject</td>
-          <td>Ein Objekt, das Ereignisse auslöst.</td>
-        </tr>
-        <tr>
-          <td>Präfix</td>
-          <td>
-          <p>Ein String, der als Präfix bei dem Ereignisnamen dienen soll, um feststellen zu können, welche Funktion bei einem Ereignis aufgerufen werden soll.</p>
-          <p>Ist dieser Parameter nicht vorhanden, wird das Objekt "getrennt"; das heißt, dass das Script nicht länger Benachrichtigungen von seinen Ereignissen erhält.</p>
-          <p><span class="ver">[v1.1.01+]:</span> Dieser Parameter kann ein Objekt sein, das vom Script definiert wurde. Beim Auslösen eines Ereignisses wird die entsprechende Methode aufgerufen. Der erste Parameter, der üblicherweise der versteckte <code>this</code>-Parameter ist, verweist auf das script-definierte Objekt, nicht auf das COM-Objekt. Mit einer <a href="../Objects.htm#Meta_Functions">__Call-Meta-Funktion</a> können alle Ereignisse abgefangen werden, ohne dass für jedes Ereignis eine Methode definiert werden muss.</p>
-          </td>
-        </tr>
-      </table>
-      <h3 id="Usage">Verwendung</h3>
-      <p>Um ComObjConnect effektiv zu nutzen, muss man erst Funktionen in das Script schreiben, die mit den gewünschten Ereignissen umgehen können. Solche Funktionen, auch "Ereignishandler" genannt, haben die folgende Struktur:</p>
-      <pre class="Syntax Short NoIndent"><i>Präfix</i><b>Ereignisname</b>([<i>Params...</i>, ComObject])
+<h1>ComObjConnect() <span class="ver">[AHK_L 53+]</span></h1>
+<p>Verbindet die Ereignisquellen eines COM-Objekts mit Funktionen, die einen vorgegeben Präfix enthalten.</p>
+<pre class="Syntax">ComObjConnect(ComObject [, Präfix])</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td>ComObject</td>
+    <td>Ein Objekt, das Ereignisse auslöst.</td>
+  </tr>
+  <tr>
+    <td>Präfix</td>
+    <td>
+    <p>Ein String, der als Präfix bei dem Ereignisnamen dienen soll, um feststellen zu können, welche Funktion bei einem Ereignis aufgerufen werden soll.</p>
+    <p>Ist dieser Parameter nicht vorhanden, wird das Objekt "getrennt"; das heißt, dass das Script nicht länger Benachrichtigungen von seinen Ereignissen erhält.</p>
+    <p><span class="ver">[v1.1.01+]:</span> Dieser Parameter kann ein Objekt sein, das vom Script definiert wurde. Beim Auslösen eines Ereignisses wird die entsprechende Methode aufgerufen. Der erste Parameter, der üblicherweise der versteckte <code>this</code>-Parameter ist, verweist auf das script-definierte Objekt, nicht auf das COM-Objekt. Mit einer <a href="../Objects.htm#Meta_Functions">__Call-Meta-Funktion</a> können alle Ereignisse abgefangen werden, ohne dass für jedes Ereignis eine Methode definiert werden muss.</p>
+    </td>
+  </tr>
+</table>
+<h3 id="Usage">Verwendung</h3>
+<p>Um ComObjConnect effektiv zu nutzen, muss man erst Funktionen in das Script schreiben, die mit den gewünschten Ereignissen umgehen können. Solche Funktionen, auch "Ereignishandler" genannt, haben die folgende Struktur:</p>
+<pre class="Syntax Short NoIndent"><i>Präfix</i><b>Ereignisname</b>([<i>Params...</i>, ComObject])
 {
     <i class="dull">... Ereignis-behandelnder Code ...</i>
     Return <i>Rückgabewert</i>
 }</pre>
-      <p>Für <i>Präfix</i> kann ein beliebiger Präfix angegeben werden, während der <b>Ereignisname</b> der Name des Ereignisses ist, das von der Funktion behandelt werden soll.</p>
-      <p><i>Params</i> sind die Parameter des Ereignisses. Hat das Ereignis keine Parameter, sollte <i>Params</i> ganz weggelassen werden. <i>ComObject</i> ist optional und nur verwendbar, wenn die korrekte Anzahl von <i>Params</i> definiert wurde. Es enthält einen Verweis auf das originale Wrapper-Objekt, das an ComObjConnect übergeben wurde. "ComObject" sollte mit einem Namen ersetzt werden, der eher dem Kontext des Scripts entspricht.</p>
-      <p>Beachte, dass Ereignishandler Rückgabewerte haben können. Mit <a href="ComObjActive.htm#param">ComObjParameter</a> kann ein COM-spezifischer Wertetyp zurückgegeben werden, das auch als <code>ComObjRetVal(Typ, Wert)</code> oder einfach als <code>ComObj(Typ, Wert)</code> geschrieben werden kann.</p>
-      <p>Mit <code>ComObjConnect(MeinObjekt, "<i>Präfix</i>")</code> kann die Ereignisbehandlung aktiviert werden.</p>
-      <p>Mit <code>ComObjConnect(MeinObjekt)</code> kann das Objekt getrennt werden (die Ereignisbehandlung gestoppt werden).</p>
-      <p>Ist die Anzahl der Parameter unbekannt, kann eine <a href="../Functions.htm#Variadic">variadische Funktion</a> verwendet werden.</p>
-      <h3>Verwandte Befehle</h3>
-      <p><a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjActive.htm">ComObjActive</a>, <a href="ComObjError.htm">ComObjError</a>, <a href="http://msdn.microsoft.com/en-us/library/ccxe1xe6.aspx">WScript.ConnectObject (MSDN)</a></p>
-      <h3 id="Examples">Beispiele</h3>
-      <pre class="NoIndent">
-ie := ComObjCreate("<a href="http://msdn.microsoft.com/en-us/library/aa752084.aspx">InternetExplorer.Application</a>")
+<p>Für <i>Präfix</i> kann ein beliebiger Präfix angegeben werden, während der <b>Ereignisname</b> der Name des Ereignisses ist, das von der Funktion behandelt werden soll.</p>
+<p><i>Params</i> sind die Parameter des Ereignisses. Hat das Ereignis keine Parameter, sollte <i>Params</i> ganz weggelassen werden. <i>ComObject</i> ist optional und nur verwendbar, wenn die korrekte Anzahl von <i>Params</i> definiert wurde. Es enthält einen Verweis auf das originale Wrapper-Objekt, das an ComObjConnect übergeben wurde. "ComObject" sollte mit einem Namen ersetzt werden, der eher dem Kontext des Scripts entspricht.</p>
+<p>Beachte, dass Ereignishandler Rückgabewerte haben können. Mit <a href="ComObjActive.htm#param">ComObjParameter</a> kann ein COM-spezifischer Wertetyp zurückgegeben werden, das auch als <code>ComObjRetVal(Typ, Wert)</code> oder einfach als <code>ComObj(Typ, Wert)</code> geschrieben werden kann.</p>
+<p>Mit <code>ComObjConnect(MeinObjekt, "<i>Präfix</i>")</code> kann die Ereignisbehandlung aktiviert werden.</p>
+<p>Mit <code>ComObjConnect(MeinObjekt)</code> kann das Objekt getrennt werden (die Ereignisbehandlung gestoppt werden).</p>
+<p>Ist die Anzahl der Parameter unbekannt, kann eine <a href="../Functions.htm#Variadic">variadische Funktion</a> verwendet werden.</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjActive.htm">ComObjActive</a>, <a href="ComObjError.htm">ComObjError</a>, <a href="http://msdn.microsoft.com/en-us/library/ccxe1xe6.aspx">WScript.ConnectObject (MSDN)</a></p>
+<h3 id="Examples">Beispiele</h3>
+<pre class="NoIndent">ie := ComObjCreate("<a href="http://msdn.microsoft.com/en-us/library/aa752084.aspx">InternetExplorer.Application</a>")
 
 <em>; Verbindet Ereignisse mit entsprechenden Script-Funktionen, die den Präfix "IE_" haben.</em>
 <b>ComObjConnect</b>(ie, "IE_")
@@ -76,9 +70,5 @@ ie.Navigate("http://ahkscript.org/")
 }
 
 </pre>
-    </article>
-  </section>
-</div>
-<script type="text/javascript">WriteFooter(1);</script>
 </body>
 </html>

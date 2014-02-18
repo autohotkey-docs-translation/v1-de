@@ -6,62 +6,57 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<link href="../static/font.css" rel="stylesheet" type="text/css" />
-<script src="../static/jquery-1.11.0.min.js" type="text/javascript"></script>
+<script src="../static/jquery.js" type="text/javascript"></script>
+<script src="../static/tree.jquery.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
-<script src="../navbar/NavScript.js" type="text/javascript"></script>
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
 <body>
-<script type="text/javascript">WriteHeader(1);</script>
-<div id="content">
-  <section>
-    <article>
-      <h1>Loop (Dateiinhalt)</h1>
-      <p>Ermittelt nacheinander die Zeilen einer Textdatei (leistungsfähiger als <a href="FileReadLine.htm">FileReadLine</a>).</p>
-      <pre class="Syntax">Loop, Read, Eingabedatei [, Ausgabedatei]</pre>
-      <h3>Parameter</h3>
-      <table class="info">
-        <tr>
-          <td style="width: 15%;">Read</td>
-          <td style="width: 85%;">Dieser Parameter muss das Wort READ sein.</td>
-        </tr>
-        <tr>
-          <td>Eingabedatei</td>
-          <td>Name der Textdatei, die sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist. Windows- und Unix-Formate werden unterstützt, d. h. die Zeilen einer Datei können mit CR-LF-Paaren (`r`n) oder nur mit LF-Zeichen (`n) enden.</td>
-        </tr>
-        <tr>
-          <td>Ausgabedatei</td>
-          <td>
-          <p>(Optional) Name der Datei, die während der Schleife offen bleibt und sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist.</p>
-          <p>Innerhalb der Schleife kann der Befehl <a href="FileAppend.htm">FileAppend</a> mit nur einem Parameter (der zu schreibende Text) verwendet werden, um der speziellen Datei den Text anzufügen. Das Anfügen des Textes auf diese Weise ist besser als <a href="FileAppend.htm">FileAppend</a> mit dem zweiten Parameter, weil die Datei nicht erst bei jeder Operation geschlossen und neu geöffnet werden muss. Vergesst nicht, ein LF-Zeichen (`n) nach dem Text einzufügen, falls notwendig.</p>
-          <p>Die Datei wird nicht geöffnet, wenn nichts zu schreiben ist. Das passiert, wenn die Schleife nicht durchlaufen wird oder nie den Befehl <a href="FileAppend.htm">FileAppend</a> verwendet.</p>
-          <p><strong>Binärmodus:</strong> Um den Text im Binärmodus anzufügen, muss ein Sternchen vor dem Dateinamen gesetzt werden. Dadurch wird jedes LF-Zeichen (`n) als einzelner Zeilenvorschub (LF) geschrieben, anstatt standardmäßig von Windows als CR + LF. Zum Beispiel: <code><strong>*</strong>C:\Eigene Unix-Datei.txt</code>. Selbst ohne Sternchen wird der Binärmodus automatisch wirksam, wenn <a href="FileAppend.htm">FileAppend</a> das erste Mal in einer Schleife dazu verwendet wird, CR-LF-Paare (`r`n) zu schreiben.</p>
-          <p><strong>Standardausgabe (stdout):</strong> Enthält <em>Ausgabedatei</em> nur ein Sternchen (*), wird jeder beliebige Text, der von <a href="FileAppend.htm">FileAppend</a> geschrieben wird, zur Standardausgabe (stdout) gesendet. Solche Texte können an eine Datei oder EXE-Datei weitergeleitet oder von <a href="_ErrorStdOut.htm">originellen Texteditoren</a> abgefangen werden. Siehe <a href="FileAppend.htm">FileAppend</a> für mehr Details.</p>
-          <p><strong>Kommas mit einem Escapezeichen</strong>: Im Gegensatz zum letzten Parameter der meisten anderen Befehle müssen Kommas in der <em>Ausgabedatei</em> mit einem Escapezeichen versehen werden (`,).</p>
-          </td>
-        </tr>
-      </table>
-      <h3>Bemerkungen</h3>
-      <p>Eine dateilesende Schleife ist nützlich, wenn jede Zeile in einer Textdatei nacheinander bearbeitet werden soll. Diese Schleife ist leistungsfähiger als <a href="FileReadLine.htm">FileReadLine</a>, weil die Datei erstens bei der Operation die ganze Zeit offen bleiben kann, und zweitens nicht jedes Mal neu eingelesen werden, um die gewünschte Zeilennummer zu finden.</p>
-      <p id="LoopReadLine">Die interne Variable <strong>A_LoopReadLine</strong> existiert in jeder dateilesenden Schleife. Sie enthält den Inhalt der aktuellen Zeile ohne CR-LF-Paar (`r`n), das das Zeilenende markiert. Wenn eine innere dateilesende Schleife von einer äußeren dateilesenden Schleife umschlossen ist, wird die Zeile von der innersten Schleife Vorrang haben.</p>
-      <p>Es können Zeilen mit einer Länge von bis zu 65.534 Zeichen eingelesen werden. Falls diese Länge überschritten wird, werden die restlichen Zeichen beim nächsten Schleifendurchlauf eingelesen.</p>
-      <p><a href="StringSplit.htm">StringSplit</a> oder <a href="LoopParse.htm">Parsing-Schleife</a> wird häufig in einer dateilesenden Schleife verwendet, um den Inhalt jeder Zeile von der <em>Eingabedatei</em> zu parsen. Wenn zum Beispiel jede Zeile von der <em>Eingabedatei</em> aus mehreren tab-getrennten Feldern besteht, dann können diese Felder wie im folgenden Beispiel einzeln abgerufen werden:</p>
-      <pre>Loop, read, C:\Datenbank-Export.txt
+<h1>Loop (Dateiinhalt)</h1>
+<p>Ermittelt nacheinander die Zeilen einer Textdatei (leistungsfähiger als <a href="FileReadLine.htm">FileReadLine</a>).</p>
+<pre class="Syntax">Loop, Read, Eingabedatei [, Ausgabedatei]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td style="width: 15%;">Read</td>
+    <td style="width: 85%;">Dieser Parameter muss das Wort READ sein.</td>
+  </tr>
+  <tr>
+    <td>Eingabedatei</td>
+    <td>Name der Textdatei, die sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist. Windows- und Unix-Formate werden unterstützt, d. h. die Zeilen einer Datei können mit CR-LF-Paaren (`r`n) oder nur mit LF-Zeichen (`n) enden.</td>
+  </tr>
+  <tr>
+    <td>Ausgabedatei</td>
+    <td>
+    <p>(Optional) Name der Datei, die während der Schleife offen bleibt und sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist.</p>
+    <p>Innerhalb der Schleife kann der Befehl <a href="FileAppend.htm">FileAppend</a> mit nur einem Parameter (der zu schreibende Text) verwendet werden, um der speziellen Datei den Text anzufügen. Das Anfügen des Textes auf diese Weise ist besser als <a href="FileAppend.htm">FileAppend</a> mit dem zweiten Parameter, weil die Datei nicht erst bei jeder Operation geschlossen und neu geöffnet werden muss. Vergesst nicht, ein LF-Zeichen (`n) nach dem Text einzufügen, falls notwendig.</p>
+    <p>Die Datei wird nicht geöffnet, wenn nichts zu schreiben ist. Das passiert, wenn die Schleife nicht durchlaufen wird oder nie den Befehl <a href="FileAppend.htm">FileAppend</a> verwendet.</p>
+    <p><strong>Binärmodus:</strong> Um den Text im Binärmodus anzufügen, muss ein Sternchen vor dem Dateinamen gesetzt werden. Dadurch wird jedes LF-Zeichen (`n) als einzelner Zeilenvorschub (LF) geschrieben, anstatt standardmäßig von Windows als CR + LF. Zum Beispiel: <code><strong>*</strong>C:\Eigene Unix-Datei.txt</code>. Selbst ohne Sternchen wird der Binärmodus automatisch wirksam, wenn <a href="FileAppend.htm">FileAppend</a> das erste Mal in einer Schleife dazu verwendet wird, CR-LF-Paare (`r`n) zu schreiben.</p>
+    <p><strong>Standardausgabe (stdout):</strong> Enthält <em>Ausgabedatei</em> nur ein Sternchen (*), wird jeder beliebige Text, der von <a href="FileAppend.htm">FileAppend</a> geschrieben wird, zur Standardausgabe (stdout) gesendet. Solche Texte können an eine Datei oder EXE-Datei weitergeleitet oder von <a href="_ErrorStdOut.htm">originellen Texteditoren</a> abgefangen werden. Siehe <a href="FileAppend.htm">FileAppend</a> für mehr Details.</p>
+    <p><strong>Kommas mit einem Escapezeichen</strong>: Im Gegensatz zum letzten Parameter der meisten anderen Befehle müssen Kommas in der <em>Ausgabedatei</em> mit einem Escapezeichen versehen werden (`,).</p>
+    </td>
+  </tr>
+</table>
+<h3>Bemerkungen</h3>
+<p>Eine dateilesende Schleife ist nützlich, wenn jede Zeile in einer Textdatei nacheinander bearbeitet werden soll. Diese Schleife ist leistungsfähiger als <a href="FileReadLine.htm">FileReadLine</a>, weil die Datei erstens bei der Operation die ganze Zeit offen bleiben kann, und zweitens nicht jedes Mal neu eingelesen werden, um die gewünschte Zeilennummer zu finden.</p>
+<p id="LoopReadLine">Die interne Variable <strong>A_LoopReadLine</strong> existiert in jeder dateilesenden Schleife. Sie enthält den Inhalt der aktuellen Zeile ohne CR-LF-Paar (`r`n), das das Zeilenende markiert. Wenn eine innere dateilesende Schleife von einer äußeren dateilesenden Schleife umschlossen ist, wird die Zeile von der innersten Schleife Vorrang haben.</p>
+<p>Es können Zeilen mit einer Länge von bis zu 65.534 Zeichen eingelesen werden. Falls diese Länge überschritten wird, werden die restlichen Zeichen beim nächsten Schleifendurchlauf eingelesen.</p>
+<p><a href="StringSplit.htm">StringSplit</a> oder <a href="LoopParse.htm">Parsing-Schleife</a> wird häufig in einer dateilesenden Schleife verwendet, um den Inhalt jeder Zeile von der <em>Eingabedatei</em> zu parsen. Wenn zum Beispiel jede Zeile von der <em>Eingabedatei</em> aus mehreren tab-getrennten Feldern besteht, dann können diese Felder wie im folgenden Beispiel einzeln abgerufen werden:</p>
+<pre>Loop, read, C:\Datenbank-Export.txt
 {
     Loop, parse, A_LoopReadLine, %A_Tab%
     {
         MsgBox, Feldnummer %A_Index% ist %A_LoopField%.
     }
 }</pre>
-      <p>Um die komplette Datei in eine Variable zu laden, sollte <a href="FileRead.htm">FileRead</a> verwendet werden, weil dieser Befehl leistungsfähiger als eine Schleife ist (besonders bei großen Dateien).</p>
-      <p>Damit mehrere Dateien gleichzeitig offen sein können, kann DllCall() wie in <a href="DllCall.htm#file">diesem Beispiel</a> verwendet werden.</p>
-      <p>Auf der <a href="Loop.htm">Loop</a>-Seite können Informationen zu <a href="Block.htm">Blocks</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index gefunden werden (weil diese in jeder Schleifenvariante vorkommen).</p>
-      <p>Um die Kodierung einer Datei ohne Bytereihenfolge-Markierung zu bestimmen, sollte <a href="FileEncoding.htm">FileEncoding</a> verwendet werden.</p>
-      <h3>Verwandte Befehle</h3>
-      <p><a href="FileEncoding.htm">FileEncoding</a>, <a href="FileOpen.htm">FileOpen</a>/<a href="../objects/File.htm">File-Objekt</a>, <a href="FileRead.htm">FileRead</a>, <a href="FileReadLine.htm">FileReadLine</a>, <a href="FileAppend.htm">FileAppend</a>, <a href="Sort.htm">Sort</a>, <a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blocks, </a><a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
-      <h3>Beispiele</h3>
-      <pre class="NoIndent"><em>; Beispiel #1: Es werden nur die Zeilen der ersten Datei, die das Wort FAMILY enthalten,
+<p>Um die komplette Datei in eine Variable zu laden, sollte <a href="FileRead.htm">FileRead</a> verwendet werden, weil dieser Befehl leistungsfähiger als eine Schleife ist (besonders bei großen Dateien).</p>
+<p>Damit mehrere Dateien gleichzeitig offen sein können, kann DllCall() wie in <a href="DllCall.htm#file">diesem Beispiel</a> verwendet werden.</p>
+<p>Auf der <a href="Loop.htm">Loop</a>-Seite können Informationen zu <a href="Block.htm">Blocks</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index gefunden werden (weil diese in jeder Schleifenvariante vorkommen).</p>
+<p>Um die Kodierung einer Datei ohne Bytereihenfolge-Markierung zu bestimmen, sollte <a href="FileEncoding.htm">FileEncoding</a> verwendet werden.</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="FileEncoding.htm">FileEncoding</a>, <a href="FileOpen.htm">FileOpen</a>/<a href="../objects/File.htm">File-Objekt</a>, <a href="FileRead.htm">FileRead</a>, <a href="FileReadLine.htm">FileReadLine</a>, <a href="FileAppend.htm">FileAppend</a>, <a href="Sort.htm">Sort</a>, <a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blocks, </a><a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
+<h3>Beispiele</h3>
+<pre class="NoIndent"><em>; Beispiel #1: Es werden nur die Zeilen der ersten Datei, die das Wort FAMILY enthalten,
 ; in die zweite Datei geschrieben.
 ; Hebt die Kommentierung der ersten Zeile auf, um die Datei zu überschreiben,
 ; anstatt die Zeilen an eine vorhandene Datei anzufügen.
@@ -71,12 +66,12 @@ Loop, read, C:\Dokumente\Adressliste.txt, C:\Dokumente\Familienadressen.txt
 {
     IfInString, A_LoopReadLine, Familie, FileAppend, %A_LoopReadLine%`n
 }</pre>
-      <p>&nbsp;</p>
-      <pre class="NoIndent"><em>; Beispiel #2: Ermittelt die letzte Zeile einer Textdatei.</em>
+<p>&nbsp;</p>
+<pre class="NoIndent"><em>; Beispiel #2: Ermittelt die letzte Zeile einer Textdatei.</em>
 Loop, read, C:\Logdatei.txt
     letzteZeile := A_LoopReadLine  <em>; Sobald die Schleife endet, wird diese Variable die letzte Zeile beinhalten.</em></pre>
-      <p>&nbsp;</p>
-      <pre class="NoIndent"><em>; Beispiel #3: Ein funktionierendes Script, das versucht, alle FTP- und HTTP-URLs
+<p>&nbsp;</p>
+<pre class="NoIndent"><em>; Beispiel #3: Ein funktionierendes Script, das versucht, alle FTP- und HTTP-URLs
 ; aus einer Text- oder HTML-Datei zu extrahieren:</em>
 FileSelectFile, Quelldatei, 3,, Text- oder HTML-Datei zur Analyse auswählen:
 If Quelldatei =
@@ -155,9 +150,5 @@ ZeichenAuslassen += %URLStart%
 StringTrimLeft, URLSuchstring, URLSuchstring, %ZeichenAuslassen%
 Gosub, URLSuche  <em>; Rekursiver Aufruf auf sich selbst.</em>
 Return</pre>
-    </article>
-  </section>
-</div>
-<script type="text/javascript">WriteFooter(1);</script>
 </body>
 </html>

@@ -6,100 +6,95 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<link href="../static/font.css" rel="stylesheet" type="text/css" />
-<script src="../static/jquery-1.11.0.min.js" type="text/javascript"></script>
+<script src="../static/jquery.js" type="text/javascript"></script>
+<script src="../static/tree.jquery.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
-<script src="../navbar/NavScript.js" type="text/javascript"></script>
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
 <body>
-<script type="text/javascript">WriteHeader(1);</script>
-<div id="content">
-  <section>
-    <article>
-      <h1>WinGet</h1>
-      <p>Ermittelt vom angegebenen Fenster die eindeutige ID, die Prozess-ID, den Prozessnamen oder eine Liste mit Steuerelementen. Zudem kann dieser Befehl eine Liste aller Fenster abrufen, die den angegebenen Kriterien entsprechen.</p>
-      <pre class="Syntax">WinGet, AusgabeVar [, Befehl, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme]</pre>
-      <h3>Parameter</h3>
-      <table class="info">
-        <tr>
-          <td style="width: 15%;">AusgabeVar</td>
-          <td style="width: 85%;">Name der Variable, in der das Ergebnis von <em>Befehl</em> gespeichert werden soll.</td>
-        </tr>
-        <tr>
-          <td>Befehl</td>
-          <td>Siehe untere Liste.</td>
-        </tr>
-        <tr>
-          <td>Fenstertitel</td>
-          <td>Ein Fenstertitel oder sonstige Kriterien, die das Zielfenster ermitteln sollen. Siehe <a href="../misc/WinTitle.htm">Fenstertitel</a>.</td>
-        </tr>
-        <tr>
-          <td>Fenstertext</td>
-          <td>In diesem Parameter kann ein Teilstring angegeben werden, der in einem Textelement des Zielfensters vorkommt (werden mit Windows Spy angezeigt). Versteckte Textelemente werden auch erkannt, sofern <a href="DetectHiddenText.htm">DetectHiddenText</a> aktiv ist.</td>
-        </tr>
-        <tr>
-          <td>Titelausnahme</td>
-          <td>Ignoriert Fenster, deren Titel diesen Wert enthalten.</td>
-        </tr>
-        <tr>
-          <td>Textausnahme</td>
-          <td>Ignoriert Fenster, deren Textelemente diesen Wert enthalten.</td>
-        </tr>
-      </table>
-      <p><em>Befehl</em> ist die Operation, die ausgeführt werden soll. Ist dieser Parameter leer oder nicht vorhanden, gilt standardmäßig <em>ID</em>. Ansonsten kann eins der folgenden Wörter verwendet werden:</p>
-      <p id="ID"><strong>ID</strong>: Ermittelt die eindeutige ID-Nummer (HWND/Handle) eines Fensters. Wenn kein passendes Fenster gefunden wird, wird <em>AusgabeVar</em> leer gemacht. Die Funktionen <a href="IfWinExist.htm">WinExist()</a> und <a href="IfWinActive.htm">WinActive()</a> können auch verwendet werden, um die ID eines Fensters zu ermitteln; zum Beispiel kann mit <code>WinExist("A")</code> auf schnelle Weise die ID des aktiven Fensters abgerufen werden. Um das HWND eines Steuerelements abzurufen (für <a href="PostMessage.htm">Post/SendMessage</a> oder <a href="DllCall.htm">DllCall</a>), benutze <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a> oder <a href="MouseGetPos.htm">MouseGetPos</a>.</p>
-      <p><strong>IDLast</strong>: Das gleich wie oben, außer dass bei mehreren Treffern die ID des letzten/untersten Fensters abgerufen wird. Wenn nur eine Übereinstimmung vorhanden ist, verhält es sich wie <em>ID</em>. Dieses Konzept ist vergleichbar mit dem, das von <a href="WinActivateBottom.htm">WinActivateBottom</a> verwendet wird.</p>
-      <p><strong>PID</strong>: Ermittelt die <a href="Process.htm">Prozess-ID (PID)</a> eines Fensters.</p>
-      <p id="ProcessName"><strong>ProcessName</strong>: Ermittelt den Namen des Prozesses (z. B. notepad.exe), der ein Fenster besitzt. Wenn keine passenden Fenster gefunden werden, wird <em>AusgabeVar</em> leer gemacht.</p>
-      <p id="ProcessPath"><strong>ProcessPath</strong> <span class="ver">[v1.1.01+]</span>: Vergleichbar mit <em>ProcessName</em>, aber mit dem Unterschied, dass neben dem Namen auch der vollständige Pfad abgerufen wird.</p>
-      <p><strong>Count</strong>: Ermittelt die Anzahl der vorhandenen Fenstern, die mit <em>Fenstertitel</em>, <em>Fenstertext</em>, <em>Titelausnahme</em> und <em>Textausnahme</em> übereinstimmen (0, wenn keine). Um alle Fenster im Betriebssystem zählen zu können, müssen alle vier Titel-/Text-Parameter weggelassen werden. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
-      <p id="List"><strong>List</strong>: Ermittelt die eindeutigen ID-Nummern aller vorhandenen Fenster, die mit <em>Fenstertitel</em>, <em>Fenstertext</em>, <em>Titelausnahme</em> und <em>Textausnahme</em> übereinstimmen (um alle Fenster im Betriebssystem ermitteln zu können, müssen alle vier Titel-/Text-Parameter weggelassen werden). Jede ID-Nummer wird in einem <a href="../misc/Arrays.htm">Array-Element</a> gespeichert, dessen Name mit dem Namen von <em>AusgabeVar</em> beginnt, während <em>AusgabeVar</em> selbst auf die Anzahl der ermittelten Elementen gesetzt wird (0, wenn keine). Zum Beispiel: Wenn <em>AusgabeVar</em> EigenerArray heißt und zwei übereinstimmende Fenster vorhanden sind, wird EigenerArray1 auf die ID des ersten Fensters, EigenerArray2 auf die ID des zweiten Fensters und EigenerArray selbst auf 2 gesetzt. Fenster werden von oben nach unten abgerufen (je nachdem, wie sie auf dem Desktop gestapelt sind). Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen. Um einen Array innerhalb einer <a href="../Functions.htm">Funktion</a> erstellen zu können, das global anstatt lokal ist, muss EigenerArray als globale Variable <a href="../Functions.htm#Global">deklariert</a> werden, bevor dieser Befehl verwendet wird (das Gegenteil davon gilt für <a href="../Functions.htm#AssumeGlobal">global-angenommene</a> Funktionen).</p>
-      <p><strong>MinMax</strong>: Ermittelt den minimierten/maximierten Zustand eines Fensters. <em>AusgabeVar</em> wird leer gemacht, wenn kein passendes Fenster vorhanden ist, ansonsten wird sie auf eine der folgenden Zahlen gesetzt:<br>-1: Das Fenster ist minimiert (<a href="WinRestore.htm">WinRestore</a> kann die Minimierung aufheben). <br>1: Das Fenster ist maximiert (<a href="WinRestore.htm">WinRestore</a> kann die Maximierung aufheben).<br>0: Das Fenster ist weder minimiert noch maximiert.</p>
-      <p id="ControlList"><strong>ControlList</strong>: Ermittelt die Namen aller Steuerelemente in einem Fenster. Falls keine passende Fenster gefunden werden oder keine Steuerelemente im Fenster vorhanden sind, wird <em>AusgabeVar</em> leer gemacht. Ansonsten besteht jeder Name des Steuerelements aus dessen Klassenname und Sequenznummer (ClassNN), wie in Windows Spy angezeigt.</p>
-      <p>Jedes Element, außer das letzte, endet mit einem LF-Zeichen (`n). Mit einer <a href="LoopParse.htm">Parsing-Schleife</a> können bestimmte Steuerelementnamen einzeln untersucht werden, wie im Beispiel-Abschnitt unten gezeigt.</p>
-      <p>Steuerelemente werden nach ihrer Z-Reihenfolge sortiert, das üblicherweise der Navigation mit der Tabulatortaste entspricht, sofern das vom Fenster unterstützt wird.</p>
-      <p>Das Steuerelement, das sich zurzeit unter dem Mauszeiger befindet, kann mit <a href="MouseGetPos.htm">MouseGetPos</a> abgerufen werden.</p>
-      <p><strong>ControlListHwnd</strong> <span class="ver">[v1.0.43.06+]:</span> Das gleiche wie oben, außer dass das <a href="ControlGet.htm#Hwnd">Fenster-Handle (HWND)</a> von jedem Steuerelement abgerufen wird, anstatt dessen ClassNN.</p>
-      <p><strong>Transparent</strong>: Ermittelt die Transparenzstärke eines Fensters (siehe <a href="WinSet.htm">WinSet</a>, wie die Transparenz gesetzt werden kann). <em>AusgabeVar</em> wird leer gemacht, wenn:</p>
-      <ul>
-        <li>das Betriebssystem älter als Windows XP ist.</li>
-        <li>keine passenden Fenster gefunden werden.</li>
-        <li>das Fenster nicht transparent ist.</li>
-        <li>andere Bedingungen auftreten (durch das Verhalten des Betriebssystems), z. B., wenn das transparent gemachte Fenster minimiert, wiederhergestellt und/oder skaliert wurde.</li>
-      </ul>
-      <p>Ansonsten wird eine Zahl zwischen 0 und 255 gespeichert, von vollständig unsichtbar bis vollständig sichtbar. Zum Beispiel:</p>
-      <pre>MouseGetPos,,, MausFenster
+<h1>WinGet</h1>
+<p>Ermittelt vom angegebenen Fenster die eindeutige ID, die Prozess-ID, den Prozessnamen oder eine Liste mit Steuerelementen. Zudem kann dieser Befehl eine Liste aller Fenster abrufen, die den angegebenen Kriterien entsprechen.</p>
+<pre class="Syntax">WinGet, AusgabeVar [, Befehl, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme]</pre>
+<h3>Parameter</h3>
+<table class="info">
+  <tr>
+    <td style="width: 15%;">AusgabeVar</td>
+    <td style="width: 85%;">Name der Variable, in der das Ergebnis von <em>Befehl</em> gespeichert werden soll.</td>
+  </tr>
+  <tr>
+    <td>Befehl</td>
+    <td>Siehe untere Liste.</td>
+  </tr>
+  <tr>
+    <td>Fenstertitel</td>
+    <td>Ein Fenstertitel oder sonstige Kriterien, die das Zielfenster ermitteln sollen. Siehe <a href="../misc/WinTitle.htm">Fenstertitel</a>.</td>
+  </tr>
+  <tr>
+    <td>Fenstertext</td>
+    <td>In diesem Parameter kann ein Teilstring angegeben werden, der in einem Textelement des Zielfensters vorkommt (werden mit Windows Spy angezeigt). Versteckte Textelemente werden auch erkannt, sofern <a href="DetectHiddenText.htm">DetectHiddenText</a> aktiv ist.</td>
+  </tr>
+  <tr>
+    <td>Titelausnahme</td>
+    <td>Ignoriert Fenster, deren Titel diesen Wert enthalten.</td>
+  </tr>
+  <tr>
+    <td>Textausnahme</td>
+    <td>Ignoriert Fenster, deren Textelemente diesen Wert enthalten.</td>
+  </tr>
+</table>
+<p><em>Befehl</em> ist die Operation, die ausgeführt werden soll. Ist dieser Parameter leer oder nicht vorhanden, gilt standardmäßig <em>ID</em>. Ansonsten kann eins der folgenden Wörter verwendet werden:</p>
+<p id="ID"><strong>ID</strong>: Ermittelt die eindeutige ID-Nummer (HWND/Handle) eines Fensters. Wenn kein passendes Fenster gefunden wird, wird <em>AusgabeVar</em> leer gemacht. Die Funktionen <a href="IfWinExist.htm">WinExist()</a> und <a href="IfWinActive.htm">WinActive()</a> können auch verwendet werden, um die ID eines Fensters zu ermitteln; zum Beispiel kann mit <code>WinExist("A")</code> auf schnelle Weise die ID des aktiven Fensters abgerufen werden. Um das HWND eines Steuerelements abzurufen (für <a href="PostMessage.htm">Post/SendMessage</a> oder <a href="DllCall.htm">DllCall</a>), benutze <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a> oder <a href="MouseGetPos.htm">MouseGetPos</a>.</p>
+<p><strong>IDLast</strong>: Das gleich wie oben, außer dass bei mehreren Treffern die ID des letzten/untersten Fensters abgerufen wird. Wenn nur eine Übereinstimmung vorhanden ist, verhält es sich wie <em>ID</em>. Dieses Konzept ist vergleichbar mit dem, das von <a href="WinActivateBottom.htm">WinActivateBottom</a> verwendet wird.</p>
+<p><strong>PID</strong>: Ermittelt die <a href="Process.htm">Prozess-ID (PID)</a> eines Fensters.</p>
+<p id="ProcessName"><strong>ProcessName</strong>: Ermittelt den Namen des Prozesses (z. B. notepad.exe), der ein Fenster besitzt. Wenn keine passenden Fenster gefunden werden, wird <em>AusgabeVar</em> leer gemacht.</p>
+<p id="ProcessPath"><strong>ProcessPath</strong> <span class="ver">[v1.1.01+]</span>: Vergleichbar mit <em>ProcessName</em>, aber mit dem Unterschied, dass neben dem Namen auch der vollständige Pfad abgerufen wird.</p>
+<p><strong>Count</strong>: Ermittelt die Anzahl der vorhandenen Fenstern, die mit <em>Fenstertitel</em>, <em>Fenstertext</em>, <em>Titelausnahme</em> und <em>Textausnahme</em> übereinstimmen (0, wenn keine). Um alle Fenster im Betriebssystem zählen zu können, müssen alle vier Titel-/Text-Parameter weggelassen werden. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
+<p id="List"><strong>List</strong>: Ermittelt die eindeutigen ID-Nummern aller vorhandenen Fenster, die mit <em>Fenstertitel</em>, <em>Fenstertext</em>, <em>Titelausnahme</em> und <em>Textausnahme</em> übereinstimmen (um alle Fenster im Betriebssystem ermitteln zu können, müssen alle vier Titel-/Text-Parameter weggelassen werden). Jede ID-Nummer wird in einem <a href="../misc/Arrays.htm">Array-Element</a> gespeichert, dessen Name mit dem Namen von <em>AusgabeVar</em> beginnt, während <em>AusgabeVar</em> selbst auf die Anzahl der ermittelten Elementen gesetzt wird (0, wenn keine). Zum Beispiel: Wenn <em>AusgabeVar</em> EigenerArray heißt und zwei übereinstimmende Fenster vorhanden sind, wird EigenerArray1 auf die ID des ersten Fensters, EigenerArray2 auf die ID des zweiten Fensters und EigenerArray selbst auf 2 gesetzt. Fenster werden von oben nach unten abgerufen (je nachdem, wie sie auf dem Desktop gestapelt sind). Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen. Um einen Array innerhalb einer <a href="../Functions.htm">Funktion</a> erstellen zu können, das global anstatt lokal ist, muss EigenerArray als globale Variable <a href="../Functions.htm#Global">deklariert</a> werden, bevor dieser Befehl verwendet wird (das Gegenteil davon gilt für <a href="../Functions.htm#AssumeGlobal">global-angenommene</a> Funktionen).</p>
+<p><strong>MinMax</strong>: Ermittelt den minimierten/maximierten Zustand eines Fensters. <em>AusgabeVar</em> wird leer gemacht, wenn kein passendes Fenster vorhanden ist, ansonsten wird sie auf eine der folgenden Zahlen gesetzt:<br>-1: Das Fenster ist minimiert (<a href="WinRestore.htm">WinRestore</a> kann die Minimierung aufheben). <br>1: Das Fenster ist maximiert (<a href="WinRestore.htm">WinRestore</a> kann die Maximierung aufheben).<br>0: Das Fenster ist weder minimiert noch maximiert.</p>
+<p id="ControlList"><strong>ControlList</strong>: Ermittelt die Namen aller Steuerelemente in einem Fenster. Falls keine passende Fenster gefunden werden oder keine Steuerelemente im Fenster vorhanden sind, wird <em>AusgabeVar</em> leer gemacht. Ansonsten besteht jeder Name des Steuerelements aus dessen Klassenname und Sequenznummer (ClassNN), wie in Windows Spy angezeigt.</p>
+<p>Jedes Element, außer das letzte, endet mit einem LF-Zeichen (`n). Mit einer <a href="LoopParse.htm">Parsing-Schleife</a> können bestimmte Steuerelementnamen einzeln untersucht werden, wie im Beispiel-Abschnitt unten gezeigt.</p>
+<p>Steuerelemente werden nach ihrer Z-Reihenfolge sortiert, das üblicherweise der Navigation mit der Tabulatortaste entspricht, sofern das vom Fenster unterstützt wird.</p>
+<p>Das Steuerelement, das sich zurzeit unter dem Mauszeiger befindet, kann mit <a href="MouseGetPos.htm">MouseGetPos</a> abgerufen werden.</p>
+<p><strong>ControlListHwnd</strong> <span class="ver">[v1.0.43.06+]:</span> Das gleiche wie oben, außer dass das <a href="ControlGet.htm#Hwnd">Fenster-Handle (HWND)</a> von jedem Steuerelement abgerufen wird, anstatt dessen ClassNN.</p>
+<p><strong>Transparent</strong>: Ermittelt die Transparenzstärke eines Fensters (siehe <a href="WinSet.htm">WinSet</a>, wie die Transparenz gesetzt werden kann). <em>AusgabeVar</em> wird leer gemacht, wenn:</p>
+<ul>
+  <li>das Betriebssystem älter als Windows XP ist.</li>
+  <li>keine passenden Fenster gefunden werden.</li>
+  <li>das Fenster nicht transparent ist.</li>
+  <li>andere Bedingungen auftreten (durch das Verhalten des Betriebssystems), z. B., wenn das transparent gemachte Fenster minimiert, wiederhergestellt und/oder skaliert wurde.</li>
+</ul>
+<p>Ansonsten wird eine Zahl zwischen 0 und 255 gespeichert, von vollständig unsichtbar bis vollständig sichtbar. Zum Beispiel:</p>
+<pre>MouseGetPos,,, MausFenster
 WinGet, Transparent, Transparent, ahk_id %MausFenster%  <em>; Transparenz eines Fensters unterhalb des Mauszeigers.</em></pre>
-      <p><strong>TransColor</strong>: Ermittelt die Farbe, die in einem Fenster als transparent markiert ist (siehe <a href="WinSet.htm#TransColor">WinSet</a>, wie die Transparenz gesetzt werden kann). <em>AusgabeVar</em> wird leer gemacht, wenn:</p>
-      <ul>
-        <li>das Betriebssystem älter als Windows XP ist.</li>
-        <li>keine passenden Fenster gefunden werden.</li>
-        <li>das Fenster keine transparente Farbe hat.</li>
-        <li>andere Bedingungen auftreten (durch das Verhalten des Betriebssystems), z. B., wenn das transparent gemachte Fenster minimiert, wiederhergestellt und/oder skaliert wurde.</li>
-      </ul>
-      <p>Ansonsten wird eine 6-stellige hexadezimale RGB-Farbe gespeichert (z. B. 0x00CC99). Zum Beispiel:</p>
-      <pre>MouseGetPos,,, MausFenster
+<p><strong>TransColor</strong>: Ermittelt die Farbe, die in einem Fenster als transparent markiert ist (siehe <a href="WinSet.htm#TransColor">WinSet</a>, wie die Transparenz gesetzt werden kann). <em>AusgabeVar</em> wird leer gemacht, wenn:</p>
+<ul>
+  <li>das Betriebssystem älter als Windows XP ist.</li>
+  <li>keine passenden Fenster gefunden werden.</li>
+  <li>das Fenster keine transparente Farbe hat.</li>
+  <li>andere Bedingungen auftreten (durch das Verhalten des Betriebssystems), z. B., wenn das transparent gemachte Fenster minimiert, wiederhergestellt und/oder skaliert wurde.</li>
+</ul>
+<p>Ansonsten wird eine 6-stellige hexadezimale RGB-Farbe gespeichert (z. B. 0x00CC99). Zum Beispiel:</p>
+<pre>MouseGetPos,,, MausFenster
 WinGet, TransFarbe, TransColor, ahk_id %MausFenster%  <em>; Transparente Farbe eines Fensters unterhalb des Mauszeigers.</em></pre>
-      <p><strong>Style</strong> oder <strong>ExStyle</strong>: Ermittelt eine 8-stellige Hexadezimalzahl, die den Style oder Extended Style eines Fensters repräsentiert. Wenn keine passenden Fenster gefunden werden, wird <em>AusgabeVar</em> leer gemacht. Das folgende Beispiel stellt fest, ob ein Fenster den WS_DISABLED-Style hat:</p>
-      <pre>WinGet, Style, Style, Eigener Fenstertitel
+<p><strong>Style</strong> oder <strong>ExStyle</strong>: Ermittelt eine 8-stellige Hexadezimalzahl, die den Style oder Extended Style eines Fensters repräsentiert. Wenn keine passenden Fenster gefunden werden, wird <em>AusgabeVar</em> leer gemacht. Das folgende Beispiel stellt fest, ob ein Fenster den WS_DISABLED-Style hat:</p>
+<pre>WinGet, Style, Style, Eigener Fenstertitel
 If (Style &amp; 0x8000000)  <em>; 0x8000000 ist WS_DISABLED.</em>
   ... das Fenster ist deaktiviert, entsprechende Maßnahme durchführen.</pre>
-      <p>Das nächste Beispiel stellt fest, ob ein Fenster den WS_EX_TOPMOST-Style hat (immer im Vordergund):</p>
-      <pre>WinGet, ExStyle, ExStyle, Eigener Fenstertitel
+<p>Das nächste Beispiel stellt fest, ob ein Fenster den WS_EX_TOPMOST-Style hat (immer im Vordergund):</p>
+<pre>WinGet, ExStyle, ExStyle, Eigener Fenstertitel
 If (ExStyle &amp; 0x8)  <em>; 0x8 ist WS_EX_TOPMOST.</em>
   ... das Fenster ist immer im Vordergrund, entsprechende Maßnahme durchführen.</pre>
-      <p>Die <a href="../misc/Styles.htm">Style-Tabelle</a> beinhaltet eine Auflistung einiger Styles.</p>
-      <h3>Bemerkungen</h3>
-      <p>Die ID-Nummer eines Fensters ist nur während dessen Laufzeit gültig. Das heißt, sobald eine Anwendung neu gestartet wird, erhalten all deren Fenster neue ID-Nummern.</p>
-      <p>Alle ID-Nummern, die von diesem Befehl abgerufen werden, sind numerisch (ohne den Präfix "ahk_id") und werden im hexadezimalen Format gespeichert, unabhängig von der <a href="SetFormat.htm">SetFormat</a>-Einstellung.</p>
-      <p>Die ID des Fensters, das sich unter dem Mauszeiger befindet, kann mit <a href="MouseGetPos.htm">MouseGetPos</a> abgerufen werden.</p>
-      <p>Obwohl die ID-Nummern zurzeit vorzeichenlose 32-Bit-Integer sind, könnten diese in einer zukünftigen Version zu 64-Bit-Integer gemacht werden. Daher ist es unsicher, numerische Operationen wie Addition bei diesen Werten durchzuführen, weil solche Operationen voraussetzen, dass ihre Eingabestrings als vorzeichenbehaftete Integer verarbeitet werden können, anstatt als vorzeichenlose Integer.</p>
-      <p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
-      <h3>Verwandte Befehle</h3>
-      <p><a href="WinGetClass.htm">WinGetClass</a>, <a href="Process.htm">Process</a>, <a href="WinGetTitle.htm">WinGetTitle</a>, <a href="MouseGetPos.htm">MouseGetPos</a>, <a href="ControlGet.htm">ControlGet</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="GroupAdd.htm">GroupAdd</a></p>
-      <h3>Beispiele</h3>
-      <pre class="NoIndent"><em>; Beispiel #1: Maximiert das aktive Fenster und meldet dessen eindeutige ID:</em>
+<p>Die <a href="../misc/Styles.htm">Style-Tabelle</a> beinhaltet eine Auflistung einiger Styles.</p>
+<h3>Bemerkungen</h3>
+<p>Die ID-Nummer eines Fensters ist nur während dessen Laufzeit gültig. Das heißt, sobald eine Anwendung neu gestartet wird, erhalten all deren Fenster neue ID-Nummern.</p>
+<p>Alle ID-Nummern, die von diesem Befehl abgerufen werden, sind numerisch (ohne den Präfix "ahk_id") und werden im hexadezimalen Format gespeichert, unabhängig von der <a href="SetFormat.htm">SetFormat</a>-Einstellung.</p>
+<p>Die ID des Fensters, das sich unter dem Mauszeiger befindet, kann mit <a href="MouseGetPos.htm">MouseGetPos</a> abgerufen werden.</p>
+<p>Obwohl die ID-Nummern zurzeit vorzeichenlose 32-Bit-Integer sind, könnten diese in einer zukünftigen Version zu 64-Bit-Integer gemacht werden. Daher ist es unsicher, numerische Operationen wie Addition bei diesen Werten durchzuführen, weil solche Operationen voraussetzen, dass ihre Eingabestrings als vorzeichenbehaftete Integer verarbeitet werden können, anstatt als vorzeichenlose Integer.</p>
+<p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
+<h3>Verwandte Befehle</h3>
+<p><a href="WinGetClass.htm">WinGetClass</a>, <a href="Process.htm">Process</a>, <a href="WinGetTitle.htm">WinGetTitle</a>, <a href="MouseGetPos.htm">MouseGetPos</a>, <a href="ControlGet.htm">ControlGet</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="GroupAdd.htm">GroupAdd</a></p>
+<h3>Beispiele</h3>
+<pre class="NoIndent"><em>; Beispiel #1: Maximiert das aktive Fenster und meldet dessen eindeutige ID:</em>
 WinGet, AktivID, ID, A
 WinMaximize, ahk_id %AktivID%
 MsgBox, Die ID des aktiven Fensters ist "%AktivID%".
@@ -133,9 +128,5 @@ AktivesFensterBeobachten:
 WinGet, Steuerelementliste, ControlList, A
 ToolTip, %Steuerelementliste%
 Return</pre>
-    </article>
-  </section>
-</div>
-<script type="text/javascript">WriteFooter(1);</script>
 </body>
 </html>
