@@ -256,7 +256,8 @@ $(document).ready(function() {
       var ListLen = oList.length;
       var iCurSel = oList.selectedIndex; 
       var text = $("#IndexEntry").val().toLowerCase();
-      var TextLen = text.length; 
+      var TextLen = text.length;
+      if (!text) return
       for (var i = 0; i < ListLen; i++) { 
         var listitem = oList.item(i).text.substr(0, TextLen).toLowerCase(); 
         if (listitem == text) { 
