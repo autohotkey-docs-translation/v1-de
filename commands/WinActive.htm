@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>IfWinActive / IfWinNotActive / WinActive</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/jquery.js" type="text/javascript"></script>
+<script src="../static/tree.jquery.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>IfWinActive / IfWinNotActive / WinActive</h1>
+
+<p>Überprüft, ob das angegebene Fenster existiert und zurzeit aktiv ist. Ist das der Fall, wird <em>WinActive()</em> dessen Eindeutige ID (HWND) zurückgeben.</p>
+
+<pre class="Syntax">IfWinActive [, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme]
+IfWinNotActive [, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme]
+<a href="WinGet.htm">EindeutigeID</a> := WinActive("Fenstertitel", "Fenstertext", "Titelausnahme", "Textausnahme")</pre>
+<h3>Parameter</h3>
+<dl>
+
+  <dt>Fenstertitel</dt>
+  <dd><p>Ein Fenstertitel oder sonstige Kriterien, die das Zielfenster ermitteln sollen. Siehe <a href="../misc/WinTitle.htm">Fenstertitel</a>.</p></dd>
+
+  <dt>Fenstertext</dt>
+  <dd><p>In diesem Parameter kann ein Teilstring angegeben werden, der in einem Textelement des Zielfensters vorkommt (abrufbar mit Windows Spy). Versteckte Textelemente werden auch erkannt, sofern <a href="DetectHiddenText.htm">DetectHiddenText</a> aktiv ist.</p></dd>
+
+  <dt>Titelausnahme</dt>
+  <dd><p>Ignoriert Fenster, deren Titel diesen Wert enthalten. Hinweis: Aufgrund der Abwärtskompatibilität interpretieren <em>IfWinActive</em> und <em>IfWinNotActive</em> diesen Parameter als Befehl, falls er exakt mit dem Namen eines Befehls übereinstimmt. Mit der <em>WinActive()</em>-Funktion dieses Problem umgangen werden.</p></dd>
+
+  <dt>Textausnahme</dt>
+  <dd><p>Ignoriert Fenster, deren Textelemente diesen Wert enthalten.</p></dd>
+
+</dl>
+
+<h3>Bemerkungen</h3>
+<p>Sobald alle Parameter weggelassen werden, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> verwendet.</p>
+<p>Wenn einer der Befehle das aktive Fenster als passende Übereinstimmung ansieht, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> auf das aktive Fenster aktualisiert. Das heißt, sobald <em>IfWinActive</em> als "wahr" oder <em>IfWinNotActive</em> als "falsch" gewertet wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> aktualisiert.</p>
+<p>Die Funktion WinActive() gibt die <a href="WinGet.htm">eindeutige ID (HWND)</a> des aktiven Fensters zurück, wenn es die angegebenen Kriterien erfüllt. Ist das nicht der Fall, gibt die Funktion eine 0 zurück. Da alle Zahlen außer 0 als "Wahr" angesehen werden, ist die Anweisung <code>If WinActive("Fenstertitel")</code> immer wahr, sobald der <em>Fenstertitel</em> aktiv ist.</p>
+<p>Mit <code>ActiveHwnd := WinExist("A")</code> kann auf einfache Weise die eindeutige ID des aktiven Fensters abgerufen werden.</p>
+<p><a href="SetWinDelay.htm">SetWinDelay</a> hat keinen Einfluss auf IfWinExist/IfWinActive.</p>
+<p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
+<h3>Siehe auch</h3>
+<p><a href="WinExist.htm">IfWinExist</a>, <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>, <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>, <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundenes Fenster</a>, <a href="WinActivate.htm">WinActivate</a>, <a href="WinWaitActive.htm">WinWaitActive</a>, <a href="WinWait.htm">WinWait</a>, <a href="WinWaitClose.htm">WinWaitClose</a>, <a href="_IfWinActive.htm">#IfWinActive/Exist</a></p>
+<h3>Beispiel</h3>
+<pre class="NoIndent">IfWinActive, Unbenannt - Editor
+{
+    WinMaximize  <em>; Maximiert das oben gefundene Fenster.</em>
+    Send, Dies ist ein Text.{Enter}
+    Return
+}
+
+If WinActive("ahk_class Notepad") or WinActive("ahk_class" . Klassenname)  <em>; Nach "ahk_class" muss ein Leerzeichen sein.</em>
+    WinClose  <em>; Verwendet das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>.</em></pre>
+
+</body>
+</html>

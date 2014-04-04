@@ -2,8 +2,7 @@
 <html>
 <head>
 <title>#HotkeyModifierTimeout</title>
-<meta name="keywords" content="Befehl, Direktive, Hotkey">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
 <script src="../static/jquery.js" type="text/javascript"></script>
@@ -12,16 +11,19 @@
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
 <body>
+
 <h1>#HotkeyModifierTimeout</h1>
+
 <p>Beeinflusst das Verhalten der <a href="../Hotkeys.htm">Hotkey</a>-Modifikatoren: STRG, ALT, WIN und UMSCHALT.</p>
+
 <pre class="Syntax">#HotkeyModifierTimeout Millisekunden</pre>
 <h3>Parameter</h3>
-<table class="info">
-  <tr>
-    <td style="width: 15%;">Millisekunden</td>
-    <td style="width: 85%;">Die Länge des Intervalls in Millisekunden. Enthält dieser Parameter -1, kommt es niemals zum Timeout (Modifikatortasten werden dem Senden immer wieder nach unten gedrückt). Enthält dieser Parameter eine 0, erfolgt immer ein Timeout (Modifikatortasten werden niemals wieder nach unten gedrückt). </td>
-  </tr>
-</table>
+<dl>
+
+  <dt>Millisekunden</dt>
+  <dd><p>Die Länge des Intervalls in Millisekunden. Enthält dieser Parameter -1, kommt es niemals zum Timeout (Modifikatortasten werden nach dem Senden immer wieder nach unten gedrückt). Enthält dieser Parameter eine 0, erfolgt immer ein Timeout (Modifikatortasten werden niemals wieder nach unten gedrückt).</p></dd>
+
+</dl>
 <h3>Bemerkungen</h3>
 <p>Diese Direktive <strong>muss nicht</strong> verwendet werden, wenn:</p>
 <ul>
@@ -29,18 +31,19 @@
   <li>das Script den Tastatur-Hook installiert hat (kann mit "View-&gt;Key history" in der Menüleiste des Hauptfensters oder mit dem <a href="KeyHistory.htm">KeyHistory</a>-Befehl überprüft werden). Das liegt daran, dass der Hook nachverfolgen kann, welche Modifikatortasten (ALT/STRG/WIN/UMSCHALT) der Benutzer physisch gedrückt hält, ohne das Timeout verwenden zu müssen.</li>
 </ul>
 <p>Am folgenden Beispiel wird gezeigt, wie diese Direktive funktioniert: <code>^!a::Send, abc</code>.</p>
-<p>Der <a href="Send.htm">Send</a>-Befehl wird zuallererst, sobald er ausgeführt wird, die STRG- und ALT-Taste loslassen, so dass die Zeichen richtig gesendet werden können. Nachdem die Tasten gesendet wurden, hat der Befehl keine Möglichkeit zu erkennen, ob er STRG und ALT sicher wieder nach unten drücken kann (falls der Benutzer diese Tasten weiterhin gedrückt hält). Ist die vergangene Zeit kleiner als die angegebenen Millisekunden, wird der Befehl annehmen, dass der Benutzer keine Chance hatte, die Modifikatortasten loszulassen. Deshalb wird der Befehl sie wieder nach unten drücken, damit sie ihrem physischen Status entsprechen. Ansonsten werden die Modifikatortasten nicht wieder nach unten gedrückt. Der Benutzer muss diese Tasten loslassen und erneut drücken, wenn sie die gleiche oder eine andere Taste modifizieren sollen.</p>
+<p>Der <a href="Send.htm">Send</a>-Befehl wird zuallererst, sobald er ausgeführt wird, die STRG- und ALT-Taste loslassen, so dass die Zeichen richtig gesendet werden können. Nachdem die Tasten gesendet wurden, hat der Befehl keine Möglichkeit zu erkennen, ob er STRG und ALT sicher wieder nach unten drücken kann (falls der Benutzer diese Tasten weiterhin gedrückt hält). Ist die vergangene Zeit kleiner als die angegebenen Millisekunden, wird der Befehl annehmen, dass der Benutzer keine Chance hatte, die Modifikatortasten loszulassen, und wird sie daher wieder nach unten drücken, um sie an ihren physischen Status anzupassen. Ansonsten werden die Modifikatortasten nicht nochmal nach unten gedrückt. Außerdem muss der Benutzer sie loslassen und wieder drücken, wenn er die gleiche oder eine andere Taste modifizieren will.</p>
 <p>Das Timeout sollte auf einen Wert gesetzt werden, der kleiner ist als die Zeitmenge, die der Benutzer üblicherweise benötigt, um Modifikatortasten eines Hotkeys gedrückt zu halten. Ansonsten könnte es passieren, dass die Modifikatortasten wieder auf die gedrückte Position gesetzt werden (stecken bleiben), auch dann, wenn der Benutzer sie nicht physisch gedrückt hält.</p>
 <p>Es ist möglich, die Notwendigkeit dieser Direktive wie folgt auf ein Minimum zu reduzieren oder vollständig zu entfernen:</p>
 <ul>
-  <li>Installiere den Tastatur-Hook durch Hinzufügen der Zeile <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> irgendwo im Script (allerdings wird dieser Hook in Win9x nicht unterstützt).</li>
-  <li>Verwende die Methoden <a href="Send.htm#SendInput">SendInput</a> oder <a href="Send.htm#SendPlay">SendPlay</a>, anstatt die traditionelle <a href="Send.htm#SendEvent">SendEvent</a>-Methode.</li>
-  <li>Wenn du die traditionelle <a href="Send.htm#SendEvent">SendEvent</a>-Methode verwendest, könnte es helfen <a href="SetKeyDelay.htm">SetKeyDelay</a> auf 0 oder -1 zu setzen, um die Tastatureingaben schneller zu senden.</li>
+  <li>Installiere den Tastatur-Hook durch Hinzufügen der Zeile <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> irgendwo im Script.</li>
+  <li>Verwende nicht das traditionelle <a href="Send.htm#SendEvent">SendEvent</a>, sondern <a href="Send.htm#SendInput">SendInput</a> oder <a href="Send.htm#SendPlay">SendPlay</a>.</li>
+  <li>Wenn du die traditionelle <a href="Send.htm#SendEvent">SendEvent</a>-Methode verwendest, könnte es helfen, <a href="SetKeyDelay.htm">SetKeyDelay</a> auf 0 oder -1 zu setzen, um die Tastatureingaben schneller zu senden.</li>
 </ul>
 <p>Ist diese Direktive im Script nicht angegeben, gilt standardmäßig 50.</p>
-<h3>Verwandte Befehle</h3>
+<h3>Siehe auch</h3>
 <p><a href="GetKeyState.htm">GetKeyState</a></p>
 <h3>Beispiel</h3>
 <pre class="NoIndent">#HotkeyModifierTimeout 100</pre>
+
 </body>
 </html>

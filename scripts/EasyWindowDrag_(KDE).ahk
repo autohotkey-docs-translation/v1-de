@@ -1,49 +1,49 @@
-ï»¿; Einfache Fensterverschiebung -- KDE-Style (benÃ¶tigt XP/2k/NT) -- von Jonny
+; Einfache Fensterverschiebung -- KDE-Style (benötigt XP/2k/NT) -- von Jonny
 ; http://www.autohotkey.com
 ; Mit diesem Script ist es bedeutend einfacher, ein Fenster zu verschieben oder zu skalieren: 1) Haltet die
-; ALT-Taste gedrÃ¼ckt und klickt mit der linken Maustaste irgendwo auf das Fenster,
-; um es zur gewÃ¼nschten Position zu verschieben; 2) Haltet die ALT-Taste gedrÃ¼ckt und
-; klickt mit der rechten Maustaste irgendwo auf das Fenster, um dessen GrÃ¶ÃŸe einfach zu Ã¤ndern;
-; 3) DrÃ¼ckt die ALT-Taste zweimal, bevor jedoch der zweite Tastendruck losgelassen wird, klickt mit der linken Maustaste, um das Fenster
-; unter dem Mauszeiger zu minimieren, klickt mit der rechten Maustaste, um es zu maximieren oder klickt mit der mittleren Maustaste, um es zu schlieÃŸen.
+; ALT-Taste gedrückt und klickt mit der linken Maustaste irgendwo auf das Fenster,
+; um es zur gewünschten Position zu verschieben; 2) Haltet die ALT-Taste gedrückt und
+; klickt mit der rechten Maustaste irgendwo auf das Fenster, um dessen Größe einfach zu ändern;
+; 3) Drückt die ALT-Taste zweimal, bevor jedoch der zweite Tastendruck losgelassen wird, klickt mit der linken Maustaste, um das Fenster
+; unter dem Mauszeiger zu minimieren, klickt mit der rechten Maustaste, um es zu maximieren oder klickt mit der mittleren Maustaste, um es zu schließen.
 
 ; Dieses Script wurde inspiriert von und beruht auf
 ; das Forum, wie viele andere Scripts auch. Der Dank geht an ck, thinkstorm, Chris,
-; und aurelian fÃ¼r eine gute Arbeit.
+; und aurelian für eine gute Arbeit.
 
-; Ã„nderungen:
+; Änderungen:
 ; 7. November 2006: Skalierungscode in !RButton optimiert, mit freundlicher Genehmigung von bluedawn.
 ; 5. Februar 2006: Fehler mit Doppel-Alt behoben (der ~Alt-Hotkey), damit das Script mit den aktuellsten Versionen von AHK funktioniert.
 
-; Der Doppel-Alt-Modifikator wird beim zweimaligen DrÃ¼cken von
-; Alt aktiviert, Ã¤hnlich wie ein Doppelklick. Haltet die zweite Taste
-; gedrÃ¼ckt, bis ein Klick erfolgt.
+; Der Doppel-Alt-Modifikator wird beim zweimaligen Drücken von
+; Alt aktiviert, ähnlich wie ein Doppelklick. Haltet die zweite Taste
+; gedrückt, bis ein Klick erfolgt.
 ;
 ; Die Tastenkombinationen:
 ;  Alt + linke Maustaste  : Ziehen, um ein Fenster zu verschieben.
-;  Alt + rechte Maustaste  : Ziehen, um die GrÃ¶ÃŸe eines Fensters zu Ã¤ndern.
+;  Alt + rechte Maustaste  : Ziehen, um die Größe eines Fensters zu ändern.
 ;  Doppel-Alt + linke Maustaste  : Ein Fenster minimieren.
 ;  Doppel-Alt + rechte Maustaste  : Ein Fenster maximieren/skalieren.
-;  Doppel-Alt + mittlere Maustaste  : Ein Fenster schlieÃŸen.
+;  Doppel-Alt + mittlere Maustaste  : Ein Fenster schließen.
 ;
 ; Die Alt-Taste kann optional nach dem ersten Klick losgelassen werden,
-; anstatt die Taste die ganze Zeit gedrÃ¼ckt zu halten.
+; anstatt die Taste die ganze Zeit gedrückt zu halten.
 
 If (A_AhkVersion < "1.0.39.00")
 {
-    MsgBox,20,,Dieses Script funktioniert mÃ¶glicherweise nicht mit der aktuellen Version von AutoHotkey. Weiter?
+    MsgBox,20,,Dieses Script funktioniert möglicherweise nicht mit der aktuellen Version von AutoHotkey. Weiter?
     IfMsgBox,No
     ExitApp
 }
 
 
 ; Die Einstellung, die auf meinem System
-; flÃ¼ssig lÃ¤uft. AbhÃ¤ngig von der aktuellen Grafikkarte und CPU,
-; kann dieser Wert erhÃ¶ht oder verringert werden.
+; flüssig läuft. Abhängig von der aktuellen Grafikkarte und CPU,
+; kann dieser Wert erhöht oder verringert werden.
 SetWinDelay,2
 
 CoordMode,Mouse
-Return
+return
 
 !LButton::
 If DoubleAlt
@@ -53,15 +53,15 @@ If DoubleAlt
     ; verhindert jedoch einen Fehler mit PSPad.
     PostMessage,0x112,0xf020,,,ahk_id %KDE_id%
     DoubleAlt := false
-    Return
+    return
 }
-; Ermittelt die anfÃ¤ngliche Mausposition und Fenster-ID, und
+; Ermittelt die anfängliche Mausposition und Fenster-ID, und
 ; abbrechen, falls das Fenster maximiert ist.
 MouseGetPos,KDE_X1,KDE_Y1,KDE_id
 WinGet,KDE_Win,MinMax,ahk_id %KDE_id%
 If KDE_Win
-    Return
-; Ermittelt die anfÃ¤ngliche Mausposition.
+    return
+; Ermittelt die anfängliche Mausposition.
 WinGetPos,KDE_WinX1,KDE_WinY1,,,ahk_id %KDE_id%
 Loop
 {
@@ -69,13 +69,13 @@ Loop
     If KDE_Button = U
         break
     MouseGetPos,KDE_X2,KDE_Y2 ; Ermittelt die aktuelle Mausposition.
-    KDE_X2 -= KDE_X1 ; Ermittelt den Offset von der anfÃ¤nglichen Mausposition.
+    KDE_X2 -= KDE_X1 ; Ermittelt den Offset von der anfänglichen Mausposition.
     KDE_Y2 -= KDE_Y1
     KDE_WinX2 := (KDE_WinX1 + KDE_X2) ; Wendet diesen Offset auf die Fensterposition an.
     KDE_WinY2 := (KDE_WinY1 + KDE_Y2)
     WinMove,ahk_id %KDE_id%,,%KDE_WinX2%,%KDE_WinY2% ; Verschiebt das Fenster zur neuen Position.
 }
-Return
+return
 
 !RButton::
 If DoubleAlt
@@ -88,17 +88,17 @@ If DoubleAlt
     Else
         WinMaximize,ahk_id %KDE_id%
     DoubleAlt := false
-    Return
+    return
 }
-; Ermittelt die anfÃ¤ngliche Mausposition und Fenster-ID, und
+; Ermittelt die anfängliche Mausposition und Fenster-ID, und
 ; abbrechen, falls das Fenster maximiert ist.
 MouseGetPos,KDE_X1,KDE_Y1,KDE_id
 WinGet,KDE_Win,MinMax,ahk_id %KDE_id%
 If KDE_Win
-    Return
-; Ermittelt die anfÃ¤ngliche Mausposition und GrÃ¶ÃŸe.
+    return
+; Ermittelt die anfängliche Mausposition und Größe.
 WinGetPos,KDE_WinX1,KDE_WinY1,KDE_WinW,KDE_WinH,ahk_id %KDE_id%
-; Definiert den Fensterbereich fÃ¼r die aktuelle Maus.
+; Definiert den Fensterbereich für die aktuelle Maus.
 ; Die vier Bereiche sind Up und Left, Up und Right, Down und Left, Down und Right.
 If (KDE_X1 < KDE_WinX1 + KDE_WinW / 2)
    KDE_WinLeft := 1
@@ -114,22 +114,22 @@ Loop
     If KDE_Button = U
         break
     MouseGetPos,KDE_X2,KDE_Y2 ; Ermittelt die aktuelle Mausposition.
-    ; Ermittelt die aktuelle Fensterposition und GrÃ¶ÃŸe.
+    ; Ermittelt die aktuelle Fensterposition und Größe.
     WinGetPos,KDE_WinX1,KDE_WinY1,KDE_WinW,KDE_WinH,ahk_id %KDE_id%
-    KDE_X2 -= KDE_X1 ; Ermittelt den Offset von der anfÃ¤nglichen Mausposition.
+    KDE_X2 -= KDE_X1 ; Ermittelt den Offset von der anfänglichen Mausposition.
     KDE_Y2 -= KDE_Y1
     ; Danach in Bezug auf den definierten Bereich agieren.
     WinMove,ahk_id %KDE_id%,, KDE_WinX1 + (KDE_WinLeft+1)/2*KDE_X2  ; X des skalierten Fensters
                             , KDE_WinY1 +   (KDE_WinUp+1)/2*KDE_Y2  ; Y des skalierten Fensters
                             , KDE_WinW  -     KDE_WinLeft  *KDE_X2  ; W des skalierten Fensters
                             , KDE_WinH  -       KDE_WinUp  *KDE_Y2  ; H des skalierten Fensters
-    KDE_X1 := (KDE_X2 + KDE_X1) ; Die ursprÃ¼ngliche Position fÃ¼r den nÃ¤chsten Durchlauf wiederherstellen.
+    KDE_X1 := (KDE_X2 + KDE_X1) ; Die ursprüngliche Position für den nächsten Durchlauf wiederherstellen.
     KDE_Y1 := (KDE_Y2 + KDE_Y1)
 }
-Return
+return
 
-; "Alt + MButton" ist mÃ¶glicherweise einfacher, ich
-; bevorzuge jedoch eine zusÃ¤tzliche Absicherung
+; "Alt + MButton" ist möglicherweise einfacher, ich
+; bevorzuge jedoch eine zusätzliche Absicherung
 ; mit einer Operation wie diese.
 !MButton::
 If DoubleAlt
@@ -137,13 +137,13 @@ If DoubleAlt
     MouseGetPos,,,KDE_id
     WinClose,ahk_id %KDE_id%
     DoubleAlt := false
-    Return
+    return
 }
-Return
+return
 
 ; Dadurch werden "Doppelklicks" der Alt-Taste erkannt.
 ~Alt::
 DoubleAlt := A_PriorHotKey = "~Alt" AND A_TimeSincePriorHotkey < 400
 Sleep 0
-KeyWait Alt  ; Dadurch wird die StÃ¶rung der automatischen Wiederholfunktion der Tastatur unterdrÃ¼ckt.
+KeyWait Alt  ; Dadurch wird die Störung der automatischen Wiederholfunktion der Tastatur unterdrückt.
 Return

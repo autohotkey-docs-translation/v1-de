@@ -1,32 +1,40 @@
-ï»¿/*
+; Tastatur-Ziffernblock als eine Maus verwenden -- von deguix
+; http://www.autohotkey.com
+; Mit diesem Script kann die Maus wie die echte Maus bewegt werden
+; (vielleicht sogar einfacher bei einigen Aufgaben).
+; Es werden bis zu fünf Maustasten sowie das Drehen des Mausrades
+; unterstützt.  Außerdem kann damit die Bewegungsgeschwindigkeit,
+; Genauigkeit und "Achseninversion" angepasst werden.
+
+/*
 o------------------------------------------------------------o
 |Tastatur-Ziffernblock als eine Maus verwenden               |
 (------------------------------------------------------------)
-| von deguix / Eine Script-Datei fÃ¼r AutoHotkey 1.0.22+      |
+| von deguix / Eine Script-Datei für AutoHotkey 1.0.22+      |
 |                    ----------------------------------------|
 |                                                            |
-|  Dieses Script ist ein Verwendungsbeispiel von AutoHotkey. |
+| Dieses Script ist ein Verwendungsbeispiel von AutoHotkey.  | 
 | Es verwendet die Neubelegung von Numpad-Tasten, um eine    |
 | Maus zu simulieren. Einige Funktionen sind die             |
 | Beschleunigung, womit die Mausgeschwindigkeit beim         |
-| lÃ¤ngeren Halten einer Taste erhÃ¶ht werden kann,            |
+| längeren Halten einer Taste erhöht werden kann,            |
 | und die Rotation, womit die Numpad-Maus "gedreht" werden   |
-| kann. Zum Beispiel NumPadDown als NumPadUp und umgekehrt.  |
+| kann. Zum Beispiel NumPadDown als NumPadUp und umgekehrt.  | 
 | Siehe nachfolgende Liste mit Tasten:                       |
 |                                                            |
 |------------------------------------------------------------|
 | Tasten                | Beschreibung                       |
 |------------------------------------------------------------|
-| ScrollLock (an)       | Aktiviert den Numpad-Maus-Modus.   |
+| ScrollLock (an)       | Aktiviert den Numpad-Maus-Modus.   |       
 |-----------------------|------------------------------------|
-| NumPad0               | Linker Maustastenklick.            |
+| NumPad0               | Linker Maustastenklick.            |           
 | NumPad5               | Mittlerer Maustastenklick.         |
 | NumPadDot             | Rechter Maustastenklick.           |
 | NumPadDiv/NumPadMult  | X1/X2-Maustastenklick. (Win 2k+)   |
-| NumPadSub/NumPadAdd   | Mausrad nach oben/unten drehen.    |
+| NumPadSub/NumPadAdd   | Mausrad nach oben/unten drehen.    |     
 |                       |                                    |
 |-----------------------|------------------------------------|
-| NumLock (aus)         | Aktiviert den Mausbewegungsmodus.  |
+| NumLock (aus)         | Aktiviert den Mausbewegungsmodus.  |     
 |-----------------------|------------------------------------|
 | NumPadEnd/Down/PgDn/  | Mausbewegung.                      |
 | /Left/Right/Home/Up/  |                                    |
@@ -35,25 +43,25 @@ o------------------------------------------------------------o
 |-----------------------|------------------------------------|
 | NumLock (an)          | Aktiviert Mauseinstellungsmodus.   |
 |-----------------------|------------------------------------|
-| NumPad7/NumPad1       | ErhÃ¶ht/Verringert Beschleunigung   |
-|                       | mittels Tastendruck.               |
-| NumPad8/NumPad2       | ErhÃ¶ht/Verringert Anfangsgeschwin- |
-|                       | digkeit per Tastendruck.           |
-| NumPad9/NumPad3       | ErhÃ¶ht/Verringert Maximalgeschwin- |
-|                       | digkeit per Tastendruck.           |
-| ^NumPad7/^NumPad1     | ErhÃ¶ht/Verringert Mausradbeschleu- |
-|                       | nigung per Tastendruck.*           |
-| ^NumPad8/^NumPad2     | ErhÃ¶ht/Verringert Mausradanfangs-  |
-|                       | geschwindigkeit per Tastendruck.*  |
-| ^NumPad9/^NumPad3     | ErhÃ¶ht/Verringert Mausradmaximal-  |
-|                       | geschwindigkeit per Tastendruck.*  |
-| NumPad4/NumPad6       | ErhÃ¶ht/Verringert Rotationswinkel  |
+| NumPad7/NumPad1       | Erhöht/Verringert Beschleunigung   |
+|                       | mittels Tastendruck.               |                      
+| NumPad8/NumPad2       | Erhöht/Verringert Anfangsgeschwin- |
+|                       | digkeit per Tastendruck.           |                      
+| NumPad9/NumPad3       | Erhöht/Verringert Maximalgeschwin- |
+|                       | digkeit per Tastendruck.           |                      
+| ^NumPad7/^NumPad1     | Erhöht/Verringert Mausradbeschleu- |
+|                       | nigung per Tastendruck.*           |                     
+| ^NumPad8/^NumPad2     | Erhöht/Verringert Mausradanfangs-  |
+|                       | geschwindigkeit per Tastendruck.*  |                     
+| ^NumPad9/^NumPad3     | Erhöht/Verringert Mausradmaximal-  |
+|                       | geschwindigkeit per Tastendruck.*  |                     
+| NumPad4/NumPad6       | Erhöht/Verringert Rotationswinkel  |
 |                       | nach rechts in Grad. (z.B.         |
-|                       | 180Â° = Umgekehrt).                 |
+|                       | 180° = Umgekehrt).                 |
 |------------------------------------------------------------|
 | * = Diese Optionen werden von der eingestellten Mausradge- |
 | schwindigkeit in der Systemsteuerung beeinflusst. Falls    |
-| die Maus kein Mausrad hat, dann wird standardmÃ¤ÃŸig         |
+| die Maus kein Mausrad hat, dann wird standardmäßig         |
 | +/- 3 Zeilen per Tastendruck verwendet.                    |
 o------------------------------------------------------------o
 */
@@ -65,8 +73,8 @@ o------------------------------------------------------------o
 
 ; Mithilfe des Tastatur-Hooks werden die implementierten
 ; Numpad-Hotkeys daran gehindert, von ANSI-Zeichenerzeugungen
-; wie Ã  beeintrÃ¤chtigt zu werden.  Denn AutoHotkey
-; erzeugt solche Zeichen, sobald ALT gedrÃ¼ckt gehalten
+; wie à beeinträchtigt zu werden.  Denn AutoHotkey
+; erzeugt solche Zeichen, sobald ALT gedrückt gehalten
 ; wird und mehrere Numpad-Tastatureingaben gesendet werden.
 ; Hook-Hotkeys sind intelligent genug, solche Tastatureingaben
 ; zu ignorieren.
@@ -88,20 +96,20 @@ MouseRotationAngle = 0
 
 ; ENDE DES KONFIGURATIONSBEREICHS
 
-; Notwendig oder TastendrÃ¼cke senden fÃ¤lschlicherweise
-; ihre natÃ¼rlichen Aktionen. Wie NumPadDiv wird manchmal "/" zum
-; Bildschirm gesendet.
+; Notwendig oder Tastendrücke senden fälschlicherweise
+; ihre natürlichen Aktionen. Wie NumPadDiv wird manchmal "/" zum
+; Bildschirm gesendet.       
 #InstallKeybdHook
 
 Temp = 0
 Temp2 = 0
 
 MouseRotationAnglePart = %MouseRotationAngle%
-; Durch 45 teilenÂº, weil MouseMove nur ganze Zahlen
-; unterstÃ¼tzt, und sobald die Mausrotation auf eine Zahl kleiner
-; als 45Âº gesetzt wird, erfolgen merkwÃ¼rdige Bewegungen.
+; Durch 45º teilen, weil MouseMove nur ganze Zahlen
+; unterstützt, und sobald die Mausrotation auf eine Zahl kleiner
+; als 45º gesetzt wird, erfolgen merkwürdige Bewegungen.
 ;
-; Zum Beispiel: 22.5Âº beim DrÃ¼cken von NumPadUp:
+; Zum Beispiel: 22.5º beim Drücken von NumPadUp:
 ; Zuerst wird die Maus nach oben bewegt, bis die Geschwindigkeit
 ; 1 erreicht.
 MouseRotationAnglePart /= 45
@@ -156,12 +164,12 @@ Hotkey, !Numpad3, ButtonWheelMaxSpeedDown
 Gosub, ~ScrollLock  ; Initialisieren, auf Basis von ScrollLock.
 return
 
-; UnterstÃ¼tzung fÃ¼r Tastenaktivierung
+; Unterstützung für Tastenaktivierung
 
 ~ScrollLock::
 ; Darauf warten, bis sie losgelassen wird, weil der Hook-Status
-; ansonsten beim DrÃ¼cken der Taste neu gesetzt wird, wodurch das
-; Up-Ereignis unterdrÃ¼ckt wird, folglich wird das Umschalten des
+; ansonsten beim Drücken der Taste neu gesetzt wird, wodurch das
+; Up-Ereignis unterdrückt wird, folglich wird das Umschalten des
 ; ScrollLock-Status/Lichts verhindert:
 KeyWait, ScrollLock
 GetKeyState, ScrollLockState, ScrollLock, T
@@ -245,7 +253,7 @@ else
 }
 return
 
-; UnterstÃ¼tzung fÃ¼r Mausklicks
+; Unterstützung für Mausklicks
 
 ButtonLeftClick:
 GetKeyState, already_down_state, LButton
@@ -322,7 +330,7 @@ SetTimer, ButtonClickEnd, off
 MouseClick, %ButtonClick%,,, 1, 0, U
 return
 
-; UnterstÃ¼tzung fÃ¼r die Mausbewegung
+; Unterstützung für die Mausbewegung
 
 ButtonSpeedUp:
 MouseSpeed++
@@ -374,7 +382,7 @@ If MouseRotationAnglePart >= 8
     MouseRotationAnglePart = 0
 MouseRotationAngle = %MouseRotationAnglePart%
 MouseRotationAngle *= 45
-ToolTip, Mausrotationswinkel: %MouseRotationAngle%Â°
+ToolTip, Mausrotationswinkel: %MouseRotationAngle%°
 SetTimer, RemoveToolTip, 1000
 return
 ButtonRotationAngleDown:
@@ -383,7 +391,7 @@ If MouseRotationAnglePart < 0
     MouseRotationAnglePart = 7
 MouseRotationAngle = %MouseRotationAnglePart%
 MouseRotationAngle *= 45
-ToolTip, Mausrotationswinkel: %MouseRotationAngle%Â°
+ToolTip, Mausrotationswinkel: %MouseRotationAngle%°
 SetTimer, RemoveToolTip, 1000
 return
 
@@ -617,7 +625,7 @@ MouseCurrentSpeed = %MouseSpeed%
 Button = 0
 return
 
-;UnterstÃ¼tzung fÃ¼r die Mausradbewegung
+;Unterstützung für die Mausradbewegung
 
 ButtonWheelSpeedUp:
 MouseWheelSpeed++
@@ -744,6 +752,6 @@ Button = 0
 return
 
 RemoveToolTip:
-SetTimer, ToolTipEntfernen, Off
+SetTimer, RemoveToolTip, Off
 ToolTip
 Return

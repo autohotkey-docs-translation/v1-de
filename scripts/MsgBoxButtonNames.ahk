@@ -1,24 +1,24 @@
-ï»¿; SchaltflÃ¤chennamen der MsgBox Ã¤ndern
+; Schaltflächennamen der MsgBox ändern
 ; http://www.autohotkey.com
 ; Das ist ein funktionierendes Beispiel-Script, das einen Timer verwendet,
-; um die Namen der SchaltflÃ¤chen in einem MsgBox-Dialogfenster zu Ã¤ndern. Auch wenn
-; die SchaltflÃ¤chennamen geÃ¤ndert werden, benÃ¶tigt der IfMsgBox-Befehl
-; weiterhin den ursprÃ¼nglichen Namen der SchaltflÃ¤che.
+; um die Namen der Schaltflächen in einem MsgBox-Dialogfenster zu ändern. Auch wenn
+; die Schaltflächennamen geändert werden, benötigt der IfMsgBox-Befehl
+; weiterhin den ursprünglichen Namen der Schaltfläche.
 
 #SingleInstance
 SetTimer, ChangeButtonNames, 50 
-MsgBox, 4, HinzufÃ¼gen oder Entfernen, SchaltflÃ¤che auswÃ¤hlen:
+MsgBox, 4, Hinzufügen oder Entfernen, Schaltfläche auswählen:
 IfMsgBox, YES 
-	MsgBox, HinzufÃ¼gen ausgewÃ¤hlt. 
-Else 
-	MsgBox, Entfernen ausgewÃ¤hlt. 
-Return 
+	MsgBox, Hinzufügen ausgewählt. 
+else
+    MsgBox, Entfernen ausgewählt. 
+return 
 
 ChangeButtonNames: 
-IfWinNotExist, HinzufÃ¼gen oder Entfernen
-	return  ; Warten.
-SetTimer, ChangeButtonNames, off 
-WinActivate 
-ControlSetText, Button1, &HinzufÃ¼gen 
-ControlSetText, Button2, &Entfernen 
-Return
+IfWinNotExist, Hinzufügen oder Entfernen
+    return  ; Warten.
+SetTimer, ChangeButtonNames, off
+WinActivate
+ControlSetText, Button1, &Hinzufügen
+ControlSetText, Button2, &Entfernen
+return

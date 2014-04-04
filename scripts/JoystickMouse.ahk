@@ -1,25 +1,23 @@
-ï»¿; Joystick als Maus verwenden
+; Joystick als Maus verwenden
 ; http://www.autohotkey.com
-; Dieses Script wandelt einen Joystick in eine Maus mit drei Tasten um.  Dadurch verhÃ¤lt sich
+; Dieses Script wandelt einen Joystick in eine Maus mit drei Tasten um.  Dadurch verhält sich
 ; jede Joystick-Taste wie eine Maustaste und verbraucht kaum CPU-Zeit.
-; AuÃŸerdem ist die Zeigergeschwindigkeit abhÃ¤ngig davon, wie weit der Joystick
-; vom Zentrum gedrÃ¼ckt wird. Verschiedene Einstellungen kÃ¶nnen auch im oberen Bereich des Scripts angepasst werden.
-
-; Den folgenden Wert erhÃ¶hen, damit der Mauszeiger sich schneller bewegt:
+; Außerdem ist die Zeigergeschwindigkeit abhängig davon, wie weit der Joystick
+; vom Zentrum gedrückt wird. ; Den folgenden Wert erhöhen, damit der Mauszeiger sich schneller bewegt:
 JoyMultiplier = 0.30
 
-; Den folgenden Wert verringern, damit weniger Weg vom Zentrum benÃ¶tigt wird,
-; um die Maus zu bewegen.  Allerdings muss mÃ¶glicherweise erst der aktuelle Joystick kalibriert werden,
+; Den folgenden Wert verringern, damit weniger Weg vom Zentrum benötigt wird,
+; um die Maus zu bewegen.  Allerdings muss möglicherweise erst der aktuelle Joystick kalibriert werden,
 ; damit er richtig zentriert ist, um einen Drift des Mauszeigers zu verhindern. Ein absolut straffer
 ; und zentrierter Joystick kann eine 1 verwenden:
 JoyThreshold = 3
 
-; FÃ¼r die Invertierung der Y-Achsen kann die folgende Variable auf True gesetzt werden, wodurch
+; Für die Invertierung der Y-Achsen kann die folgende Variable auf True gesetzt werden, wodurch
 ; die sich Maus vertikal in die entgegengesetzte Richtung des Sticks bewegt:
 InvertYAxis := false
 
-; Diese Werte kÃ¶nnen geÃ¤ndert werden, um beliebige Joystick-Tastennummern fÃ¼r
-; die linke, rechte und mittlere Maustaste zu verwenden.  Zahlen von 1 bis 32 sind verfÃ¼gbar.
+; Diese Werte können geändert werden, um beliebige Joystick-Tastennummern für
+; die linke, rechte und mittlere Maustaste zu verwenden.  Zahlen von 1 bis 32 sind verfügbar.
 ; Verwendet das Joystick-Test-Script, um die aktuellen Joystick-Nummern einfach herauszufinden.
 ButtonLeft = 1
 ButtonRight = 2
@@ -30,12 +28,12 @@ ButtonMiddle = 3
 ; Wird der Wert verringert, dreht sich das Rad schneller:
 WheelDelay = 250
 
-; Falls mehr als ein Joystick vorhanden ist, erhÃ¶ht diesen Wert, um einen beliebigen Joystick
+; Falls mehr als ein Joystick vorhanden ist, erhöht diesen Wert, um einen beliebigen Joystick
 ; zu verwenden:
 JoystickNumber = 1
 
-; ENDE DES KONFIGURATIONSBEREICHS -- Hier danach keine Ã„nderungen durchfÃ¼hren,
-; es sei denn, die allgemeine FunktionalitÃ¤t des Scripts soll geÃ¤ndert werden.
+; ENDE DES KONFIGURATIONSBEREICHS -- Hier danach keine Änderungen durchführen,
+; es sei denn, die allgemeine Funktionalität des Scripts soll geändert werden.
 
 #SingleInstance
 
@@ -44,69 +42,69 @@ Hotkey, %JoystickPrefix%%ButtonLeft%, ButtonLeft
 Hotkey, %JoystickPrefix%%ButtonRight%, ButtonRight
 Hotkey, %JoystickPrefix%%ButtonMiddle%, ButtonMiddle
 
-; BenÃ¶tigte AchsenabstÃ¤nde berechnen, um den Mauszeiger bewegen zu kÃ¶nnen:
+; Benötigte Achsenabstände berechnen, um den Mauszeiger bewegen zu können:
 JoyThresholdUpper := 50 + JoyThreshold
 JoyThresholdLower := 50 - JoyThreshold
 if InvertYAxis
-	YAxisMultiplier = -1
-Else
-	YAxisMultiplier = 1
+    YAxisMultiplier = -1
+else
+    YAxisMultiplier = 1
 
-SetTimer, WatchJoystick, 10  ; Joystick-Bewegung Ã¼berwachen.
+SetTimer, WatchJoystick, 10  ; Joystick-Bewegung überwachen.
 
 GetKeyState, JoyInfo, %JoystickNumber%JoyInfo
 IfInString, JoyInfo, P  ; Joystick hat einen Rundblickschalter (POV), also als Mausrad verwenden.
-	SetTimer, MouseWheel, %WheelDelay%
+    SetTimer, MouseWheel, %WheelDelay%
 
-Return ; Ende des automatischen AusfÃ¼hrungsbereichs.
+return  ; Ende des automatischen Ausführungsbereichs.
 
 
 ; Die unteren Subroutinen verwenden nicht KeyWait, weil ansonsten der
 ; WatchJoystick-Quasi-Thread unter dem Warten-auf-Tastendruck-Thread eingefangen wird,
-; wodurch das Maus-Ziehen mit dem Joystick unterdrÃ¼ckt wird.
+; wodurch das Maus-Ziehen mit dem Joystick unterdrückt wird.
 
 ButtonLeft:
-SetMouseDelay, -1  ; FlÃ¼ssigerer Bewegungsablauf.
-MouseClick, left,,, 1, 0, D  ; HÃ¤lt die linke Maustaste gedrÃ¼ckt.
+SetMouseDelay, -1  ; Flüssigerer Bewegungsablauf.
+MouseClick, left,,, 1, 0, D  ; Hält die linke Maustaste gedrückt.
 SetTimer, WaitForLeftButtonUp, 10
-Return
+return
 
 ButtonRight:
-SetMouseDelay, -1  ; FlÃ¼ssigerer Bewegungsablauf.
-MouseClick, right,,, 1, 0, D  ; HÃ¤lt die rechte Maustaste gedrÃ¼ckt.
+SetMouseDelay, -1  ; Flüssigerer Bewegungsablauf.
+MouseClick, right,,, 1, 0, D  ; Hält die rechte Maustaste gedrückt.
 SetTimer, WaitForRightButtonUp, 10
-Return
+return
 
 ButtonMiddle:
-SetMouseDelay, -1  ; FlÃ¼ssigerer Bewegungsablauf.
-MouseClick, middle,,, 1, 0, D  ; HÃ¤lt die mittlere Maustaste gedrÃ¼ckt.
+SetMouseDelay, -1  ; Flüssigerer Bewegungsablauf.
+MouseClick, middle,,, 1, 0, D  ; Hält die mittlere Maustaste gedrückt.
 SetTimer, WaitForMiddleButtonUp, 10
-Return
+return
 
 WaitForLeftButtonUp:
 if GetKeyState(JoystickPrefix . ButtonLeft)
-	return  ; Wenn die Taste immer noch gedrÃ¼ckt gehalten wird, dann warten.
+    return  ; Falls die Taste weiterhin gedrückt gehalten wird, warten.
 ; Ansonsten wurde die Taste losgelassen.
 SetTimer, WaitForLeftButtonUp, off
-SetMouseDelay, -1  ; FlÃ¼ssigerer Bewegungsablauf.
-MouseClick, left,,, 1, 0, U  ; LÃ¤sst die Maustaste los.
-Return
+SetMouseDelay, -1  ; Flüssigerer Bewegungsablauf.
+MouseClick, left,,, 1, 0, U  ; Lässt die Maustaste los.
+return
 
 WaitForRightButtonUp:
 if GetKeyState(JoystickPrefix . ButtonRight)
-	return  ; Wenn die Taste immer noch gedrÃ¼ckt gehalten wird, dann warten.
+    return  ; Falls die Taste weiterhin gedrückt gehalten wird, warten.
 ; Ansonsten wurde die Taste losgelassen.
 SetTimer, WaitForRightButtonUp, off
-MouseClick, right,,, 1, 0, U  ; LÃ¤sst die Maustaste los.
-Return
+MouseClick, right,,, 1, 0, U  ; Lässt die Maustaste los.
+return
 
 WaitForMiddleButtonUp:
 if GetKeyState(JoystickPrefix . ButtonMiddle)
-	return  ; Wenn die Taste immer noch gedrÃ¼ckt gehalten wird, dann warten.
+    return  ; Falls die Taste weiterhin gedrückt gehalten wird, warten.
 ; Ansonsten wurde die Taste losgelassen.
 SetTimer, WaitForMiddleButtonUp, off
-MouseClick, middle,,, 1, 0, U  ; LÃ¤sst die Maustaste los.
-Return
+MouseClick, middle,,, 1, 0, U  ; Lässt die Maustaste los.
+return
 
 WatchJoystick:
 MouseNeedsToBeMoved := false  ; Standardwert setzen.
@@ -115,41 +113,41 @@ GetKeyState, joyx, %JoystickNumber%JoyX
 GetKeyState, joyy, %JoystickNumber%JoyY
 if joyx > %JoyThresholdUpper%
 {
-	MouseNeedsToBeMoved := true
-	DeltaX := joyx - JoyThresholdUpper
+    MouseNeedsToBeMoved := true
+    DeltaX := joyx - JoyThresholdUpper
 }
 else if joyx < %JoyThresholdLower%
 {
-	MouseNeedsToBeMoved := true
-	DeltaX := joyx - JoyThresholdLower
+    MouseNeedsToBeMoved := true
+    DeltaX := joyx - JoyThresholdLower
 }
-Else
-	DeltaX = 0
+else
+    DeltaX = 0
 if joyy > %JoyThresholdUpper%
 {
-	MouseNeedsToBeMoved := true
-	DeltaY := joyy - JoyThresholdUpper
+    MouseNeedsToBeMoved := true
+    DeltaY := joyy - JoyThresholdUpper
 }
 else if joyy < %JoyThresholdLower%
 {
-	MouseNeedsToBeMoved := true
-	DeltaY := joyy - JoyThresholdLower
+    MouseNeedsToBeMoved := true
+    DeltaY := joyy - JoyThresholdLower
 }
-Else
-	DeltaY = 0
+else
+    DeltaY = 0
 if MouseNeedsToBeMoved
 {
-	SetMouseDelay, -1  ; FlÃ¼ssigerer Bewegungsablauf.
-	MouseMove, DeltaX * JoyMultiplier, DeltaY * JoyMultiplier * YAxisMultiplier, 0, R
+    SetMouseDelay, -1  ; Flüssigerer Bewegungsablauf.
+    MouseMove, DeltaX * JoyMultiplier, DeltaY * JoyMultiplier * YAxisMultiplier, 0, R
 }
-Return
+return
 
 MouseWheel:
 GetKeyState, JoyPOV, %JoystickNumber%JoyPOV
 if JoyPOV = -1  ; Kein Winkel.
-	Return
+    return
 if (JoyPOV > 31500 or JoyPOV < 4500)  ; Nach vorne
-	Send {WheelUp}
+    Send {WheelUp}
 else if JoyPOV between 13500 and 22500  ; Nach hinten
-	Send {WheelDown}
-Return
+    Send {WheelDown}
+return
