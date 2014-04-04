@@ -11,9 +11,9 @@ $(document).ready(function() {
   // Build website structure
   //
 
-  // if root contains folders (e.g. "http://www.some.org/root/"), you have to specify the full url literally
+  var virtualDir = "";
 
-  var urlroot  = location.protocol + "//" + location.host;
+  var urlroot  = location.protocol + "//" + location.host + virtualDir;
 
   var urlpath  = location.href.replace(urlroot, '');
   
@@ -283,7 +283,7 @@ $(document).ready(function() {
           var URL = document.getElementById("indexcontainer").item(iSelect).value;
           sessionStorage.setItem('sb_index_lastselected', iSelect + 1);
           if (URL.length > 0) {
-            window.location = location.protocol + "//" + location.host + '/docs/' + URL;
+            window.location = urlroot + '/docs/' + URL;
           }
         }
       }
