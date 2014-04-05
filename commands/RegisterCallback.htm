@@ -55,7 +55,7 @@ If wParam &gt; 0x7FFFFFFF
 wParam := wParam &lt;&lt; 32 &gt;&gt; 32</pre>
 <p><strong>64-Bit</strong>: Alle eingehenden Parameter sind vorzeichenbehaftete 64-Bit-Integer. AutoHotkey unterstützt von Haus aus keine vorzeichenlose 64-Bit-Integers.</p>
 <p>Wenn ein eingehender Parameter vom Aufrufer als String vorgesehen ist, ist das, was aktuell empfangen wird, die aktuelle Adresse des Strings. Mit <a href="StrPutGet.htm">StrGet</a> kann der String selbst abgerufen werden:</p>
-<pre>EigenerString := StrGet(EigenerParameter)  <em>; AHK_L 46+</em></pre>
+<pre>MeinString := StrGet(MeinParameter)  <em>; AHK_L 46+</em></pre>
 <p>Wenn ein eingehender Parameter die Adresse einer Struktur ist, können einzelne Elemente daraus extrahiert werden, wenn die Schritte in "<a href="DllCall.htm#struct">DllCall-Strukturen</a>" befolgt werden.</p>
 <p id="Indirect"><span class="ver">[AHK_L 60+]:</span> Ist die Funktion als <a href="../Functions.htm#Variadic">variadisch</a> deklariert, wird dem letzte Parameter die <i>Adresse</i> des ersten Callback-Parameters zugewiesen, die nicht einem Script-Parameter zugewiesen worden ist. Zum Beispiel:</p>
 <pre>callback := RegisterCallback("Func", "F", 1)  <em>; Parameteranzahl muss angegeben werden.</em>
@@ -109,7 +109,7 @@ EnumWindowsProc(hwnd, lParam)
 Texthintergrundfarbe := 0xFFBBBB  <em>; Eine benutzerdefinierte Farbe im BGR-Format.</em>
 Pinsel := DllCall("CreateSolidBrush", UInt, Texthintergrundfarbe)
 
-Gui, Add, Text, HwndEigenerTextHwnd, Hier ein Text mit einer`nbenutzerdefinierter Hintergrundfarbe.
+Gui, Add, Text, HwndMeinTextHwnd, Hier ein Text mit einer`nbenutzerdefinierter Hintergrundfarbe.
 Gui +LastFound
 GuiHwnd := WinExist()
 
@@ -117,7 +117,7 @@ GuiHwnd := WinExist()
 SetWindowLong := A_PtrSize=8 ? "SetWindowLongPtr" : "SetWindowLong"
 
 WindowProcNeu := <strong>RegisterCallback</strong>("WindowProc", ""  <em>; Mit "" wird der schnelle Modus beim Setzen der Unterklasse verhindert.</em>
-    , <strong>4</strong>, EigenerTextHwnd)  <em>; Parameteranzahl muss genau angegeben werden, wenn der EventInfo-Parameter vorhanden ist.</em>
+    , <strong>4</strong>, MeinTextHwnd)  <em>; Parameteranzahl muss genau angegeben werden, wenn der EventInfo-Parameter vorhanden ist.</em>
 WindowProcAlt := DllCall(SetWindowLong, Ptr, GuiHwnd, Int, -4  <em>; -4 ist GWL_WNDPROC</em>
     , Ptr, WindowProcNeu, Ptr)  <em>; Wert muss auf Ptr oder UPtr anstatt auf Int gesetzt werden.</em>
 

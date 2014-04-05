@@ -50,9 +50,9 @@
 ;    AutoHotkey v1.0.25 oder höher auf deinem PC (von
 ;    http://www.autohotkey.com herunterladen). Als nächstes den Befehl ausführen:
 ;
-;    C:\Programme\AutoHotkey\AutoHotkey.exe C:\EigeneScripts\Seek.ahk
+;    C:\Programme\AutoHotkey\AutoHotkey.exe C:\MeineScripts\Seek.ahk
 ;
-;    Denke daran, C:\Programme und C:\EigeneScripts mit
+;    Denke daran, C:\Programme und C:\MeineScripts mit
 ;    den richtigen Verzeichnisnamen zu ersetzen.
 ;
 ; 2. Seek.exe kann von überall ausgeführt
