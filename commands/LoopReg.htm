@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>Loop (Registrierung)</title>
+<title>Loop (Registry)</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -12,9 +12,9 @@
 </head>
 <body>
 
-<h1>Loop (Registrierung)</h1>
+<h1>Loop (Registry)</h1>
 
-<p>Ermittelt nacheinander den Inhalt des angegebenen Unterschlüssels.</p>
+<p>Ermittelt nacheinander den Inhalt des angegebenen Registry-Unterschlüssels.</p>
 
 <pre class="Syntax">Loop, Hauptschlüssel [, Schlüssel, UnterschlüsselEinbeziehen?, Rekursiv?]</pre>
 <h3>Parameter</h3>
@@ -22,7 +22,7 @@
 
   <dt>Hauptschlüssel</dt>
   <dd><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC).</p>
-      <p>Um den Zugriff auf eine Remote-Registrierung zu ermöglichen, muss der Computername und ein Doppelpunkt wie im folgenden Beispiel vorangestellt werden: \\workstation01:HKEY_LOCAL_MACHINE</p></dd>
+      <p>Um den Zugriff auf eine Remote-Registry zu ermöglichen, muss der Computername und ein Doppelpunkt wie im folgenden Beispiel vorangestellt werden: \\workstation01:HKEY_LOCAL_MACHINE</p></dd>
 
   <dt>Schlüssel</dt>
   <dd><p>Name des Schlüssels (z. B. Software\BeliebigeAnwendung). Ist dieser Parameter leer oder nicht vorhanden, wird der Inhalt vom <em>Hauptschlüssel</em> abgerufen.</p></dd>
@@ -39,8 +39,8 @@
 </dl>
 
 <h3>Bemerkungen</h3>
-<p>Eine Registrierungs-Schleife ist nützlich, wenn mehrere Werte und Unterschlüssel nacheinander bearbeitet werden sollen. Die Werte und Unterschlüssel werden in umgekehrter Reihenfolge abgerufen (von unten nach oben), damit <a href="RegDelete.htm">RegDelete</a> ohne Unterbrechung innerhalb der Schleife verwendet werden kann.</p>
-<p>Die folgenden Variablen können nur innerhalb einer Registrierungs-Schleife verwendet werden. Wenn eine innere Registrierungs-Schleife von einer äußeren Registrierungs-Schleife umschlossen ist, wird der Eintrag von der innersten Schleife Vorrang haben.</p>
+<p>Eine Registry-Schleife ist nützlich, wenn mehrere Werte und Unterschlüssel nacheinander bearbeitet werden sollen. Die Werte und Unterschlüssel werden in umgekehrter Reihenfolge abgerufen (von unten nach oben), damit <a href="RegDelete.htm">RegDelete</a> ohne Unterbrechung innerhalb der Schleife verwendet werden kann.</p>
+<p>Die folgenden Variablen können nur innerhalb einer Registry-Schleife verwendet werden. Wenn eine innere Registry-Schleife von einer äußeren Registry-Schleife umschlossen ist, wird der Eintrag von der innersten Schleife Vorrang haben.</p>
 <table class="info">
   <tr>
     <td>A_LoopRegName</td>
@@ -52,7 +52,7 @@
   </tr>
   <tr>
     <td>A_LoopRegKey</td>
-    <td>Name des zurzeit verwendeten Hauptschlüssels (HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG). Beim Zugriff auf eine Remote-Registrierung enthält dieser Wert <strong>nicht</strong> den Namen des Computers.</td>
+    <td>Name des zurzeit verwendeten Hauptschlüssels (HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG). Beim Zugriff auf eine Remote-Registry enthält dieser Wert <strong>nicht</strong> den Namen des Computers.</td>
   </tr>
   <tr>
     <td>A_LoopRegSubKey</td>
@@ -63,7 +63,7 @@
     <td>Wann der aktuelle Unterschlüssel oder seine Werte zuletzt bearbeitet wurden. <a href="FileSetTime.htm">YYYYMMDDHH24MISS</a>-Format. Diese Variable wird leer sein, wenn der aktuell ermittelte Eintrag kein Unterschlüssel ist (d. h. <em>A_LoopRegType</em> ist nicht das Wort KEY).</td>
   </tr>
 </table>
-<p>Innerhalb einer Registrierungs-Schleife können folgende Befehle auf einfachere Weise verwendet werden, um den aktuell ermittelten Eintrag zu bearbeiten:</p>
+<p>Innerhalb einer Registry-Schleife können folgende Befehle auf einfachere Weise verwendet werden, um den aktuell ermittelten Eintrag zu bearbeiten:</p>
 <table class="info">
   <tr>
     <td width="21%"><a href="RegRead.htm">RegRead</a>, AusgabeVar</td>
@@ -78,14 +78,14 @@
     <td>Löscht den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Schlüssel ist, wird dieser mit all seinen Unterschlüsseln und Werten gelöscht.</td>
   </tr>
 </table>
-<p>Beim Zugriff auf eine Remote-Registrierung (über den <em>Hauptschlüssel</em>-Parameter, wie oben beschrieben) gelten folgende Hinweise:</p>
+<p>Beim Zugriff auf eine Remote-Registry (über den <em>Hauptschlüssel</em>-Parameter, wie oben beschrieben) gelten folgende Hinweise:</p>
 <ul>
   <li>Auf dem Zielrechner muss der Dienst "Remote Registry" laufen.</li>
-  <li>Der Zugriff auf eine Remote-Registrierung kann fehlschlagen, wenn der Zielcomputer nicht zur Domäne des Benutzers gehört oder der Benutzername nicht genügend Berechtigungen hat (siehe unten für mögliche Übergangslösungen).</li>
-  <li>Abhängig von der Domäne, der Arbeitsgruppe und/oder den Berechtigungen kann es sein, dass sich der Benutzer mit einem freigegebenen Gerät erst verbinden muss (z. B. durch eine Laufwerkszuordnung), bevor der Remotezugriff auf die Registrierung erfolgt. Bei so einer Verbindung (mit Benutzernamen, Passwort und genug Berechtigungen zur Bearbeitung der Registrierung) könnte als Nebeneffekt der Remotezugriff auf die Registrierung aktiviert werden.</li>
-  <li>Wenn der Benutzer bereits mit einem anderen Benutzernamen auf dem Zielcomputer angemeldet ist (z. B. als Gast auf ein zugeordnetes Laufwerk), dann kann es sein, dass der Benutzer sich erst abmelden muss, damit die Remote-Registrierung sich neu verbinden kann und den Benutzer wieder mit seinem eigenen angemeldeten Benutzernamen authentifiziert.</li>
-  <li>Für Windows Server 2003 und Windows XP Professional heißt es in MSDN: "Wenn der [Server der Registrierung] Computer mit einer Arbeitsgruppe verbunden ist und die Sicherheitsrichtlinie <em>Einfache Dateifreigabe</em> aktiviert ist, dann schlägt die Funktion fehl. Beachten Sie, dass diese Sicherheitsrichtlinie standardmäßig aktiviert ist, wenn der Computer mit einer Arbeitsgruppe verbunden ist."</li>
-  <li>Für Windows XP Home Edition weißt MSDN darauf hin, dass "diese Funktion immer fehlschlägt". In der Home Edition fehlt für die Registrierung sowohl der Server als auch der Client, jedoch kann der Client aus einer CAB-Datei des Betriebssystems extrahiert werden.</li>
+  <li>Der Zugriff auf eine Remote-Registry kann fehlschlagen, wenn der Zielcomputer nicht zur Domäne des Benutzers gehört oder der Benutzername nicht genügend Berechtigungen hat (siehe unten für mögliche Übergangslösungen).</li>
+  <li>Abhängig von der Domäne, der Arbeitsgruppe und/oder den Berechtigungen kann es sein, dass sich der Benutzer mit einem freigegebenen Gerät erst verbinden muss (z. B. durch eine Laufwerkszuordnung), bevor der Remotezugriff auf die Registry erfolgt. Bei so einer Verbindung (mit Benutzernamen, Passwort und genug Berechtigungen zur Bearbeitung der Registry) könnte als Nebeneffekt der Remotezugriff auf die Registry aktiviert werden.</li>
+  <li>Wenn der Benutzer bereits mit einem anderen Benutzernamen auf dem Zielcomputer angemeldet ist (z. B. als Gast auf ein zugeordnetes Laufwerk), dann kann es sein, dass der Benutzer sich erst abmelden muss, damit die Remote-Registry sich neu verbinden kann und den Benutzer wieder mit seinem eigenen angemeldeten Benutzernamen authentifiziert.</li>
+  <li>Für Windows Server 2003 und Windows XP Professional heißt es in MSDN: "Wenn der [Server der Registry] Computer mit einer Arbeitsgruppe verbunden ist und die Sicherheitsrichtlinie <em>Einfache Dateifreigabe</em> aktiviert ist, dann schlägt die Funktion fehl. Beachten Sie, dass diese Sicherheitsrichtlinie standardmäßig aktiviert ist, wenn der Computer mit einer Arbeitsgruppe verbunden ist."</li>
+  <li>Für Windows XP Home Edition weißt MSDN darauf hin, dass "diese Funktion immer fehlschlägt". In der Home Edition fehlt für die Registry sowohl der Server als auch der Client, jedoch kann der Client aus einer CAB-Datei des Betriebssystems extrahiert werden.</li>
 </ul>
 <p>Auf der <a href="Loop.htm">Loop</a>-Seite können Informationen zu <a href="Block.htm">Blöcke</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index gefunden werden (weil diese in jeder Schleifenvariante vorkommen).</p>
 <h3>Siehe auch</h3>
