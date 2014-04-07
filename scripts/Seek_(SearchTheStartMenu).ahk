@@ -229,7 +229,7 @@
 ; - Internen Schalter hinzugefügt (ScanMode), um zu definieren, ob
 ;   Dateien und/oder Verzeichnisse beim Überprüfen mit einbezogen werden.
 ; - Die selbst programmierte Erkennung vom Startmenü-Pfad wurde mit den
-;   internen Variablen A_StartMenu und A_StartMenuCommon ersetzt.
+;   integrierten Variablen A_StartMenu und A_StartMenuCommon ersetzt.
 ;   Damit funktioniert Seek nun mit unterschiedlichen Sprachen, die
 ;   verschiedene Namensgebungen für den Startmenü haben.
 ;   (Danke an Wolfgang Bujatti und Sietse Fliege für die Hilfe

@@ -35,9 +35,9 @@ SendEvent Tasten</pre>
 
 </dl>
 
-<p><strong><a name="SendRaw"></a>Raw-Modus</strong>: Der <em>SendRaw</em>-Befehl interpretiert alle Zeichen direkt, anstatt zum Beispiel {Enter} als ENTER-Taste, ^c als STRG+C und so weiter zu interpretieren. Allerdings gelten weiterhin die normalen Regeln für Escapesequenzen, Variablenverweise und Ausdrücke, da diese verarbeitet werden, bevor der Befehl ausgeführt wird. Um den Raw-Modus mit SendInput, SendPlay oder SendEvent zu verwenden, sollte <a href="#Raw">{Raw}</a> als erstes Element im String geschrieben werden, zum Beispiel: <code>SendInput {Raw}abc</code>.</p>
+<p><strong><a name="SendRaw"></a>Raw-Modus</strong>: Der <em>SendRaw</em>-Befehl interpretiert alle Zeichen literal, anstatt zum Beispiel {Enter} als ENTER-Taste, ^c als STRG+C und so weiter zu interpretieren. Allerdings gelten weiterhin die normalen Regeln für Escapesequenzen, Variablenverweise und Ausdrücke, da diese verarbeitet werden, bevor der Befehl ausgeführt wird. Um den Raw-Modus mit SendInput, SendPlay oder SendEvent zu verwenden, sollte <a href="#Raw">{Raw}</a> als erstes Element im String geschrieben werden, zum Beispiel: <code>SendInput {Raw}abc</code>.</p>
 <p><strong>Normal-Modus</strong>: Ist der Raw-Modus nicht aktiv, werden folgende Zeichen als Modifikatoren behandelt (diese Modifikatoren beeinflussen nur die nachfolgende Taste):</p>
-<p><span class="red">!</span>: Sendet eine ALT-Taste. Zum Beispiel würde <code>Send Das ist ein Text!a</code> die Tasten "Das ist ein Text" senden und danach ALT+A drücken. <strong>Hinweis</strong>: !A erzeugt in einigen Programmen einen anderen Effekt als !a. Das liegt daran, dass mit !A die Tastenkombination ALT+UMSCHALT+A und mit !a die Tastenkombination ALT+A gedrückt wird. Im Zweifelsfall sollten immer Kleinbuchstaben verwenden werden.</p>
+<p><span class="red">!</span>: Sendet eine ALT-Taste. Zum Beispiel würde <code>Send Das ist ein Text!a</code> die Tasten "Das ist ein Text" senden und danach ALT+A drücken. <strong>Hinweis</strong>: !A erzeugt in einigen Programmen einen anderen Effekt als !a. Das liegt daran, dass !A die Tastenkombination ALT+UMSCHALT+A und !a die Tastenkombination ALT+A drücken würde. Im Zweifelsfall sollten immer Kleinbuchstaben verwenden werden.</p>
 <p><span class="red">+</span>: Sendet eine UMSCHALT-Taste. Zum Beispiel: <code>Send +abC</code> sendet den Text "AbC" und <code>Send !+a</code> drückt die Tastenkombination ALT+UMSCHALT+A.</p>
 <p><span class="red">^</span>: Sendet eine STRG-Taste. Zum Beispiel: <code>Send ^!a</code> drückt STRG+ALT+A und <code>Send ^{Home}</code> sendet STRG+POS1. <strong>Hinweis</strong>: ^A erzeugt in einigen Programmen einen anderen Effekt als ^a. Das liegt daran, dass mit ^A die Tastenkombination STRG+UMSCHALT+A und mit ^a die Tastenkombination STRG+A gedrückt wird. Im Zweifelsfall sollten immer Kleinbuchstaben verwenden werden.</p>
 <p><span class="red">#</span>: Sendet eine WIN-Taste. Zum Beispiel würde <code>Send #e</code> die WIN-Taste gedrückt halten und den Buchstaben "e" drücken.</p>
@@ -88,7 +88,7 @@ SendEvent Tasten</pre>
   </tr>
   <tr>
     <td align="center">{Space}</td>
-    <td>LEERTASTE (nur für Leerzeichen notwendig, die sich am Anfang oder am Ende des Strings befinden - die in der Mitte können echte Leerzeichen sein)</td>
+    <td>LEERTASTE (nur für Leerzeichen notwendig, die sich am Anfang oder am Ende des Strings befinden - die in der Mitte können literale Leerzeichen sein)</td>
   </tr>
   <tr>
     <td align="center">{Tab}</td>
@@ -254,7 +254,7 @@ SendEvent Tasten</pre>
   <tr id="Unicode">
     <td align="center">{U+nnnn}</td>
     <td><p><a name="sendu"></a><span class="ver">[AHK_L 24+]:</span> Sendet ein Unicode-Zeichen, wenn <em>nnnn</em> der hexadezimale Wert des Zeichens ohne 0x-Präfix ist. Das ist in den Unicode-Versionen von AutoHotkey normalerweise nicht notwendig, weil deren Send und ControlSend von sich aus Unicode-Text unterstützen.</p>
-    <p>Wenn das Zeichen keinem virtuellen Tastencode zugeordnet werden kann, wird <a href="http://msdn.microsoft.com/en-us/library/ms646310.aspx">SendInput()</a> oder <a href="http://msdn.microsoft.com/en-us/library/ms646276.aspx">WM_CHAR</a> zum Senden des Zeichens verwendet. Außerdem ist der aktuelle Send-Modus unwirksam.</p></td>
+    <p>Wenn das Zeichen keinem virtuellen Tastencode zugeordnet werden kann, wird mit <a href="http://msdn.microsoft.com/en-us/library/ms646310.aspx">SendInput()</a> oder <a href="http://msdn.microsoft.com/en-us/library/ms646276.aspx">WM_CHAR</a> das Zeichen gesendet und der aktuelle Send-Modus ignoriert.</p></td>
   </tr>
   <tr>
     <td align="center"><p>{vkXX}<br>
@@ -482,7 +482,7 @@ Send {Up up}  <em>; Lässt die obere Pfeiltaste wieder los.</em></pre>
     Sleep 30  <em>; Die Anzahl an Millisekunden zwischen den Tastatureingaben (oder verwendet <a href="SetKeyDelay.htm">SetKeyDelay</a>).</em>
 }
 Send {Tab up}  <em>; Taste loslassen.</em></pre>
-<p>Das Wort <em>DownTemp</em> kann auch verwendet werden. Dieses Wort bewirkt das gleiche wie <em>Down</em>, außer bei Modifikatoren (STRG/UMSCHALT/ALT/WIN). In solchen Fällen benachrichtigt <em>DownTemp</em> nachfolgende Send-Befehle, dass die Taste nicht dauerhaft gedrückt ist und losgelassen werden kann, sobald diese von einer Tastatureingabe aufgerufen wird. Zum Beispiel würde <code>Send {Control DownTemp}</code> und danach <code>Send a</code> ein normales "a" erzeugen, anstatt STRG+A.</p>
+<p>Das Wort <em>DownTemp</em> kann auch verwendet werden. Dieses Wort bewirkt das gleiche wie <em>Down</em>, außer bei Modifikatoren (STRG/UMSCHALT/ALT/WIN). In solchen Fällen benachrichtigt <em>DownTemp</em> nachfolgende Send-Befehle, dass die Taste nicht dauerhaft gedrückt ist und losgelassen werden kann, wann immer diese von einer Tastatureingabe aufgerufen wird. Zum Beispiel würde <code>Send {Control DownTemp}</code> und danach <code>Send a</code> ein normales "a" erzeugen, anstatt STRG+A.</p>
 
 <h2 id="Remarks">Allgemeine Bemerkungen</h2>
 <p>Es gibt keine bestimmten Einschränkungen, welche Zeichen gesendet werden können. Falls ein Zeichen auf der aktuellen Tastaturbelegung nicht vorhanden ist, kann es durch Senden eines Unicode-Zeichenpackets oder einer <a href="#asc">ALT+nnnnn</a>-Kombination simuliert werden, abhängig davon, welche Version von AutoHotkey verwendet wird. Unicode-Zeichen werden in den Unicode-Versionen von AutoHotkey direkt als Text unterstützt, bei allen anderen Versionen nur mithilfe der <a href="#sendu">{U+nnnn}-Schreibweise</a>.</p>

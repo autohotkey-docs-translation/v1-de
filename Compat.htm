@@ -44,7 +44,7 @@
   <li><a href="#Window_Groups">GroupActivate setzt ErrorLevel; <em>Label</em> von GroupAdd funktioniert anders</a></li>
   <li><a href="#Run">Run und RunWait interpretieren das <em>Ziel</em> unterschiedlich</a></li>
   <li><a href="#ControlZ">STRG+Z wird nicht als EOF (End of File) interpretiert</a></li>
-  <li><a href="#Compatibility_Mode">Der Kompatibilitätsmodus kann zu Verwechslungen führen</a></li>
+  <li><a href="#Compatibility_Mode">Der Kompatibilitätsmodus kann irreführend sein</a></li>
   <li><a href="#IsCompiled">A_IsCompiled ist immer schreibgeschützt</a></li>
   <li><a href="#Escaped_Whitespace">Führende und nachfolgende `t-Sequenzen werden nicht länger verworfen</a></li>
 </ul>
@@ -166,10 +166,10 @@ MsgBox,, Titel
 <p>Setzt man den <a href="http://www.microsoft.com/windowsxp/using/helpandsupport/learnmore/appcompat.mspx#ECD">Kompatibilitätsmodus</a> auf Windows 95, NT4 oder 98/ME im Eigenschaftsfenster der EXE-Datei, mit der das Script ausgeführt werden soll, kann es passieren, dass sich das Script falsch verhalten wird. Das liegt daran, dass der Kompatibilitätsmodus eine bestimmte Windows-Version an das Programm senden würde, die in AutoHotkey_L nicht mehr unterstützt wird. Setzt man den Kompatibilitätsmodus auf Windows 95 oder 98/ME, würde <code>MsgBox %A_OSVersion%</code> die Version <code>WIN_NT4</code> melden.</p>
 
 <h3 id="IsCompiled">A_IsCompiled</h3>
-<p><a href="Variables.htm#IsCompiled">A_IsCompiled</a> ist als leerer String definiert, sofern das Script noch nicht kompiliert wurde. Vorher blieb es undefiniert, wodurch Zuweisungen wie <code>A_IsCompiled := 1</code> möglich waren, sofern das Script noch nicht kompiliert wurde. Absofort wird sie überall als schreibgeschützte interne Variable behandelt.</p>
+<p><a href="Variables.htm#IsCompiled">A_IsCompiled</a> ist als leerer String definiert, sofern das Script noch nicht kompiliert wurde. Vorher blieb es undefiniert, wodurch Zuweisungen wie <code>A_IsCompiled := 1</code> möglich waren, sofern das Script noch nicht kompiliert wurde. Absofort wird sie überall als schreibgeschützte integrierte Variable behandelt.</p>
 
-<h3 id="Escaped_Whitespace">Unsichtbare Zeichen mit einem Escapezeichen</h3>
-<p>Unsichtbare Zeichen mit einem Escapezeichen wie <code>`t</code> und <code>` </code> werden nicht länger am Anfang oder am Ende eines Arguments verworfen. Zum Beispiel ist <code>StringReplace s, s, `t</code> nun eine gültige Anweisung, die alle Tabulatorzeichen in <em>s</em> entfernt.</p>
+<h3 id="Escaped_Whitespace">Escapezeichen-versehene Leerraumzeichen</h3>
+<p>Escapezeichen-versehene Leerraumzeichen wie <code>`t</code> und <code>` </code> werden nicht länger am Anfang oder am Ende eines Arguments verworfen. Zum Beispiel ist <code>StringReplace s, s, `t</code> nun eine gültige Anweisung, die alle Tabulatorzeichen in <em>s</em> entfernt.</p>
 
 
 <h2 id="Format">Unicode vs ANSI</h2>
@@ -205,7 +205,7 @@ VarSetCapacity(Native_Var,  t_size(Zeichenkapazität))  <em>; siehe <a href="#Nu
   <tr><th>&nbsp;</th><th>Zeichengröße</th><th>C / Win32-Typen</th><th>Kodierung</th></tr>
   <tr><td class="Syntax" style="text-align:center">WStr</td><td style="text-align:center">16-Bit</td><td>wchar_t*, WCHAR*, LPWSTR, LPCWSTR</td><td>UTF-16</td></tr>
   <tr><td class="Syntax" style="text-align:center">AStr</td><td style="text-align:center">8-Bit</td><td>char*, CHAR*, LPSTR, LPCSTR</td><td>ANSI (der Standard-ANSI-Zeichensatz des Systems)</td></tr>
-  <tr><td class="Syntax" style="text-align:center">Str</td><td style="text-align:center">--</td><td>TCHAR*, LPTSTR, LPCTSTR</td><td>Entspricht <b>WStr</b> in Unicode-Versionen und <b>AStr</b> in ANSI-Versionen.</td></tr>
+  <tr><td class="Syntax" style="text-align:center">Str</td><td style="text-align:center">--</td><td>TCHAR*, LPTSTR, LPCTSTR</td><td>Entspricht <b>WStr</b> in Unicode-Builds und <b>AStr</b> in ANSI-Builds.</td></tr>
 </table>
 <p>Verwendet man "Str" oder das Gegenstück des aktuellen Builds als Parameter, wird die Adresse des Strings oder der Variable an die Funktion übergeben. Ansonsten wird eine temporäre Kopie des Strings im gewünschten Format erstellt und diese stattdessen übergeben. In der Regel sollten "AStr" und "WStr" nicht verwendet werden, wenn die Funktion einen Wert in diesen Parameter schreibt.</p>
 <p><b>Hinweis</b>: "AStr" und "WStr" sind sowohl bei Parametern als auch beim Rückgabewert einer Funktion gültig.</p>

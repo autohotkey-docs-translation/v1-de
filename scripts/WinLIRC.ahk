@@ -197,8 +197,8 @@ ConnectToAddress(IPAddress, Port)
 
 
 ReceiveData(wParam, lParam)
-; Durch OnMessage() wird diese Funktion automatisch aufgerufen, sobald neue Daten
-; bei der Verbindung eingetroffen sind.  Sie ließt die Daten von WinLIRC und führt entsprechende Aktionen abhängig
+; Durch OnMessage() wird diese Funktion automatisch aufgerufen, wann immer neue Daten
+; bei der Verbindung eintreffen.  Sie ließt die Daten von WinLIRC und führt entsprechende Aktionen abhängig
 ; vom Inhalt durch.
 {
     Critical  ; Verhindert, dass die Nachricht von einer anderen Nachricht verworfen wird, da der Thread bereits ausgeführt wird.
