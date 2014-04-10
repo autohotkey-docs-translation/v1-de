@@ -317,7 +317,7 @@ function ShowTOC()
   $('#sb_content').attr('class', 'selected');
   $('#sb_index').removeAttr('class');
   $('#keywords').hide();
-  $('#sidebar').show();
+  $('#sidebar').fadeIn();
 }
 
 function ShowIndex()
@@ -326,7 +326,7 @@ function ShowIndex()
   $('#sb_index').attr('class', 'selected');
   $('#sb_content').removeAttr('class');
   $('#sidebar').hide();
-  $('#keywords').show();
+  $('#keywords').fadeIn();
 }
 
 function IsInsideCHM()
