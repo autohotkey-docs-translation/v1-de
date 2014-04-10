@@ -1,3 +1,8 @@
+// This prevents indenting the main content to the left when loading large files
+
+if (!IsInsideCHM())
+  $('html').attr('style', 'margin: 108px 0px 0px 245px; max-width: 966px; padding-right: 26px');
+
 $(document).ready(function() {
 
   if (IsInsideCHM())
@@ -12,7 +17,8 @@ $(document).ready(function() {
   var urlroot  = location.protocol + "//" + location.host + virtualDir;
 
   var urlpath  = location.href.replace(urlroot, '');
-  
+
+  $('html').removeAttr('style');
   $('body').wrapInner('<div class="right-col"><div id="main-content">');
   $('body').append('<div class="float-clear"></div>'); // necessary otherwise sidebar would overlap the footer
   $('body').prepend('<div id="headerbar"></div><div class="left-col"><ul class="nav"><li id ="sb_content"><span>Inhalt</span></li><li id ="sb_index"><span>Index</span></li></ul><div id="sidebar"></div><div id="keywords"><input id="IndexEntry" type="text"><select id="indexcontainer" name="IndexListbox" class="docstyle" size="20"></select></div></div>');
