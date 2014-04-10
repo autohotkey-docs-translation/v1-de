@@ -1,11 +1,7 @@
 $(document).ready(function() {
 
-  //
-  // Check if website is inside a CHM file
-  //
-
-  if (location.href.search(/::/) > 0)
-    return 0;
+  if (IsInsideCHM())
+    return;
 
   //
   // Build website structure
@@ -325,4 +321,12 @@ function ShowIndex()
   $('#sb_content').removeAttr('class');
   $('#sidebar').hide();
   $('#keywords').show();
+}
+
+function IsInsideCHM()
+{
+  if (location.href.search(/::/) > 0)
+    return 1;
+  else
+    return 0;
 }
