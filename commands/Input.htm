@@ -16,7 +16,7 @@
 
 <p>Wartet auf die Tastatureingabe des Benutzers.</p>
 
-<pre class="Syntax">Input [, AusgabeVar, Optionen, Endtasten, Übereinstimmungsliste]</pre>
+<pre class="Syntax">Input [, AusgabeVar, Optionen, Endtasten, Vergleichsliste]</pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -29,9 +29,9 @@
   <dt>Optionen</dt>
   <dd><p><u>Ein String mit beliebig vielen Buchstaben (in beliebiger Reihenfolge, optional mit Leerzeichen getrennt):</u></p>
       <p><strong>B</strong>: Rücktaste (Backspace) wird ignoriert. Normalerweise wird durch Drücken der Rücktaste bei einem Input-Befehl das zuletzt gedrückte Zeichen vom String entfernt. Hinweis: Falls bei einem sichtbaren Eingabetext (wie in einem Editor) Pfeiltasten oder ähnliches zur Navigation verwendet werden, wird durch die Rücktaste weiterhin das letzte Zeichen entfernt, anstatt das Zeichen hinter dem Textcursor (Einfügestrich).</p>
-      <p><strong>C</strong>: Zeichengenauigkeit. Normalerweise ist die <em>Übereinstimmungsliste</em> nicht von der Groß- und Kleinschreibung abhängig (In den Versionen vor 1.0.43.03 wurden nur die Buchstaben von A bis Z erkannt, jedoch nicht z. B. ü/Ü).</p>
+      <p><strong>C</strong>: Zeichengenauigkeit. Normalerweise unterscheidet <em>Vergleichsliste</em> nicht zwischen Groß- und Kleinschreibung (In den Versionen vor 1.0.43.03 wurden nur die Groß- und Kleinbuchstaben von A bis Z erkannt, aber nicht Buchstaben wie ü/Ü).</p>
       <p><strong>I</strong>: Ignoriert Eingaben, die vom AutoHotkey-Script erzeugt werden, wie z. B. der <a href="Send.htm#SendEvent">SendEvent</a>-Befehl. <a href="Send.htm#SendInput">SendInput</a> und <a href="Send.htm#SendPlay">SendPlay</a> werden allerdings immer ignoriert, unabhängig dieser Einstellung.</p>      
-      <p><strong>L</strong>: Länge begrenzen (z. B. <code>L5</code>). Die maximal erlaubte Eingabelänge. Sobald der Text diese Länge erreicht, wird Input beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Max gesetzt. Kommt der Text jedoch in der <em>Übereinstimmungsliste</em> vor, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Match gesetzt. Durch Weglassen der Zahl wird die Länge automatisch auf 16383 Zeichen begrenzt (der höchste zulässige Wert).</p>
+      <p><strong>L</strong>: Länge begrenzen (z. B. <code>L5</code>). Die maximal erlaubte Eingabelänge. Sobald der Text diese Länge erreicht, wird Input beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Max gesetzt. Stimmt der Text mit einem Element aus der <em>Vergleichsliste</em> überein, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Match gesetzt. Durch Weglassen der Zahl wird die Länge automatisch auf 16383 Zeichen begrenzt (der höchste zulässige Wert).</p>
       <p><strong>M</strong>: Tastenkombinationen wie STRG+A bis STRG+Z werden erkannt und in reale ASCII-Zeichen umgewandelt, falls vorhanden. Das folgende Beispiel zeigt, wie STRG+C erkannt werden kann:</p>
       <pre>Transform, StrgC, Chr, 3 <em>; Speichert das Zeichen für STRG+C in die Variable StrgC.</em>
 Input, AusgabeVar, L1 M
@@ -41,7 +41,7 @@ ExitApp</pre>
       <p>Hinweis: STRG+A bis STRG+Z sind die Zeichen von <a href="../Functions.htm#Chr">Chr(1)</a> bis <a href="../Functions.htm#Chr">Chr(26)</a>. Zudem kann die <strong>M</strong>-Option dazu führen, dass sich einige Tastenkürzel wie STRG+NACH-LINKS bei einem Input-Befehl falsch verhalten.</p>
       <p><strong>T</strong>: Zeitlimit (z. B. <code>T3</code>). Die Wartezeit in Sekunden, bevor der Input-Befehl beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Timeout gesetzt wird. Sobald die Zeit abgelaufen ist, enthält <em>AusgabeVar</em> den bis dahin eingegebenen Text des Benutzers. Dieser Wert kann eine Fließkommazahl wie 2.5 sein.</p>      
       <p><strong><a name="vis"></a>V</strong>: Sichtbar. Normalerweise wird die Benutzereingabe blockiert (kann nicht vom Betriebssystem erkannt werden). Mit dieser Option werden die Benutzereingaben direkt an das aktive Fenster gesendet.</p>
-      <p><strong><a name="asterisk"></a>*</strong>: Platzhalter (überall finden). Normalerweise muss die Benutzereingabe exakt mit einem Element aus der <em>Übereinstimmungsliste</em> übereinstimmen. Mit dieser Option kann eine Übereinstimmung öfters gefunden werden, da die gesamte Länge des Eingabetextes durchsucht wird.</p></dd>
+      <p><strong><a name="asterisk"></a>*</strong>: Platzhalter (überall finden). Normalerweise muss die Benutzereingabe exakt mit einem Element aus der <em>Vergleichsliste</em> übereinstimmen. Mit dieser Option kann eine Übereinstimmung öfters gefunden werden, da die gesamte Länge des Eingabetextes durchsucht wird.</p></dd>
 
   <dt>Endtasten</dt>
   <dd><p>Eine Liste mit beliebig vielen Tasten, die den Input-Befehl beenden, sobald eine von denen gedrückt wird (die <em>Endtaste</em> selbst wird nicht in <em>AusgabeVar</em> geschrieben). Falls ein Input-Befehl auf diese Weise beendet wird, enthält <a href="../misc/ErrorLevel.htm">ErrorLevel</a> das Wort EndKey, gefolgt von einem Doppelpunkt und den Namen der <em>Endtaste</em>. Beispiele: <code>EndKey:.</code>, <code>EndKey:Escape</code>.</p>
@@ -51,10 +51,10 @@ ExitApp</pre>
       <p>Alternativ kann ein eindeutiger virtueller Tastencode wie <code>{vkFF}</code> angegeben werden. Das ist vorallem dann nützlich, wenn die Taste weder einen Namen hat, noch beim Drücken ein sichtbares Zeichen erzeugt. Der virtuelle Tastencode kann ermittelt werden, wenn die Schritte im unteren Abschnitt der <a href="../KeyList.htm#SpecialKeys">Tastenliste</a> befolgt werden.</p>
     </dd>
 
-  <dt>Übereinstimmungsliste</dt>
-  <dd><p>Eine kommagetrennte Liste mit Schlüsselwörtern, die den Input-Befehl beenden werden (dabei wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Match gesetzt). Die Benutzereingabe muss exakt mit einem Element aus der Liste übereinstimmen (sofern die <a href="#asterisk">*-Option</a> nicht vorhanden ist). <strong>Alle Leer- und Tabulatorzeichen an den Trennkommas sind von Bedeutung</strong> - das heißt, sie gehören zum übereinstimmenden String. Wenn die <em>Übereinstimmungsliste</em> beispielsweise "ABC , XYZ" enthält, dann muss Var entweder ABC mit einem Leerzeichen danach oder XYZ mit einem Leerzeichen davor enthalten, damit eine Übereinstimmung erfolgen kann.</p>
+  <dt>Vergleichsliste</dt>
+  <dd><p>Eine kommagetrennte Liste mit Schlüsselwörtern, die den Input-Befehl beenden werden (dabei wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Match gesetzt). Die Benutzereingabe muss exakt mit einem Element aus der Liste übereinstimmen (sofern die <a href="#asterisk">*-Option</a> nicht vorhanden ist). <strong>Alle Leer- und Tabulatorzeichen an den Trennkommas sind von Bedeutung</strong> - das heißt, sie gehören zum übereinstimmenden String. Wenn <em>Vergleichsliste</em> beispielsweise "ABC , XYZ" enthält, dann muss Var entweder ABC mit einem Leerzeichen danach oder XYZ mit einem Leerzeichen davor enthalten, damit eine Übereinstimmung erfolgen kann.</p>
       <p>Zwei aufeinanderfolgende Kommas stellen ein literales Komma dar. Im folgenden Beispiel wird ein literales Komma nach dem Wort string1 erzeugt: "string1,,,string2". Ebenso enthält die folgende Liste nur ein einzelnes Element, in dem sich ein literales Komma befindet: "einzelnes,,Element".</p>
-    <p>Da die Elemente in <em>Übereinstimmungsliste</em> nicht als einzelne Parameter behandelt werden, kann sich die komplette Liste in einer Variable befinden. Tatsächlich muss sich alles oder ein Teil davon in der Variable befinden, wenn eine Länge von 16383 Zeichen überschritten wird (die maximale Länge einer Script-Zeile). Zum Beispiel könnte <em>Übereinstimmungsliste</em> aus <code>%Liste1%,%Liste2%,%Liste3%</code> bestehen, von der jede Unterliste eine lange Liste mit Elementen enthält.</p>
+    <p>Da die Elemente in <em>Vergleichsliste</em> nicht als einzelne Parameter behandelt werden, kann sich die komplette Liste in einer Variable befinden. Tatsächlich muss sich alles oder ein Teil davon in der Variable befinden, wenn eine Länge von 16383 Zeichen überschritten wird (die maximale Länge einer Script-Zeile). Zum Beispiel könnte <em>Vergleichsliste</em> aus <code>%Liste1%,%Liste2%,%Liste3%</code> bestehen, von der jede Unterliste eine lange Liste mit Elementen enthält.</p>
     </dd>
 
 </dl>
@@ -72,7 +72,7 @@ ExitApp</pre>
   </tr>
   <tr>
     <td>Max</td>
-    <td>Die Benutzereingabe hat die maximal erlaubte Länge erreicht und stimmt nicht mit den Elementen in der <em>Übereinstimmungsliste</em> überein.</td>
+    <td>Die Benutzereingabe hat die maximal erlaubte Länge erreicht und stimmt mit keinem Elementen aus <em>Vergleichsliste</em> überein.</td>
   </tr>
   <tr>
     <td>Zeitlimit</td>
@@ -80,7 +80,7 @@ ExitApp</pre>
   </tr>
   <tr>
     <td>Match</td>
-    <td>Die Benutzereingabe stimmt mit einem Element aus der <em>Übereinstimmungsliste</em> überein.</td>
+    <td>Die Benutzereingabe stimmt mit einem Element aus der <em>Vergleichsliste</em> überein.</td>
   </tr>
   <tr>
     <td>EndKey:name</td>
@@ -94,7 +94,7 @@ ExitApp</pre>
 <p>Falls mehrere Sprachen oder Tastaturbelegungen vorhanden sind, greift der Input-Befehl auf die Tastaturbelegung des aktiven Fensters zurück, anstatt auf die des Scripts (unabhängig davon, ob Input <a href="#vis">sichtbar</a> ist). In den Versionen vor 1.0.44.03 wurde die Belegung des Scripts verwendet.</p>
 <p>Obwohl <a href="../Hotstrings.htm">Hotstrings</a> im Gegensatz zu einem Input-Befehl nicht so flexibel sind, sind sie dennoch einfacher zu handhaben.</p>
 <h3>Siehe auch</h3>
-<p><a href="KeyWait.htm">KeyWait</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="InputBox.htm">InputBox</a>, <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="IfIn.htm">If Var in/contains Übereinstimmungsliste</a></p>
+<p><a href="KeyWait.htm">KeyWait</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="InputBox.htm">InputBox</a>, <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="IfIn.htm">If Var in/contains Vergleichsliste</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Wartet darauf, dass der Benutzer eine Taste drückt.  Tasten, die keine sichtbaren Zeichen
 ; wie Modifikatoren, Funktionstasten und Pfeiltasten erzeugen, sind als Endtasten aufgelistet,
