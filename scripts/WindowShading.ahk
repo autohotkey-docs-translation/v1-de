@@ -8,7 +8,7 @@
 
 ; Höhe eines zusammengerollten Fensters hier angeben.  Durch das Betriebssystem
 ; kann die Titelleiste wahrscheinlich gar nicht versteckt werden,
-; unabhängig davon, wie klein die Zahl ist:
+; egal wie klein die Zahl ist:
 ws_MinHeight = 25
 
 ; Diese Zeile wird alle Fenster wieder aufrollen, falls das Script
