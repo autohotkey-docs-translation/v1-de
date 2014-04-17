@@ -47,10 +47,10 @@ MsgBox % "Interface-Name: " ComObjType(obj, "name")
 IID_IProvideClassInfo := "{B196B283-BAB4-101A-B69C-00AA00341D07}"
 
 <em>; Fordert einen Pointer an, der auf das IProvideClassInfo-Interface des Objekts verweist.</em>
-If !(pci := ComObjQuery(obj, IID_IProvideClassInfo))
+if !(pci := ComObjQuery(obj, IID_IProvideClassInfo))
 {
     MsgBox IProvideClassInfo-Interface wird nicht unterstützt.
-    Return
+    return
 }
 
 <em>; Ruft GetClassInfo auf, um einen Pointer zu ermitteln, der auf das ITypeInfo-Interface verweist.</em>
@@ -73,24 +73,24 @@ vtable(ptr, n) {
     <em>; NumGet(ptr+0) gibt die Adresse der virtuellen Funktionstabelle
     ; des Objekts zurück (kurz: vtable). Der Rest des Ausdrucks ermittelt
     ; die Adresse der n-ten Funktionadresse von der vtable.</em>
-    Return NumGet(NumGet(ptr+0), n*A_PtrSize)
+    return NumGet(NumGet(ptr+0), n*A_PtrSize)
 }
 </pre>
 
 <pre id="ExIE" class="NoIndent"><em>; Beispiel: Automatisiert ein vorhandenes Internet-Explorer-Fenster.</em>
 
 sURL := "http://ahkscript.org/boards/"
-If webBrowser := GetWebBrowser()
+if webBrowser := GetWebBrowser()
    webBrowser.Navigate(sURL)
-Return
+return
 
 GetWebBrowser()
 {
     <em>; Ermittelt einen unbearbeiteten Pointer, der auf das Document-Objekt des obersten IE-Fensters verweist.</em>
     static msg := DllCall("RegisterWindowMessage", "str", "WM_HTML_GETOBJECT")
     SendMessage msg, 0, 0, Internet Explorer_Server1, ahk_class IEFrame
-    If ErrorLevel = FAIL
-        Return  <em>; IE nicht gefunden.</em>
+    if ErrorLevel = FAIL
+        return  <em>; IE nicht gefunden.</em>
     lResult := ErrorLevel
     DllCall("oleacc\ObjectFromLresult", "ptr", lResult
         , "ptr", GUID(IID_IHTMLDocument2,"{332C4425-26CB-11D0-B483-00C04FD90119}")
@@ -107,13 +107,13 @@ GetWebBrowser()
 
     <em>; Gibt das WebBrowser-Objekt in verwendbarer Form zurück:</em>
     static VT_DISPATCH := 9, F_OWNVALUE := 1
-    Return ComObject(VT_DISPATCH, pweb, F_OWNVALUE)
+    return ComObject(VT_DISPATCH, pweb, F_OWNVALUE)
 }
 
 GUID(ByRef GUID, sGUID) <em>; Wandelt ein String in eine binäre GUID um und gibt deren Adresse zurück.</em>
 {
     VarSetCapacity(GUID, 16, 0)
-    Return DllCall("ole32\CLSIDFromString", "wstr", sGUID, "ptr", &amp;GUID) &gt;= 0 ? &amp;GUID : ""
+    return DllCall("ole32\CLSIDFromString", "wstr", sGUID, "ptr", &amp;GUID) &gt;= 0 ? &amp;GUID : ""
 }
 </pre>
 

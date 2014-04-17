@@ -125,7 +125,7 @@ DllCall("DeleteFile", Ptr, &amp;Dateiname) <em>; Lasst die Anführungszeichen be
 <p><a name="LastError"></a>Die integrierte Variable <strong>A_LastError</strong> enthält den Rückgabewert der Systemfunktion GetLastError(), die sofort nach einem Funktionsaufruf aufgerufen wird (hat keine messbaren Auswirkungen auf die Performance). A_LastError enthält eine Nummer zwischen 0 und 4294967295 (immer als Dezimalzahl). Wie bei <a href="../misc/ErrorLevel.htm">ErrorLevel</a> gilt A_LastError jeweils nur für einen Thread, das heißt, dass Unterbrechungen durch andere <a href="../misc/Threads.htm">Threads</a> den Wert nicht ändern können. Allerdings wird A_LastError auch von <a href="Run.htm#LastError">Run/RunWait</a> geändert.</p>
 
 <h3 id="load">Performance</h3>
-<p>Die Performance kann bei mehrfachen Aufrufen einer DLL deutlich verbessert werden, indem sie direkt geladen wird (<em>das ist nicht für eine <a href="#std">Standard-DLL</a> wie User32 notwendig, weil diese dauerhaft im Arbeitsspeicher vorhanden ist</em>). Dadurch wird verhindert, dass für DllCall jedesmal LoadLibrary und FreeLibrary intern aufgerufen werden muss. Zum Beispiel:</p>
+<p>Die Performance kann bei mehrfachen Aufrufen einer DLL deutlich verbessert werden, indem sie explizit geladen wird (<em>das ist nicht für eine <a href="#std">Standard-DLL</a> wie User32 notwendig, weil diese dauerhaft im Arbeitsspeicher vorhanden ist</em>). Dadurch wird verhindert, dass für DllCall jedesmal LoadLibrary und FreeLibrary intern aufgerufen werden muss. Zum Beispiel:</p>
 <pre>hModule := DllCall("<strong>LoadLibrary</strong>", "Str", "MeineFunktionen.dll", "Ptr")  <em>; Verhindert, dass DllCall() die Library in der Schleife laden muss.</em>
 Loop, C:\Meine Dokumente\*.*, , 1
     Ergebnis := DllCall("MeineFunktionen\BackupFile", "Str", A_LoopFileFullPath)
@@ -164,10 +164,10 @@ Ergebnis := DllCall("CharLower", <strong><u>str</u></strong>, DllCall("CharUpper
 <h3>Siehe auch</h3>
 <p><a href="../Compat.htm#DllCall">Script-Kompatibilität</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="Run.htm">Run</a>, <a href="VarSetCapacity.htm">VarSetCapacity</a>, <a href="../Functions.htm">Funktionen</a>, <a href="SysGet.htm">SysGet</a>, <a href="http://msdn.microsoft.com/library/">MSDN Library</a></p>
 <h3>Beispiele</h3>
-<pre class="NoIndent"><em>; Beispiel: Ruft die Windows-API-Funktion "MessageBox" auf und meldet, welche Schaltfläche der Benutzer drückt.</em>
+<pre class="NoIndent"><em>; Beispiel: Ruft die Windows-API-Funktion "MessageBox" auf und meldet, welchen Button der Benutzer drückt.</em>
 
 WelcherButton := DllCall("MessageBox", "Int", "0", "Str", "Ja oder Nein drücken", "Str", "Titel der Box", "Int", 4)
-MsgBox Sie haben die Schaltfläche #%WelcherButton% gedrückt.</pre>
+MsgBox Sie haben den Button #%WelcherButton% gedrückt.</pre>
 
 <pre class="NoIndent"><em>; Beispiel: Ersetzt das Desktop-Hintergrundbild mit der angegebenen Bitmap-Datei (.bmp).</em>
 
@@ -176,7 +176,7 @@ DllCall("SystemParametersInfo", UInt, 0x14, UInt, 0, Str, <i>A_WinDir <strong>.<
 <pre class="NoIndent"><em>; Beispiel: Ruft die API-Funktion "IsWindowVisible" auf, um herauszufinden, ob ein Editor-Fenster sichtbar ist.</em>
 
 DetectHiddenWindows On
-If not DllCall("IsWindowVisible", "Ptr", WinExist("Unbenannt - Editor"))  <em>; WinExist() gibt HWND zurück.</em>
+if not DllCall("IsWindowVisible", "Ptr", WinExist("Unbenannt - Editor"))  <em>; WinExist() gibt HWND zurück.</em>
     MsgBox Das Fenster ist nicht sichtbar.</pre>
 
 <pre class="NoIndent"><em>; Beispiel: Ruft die API-Funktion wsprintf() auf, um die Zahl 432 mit führenden Nullen zu erweitern, insgesamt 0000000432 Zeichen lang (20).</em>
@@ -203,7 +203,7 @@ SPI_SETMOUSESPEED = 0x71
 <em>; Nun wird die Geschwindigkeit der Maus im vorletzten Parameter verringert (von 1 bis 20, 10 ist Standard):</em>
 <strong>DllCall</strong>("SystemParametersInfo", UInt, SPI_SETMOUSESPEED, UInt, 0, Ptr, <strong>3</strong>, UInt, 0)
 KeyWait F1  <em>; Dadurch wird verhindert, dass die Auto-Wiederholung von der Tastatur DllCall mehrmals aufruft.</em>
-Return
+return
 
 F1 up::<strong>DllCall</strong>("SystemParametersInfo", UInt, 0x71, UInt, 0, Ptr, OrigMausSpeed, UInt, 0)  <em>; Stellt die ursprüngliche Geschwindigkeit wieder her.</em></pre>
 
@@ -218,34 +218,34 @@ F1 up::<strong>DllCall</strong>("SystemParametersInfo", UInt, 0x71, UInt, 0, Ptr
 
 #Persistent
 SetTimer, BildlaufleisteBeobachten, 100
-Return
+return
 
 BildlaufleisteBeobachten:
 ActiveWindow := WinExist("A")
-If not ActiveWindow  <em>; Kein aktives Fenster.</em>
-    Return
+if not ActiveWindow  <em>; Kein aktives Fenster.</em>
+    return
 ControlGetFocus, FokussiertesSteuerelement, ahk_id %ActiveWindow%
-If not FokussiertesSteuerelement  <em>; Kein fokussiertes Steuerelement.</em>
-    Return
+if not FokussiertesSteuerelement  <em>; Kein fokussiertes Steuerelement.</em>
+    return
 <em>; Zeigt die vertikale oder horizontale Position der Bildlaufleiste in einem ToolTip an:</em>
 ControlGet, ChildHWND, Hwnd,, %FokussiertesSteuerelement%, ahk_id %ActiveWindow%
 ToolTip % <strong>DllCall</strong>("GetScrollPos", "Ptr", ChildHWND, "Int", 1)  <em>;  Im letzten Parameter kann 1 für SB_VERT und 0 für SB_HORZ angegeben werden.</em>
-Return</pre>
+return</pre>
 
 <pre class="NoIndent"><a name="file"></a><em>; Beispiel: Dieses Script schreibt etwas Text in eine Datei und liest diesen zurück in den Speicher (benötigt v1.0.34+).
 ; Diese Methode hilft der Performance, falls mehreren Dateien gleichzeitig gelesen oder geschrieben werden müssen.
 ; Seit AHK_L 42 kann das Gleiche mit <a href="FileOpen.htm#writeread">FileOpen</a> erreicht werden. Siehe dazu das <a href="FileOpen.htm">Beispiel</a>.</em>
 
 FileSelectFile, Dateiname, S16,, Neue Datei erstellen:
-If Dateiname =
-    Return
+if Dateiname =
+    return
 GENERIC_WRITE = 0x40000000  <em>; Datei zum Schreiben öffnen.</em>
 CREATE_ALWAYS = 2  <em>; Neue Datei erstellen (überschreibt eine vorhandene Datei).</em>
 hFile := <strong>DllCall</strong>("CreateFile", Str, Dateiname, UInt, GENERIC_WRITE, UInt, 0, Ptr, 0, UInt, CREATE_ALWAYS, UInt, 0, Ptr, 0, Ptr)
-If not hFile
+if not hFile
 {
     MsgBox Kann "%Dateiname%" nicht zum Schreiben öffnen.
-    Return
+    return
 }
 TestString = Das ist ein Teststring.`r`n  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
 <strong>DllCall</strong>("WriteFile", Ptr, hFile, Str, TestString, UInt, StrLen(TestString), UIntP, AktuellGeschriebeneBytes, Ptr, 0)
@@ -257,10 +257,10 @@ OPEN_EXISTING = 3  <em>; Datei muss existieren, bevor sie geöffnet werden kann.
 FILE_SHARE_READ = 0x1 <em>; Diese und die nächste Variable bestimmen, ob andere Prozesse die Datei öffnen können.</em>
 FILE_SHARE_WRITE = 0x2
 hFile := <strong>DllCall</strong>("CreateFile", Str, Dateiname, UInt, GENERIC_READ, UInt, FILE_SHARE_READ|FILE_SHARE_WRITE, Ptr, 0, UInt, OPEN_EXISTING, UInt, 0, Ptr, 0)
-If not hFile
+if not hFile
 {
     MsgBox Kann "%Dateiname%" nicht zum Lesen öffnen.
-    Return
+    return
 }
 <em>; Macht die Variable für weitere Testzwecke leer, aber stellt sicher, das genügend Kapazität zur Verfügung steht:</em>
 ZuLesendeBytes := VarSetCapacity(TestString, StrLen(TestString))
@@ -272,7 +272,7 @@ MsgBox Der folgende String wurde aus der Datei gelesen: %TestString%</pre>
 ; Dieses Script stammt aus <a href="http://www.autohotkey.com/forum/topic6107.html">www.autohotkey.com/forum/topic6107.html</a></em>
 
 OnExit, CursorAnzeigen  <em>; Stellt sicher, dass der Mauszeiger beim Beenden des Scripts wieder sichtbar gemacht wird.</em>
-Return
+return
 
 CursorAnzeigen:
 SystemCursor("On")
@@ -286,7 +286,7 @@ SystemCursor(OnOff=1)   <em>; INIT = "I","Init"; OFF = 0,"Off"; TOGGLE = -1,"T",
         ,c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13 <em>; Mauszeiger vom System</em>
         , b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13   <em>; Leere Mauszeiger</em>
         , h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12,h13   <em>; Handles von Standardzeiger</em>
-    If (OnOff = "Init" or OnOff = "I" or $ = "")       <em>; initialisieren, wenn benötigt oder erster Aufruf</em>
+    if (OnOff = "Init" or OnOff = "I" or $ = "")       <em>; initialisieren, wenn benötigt oder erster Aufruf</em>
     {
         $ = h                                          <em>; aktive Standardzeiger</em>
         VarSetCapacity( h_cursor,4444, 1 )
@@ -302,9 +302,9 @@ SystemCursor(OnOff=1)   <em>; INIT = "I","Init"; OFF = 0,"Off"; TOGGLE = -1,"T",
                 , "Int",32, "Int",32, "Ptr",&amp;AndMask, "Ptr",&amp;XorMask )
         }
     }
-    If (OnOff = 0 or OnOff = "Off" or $ = "h" and (OnOff &lt; 0 or OnOff = "Toggle" or OnOff = "T"))
+    if (OnOff = 0 or OnOff = "Off" or $ = "h" and (OnOff &lt; 0 or OnOff = "Toggle" or OnOff = "T"))
         $ = b  <em>; leere Mauszeiger benutzen</em>
-    Else
+    else
         $ = h  <em>; gespeicherte Mauszeiger benutzen</em>
 
     Loop %c0%
@@ -367,7 +367,7 @@ SystemzeitSetzen(YYYYMMDDHHMISS)
     StringMid, Int, YYYYMMDDHHMISS, 13, 2 <em>; SS (Sekunden)</em>
     NumPut(Int, SystemTime, 12, "UShort")
 
-    Return <strong>DllCall</strong>("SetSystemTime", Ptr, &amp;SystemTime)
+    return <strong>DllCall</strong>("SetSystemTime", Ptr, &amp;SystemTime)
 }</pre>
 
 <pre class="NoIndent"><em>/* <strong>Weitere Struktur-Befehle:</strong>
@@ -415,7 +415,7 @@ vtable(ptr, n) {
     <em>; NumGet(ptr+0) gibt die Adresse der virtuellen Funktionstabelle
     ; des Objekts zurück (kurz: vtable). Der Rest des Ausdrucks ermittelt
     ; die Adresse der n-ten Funktionsadresse von der vtable.</em>
-    Return NumGet(NumGet(ptr+0), n*A_PtrSize)
+    return NumGet(NumGet(ptr+0), n*A_PtrSize)
 }
 </pre>
 

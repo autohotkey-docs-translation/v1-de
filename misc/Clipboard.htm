@@ -52,7 +52,7 @@ ClipSicherung =   <em>; Speicher freigeben, falls die Zwischenablage sehr groß 
 <p>Mit <a href="../commands/ClipWait.htm">ClipWait</a> kann festgestellt werden, wann die Zwischenablage Daten enthält (wahlweise auch Daten, die kein Text sind).</p>
 <p><a href="../commands/StringLen.htm">StrLen / StringLen</a> kann dazu verwendet werden, die Gesamtgröße einer Variable zu ermitteln, der <em>ClipboardAll</em> zugewiesen worden ist. Um die Größe bei den Unicode-Versionen von AutoHotkey abzurufen (in Bytes), muss die Länge mit 2 multipliziert werden. Mithilfe von <a href="../Variables.htm#IsUnicode">A_IsUnicode</a> können ANSI- und Unicode-Versionen wie folgt unterstützt werden: <code>Größe := StrLen(ClipSicherung) * (A_IsUnicode ? 2 : 1)</code>.</p>
 <p>Variablen, denen <em>ClipboardAll</em> zugewiesen worden ist, können mit den Operatoren "&lt;&gt;" und "=" miteinander verglichen werden (aber nicht direkt mit <em>ClipboardAll</em>). Im folgenden Beispiel wird zunächst die Länge jeder Variable überprüft. Falls das nicht reicht, können die Variablen noch wie folgt verglichen werden:</p>
-<pre>If ClipSicherung1 &lt;&gt; %ClipSicherung2%   <em>; <u>Muss</u> eine IF-Anweisung im alten Stil sein, kein Ausdruck.</em>
+<pre>if ClipSicherung1 &lt;&gt; %ClipSicherung2%   <em>; <u>Muss</u> eine IF-Anweisung im alten Stil sein, kein Ausdruck.</em>
     MsgBox Die zwei gespeicherten Zwischenablagen sind unterschiedlich.</pre>
 <p>Das Speichern von <em>ClipboardAll</em> in eine Variable wird nicht durch das Speicherlimit von <a href="../commands/_MaxMem.htm">#MaxMem</a> beeinflusst.</p>
 <p>Eine intern gespeicherte Zwischenablagedatei besteht aus mehreren Teilen: Die ersten 4 Bytes enthalten den Formattyp, die nächsten 4 Bytes die Datenblockgröße und zum Schluss den Datenblock des Formats. Falls die Zwischenablage mehr als ein Format enthält (dass fast immer der Fall ist), werden diese drei Elemente so oft wiederholt, bis alle Formate enthalten sind. Anschließend endet die Datei mit einem Formattyp (4 Byte groß), wobei jedoch eine 0 enthalten ist.</p>
@@ -70,13 +70,13 @@ ClipSicherung =   <em>; Speicher freigeben, falls die Zwischenablage sehr groß 
 2, falls etwas enthalten ist, das kein Text ist, wie z. B. ein Bild.</p>
 <p>Das folgende Beispiel ist ein funktionierendes Script. Sobald es ausgeführt wird, wird bei jeder Änderung der Zwischenablage kurz ein ToolTip angezeigt.</p>
 <pre>#Persistent
-Return
+return
 
 OnClipboardChange:
 ToolTip Datentyp der Zwischenablage: %A_EventInfo%
 Sleep 1000
 ToolTip  <em>; ToolTip deaktivieren.</em>
-Return</pre>
+return</pre>
 <p>Wenn die Zwischenablage geändert wird, während das Label OnClipboardChange läuft, geht das Benachrichtigungsereignis verloren. Falls das unerwünscht ist, verwendet <a href="../commands/Critical.htm">Critical</a> in der ersten Zeile des Labels. Allerdings werden dadurch auch andere <a href="../misc/Threads.htm">Threads</a> zwischengespeichert/aufgeschoben (z. B. das Drücken eines Hotkeys), während der OnClipboardChange-Thread läuft.</p>
 <p>Sobald das Script selbst die Zwischenablage ändert, wird das OnClipboardChange-Label normalerweise nicht sofort ausgeführt. Das heißt, dass Befehle unterhalb des Befehls, der die Zwischenablage geändert hat, wahrscheinlich vorher ausgeführt werden. Um die sofortige Ausführung des Labels zu erzwingen, verwendet eine kurze Verzögerung wie beispielsweise <code><a href="../commands/Sleep.htm">Sleep 20</a></code>, nachdem die Zwischenablage geändert wurde.</p>
 <p>Siehe auch: <a href="../commands/OnExit.htm">OnExit</a>, <a href="../commands/OnMessage.htm">OnMessage()</a>, <a href="../commands/RegisterCallback.htm">RegisterCallback()</a></p>

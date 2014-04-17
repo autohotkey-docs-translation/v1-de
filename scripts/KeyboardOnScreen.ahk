@@ -55,8 +55,8 @@ Gui, -Caption +E0x200 +ToolWindow
 TransColor = F1ECED
 Gui, Color, %TransColor%  ; Diese Farbe wird später transparent gemacht.
 
-;---- Für jede Taste eine Schaltfläche hinzufügen. Die erste Schaltfläche wird mit absoluten
-; Koordinaten positioniert, sodass alle anderen Schaltflächen sich darauf beziehen:
+;---- Für jede Taste einen Button hinzufügen. Der erste Button wird mit absoluten
+; Koordinaten positioniert, sodass alle anderen Buttons sich darauf beziehen:
 Gui, Add, Button, section %k_KeySize% xm+%k_KeyWidth%, 1
 Gui, Add, Button, %k_Position%, 2
 Gui, Add, Button, %k_Position%, 3
@@ -99,7 +99,7 @@ Gui, Add, Button, %k_Position%, `;
 Gui, Add, Button, %k_Position%, '
 Gui, Add, Button, x+%k_KeyMargin% h%k_KeyHeight%, Enter  ; Automatische Breite.
 
-; Die erste untere Schaltfläche enthält am Ende %A_Space%, um sie etwas breiter zu machen,
+; Der erste untere Button enthält am Ende %A_Space%, um sie etwas breiter zu machen,
 ; damit das Layout der Tasten daneben mehr einer echten Tastatur entspricht:
 Gui, Add, Button, xm y+%k_KeyMargin% h%k_KeyHeight%, Shift%A_Space%%A_Space%
 Gui, Add, Button, %k_Position%, Z
@@ -168,7 +168,7 @@ Loop
 return ; Ende des automatischen Ausführungsbereichs.
 
 
-;---- Beim Tastendruck die entsprechende Schaltfläche auf dem Bildschirm drücken:
+;---- Beim Tastendruck den entsprechenden Button auf dem Bildschirm drücken:
 
 ~*Backspace::
 ControlClick, Bk, ahk_id %k_ID%, , LEFT, 1, D
@@ -181,7 +181,7 @@ return
 ; würde "Shift" beim Loslassen der Taste standardmäßig ausgeführt (in älteren AHK-Versionen):
 ~*LShift::
 ~*RShift::
-~*LCtrl::  ; Ctrl muss anstelle von Control verwendet werden, damit es mit dem Schaltflächennamen übereinstimmt.
+~*LCtrl::  ; Ctrl muss anstelle von Control verwendet werden, damit es mit dem Button-Namen übereinstimmt.
 ~*RCtrl::
 ~*LAlt::
 ~*RAlt::

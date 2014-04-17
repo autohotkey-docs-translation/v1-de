@@ -31,13 +31,13 @@
 <p>Hotkeys werden manchmal auch als Tastenkürzel bezeichnet, weil sie in der Lage sind, schnell und einfach eine Aktion auszulösen (z. B. das Ausführen eines Programms oder <a href="misc/Macros.htm">Tastatur-Makros</a>). Im folgenden Beispiel wird der Hotkey WIN+N dazu gebracht, den Editor zu starten. Das Raute-Zeichen [#] ist die WIN-Taste, die als <em>Modifikatortaste</em> bezeichnet wird:</p>
 <pre>#n::
 Run Notepad
-Return</pre>
+return</pre>
 <p>Im oberen Beispiel dient das <code><a href="commands/Return.htm">Return</a></code> dazu, den Hotkey zu beenden. Muss ein Hotkey nur eine einzige Zeile ausführen, kann diese Zeile rechts neben den Doppelpunkten vorkommen. In diesem Fall ist das <code>Return</code> inbegriffen:</p>
 <pre>#n::Run Notepad</pre>
 <p>Um mehrere Modifikatoren mit einem Hotkey zu kombinieren, liste diese nebeneinander auf (die Reihenfolge spielt keine Rolle). Im folgenden Beispiel wird <code>^!s</code> verwendet, das STRG+ALT+S kennzeichnet:</p>
 <pre>^!s::
 <a href="commands/Send.htm">Send</a> Mit freundlichen Grüßen,{Enter}John Smith  <em>; Diese Zeile sendet Tastatureingaben an das aktive (vorderste) Fenster.</em>
-Return</pre>
+return</pre>
 <h3 id="Symbols">Folgende Modifikatorsymbole können zum Definieren von Hotkeys verwendet werden:</h3>
 <table class="info">
   <tr>
@@ -121,7 +121,7 @@ Es können mehrere Hotkeys vertikal gestapelt werden, damit sie die gleiche Akti
 <pre>^Numpad0::
 ^Numpad1::
 MsgBox Durch Drücken von STRG+Numpad0 oder STRG+Numpad1 wird diese Meldung angezeigt.
-Return</pre>
+return</pre>
 <p>Eine Taste oder Tastenkombination kann vollständig deaktiviert werden, indem sie dazu gebracht wird, nichts zu tun. Das folgende Beispiel deaktiviert die rechte WIN-Taste:</p>
 <pre>RWin::Return</pre>
 
@@ -168,20 +168,20 @@ RControl &amp; Enter::ShiftAltTab  <em>; Ohne die rechte STRG-Taste loszulassen,
 ControlGetFocus, fcontrol, A
 Loop 2  <em>; &lt;-- Erhöhe diesen Wert, um das Scrollen zu beschleunigen.</em>
     SendMessage, 0x114, 0, 0, %fcontrol%, A  <em>; 0x114 ist WM_HSCROLL und die 0 danach SB_LINELEFT.</em>
-Return
+return
 
 ~LControl &amp; WheelDown::  <em>; Scrollt nach rechts.</em>
 ControlGetFocus, fcontrol, A
 Loop 2  <em>; &lt;-- Erhöhe diesen Wert, um das Scrollen zu beschleunigen.</em>
     SendMessage, 0x114, 1, 0, %fcontrol%, A  <em>; 0x114 ist WM_HSCROLL und die 1 danach SB_LINERIGHT.</em>
-Return</pre>
+return</pre>
 <p>Da Mausrad-Hotkeys nur Ereignisse beim Drücken erzeugen (nie beim Loslassen), können sie nicht als Hotkeys verwendet werden, die das Wort <a href="#keyup">"UP"</a> enthalten.</p>
 <h2 id="Remarks">Tipps und Hinweise</h2>
 <p>Jede Ziffernblocktaste kann dazu gebracht werden, je nach Status der NUM-Taste zwei verschiedene Hotkey-Subroutinen zu starten. Alternativ kann man eine Ziffernblocktaste auch dazu bringen, die gleiche Subroutine zu starten, unabhängig vom Status der NUM-Taste. Zum Beispiel:</p>
 <pre>NumpadEnd::
 Numpad1::
 MsgBox, Dieser Hotkey wurde gestartet, egal ob die NUM-Taste An ist oder nicht.
-Return</pre>
+return</pre>
 <p>Sobald der Tilde-Operator (~) mit einer <a href="#prefix">Präfix-Taste</a> verwendet wird, würde dieses Präfix immer das aktive Fenster erreichen. Zum Beispiel würde bei beiden folgenden Hotkeys das aktive Fenster alle Rechtsklick-Ereignisse empfangen, obwohl das Tilde-Zeichen nur in einer der Definitionen vorkommt:</p>
 <pre>~RButton &amp; LButton::MsgBox Sie haben die linke Maustaste gedrückt, während die rechte gedrückt wurde.
 RButton &amp; WheelUp::MsgBox Sie haben das Mausrad nach oben gedreht, während die rechte Maustaste gedrückt wurde.</pre>
@@ -189,10 +189,10 @@ RButton &amp; WheelUp::MsgBox Sie haben das Mausrad nach oben gedreht, während 
 <p>Mithilfe des <a href="commands/Hotkey.htm">Hotkey</a>-Befehls können Hotkeys dynamisch erstellt werden, während das Script läuft. Der Hotkey-Befehl kann zudem Hotkeys, die im Script bereits vorkommen, einzeln bearbeiten, deaktivieren oder aktivieren.</p>
 <p>Joystick-Hotkeys unterstützen Modifikatortasten wie ^ (STRG) und # (WIN) zurzeit nicht als Präfix. Allerdings kann man <a href="commands/GetKeyState.htm">GetKeyState</a> wie folgt verwenden, um diesen Effekt nachzuahmen:</p>
 <pre>Joy2::
-If not GetKeyState("Control")  <em>; Weder die linke noch die rechte STRG-Taste ist gedrückt.</em>
-    Return  <em>; also nichts tun.</em>
+if not GetKeyState("Control")  <em>; Weder die linke noch die rechte STRG-Taste ist gedrückt.</em>
+    return  <em>; also nichts tun.</em>
 MsgBox Sie haben die zweite Taste vom ersten Joystick gedrückt, während die STRG-Taste gedrückt wurde.
-Return</pre>
+return</pre>
 <p>Manchmal ist es notwendig, dass ein Hotkey auf das Loslassen seiner Modifikatortasten warten muss, bevor er fortfahren kann. Siehe dazu folgendes Beispiel:</p>
 <pre>^!s::Send {Delete}</pre>
 <p>Durch Drücken von STRG+ALT+S wird das System dazu gebracht, sich so zu verhalten, als hätte man STRG+ALT+ENTF gedrückt (aufgrund der aggressiven Erkennung dieser Tastenkombination). Um das zu umgehen, sollte man mit <a href="commands/KeyWait.htm">KeyWait</a> auf das Loslassen der Tasten warten; zum Beispiel:</p>
@@ -200,7 +200,7 @@ Return</pre>
 KeyWait Control
 KeyWait Alt
 Send {Delete}
-Return</pre>
+return</pre>
 <p>Erzeugt ein Hotkey-Label wie <code>#z::</code> ein Fehler wie "Invalid Hotkey" (ungültiger Hotkey), hat die Tastaturbelegung/Sprache deines Systems dieses bestimmte Zeichen möglicherweise nicht (in diesem Fall "Z"). Probiere nur Zeichen aus, die auf deiner Tastaturbelegung vorhanden sind.</p>
 <p>Ein Hotkey-Label kann als Ziel von <a href="commands/Gosub.htm">Gosub</a> oder <a href="commands/Goto.htm">Goto</a> verwendet werden. Zum Beispiel: <code>Gosub ^!s</code>.</p>
 <p>Häufig werden Hotkeys dazu verwendet, eine wiederholende Aktion zu starten und zu stoppen, wie z. B. mehrere Tastatureingaben oder Mausklicks. Ein Beispiel dazu findet man in <a href="FAQ.htm#repeat">diesem FAQ-Thema</a>.</p>
@@ -223,7 +223,7 @@ WheelUp::ShiftAltTab</pre>
 <strong>!</strong>MButton::  <em>; Mittlere Maustaste. Mit dem <strong>!</strong>-Präfix kann er nur ausgeführt werden, wenn die ALT-Taste gedrückt wird (sobald das Alt-Tab-Menü sichtbar ist).</em>
 IfWinExist ahk_class #32771  <em>; Zeigt an, dass das Alt-Tab-Menü auf dem Bildschirm vorhanden ist.</em>
     Send <strong>!</strong>{Escape}{Alt up}
-Return</pre>
+return</pre>
 <p>Zurzeit müssen alle speziellen Alt-Tab-Aktionen direkt einem Hotkey wie oben zugewiesen werden (das heißt, dass sie nicht verwendet werden können, als wären sie Befehle). Sie werden <span class="red">nicht von <a href="commands/_IfWinActive.htm">#IfWin</a> oder <a href="commands/_If.htm">#If</a> beeinflusst</span>.
 
 </p>
@@ -233,6 +233,6 @@ Return</pre>
 ~*Escape::
 IfWinExist ahk_class #32771
     Send {Escape}{Alt up}  <em>; Schließt das Menü, ohne das ausgewählte Fenster zu aktivieren.</em>
-Return</pre>
+return</pre>
 </body>
 </html>

@@ -105,7 +105,7 @@ Objekt.Eigenschaft[Parameter] := Wert</pre>
 <ul><li>Zurzeit wird <code><span class="dull">x</span>.y[z]<span class="dull">()</span></code> als <code><span class="dull">x</span>["y", z]<span class="dull">()</span></code> behandelt, allerdings wird dies nicht unterstützt. Als Übergangslösung wird <code>x.y</code> in <code><span class="red">(</span><span class="dull">x.y</span><span class="red">)</span>[z]()</code> zuerst ausgewertet und danach das Ergebnis als Ziel des Methodenaufrufs verwendet. Beachtet, dass <code>x.y[z].()</code> nicht diese Einschränkung hat, da es wie <code>(x.y[z]).()</code> ausgewertet wird.</li></ul>
 
 <h3 id="Usage_Freeing_Objects">Freigeben von Objekten</h3>
-<p>Scripts geben Objekte nicht direkt frei. Sobald der letzte Verweis auf ein Objekt freigegeben ist, wird das Objekt automatisch freigegeben. Ein gespeicherter Verweis in einer Variable wird automatisch freigegeben, wenn diese Variable irgendeinen anderen Wert zugewiesen bekommt. Zum Beispiel:</p>
+<p>Scripts geben Objekte nicht explizit frei. Sobald der letzte Verweis auf ein Objekt freigegeben ist, wird das Objekt automatisch freigegeben. Ein gespeicherter Verweis in einer Variable wird automatisch freigegeben, wenn diese Variable irgendeinen anderen Wert zugewiesen bekommt. Zum Beispiel:</p>
 <pre>obj := {}  <em>; Erstellt ein Objekt.</em>
 obj := ""  <em>; Gibt den letzten Verweis frei, wodurch das Objekt freigegeben wird.</em></pre>
 <p>In diesem Zusammenhang wird ein Verweis, der in einem Feld eines anderen Objekts gespeichert ist, freigegeben, wenn dieses Feld irgendeinen anderen Wert zugewiesen bekommt oder vom Objekt entfernt wird. Das gilt auch für Arrays, da sie eigentlich Objekte sind.</p>
@@ -129,7 +129,7 @@ x := "", y := ""             <em>; Ohne die obige Zeile würde dies hier die Obj
 <p>Darüber hinaus können Objektverweise auch in Ausdrücke verwendet werden:</p>
 <ul>
   <li>Wenn ein Objektverweis mit irgendeinem anderen Wert mithilfe von <code>= == != &lt;&gt;</code> verglichen wird, dann werden sie nur als gleich angesehen, wenn beide Werte auf dasselbe Objekt verweisen.</li>
-  <li>Objekte werden immer als <i>True</i> angesehen, falls ein logischer Wert erforderlich ist, wie z. B. in <code>If obj</code>, <code>!obj</code> oder <code>obj ? x : y</code>.</li>
+  <li>Objekte werden immer als <i>True</i> angesehen, falls ein logischer Wert erforderlich ist, wie z. B. in <code>if obj</code>, <code>!obj</code> oder <code>obj ? x : y</code>.</li>
   <li>Eine Objektadresse kann mithilfe des <code>&amp;</code>-Operators abgerufen werden. Damit kann das Objekt eindeutig identifiziert werden, sobald sein letzter Verweis <a href="#Refs">freigegeben</a> wird.</li>
 </ul>
 <p>Sobald ein Objekt in einem Rahmen verwendet wird, in dem ein Objekt nicht erwartet wird, wird es als einen leeren String behandelt. Zum Beispiel zeigt <code>MsgBox %Objekt%</code> eine leere MsgBox an und <code>Objekt + 1</code> ergibt einen leeren String. Man sollte sich nicht auf dieses Verhalten verlassen, da sich das noch ändern kann.</p>
@@ -292,8 +292,8 @@ class GMem
     __New(aFlags, aGröße)
     {
         this.ptr := DllCall("GlobalAlloc", "uint", aFlags, "ptr", aGröße, "ptr")
-        If !this.ptr
-            Return ""
+        if !this.ptr
+            return ""
         MsgBox % "New GMem mit einer Größe von " aGröße " Bytes auf der Adresse " this.ptr "."
         return this  <em>; Diese Zeile kann weggelassen werden, wenn der Operator 'new' verwendet wird.</em>
     }
@@ -324,7 +324,7 @@ class <i>Klassenname</i> {
 <p>Meta-Funktionen sind Methoden, die mit base von einem Objekt definiert wurden. Damit kann genau angegeben werden, wie das Objekt agieren soll, falls ein unbekannter Schlüssel angefordert wird. Wenn zum Beispiel dem <code>Objekt.Schlüssel</code> keinen Wert zugewiesen wurde, wird die <i>__Get</i>-Meta-Funktion aufgerufen. Ebenso wird <i>__Set</i> bei <code>Objekt.Schlüssel := Wert</code> und <i>__Call</i> bei <code>Objekt.Schlüssel()</code> aufgerufen.</p>
 <p>In diesen Fällen wird das base-Objekt wie folgt aufgerufen:</p>
 <ul>
-  <li>Falls dieses base-Objekt die geeignete Meta-Funktion definiert, wird es aufgerufen. Wenn die Meta-Funktion einen Wert direkt mit <code>Return</code> zurückgibt, wird der Rückgabewert als Ergebnis der Operation verwendet und keine weitere Verarbeitung durchgeführt.
+  <li>Falls dieses base-Objekt die geeignete Meta-Funktion definiert, wird es aufgerufen. Wenn die Meta-Funktion einen Wert explizit mit <code>Return</code> zurückgibt, wird der Rückgabewert als Ergebnis der Operation verwendet und keine weitere Verarbeitung durchgeführt.
     <p><i>Set</i>: Falls die Operation erfolgreich war, sollte <i>__Set</i> den neuen Wert des Feldes zurückgeben, der möglicherweise vom originalen Rückgabewert abweicht. Dadurch können Zuweisungen wie in <code>a.x := b.y := z</code> verkettet werden. Falls die Zuweisung nicht erfolgreich war, sollte ein leerer String zurückgegeben werden, damit das Script den Fehler erkennen kann.</p></li>
   <li>Bei einer <i>Get</i>- oder <i>Call</i>-Operation wird ein passender Schlüssel in den Feldern des base-Objekts gesucht.
     <p><i>Get</i>: Wenn er gefunden wird, wird dieser Feldwert zurückgegeben.<br>
@@ -359,30 +359,30 @@ class Farbe
 
     __Get(aName)
     {
-        If (aName = "R")
-            Return (this.RGB &gt;&gt; 16) &amp; 255
-        If (aName = "G")
-            Return (this.RGB &gt;&gt; 8) &amp; 255
-        If (aName = "B")
-            Return this.RGB &amp; 255
+        if (aName = "R")
+            return (this.RGB &gt;&gt; 16) &amp; 255
+        if (aName = "G")
+            return (this.RGB &gt;&gt; 8) &amp; 255
+        if (aName = "B")
+            return this.RGB &amp; 255
     }
 
     __Set(aName, aWert)
     {
-        If aName in R,G,B
+        if aName in R,G,B
         {
             aWert &amp;= 255
 
-            If      (aName = "R")
+            if      (aName = "R")
                 this.RGB := (aWert &lt;&lt; 16) | (this.RGB &amp; ~0xff0000)
-            Else If (aName = "G")
+            else if (aName = "G")
                 this.RGB := (aWert &lt;&lt; 8)  | (this.RGB &amp; ~0x00ff00)
-            Else  <em>; (aName = "B")</em>
+            else  <em>; (aName = "B")</em>
                 this.RGB :=  aWert        | (this.RGB &amp; ~0x0000ff)
 
             <em>; 'Return' muss verwendet werden, um darauf hinzuweisen, dass ein neues Schlüssel-Wert-Paar nicht erstellt werden sollte.
             ; Damit wird auch definiert, was in 'x' von 'x := clr[name] := val' gespeichert wird:</em>
-            Return aWert
+            return aWert
         }
     }
 }</pre>
@@ -423,8 +423,8 @@ class Eigenschaften
     {
         <em>; Falls dieses Eigenschaftsobjekt eine Definition für diese Halb-Eigenschaft enthält, ruft es auf.
         ; Achtet darauf, nicht this.HasKey(aName) zu verwenden, da das sonst in  __Call rekursiv ausgeführt wird.</em>
-        If IsObject(aZiel) &amp;&amp; ObjHasKey(this, aName)
-            Return this[aName].(aZiel, aParams*)
+        if IsObject(aZiel) &amp;&amp; ObjHasKey(this, aName)
+            return this[aName].(aZiel, aParams*)
     }
 }
 
@@ -438,13 +438,13 @@ class Farbe
     class __Get extends Eigenschaften
     {
         R() {
-            Return (this.RGB &gt;&gt; 16) &amp; 255
+            return (this.RGB &gt;&gt; 16) &amp; 255
         }
         G() {
-            Return (this.RGB &gt;&gt; 8) &amp; 255
+            return (this.RGB &gt;&gt; 8) &amp; 255
         }
         B() {
-            Return this.RGB &amp; 255
+            return this.RGB &amp; 255
         }
     }
 
@@ -466,7 +466,7 @@ x_Setter(x, p1, p2, p3) {
 }
 
 x_Addr(x) {
-    Return &amp;x
+    return &amp;x
 }</pre>
 <p>Da <code>x_Setter</code> vier Pflichtparameter hat, wird es nur aufgerufen, sobald zwei oder mehr Schlüsselparameter vorhanden sind. Wenn die Zuweisung von oben durchgeführt wird, passiert Folgendes:</p>
 <ul>
@@ -495,7 +495,7 @@ MsgBox % empty_var.foo
 
 Default_Set_AutomaticVarInit(ByRef var, key, value)
 {
-    If (var = "")
+    if (var = "")
         var := Object(key, value)
 }</pre>
 
@@ -509,15 +509,15 @@ MsgBox % A_AhkPath.length.is("integer")
 
 Default_Get_PseudoProperty(nonobj, key)
 {
-    If (key = "length")
-        Return StrLen(nonobj)
+    if (key = "length")
+        return StrLen(nonobj)
 }
 
 Default_is(nonobj, type)
 {
-    If nonobj is %type%
-        Return true
-    Return false
+    if nonobj is %type%
+        return true
+    return false
 }</pre>
 <p>Beachtet, dass integrierte Funktionen auch verwendet werden können, aber die Klammern in diesem Fall nicht weggelassen werden können:</p>
 <pre>"".base.length := Func("StrLen")
@@ -538,7 +538,7 @@ Default__Warn(nonobj, p1="", p2="", p3="", p4="")
 
 <h2 id="Implementation">Implementierung</h2>
 <a name="Refs"></a><h3 id="Reference_Counting">Referenzzählung</h3>
-<p>AutoHotkey verwendet ein grundlegendes Referenz-Zählwerk, um benutzte Ressourcen eines Objekts automatisch freizugeben, falls es nicht länger durch das Script verwiesen wird. Script-Autoren sollten dieses Zählwerk nicht unbedingt aufrufen, es sei denn, sie arbeiten direkt mit unverwalteten Pointer, die auf Objekte verweisen. Für weitere Informationen, siehe <a href="commands/ObjAddRef.htm">ObjAddRef</a>.</p>
+<p>AutoHotkey verwendet ein grundlegendes Referenz-Zählwerk, um benutzte Ressourcen eines Objekts automatisch freizugeben, falls es nicht länger durch das Script verwiesen wird. Script-Autoren sollten dieses Zählwerk nicht explizit aufrufen, es sei denn, sie arbeiten direkt mit unverwalteten Pointer, die auf Objekte verweisen. Für weitere Informationen, siehe <a href="commands/ObjAddRef.htm">ObjAddRef</a>.</p>
 <pre><em>; Erhöht die Referenzzählung des Objekts, um "es am Leben zu erhalten":</em>
 <a href="commands/ObjAddRef.htm">ObjAddRef</a>(Adresse)
 ...

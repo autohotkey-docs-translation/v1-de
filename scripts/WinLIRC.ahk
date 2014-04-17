@@ -3,7 +3,7 @@
 ; Dieses Script empfängt Nachrichten von WinLIRC,
 ; sobald eine Taste der Fernbedienung gedrückt wird. Außerdem kann damit Winamp,
 ; Windows Media Player und so weiter automatisiert werden. Es ist einfach zu konfigurieren. Wenn zum Beispiel
-; WinLIRC eine Schaltfläche namens "VolUp" auf der Fernbedienung erkennt,
+; WinLIRC einen Button namens "VolUp" auf der Fernbedienung erkennt,
 ; dann wird ein Label namens VolUp erstellt und der Befehl
 ; "SoundSet +5" darunter verwendet, um die Lautstärke der Soundkarte um 5 % zu erhöhen.
 
@@ -220,7 +220,7 @@ ReceiveData(wParam, lParam)
         ExitApp  ; Die OnExit-Subroutine wird für uns WSACleanup() aufrufen.
     }
     ; Ansonsten die empfangenen Daten bearbeiten. Tests zeigen, dass es möglich ist, mehr als eine Zeile gleichzeitig zu erhalten
-    ; (selbst beim direkten Senden eines IR-Signals), wodurch die folgende Mehthode richtig behandelt wird.
+    ; (selbst beim expliziten Senden eines IR-Signals), wodurch die folgende Mehthode richtig behandelt wird.
     ; Empfangene Daten von WinLIRC sehen z. B. wie folgt aus (siehe Dokumentation zu WinLIRC für Details):
     ; 0000000000eab154 00 Tastenname Fernbedienungsname
     Loop, parse, ReceivedData, `n, `r

@@ -754,4 +754,4 @@ return
 RemoveToolTip:
 SetTimer, RemoveToolTip, Off
 ToolTip
-Return
+return

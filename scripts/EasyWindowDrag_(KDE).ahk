@@ -146,4 +146,4 @@ return
 DoubleAlt := A_PriorHotKey = "~Alt" AND A_TimeSincePriorHotkey < 400
 Sleep 0
 KeyWait Alt  ; Dadurch wird die Störung der automatischen Wiederholfunktion der Tastatur unterdrückt.
-Return
+return

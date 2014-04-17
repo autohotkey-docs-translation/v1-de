@@ -101,7 +101,7 @@
 ;    dass du ein Schlüsselwort einträgst. Nachdem du einen
 ;    Abfragestring eingetragen hast, wird eine Liste mit
 ;    Übereinstimmungen angezeigt. Als nächstes muss ein Eintrag ausgewählt
-;    und <Enter> oder die Schaltfläche 'Öffnen' gedrückt
+;    und <Enter> oder der Button 'Öffnen' gedrückt
 ;    werden, um das ausgewählte Programm auszuführen
 ;    oder das ausgewählte Verzeichnis zu öffnen.
 ;
@@ -188,7 +188,7 @@
 ; - Das Popup-Fenster von 'Seek' wurde im Ausgabebildschirm integriert,
 ;   sodass der Benutzer den Abfragestring nochmals eingeben kann, um etwas
 ;   zu suchen, ohne dabei Seek zu beenden und wieder zu starten.
-; - Schaltfläche 'Startmenü überprüfen'  hinzugefügt.
+; - Button 'Startmenü überprüfen'  hinzugefügt.
 ; - Inkrementelle Suche in Echtzeit hinzugefügt, die Übereinstimmungen
 ;   bei der Benutzereingabe automatisch filtert, ohne darauf zu warten,
 ;   dass du <Enter> drückst.
@@ -215,7 +215,7 @@
 ;   sobald alle Strings ("med" & "pla") gefunden werden. Damit wird zum Beispiel
 ;   "Media Player", "Macromedia Flash Player",
 ;   "Play Medieval King", "medpla", "plamed" gefunden.
-; - Tabulator-Bewegungsablauf korrigiert, indem bereits alle Schaltflächen
+; - Tabulator-Bewegungsablauf korrigiert, indem bereits alle Buttons
 ;   beim Start hinzugefügt werden, die jedoch deaktiviert sind, bis sie
 ;   gebraucht werden.
 ; - Statusleiste hinzugefügt, um ToolTip-Feedback zu ersetzen.
@@ -329,12 +329,12 @@ IfNotEqual 1, -scex
     ; AUSWAHL-LISTBOX HINZUFÜGEN, UM SUCHERGEBNISSE ANZUZEIGEN
     Gui, 1:Add, ListBox, vOpenTarget gTargetSelection X10 Y53 R28 W764 HScroll Disabled, %List%
 
-    ; DIESE SCHALTFLÄCHEN HINZUFÜGEN, ABER ERSTMAL DEAKTIVIEREN
+    ; DIESE BUTTONS HINZUFÜGEN, ABER ERSTMAL DEAKTIVIEREN
     Gui, 1:Add, Button, gButtonOPEN vButtonOPEN Default X10 Y446 Disabled, Öffnen
     Gui, 1:Add, Button, gButtonOPENDIR vButtonOPENDIR X59 Y446 Disabled, Verzeichnis öffnen
     Gui, 1:Add, Button, gButtonSCANSTARTMENU vButtonSCANSTARTMENU X340 Y446 Disabled, Startmenü überprüfen
 
-    ; BEENDEN-SCHALTFLÄCHE HINZUFÜGEN
+    ; BEENDEN-BUTTON HINZUFÜGEN
     Gui, 1:Add, Button, gButtonEXIT X743 Y446, Beenden
 
     ; ABFRAGEFENSTER ANZEIGEN
@@ -369,8 +369,8 @@ Gosub SilentFindMatches
 ; STATUSTEXT ENTFERNEN
 GuiControl,, StatusBar,
 
-; VERZEICHNISAUFLISTUNG WURDE GELADEN. ANDERE SCHALTFLÄCHEN WERDEN AKTIVIERT.
-; DIESE SCHALTFLÄCHEN WURDEN VORHER DEAKTIVIERT, DA SIE ERST
+; VERZEICHNISAUFLISTUNG WURDE GELADEN. ANDERE BUTTONS WERDEN AKTIVIERT.
+; DIESE BUTTONS WURDEN VORHER DEAKTIVIERT, DA SIE ERST
 ; FUNKTIONIEREN SOLLEN, WENN SIE GEBRAUCHT WERDEN.
 GuiControl, 1:Enable, ButtonOPEN
 GuiControl, 1:Enable, ButtonOPENDIR
@@ -637,7 +637,7 @@ Return
 
 ;=== BEGINN DES ButtonOPEN-EREIGNISSES ================================
 
-; BENUTZER HAT DIE SCHALTFLÄCHE 'ÖFFNEN' ODER <ENTER> GEDRÜCKT
+; BENUTZER HAT DEN BUTTON 'ÖFFNEN' ODER <ENTER> GEDRÜCKT
 ButtonOPEN:
 Gui, 1:Submit, NoHide
 
@@ -664,7 +664,7 @@ If OpenTarget =
 ; AUSGEWÄHLTE ÜBEREINSTIMMUNG NICHT VORHANDEN  (DATEI ODER VERZEICHNIS NICHT GEFUNDEN)
 IfNotExist, %OpenTarget%
 {
-    MsgBox, 8192, %version%, %OpenTarget% nicht vorhanden. Das heißt`, dass der Verzeichnis-Cache nicht mehr aktuell ist. Du kannst die Schaltfläche "Startmenü überprüfen" drücken`, um den Verzeichnis-Cache mit deiner neuesten Verzeichnisliste zu aktualisieren.
+    MsgBox, 8192, %version%, %OpenTarget% nicht vorhanden. Das heißt`, dass der Verzeichnis-Cache nicht mehr aktuell ist. Du kannst den Button "Startmenü überprüfen" drücken`, um den Verzeichnis-Cache mit deiner neuesten Verzeichnisliste zu aktualisieren.
     Goto EnterQuery
 }
 
@@ -690,7 +690,7 @@ Goto Quit
 
 ;=== BEGINN DES ButtonOPENDIR-EREIGNISSES =============================
 
-; BENUTZER HAT DIE SCHALTFLÄCHE 'VERZEICHNIS ÖFFNEN' GEDRÜCKT
+; BENUTZER HAT DEN BUTTON 'VERZEICHNIS ÖFFNEN' GEDRÜCKT
 ButtonOPENDIR:
 Gui, 1:Submit, NoHide
 
@@ -727,7 +727,7 @@ If status <> Ready ; KEIN VERZEICHNIS
 ; ÜBERPRÜFEN, OB VERZEICHNIS VORHANDEN IST
 IfNotExist, %OpenTarget%
 {
-    MsgBox, 8192, %version%, %OpenTarget% nicht vorhanden. Das heißt`, dass der Verzeichnis-Cache nicht mehr aktuell ist. Du kannst die Schaltfläche "Startmenü überprüfen" drücken`, um den Verzeichnis-Cache mit deiner neuesten Verzeichnisliste zu aktualisieren.
+    MsgBox, 8192, %version%, %OpenTarget% nicht vorhanden. Das heißt`, dass der Verzeichnis-Cache nicht mehr aktuell ist. Du kannst den Button "Startmenü überprüfen" drücken`, um den Verzeichnis-Cache mit deiner neuesten Verzeichnisliste zu aktualisieren.
     Goto EnterQuery
 }
 

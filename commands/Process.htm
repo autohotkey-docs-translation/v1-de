@@ -58,10 +58,10 @@ MsgBox Die PID des neu gestarteten Editors ist %NeuPID%.</pre>
 
 Process, wait, Notepad.exe, 5.5
 NeuPID = %ErrorLevel%  <em>; Den Wert sofort speichern, da sich ErrorLevel ständig ändert.</em>
-If NeuPID = 0
+if NeuPID = 0
 {
     MsgBox Innerhalb von 5.5 Sekunden ist kein passender Prozess erschienen.
-    Return
+    return
 }
 <em>; Ansonsten:</em>
 MsgBox Ein passender Prozess ist erschienen (Prozess-ID ist %NeuPID%).
@@ -69,7 +69,7 @@ Process, priority, %NeuPID%, Low
 Process, priority, , High  <em>; Das Script selbst setzt sich auf hohe Priorität.</em>
 WinClose Unbenannt - Editor
 Process, WaitClose, %NeuPID%, 5
-If ErrorLevel <em>; Die PID ist noch vorhanden.</em>
+if ErrorLevel <em>; Die PID ist noch vorhanden.</em>
     MsgBox Der Prozess wurde nicht innerhalb von 5 Sekunden geschlossen.</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel #3: Ein Hotkey, der die Priorität des Prozesses vom aktiven Fenster ändert:</em>
@@ -81,26 +81,26 @@ Gui, 5:Add, Text,, Drücke ESCAPE, um das Fenster zu schließen, oder wähle mit
 Gui, 5:Add, ListBox, vMeineListBox gMeineListBox r5, Normal|High|Low|BelowNormal|AboveNormal
 Gui, 5:Add, Button, default, OK
 Gui, 5:Show,, Priorität bestimmen
-Return
+return
 
 5GuiEscape:
 5GuiClose:
 Gui, Destroy
-Return
+return
 
 MeineListBox:
-If A_GuiEvent &lt;&gt; DoubleClick
-    Return
+if A_GuiEvent &lt;&gt; DoubleClick
+    return
 <em>; sonst bis zum nächsten Label springen:</em>
 5ButtonOK:
 GuiControlGet, MeineListBox
 Gui, Destroy
 Process, Priority, %aktiv_pid%, %MeineListBox%
-If ErrorLevel
+if ErrorLevel
     MsgBox Erfolg: Die Priorität wurde auf "%MeineListBox%" gesetzt.
-Else
+else
     MsgBox Fehler: Die Priorität wurde nicht auf "%MeineListBox%" gesetzt.
-Return</pre>
+return</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent" id="ListEx"><em>; Beispiel #4: Ermittelt mit DllCall eine Liste aller laufenden Prozesse und zeigt sie in einer MsgBox an.</em>
 
@@ -132,15 +132,15 @@ Loop, % r // 4  <em>; Parst das Array nach Kennungen in DWORD-Formaten (32 Bit):
    id := NumGet(a, A_Index * 4, "UInt")
    <em>; Öffnet Prozess mit: PROCESS_VM_READ (0x0010) | PROCESS_QUERY_INFORMATION (0x0400)</em>
    h := DllCall("OpenProcess", "UInt", 0x0010 | 0x0400, "Int", false, "UInt", id, "Ptr")
-   If !h
+   if !h
       continue
    VarSetCapacity(n, s, 0)  <em>; Ein Puffer, der den Basisnamen des Moduls erhält:</em>
    e := DllCall("Psapi.dll\GetModuleBaseName", "Ptr", h, "Ptr", 0, "Str", n, "UInt", A_IsUnicode ? s//2 : s)
-   If !e    <em>; Rückfallmethode für 64-Bit-Prozesse, falls im 32-Bit-Modus:</em>
-      If e := DllCall("Psapi.dll\GetProcessImageFileName", "Ptr", h, "Str", n, "UInt", A_IsUnicode ? s//2 : s)
+   if !e    <em>; Rückfallmethode für 64-Bit-Prozesse, falls im 32-Bit-Modus:</em>
+      if e := DllCall("Psapi.dll\GetProcessImageFileName", "Ptr", h, "Str", n, "UInt", A_IsUnicode ? s//2 : s)
          SplitPath n, n
    DllCall("CloseHandle", "Ptr", h)  <em>; Handle vom Prozess schließen, um Speicherplatz zu sparen.</em>
-   If (n &amp;&amp; e)  <em>; Wenn Abbild ungleich 0 ist, zur Liste hinzufügen:</em>
+   if (n &amp;&amp; e)  <em>; Wenn Abbild ungleich 0 ist, zur Liste hinzufügen:</em>
       l .= n . d, c++
 }
 DllCall("FreeLibrary", "Ptr", hModule)  <em>; Library entladen, um Speicher freizugeben.</em>

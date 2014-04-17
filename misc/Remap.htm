@@ -93,7 +93,7 @@ a::b  <em>; Im Editor verhält sich die A-Taste wie die B-Taste.</em>
 ^!a::
 ^!b::
 ToolTip %A_ThisHotkey% wurde gedrückt.
-Return</pre>
+return</pre>
 <p>Seit v1.1.06 kann alternativ <a href="../commands/_InputLevel.htm">#InputLevel</a> verwendet werden, um das Standardverhalten zu überschreiben. Zum Beispiel:</p>
 <pre>#InputLevel 1
 a::b
@@ -102,30 +102,30 @@ a::b
 ^!b::
 ToolTip %A_ThisHotkey% wurde gedrückt.
 return</pre>
-<p><a name="SendPlay"></a>Wenn <a href="../commands/SendMode.htm">SendMode</a> im automatischen Ausführungsbereich verwendet wird (oberste Teil des Scripts), werden alle Neubelegungen davon beeinflusst. Da jedoch die Neubelegung <a href="../commands/Send.htm#blind">Send {Blind}</a> verwendet, das vom <a href="../commands/SendMode.htm">SendPlay-Modus</a> nicht vollständig unterstützt wird, funktionieren möglicherweise einige Neubelegungen nicht richtig im SendPlay-Modus (besonders die Tasten STRG, UMSCHALT, ALT und WIN). Als Übergangslösung sollte SendPlay im automatischen Ausführungsbereich weggelassen werden, falls Neubelegungen vorhanden sind - verwendet <a href="../commands/Send.htm#SendPlay">SendPlay</a> anstelle von Send. Alternativ können die Neubelegungen auch in Hotkeys umgewandelt werden (wie unten beschrieben), die SendEvent anstelle von Send direkt aufrufen.</p>
+<p><a name="SendPlay"></a>Wenn <a href="../commands/SendMode.htm">SendMode</a> im automatischen Ausführungsbereich verwendet wird (oberste Teil des Scripts), werden alle Neubelegungen davon beeinflusst. Da jedoch die Neubelegung <a href="../commands/Send.htm#blind">Send {Blind}</a> verwendet, das vom <a href="../commands/SendMode.htm">SendPlay-Modus</a> nicht vollständig unterstützt wird, funktionieren möglicherweise einige Neubelegungen nicht richtig im SendPlay-Modus (besonders die Tasten STRG, UMSCHALT, ALT und WIN). Als Übergangslösung sollte SendPlay im automatischen Ausführungsbereich weggelassen werden, falls Neubelegungen vorhanden sind - verwendet <a href="../commands/Send.htm#SendPlay">SendPlay</a> anstelle von Send. Alternativ können die Neubelegungen auch in Hotkeys umgewandelt werden (wie unten beschrieben), die explizit SendEvent anstelle von Send aufrufen.</p>
 <p>Sobald ein Script gestartet wird, wird jede Neubelegung in zwei <a href="../Hotkeys.htm">Hotkeys</a> umgewandelt. Zum Beispiel enthält ein Script mit <code>a::b</code> stattdessen folgende zwei Hotkeys:</p>
 <pre>*<strong>a</strong>::
 SetKeyDelay -1   <em>; Wenn die Zieltaste eine Maustaste ist, dann verwendet stattdessen SetMouseDelay.</em>
 Send <a href="../commands/Send.htm#blind">{Blind}</a>{<strong>b</strong> DownTemp}  <em>; DownTemp ist wie Down, nur dass andere Send-Befehle im Script nicht davon ausgehen, dass "b" während des Sendens unten bleiben soll.</em>
-Return
+return
 
 *<strong>a up</strong>::
 SetKeyDelay -1  <em>; Siehe den unteren Hinweis, warum die Druckdauer nicht mit einem der beiden SetKeyDelays angegeben wird.</em>
 Send {Blind}{<strong>b</strong> Up}
-Return</pre>
+return</pre>
 <p>Allerdings unterscheiden sich die oberen Hotkeys unter folgenden Umständen:</p>
 <ol>
   <li>Sobald die linke STRG-Taste die Originaltaste und die ALT-Taste die Zieltaste ist, wird die Zeile <code>Send {Blind}{LAlt DownTemp}</code> mit <code>Send {Blind}<strong>{LCtrl Up}</strong>{LAlt DownTemp}</code> ersetzt. Das Gleiche gilt, wenn die rechte STRG-Taste das Original ist, jedoch ohne <code>{RCtrl up}</code>.</li>
   <li>Sobald eine Tastatur-Taste mit einer Maustaste (z. B. <code>RCtrl::RButton</code>) neu belegt wird, verwenden die oben genannten Hotkeys SetMouseDelay anstelle von SetKeyDelay. Darüber hinaus wird der erste oben genannte Hotkey mit folgendem ersetzt, um die automatische Wiederholung von Maustasten zu verhindern:
     <pre>*RCtrl::
 SetMouseDelay -1
-If not GetKeyState("RButton")  <em>; d. h. die rechte Maustaste wurde noch nicht gedrückt.</em>
+if not GetKeyState("RButton")  <em>; d. h. die rechte Maustaste wurde noch nicht gedrückt.</em>
     Send {Blind}{RButton DownTemp}
-Return</pre>
+return</pre>
   </li>
 </ol>
 <p>Beachtet, dass der zweite Parameter (<a href="../commands/SetKeyDelay.htm#dur">Druckdauer</a>) von SetKeyDelay bei den oben genannten Hotkeys entfällt. Denn die Druckdauer gilt nicht für den drückenden und loslassenden Status, wie z. B. <code>{b down}</code> und <code>{b up}</code>. Allerdings gilt die Druckdauer weiterhin für die Statusänderungen der Tasten UMSCHALT, STRG, ALT und WIN, die Neubelegungen wie <code>a::B</code> oder <code>a::^b</code> beeinflussen. Folglich gilt die Druckdauer, die im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> in Kraft gesetzt wurde, für alle Neubelegungen.</p>
-<p>Obwohl ein Tastenpaar nicht direkt mit einer Taste neu belegt werden kann (z. B. ist <code>a &amp; c::b</code> ungültig), kann dieser Effekt dennoch erreicht werden, indem die Up- und Down-Hotkeys von weiter oben direkt hinzugefügt werden: ersetzt einfach <code>*a::</code> mit <code>a &amp; c::</code>, und <code>*a up::</code> mit <code>a &amp; c up::</code>.</p>
+<p>Obwohl ein Tastenpaar nicht direkt mit einer Taste neu belegt werden kann (z. B. ist <code>a &amp; c::b</code> ungültig), kann dieser Effekt dennoch erreicht werden, indem die Up- und Down-Hotkeys von weiter oben explizit hinzugefügt werden: ersetzt einfach <code>*a::</code> mit <code>a &amp; c::</code>, und <code>*a up::</code> mit <code>a &amp; c up::</code>.</p>
 <p>Da Neubelegungen wie oben beschrieben in Hotkeys umgewandelt werden, werden sie vom <a href="../commands/Suspend.htm">Suspend</a>-Befehl beeinflusst. Ebenso kann mit dem <a href="../commands/Hotkey.htm">Hotkey</a>-Befehl eine Neubelegung deaktiviert oder bearbeitet werden. Zum Beispiel deaktivieren die zwei folgenden Befehle die Neubelegung <code>a::b</code>.</p>
 <pre>Hotkey, *a, off
 Hotkey, *a up, off</pre>
@@ -151,13 +151,13 @@ Hotkey, *a up, off</pre>
 SendEvent {Blind}{LButton down}
 KeyWait RCtrl  <em>; Die automatische Wiederholung des Mausklicks verhindern.</em>
 SendEvent {Blind}{LButton up}
-Return
+return
 
 *&lt;#AppsKey::  <em>; WinLinks + Menü-Taste =&gt; Rechtsklick</em>
 SendEvent {Blind}{RButton down}
 KeyWait AppsKey  <em>; Die automatische Wiederholung des Mausklicks verhindern.</em>
 SendEvent {Blind}{RButton up}
-Return</pre>
+return</pre>
 <h2 id="registry">Neubelegung mittels "Scancode Map" von der Registry</h2>
 <p><strong>Vorteile:</strong></p>
 <ul>

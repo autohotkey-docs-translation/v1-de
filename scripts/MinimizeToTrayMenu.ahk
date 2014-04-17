@@ -74,7 +74,7 @@ if a_AhkVersion =   ; Falls leer, dann ist die Version älter als 1.0.22.
 else
     mwt_MaxLength = 260  ; Verringern, um die Breite des Menüs zu begrenzen.
 
-Return ; Ende des automatischen Ausführungsbereichs.
+return ; Ende des automatischen Ausführungsbereichs.
 
 
 mwt_Minimize:

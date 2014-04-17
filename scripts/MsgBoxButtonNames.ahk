@@ -1,13 +1,13 @@
-; Schaltflächennamen der MsgBox ändern
+; Button-Namen der MsgBox ändern
 ; http://www.autohotkey.com
 ; Das ist ein funktionierendes Beispiel-Script, das einen Timer verwendet,
-; um die Namen der Schaltflächen in einem MsgBox-Dialogfenster zu ändern. Auch wenn
-; die Schaltflächennamen geändert werden, benötigt der IfMsgBox-Befehl
-; weiterhin den ursprünglichen Namen der Schaltfläche.
+; um die Namen der Buttons in einem MsgBox-Dialogfenster zu ändern. Auch wenn
+; die Button-Namen geändert werden, benötigt der IfMsgBox-Befehl
+; weiterhin den ursprünglichen Namen des Buttons.
 
 #SingleInstance
 SetTimer, ChangeButtonNames, 50 
-MsgBox, 4, Hinzufügen oder Entfernen, Schaltfläche auswählen:
+MsgBox, 4, Hinzufügen oder Entfernen, Button auswählen:
 IfMsgBox, YES 
 	MsgBox, Hinzufügen ausgewählt. 
 else

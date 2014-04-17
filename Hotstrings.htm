@@ -24,12 +24,12 @@
 <p><a name="auto"></a>Das obere Beispiel wird auch als Automatisches Ersetzen bezeichnet, weil der eingegebene Text automatisch gelöscht und mit dem angegebenen String nach dem zweiten Doppelpunkt-Paar ersetzt wird. Ein Hotstring kann hingegen auch definiert werden, um eine benutzerdefinierte Aktion wie in den folgenden Beispielen auszuführen. Beachtet, dass die Befehle sich <u>unter</u> dem Hotstring befinden müssen:</p>
 <pre>::bzw::
 MsgBox Es wurde "bzw" eingegeben.
-Return
+return
 
 :*:]d::  <em>; Dieser Hotstring ersetzt "]d" mit dem aktuellen Datum und der aktuellen Zeit mithilfe der folgenden Befehle.</em>
 <a href="commands/FormatTime.htm">FormatTime</a>, AktuellerZeitstempel,, d.M.yyyy HH:mm  <em>; z. B. 21.6.2011 15:10</em>
 SendInput %AktuellerZeitstempel%
-Return</pre>
+return</pre>
 <p>Auch wenn die beiden oben genannten Beispiele nichts mit dem Automatischen Ersetzen zu tun haben, wird die eingegebene Abkürzung dennoch standardmäßig gelöscht. Das erfolgt durch das automatische Verwenden der Rücktaste, die mithilfe der <a href="#b0">b0-Option</a> deaktiviert werden kann.</p>
 <h2 id="EndChars">Endungszeichen</h2>
 <p>Solange die <a href="#Asterisk">Sternchen-Option</a> nicht aktiv ist, müssen <em>Endungszeichen</em> nach einer Abkürzung eingegeben werden, damit der Hotstring ausgelöst wird. Endungszeichen bestehen vorrangig aus den folgenden Zeichen: <strong>-()[]{}':;"/\,.?!`n `t</strong> (beachtet, dass `n ein Enter ist, `t ein Tabulator ist und sich ein Leerzeichen zwischen `n und `t befindet). Verwendet und bearbeitet je nach Bedarf das folgende Beispiel, um neue Endungszeichen für <u>alle</u> Hotstrings zu bestimmen, nicht nur für den Hotstring danach:</p>
@@ -70,7 +70,7 @@ Return</pre>
 <p><strong><a name="z"></a>Z</strong>: Diese selten verwendete Option setzt die Hotstring-Erkennung wieder zurück, sobald der Hotstring ausgelöst wurde. Das heißt, dass das Script auf einen völlig neuen Hotstring wartet und dabei alle vorherigen Benutzereingaben beseitigt. Dadurch wird verhindert, dass Hotstrings unbeabsichtigt ausgelöst werden. Siehe dazu folgenden Hotstring:</p>
 <pre>:b0*?:11::
 SendInput xx
-Return</pre>
+return</pre>
 <p>Sobald drei aufeinanderfolgende Einsen (111) eingegeben werden, würde der Hotstring ohne Z-Option zweimal ausgelöst werden, da die mittlere Eins das <em>letzte</em> Zeichen vom ersten Auslösen ist, aber auch das <em>erste</em> Zeichen vom zweiten Auslösen. Durch Hinzufügen des Buchstabens Z vor b0 müssen vier anstelle von drei Einsen eingegeben werden, um den Hotstring zweimal auszulösen. Verwendet <strong>Z0</strong>, um diese Option wieder zu deaktivieren.</p>
 <h2 id="continuation">Lange Ersatztexte</h2>
 <p>Hotstrings, die lange Ersatztexte erzeugen, können durch <a href="Scripts.htm#continuation">Fortsetzungsbereiche</a> besser gelesen und verwaltet werden. Zum Beispiel:</p>
@@ -132,8 +132,8 @@ ClipboardOld = %ClipboardAll%
 Clipboard =  <em>; Muss anfangs leer sein, damit die Erkennung funktioniert.</em>
 Send ^c
 ClipWait 1
-If ErrorLevel  <em>; ClipWait hat die Zeit überschritten.</em>
-    Return
+if ErrorLevel  <em>; ClipWait hat die Zeit überschritten.</em>
+    return
 <em>; Ersetzt CRLF und/oder LF mit `n für die Verwendung in einem Hotstring im Raw-Modus:
 ; Das gleiche erfolgt auch für jedes andere Zeichen,
 ; dass ansonsten möglicherweise ein Problem im Raw-Modus ist:</em>
@@ -147,12 +147,12 @@ Clipboard = %ClipboardOld%  <em>; Stellt den vorherigen Inhalt der Zwischenablag
 SetTimer, MoveCaret, 10
 <em>; Zeigt die InputBox für den Standard-Hotstring an:</em>
 InputBox, Hotstring, Neuer Hotstring, Schreibt eine entsprechende Abkürzung am angegebenen Text-Cursor. Der Ersatztext kann je nach Bedarf auch angepasst werden.`n`nBeispieleintrag: :R:bzw`::beziehungsweise,,,,,,,, :R:`::%Hotstring%
-If ErrorLevel  <em>; Der Benutzer hat Abbrechen gedrückt.</em>
-    Return
+if ErrorLevel  <em>; Der Benutzer hat Abbrechen gedrückt.</em>
+    return
 IfInString, Hotstring, :R`:::
 {
     MsgBox Es wurde keine Abkürzung angegeben. Der Hotstring wurde nicht hinzugefügt.
-    Return
+    return
 }
 <em>; Ansonsten wird der Hotstring hinzugefügt und das Script neu geladen:</em>
 FileAppend, `n%Hotstring%, %A_ScriptFullPath%  <em>; Ein `n am Anfang einfügen, wenn der Datei eine leere Zeile am Ende fehlt.</em>
@@ -160,14 +160,14 @@ Reload
 Sleep 200 <em>; Wenn erfolgreich, dann schließt Reload diese Instanz während Sleep, die Zeile darunter wird also nie erreicht.</em>
 MsgBox, 4,, Der aktuell eingefügte Hotstring wurde scheinbar nicht richtig formatiert.  Soll das Script geöffnet werden, damit es bearbeitet werden kann? Beachtet, dass der betroffene Hotstring ganz unten ist.
 IfMsgBox, Yes, Edit
-Return
+return
 
 MoveCaret:
 IfWinNotActive, Neuer Hotstring
-    Return
+    return
 <em>; Verschiebt ansonsten den Text-Cursor der InputBox auf eine Position, wo der Benutzer die Abkürzung eintragen kann.</em>
 Send {Home}{Right 3}
 SetTimer, MoveCaret, Off
-Return</pre>
+return</pre>
 </body>
 </html>

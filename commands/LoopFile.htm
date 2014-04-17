@@ -105,7 +105,7 @@
 <h3>Bemerkungen</h3>
 <p>Eine Datei-Schleife ist nützlich, wenn mehrere Dateien und/oder Ordner nacheinander bearbeitet werden sollen.</p>
 <p>Alle übereinstimmenden Dateien werden ermittelt, einschließlich versteckte Dateien. OS-Funktionen wie der DIR-Befehl lassen hingegen versteckte Dateien standardmäßig weg. Um die Bearbeitung von versteckten, schreibgeschützten und/oder System-Dateien zu vermeiden, kann folgendes Beispiel innerhalb der Schleife verwendet werden:</p>
-<pre>If A_LoopFileAttrib contains H,R,S  <em>; Jede Datei überspringen, die H (versteckt), R (schreibgeschützt) oder S (vom System) ist. Hinweis: Keine Leerzeichen in "H,R,S".</em>
+<pre>if A_LoopFileAttrib contains H,R,S  <em>; Jede Datei überspringen, die H (versteckt), R (schreibgeschützt) oder S (vom System) ist. Hinweis: Keine Leerzeichen in "H,R,S".</em>
     continue  <em>; Diese Datei überspringen und zur Nächsten gehen</em></pre>
 <p>Um anstelle der absoluten Pfade die relativen Pfade von den Dateien beim rekursiven Suchen zu ermitteln, muss mit <a href="SetWorkingDir.htm">SetWorkingDir</a> der Basisordner geändert werden, bevor die Schleife erfolgt. Danach muss in der Schleife selbst der Pfad weggelassen werden (z. B. <code>Loop, *.*, 0, 1</code>). Das bewirkt, dass <a href="#LoopFileFullPath">A_LoopFileFullPath</a> den relativen Pfad für den Basisordner der Datei enthält.</p>
 <p>Eine Datei-Schleife kann sich selbst unterbrechen, wenn sie Dateien oder Ordner innerhalb der eigenen Zuständigkeit erstellt oder umbenennt. Wenn die Dateien in der Schleife zum Beispiel mit <a href="FileMove.htm">FileMove</a> umbenannt werden, kann es passieren, dass diese jeweils zweimal gefunden werden: einmal mit dem alten Namen und nochmal mit dem neuen Namen. Als Übergangslösung sollten die Dateien nur umbenannt werden, nachdem eine Liste von denen erstellt wurde. Zum Beispiel:</p>
@@ -143,7 +143,7 @@ Loop, C:\*.*
 Sort, Dateiliste, R  <em>; Die R-Option sortiert in umgekehrter Richtung. Siehe <a href="Sort.htm">Sort</a> für weitere Optionen.</em>
 Loop, parse, Dateiliste, `n
 {
-    If A_LoopField =  <em>; Ignoriert das leere Element am Ende der Liste.</em>
+    if A_LoopField =  <em>; Ignoriert das leere Element am Ende der Liste.</em>
         continue
     MsgBox, 4,, Dateinummer %A_Index% ist %A_LoopField%.  Weiter?
     IfMsgBox, No
@@ -157,7 +157,7 @@ Loop, %A_MyDocuments%\Fotos\*.*, 1
 Sort, Dateiliste  <em>; Nach Datum sortieren.</em>
 Loop, parse, Dateiliste, `n
 {
-    If A_LoopField =  <em>; Lässt das letzte LF-Zeichen (leeres Element) am Ende der Liste weg.</em>
+    if A_LoopField =  <em>; Lässt das letzte LF-Zeichen (leeres Element) am Ende der Liste weg.</em>
         continue
     StringSplit, Dateielement, A_LoopField, %A_Tab%  <em>; Beim Tab-Zeichen in zwei Teile aufteilen.</em>
     MsgBox, 4,, Die nächste Datei ist (modifiziert am %Dateielement1%):`n%Dateielement2%`n`nWeiter?
@@ -173,17 +173,17 @@ Loop, %KopieQuellmuster%
     kopieren = n
     IfNotExist, %KopieZiel%\%A_LoopFileName%  <em>; Immer kopieren, falls die Zieldatei noch nicht existiert.</em>
         kopieren = y
-    Else
+    else
     {
         FileGetTime, Zeitstempel, %KopieZiel%\%A_LoopFileName%
         EnvSub, Zeitstempel, %A_LoopFileTimeModified%, seconds  <em>; Subtrahiert die Zeit der Quelldatei mit der Zeit der Zieldatei.</em>
-        If Zeitstempel &lt; 0  <em>; Quelldatei ist neuer als Zieldatei.</em>
+        if Zeitstempel &lt; 0  <em>; Quelldatei ist neuer als Zieldatei.</em>
             kopieren = y
     }
-    If kopieren = y
+    if kopieren = y
     {
         FileCopy, %A_LoopFileFullPath%, %KopieZiel%\%A_LoopFileName%, 1   <em>; Kopieren und überschreiben.</em>
-        If ErrorLevel
+        if ErrorLevel
             MsgBox, "%A_LoopFileFullPath%" konnte nicht nach "%KopieZiel%\%A_LoopFileName%" kopiert werden.
     }
 }

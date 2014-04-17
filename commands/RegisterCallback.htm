@@ -48,7 +48,7 @@
 <p>Eine <a href="../Functions.htm">Funktion</a>, die einer Callback-Adresse zugewiesen ist, kann bis zu 31 Parameter akzeptieren. <a href="../Functions.htm#optional">Optionale Parameter</a> sind erlaubt und nützlich, wenn die Funktion von mehreren Aufrufern aufgerufen wird.</p>
 <p><strong>32-Bit</strong>: Alle eingehenden Parameter sind vorzeichenlose 32-Bit-Integer. Wenn ein eingehender Parameter als vorzeichenbehafteter Integer vorgesehen ist, können negative Zahlen mit einem der folgenden Beispielen offenbart werden:</p>
 <pre><em>; Methode #1</em>
-If wParam &gt; 0x7FFFFFFF
+if wParam &gt; 0x7FFFFFFF
     wParam := -(~wParam) - 1
 
 <em>; Methode #2: Basiert auf die Tatsache, dass AutoHotkey von Haus aus vorzeichenbehaftete 64-Bit-Integers verwendet.</em>
@@ -62,9 +62,9 @@ wParam := wParam &lt;&lt; 32 &gt;&gt; 32</pre>
 Func("Funktion wurde direkt aufgerufen.")  <em>; Func direkt aufrufen.</em>
 DllCall(callback, float, 10.5)  <em>; Func über Callback aufrufen.</em>
 Func(params*) {
-    If IsObject(params)
+    if IsObject(params)
         MsgBox % params[1]
-    Else
+    else
         MsgBox % <a href="NumGet.htm">NumGet</a>(params+0, 0, "float")
 }</pre>
 <p>Die meisten Callbacks verwenden die <i>stdcall</i>-Aufrufkonvention, die eine feste Anzahl an Parametern voraussetzt. In diesem Fall muss <i>Parameteranzahl</i> beim Erstellen des Callbacks angegeben werden. Die <i>Parameteranzahl</i> kann in 64-Bit-Builds und bei <i>Cdecl</i>-Callbacks in 32-Bit-Builds weggelassen werden. In solchen Fällen erhalten alle optionalen Parameter ihre Standardwerte und werden für die Adressenberechnung ignoriert, um in <i>params</i> gespeichert werden zu können.</p>
@@ -75,7 +75,7 @@ Func(params*) {
 <p>Der <a href="#Fast">schnelle Modus</a> hingegen erbt die globalen Einstellungen von einem beliebigen <a href="../misc/Threads.htm">Thread</a>, der zum Zeitpunkt des Funktionsaufrufs läuft. Desweiteren werden die von der Funktion vorgenommenen Änderungen an den globalen Einstellungen (einschließlich <a href="../misc/ErrorLevel.htm">ErrorLevel</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>) auch für den <a href="../misc/Threads.htm">aktuellen Thread</a> wirksam. Folglich sollte der schnelle Modus nur verwendet werden, wenn genau bekannt ist, welche Threads von der Funktion beeinflusst werden.</p>
 <p>Damit ein Callback weder von sich selbst noch von einem anderen Thread unterbrochen wird, kann in der erste Zeile der Funktion <a href="Critical.htm">Critical</a> angegeben werden. Allerdings hilft das nicht viel, wenn die Funktion durch eine eingehende Nachricht kleiner als 0x312 indirekt aufgerufen wird (die Erhöhung des <a href="Critical.htm#Interval">Intervalls</a> von Critical könnte helfen). Desweiteren kann <a href="Critical.htm">Critical</a> die Funktion nicht daran zu hindern, etwas zu tun, das zum indirekten Selbstaufruf führen könnte, wie z. B. durch <a href="PostMessage.htm">SendMessage</a> oder <a href="DllCall.htm">DllCall</a>.</p>
 <h3>Speicher</h3>
-<p>Jedes mal, wenn RegisterCallback() verwendet wird, wird eine kleine Speichermenge (32 Bytes plus System-Overhead) reserviert. Da das Betriebssystem diesen Speicher automatisch freigibt, sobald das Scripts beendet wird, muss jedes Script, das eine kleine <em>feste</em> Anzahl an Callbacks reserviert, nicht unbedingt den Speicher freigegeben. Hingegen sollte ein Script, das RegisterCallback() unendlich oft aufruft, folgendes direkt bei unbenutzten Callbacks aufrufen:</p>
+<p>Jedes mal, wenn RegisterCallback() verwendet wird, wird eine kleine Speichermenge (32 Bytes plus System-Overhead) reserviert. Da das Betriebssystem diesen Speicher automatisch freigibt, sobald das Scripts beendet wird, muss jedes Script, das eine kleine <em>feste</em> Anzahl an Callbacks reserviert, nicht explizit den Speicher freigegeben. Hingegen sollte ein Script, das RegisterCallback() unendlich oft aufruft, folgendes explizit bei unbenutzten Callbacks aufrufen:</p>
 <pre>DllCall("GlobalFree", "Ptr", Adresse, "Ptr")</pre>
 <h3>Siehe auch</h3>
 <p><a href="DllCall.htm">DllCall()</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="OnExit.htm">OnExit</a>, <a href="../misc/Clipboard.htm#OnClipboardChange">OnClipboardChange</a>, <a href="Sort.htm#callback">Sort's Callback</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fensternachrichten</a>, <a href="../misc/Threads.htm">Threads</a></p>
@@ -83,7 +83,7 @@ Func(params*) {
 <pre class="NoIndent"><em>; Beispiel: Das folgende Script zeigt eine Zusammenfassung aller Fenster auf höchster Ebene an.</em>
 
 <em>; Aus Performance- und Speichergründen wird RegisterCallback() nur einmal für einen bestimmten Callback aufgerufen:</em>
-If not EnumAdresse  <em>; Schneller Modus ist okay, weil er nur vom diesen Thread aufgerufen wird:</em>
+if not EnumAdresse  <em>; Schneller Modus ist okay, weil er nur vom diesen Thread aufgerufen wird:</em>
     EnumAdresse := <strong>RegisterCallback</strong>("EnumWindowsProc", "Fast")
 
 DetectHiddenWindows On  <em>; Durch den schnellen Modus wird diese Einstellung auch für Callback wirksam.</em>
@@ -97,9 +97,9 @@ EnumWindowsProc(hwnd, lParam)
     global Ausgabe
     WinGetTitle, Titel, ahk_id %hwnd%
     WinGetClass, Klasse, ahk_id %hwnd%
-    If Titel
+    if Titel
         Ausgabe .= "HWND: " . hwnd . "`tTitel: " . Titel . "`tKlasse: " . Klasse . "`n"
-    Return true  <em>; Setzt EnumWindows() fort, bis alle Fenster abgearbeitet wurden.</em>
+    return true  <em>; Setzt EnumWindows() fort, bis alle Fenster abgearbeitet wurden.</em>
 }</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel: Das folgende Script zeigt, wie ein GUI-Fenster zu einer Unterklasse gemacht wird,
@@ -122,19 +122,19 @@ WindowProcAlt := DllCall(SetWindowLong, Ptr, GuiHwnd, Int, -4  <em>; -4 ist GWL_
     , Ptr, WindowProcNeu, Ptr)  <em>; Wert muss auf Ptr oder UPtr anstatt auf Int gesetzt werden.</em>
 
 Gui Show
-Return
+return
 
 WindowProc(hwnd, uMsg, wParam, lParam)
 {
     Critical
     global Texthintergrundfarbe, Pinsel, WindowProcAlt
-    If (uMsg = 0x138 &amp;&amp; lParam = A_EventInfo)  <em>; 0x138 ist WM_CTLCOLORSTATIC.</em>
+    if (uMsg = 0x138 &amp;&amp; lParam = A_EventInfo)  <em>; 0x138 ist WM_CTLCOLORSTATIC.</em>
     {
         DllCall("SetBkColor", UInt, wParam, Ptr, Texthintergrundfarbe)
-        Return Pinsel  <em>; Gibt HBRUSH zurück, um dem OS mitzuteilen, dass wir HDC geändert haben.</em>
+        return Pinsel  <em>; Gibt HBRUSH zurück, um dem OS mitzuteilen, dass wir HDC geändert haben.</em>
     }
     <em>; Ansonsten (da oben nichts zurückgegeben wurde) werden alle unbehandelten Ereignisse an das originale WindowProc übergeben.</em>
-    Return DllCall("CallWindowProc", Ptr, WindowProcAlt, Ptr, hwnd, UInt, uMsg, Ptr, wParam, Ptr, lParam)
+    return DllCall("CallWindowProc", Ptr, WindowProcAlt, Ptr, hwnd, UInt, uMsg, Ptr, wParam, Ptr, lParam)
 }
 
 GuiClose:

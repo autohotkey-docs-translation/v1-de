@@ -40,7 +40,7 @@
 <h3>Attribut, Wert</h3>
 <p><strong><a name="AlwaysOnTop" id="AlwaysOnTop"></a>AlwaysOnTop, [On|Off|Toggle]</strong>: Bewirkt, dass ein Fenster sich immer vor den anderen Fenstern befindet wird. Mit ON wird die Einstellung aktiviert, mit OFF deaktiviert oder mit TOGGLE jeweils auf dem entgegengesetzten Zustand gesetzt. Ist dieser Parameter nicht vorhanden, gilt standardmäßig TOGGLE. Anstelle von AlwaysOnTop kann das Wort Topmost verwendet werden.</p>
 <p><strong>Bottom</strong>: Sendet das Fenster ans untere Ende des Stapels, so dass es unter allen anderen Fenstern liegt. Das Gleiche kann auch mit ALT+ESC erzeugt werden. Zum Beispiel: <code>WinSet, Bottom,, Fenstertitel</code>.</p>
-<p><strong>Top</strong>: Sendet das Fenster ans obere Ende des Stapels, ohne es dabei direkt zu <a href="WinActivate.htm">aktivieren</a>. Allerdings bewirken die Standardeinstellungen des Systems, dass das Fenster in den meisten Fällen trotzdem aktiviert wird. Darüber hinaus wird dieser Befehl möglicherweise nicht funktionieren, wenn das Betriebssystem sich gegen Anwendungen schützt, die versuchen wollen, den Fokus vom Benutzer zu stehlen (das zum Beispiel abhängig davon ist, welches Fenster zurzeit aktiv ist und was der Benutzer gerade macht). Als mögliche Übergangslösung könnte die <a href="#AlwaysOnTop">AlwaysOnTop</a>-Eigenschaft des Fensters kurz aktiviert und dann wieder deaktiviert werden.</p>
+<p><strong>Top</strong>: Sendet das Fenster ans obere Ende des Stapels, ohne es dabei explizit zu <a href="WinActivate.htm">aktivieren</a>. Allerdings bewirken die Standardeinstellungen des Systems, dass das Fenster in den meisten Fällen trotzdem aktiviert wird. Darüber hinaus wird dieser Befehl möglicherweise nicht funktionieren, wenn das Betriebssystem sich gegen Anwendungen schützt, die versuchen wollen, den Fokus vom Benutzer zu stehlen (das zum Beispiel abhängig davon ist, welches Fenster zurzeit aktiv ist und was der Benutzer gerade macht). Als mögliche Übergangslösung könnte die <a href="#AlwaysOnTop">AlwaysOnTop</a>-Eigenschaft des Fensters kurz aktiviert und dann wieder deaktiviert werden.</p>
 <p><strong>Disable</strong> oder <strong>Enable</strong>: Deaktiviert oder aktiviert jeweils ein Fenster. Sobald ein Fenster deaktiviert ist, kann der Benutzer das Fenster weder verschieben noch mit dessen Steuerelementen interagieren. Außerdem werden deaktivierte Fenster in der Alt-Tab-Liste weggelassen.</p>
 <p><strong><a name="Redraw"></a>Redraw</strong>: Versucht, die Darstellung/Inhalte eines Fensters zu aktualisieren, indem es dem Betriebssystem mitteilt, dass das Fensterrechteck eine Neuzeichnung benötigt. Falls diese Methode bei einem bestimmten Fenster nicht funktioniert, kann <a href="WinMove.htm">WinMove</a> ausprobiert werden. Wenn das auch nicht funktioniert, kann folgendes versucht werden:</p>
 <pre><a href="WinHide.htm">WinHide</a>, Fenstertitel
@@ -75,13 +75,13 @@ WinSet, Transparent, 150, ahk_class BaseBar  <em>; Um auch die Untermenüs des S
 <p>Um alle oder bestimmte Menüs im gesamten System transparent zu machen, könnte ein Script wie folgt am Laufen gehalten werden. Beachte, dass obwohl so ein Script seine eigenen Menüs nicht transparent machen kann, Menüs von anderen Scripts transparent machen kann:</p>
 <pre>#Persistent
 SetTimer, WatchForMenu, 5
-Return  <em>; Ende des automatischen Ausführungsbereichs.</em>
+return  <em>; Ende des automatischen Ausführungsbereichs.</em>
 
 WatchForMenu:
 DetectHiddenWindows, on  <em>; Damit können Menüs eher erkannt werden.</em>
 IfWinExist, ahk_class #32768
     WinSet, Transparent, 150  <em>; Verwendet das gefundene Fenster von der darüberliegenden Zeile.</em>
-Return</pre>
+return</pre>
 <h3 id="TransColor">WinSet, TransColor, Farbe [N], Fenstertitel</h3>
 <p>Macht alle Pixel der ausgewählten Farbe innerhalb des Zielfensters unsichtbar, so dass der Inhalt hinter dem Fenster durchscheint. Ein Mausklick auf einen unsichtbaren Pixel wirkt sich auf den Inhalt dahinter aus. Ansonsten kann für <em>Farbe</em> ein Farbname oder RGB-Wert angegeben werden (siehe <a href="Progress.htm#colors">Farbtabelle</a> oder verwende <a href="PixelGetColor.htm">PixelGetColor</a> im RGB-Modus). Um zusätzlich einen sichtbaren Fensterbereich teilweise transparent zu machen, sollte ein Leerzeichen (kein Komma) gefolgt von der Transparenzstufe (0-255) angefügt werden. Zum Beispiel: <code>WinSet, TransColor, EEAA99 150, Fenstertitel</code>.</p>
 <p>TransColor wird oft verwendet, um Bildschirmanzeigen (OSD) und andere visuelle Effekte zu erzeugen. Ein Beispiel dazu befindet sich <a href="Gui.htm#OSD">am Ende der GUI-Seite</a>.</p>
@@ -117,19 +117,19 @@ PixelGetColor, MausRGB, %MausX%, %MausY%, RGB
 <em>; Scheinbar ist es notwendig, zuerst jede vorhandene Transparenz zu deaktivieren:</em>
 WinSet, TransColor, Off, ahk_id %MausWin%
 WinSet, TransColor, %MausRGB% 220, ahk_id %MausWin%
-Return
+return
 
 #o::  <em>; Drücke WIN+O, um die Transparenz des Fensters unter der Maus zu deaktivieren.</em>
 MouseGetPos,,, MausWin
 WinSet, TransColor, Off, ahk_id %MausWin%
-Return
+return
 
 #g::  <em>; Drücke WIN+G, um die aktuellen Einstellungen des Fensters unter der Maus anzuzeigen.</em>
 MouseGetPos,,, MausWin
 WinGet, Transparent, Transparent, ahk_id %MausWin%
 WinGet, TransColor, TransColor, ahk_id %MausWin%
 ToolTip Durchsichtigkeit:`t%Transparent%`nTransparenzfarbe:`t%TransColor%
-Return
+return
 
 <em>; Beispiele für "WinSet Region":</em>
 WinSet, Region, 50-0 W200 H250, Fenstertitel <em>; Macht alle Fensterbereiche außerhalb dieses Rechtecks unsichtbar.</em>

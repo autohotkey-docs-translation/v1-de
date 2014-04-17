@@ -42,7 +42,7 @@ Run Notepad
 WinWait Unbenannt - Editor
 WinActivate
 Send Das ist der Text, der im Editor erscheinen wird.{Enter}
-Return</pre>
+return</pre>
 <p>In der <a href="../KeyList.htm">Tastenliste</a> können alle Tastennamen der Tastatur, Maus und des Joysticks gefunden werden.</p>
 <br>
 <p><strong>Methode #2</strong>: Diese Methode ist notwendig, wenn eine Taste oder Maustaste gedrückt gehalten werden muss, während eine Joystick-Taste gedrückt gehalten wird. Im folgenden Beispiel verhält sich die zweite Joystick-Taste wie die NACH-LINKS-Taste:</p>
@@ -50,21 +50,21 @@ Return</pre>
 Send {Left down}  <em>; Hält die linke Pfeiltaste gedrückt.</em>
 <a href="../commands/KeyWait.htm">KeyWait</a> Joy2  <em>; Wartet, bis die Joystick-Taste losgelassen wird.</em>
 Send {Left up}  <em>; Lässt die linke Pfeiltaste los.</em>
-Return</pre>
+return</pre>
 <br>
 <p><strong>Methode #3</strong>: Diese Methode ist notwendig, wenn mehr als ein Joystick-Hotkey von Methode #2 vorhanden ist und solche Hotkeys gleichzeitig gedrückt gehalten oder losgelassen werden müssen. Im folgenden Beispiel verhält sich die dritte Joystick-Taste wie die linke Maustaste:</p>
 <pre>Joy3::
 Send {LButton down}   <em>; Hält die linke Maustaste gedrückt.</em>
 SetTimer, AufTaste3Warten, 10
-Return
+return
 
 AufTaste3Warten:
-If <a href="../Functions.htm#GetKeyState">GetKeyState</a>("Joy3")  <em>; Falls die Taste weiterhin gedrückt gehalten wird, warten.</em>
-    Return
+if <a href="../Functions.htm#GetKeyState">GetKeyState</a>("Joy3")  <em>; Falls die Taste weiterhin gedrückt gehalten wird, warten.</em>
+    return
 <em>; Ansonsten wurde die Taste losgelassen.</em>
 Send {LButton up}   <em>; Die linke Maustaste loslassen.</em>
 SetTimer, AufTaste3Warten, off
-Return
+return
 
 </pre>
 <br>
@@ -72,57 +72,57 @@ Return
 <pre>Joy2::
 Send {Space down}   <em>; Hält die Leertaste gedrückt.</em>
 SetTimer, WaitForJoy2, <strong>30</strong>  <em>; Reduziert die Zahl <strong>30</strong> auf 20 oder 10, um die Taste schneller zu senden. Erhöht sie, um die Taste langsamer zu senden.</em>
-Return
+return
 
 AufJoy2Warten:
-If not GetKeyState("Joy2")  <em>; Die Taste wurde losgelassen.</em>
+if not GetKeyState("Joy2")  <em>; Die Taste wurde losgelassen.</em>
 {
     Send {Space up}  <em>; Leertaste loslassen.</em>
     SetTimer, AufJoy2Warten, off  <em>; Überwachung der Taste stoppen.</em>
-    Return
+    return
 }
 <em>; Da kein "Return" erfolgt, wird die Taste weiterhin gedrückt gehalten.</em>
 Send {Space down}  <em>; Eine andere Leertaste senden.</em>
-Return</pre>
+return</pre>
 <p><strong>Kontextabhängige Joystick-Tasten</strong>: Die Direktiven <a href="../commands/_IfWinActive.htm">#IfWinActive/Exist</a> können verwendet werden, damit bestimmte Joystick-Tasten unterschiedliche Aktionen je nach Typ des aktiven oder vorhandenen Fensters durchführen.</p>
 <p><strong>Joystick als Maus verwenden</strong>: Das <a href="../scripts/JoystickMouse.htm">Joystick-zu-Maus-Script</a> wandelt ein Joystick durch Neubelegung der Tasten und Achsen-Steuerung in eine Maus um.</p>
 <h2 id="axis">Mit einer Joystick-Achse oder einem Rundblickschalter Tastatureingaben oder Mausklicks senden</h2>
 <p>Damit ein Script auf die Bewegung einer Joystick-Achse oder des Rundblickschalters reagiert, verwendet <a href="../commands/SetTimer.htm">SetTimer</a> und <a href="../commands/GetKeyState.htm">GetKeyState</a>. Im folgenden Beispiel verhalten sich die X- und Y-Achsen des Joysticks wie die Pfeiltasten auf der Tastatur (links, rechts, oben und unten):</p>
-<pre>#Persistent  <em>; Hält das Script aufrecht, bis der Benutzer es direkt beendet.</em>
+<pre>#Persistent  <em>; Hält das Script aufrecht, bis der Benutzer es explizit beendet.</em>
 <a href="../commands/SetTimer.htm">SetTimer</a>, Achsenüberwachung, 5
-Return
+return
 
 Achsenüberwachung:
 <a href="../commands/GetKeyState.htm">GetKeyState</a>, JoyX, JoyX  <em>; Position der X-Achse ermitteln.</em>
 GetKeyState, JoyY, JoyY  <em>; Position der Y-Achse ermitteln.</em>
 VorherGedrückteTaste = %GedrückteTaste%  <em>; VorherGedrückteTaste enthält nun die Taste, die vorher gedrückt wurde (falls vorhanden).</em>
 
-If JoyX &gt; 70
+if JoyX &gt; 70
     GedrückteTaste = Right
-Else If JoyX &lt; 30
+else if JoyX &lt; 30
     GedrückteTaste = Left
-Else If JoyY &gt; 70
+else if JoyY &gt; 70
     GedrückteTaste = Down
-Else If JoyY &lt; 30
+else if JoyY &lt; 30
     GedrückteTaste = Up
-Else
+else
     GedrückteTaste =
 
-If GedrückteTaste = %VorherGedrückteTaste%  <em>; Die richtige Taste wird bereits gedrückt (oder es ist keine Taste notwendig).</em>
-    Return  <em>; Nichts machen.</em>
+if GedrückteTaste = %VorherGedrückteTaste%  <em>; Die richtige Taste wird bereits gedrückt (oder es ist keine Taste notwendig).</em>
+    return  <em>; Nichts machen.</em>
 
 <em>; Ansonsten die vorherige Taste loslassen und neue Taste drücken:</em>
 SetKeyDelay -1  <em>; Verhindert eine Verzögerung zwischen den Tastatureingaben.</em>
-If VorherGedrückteTaste   <em>; Vorherige Taste verfügbar, die losgelassen werden kann.</em>
+if VorherGedrückteTaste   <em>; Vorherige Taste verfügbar, die losgelassen werden kann.</em>
     Send, {%VorherGedrückteTaste% up}  <em>; Loslassen.</em>
-If GedrückteTaste   <em>; Taste verfügbar, die gedrückt werden kann.</em>
+if GedrückteTaste   <em>; Taste verfügbar, die gedrückt werden kann.</em>
     Send, {%GedrückteTaste% down}  <em>; Drücken.</em>
-Return</pre>
+return</pre>
 <p>&nbsp;</p>
 <p>Im folgenden Beispiel verhält sich der Rundblickschalter des Joysticks wie die Pfeiltasten auf der Tastatur (links, rechts, oben und unten):</p>
-<pre>#Persistent  <em>; Hält das Script aufrecht, bis der Benutzer es direkt beendet.</em>
+<pre>#Persistent  <em>; Hält das Script aufrecht, bis der Benutzer es explizit beendet.</em>
 SetTimer, POVÜberwachung, 5
-Return
+return
 
 POVÜberwachung:
 GetKeyState, POV, JoyPOV  <em>; Position der POV-Steuerung ermitteln.</em>
@@ -130,37 +130,37 @@ VorherGedrückteTaste = %GedrückteTaste%  <em>; VorherGedrückteTaste enthält 
 
 <em>; Einige Joysticks haben möglicherweise eine reibungslose/stetige POV anstelle eines POVs in regelmäßigen Abständen.
 ; Damit alle unterstützt werden, verwendet einen Bereich:</em>
-If POV &lt; 0   <em>; Keine Achse zu melden</em>
+if POV &lt; 0   <em>; Keine Achse zu melden</em>
     GedrückteTaste =
-Else If POV &gt; 31500                 <em>; 315 bis 360 Grad: Nach vorne gerichtet</em>
+else if POV &gt; 31500                 <em>; 315 bis 360 Grad: Nach vorne gerichtet</em>
     GedrückteTaste = Up
-Else If POV between 0 and 4500      <em>; 0 bis 45 Grad: Nach vorne gerichtet</em>
+else if POV between 0 and 4500      <em>; 0 bis 45 Grad: Nach vorne gerichtet</em>
     GedrückteTaste = Up
-Else If POV between 4501 and 13500  <em>; 45 bis 135 Grad: Nach rechts gerichtet</em>
+else if POV between 4501 and 13500  <em>; 45 bis 135 Grad: Nach rechts gerichtet</em>
     GedrückteTaste = Right
-Else If POV between 13501 and 22500 <em>; 135 bis 225 Grad: Nach hinten gerichtet</em>
+else if POV between 13501 and 22500 <em>; 135 bis 225 Grad: Nach hinten gerichtet</em>
     GedrückteTaste = Down
-Else                                <em>; 225 bis 315 Grad: Nach links gerichtet</em>
+else                                <em>; 225 bis 315 Grad: Nach links gerichtet</em>
     GedrückteTaste = Left
 
-If GedrückteTaste = %VorherGedrückteTaste%  <em>; Die richtige Taste wird bereits gedrückt (oder es ist keine Taste notwendig).</em>
-    Return  <em>; Nichts machen.</em>
+if GedrückteTaste = %VorherGedrückteTaste%  <em>; Die richtige Taste wird bereits gedrückt (oder es ist keine Taste notwendig).</em>
+    return  <em>; Nichts machen.</em>
 
 <em>; Ansonsten die vorherige Taste loslassen und neue Taste drücken:</em>
 SetKeyDelay -1  <em>; Verhindert eine Verzögerung zwischen den Tastatureingaben.</em>
-If VorherGedrückteTaste   <em>; Vorherige Taste verfügbar, die losgelassen werden kann.</em>
+if VorherGedrückteTaste   <em>; Vorherige Taste verfügbar, die losgelassen werden kann.</em>
     Send, {%VorherGedrückteTaste% up}  <em>; Loslassen.</em>
-If GedrückteTaste   <em>; Taste verfügbar, die gedrückt werden kann.</em>
+if GedrückteTaste   <em>; Taste verfügbar, die gedrückt werden kann.</em>
     Send, {%GedrückteTaste% down}  <em>; Drücken.</em>
-Return</pre>
+return</pre>
 <p>&nbsp;</p>
 <p><strong>Automatische Wiederholung einer Tastatureingabe</strong>: Die beiden oberen Beispiele können so geändert werden, dass die Taste mehrmals gesendet wird, anstatt sie gedrückt zuhalten (d. h., dass der physische Tastendruck simuliert wird). Ersetzt dafür die folgende Zeile:</p>
 <pre>Return  <em>; Nichts machen.</em></pre>
 <p>MIT:</p>
 <pre>{
-    If GedrückteTaste
+    if GedrückteTaste
         Send, {%GedrückteTaste% down}  <em>; Automatische Wiederholung der Taste.</em>
-    Return
+    return
 }</pre>
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Es kann ein beliebiger Joystick verwendet werden, indem der Taste oder dem Achsennamen die Nummer des Joysticks vorangestellt wird. Zum Beispiel ist <code>2Joy1</code> die erste Taste des zweiten Joysticks.</p>

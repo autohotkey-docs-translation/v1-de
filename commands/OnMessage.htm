@@ -34,7 +34,7 @@
 
 <h3>Rückgabewerte</h3>
 <p>Fehlt <em>Funktionsname</em>, wird der Name der Funktion zurückgegeben, die gerade <em>Nachrichtennummer</em> überwacht (leer, wenn keine).</p>
-<p>Falls der <em>Funktionsname</em> ausdrücklich leer ist (d. h. ""), wird der Name der Funktion zurückgegeben, die zurzeit die <em>Nachrichtennummer</em> überwacht (leer, wenn nicht vorhanden). Danach wird die Überwachung der <em>Nachrichtennummer</em> deaktiviert.</p>
+<p>Falls der <em>Funktionsname</em> explizit leer ist (d. h. ""), wird der Name der Funktion zurückgegeben, die zurzeit die <em>Nachrichtennummer</em> überwacht (leer, wenn nicht vorhanden). Danach wird die Überwachung der <em>Nachrichtennummer</em> deaktiviert.</p>
 <p>Wenn <em>Funktionsname</em> nicht leer ist: Falls <em>Nachrichtennummer</em> bereits überwacht wird, wird der Name dieser Funktion zurückgegeben und danach die neue Funktion in Kraft gesetzt. Ansonsten wird <em>Funktionsname</em> dazu bestimmt, <em>Nachrichtennummer</em> zu überwachen und danach den selben <em>Funktionsnamen</em> zurückzugeben. In jedem Fall wird bei Misserfolg ein leerer Wert zurückgegeben. Fehler treten auf, wenn <em>Funktionsname</em>: 1) nicht existiert (vielleicht wegen fehlender Anführungszeichen um <em>Funktionsnamen</em>); 2) mehr als 4 Parameter akzeptiert; oder 3) v1.0.48.05 oder älter: <a href="../Functions.htm#ByRef">ByRef</a>- oder <a href="../Functions.htm#optional">optionale</a> Parameter hat. Es schlägt auch fehl, wenn das Script versucht, eine neue Nachricht zu überwachen, in dem bereits 500 Nachrichten überwacht werden.</p>
 
 <h3>Die Parameter der Funktion</h3>
@@ -49,7 +49,7 @@ Parameter #2: LPARAM-Wert der Nachricht.<br>
 Parameter #3: Nachrichtennummer - nützlich, falls die Funktion mehrere Nachrichten überwacht.<br>
 Parameter #4: HWND (eindeutige ID) des Fensters oder Steuerelements, zu dem die Nachricht gesendet wurde. Das HWND kann mit <a href="../misc/WinTitle.htm#ahk_id">ahk_id</a> verwendet werden.</p>
 <p>WPARAM und LPARAM sind vorzeichenlose 32-Bit-Integer (von 0 bis 2<sup>32</sup>-1) oder vorzeichenbehaftete 64-Bit-Integer (von -2<sup>63</sup> bis 2<sup>63</sup>-1), abhängig davon, ob die EXE-Datei, die das Script ausführt, 32- oder 64-Bit ist. Wenn bei 32-Bit-Scripts ein eingehender Parameter als vorzeichenbehafteter Integer vorgesehen ist, können negative Zahlen zum Beispiel wie folgt offenbart werden:</p>
-<pre>If (A_PtrSize = 4 &amp;&amp; wParam &gt; 0x7FFFFFFF)  <em>; Das Überprüfen von <a href="../Variables.htm#PtrSize">A_PtrSize</a> stellt sicher, dass das Script 32-Bit ist.</em>
+<pre>if (A_PtrSize = 4 &amp;&amp; wParam &gt; 0x7FFFFFFF)  <em>; Das Überprüfen von <a href="../Variables.htm#PtrSize">A_PtrSize</a> stellt sicher, dass das Script 32-Bit ist.</em>
     wParam := -(~wParam) - 1</pre>
 <p>Falls bestimmte Informationen nicht benötigt werden, können entsprechende Parameter am Listenende weggelassen werden. Zum Beispiel würde eine Funktion, definiert als <code>MeineNachrichtenüberwachung(wParam, lParam)</code>, nur die ersten zwei Parameter empfangen. Eine Funktion, definiert als <code>MeineNachrichtenüberwachung()</code>, würde hingegen keine Parameter empfangen.</p>
 
@@ -78,7 +78,7 @@ MsgParentWindow := WinExist()  <em>; Speichert die eindeutige ID des Fensters, z
 <p>Wenn eine überwachte Nachrichtennummer kleiner als 0x312 eintrifft, während das Script aufgrund der Einstellungen von <a href="Thread.htm">Thread Interrupt</a> oder <a href="Critical.htm">Critical</a> unterbrechungsfrei ist, wird der aktuelle Thread unterbrochen, damit die Funktion aufgerufen werden kann. Eine überwachte Nachricht größer gleich 0x312 wird hingegen zwischengespeichert, bis der Thread endet oder unterbrechbar wird.</p>
 <p>Die <a href="../misc/Threads.htm">Priorität</a> von OnMessage-Threads ist immer 0. Folglich werden Nachrichten weder überwacht noch zwischengespeichert, wenn der aktuelle Thread eine Priorität höher als 0 hat.</p>
 <p>Bei der Überwachung von Systemnachrichten ist Vorsicht geboten (solche unter 0x400). Wenn zum Beispiel eine Überwachungsfunktion nicht schnell genug zum Abschluss kommt, kann die Reaktion auf die Nachricht länger dauern als vom System erwartet, wodurch Nebeneffekte auftreten können. Diese können auch auftreten, wenn eine Überwachungsfunktion ein Integer zurückgibt, um die weitere Verarbeitung einer Nachricht zu unterdrücken, aber das System voraussichtlich eine andere Verarbeitung oder Reaktion erwartet.</p>
-<p>Sobald das Script ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt, werden gesendete Nachrichten an ein Steuerelement nicht länger überwacht. Wenn das Script zum Beispiel eine MsgBox anzeigt und der Benutzer eine Schaltfläche in einem GUI-Fenster anklickt, wird die WM_LBUTTONDOWN-Nachricht direkt zur Schaltfläche gesendet, ohne dabei die Überwachungsfunktion aufzurufen.</p>
+<p>Sobald das Script ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt, werden gesendete Nachrichten an ein Steuerelement nicht länger überwacht. Wenn das Script zum Beispiel eine MsgBox anzeigt und der Benutzer einen Button in einem GUI-Fenster anklickt, wird die WM_LBUTTONDOWN-Nachricht direkt zum Button gesendet, ohne dabei die Überwachungsfunktion aufzurufen.</p>
 <p>Obwohl ein externes Programm in der Lage wäre, Nachrichten direkt mit PostThreadMessage() oder anderen API-Funktionen an ein Script-Thread zu senden, ist das nicht zu empfehlen, weil die Nachrichten dabei verloren gehen können, falls das Script ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt. Stattdessen ist es besser, PostMessage- oder SendMessage-Nachrichten an das Hauptfenster des Scripts oder dessen GUI-Fenster zu senden.</p>
 <h3>Siehe auch</h3>
 <p><a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="OnExit.htm">OnExit</a>, <a href="../misc/Clipboard.htm#OnClipboardChange">OnClipboardChange</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fensternachrichten</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Critical.htm">Critical</a>, <a href="DllCall.htm">DllCall()</a></p>
@@ -90,13 +90,13 @@ Gui, Add, Text,, Irgendwo auf das Fenster klicken.
 Gui, Add, Edit, w200 vMeinEdit
 Gui, Show
 OnMessage(0x201, "WM_LBUTTONDOWN")
-Return
+return
 
 WM_LBUTTONDOWN(wParam, lParam)
 {
     X := lParam &amp; 0xFFFF
     Y := lParam &gt;&gt; 16
-    If A_GuiControl
+    if A_GuiControl
         Steuerelement := "`n(im Steuerelement " . A_GuiControl . ")"
     ToolTip Sie haben im GUI-Fenster #%A_Gui% auf die Koordinaten %X%x%Y% geklickt.%Steuerelement%
 }
@@ -110,20 +110,20 @@ ExitApp</pre>
 <em>; Der folgende Aufruf von DllCall ist optional: dem OS wird mitgeteilt, <i>zuerst</i> das Script zu beenden (vor allen anderen Anwendungen).</em>
 DllCall("kernel32.dll\SetProcessShutdownParameters", UInt, 0x4FF, UInt, 0)
 OnMessage(0x11, "WM_QUERYENDSESSION")
-Return
+return
 
 WM_QUERYENDSESSION(wParam, lParam)
 {
     ENDSESSION_LOGOFF = 0x80000000
-    If (lParam &amp; ENDSESSION_LOGOFF)  <em>; Benutzer meldet sich ab.</em>
+    if (lParam &amp; ENDSESSION_LOGOFF)  <em>; Benutzer meldet sich ab.</em>
         Ereignis = Abmeldung
-    Else  <em>; System wird entweder heruntergefahren oder neu gestartet.</em>
+    else  <em>; System wird entweder heruntergefahren oder neu gestartet.</em>
         Ereignis = Herunterfahren
     MsgBox, 4,, %Ereignis% im Gange.  Erlauben?
     IfMsgBox Yes
-        Return true  <em>; Erlaubt dem OS, herunterzufahren/abzumelden.</em>
-    Else
-        Return false  <em>; Herunterfahren/Abmelden wird abgebrochen.</em>
+        return true  <em>; Erlaubt dem OS, herunterzufahren/abzumelden.</em>
+    else
+        return false  <em>; Herunterfahren/Abmelden wird abgebrochen.</em>
 }</pre>
 
 <pre class="NoIndent"><em>; Beispiel: Bewirkt, dass ein Script eine benutzerdefinierte Nachricht und bis zu zwei Zahlen von einem anderen Script oder Programm erhält
@@ -142,7 +142,7 @@ MsgMonitor(wParam, lParam, msg)
 <em>; Die folgenden Zeilen können innerhalb eines anderen Scripts verwendet werden, um die Funktion im oberen Script auszuführen:</em>
 SetTitleMatchMode 2
 DetectHiddenWindows On
-If WinExist("Empfänger.ahk ahk_class AutoHotkey")
+if WinExist("Empfänger.ahk ahk_class AutoHotkey")
     PostMessage, 0x5555, 11, 22  <em>; Die Nachricht wird aufgrund von WinExist() an das "<a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>" gesendet.</em>
 DetectHiddenWindows Off  <em>; Muss nicht deaktiviert werden, bis nach PostMessage.</em></pre>
 
@@ -153,7 +153,7 @@ DetectHiddenWindows Off  <em>; Muss nicht deaktiviert werden, bis nach PostMessa
 <em>; Speichert das folgende Script als "<strong>Empfänger.ahk</strong>" und startet es:</em>
 #SingleInstance
 OnMessage(0x4a, "WM_COPYDATA_Empfangen")  <em>; 0x4a ist WM_COPYDATA</em>
-Return
+return
 
 WM_COPYDATA_Empfangen(wParam, lParam)
 {
@@ -161,7 +161,7 @@ WM_COPYDATA_Empfangen(wParam, lParam)
     Datenkopie := StrGet(Stringadresse)  <em>; Kopiert den String aus der Struktur.</em>
     <em>; Mit ToolTip anzeigen, damit wir rechtzeitig zurückkehren können:</em>
     ToolTip %A_ScriptName%`nFolgender String empfangen:`n%Datenkopie%
-    Return true  <em>; Die Rückgabe von 1 (wahr) ist der traditionelle Weg, um diese Nachricht zu bestätigen.</em>
+    return true  <em>; Die Rückgabe von 1 (wahr) ist der traditionelle Weg, um diese Nachricht zu bestätigen.</em>
 }
 
 <em>; Speichert das folgende Script als "<strong>Sender.ahk</strong>" und startet es:  Drückt danach den Hotkey WIN+LEERTASTE.</em>
@@ -169,14 +169,14 @@ Empfängertitel = Empfänger.ahk ahk_class AutoHotkey
 
 #space::  <em>; Hotkey: WIN+LEERTASTE. Drücken, um eine InputBox für die Eingabe eines String anzuzeigen.</em>
 InputBox, StringSenden, Text mit WM_COPYDATA senden, Beliebigen Text eingeben:
-If ErrorLevel  <em>; Benutzer hat die Abbrechen-Schaltfläche gedrückt.</em>
-    Return
+if ErrorLevel  <em>; Benutzer hat den Abbrechen-Button gedrückt.</em>
+    return
 Ergebnis := WM_COPYDATA_Senden(StringSenden, Empfängertitel)
-If Ergebnis = FAIL
+if Ergebnis = FAIL
     MsgBox SendMessage fehlgeschlagen. Existiert der folgende Fenstertitel?:`n%Empfängertitel%
-Else If Ergebnis = 0
+else if Ergebnis = 0
     MsgBox Nachricht gesendet, aber das Zielfenster hat mit 0 geantwortet (es ignoriert die Nachricht).
-Return
+return
 
 WM_COPYDATA_Senden(ByRef StringSenden, ByRef Empfängertitel)  <em>; ByRef spart in diesem Fall ein wenig Speicherplatz.
 ; Diese Funktion sendet den angegebenen String an das angegebene Fenster und gibt eine Anwort zurück.
@@ -194,7 +194,7 @@ WM_COPYDATA_Senden(ByRef StringSenden, ByRef Empfängertitel)  <em>; ByRef spart
     SendMessage, 0x4a, 0, &amp;CopyDataStruct,, %Empfängertitel%  <em>; 0x4a ist WM_COPYDATA. Verwendet Send, nicht Post.</em>
     DetectHiddenWindows %DetectHiddenWindows_Vorher%  <em>; Stellt die ursprüngliche Einstellung wieder her.</em>
     SetTitleMatchMode %TitleMatchMode_Vorher%         <em>; Das Gleiche.</em>
-    Return ErrorLevel  <em>; Die Antwort von SendMessage zurückgeben.</em>
+    return ErrorLevel  <em>; Die Antwort von SendMessage zurückgeben.</em>
 }</pre>
 
 <pre class="NoIndent"><em>; Beispiel: Siehe <a href="../scripts/WinLIRC.htm">WinLIRC-Client-Script</a>, wie OnMessage() verwendet werden kann,
