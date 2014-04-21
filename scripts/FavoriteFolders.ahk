@@ -6,8 +6,8 @@
 ; wechselt das Script innerhalb des aktiven Fensters sofort auf diesen Ordner.  Die folgenden
 ; Fenstertypen werden unterstützt: 1) Standard-Dialogfenster zum Öffnen oder Speichern von Dateien;
 ; 2) Explorer-Fenster; 3) Konsolenfenster (Eingabeaufforderung).
-; Das Menü kann optional auch für nicht unterstützte Fenstertypen angezeigt werden,
-; in diesem Fall wird der ausgewählte Ordner in einem neuen
+; Das Menü kann optional auch für nicht unterstützte Fenstertypen angezeigt
+; werden - in diesem Fall wird der ausgewählte Ordner in einem neuen
 ; Explorer-Fenster geöffnet.
 
 ; Hinweis: Wenn "Ansicht > Symbolleisten > Adressleiste" im Fenster-Explorer deaktiviert ist,
