@@ -1,257 +1,238 @@
-// This prevents indenting the main content to the left when loading large files
-
 if (!IsInsideCHM())
-  $('html').attr('style', 'margin: 108px 0px 0px 245px; max-width: 966px; padding-right: 26px');
+{
+  BuildStructure();
+  AddContent();
+}
 
-$(document).ready(function() {
+function GetUrlRoot()
+{ 
+  return location.href.substr(0, location.href.lastIndexOf('/docs'));
+}
 
-  if (IsInsideCHM())
-    return;
 
-  //
-  // Build website structure
-  //
+function GetScriptDir() {
+  var scriptEls = document.getElementsByTagName('script');
+  var thisScriptEl = scriptEls[scriptEls.length - 1];
+  var scriptPath = thisScriptEl.src;
+  return scriptPath.substr(0, scriptPath.lastIndexOf('/') + 1);
+}
 
-  var virtualDir = "";
+function BuildStructure()
+{
+  var urlroot = GetUrlRoot();
+  var header  = '<div class="header"><table class="hdr-table"><tr><td class="hdr-image"><a href="' + urlroot + '"><img src="' + urlroot + '/docs/static/ahk_logo_no_text.png" alt="AutoHotkey"></a></td><td class="hdr-search"><form id="search-form"><input id="q" size="30" type="text"></form><div id="search-btn"></div></td><td class="hdr-language"><ul><li>Language<ul class="second"><li id="lng-btn-en">English</li><li id="lng-btn-de">Deutsch</li><li id="lng-btn-cn">中文</li></ul></li></ul></td></tr></table></div>';
+  var main_1  = '<div class="main-content"><div id="app-body"><div id="headerbar"></div><div class="left-col"><ul class="nav"><li id="sb_content" class="selected"><span></span></li><li id="sb_index"><span></span></li></ul><div id="sidebar"></div><div id="keywords"><input id="IndexEntry" type="text"><select id="indexcontainer" name="IndexListbox" class="docstyle" size="20"></select></div></div><div class="right-col"><div id="main-content">';
+  var main_2  = '</div></div><div class="float-clear"></div></div></div>';
+  var footer  = '<div class="footer"><b>Copyright</b> © 2003-' + new Date().getFullYear() + ' ' + location.host + ' - <span id="ftLicense"></span> <a href="' + urlroot + '/docs/license.htm">GNU General Public License</a><span id="ftExtra"></span></div>';
+  document.write(header + main_1);
+  $(document).ready(function() { $('body').append(main_2 + footer); });
+}
 
-  var urlroot  = location.protocol + "//" + location.host + virtualDir;
+function AddContent()
+{
+  $(document).ready(function() {
+    var urlroot = GetUrlRoot();
+    var urlpath = location.href.replace(urlroot, '').substr(1);
 
-  var urlpath  = location.href.replace(urlroot, '');
+    //
+    // Read config.xml
+    //
 
-  $('html').removeAttr('style');
-  $('body').wrapInner('<div class="right-col"><div id="main-content">');
-  $('body').append('<div class="float-clear"></div>'); // necessary otherwise sidebar would overlap the footer
-  $('body').prepend('<div id="headerbar"></div><div class="left-col"><ul class="nav"><li id ="sb_content"><span>Inhalt</span></li><li id ="sb_index"><span>Index</span></li></ul><div id="sidebar"></div><div id="keywords"><input id="IndexEntry" type="text"><select id="indexcontainer" name="IndexListbox" class="docstyle" size="20"></select></div></div>');
-  $('body').wrapInner('<div class="main-content"><div id="app-body">');
-  $('body').prepend('<div class="header"><table class="hdr-table"><tr><td class="hdr-image"><a href="' + urlroot + '"><img src="' + urlroot + '/docs/static/ahk_logo_no_text.png" alt="AutoHotkey"></a></td><td class="hdr-search"><form id="search-form"><input id="q" size="30" type="text" placeholder="Suchbegriff eingeben ..."></form><div id="search-btn">Suchen</div></td><td class="hdr-language"><ul><li>Language<ul class="second"><li id="lng-btn-en">English</li><li id="lng-btn-de">Deutsch</li><li id="lng-btn-cn">中文</li></ul></li></ul></td></tr></table></div>');
-  $('body').append('<div class="footer"><b>Copyright</b> &copy; 2003-' + new Date().getFullYear() + ' ' + location.host + ' - Lizenz: <a href="' + urlroot + '/docs/license.htm">GNU General Public License</a> | Übersetzung: Harald Bootz</div>');
-  
-  //
-  // on events for sidebar buttons
-  //
+    if (!sessionStorage.getItem('hdSearchTxt'))
+    {
+      $.ajax({
+        url:     GetScriptDir() + 'config.xml',
+        async:   false,
+        success: function(xml) {
+          $(xml).find('*').each(function(index) {
+            sessionStorage.setItem($(this).prop("tagName"), $(this).text());
+          });
+        }
+      });
+    }
+    $('#q').attr("placeholder", sessionStorage.getItem("hdSearchTxt"));
+    $('#search-btn').text(sessionStorage.getItem("hdSearchBtn"));
+    $('#sb_content span').text(sessionStorage.getItem("sbContent"));
+    $('#sb_index span').text(sessionStorage.getItem("sbIndex"));
+    $('#ftLicense').text(sessionStorage.getItem("ftLicense"));
+    $('#ftExtra').text(sessionStorage.getItem("ftExtra"));
 
-  $('#sb_content').on('click', function() { ShowTOC(); });
-  $('#sb_index').on('click', function() { ShowIndex(); });
+    //
+    // set last used state of sidebar
+    //
 
-  //
-  // on events for search field + button
-  //
+    (sessionStorage.getItem('sb_state') == 2) ? ShowIndex() : ShowTOC();
 
-  $('.header #search-btn').on('click', function() {
-    var query = $(".header #q").val();
-    document.location = 'https://www.google.com/search?sitesearch=' + location.host + '&q=' + query;
-  });
+    //
+    // on events for sidebar buttons
+    //
 
-  $('.header #search-form').on('submit', function(event) {
-      event.preventDefault();
+    $('#sb_content').on('click', function() { ShowTOC(); });
+    $('#sb_index').on('click', function() { ShowIndex(); });
+
+    //
+    // on events for search field + button
+    //
+
+    $('.header #search-btn').on('click', function() {
       var query = $(".header #q").val();
       document.location = 'https://www.google.com/search?sitesearch=' + location.host + '&q=' + query;
-  });
-
-  //
-  // language button
-  //
-
-  var en = 'http://ahkscript.org';
-  var de = 'http://ragnar-f.github.io';
-  var cn = 'http://ahkcn.sourceforge.net';
-
-  $('#lng-btn-en').on('click', function() { document.location = en + urlpath; } );
-  $('#lng-btn-de').on('click', function() { document.location = de + urlpath; } );
-  $('#lng-btn-cn').on('click', function() { document.location = cn + urlpath; } );
-
-  $('.hdr-table .hdr-language').find('li').mouseenter(function() {
-    $(this).children('ul').show();
-    $(this).addClass('selected');
-    $(this).mouseleave(function() {
-      $(this).children('ul').hide();
-      $(this).removeClass('selected');
     });
-  });
 
-  //
-  // set last used state of sidebar
-  //
+    $('.header #search-form').on('submit', function(event) {
+        event.preventDefault();
+        var query = $(".header #q").val();
+        document.location = 'https://www.google.com/search?sitesearch=' + location.host + '&q=' + query;
+    });
 
-  (sessionStorage.getItem('sb_state') == 2) ? ShowIndex() : ShowTOC();
+    //
+    // language button
+    //
 
-  //
-  // Create toc sidebar based on HHC file (tree.jquery.js)
-  //
+    var en = 'http://ahkscript.org/';
+    var de = 'http://ragnar-f.github.io/';
+    var cn = 'http://ahkcn.sourceforge.net/';
 
-  var source = urlroot + '/Table of Contents.hhc';
+    $('#lng-btn-en').on('click', function() { document.location = en + urlpath; } );
+    $('#lng-btn-de').on('click', function() { document.location = de + urlpath; } );
+    $('#lng-btn-cn').on('click', function() { document.location = cn + urlpath; } );
 
-  $.get(source, function(txt)
-  {
-    var lines             = txt.split("\n");
-    var data              = [];
-    var processing        = false;
-    var counter           = 0;
-    var title             = '';
-    var path              = '';
-    var id                = 0;
-    var sb_content_match  = 0;
+    $('.hdr-table .hdr-language').find('li').mouseenter(function() {
+      $(this).children('ul').show();
+      $(this).addClass('selected');
+      $(this).mouseleave(function() {
+        $(this).children('ul').hide();
+        $(this).removeClass('selected');
+      });
+    });
 
-    for (var i = 0, len = lines.length; i < len; i++)
+    //
+    // Create toc sidebar based on HHC file (tree.jquery.js)
+    //
+
+    if (!sessionStorage.getItem('content'))
     {
-      var line = lines[i]; // required otherwise .indexOf would search through the whole array
-      
-      // ignore lines until first <li>
+      $.ajax({
+        url:     urlroot + '/Table of Contents.hhc',
+        async:   false,
+        success: function(txt) {
+          var id = 0;
 
-      if (line.indexOf('<LI>') >= 0)
-        processing = true;
-      if (!processing)
-        continue;
+          function CreateData(obj_ul, tree)
+          {
+            var obj_lis = obj_ul.find("li");
+            if (obj_lis.length == 0) return;        
+            obj_lis.each(function(index) {
+              var $this = $(this);
+              if($this.parent("ul").get(0) == obj_ul.get(0))
+              {
+                tree.push({
+                  label:    $this.find('> object > param[name="Name"]').attr('value'),
+                  path:     $this.find('> object > param[name="Local"]').attr('value'),
+                  children: CreateData($this.find("ul").first(), []),
+                  id:       id++
+                });
+              }
+            });
+            return tree;
+          }
 
-      // analyse every toc item
-
-      if (line.indexOf('<OBJECT type="text/sitemap">') >= 0)
-      {
-        id++;
-        path = '';
-        title = '';
-      }
-      if (line.indexOf('<param name="Name"') >= 0)
-      {
-        title = line.match(/value="(.*)"/)[1];
-        title = $("<div/>").html(title).text(); // encode html entities
-      }
-      if (line.indexOf('<param name="Local"') >= 0)
-      {
-        path = line.match(/value="(.*)"/)[1];
-        if ((!sb_content_match) && (urlpath.indexOf(path) >= 0)) 
-          sb_content_match = id;
-      }
-      if (line.indexOf('</OBJECT>') >= 0)
-      {
-        switch(counter) {
-          case 0:
-            var temp0 = data;
-            temp0.push({label: title, children: [], path: path, id: id});
-            break;
-          case 1:
-            var temp1 = temp0[temp0.length - 1].children;
-            temp1.push({label: title, children: [], path: path, id: id});
-            break;
-          case 2:
-            var temp2 = temp1[temp1.length - 1].children;
-            temp2.push({label: title, children: [], path: path, id: id});
-            break;
-          default:
-            alert('sidebar item - ' + title + ': level ' + counter + ' not supported');
+          var data = CreateData($(txt).filter('ul'), []);
+          sessionStorage.setItem('content', JSON.stringify(data));
         }
-      }
-      if (line.indexOf('<UL>') >= 0)
-      {
-        counter++;
-      }
-      if (line.indexOf('</UL>') >= 0)
-      {
-        counter--;
-      }
+      });
     }
 
-    $(function() {
+    var sb_content_matched = [];
+    var sb_content_matched_2 = [];
 
-      var that = $('#sidebar');
-
-      that.tree({
-        data: data,
-        useContextMenu: false,
-        keyboardSupport: false
-      });
-
-      // pre-select toc sidebar item
-
-      var sb_content_lastselected = sessionStorage.getItem('sb_content_lastselected');
-      var sb_content_node_match = that.tree('getNodeById', sb_content_match);
-
-      if (sb_content_lastselected)
-      {
-        var sb_content_node_last = that.tree('getNodeById', sb_content_lastselected);
-        if ('/' + sb_content_node_last.path == urlpath)
-          that.tree('selectNode', sb_content_node_last);
+    $('#sidebar').tree({
+      data:             JSON.parse(sessionStorage.getItem('content')),
+      useContextMenu:   false,
+      keyboardSupport:  false,
+      saveState:        false,
+      onCanSelectNode:  function(node) {
+        if ((node.children.length) && (!node.path))
+            return false;
         else
-          that.tree('selectNode', sb_content_node_match);
-      }
-      else
-        that.tree('selectNode', sb_content_node_match);
-
-      that.bind('tree.click', function(event) {
-        var node = event.node;
-        if (node.path)
-          window.location = urlroot + "/" + node.path;
-        $(this).tree('toggle', node);
-        sessionStorage.setItem('sb_content_lastselected', node.id);
-      });
-    });
-  });
-
-  //
-  // Create keyword list sidebar based on HHK file
-  //
-
-  var source = urlroot + '/Index.hhk';
-
-  $.get(source, function(txt)
-  {
-    var lines           = txt.split("\n");
-    var newContent      = '\n';
-    var processing      = false;
-    var counter         = 0;
-    var sb_index_match  = 0;
-
-    for (var i = 0, len = lines.length; i < len; i++)
-    {
-      var line = lines[i]; // required otherwise .indexOf would search through the whole array
-      
-      // ignore lines until first <li> 
-
-      if ((!processing) && (line.indexOf('<LI>') >= 0))
-        processing = true;
-      if (!processing)
-        continue;
-
-      // analyse every keyword
-
-      if (line.indexOf('<param name="Name"') >= 0)
-      {
-        var title = line.match(/value="(.*)"/)[1];
-      }
-      if (line.indexOf('<param name="Local"') >= 0)
-      {
-        var path = line.match(/value="(.*)"/)[1].replace('docs/', '');
-      }
-      if (line.indexOf('</OBJECT>') >= 0)
-      {
-        counter++;
-        newContent += '<option value="' + path + '">' + title + '</option>\n';
-        if ((!sb_index_match) && (urlpath.indexOf(path) >= 0))
+            return true;
+      },
+      onCreateLi:       function(node, $li) {
+        if (node.path == urlpath)
         {
-          sb_index_match = counter;
+          sb_content_matched.push(node.id);
         }
-
+        if (node.path == urlpath.substr(0, urlpath.lastIndexOf('#')))
+        {
+          sb_content_matched_2.push(node.id);
+        }
       }
-    }
-    $("#indexcontainer").append(newContent);
+    });
 
-    // pre-select keyword list sidebar item
+    $('#sidebar').bind('tree.click', function(event) {
+      var node = event.node;
+      sessionStorage.setItem('sb_content_lastselected', node.id);
+      $(this).tree('toggle', node);
+      if (node.path)
+        window.location = urlroot + "/" + node.path;
+    });
 
-    var sb_index_lastselected = sessionStorage.getItem('sb_index_lastselected');
-    var sb_index_item_match = $('#indexcontainer :nth-child(' + sb_index_match + ')');
+    //
+    // pre-select toc sidebar item
+    //
 
-    if (sb_index_lastselected)
+    var array = [];
+
+    if (sb_content_matched.length)
     {
-      var sb_index_item_last = $('#indexcontainer :nth-child(' + sb_index_lastselected + ')');
-      if ('/docs/' + sb_index_item_last.attr('value') == urlpath)
-        sb_index_item_last.prop('selected', true);
-      else
-        sb_index_item_match.prop('selected', true);
+      array = sb_content_matched;
     }
-    else
-      sb_index_item_match.prop('selected', true);
+    else if (urlpath.indexOf('#') >= 0)
+    {
+      array = sb_content_matched_2;
+    }
+    for (var i = 0, len = array.length; i < len; i++)
+    {
+      var node = $('#sidebar').tree('getNodeById', array[i]);
+      $('#sidebar').tree('addToSelection', node);
+      $('#sidebar').tree('openNode', node);
+      $('#sidebar').tree('openNode', node.parent);
+    }
 
+    //
+    // Create keyword list sidebar based on HHK file
+    //
+
+    if (!sessionStorage.getItem('index'))
+    {
+      $.ajax({
+        url:     urlroot + '/Index.hhk',
+        async:   false,
+        success: function(txt) {
+          var newContent      = '';
+          $(txt).find("li").each(function(index) {
+            var title = $(this).find('param[name="Name"]').attr('value');
+            var path  = $(this).find('param[name="Local"]').attr('value');
+            newContent += '<option value="' + path + '">' + title + '</option>';
+          });
+          sessionStorage.setItem('index', newContent);
+        }
+      });
+    }
+
+    $("#indexcontainer").html(sessionStorage.getItem('index'));
+    
+    //
+    // pre-select toc sidebar item
+    //
+
+    var sb_index_lastselected = $('[value="' + urlpath + '"]').index() + 1;
+    var sb_index_item_last = $('#indexcontainer :nth-child(' + sb_index_lastselected + ')');
+    sb_index_item_last.prop('selected', true);
+
+    //
     // select closest listbox entry while typing
+    //
 
     $("#IndexEntry").on('keyup', function() {
       var oList = $('#indexcontainer')[0];
@@ -276,7 +257,9 @@ $(document).ready(function() {
       } 
     });
 
+    //
     // open document when pressing enter or select item
+    //
 
     $("#indexcontainer, #IndexEntry").on('keydown change', function(event) {
       if ((event.which && event.which==13) || (event.keyCode && event.keyCode==13) || (event.type == 'change')) {
@@ -285,31 +268,31 @@ $(document).ready(function() {
           var URL = document.getElementById("indexcontainer").item(iSelect).value;
           sessionStorage.setItem('sb_index_lastselected', iSelect + 1);
           if (URL.length > 0) {
-            window.location = urlroot + '/docs/' + URL;
+            window.location = urlroot + '/' + URL;
           }
         }
       }
     });
-  });
 
-  //
-  // Automatically adding anchor links to the headings
-  //
+    //
+    // Automatically adding anchor links to the headings
+    //
 
-  $('h1, h2, h3, h4, h5, h6').each(function(index) {
-    if(!$(this).attr('id')) // if id anchor not exist, create one
-    {
-      
-      var str = $(this).text().replace(/\s/g, '_'); // replace spaces with _
-      var str = str.replace(/[():.,#\[\]\/{}&="|?!]/g, ''); // remove special chars
-      if($('#' + str).length) // if new id anchor exist already, set it to a unique one
-        $(this).attr('id', str + '_' + index);
-      else
-        $(this).attr('id', str);
-    }
-    $(this).wrap('<a class="anchorlink" href="#' + $(this).attr('id') + '"></a>');
+    $('h1, h2, h3, h4, h5, h6').each(function(index) {
+      if(!$(this).attr('id')) // if id anchor not exist, create one
+      {
+        
+        var str = $(this).text().replace(/\s/g, '_'); // replace spaces with _
+        var str = str.replace(/[():.,#\[\]\/{}&="|?!]/g, ''); // remove special chars
+        if($('#' + str).length) // if new id anchor exist already, set it to a unique one
+          $(this).attr('id', str + '_' + index);
+        else
+          $(this).attr('id', str);
+      }
+      $(this).wrap('<a class="anchorlink" href="#' + $(this).attr('id') + '"></a>');
+    });
   });
-});
+};
 
 function ShowTOC()
 {
@@ -331,8 +314,5 @@ function ShowIndex()
 
 function IsInsideCHM()
 {
-  if (location.href.search(/::/) > 0)
-    return 1;
-  else
-    return 0;
+  return (location.href.search(/::/) > 0) ? 1 : 0;
 }
