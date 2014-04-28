@@ -6,9 +6,14 @@ if (!IsInsideCHM())
 
 function GetUrlRoot()
 { 
-  return location.href.substr(0, location.href.lastIndexOf('/docs'));
+  return location.protocol + '//' + location.host + GetVirtualDir();
 }
 
+function GetVirtualDir()
+{
+  var pathname = location.pathname;
+  return pathname.substr(0, pathname.lastIndexOf('/docs'));
+}
 
 function GetScriptDir() {
   var scriptEls = document.getElementsByTagName('script');
@@ -19,11 +24,11 @@ function GetScriptDir() {
 
 function BuildStructure()
 {
-  var urlroot = GetUrlRoot();
-  var header  = '<div class="header"><table class="hdr-table"><tr><td class="hdr-image"><a href="' + urlroot + '"><img src="' + urlroot + '/docs/static/ahk_logo_no_text.png" width="217" height="70" alt="AutoHotkey"></a></td><td class="hdr-search"><form id="search-form"><input id="q" size="30" type="text"></form><div id="search-btn"></div></td><td class="hdr-language"><ul><li>Language<ul class="second"><li id="lng-btn-en">English</li><li id="lng-btn-de">Deutsch</li><li id="lng-btn-cn">中文</li></ul></li></ul></td></tr></table></div>';
+  var vdir = GetVirtualDir();
+  var header  = '<div class="header"><table class="hdr-table"><tr><td class="hdr-image"><a href="' + vdir + '/' + '"><img src="' + vdir + '/docs/static/ahk_logo_no_text.png" width="217" height="70" alt="AutoHotkey"></a></td><td class="hdr-search"><form id="search-form"><input id="q" size="30" type="text"></form><div id="search-btn"></div></td><td class="hdr-language"><ul><li>Language<ul class="second"><li id="lng-btn-en">English</li><li id="lng-btn-de">Deutsch</li><li id="lng-btn-cn">中文</li></ul></li></ul></td></tr></table></div>';
   var main_1  = '<div class="main-content"><div id="app-body"><div id="headerbar"></div><div class="left-col"><ul class="nav"><li id="sb_content" class="selected"><span></span></li><li id="sb_index"><span></span></li></ul><div id="sidebar"></div><div id="keywords"><input id="IndexEntry" type="text"><select id="indexcontainer" name="IndexListbox" class="docstyle" size="20"></select></div></div><div class="right-col"><div id="main-content">';
   var main_2  = '</div></div><div class="float-clear"></div></div></div>';
-  var footer  = '<div class="footer"><b>Copyright</b> © 2003-' + new Date().getFullYear() + ' ' + location.host + ' - <span id="ftLicense"></span> <a href="' + urlroot + '/docs/license.htm">GNU General Public License</a><span id="ftExtra"></span></div>';
+  var footer  = '<div class="footer"><b>Copyright</b> © 2003-' + new Date().getFullYear() + ' ' + location.host + ' - <span id="ftLicense"></span> <a href="' + vdir + '/docs/license.htm">GNU General Public License</a><span id="ftExtra"></span></div>';
   document.write(header + main_1);
   $(document).ready(function() { $('body').append(main_2 + footer); });
 }
@@ -31,8 +36,8 @@ function BuildStructure()
 function AddContent()
 {
   $(document).ready(function() {
-    var urlroot = GetUrlRoot();
-    var urlpath = location.href.replace(urlroot, '').substr(1);
+    var vdir = GetVirtualDir();
+    var urlpath = location.href.replace(GetUrlRoot(), '').substr(1);
 
     //
     // Read config.xml
@@ -113,7 +118,7 @@ function AddContent()
     if (!sessionStorage.getItem('content'))
     {
       $.ajax({
-        url:     urlroot + '/Table of Contents.hhc',
+        url:     vdir + '/Table of Contents.hhc',
         async:   false,
         success: function(txt) {
           var id = 0;
@@ -174,7 +179,7 @@ function AddContent()
       sessionStorage.setItem('sb_content_lastselected', node.id);
       $(this).tree('toggle', node);
       if (node.path)
-        window.location = urlroot + "/" + node.path;
+        window.location = vdir + "/" + node.path;
     });
 
     //
@@ -206,7 +211,7 @@ function AddContent()
     if (!sessionStorage.getItem('index'))
     {
       $.ajax({
-        url:     urlroot + '/Index.hhk',
+        url:     vdir + '/Index.hhk',
         async:   false,
         success: function(txt) {
           var newContent      = '';
@@ -268,7 +273,7 @@ function AddContent()
           var URL = document.getElementById("indexcontainer").item(iSelect).value;
           sessionStorage.setItem('sb_index_lastselected', iSelect + 1);
           if (URL.length > 0) {
-            window.location = urlroot + '/' + URL;
+            window.location = vdir + '/' + URL;
           }
         }
       }
