@@ -16,34 +16,34 @@
 
 <p>Liest einen Wert aus der Registry.</p>
 
-<pre class="Syntax">RegRead, AusgabeVar, Hauptschlüssel, Unterschlüssel [, Wertname]</pre>
+<pre class="Syntax">RegRead, AusgabeVar, Rootkey, Subkey [, Wertname]</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>AusgabeVar</dt>
   <dd><p>Name der Variable, in der der ermittelte Wert gespeichert werden soll. Falls der Wert nicht abgerufen werden kann, wird die Variable leer gemacht und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p></dd>
 
-  <dt>Hauptschlüssel</dt>
+  <dt>Rootkey</dt>
   <dd><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC). Um den Zugriff auf eine Remote-Registry zu ermöglichen, muss der Computername und ein Doppelpunkt wie im folgenden Beispiel vorangestellt werden: \\workstation01:HKEY_LOCAL_MACHINE</p></dd>
 
-  <dt>Unterschlüssel</dt>
-  <dd><p>Der Name des Unterschlüssels (z. B. Software\BeliebigeAnwendung).</p></dd>
+  <dt>Subkey</dt>
+  <dd><p>Der Name des Subkeys (z. B. Software\BeliebigeAnwendung).</p></dd>
 
   <dt>Wertname</dt>
-  <dd><p>Der Name des zu ermittelnden Wertes. Ist dieser Parameter nicht vorhanden, wird der Standardwert von <em>Unterschlüssel</em> abgerufen. Dieser wird in RegEdit als "(Standard)" angezeigt. Wenn kein Standardwert vorhanden ist (d. h., wenn in RegEdit "Wert nicht festgelegt" anzeigt wird), wird <em>AusgabeVar</em> leer gemacht und ErrorLevel auf 1 gesetzt.</p></dd>
+  <dd><p>Der Name des zu ermittelnden Wertes. Ist dieser Parameter nicht vorhanden, wird der Standardwert von <em>Subkey</em> abgerufen. Dieser wird in RegEdit als "(Standard)" angezeigt. Wenn kein Standardwert vorhanden ist (d. h., wenn in RegEdit "Wert nicht festgelegt" anzeigt wird), wird <em>AusgabeVar</em> leer gemacht und ErrorLevel auf 1 gesetzt.</p></dd>
 
 </dl>
 <h3>ErrorLevel</h3>
 <p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
-<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 (z. B. nicht-existierender Schlüssel oder Wert) oder bei Erfolg auf 0 gesetzt.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 (z. B. nicht-existierender Key oder Wert) oder bei Erfolg auf 0 gesetzt.</p>
 <p>Die Variable <a href="../Variables.htm#LastError">A_LastError</a> enthält den Rückgabewert der Systemfunktion GetLastError().</p>
 <h3>Bemerkungen</h3>
 <p>Zurzeit werden nur folgende Wert-Typen unterstützt: REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ, REG_DWORD und REG_BINARY.</p>
 <p>REG_DWORD-Werte werden immer als positive Dezimalzahlen ausgedrückt.</p>
-<p>Das Ergebnis eines REG_BINARY-Schlüssels ist ein String mit Hex-Zeichen. Zum Beispiel wird der REG_BINARY-Wert 01,a9,ff,77 als String 01A9FF77 gelesen.</p>
-<p>Das Ergebnis eines REG_MULTI_SZ-Schlüssels besteht aus mehreren Komponenten, die jeweils mit einem Zeilenumbruchzeichen (`n) enden. Wenn keine Komponenten vorhanden sind, wird <em>AusgabeVar</em> leer gemacht. Siehe <a href="FileSelectFile.htm">FileSelectFile</a> für ein Beispiel, wie einzelne Komponenten aus <em>AusgabeVar</em> extrahieren werden können.</p>
+<p>Das Ergebnis eines REG_BINARY-Keys ist ein String mit Hex-Zeichen. Zum Beispiel wird der REG_BINARY-Wert 01,a9,ff,77 als String 01A9FF77 gelesen.</p>
+<p>Das Ergebnis eines REG_MULTI_SZ-Keys besteht aus mehreren Komponenten, die jeweils mit einem Zeilenumbruchzeichen (`n) enden. Wenn keine Komponenten vorhanden sind, wird <em>AusgabeVar</em> leer gemacht. Siehe <a href="FileSelectFile.htm">FileSelectFile</a> für ein Beispiel, wie einzelne Komponenten aus <em>AusgabeVar</em> extrahieren werden können.</p>
 <p>REG_BINARY-Werte größer als 64 KB können nur in v1.1.10.01 und höher gelesen werden.</p>
-<p>Mit der <a href="LoopReg.htm">Registry-Schleife</a> können mehrere Registry-Schlüssel und -werte abgerufen und bearbeitet werden.</p>
+<p>Mit der <a href="LoopReg.htm">Registry-Schleife</a> können mehrere Registry-Keys und -Werte abgerufen und bearbeitet werden.</p>
 <p>Bei den Bemerkungen zur <a href="LoopReg.htm">Registry-Schleife</a> wird näher gebracht, wie man auf die Registry eines Remotecomputers zugreifen kann.</p>
 <p>Mit <a href="SetRegView.htm">SetRegView</a> können Einträge von den 64-Bit-Bereichen der Registry in einem 32-Bit-Script oder umgekehrt gelesen und geschrieben werden.</p>
 
@@ -54,12 +54,12 @@
 MsgBox, Programmdateien befinden sich in: %AusgabeVar%</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Das folgende Beispiel ermittelt den TYP eines Registrierungswertes (z. B. REG_SZ oder REG_DWORD).</em>
-MsgBox % RegSchlüsseltyp("HKCU", "Environment", "TEMP")
+MsgBox % RegKeyTyp("HKCU", "Environment", "TEMP")
 return
 
-RegSchlüsseltyp(Hauptschlüssel, Unterschlüssel, Wertname)  <em>; Diese Funktion gibt den Typ des angegebenen Wertes zurück.</em>
+RegKeyTyp(Rootkey, Subkey, Wertname)  <em>; Diese Funktion gibt den Typ des angegebenen Wertes zurück.</em>
 {
-    Loop, %Hauptschlüssel%, %Unterschlüssel%
+    Loop, %Rootkey%, %Subkey%
         if (A_LoopRegName = Wertname)
             return A_LoopRegType
     return "Fehler"

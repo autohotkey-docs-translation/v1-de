@@ -16,21 +16,21 @@
 
 <p>Schreibt einen Wert in die Registry.</p>
 
-<pre class="Syntax">RegWrite, Werttyp, Hauptschlüssel, Unterschlüssel [, Wertname, Wert]</pre>
+<pre class="Syntax">RegWrite, Werttyp, Rootkey, Subkey [, Wertname, Wert]</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>Werttyp</dt>
   <dd><p>Muss entweder REG_SZ, REG_EXPAND_SZ REG_MULTI_SZ, REG_DWORD oder REG_BINARY sein.</p></dd>
 
-  <dt>Hauptschlüssel</dt>
+  <dt>Rootkey</dt>
   <dd><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC). Um den Zugriff auf eine Remote-Registry zu ermöglichen, muss der Computername und ein Doppelpunkt wie im folgenden Beispiel vorangestellt werden: \\workstation01:HKEY_LOCAL_MACHINE</p></dd>
 
-  <dt>Unterschlüssel</dt>
-  <dd><p>Der Name des Unterschlüssels (z. B. Software\BeliebigeAnwendung). Falls der <em>Unterschlüssel</em> nicht vorhanden ist, wird er erstellt (einschließlich seine Elternelemente, falls nötig). Ist der <em>Unterschlüssel</em> leer, wird der Wert direkt in den <em>Hauptschlüssel</em> geschrieben (obwohl einige Betriebssysteme sich weigern könnten, in die oberste Ebene von HKEY_CURRENT_USER zu schreiben).</p></dd>
+  <dt>Subkey</dt>
+  <dd><p>Der Name des Subkeys (z. B. Software\BeliebigeAnwendung). Falls <em>Subkey</em> nicht vorhanden ist, wird er erstellt (einschließlich seine Elternelemente, falls nötig). Ist <em>Subkey</em> leer, wird der Wert direkt in <em>Rootkey</em> geschrieben (obwohl einige Betriebssysteme sich weigern könnten, in die oberste Ebene von HKEY_CURRENT_USER zu schreiben).</p></dd>
 
   <dt>Wertname</dt>
-  <dd><p>Der Name des zu schreibenden Wertes. Ist dieser Parameter nicht vorhanden, wird der Standardwert von <em>Unterschlüssel</em> verwendet. Dieser wird in RegEdit als "(Standard)" angezeigt.</p></dd>
+  <dd><p>Der Name des zu schreibenden Wertes. Ist dieser Parameter nicht vorhanden, wird der Standardwert von <em>Subkey</em> verwendet. Dieser wird in RegEdit als "(Standard)" angezeigt.</p></dd>
 
   <dt>Value</dt>
   <dd><p>Der zu schreibende Wert. Ist dieser Parameter nicht vorhanden, wird je nach <em>Werttyp</em> standardmäßig ein leerer String oder eine 0 verwendet. Falls der Text zu lang ist, kann er in mehreren kurzen Zeilen aufgeteilt werden (<a href="../Scripts.htm#continuation">Fortsetzungsbereich</a>), um ihn besser lesbar und verwaltbar zu machen.</p></dd>
@@ -42,17 +42,17 @@
 <p>Die Variable <a href="../Variables.htm#LastError">A_LastError</a> enthält den Rückgabewert der Systemfunktion GetLastError().</p>
 <h3>Bemerkungen</h3>
 <p>Wenn der <em>Werttyp</em> REG_DWORD enthält, sollte der <em>Wert</em> zwischen -2147483648 und 4294967295 (0xFFFFFFFF) liegen.</p>
-<p>Der zu schreibende Wert eines REG_BINARY-Schlüssels muss ein String mit Hex-Zeichen sein. Zum Beispiel ist es mithilfe des Strings 01A9FF77 möglich, einen REG_BINARY-Wert von 01,a9,ff,77 zu schreiben.</p>
-<p>Der zu schreibende Wert eines REG_MULTI_SZ-Schlüssels muss aus mehreren Komponenten bestehen, die jeweils mit einen Zeilenumbruchzeichen (`n) enden. Optional kann die letzte Komponente auch mit Zeilenumbruchzeichen enden. Leere Komponenten sind nicht erlaubt. Das heißt, dass zwei Zeilenumbruchzeichen nicht hintereinander erfolgen dürfen (`n`n), denn das würde bedeuten, dass ein Wert in die Registry geschrieben wird, der kürzer als erwartet ist.</p>
+<p>Der zu schreibende Wert eines REG_BINARY-Keys muss ein String mit Hex-Zeichen sein. Zum Beispiel ist es mithilfe des Strings 01A9FF77 möglich, einen REG_BINARY-Wert von 01,a9,ff,77 zu schreiben.</p>
+<p>Der zu schreibende Wert eines REG_MULTI_SZ-Keys muss aus mehreren Komponenten bestehen, die jeweils mit einen Zeilenumbruchzeichen (`n) enden. Optional kann die letzte Komponente auch mit Zeilenumbruchzeichen enden. Leere Komponenten sind nicht erlaubt. Das heißt, dass zwei Zeilenumbruchzeichen nicht hintereinander erfolgen dürfen (`n`n), denn das würde bedeuten, dass ein Wert in die Registry geschrieben wird, der kürzer als erwartet ist.</p>
 <p>REG_BINARY- und REG_MULTI_SZ-Werte größer als 64 KB werden seit v1.1.10.01 unterstützt. In älteren Versionen werden sie auf 64 KB gekürzt.</p>
-<p>Mit der <a href="LoopReg.htm">Registry-Schleife</a> können mehrere Registry-Schlüssel und -werte abgerufen und bearbeitet werden.</p>
+<p>Mit der <a href="LoopReg.htm">Registry-Schleife</a> können mehrere Registry-Keys und -Werte abgerufen und bearbeitet werden.</p>
 <p>Bei den Bemerkungen zur <a href="LoopReg.htm">Registry-Schleife</a> wird näher gebracht, wie man auf die Registry eines Remotecomputers zugreifen kann.</p>
 <p>Mit <a href="SetRegView.htm">SetRegView</a> können Einträge von den 64-Bit-Bereichen der Registry in einem 32-Bit-Script oder umgekehrt gelesen und geschrieben werden.</p>
 
 <h3>Siehe auch</h3>
 <p><a href="RegDelete.htm">RegDelete</a>, <a href="RegRead.htm">RegRead</a>, <a href="LoopReg.htm">Registry-Schleife</a>, <a href="SetRegView.htm">SetRegView</a>, <a href="IniWrite.htm">IniWrite</a></p>
 <h3>Beispiele</h3>
-<pre class="NoIndent">RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, SOFTWARE\Testschlüssel, Wertname, Testwert
+<pre class="NoIndent">RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, SOFTWARE\Testkey, Wertname, Testwert
 RegWrite, REG_BINARY, HKEY_CURRENT_USER, Software\TEST_APP, TEST_NAME, 01A9FF77
 RegWrite, REG_MULTI_SZ, HKEY_CURRENT_USER, Software\TEST_APP, TEST_NAME, Zeile1`nZeile2</pre>
 

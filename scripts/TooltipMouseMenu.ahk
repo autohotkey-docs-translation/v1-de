@@ -22,7 +22,7 @@ SetTitleMatchMode, 2
 ;_____Menü-Definitionen_____________________
 
 ; Hier können die Menüpunkte erstellt oder bearbeitet werden.
-; Es dürfen keine Leerzeichen im Schlüssel-/Wert-/Bereichssnamen verwendet werden.
+; Es dürfen keine Leerzeichen im Key-/Wert-/Sektionsnamen verwendet werden.
 
 ; Mach dir keine Sorgen über die Reihenfolge, das Menü wird sortiert.
 
