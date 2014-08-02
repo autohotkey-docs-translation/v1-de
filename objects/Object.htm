@@ -14,11 +14,22 @@
 
 <h1>Object</h1>
 
-<p>Alle integrierten Methoden von Objekten, die mit <a href="../Objects.htm#Arrays">Object()</a> oder <code>{}</code> erstellt wurden, können entweder als reguläre Funktionen oder als Methoden aufgerufen werden:</p>
-<pre>Ergebnis := Object.Methode(Parameter)</pre>
-<p>Wenn die Methode auf diese Weise aufgerufen wird, kann jedes Objekt sein eigenes Verhalten für diese Methode umsetzen. Wenn ein Objekt allerdings eine integrierte Methode überschreibt, muss das Objekt irgendwie auf die ursprüngliche Funktionalität zurückgreifen können. Das erreicht man mit der folgenden Funktionsform:</p>
-<pre>Ergebnis := ObjMethod(Objekt, Parameter)</pre>
-<p>Das direkte Aufrufen der Funktion ist zwar etwas schneller, weil der Name bereits beim Laden des Scripts aufgelöst wird, allerdings macht das die Syntax generell weniger gut verständlich. Jedes benutzerdefinierte Verhalten, das vom Objekt implementiert wurde, wird umgangen, so dass diese Funktionen in der Regel nur vom Objekt selbst verwendet werden sollte.</p>
+<p>In AutoHotkey ist der grundlegende Objektdatentyp ein assoziatives Array, dessen Verhalten <a href="../Objects.htm#Custom_Objects">individuell angepasst werden kann</a>. Standardmäßig unterstützen alle Objekte, die mit <code>{}</code>, <code>[]</code>, <code>Object()</code> und <code>Array()</code> erstellt wurden, folgende Methoden:</p>
+<ul>
+	<li><a href="#Insert">Insert</a></li>
+	<li><a href="#Remove">Remove</a></li>
+	<li><a href="#MinMaxIndex">MinIndex / MaxIndex</a></li>
+	<li><a href="#SetCapacity">SetCapacity</a></li>
+	<li><a href="#GetCapacity">GetCapacity</a></li>
+	<li><a href="#GetAddress">GetAddress</a></li>
+	<li><a href="#NewEnum">_NewEnum</a></li>
+	<li><a href="#HasKey">HasKey</a></li>
+	<li><a href="#Clone">Clone</a></li>
+</ul>
+<p>Jede Methode hat außerdem eine äquivalente Funktion, mit der jedes <a href="../Objects.htm#Custom_Objects">benutzerdefinierte Verhalten</a>, das vom Objekt implementiert wurde, umgangen werden kann. Diese Funktionen sollten nur für diesen Zweck verwendet werden. Um so eine Funktion aufzurufen, muss vor dem Methodennamen "Obj" angefügt und das Zielobjekt als erster Parameter übergeben werden. Zum Beispiel:</p>
+<pre>array := [1, 2, 3]
+MsgBox % ObjMaxIndex(array) " = " array.MaxIndex()</pre>
+&nbsp;
 
 <div class="methodShort" id="Insert"><h2>Insert <span class="ver">[AHK_L 31+]</span></h2>
 <p>Fügt Key-Value-Paare in das Objekt ein und passt bei Bedarf vorhandene Keys automatisch an.</p>
@@ -62,7 +73,7 @@ MaxIndex := Object.MaxIndex()</pre>
 <pre class="Syntax">Object.SetCapacity(MaxElemente)
 Object.SetCapacity(Key, Bytegröße)</pre>
 <table class="info">
-  <tr><td width="15%">MaxElemente</td><td width="85%">Die maximale Anzahl an Key-Value-Paaren, die das Objekt beinhalten soll, bevor es automatisch erweitert werden muss. Ist dieser Parameter kleiner als die aktuelle Anzahl an Key-Value-Paaren, wird das Objekt passend verkleinert.</td></tr>
+  <tr><td width="15%">MaxElemente</td><td width="85%">Die maximale Anzahl an Key-Value-Paaren, die das Objekt beinhalten soll, bevor es automatisch erweitert werden muss. Ist dieser Parameter kleiner als die aktuelle Anzahl an Key-Value-Paaren, wird stattdessen dieser Wert verwendet und ungenutzter Speicher freigegeben.</td></tr>
   <tr><td>Key</td><td>Beliebiger gültiger Key.</td></tr>
   <tr><td>Bytegröße</td><td>Die neue Größe in Bytes für den String-Zwischenspeicher des Feldes, ohne den 0-Terminator. Wenn das Feld nicht vorhanden ist, wird es erstellt. Ist <i>Bytegröße</i> eine 0, wird der Zwischenspeicher freigegeben, aber das leere Feld nicht entfernt. Ist <i>Bytegröße</i> kleiner als die aktuelle Größe, werden überschüssige Daten gekürzt; ansonsten werden alle vorhandenen Daten beibehalten.</td></tr>
   <tr><td><b>Rückgabe</b></td><td>Bei Erfolg die neue Kapazität, ansonsten ein leerer String.</td></tr>
@@ -79,7 +90,7 @@ Bytegröße := Object.GetCapacity(Key)</pre>
 
 <div class="methodShort" id="NewEnum"><h2>NewEnum <span class="ver">[AHK_L 49+]</span></h2>
 <pre class="Syntax">Enum := Object._NewEnum()</pre>
-<p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zurück, um Key-Value-Paare des Objekts zu enumerieren.</p></div>
+<p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zurück, um Key-Value-Paare des Objekts zu enumerieren. Diese Methode wird in der Regel nicht direkt, sondern über die <a href="../commands/For.htm">For-Schleife</a> aufgerufen.</p></div>
 
 <div class="methodShort" id="HasKey"><h2>HasKey <span class="ver">[AHK_L 53+]</span></h2>
 <pre class="Syntax">Object.HasKey(Key)</pre>

@@ -9,12 +9,16 @@
 <script src="static/tree.jquery.js" type="text/javascript"></script>
 <script src="static/ga.js" type="text/javascript"></script>
 <script src="static/content.js" type="text/javascript"></script>
+<style>
+ul.list_of_p p { margin: 0.5em 0; }
+ul.list_of_p li { margin: 1em 0; }
+</style>
 </head>
 <body>
 
 <h1>Objekte</h1>
 
-<p>Ein <i>Objekt</i> ist in AutoHotkey eine abstrakte Datenstruktur, das drei Grundfunktionen bereitstellt:</p>
+<p>Ein <i>Objekt</i> ist in AutoHotkey ein abstrakter Datentyp, das drei Grundfunktionen bereitstellt:</p>
 <ul>
   <li>GET - Abrufen eines Wertes.</li>
   <li>SET - Setzen eines Wertes.</li>
@@ -58,7 +62,7 @@ Array := Array(Element1, Element2, ..., ElementN)</pre>
 <pre>Array.<a href="objects/Object.htm#Insert">Insert</a>(Index, Wert, Wert2, ...)</pre>
 <p>Entfernen eines Elements:</p>
 <pre>EntfernterWert := Array.<a href="objects/Object.htm#Remove">Remove</a>(Index)</pre>
-<p>Sofern Array nicht leer ist, können <a href="objects/Object.htm#MinMaxIndex">MinIndex</a> und <a href="objects/Object.htm#MinMaxIndex">MaxIndex</a> den niedrigsten und höchsten Index vom Array zurückgeben. Während der niedrigste Index fast immer 1 ist, wird MaxIndex üblicherweise die Anzahl der Elemente zurückgeben. Um die Inhalte des Arrays zu durchlaufen, benutzt man enweder den Index oder eine For-Schleife. Zum Beispiel:</p>
+<p>Sofern Array nicht leer ist, können <a href="objects/Object.htm#MinMaxIndex">MinIndex</a> und <a href="objects/Object.htm#MinMaxIndex">MaxIndex</a> den niedrigsten und höchsten Index vom Array zurückgeben. Während der niedrigste Index fast immer 1 ist, wird MaxIndex üblicherweise die Anzahl der Elemente zurückgeben. Um die Inhalte des Arrays zu durchlaufen, benutzt man entweder den Index oder eine For-Schleife. Zum Beispiel:</p>
 <pre>array := ["eins", "zwei", "drei"]
 
 <em>; Iteriert von 1 bis Anzahl der Elemente:</em>
@@ -201,13 +205,19 @@ ZweiteFunk(Parameter) {
 <p>Für die Abwärtskompatibilität wird die zweite Form <i>array</i> nicht als Parameter übergeben, wenn <code>array[A_Index]</code> einen Funktionsnamen statt einen Funktionsverweis enthält. Wenn aber <code>array[A_Index]</code> von <code>array.base[A_Index]</code> <a href="#Custom_Objects">geerbt</a> wurde, wird <i>array</i> als Parameter übergeben.</p>
 
 <h2 id="Custom_Objects">Benutzerdefinierte Objekte</h2>
-<p>Objekte in AutoHotkey basieren nicht auf Klassen, sondern auf Prototypen. Das heißt, dass ein Objekt die Eigenschaften und Methoden von seinem Prototyp oder <code>base</code>-Objekt erben kann, aber keine vordefinierte Struktur haben muss. Es ist jederzeit möglich, bei einem Objekt oder bei jedem Objekt, das davon abgeleitet wurde, Eigenschaften und Methoden hinzuzufügen oder zu entfernen. Allerdings wird AutoHotkey Klassen nachbilden, indem es <a href="#Custom_Classes">Klassendefinitionen</a> in gewöhnliche Objekte umwandelt. Bei komplexeren oder spezielleren Situationen kann das base-Objekt das Standardverhalten überschreiben, indem es <a href="#Meta_Functions"><i>Meta-Funktionen</i></a> definiert.</p>
-<p>Um ein abgeleitetes Objekt von einem anderen Objekt zu erstellen, können Scripts ein <code>base</code> zuweisen oder das <code>new</code>-Schlüsselwort verwenden:</p>
-<pre>baseObjekt := {foo: "bar"}
-obj1 := Object(), obj1.base := baseObjekt
+<p>Objekte, die vom Script erstellt wurden, müssen nicht zwingend eine vordefinierte Struktur haben. Stattdessen kann jedes Objekt Eigenschaften und Methoden von seinem <code>base</code>-Objekt (auch bekannt als "Prototyp" oder "Klasse") erben. Bei einem Objekt kann man jederzeit Eigenschaften und Methoden hinzufügen oder entfernen. Solche Änderungen haben auch Auswirkung auf alle abgeleiteten Objekte. Bei komplexeren oder spezielleren Situationen kann das base-Objekt das Standardverhalten überschreiben, indem es <a href="#Meta_Functions"><i>Meta-Funktionen</i></a> definiert.</p>
+<p><em>Base</em>-Objekte sind ganz normale Objekte, die mit den folgenden zwei Möglichkeiten erstellt werden können:</p>
+<pre>class baseObject {
+    static foo := "bar"
+}
+<em>; OR</em>
+baseObject := {foo: "bar"}</pre>
+<p>Um ein Objekt zu erstellen, das von einem anderen Objekt abgeleitet wurde, können Scripts die <code>base</code>-Eigenschaft zuweisen oder das <a href="#Custom_NewDelete"><code>new</code>-Schlüsselwort</a> verwenden:</p>
+<pre>obj1 := Object(), obj1.base := baseObject
 obj2 := {base: baseObjekt}
 obj3 := new baseObjekt
 MsgBox % obj1.foo " " obj2.foo " " obj3.foo</pre>
+<p>Es ist jederzeit möglich, einem Objekt ein neues <code>base</code> zuzuweisen, das alle Eigenschaften und Methoden ersetzen würde, die das Objekt geerbt hat.</p>
 
 <h3 id="Custom_Prototypes">Prototypen</h3>
 <p>Prototypen oder <code>base</code>-Objekte können konstruiert und manipuliert werden, wie jedes andere Objekt auch. Zum Beispiel könnte ein gewöhnliches Objekt mit einer Eigenschaft und einer Methode wie folgt konstruiert werden:</p>
@@ -321,23 +331,32 @@ class <i>Klassenname</i> {
 
 <i>Klassenname</i> := { __Get: Func("<i>MeinGet</i>"), __Set: Func("<i>MeinSet</i>"), __Call: Func("<i>MeinCall</i>") }
 </pre>
-<p>Meta-Funktionen sind Methoden, definiert über das base eines Objekts, die genau definieren können, wie das Objekt agieren soll, wenn ein unbekannter Key angefordert wird. Wenn <code>obj.key</code> beispielsweise leer wäre, würde es die <i>__Get</i>-Meta-Funktion aufrufen. Außerdem würde <code>obj.key := value</code> die Meta-Funktion <i>__Set</i> aufrufen und <code>obj.key()</code> die Meta-Funktion <i>__Call</i>.</p>
-<p>In solchen Fällen wird das base-Objekt wie folgt aufgerufen:</p>
-<ul>
-  <li>Definiert dieses base-Objekt die geeignete Meta-Funktion, rufe es auf. Wird die Meta-Funktion explizit per <code>return</code> zurückgegeben, dient der Rückgabewert als Ergebnis der Operation und beendet die Verarbeitung.
-    <p><i>Set</i>: Wenn die Operation erfolgreich war, sollte <i>__Set</i> den neuen Wert des Feldes zurückgeben, der vom originalen Rückgabewert abweichen könnte. Auf diese Weise können Zuweisungen verkettet werden, wie in <code>a.x := b.y := z</code>. Ein leerer String sollte zurückgegeben werden, wenn die Zuweisung fehlschlägt, so dass das Script den Fehler erkennen kann.</p></li>
-  <li>Ist dies eine <i>Get</i>- oder <i>Call</i>-Operation, suche einen passenden Key im eigenen Feld des base-Objekts.
-    <p><i>Get</i>: Wurde er gefunden, wird der Wert von diesem Feld zurückgegeben.<br>
-    <i>Call</i>: Wurde er gefunden, wird die gespeicherte Funktion im Feld aufgerufen (per Name oder <a href="#Function_References">Verweis</a>) und das originale Zielobjekt als <i>this</i>-Parameter übergeben.</p></li>
-  <li>Rufe rekursiv sein eigenes base-Objekt auf. Auf diese Weise können die Eigenschaften eines Objekts von seinem base, base's base und so weiter "geerbt" werden.</li>
+<p>Meta-Funktionen definieren, was passieren soll, wenn ein Key angefordert, aber nicht im Zielobjekt gefunden wird. Wenn <code>obj.key</code> beispielsweise leer wäre, würde es die <i>__Get</i>-Meta-Funktion aufrufen. Außerdem würde <code>obj.key := value</code> die Meta-Funktion <i>__Set</i> aufrufen und <code>obj.key()</code> die Meta-Funktion <i>__Call</i>. Diese Meta-Funktionen (oder Methoden) müssten in <code>obj.base</code>, <code>obj.base.base</code> oder ähnliches definiert werden.</p>
+<p>Wenn das Script einen nicht vorhandenen Key im Zielobjekt abruft (get), setzt (set) oder aufruft (call), wird das base-Objekt wie folgt aufgerufen:</p>
+<ul class="list_of_p">
+  <li>Definiert dieses base-Objekt die geeignete Meta-Funktion, rufe es auf. Wenn die Meta-Funktion explizit per <code>return</code> zurückgegeben wird, verwende den Rückgabewert als Ergebnis der Operation (was auch immer den Aufruf der Meta-Funktion verursacht hat) und übergebe die Kontrolle wieder an das Script. Ansonsten mache weiter wie unten beschrieben.
+    <p><i>Set</i>: Wenn die Meta-Funktion eine Zuweisung behandelt, sollte sie den zugewiesenen Wert zurückgeben. Auf diese Weise können Zuweisungen verkettet werden, wie in <code>a.x := b.y := z</code>. Der Rückgabewert könnte vom ursprünglichen Wert <code>z</code> abweichen (wenn beispielsweise Beschränkungen auferlegt werden, welche Werte zugewiesen werden können).</p></li>
+  <li>Ist dies eine <i>Get</i>- oder <i>Call</i>-Operation, suche einen passenden Key im eigenen Feld des base-Objekts.</li>
+  <li>Wenn kein einziger Key gefunden wurde, rufe das eigene base von diesem base-Objekt auf (wende dabei jeden dieser Schritte darauf an, beginnend vom Anfang der Liste). Sind wir noch nicht fertig, durchsuche dieses base-Objekt nochmals nach einen passendem Key, falls ein Key von einer Meta-Funktion hinzugefügt wurde.</li>
+  <li>Wenn mehrere Parameter bei <i>get</i> oder <i>set</i> angegeben wurden und ein Key gefunden wurde, überprüfe seinen Wert. Ist dieser Wert ein Objekt, rufe es auf, um die restlichen Parameter zu behandeln, und tue nichts weiter.</li>
+  <li>Wenn ein Key gefunden wurde,<br>
+    <i>Get</i>: Gebe den Wert zurück.<br>
+    <i>Call</i>: Wenn der Wert ein Funktionsname oder <a href="#Function_References">Verweis</a> ist, rufe es auf und übergebe dabei das Zielobjekt als ersten Parameter (<code>this</code>).</p></li>
 </ul>
-<p>Wenn (und nur wenn) die Operation von keinem base-Objekt behandelt wird, wird die Verarbeitung wie gewohnt fortgesetzt:</p>
+<p>Wenn eine Meta-Funktion einen passenden Key im Objekt beinhaltet, aber keinen <code>return</code> verwendet, ist das Verhalten das gleiche wie, als wäre der Key bereits zu Beginn im Objekt da gewesen. Um zu erfahren, wie __Set funktioniert, siehe <a href="#Subclassing_aoa">Mehrdimensionale Arrays bei Unterklassen</a>.</p>
+<p>Wenn die Operation immer noch nicht behandelt wurde, überprüfe, ob es eine integrierte Methode oder Eigenschaft ist:</p>
 <ul>
-  <li><i>Get</i>: Wenn der Key "base" ist, wird das base des Objekts abgerufen.</li>
-  <li><i>Set</i>: Wenn der Key "base" ist, wird das base des Objekts gesetzt; Nicht-Objekt-Werte bewirken, dass das vorhandene base entfernt wird.
-  <p style="margin-left:2.6em;margin-top:0.25em;">Ansonsten wird ein neues Key-Value-Paar erstellt und in das Objekt gespeichert.</p></li>
-  <li><i>Call</i>: Eine <a href="objects/Object.htm">integrierte Methode</a> kann aufgerufen werden.</li>
+  <li><i>Get</i>: Wenn der Key "base" ist, gebe das base des Objekts zurück.</li>
+  <li><i>Set</i>: Wenn der Key "base" ist, setze das base des Objekts (oder entferne es, wenn der Wert kein Objekt ist).</li>
+  <li><i>Call</i>: Rufe eine <a href="objects/Object.htm">integrierte Methode</a> auf, falls zutreffend.</li>
 </ul>
+<p>Wenn die Operation immer noch nicht behandelt wurde,</p>
+<ul>
+  <li><i>Get</i> und <i>Call</i>: Gebe einen leeren String zurück.</li>
+  <li><i>Set</i>: Wenn nur ein Key-Parameter angegeben wurde, speichere den Key und Wert in das Zielobjekt und gebe den zugewiesenen Wert zurück. Wenn mehrere Parameter angegeben wurden, erstelle ein neues Objekt und speichere es, und verwende dabei den ersten Parameter als Key; rufe dann das neue Objekt auf, um die restlichen Parameter zu behandeln. (Siehe <a href="#Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</a>.)</li>
+
+</ul>
+    
 <p><b>Bekannte Einschränkungen:</b></p>
 <ul><li>Das Verwenden von <code>return</code> ohne Wert ist dasselbe wie <code>return ""</code>. Dies könnte in einer zukünftigen Version geändert werden, so dass man mit <code>return</code> aus einer Meta-Funktion "flüchten" kann, ohne dabei das Standardverhalten überschreiben zu müssen.</li>
 <li>Siehe <a href="#ExitLimitation">Exit-Einschränkung</a>.</li></ul>

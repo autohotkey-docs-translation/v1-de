@@ -43,17 +43,31 @@
   <li><a href="#Examples">Beispiele</a>: Enthält funktionierende Scripts, die GUI-Fenster und Steuerelemente zeigen.</li>
 </ul>
 
-<h2 id="New">Gui, New [, Optionen, Titel] <span class="ver">[v1.1.04]</span></h2>
-<p>Erstellt ein neues Fenster.</p>
-<pre>Gui, New  <em>; Erstellt ein neues unbenanntes GUI.</em>
-Gui, Name:New  <em>; Erstellt ein neues GUI und zerstört jedes vorhandene GUI mit diesem Namen.</em>
+<h2 id="New">Gui, New [, Optionen, Titel] <span class="ver">[v1.1.04]+</span></h2>
+<p>Erstellt ein neues Fenster und macht es zum <a href="#Default">Standard</a> für den aktuellen Thread.</p>
+<pre>Gui, New  <em>; Erstellt ein neues unbenanntes und nicht nummeriertes GUI.</em>
+Gui, Name: New  <em>; Erstellt ein neues GUI, und zerstört dabei jedes vorhandene GUI mit diesem Namen.</em>
 </pre>
-<p>Zur Vereinfachung wird das neue Fenster als <a href="#Default">Standard</a> für den aktuellen Thread definiert.</p>
-<p>Wenn kein Name angegeben ist, haben spezielle <a href="#Labels">Label</a> wie <a href="#GuiClose"><em>GuiClose</em></a> standardmäßig das Präfix "Gui", sofern das nicht in den Optionen mit <a href="#PlusLabel">+Label<em>Präfix</em></a> überschrieben wird. Wenn das GUI, das den aktuellen Thread gestartet hat, auf diese Weise erstellt worden ist, enthält <a href="../Variables.htm#Gui">A_Gui</a> ein HWND, anstatt einen Namen. Desweiteren kann, wenn <a href="#GuiHwndOutputVar">+Hwnd<em>AusgabeVar</em></a> verwendet wird, das HWND des neuen Fensters in <em>AusgabeVar</em> gespeichert werden.</p>
-<p>Falls ein Name angegeben ist, wird jedes vorhandene GUI mit diesem Namen <strong>zerstört</strong>.</p>
-<p>Der <em>Optionen</em>-Parameter kann <a href="#Options">Optionen</a> enthalten, die vom Haupt-GUI-Befehl unterstützt werden.</p>
-<p>Falls der <em>Titel</em>-Parameter nicht vorhanden ist, wird der Dateiname des Scripts verwendet.</p>
-<p>Dieser Befehl wird empfohlen, weil er verständlicher ist - er ist nicht zwingend erforderlich. Wenn einer der anderen Gui-Unterbefehle (z. B. <a href="#Add">Gui, Add</a>) verwendet wird und das GUI nicht vorhanden ist, wird es automatisch erstellt.</p>
+<p>Der <strong><em>Optionen</em></strong>-Parameter kann <a href="#Options">Optionen</a> enthalten, die vom Haupt-GUI-Befehl unterstützt werden.</p>
+<p>Falls der <strong><em>Titel</em></strong>-Parameter nicht vorhanden ist, wird der Dateiname des Scripts verwendet.</p>
+<p>Dieser Befehl kommt mit den folgenden Einschränkungen:</p>
+<ul>
+  <li>In den meisten Fällen wird das Fenster bei Bedarf automatisch erstellt, daher muss <em>Gui New</em> üblicherweise nicht aufgerufen werden.</li>
+  <li>Auch wenn das neue Fenster zum <a href="#Default">Standard</a> für den <em>aktuellen</em> Thread gemacht wird, verwenden Nicht-GUI-Threads weiterhin eine <a href="#DefaultWin">GUI-Nummer von 1</a>.</li>
+  <li>Wenn das GUI keinen Namen hat und nicht das <a href="#Default">Standard-GUI</a> ist, muss es per HWND identifiziert werden. Mit der Option <code><a href="#GuiHwndOutputVar">+Hwnd<i>GuiHwnd</i></a></code> kann das HWND des neuen Fensters in die <em>GuiHwnd</em>-Variable gespeichert werden. Mit <code>Gui, %<i>GuiHwnd</i>%:Default</code> können andere Gui-Befehle dazu gebracht werden, sich auf dieses GUI-Fenster zu beziehen.</li>
+</ul>
+<p>Auf der positiven Seite:</p>
+<ul>
+  <li>Das Aufrufen von <em>Gui New</em> stellt sicher, dass das Script ein neues GUI erstellt und nicht ein bereits Existierendes modifiziert. Es könnte auch den Zweck des Scripts für andere Leute (oder für dein zukünftiges Ich) deutlicher machen, die dein Code lesen.</li>
+  <li><em>Gui New</em> verhindert, dass ein eindeutiger Name oder Nummer für jedes GUI vergeben werden muss. Dies kann besonders nützlich sein, wenn das Script mehr als einen GUI erstellen muss, oder es in anderen Scripts enthalten sein soll.</li>
+  <li>Manchmal ist es intuitiver, den Fenstertitel nicht beim <a href="#Show">Anzeigen</a>, sondern beim Erstellen des GUIs zu setzen.</li>
+</ul>
+
+<p>Wenn kein Name angegeben wurde, gilt folgendes:</p>
+<ul>
+  <li>Spezielle <a href="#Labels">Label</a> wie <a href="#GuiClose"><em>GuiClose</em></a> haben standardmäßig das Präfix "Gui", sofern das nicht in den Optionen mit <a href="#PlusLabel">+Label<em>Präfix</em></a> überschrieben wurde.</li>
+  <li>Wann immer das GUI einen neuen Thread startet, enthält <a href="../Variables.htm#Gui">A_Gui</a> einen HWND, anstatt einen Namen.</li>
+</ul>
 <p><strong>Hinweis</strong>: Vor v1.1.08 war dieser Befehl nicht in der Lage, das Standard-Gui zu setzen, falls ein Name angegeben war.</p>
 
 <h2 id="Add">Gui, Add, Steuerelementart [, Optionen, Text]</h2>
