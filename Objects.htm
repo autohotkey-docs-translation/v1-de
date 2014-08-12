@@ -262,33 +262,44 @@ obj2.test()</pre>
 </pre>
 <p>Beim Laden des Scripts würde mit diesem Beispiel ein Objekt konstruiert und in die globale (oder seit v1.1.05 in die <a href="Functions.htm#SuperGlobal">superglobale</a>) Variable <i>Klassenname</i> gespeichert werden. Vor v1.1.05 war es notwendig, eine Deklaration wie <code>global Klassenname</code> anzugeben, um diese Klasse innerhalb einer Funktion zu verweisen, sofern die Funktion nicht <a href="Functions.htm#AssumeGlobal">global-behandelnd</a> war. Wenn <code>extends BaseKlassenname</code> vorhanden ist, muss der <i>BaseKlassenname</i> der vollständige Name einer anderen Klasse sein (seit v1.1.11 spielt die Reihenfolge, in der sie definiert werden, keine Rolle mehr). Der vollständige Name jeder Klasse ist in <code><i>objekt</i>.__Class</code> gespeichert.</p>
 <p>Klassendefinitionen können Variablendeklarationen, Methodendefinitionen und Unterklassendefinitionen enthalten.</p>
-<pre id="Custom_Classes_var">
-    InstanzVar := Ausdruck
-</pre>
-<p><b>Instanzvariable</b> <span class="ver">[v1.1.01+]:</span> Deklaration von Instanzvariablen werden jedes Mal ausgewertet, wenn eine neue Instanz der Klasse mit dem <a href="#Custom_NewDelete">new</a>-Schlüsselwort erstellt wird. Die <a href="#Custom_NewDelete">__New()</a>-Methode wird aufgerufen, sobald alle Deklarationen dieser Art (auch solche, die in base-Klassen definiert wurden) ausgewertet worden sind. <i>Ausdruck</i> kann mit <code>this</code> auf andere Instanzvariablen und Methoden zugreifen, aber alle anderen Variablenverweise werden als global angesehen. Um auf eine Instanzvariable zugreifen zu können, muss immer das Zielobjekt angegeben werden; zum Beispiel <code><b>this</b>.InstanzVar</code>.</p>
-<pre id="Custom_Classes_staticvar">
-    static KlassenVar := Ausdruck
-</pre>
-<p><b>Klassenvariable</b> <span class="ver">[v1.1.00.01+]:</span> Deklarationen von Klassenvariablen werden nur einmal ausgewertet - bevor der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> erfolgt, und in der Reihenfolge, wie sie im Script vorkommen. Jede Deklaration speichert einen Wert in das Klassenobjekt. Wie bei allen Werten oder Methoden vom Klassenobjekt auch, kann dieser Wert von abgeleiteten Objekten geerbt werden. Jeder Variablenverweis in <i>Ausdruck</i> wird als global angesehen. Um auf eine Klassenvariable zugreifen zu können, muss immer die Klasse oder das abgeleitete Objekt angegeben werden; zum Beispiel <code><b>Klassenname</b>.KlassenVar</code>.</p>
-<pre id="Custom_Classes_class">
-    class Unterklasse
-    {
-        ...
-    }
 
+<h4 id="Custom_Classes_var">Instanzvariablen <span class="ver">[v1.1.01+]</span></h4>
+<p>Eine <em>Instanzvariable</em> ist eine Variable, von der jede Instanz der Klasse (also jedes abgeleitete Objekt der Klasse) eine eigene Kopie hat. Sie werden wie normale Zuweisungen deklariert, aber ohne dem Präfix <code>this.</code> (nur direkt innerhalb der Klasse):</p>
+<pre>InstanzVar := Ausdruck</pre>
+<p>Solche Deklarationen werden jedes Mal ausgewertet, wenn eine neue Instanz der Klasse mit dem <a href="#Custom_NewDelete">new</a>-Schlüsselwort erstellt wird. Der Methodenname <code>__Init</code> ist für diesen Zweck reserviert, und sollte nicht im Script verwendet werden. Die <a href="#Custom_NewDelete">__New()</a>-Methode wird aufgerufen, sobald alle Deklarationen dieser Art (auch solche, die in base-Klassen definiert wurden) ausgewertet worden sind. <em>Ausdruck</em> kann mit <code>this</code> auf andere Instanzvariablen und Methoden zugreifen, aber alle anderen Variablenverweise werden als global angesehen.</p>
+<p>Um auf eine Instanzvariable zugreifen zu können, muss immer das Zielobjekt angegeben werden; zum Beispiel <code><b>this</b>.InstanzVar</code>.</p>
+<p><span class="ver">[v1.1.08+]:</span> Deklarationen wie <code>x.y := z</code> werden auch unterstützt, sofern <code>x</code> zuvor in dieser Klasse deklariert wurde. <code>x := {}, x.y := 42</code> würde beispielsweise <code>x</code>  deklarieren und außerdem <code>this.x.y</code> initialisieren.</p>
+
+<h4 id="Custom_Classes_staticvar">Statische bzw. Klassenvariablen <span class="ver">[v1.1.00.01+]</span></h4>
+<p>Statische bzw. Klassenvariablen gehören nur der Klasse selbst, aber sie können von abgeleiteten Objekten vererbt werden (einschließlich Unterklassen). Sie werden wie Instanzvariablen deklariert, aber unter Verwendung des static-Schlüsselworts:</p>
+<pre>static KlassenVar := Ausdruck</pre>
+<p>Statische Deklarationen werden nur einmal ausgewertet - bevor der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> erfolgt, und in der Reihenfolge, wie sie im Script vorkommen. Jede Deklaration speichert einen Wert in das Klassenobjekt. Jeder Variablenverweis im <i>Ausdruck</i> wird als global angesehen.</p>
+<p>Um auf eine Klassenvariable zugreifen zu können, muss immer die Klasse oder das abgeleitete Objekt angegeben werden; zum Beispiel <code><b>Klassenname</b>.KlassenVar</code>.</p>
+<p><span class="ver">[v1.1.08+]:</span> Deklarationen wie <code>static x.y := z</code> werden auch unterstützt, sofern <code>x</code> zuvor in dieser Klasse deklariert wurde. <code>static x := {}, x.y := 42</code> würde beispielsweise <code>x</code>  deklarieren und außerdem <code><i>Klassenname</i>.x.y</code> initialisieren.</p>
+
+<h4 id="Custom_Classes_class">Verschachtelte Klassen</h4>
+<p>Verschachtelte Klassendefinitionen ermöglichen Klassenobjekte innerhalb von anderen Klassenobjekten, anstatt eine separate globale Variable verwenden zu müssen. Im obigen Beispiel würde <code>class VerschachtelteKlasse</code> ein Objekt konstruieren und es in <code>Klassenname.VerschachtelteKlasse</code> speichern. Unterklassen können <em>VerschachtelteKlasse</em> erben oder es mit ihrer eigenen verschachtelten Klasse überschreiben (in diesem Fall könnte mit <code>new this.VerschachtelteKlasse</code> eine Instanz unabhängig einer geeigneten Klasse erstellt werden).</p>
+<pre>
+class VerschachtelteKlasse
+{
+	...
+}
 </pre>
-<p><b>Unterklasse</b>: Definitionen von Unterklassen ermöglichen Klassenobjekte innerhalb von anderen Klassenobjekten, anstatt einer einzelnen globalen Variable. Im obigen Beispiel würde <code>class Unterklasse</code> ein Objekt konstruieren und es in <code>Klassenname.Unterklasse</code> speichern. Daraus folgt, dass <i>Unterklasse</i> von Klassen oder Objekten geerbt werden kann, die von <i>Klassennamen</i> abgeleitet wurden.</p>
-<pre id="Custom_Classes_method">
-    Methode()
-    {
-        ...
-    }
+
+<h4 id="Custom_Classes_method">Methoden</h4>
+<p>Methodendefinitionen sehen genauso aus wie Funktionsdefinitionen. Jede Methode hat einen versteckten Parameter namens <code>this</code>, der üblicherweise einen Verweis auf ein Objekt enthält, das von der Klasse abgeleitet wurde. Allerdings könnte er auch einen Verweis auf die Klasse selbst oder auf eine abgeleitete Klasse enthalten, je nachdem, wie die Methode aufgerufen wurde. Methoden werden <a href="#Function_References">per Verweis</a> in das Klassenobjekt gespeichert.</p>
+<pre>
+Methode()
+{
+	...
+}
 </pre>
-<p><b>Methode</b>: Methodendefinitionen sehen genauso aus wie Funktionsdefinitionen. Jede Methode hat einen versteckten Parameter namens <code>this</code>, der üblicherweise einen Verweis auf ein Objekt enthält, das von der Klasse abgeleitet wurde. Allerdings könnte er auch einen Verweis auf die Klasse selbst oder auf eine abgeleitete Klasse enthalten, je nachdem, wie die Methode aufgerufen wurde. Methoden werden <a href="#Function_References">per Verweis</a> in das Klassenobjekt gespeichert.</p>
+
 <p id="Custom_Classes_base">Neben dem <code>this</code>-Parameter können Methodendefinitionen auch das Pseudo-Schlüsselwort <code>base</code> verwenden, um die base-Klasse der Klasse, die die Methodendefinition enthält, aufrufen zu können. Zum Beispiel wäre <code>base.Methode()</code> in der oberen Methode dasselbe wie <code>BaseKlassenname.Methode.(this)</code>. Beachte, dass sich das von <code>this.base.base.Methode()</code> auf zwei Arten unterscheidet:</p>
 <ul>
   <li>Es ruft immer base von der aktuellen Klasse auf, selbst wenn <code>this</code> von einer <i>Unterklasse</i> der aktuellen Klasse abgeleitet wurde.</li>
   <li>Es übergibt <code>this</code> automatisch, aber nicht <code>this.base.base</code>.</li>
+  <li>Es bewirkt nicht, dass eine <a href="#Meta_Functions">Meta-Funktion</a> aufgerufen wird.</li>
 </ul>
 <p><code>base</code> hat nur eine besondere Bedeutung, wenn ein Punkt <code>.</code> oder eine eckige Klammer <code>[]</code> danach erfolgt. Deshalb wird so etwas wie <code>obj := base, obj.Methode()</code> nicht funktionieren. Scripts können das spezielle Verhalten von <i>base</i> deaktivieren, indem sie base einen nicht-leeren Wert zuweisen; dies wird jedoch nicht empfohlen. Da die Variable <i>base</i> leer sein muss, könnte die Performance reduziert sein, wenn das Script <a href="commands/_NoEnv.htm">#NoEnv</a> weglässt.</p>
 
