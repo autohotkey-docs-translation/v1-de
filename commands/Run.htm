@@ -58,7 +58,7 @@
 <pre>Run rundll32.exe shell32.dll<span class="style3">`,</span>Control_RunDLL desk.cpl<span class="style3">`,`,</span> 3  <em>; Öffnet Systemsteuerung &gt; Anzeige &gt; Einstellungen</em></pre>
 <p>Wenn ein Programm mit <a href="../Variables.htm#ComSpec">Comspec</a> (cmd.exe) ausgeführt wird, um z. B. die Ein- oder Ausgabe des Programms umzuleiten, sollte, wenn Leerzeichen im Pfad oder Namen enthalten sind, der ganze String mit äußeren Anführungszeichen umschlossen werden. Im folgenden Beispiel werden die äußeren Anführungszeichen in Rot und alle inneren Anführungszeichen in Schwarz dargestellt:</p>
 <pre>Run %comspec% /c <span class="style3">"</span>"C:\Mein Tool.exe" "param 1" "zweiter param" &gt;"C:\Meine Datei.txt"<span class="style3">"</span></pre>
-<p>Falls <em>Ziel</em> nicht gestartet werden kann, wird ein Fenster mit einer Fehlermeldung angezeigt, danach verhält sich das Script so, als hätte es den <a href="Exit.htm">Exit</a>-Befehl erreicht. Um das zu verhindern, kann im dritten Parameter der String <strong>UseErrorLevel</strong> eingefügt werden.</p>
+<p>Falls <em>Ziel</em> nicht gestartet werden kann, wird ein Fenster mit einer Fehlermeldung angezeigt und der aktuelle Thread beendet, es sei denn, <strong>UseErrorLevel</strong> ist im dritten Parameter enthalten oder der Fehler wird per <a href="Try.htm">Try</a>/<a href="Catch.htm">Catch</a>-Anweisung abgefangen.</p>
 <p>Die Performance kann ein wenig verbessert werden, wenn <em>Ziel</em> ein genauer Pfad ist, z. B. <code>Run, C:\Windows\Notepad.exe "C:\Meine Dokumente\Test.txt"</code> anstelle von <code>Run, C:\Meine Dokumente\Test.txt</code>.</p>
 <p>Es ist möglich, mit Run spezielle <a href="../misc/CLSID-List.htm">CLSID-Ordner</a> zu öffnen. Zum Beispiel:</p>
 <pre>Run ::{20d04fe0-3aea-1069-a2d8-08002b30309d}  <em>; Öffnet den Arbeitsplatz/Computer.</em>
@@ -118,6 +118,38 @@ Run ::{645ff040-5081-101b-9f08-00aa002f954e}  <em>; Öffnet den Papierkorb.</em>
 
 <em>; Mit "&amp;&amp;" können mehrere Befehle hintereinander ausgeführt werden:</em>
 Run, %comspec% /c dir /b &gt; C:\Liste.txt &amp;&amp; type C:\Liste.txt &amp;&amp; pause
+</pre>
+
+<pre class="NoIndent" id="StdOut">
+<em>; Das folgende Beispiel zeigt, wie ein Befehl ausgeführt und seine Ausgabe ermittelt werden kann:</em>
+MsgBox % RunWaitEin("dir " A_ScriptDir)
+
+<em>; ...oder wie mehrere Befehle in einem Rutsch ausgeführt und deren Ausgaben ermittelt werden können:</em>
+MsgBox % RunWaitViele("
+(
+echo Füge hier deine Befehle ein,
+echo die ausgeführt werden sollen,
+echo um danach ihre Ausgaben zu erhalten.
+)")
+
+RunWaitEin(Befehl) {
+    <em>; WshShell-Objekt: <a href="http://msdn.microsoft.com/en-us/library/aew9yb99">http://msdn.microsoft.com/en-us/library/aew9yb99</a></em>
+    shell := ComObjCreate("WScript.Shell")
+    <em>; Führt einen einzelnen Befehl via cmd.exe aus</em>
+    exec := shell.Exec(ComSpec " /C " Befehl)
+    <em>; Liest und gibt die Ausgabe des Befehls zurück</em>
+    return exec.StdOut.ReadAll()
+}
+
+RunWaitViele(Befehle) {
+    shell := ComObjCreate("WScript.Shell")
+    <em>; Öffnet cmd.exe mit deaktivierter Textanzeige</em>
+    exec := shell.Exec(ComSpec " /Q /K echo off")
+    <em>; Sendet die Befehle, die ausgeführt werden sollen, getrennt durch Newline</em>
+    exec.StdIn.WriteLine(Befehle "`nexit")  <em>; Immer ein Exit am Ende!</em>
+    <em>; Liest und gibt die Ausgaben aller Befehle zurück</em>
+    return exec.StdOut.ReadAll()
+}
 </pre>
 
 </body>

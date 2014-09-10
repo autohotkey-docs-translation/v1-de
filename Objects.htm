@@ -248,7 +248,7 @@ obj2.test()</pre>
     InstanzVar := Ausdruck
     static KlassenVar := Ausdruck
 
-    class Unterklasse
+    class VerschachtelteKlasse
     {
         ...
     }
@@ -257,8 +257,17 @@ obj2.test()</pre>
     {
         ...
     }
-}
 
+    Eigenschaft[]
+    {
+        get {
+            return ...
+        }
+        set {
+            return ... := Wert
+        }
+    }
+}
 </pre>
 <p>Beim Laden des Scripts würde mit diesem Beispiel ein Objekt konstruiert und in die globale (oder seit v1.1.05 in die <a href="Functions.htm#SuperGlobal">superglobale</a>) Variable <i>Klassenname</i> gespeichert werden. Vor v1.1.05 war es notwendig, eine Deklaration wie <code>global Klassenname</code> anzugeben, um diese Klasse innerhalb einer Funktion zu verweisen, sofern die Funktion nicht <a href="Functions.htm#AssumeGlobal">global-behandelnd</a> war. Wenn <code>extends BaseKlassenname</code> vorhanden ist, muss der <i>BaseKlassenname</i> der vollständige Name einer anderen Klasse sein (seit v1.1.11 spielt die Reihenfolge, in der sie definiert werden, keine Rolle mehr). Der vollständige Name jeder Klasse ist in <code><i>objekt</i>.__Class</code> gespeichert.</p>
 <p>Klassendefinitionen können Variablendeklarationen, Methodendefinitionen und Unterklassendefinitionen enthalten.</p>
@@ -282,7 +291,7 @@ obj2.test()</pre>
 <pre>
 class VerschachtelteKlasse
 {
-	...
+    ...
 }
 </pre>
 
@@ -291,7 +300,7 @@ class VerschachtelteKlasse
 <pre>
 Methode()
 {
-	...
+    ...
 }
 </pre>
 
@@ -302,6 +311,24 @@ Methode()
   <li>Es bewirkt nicht, dass eine <a href="#Meta_Functions">Meta-Funktion</a> aufgerufen wird.</li>
 </ul>
 <p><code>base</code> hat nur eine besondere Bedeutung, wenn ein Punkt <code>.</code> oder eine eckige Klammer <code>[]</code> danach erfolgt. Deshalb wird so etwas wie <code>obj := base, obj.Methode()</code> nicht funktionieren. Scripts können das spezielle Verhalten von <i>base</i> deaktivieren, indem sie base einen nicht-leeren Wert zuweisen; dies wird jedoch nicht empfohlen. Da die Variable <i>base</i> leer sein muss, könnte die Performance reduziert sein, wenn das Script <a href="commands/_NoEnv.htm">#NoEnv</a> weglässt.</p>
+
+<h4 id="Custom_Classes_property">Eigenschaften <span class="ver">[v1.1.16+]</span></h4>
+<p>Eigenschaftsdefinitionen erlauben das Ausführen einer Methode, wann immer das Script einen spezifischen Key abruft oder setzt.</p>
+<pre>Eigenschaft[]
+{
+    get {
+        return ...
+    }
+    set {
+        return ... := Wert
+    }
+}</pre>
+<p><em>Eigenschaft</em> ist der Name der Eigenschaft, mit dem sie aufgerufen werden kann. <code>obj.Eigenschaft</code> würde beispielsweise <em>get</em> aufrufen, und <code>obj.Eigenschaft := Wert</code> würde <em>set</em> aufrufen. Innerhalb von  <em>get</em> oder <em>set</em> bezieht sich <code>this</code> auf das Objekt, das aufgerufen wird. Innerhalb von <em>set</em> enthält <code>Wert</code> den Wert, der zugewiesen wird.</p>
+<p>Parameter können übergeben werden, indem man sie auf der rechten Seite des Eigenschaftsnamens in eckigen Klammern setzt, sowohl beim Definieren als auch beim Aufrufen der Eigenschaft. Abgesehen von der Verwendung eckiger Klammern werden Eigenschaftsparameter genauso wie Methodenparameter definiert - optionale, variadische und ByRef-Parameter werden unterstützt.</p>
+<p>Der Rückgabewert von <em>get</em> oder <em>set</em> ist das Ergebnis des Unterausdrucks, der die Eigenschaft aufgerufen hat. Zum Beispiel würde <code>Wert := obj.Eigenschaft := 42</code> den Rückgabewert von <em>set</em> in <code>Wert</code> speichern.</p>
+<p>Jede Klasse kann eine oder beide Hälften einer Eigenschaft definieren. Wenn eine Klasse eine Eigenschaft überschreibt, kann sie mit <code><a href="#Custom_Classes_base">base.Eigenschaft</a></code> auf die Eigenschaft, die über deren base-Klasse definiert wurde, zugreifen. Wenn <em>get</em> oder <em>set</em> nicht definiert ist, kann es über eine base-Klasse behandelt werden. Wenn <em>set</em> nicht definiert ist und nicht über eine Meta-Funktion oder base-Klasse behandelt wird, wird es beim Zuweisen eines Wertes in das Objekt gespeichert und die Eigenschaft deaktiviert.</p>
+<p>Intern sind <em>get</em> und <em>set</em> zwei unterschiedliche Methoden, wodurch sie sich untereinander keine Variablen teilen können (außer sie werden in <code>this</code> gespeichert).</p>
+<p><a href="#Meta_Functions">Meta-Funktionen</a> stellen eine breitere Auswahl an Möglichkeiten bereit, um auf Eigenschaften und Methoden eines Objekts zugreifen zu können, aber sie sind komplizierter und fehleranfällig.</p>
 
 <h3 id="Custom_NewDelete">Konstruktion und Destruktion</h3>
 <p>Immer wenn ein abgeleitetes Objekt mit dem Schlüsselwort <code>new</code> erstellt wird <span class="ver">[benötigt v1.1.00+]</span>, wird die <code>__New</code>-Methode, definiert über das base-Objekt, aufgerufen. Diese Methode kann Parameter akzeptieren, das Objekt initialisieren und das Ergebnis des <code>new</code>-Operators durch Zurückgeben eines Wertes überschreiben. Zerstört man ein Objekt, wird <code>__Delete</code> aufgerufen. Zum Beispiel:</p>
@@ -347,8 +374,10 @@ class <i>Klassenname</i> {
 <ul class="list_of_p">
   <li>Definiert dieses base-Objekt die geeignete Meta-Funktion, rufe es auf. Wenn die Meta-Funktion explizit per <code>return</code> zurückgegeben wird, verwende den Rückgabewert als Ergebnis der Operation (was auch immer den Aufruf der Meta-Funktion verursacht hat) und übergebe die Kontrolle wieder an das Script. Ansonsten mache weiter wie unten beschrieben.
     <p><i>Set</i>: Wenn die Meta-Funktion eine Zuweisung behandelt, sollte sie den zugewiesenen Wert zurückgeben. Auf diese Weise können Zuweisungen verkettet werden, wie in <code>a.x := b.y := z</code>. Der Rückgabewert könnte vom ursprünglichen Wert <code>z</code> abweichen (wenn beispielsweise Beschränkungen auferlegt werden, welche Werte zugewiesen werden können).</p></li>
-  <li>Ist dies eine <i>Get</i>- oder <i>Call</i>-Operation, suche einen passenden Key im eigenen Feld des base-Objekts.</li>
-  <li>Wenn kein einziger Key gefunden wurde, rufe das eigene base von diesem base-Objekt auf (wende dabei jeden dieser Schritte darauf an, beginnend vom Anfang der Liste). Sind wir noch nicht fertig, durchsuche dieses base-Objekt nochmals nach einen passendem Key, falls ein Key von einer Meta-Funktion hinzugefügt wurde.</li>
+  <li>Suche nach einem passenden Key in den eigenen Feldern des base-Objekts.</li>
+  <li><span class="ver">[v1.1.16+]:</span> Wenn ein Key einer Eigenschaft gefunden wurde und <em>get</em> oder <em>set</em> umsetzt (wie vorgesehen), rufe die Eigenschaft auf und kehre zurück. Ist das ein Methodenaufruf, rufe <em>get</em> auf.</li>
+  <li>Wenn kein einziger Key gefunden wurde, rufe das eigene base von diesem base-Objekt auf (wende dabei jeden dieser Schritte darauf an, beginnend vom Anfang der Liste). Sind wir noch nicht fertig, durchsuche dieses base-Objekt nochmals nach einen passendem Key, falls ein Key von einer Meta-Funktion hinzugefügt wurde.
+    <p>Aufgrund der Abwärtskompatibilität wird dieser Schritt für <em>set</em>-Operationen durchgeführt, selbst wenn ein Key gefunden wurde (es sei denn, es definiert eine Eigenschaft, die <em>set</em> umsetzt).</p></li>
   <li>Wenn mehrere Parameter bei <i>get</i> oder <i>set</i> angegeben wurden und ein Key gefunden wurde, überprüfe seinen Wert. Ist dieser Wert ein Objekt, rufe es auf, um die restlichen Parameter zu behandeln, und tue nichts weiter.</li>
   <li>Wenn ein Key gefunden wurde,<br>
     <i>Get</i>: Gebe den Wert zurück.<br>
