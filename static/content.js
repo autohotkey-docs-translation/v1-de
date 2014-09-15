@@ -1,4 +1,4 @@
-if (!IsInsideCHM())
+if (!IsInsideCHM() && !IsSearchEngine())
 {
   BuildStructure();
   AddContent();
@@ -345,4 +345,9 @@ function ShowIndex()
 function IsInsideCHM()
 {
   return (location.href.search(/::/) > 0) ? 1 : 0;
+}
+
+function IsSearchEngine()
+{
+  return (navigator.userAgent.toLowerCase().indexOf('googlebot') < 0) ? 0 : 1;
 }
