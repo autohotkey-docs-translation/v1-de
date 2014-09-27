@@ -1,4 +1,4 @@
-if (!IsInsideCHM() && !IsSearchEngine())
+if (!IsInsideCHM() && !IsSearchBot())
 {
   BuildStructure();
   AddContent();
@@ -81,13 +81,13 @@ function AddContent()
 
     $('.header #search-btn').on('click', function() {
       var query = $(".header #q").val();
-      document.location = 'https://www.google.com/search?sitesearch=' + location.host + '&q=' + query;
+      document.location = eval(sessionStorage.getItem("hdSearchLnk"));
     });
 
     $('.header #search-form').on('submit', function(event) {
         event.preventDefault();
         var query = $(".header #q").val();
-        document.location = 'https://www.google.com/search?sitesearch=' + location.host + '&q=' + query;
+        document.location = eval(sessionStorage.getItem("hdSearchLnk"));
     });
 
     //
@@ -347,7 +347,7 @@ function IsInsideCHM()
   return (location.href.search(/::/) > 0) ? 1 : 0;
 }
 
-function IsSearchEngine()
+function IsSearchBot()
 {
-  return (navigator.userAgent.toLowerCase().indexOf('googlebot') < 0) ? 0 : 1;
+  return navigator.userAgent.match(/googlebot|bingbot|slurp/i);
 }

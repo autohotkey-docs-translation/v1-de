@@ -20,9 +20,9 @@
 
 <h3>Syntax</h3>
 
-<p>Die Syntax für ein Callout ist in AutoHotkey <span class="Syntax">(?C<em>Nummer</em>:<em>Funktion</em>)</span>, bei der sowohl <em>Nummer</em> als auch <em>Funktion</em> optional sind. Der Doppelpunkt (:) ist nur erlaubt, wenn die <em>Funktion</em> angegeben ist, und optional, wenn die <em>Nummer</em> weggelassen wird. Wenn die <em>Funktion</em> angegeben ist, aber nicht der Name einer benutzerdefinierten Funktion ist, dann erscheint ein Kompilierungsfehler und die Mustererkennung startet nicht.</p>
+<p>Die Syntax zum Definieren eines Callouts ist <span class="Syntax">(?C<em>Nummer</em>:<em>Funktion</em>)</span>; <em>Nummer</em> und <em>Funktion</em> sind optional. Der Doppelpunkt (:) ist nur erlaubt, wenn <em>Funktion</em> angegeben ist, und optional, wenn <em>Nummer</em> fehlt. Wenn die <em>Funktion</em> angegeben ist, aber nicht der Name einer benutzerdefinierten Funktion ist, dann erscheint ein Kompilierungsfehler und die Mustererkennung startet nicht.</p>
 
-<p>Wenn die <em>Funktion</em> weggelassen wird, muss der Funktionsname in eine Variable namens <b>pcre_callout</b> angegeben werden. Falls sowohl eine globale als auch lokale Variable mit diesem Namen vorhanden ist, hat die lokale Variable Vorrang. Wenn <em>pcre_callout</em> keinen Namen einer benutzerdefinierten Funktion enthält, dann werden Callouts ohne die <em>Funktion</em> ignoriert.</p>
+<p>Fehlt <em>Funktion</em>, muss der Funktionsname in eine Variable namens <b>pcre_callout</b> gespeichert werden. Existiert sowohl eine globale als auch lokale Variable mit diesem Namen, gilt vorrangig die lokale Variable. Enthält <em>pcre_callout</em> nicht den Namen einer benutzerdefinierten Funktion, werden Callouts, bei denen <em>Funktion</em> fehlt, ignoriert.</p>
 
 <h3>Callout-Funktionen</h3>
 
@@ -32,20 +32,20 @@
 }</pre>
 <p>Callout-Funktionen können bis zu 5 Parameter definieren:</p>
 <ul>
-  <li><b>Übereinstimmung</b>: Gleichwertig mit <em>NichtZitierteAusgabeVar</em> von RegExMatch, einschließlich der Erstellung von Array-Variablen je nach Bedarf.</li>
+  <li><b>Übereinstimmung</b>: Das gleiche wie <em>NichtZitierteAusgabeVar</em> von RegExMatch, einschließlich das Erstellen von Array-Variablen, falls notwendig.</li>
   <li><b>Calloutnummer</b>: Empfängt die <em>Nummer</em> des Callouts.</li>
-  <li><b>Fundposition</b>: Empfängt die Position einer potenziellen Übereinstimmung.</li>
+  <li><b>Fundposition</b>: Empfängt die Position der aktuell möglichen Übereinstimmung.</li>
   <li><b>Heuhaufen</b>: Empfängt den <em>Heuhaufen</em>, der an RegExMatch oder RegExReplace übergeben wurde.</li>
   <li><b>NadelRegEx</b>: Empfängt <em>NadelRegEx</em>, der an RegExMatch oder RegExReplace übergeben wurde.</li>
 </ul>
-<p>Diese Namen dienen nur als Anregung. Die tatsächlichen Namen können variieren.</p>
+<p>Diese Namen sind nur zweckmäßig. Die tatsächlichen Namen können variieren.</p>
 
-<p>Die Mustererkennung wird je nach Rückgabewert der Callout-Funktion fortgesetzt oder fehlschlagen:</p>
+<p>Die Mustererkennung kann erfolgen oder fehlschlagen, abhängig vom Rückgabewert der Callout-Funktion:</p>
 <ul>
-  <li>Sobald die Funktion eine <b>0</b> oder keinen numerischen Wert zurückgibt, wird die Erkennung normal fortgesetzt.</li>
-  <li>Sobald die Funktion eine <b>1</b> oder höher zurückgibt, schlägt die Erkennung zu diesem Zeitpunkt fehl, aber andere Erkennungen werden möglicherweise fortgesetzt.</li>
-  <li>Sobald die Funktion <b>-1</b> zurückgibt, wird die Erkennung abgebrochen.</li>
-  <li>Sobald die Funktion einen Wert kleiner als -1 zurückgibt, dann wird er als ein PCRE-Fehlercode behandelt und die Erkennung abgebrochen. RegExMatch gibt einen leeren String zurück, während RegExReplace den originalen <em>Heuhaufen</em> zurückgibt. In beiden Fällen enthält ErrorLevel den Fehlercode.</li>
+  <li>Gibt die Funktion eine <b>0</b> oder einen nicht-numerischen Wert zurück, wird die Erkennung normal fortgesetzt.</li>
+  <li>Gibt die Funktion eine <b>1</b> oder höher zurück, wird die Erkennung an aktueller Stelle fehlschlagen, aber das Testen von anderen Erkennungsmöglichkeiten fortgesetzt.</li>
+  <li>Gibt die Funktion <b>-1</b> zurück, wird die Erkennung abgebrochen.</li>
+  <li>Gibt die Funktion einen Wert kleiner als -1 zurück, wird es als PCRE-Fehlercode behandelt und die Erkennung abgebrochen. RegExMatch gibt einen leeren String zurück, während RegExReplace den originalen <em>Heuhaufen</em> zurückgibt. In beiden Fällen wird ErrorLevel den Fehlercode enthalten.</li>
 </ul>
 
 <p>Zum Beispiel:</p>
@@ -55,11 +55,11 @@ Funktion(m) {
     MsgBox m=%m%`nm1=%m1%`nm2=%m2%
     return 1
 }</pre>
-<p>Im oberen Beispiel wird die <em>Funktion</em> für jeden Teilstring einmal aufgerufen, der mit dem Teil des Musters vor dem Callout übereinstimmt. Mit <span class="Syntax">\b</span> können unvollständige Wörter in Übereinstimmungen wie <em>The quic</em>, <em>The qui</em>, <em>The qu</em>, etc. ausgeschlossen werden.</p>
+<p>Im oberen Beispiel wird <em>Funktion</em> für jeden Teilstring einmal aufgerufen, der mit dem Teil des Musters vor dem Callout übereinstimmt. Mit <span class="Syntax">\b</span> können unvollständige Wörter in Übereinstimmungen wie <em>The quic</em>, <em>The qui</em>, <em>The qu</em>, etc. ausgeschlossen werden.</p>
 
 <h3 id="EventInfo">EventInfo</h3>
 
-<p>Zusätzliche Informationen sind verfügbar, sobald auf die pcre_callout_block-Struktur mittels <b>A_EventInfo</b> zugegriffen wird.</p>
+<p>Es stehen zusätzliche Informationen zur Verfügung, wenn man per <b>A_EventInfo</b> auf die pcre_callout_block-Struktur zugreift.</p>
 <pre>version           := NumGet(A_EventInfo,  0, "Int")
 callout_number    := NumGet(A_EventInfo,  4, "Int")
 offset_vector     := NumGet(A_EventInfo,  8)
@@ -80,8 +80,8 @@ if version &gt;= 2
 
 <h3 id="auto">Auto-Callout</h3>
 
-<p>Sobald ein <span class="Syntax">C</span> in den Optionen des Musters eingefügt wird, wird der Auto-Callout-Modus aktiviert. In diesem Modus werden Callouts wie <span class="Syntax">(?C255)</span> vor jedem Element im Muster eingefügt. Zum Beispiel könnte die folgende Vorlage verwendet werden, um reguläre Ausdrücke zu debuggen:</p>
-<pre><em>; Bestimmt die Standard-Callout-Funktion.</em>
+<p>Das Einfügen von <span class="Syntax">C</span> in den Optionen des Musters aktiviert den Auto-Callout-Modus. Bei diesem Modus werden Callouts in Form von <span class="Syntax">(?C255)</span> vor jedem Element im Muster eingefügt. Das folgende Beispiel zeigt, wie man mit Callouts reguläre Ausdrücke debuggen kann:</p>
+<pre><em>; Setzt die Standard-Callout-Funktion.</em>
 pcre_callout = DebugRegEx
 
 <em>; Ruft RegExMatch mit der Auto-Callout-Option C auf.</em>
@@ -89,32 +89,32 @@ RegExMatch("xxxabc123xyz", "C)abc.*xyz")
 
 DebugRegEx(Übereinstimmung, Calloutnummer, Fundposition, Heuhaufen, NadelRegEx)
 {
-    <em>; Für Beschreibungen dieser Felder, siehe pcre.txt.</em>
+    <em>; Siehe pcre.txt, um mehr über diese Felder zu erfahren.</em>
     start_match       := NumGet(A_EventInfo, 12 + A_PtrSize*2, "Int")
     current_position  := NumGet(A_EventInfo, 16 + A_PtrSize*2, "Int")
     pad := A_PtrSize=8 ? 4 : 0
     pattern_position  := NumGet(A_EventInfo, 28 + pad + A_PtrSize*3, "Int")
     next_item_length  := NumGet(A_EventInfo, 32 + pad + A_PtrSize*3, "Int")
 
-    <em>; &gt;&gt;aktuelle Übereinstimmung&lt;&lt; aufzeigen.</em>
+    <em>; Betont die &gt;&gt;aktuelle Übereinstimmung&lt;&lt;.</em>
     _HEUHAUFEN:=SubStr(Heuhaufen, 1, start_match)
         . "&gt;&gt;" SubStr(Heuhaufen, start_match + 1, current_position - start_match)
         . "&lt;&lt;" SubStr(Heuhaufen, current_position + 1)
 
-    <em>; &gt;&gt;nächstes Element zu Auswertung&lt;&lt; aufzeigen.</em>
+    <em>; Betont das &gt;&gt;nächste auszuwertende Element&lt;&lt;.</em>
     _NADEL:=  SubStr(NadelRegEx, 1, pattern_position)
         . "&gt;&gt;" SubStr(NadelRegEx, pattern_position + 1, next_item_length)
         . "&lt;&lt;" SubStr(NadelRegEx, pattern_position + 1 + next_item_length)
 
     ListVars
-    <em>; PAUSE drücken, um fortzufahren.</em>
+    <em>; Drücke PAUSE, um fortzufahren.</em>
     Pause
 }</pre>
 
 <h3>Bemerkungen</h3>
 
-<p>Callouts werden auf dem aktuellen Quasi-Thread ausgeführt, aber der vorherige Wert von A_EventInfo wird wiederhergestellt, nachdem die Callout-Funktion einen Wert zurückgegeben hat. ErrorLevel wird nicht gesetzt, bis RegExMatch oder RegExReplace einen Wert zurückgibt.</p>
-<p>PCRE wurde so optimiert, in einigen Fällen früh abzubrechen, falls eine Übereinstimmung nicht möglich ist. Damit Callouts in solchen Fällen aufgerufen werden, müssen diese Optimierungen mithilfe von <code>(*NO_START_OPT)</code> am Anfang des Musters deaktiviert werden. Das benötigt v1.1.05 oder höher.</p>
+<p>Callouts werden auf den aktuellen Pseudo-Thread ausgeführt. Der vorherige Wert von A_EventInfo wird aber wiederhergestellt, nachdem die Callout-Funktion einen Wert zurückgegeben hat. ErrorLevel wird nicht gesetzt, bis RegExMatch oder RegExReplace einen Wert zurückgibt.</p>
+<p>PCRE wurde optimiert, um in einigen Fällen früh abbrechen zu können, wenn es feststellt, dass eine Übereinstimmung nicht möglich ist. Damit Callouts in solchen Fällen aufgerufen werden können, müssen diese Optimierungen deaktiviert werden, indem man <code>(*NO_START_OPT)</code> an den Anfang des Musters setzt. Das benötigt v1.1.05 oder höher.</p>
 
 </body>
 </html>
