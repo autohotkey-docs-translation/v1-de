@@ -21,31 +21,31 @@
 <dl>
 
   <dt>On|Off</dt>
-  <dd><p>Ist dieser Parameter leer oder nicht vorhanden, wird der Verlauf der aktuell ausgeführten Zeilen angezeigt. Seit v1.0.48.01 ist es möglich, wahlweise On oder Off im ersten Parameter anzugeben. Dies wirkt sich wie folgt nur auf das Verhalten des <a href="../misc/Threads.htm">aktuellen Threads</a> aus:</p>
-      <p><strong>On</strong>: Alle danach ausgeführten Zeilen werden im Verlauf eingefügt. Das ist der Standardwert für alle Scripts.</p>      
-      <p><strong>Off</strong>: Alle danach ausgeführten Zeilen werden im Verlauf weggelassen.</p></dd>
+  <dd><p>Fehlt dieser Parameter oder ist er leer, wird der Verlauf der aktuell ausgeführten Zeilen angezeigt. Seit v1.0.48.01 ist es möglich, wahlweise On oder Off im ersten Parameter anzugeben. Diese Einstellungen beeinflussen nur das Verhalten des <a href="../misc/Threads.htm">aktuellen Threads</a>:</p>
+      <p><strong>On</strong>: Fügt danach ausgeführte Zeilen in den Verlauf ein. Dies ist der Standardwert für alle Scripts.</p>      
+      <p><strong>Off</strong>: Lässt danach ausgeführte Zeilen im Verlauf weg.</p></dd>
 
 </dl>
 
 <h3>Bemerkungen</h3>
-<p>ListLines (ohne Parameter) ist das gleiche wie, als würde man den Menüpunkt "View-&gt;Lines most recently executed" im Hauptfenster auswählen. Dieser Befehl kann dabei helfen, <a href="../Scripts.htm#debug">ein Script zu debuggen</a>.</p>
-<p>Mit <code>ListLines Off/On</code> können bestimmte Zeilen im Verlauf weggelassen werden, um zu verhindern, dass sich der Verlauf zu schnell füllt (z. B. bei einer Schleife mit schnellen Iterationen). Mit <code>ListLines, Off</code> kann die Performance zudem um einige Prozente verbessert werden.</p>
+<p>ListLines (ohne Parameter) ist das gleiche wie, als würde man den Menüpunkt "View-&gt;Lines most recently executed" im Hauptfenster auswählen. Dieser Befehl unterstützt das <a href="../Scripts.htm#debug">Debuggen eines Scripts</a>.</p>
+<p>Mit <code>ListLines Off/On</code> können bestimmte Zeilen im Verlauf weggelassen werden, um zu verhindern, dass sich der Verlauf zu schnell füllt (z. B. bei einer Schleife mit vielen schnellen Iterationen). <code>ListLines, Off</code> kann die Performance zudem um einige Prozente verbessern.</p>
 <p>Jeder neu gestartete <a href="../misc/Threads.htm">Thread</a> (z. B. ein <a href="../Hotkeys.htm">Hotkey</a>, ein <a href="Menu.htm">benutzerdefinierter Menüpunkt</a> oder eine <a href="SetTimer.htm">zeitgesteuerte</a> Subroutine) beginnt mit der Standardeinstellung des Befehls. Diese Standardeinstellung kann man ändern, wenn dieser Befehl bereits im automatischen Ausführungsbereich (am Anfang des Scripts) definiert wird.</p>
-<p>Obwohl die integrierte Variable "A_ListLines" nicht verfügbar ist, kann man eine ähnliche Funktionalität erreichen, indem man den folgenden Code in das Script einfügt:</p>
-<pre>ListLines(PassTrueToTurnOnOrFalseToTurnOff)  <em>; Gibt die vorherige Einstellung von ListLines zurück (vor diesem Aufruf).</em>
+<p>Zwar gibt es nicht die integrierte Variable "A_ListLines", allerdings kann man eine ähnliche Funktionalität erreichen, wenn man den folgenden Code in das Script einfügt:</p>
+<pre>ListLines(ÜbergebeTrueFürAnOderFalseFürAus)  <em>; Gibt die vorherige Einstellung von ListLines zurück (vor diesem Aufruf).</em>
 {
-    static sListLines := true  <em>; Die Standardeinstellung für alle Scripts ist "ListLines On".</em>
-    ListLines % PassTrueToTurnOnOrFalseToTurnOff ? "On" : "Off"  <em>; Führt ListLines bedingungslos aus, um danach ausgeführte Zeilen im Verlauf wegzulassen.</em>
-    ListLines_prev := sListLines
-    sListLines := PassTrueToTurnOnOrFalseToTurnOff
-    return ListLines_prev
+    static sListLines := true  <em>; Die anfängliche Standardeinstellung für alle Scripts ist "ListLines On".</em>
+    ListLines % ÜbergebeTrueFürAnOderFalseFürAus ? "On" : "Off"  <em>; Führt ListLines bedingungslos aus, um danach ausgeführte Zeilen im Verlauf wegzulassen.</em>
+    ListLines_vorher := sListLines
+    sListLines := ÜbergebeTrueFürAnOderFalseFürAus
+    return ListLines_vorher
 }
 
-<em>; Um die obere Funktion anzuwenden:</em>
-prev_ListLines := ListLines(false)  <em>; ListLines wird vorübergehend deaktiviert.
+<em>; Die Funktion kann dann wie folgt verwendet werden:</em>
+vorher_ListLines := ListLines(false)  <em>; Deaktiviert ListLines vorübergehend.
 ; ...</em>
-ListLines(prev_ListLines)  <em>; Die vorherige Einstellung von ListLines wird wiederhergestellt.</em></pre>
-<p>Beachtet zudem, dass die integrierten Variablen <a href="../Variables.htm#LineNumber">A_LineNumber</a> und <a href="../Variables.htm#LineFile">A_LineFile</a> die derzeit ausgeführte Zeilennummer und den dazugehörigen Dateinamen enthalten.</p>
+ListLines(vorher_ListLines)  <em>; Stellt die vorherige Einstellung von ListLines wieder her.</em></pre>
+<p>Im Zusammenhang dazu enthalten die integrierten Variablen <a href="../Variables.htm#LineNumber">A_LineNumber</a> und <a href="../Variables.htm#LineFile">A_LineFile</a> die aktuell ausgeführte Zeilennummer und den Dateinamen, auf der sie sich bezieht.</p>
 <h3>Siehe auch</h3>
 <p><a href="KeyHistory.htm">KeyHistory</a>, <a href="ListHotkeys.htm">ListHotkeys</a>, <a href="ListVars.htm">ListVars</a></p>
 <h3>Beispiel</h3>

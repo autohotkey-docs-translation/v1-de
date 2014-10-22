@@ -14,18 +14,18 @@
 
 <h1>Loop (Registry)</h1>
 
-<p>Ermittelt nacheinander den Inhalt des angegebenen Registry-Subkeys.</p>
+<p>Ruft die Inhalte des angegebenen Registry-Subkeys einzeln ab.</p>
 
 <pre class="Syntax">Loop, Rootkey [, Key, SubkeysEinbeziehen?, Rekursiv?]</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>Rootkey</dt>
-  <dd><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC).</p>
+  <dd><p>Muss entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC) sein.</p>
       <p>Um den Zugriff auf eine Remote-Registry zu ermöglichen, muss der Computername und ein Doppelpunkt wie im folgenden Beispiel vorangestellt werden: \\workstation01:HKEY_LOCAL_MACHINE</p></dd>
 
   <dt>Key</dt>
-  <dd><p>Name des Keys (z. B. Software\BeliebigeAnwendung). Ist dieser Parameter leer oder nicht vorhanden, wird der Inhalt von <em>Rootkey</em> abgerufen.</p></dd>
+  <dd><p>Name des Keys (z. B. Software\BeliebigeAnwendung). Fehlt dieser Parameter oder ist er leer, werden die Inhalte von <em>Rootkey</em> abgerufen.</p></dd>
 
   <dt>SubkeysEinbeziehen?</dt>
   <dd><p>0 (Standard) Subkeys innerhalb von <em>Key</em> werden nicht abgerufen (nur die Werte).<br>
@@ -34,36 +34,36 @@
 
   <dt>Rekursiv?</dt>
   <dd>0 (Standard) Subkeys werden nicht durchsucht.<br>
-1 Subkeys werden auch durchsucht, so dass darin enthaltene Werte und Subkeys ermittelt werden.</dd>
+1 Subkeys werden durchsucht - die darin enthaltenen Werte und Subkeys werden abgerufen.</dd>
 
 </dl>
 
 <h3>Bemerkungen</h3>
-<p>Eine Registry-Schleife ist nützlich, wenn mehrere Werte und Subkeys nacheinander bearbeitet werden sollen. Die Werte und Subkeys werden in umgekehrter Reihenfolge abgerufen (von unten nach oben), damit <a href="RegDelete.htm">RegDelete</a> ohne Unterbrechung innerhalb der Schleife verwendet werden kann.</p>
-<p>Die folgenden Variablen können nur innerhalb einer Registry-Schleife verwendet werden. Wenn eine innere Registry-Schleife von einer äußeren Registry-Schleife umschlossen ist, wird der Eintrag von der innersten Schleife Vorrang haben.</p>
+<p>Eine Registry-Schleife ist nützlich, wenn du mehrere Werte und Subkeys einzeln abarbeiten willst. Die Werte und Subkeys werden in umgekehrter Reihenfolge abgerufen (von unten nach oben), so dass <a href="RegDelete.htm">RegDelete</a> innerhalb der Schleife verwendet werden kann, ohne sie unterbrechen zu müssen.</p>
+<p>Die folgenden Variablen sind nur in einer Registry-Schleife von Bedeutung. Wenn eine innere Registry-Schleife von einer äußeren Registry-Schleife umschlossen ist, wird der Eintrag von der innersten Schleife Vorrang haben.</p>
 <table class="info">
   <tr>
     <td>A_LoopRegName</td>
-    <td>Name des aktuell ermittelten Eintrags, der entweder ein Wertname oder der Name eines Subkeys sein kann. Der im Registrierungs-Editor angezeigte Wertname "(Standard)" wird abgerufen, wenn ihm ein Wert zugewiesen wurde - A_LoopRegName selbst wird aber leer sein.</td>
+    <td>Name des aktuell abgerufenen Eintrags, der entweder ein Wertname oder der Name eines Subkeys sein kann. Wertenamen, die im Registry-Editor als "(Standard)" dargestellt werden, werden abgerufen, sofern ihnen ein Wert zugewiesen wurde - A_LoopRegName selbst wird aber leer sein.</td>
   </tr>
   <tr>
     <td>A_LoopRegType</td>
-    <td>Typ des aktuell ermittelten Eintrags, der eins der folgenden Wörter sein kann: KEY (bedeutet, dass der aktuell ermittelte Eintrag nicht ein Wert, sondern ein Subkey ist), REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ, REG_DWORD, REG_QWORD, REG_BINARY, REG_LINK, REG_RESOURCE_LIST, REG_FULL_RESOURCE_DESCRIPTOR, REG_RESOURCE_REQUIREMENTS_LIST, REG_DWORD_BIG_ENDIAN (wahrscheinlich selten in den meisten Betriebssystemen). Diese Variable ist leer, wenn der aktuell ermittelte Eintrag ein unbekannter Typ ist.</td>
+    <td>Typ des aktuell abgerufenen Eintrags, der eines der folgenden Wörter sein kann: KEY (der aktuell abgerufene Eintrag ist also ein Subkey, nicht ein Wert), REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ, REG_DWORD, REG_QWORD, REG_BINARY, REG_LINK, REG_RESOURCE_LIST, REG_FULL_RESOURCE_DESCRIPTOR, REG_RESOURCE_REQUIREMENTS_LIST, REG_DWORD_BIG_ENDIAN (wahrscheinlich selten in den meisten Betriebssystemen). Diese wird Variable leer sein, wenn der aktuell abgerufene Eintrag unbekannten Typs ist.</td>
   </tr>
   <tr>
     <td>A_LoopRegKey</td>
-    <td>Name des zurzeit verwendeten Rootkeys (HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG). Beim Zugriff auf eine Remote-Registry enthält dieser Wert <strong>nicht</strong> den Namen des Computers.</td>
+    <td>Name des zurzeit verwendeten Rootkeys (HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG). Beim Zugriff auf eine Remote-Registry wird dieser Wert <strong>nicht</strong> den Namen des Computers enthalten.</td>
   </tr>
   <tr>
     <td>A_LoopRegSubKey</td>
-    <td>Name des aktuellen Subkeys. Ist das gleiche wie der <em>Key</em>-Parameter, solange der <em>Rekursiv</em>-Parameter nicht dazu verwendet wird, andere Subkeys zu durchsuchen. In diesem Fall enthält die Variable den vollständigen Pfad des aktuell ermittelten Eintrags, ohne Rootkey. Zum Beispiel: Software\BeliebigeAnwendung\MeinSubkey</td>
+    <td>Name des aktuellen Subkeys. Dies wird das gleiche sein wie der <em>Key</em>-Parameter, sofern man nicht den <em>Rekursiv</em>-Parameter zum Durchsuchen anderer Subkeys verwendet. In diesem Fall wird es der vollständige Pfad des aktuell abgerufenen Eintrags sein, ohne Rootkey. Zum Beispiel: Software\BeliebigeAnwendung\MeinSubkey</td>
   </tr>
   <tr>
     <td>A_LoopRegTimeModified</td>
-    <td>Wann der aktuelle Subkey oder seine Werte zuletzt bearbeitet wurden. <a href="FileSetTime.htm">YYYYMMDDHH24MISS</a>-Format. Diese Variable wird leer sein, wenn der aktuell ermittelte Eintrag kein Subkey ist (d. h. <em>A_LoopRegType</em> ist nicht das Wort KEY).</td>
+    <td>Der Zeitpunkt, wann der aktuelle Subkey oder einer seiner Werte zuletzt modifiziert wurde. <a href="FileSetTime.htm">YYYYMMDDHH24MISS</a>-Format. Diese Variable wird leer sein, wenn der aktuell abgerufene Eintrag kein Subkey ist (also wenn <em>A_LoopRegType</em> nicht das Wort KEY ist).</td>
   </tr>
 </table>
-<p>Innerhalb einer Registry-Schleife können folgende Befehle auf einfachere Weise verwendet werden, um den aktuell ermittelten Eintrag zu bearbeiten:</p>
+<p>Innerhalb einer Registry-Schleife können bei folgenden Befehlen die Parameter weggelassen werden, um zu kennzeichnen, dass der aktuell ermittelte Eintrag abgearbeitet werden soll:</p>
 <table class="info">
   <tr>
     <td width="21%"><a href="RegRead.htm">RegRead</a>, AusgabeVar</td>
@@ -71,28 +71,28 @@
   </tr>
   <tr>
     <td><a href="RegWrite.htm">RegWrite</a> [, Wert]</td>
-    <td>Schreibt in den aktuellen Eintrag. Falls <em>Wert</em> nicht vorhanden ist, wird der Eintrag je nach Typ auf 0 gesetzt oder leer gemacht. Wenn der aktuelle Eintrag ein Key ist, wird ErrorLevel auf 1 gesetzt.</td>
+    <td>Schreibt in den aktuellen Eintrag. Fehlt <em>Wert</em>, wird der Eintrag je nach seinem Typ auf 0 gesetzt oder leer gemacht. Wenn der aktuelle Eintrag ein Key ist, wird ErrorLevel auf 1 gesetzt und nichts weiter passieren.</td>
   </tr>
   <tr>
     <td><a href="RegDelete.htm">RegDelete</a></td>
-    <td>Löscht den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Key ist, wird dieser mit all seinen Subkeys und Werten gelöscht.</td>
+    <td>Löscht den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Key ist, wird er gelöscht, zusammen mit seinen Subkeys und Werten.</td>
   </tr>
 </table>
 <p>Beim Zugriff auf eine Remote-Registry (über den <em>Rootkey</em>-Parameter, wie oben beschrieben) gelten folgende Hinweise:</p>
 <ul>
   <li>Auf dem Zielrechner muss der Dienst "Remote Registry" laufen.</li>
   <li>Der Zugriff auf eine Remote-Registry kann fehlschlagen, wenn der Zielcomputer nicht zur Domäne des Benutzers gehört oder der Benutzername nicht genügend Berechtigungen hat (siehe unten für mögliche Übergangslösungen).</li>
-  <li>Abhängig von der Domäne, der Arbeitsgruppe und/oder den Berechtigungen kann es sein, dass sich der Benutzer mit einem freigegebenen Gerät erst verbinden muss (z. B. durch eine Laufwerkszuordnung), bevor der Remotezugriff auf die Registry erfolgt. Bei so einer Verbindung (mit Benutzernamen, Passwort und genug Berechtigungen zur Bearbeitung der Registry) könnte als Nebeneffekt der Remotezugriff auf die Registry aktiviert werden.</li>
-  <li>Wenn der Benutzer bereits mit einem anderen Benutzernamen auf dem Zielcomputer angemeldet ist (z. B. als Gast auf ein zugeordnetes Laufwerk), dann kann es sein, dass der Benutzer sich erst abmelden muss, damit die Remote-Registry sich neu verbinden kann und den Benutzer wieder mit seinem eigenen angemeldeten Benutzernamen authentifiziert.</li>
+  <li>Abhängig von der Domäne, der Arbeitsgruppe und/oder den Berechtigungen kann es sein, dass sich der Benutzer mit einem freigegebenen Gerät erst verbinden muss (z. B. durch eine Laufwerkszuordnung), bevor der Remotezugriff auf die Registry erfolgt. Das Aufbauen von so einer Verbindung -- unter Verwendung eines Remote-Benutzernamens, der zum Bearbeiten der Registry berechtigt ist -- könnte auch dazu führen, dass der Remote-Registry-Zugriff aktiviert wird.</li>
+  <li>Wenn du bereits mit einem anderen Benutzernamen auf dem Zielcomputer angemeldet bist (z. B. als Gast auf ein zugeordnetes Laufwerk), musst du wahrscheinlich zuvor diese Verbindung beenden, so dass die Remote-Registry sich neu verbinden und deinen aktuell angemeldeten Benutzernamen authentifizieren kann.</li>
   <li>Für Windows Server 2003 und Windows XP Professional heißt es in MSDN: "Wenn der [Server der Registry] Computer mit einer Arbeitsgruppe verbunden ist und die Sicherheitsrichtlinie <em>Einfache Dateifreigabe</em> aktiviert ist, dann schlägt die Funktion fehl. Beachten Sie, dass diese Sicherheitsrichtlinie standardmäßig aktiviert ist, wenn der Computer mit einer Arbeitsgruppe verbunden ist."</li>
   <li>Für Windows XP Home Edition weißt MSDN darauf hin, dass "diese Funktion immer fehlschlägt". In der Home Edition fehlt für die Registry sowohl der Server als auch der Client, jedoch kann der Client aus einer CAB-Datei des Betriebssystems extrahiert werden.</li>
 </ul>
-<p>Auf der <a href="Loop.htm">Loop</a>-Seite können Informationen zu <a href="Block.htm">Blöcke</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index gefunden werden (weil diese in jeder Schleifenvariante vorkommen).</p>
+<p>Auf der <a href="Loop.htm">Loop</a>-Seite findest du Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (sie können in jeder Schleifenvariante verwendet werden).</p>
 <h3>Siehe auch</h3>
 <p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="RegRead.htm">RegRead</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="RegDelete.htm">RegDelete</a>, <a href="SetRegView.htm">SetRegView</a></p>
 
 <h3>Beispiele</h3>
-<pre class="NoIndent"><em>; Beispiel: Löscht den Link-Verlauf im Internet Explorer.</em>
+<pre class="NoIndent"><em>; Beispiel: Löscht den Link-Verlauf des Internet Explorer.</em>
 Loop, HKEY_CURRENT_USER, Software\Microsoft\Internet Explorer\TypedURLs
     RegDelete</pre>
 <p>&nbsp;</p>
@@ -111,10 +111,10 @@ Loop, HKEY_CURRENT_USER, Software\Microsoft\Windows, 1, 1
     IfMsgBox, NO, break
 }</pre>
 <p>&nbsp;</p>
-<pre class="NoIndent"><em>; Beispiel: Ein funktionierendes Beispiel, um die komplette Registrierung
-; rekursiv nach einem bestimmten Wert zu durchsuchen.</em>
+<pre class="NoIndent"><em>; Beispiel: Dieses Beispiel sucht in der gesamten Registry
+; nach einem oder mehreren bestimmten Werten.</em>
 SetBatchLines, -1  <em>; Führt die Operation mit maximaler Geschwindigkeit aus.</em>
-RegSuchziel = Notepad  <em>; Teilt der Subroutine mit, was gesucht wird.</em>
+RegSuchziel = Notepad  <em>; Teilt der Subroutine mit, was gesucht werden soll.</em>
 Gosub, RegSuche
 return
 
@@ -123,37 +123,37 @@ RegSucheFortfahren = y
 Loop, HKEY_LOCAL_MACHINE, , 1, 1
 {
     Gosub, RegEintragUntersuchen
-    if RegSucheFortfahren = n <em>; Stoppt uns.</em>
+    if RegSucheFortfahren = n <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
         return
 }
 Loop, HKEY_USERS, , 1, 1
 {
     Gosub, RegEintragUntersuchen
-    if RegSucheFortfahren = n <em>; Stoppt uns.</em>
+    if RegSucheFortfahren = n <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
         return
 }
 Loop, HKEY_CURRENT_CONFIG, , 1, 1
 {
     Gosub, RegEintragUntersuchen
-    if RegSucheFortfahren = n <em>; Stoppt uns.</em>
+    if RegSucheFortfahren = n <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
         return
 }
 <em>; Hinweis: Ich glaube, dass HKEY_CURRENT_USER nicht durchsucht werden muss,
-; wenn HKEY_USERS durchsucht wird.  Das gleiche gilt wahrscheinlich auch für HKEY_CLASSES_ROOT,
+; wenn HKEY_USERS durchsucht wird.  Das gleiche könnte auch für HKEY_CLASSES_ROOT gelten,
 ; wenn HKEY_LOCAL_MACHINE durchsucht wird.</em>
 return
 
 RegEintragUntersuchen:
-if A_LoopRegType = KEY  <em>; Entfernt diese zwei Zeilen, wenn die Key-Namen auch überprüft werden sollen.</em>
+if A_LoopRegType = KEY  <em>; Entferne diese zwei Zeilen, wenn du die Key-Namen auch überprüfen lassen willst.</em>
     return
 RegRead, RegWert
 if ErrorLevel
     return
 IfInString, RegWert, %RegSuchziel%
 {
-    MsgBox, 4, , Die folgende Übereinstimmung wurde gefunden:`n%A_LoopRegKey%\%A_LoopRegSubKey%\%A_LoopRegName%`nWert = %RegWert%`n`nWeiter?
+    MsgBox, 4, , Der folgende Treffer wurde gefunden:`n%A_LoopRegKey%\%A_LoopRegSubKey%\%A_LoopRegName%`nWert = %RegWert%`n`nWeiter?
     IfMsgBox, No
-        RegSucheFortfahren = n  <em>; Stoppt uns.</em>
+        RegSucheFortfahren = n  <em>; Teilt unserem Aufrufer mit, die Suche zu stoppen.</em>
 }
 return</pre>
 

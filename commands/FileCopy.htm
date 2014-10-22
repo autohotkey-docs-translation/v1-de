@@ -21,10 +21,10 @@
 <dl>
 
   <dt>Quellmuster</dt>
-  <dd><p>Name einer Datei, eines Ordners oder einer musterbasierten Suche wie C:\Temp\*.tmp. Das <em>Quellmuster</em> befindet sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis, solange kein absoluter Pfad angegeben ist.</p></dd>
+  <dd><p>Name einer Datei, eines Ordners oder eines Platzhaltermusters wie C:\Temp\*.tmp. <em>Quellmuster</em> wird im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet, wenn kein absoluter Pfad angegeben ist.</p></dd>
 
   <dt>Zielmuster</dt>
-  <dd>Name oder Muster des Ziels, die sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befinden, solange kein absoluter Pfad angegeben ist. Um eine einfache Kopie durchzuführen (vorhandene Dateinamen beibehalten), sollte nur der Ordnername angegeben werden. Siehe dazu folgende Beispiele, die funktional identisch sind:<br>
+  <dd>Name oder Muster des Ziels, das im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet wird, wenn kein absoluter Pfad angegeben ist. Die folgenden funktional identischen Beispiele zeigen, wie man eine einfache Kopie durchführen kann (unter Beibehaltung der vorhandenen Dateinamen), indem man nur den Ordnernamen angibt:<br>
       <pre>FileCopy, C:\*.txt, C:\Mein Ordner</pre>
       <pre>FileCopy, C:\*.txt, C:\Mein Ordner\*.*</pre>
     </dd>
@@ -39,28 +39,28 @@
 
 <h3>ErrorLevel</h3>
 <p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
-<p>Bei Problemen enthält <a href="../misc/ErrorLevel.htm">ErrorLevel</a> die Anzahl an Dateien, die nicht kopiert werden konnten, ansonsten wird ErrorLevel auf 0 gesetzt.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf die Anzahl an Dateien gesetzt, die aufgrund eines Fehlers nicht kopiert werden konnten, ansonsten auf 0.</p>
 <p>In jedem Fall wird ErrorLevel auf 0 gesetzt, falls die Quelldatei eine einzelne Datei ist (ohne Platzhalter) und nicht existiert. Um diesen Zustand zu erkennen, verwende <a href="IfExist.htm">IfExist</a> oder <a href="../Functions.htm#FileExist">FileExist()</a>, bevor die Quelldatei kopiert wird.</p>
 <p>Im Gegensatz zu <a href="FileMove.htm">FileMove</a> wird das Kopieren einer Datei auf sich selbst immer als Fehler gewertet, auch dann, wenn der Überschreibmodus aktiv ist.</p>
-<p>Falls Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> auf 0 gesetzt, oder auf den aktuellsten Rückgabewert der Systemfunktion GetLastError(). Ansonsten enthält A_LastError einen Fehlercode, der darauf hinweist, warum keine Dateien gefunden wurden.</p>
+<p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> auf 0 gesetzt, oder auf das aktuellste Ergebnis der Systemfunktion GetLastError(). Ansonsten enthält A_LastError einen Fehlercode, der kenntlich machen soll, warum keine Dateien gefunden wurden.</p>
 
 <h3>Bemerkungen</h3>
-<p>FileCopy kopiert nur Dateien. Um stattdessen den Inhalt eines Ordners zu kopieren (alle Dateien und Unterordner), siehe Beispiele weiter unten. Um einen einzelnen Ordner (einschließlich Unterordner) zu kopieren, verwende <a href="FileCopyDir.htm">FileCopyDir</a>.</p>
+<p>FileCopy kopiert nur Dateien. In dem Beispielabschnitt weiter unten wird gezeigt, wie die Inhalte eines Ordners (alle Dateien und Unterordner) kopiert werden können. Um einen einzelnen Ordner (einschließlich Unterordner) zu kopieren, verwende <a href="FileCopyDir.htm">FileCopyDir</a>.</p>
 <p>Die Operation wird auch dann fortgesetzt, wenn Fehler auftreten.</p>
 <h3>Siehe auch</h3>
 <p><a href="FileMove.htm">FileMove</a>, <a href="FileCopyDir.htm">FileCopyDir</a>, <a href="FileMoveDir.htm">FileMoveDir</a>, <a href="FileDelete.htm">FileDelete</a></p>
 <h3>Beispiele</h3>
-<pre class="NoIndent">FileCopy, C:\Meine Dokumente\Liste1.txt, D:\Backup\  <em>; Macht eine Kopie, behält aber den originalen Namen.</em>
+<pre class="NoIndent">FileCopy, C:\Meine Dokumente\Liste1.txt, D:\Backup\  <em>; Macht eine Kopie, aber behält den originalen Namen.</em>
 FileCopy, C:\Meine Datei.txt, C:\Meine neue Datei.txt  <em>; Kopiert eine Datei mit neuem Namen in den gleichen Ordner.</em>
-FileCopy, C:\Ordner1\*.txt, D:\Neuer Ordner\*.bkp  <em>; Kopiert eine Datei mit neuer Erweiterung in einen anderen Ordner.</em></pre>
+FileCopy, C:\Ordner1\*.txt, D:\Neuer Ordner\*.bkp  <em>; Kopiert eine Datei mit neuer Dateiendung in einen anderen Ordner.</em></pre>
 <p>&nbsp;</p>
-<pre class="NoIndent"><em>; Das folgende Beispiel kopiert alle Dateien und Unterordner in einem anderen Ordner:</em>
+<pre class="NoIndent"><em>; Das folgende Beispiel kopiert alle Dateien und Unterordner in einen anderen Ordner:</em>
 Fehleranzahl := KopiereDateienUndOrdner("C:\Mein Ordner\*.*", "D:\Zielordner für Dateien &amp; Ordner")
 if Fehleranzahl &lt;&gt; 0
     MsgBox %Fehleranzahl% Dateien/Ordner konnten nicht kopiert werden.
 
 KopiereDateienUndOrdner(Quellmuster, Zielordner, Überschreiben = false)
-<em>; Kopiert alle Dateien und Ordner von Quellmuster in einem Ordner mit den Namen Zielordner und
+<em>; Kopiert alle Dateien und Ordner von Quellmuster in einen Ordner mit den Namen Zielordner und
 ; gibt die Anzahl an Dateien/Ordnern zurück, die nicht kopiert werden konnten.</em>
 {
     <em>; Zuerst alle Dateien kopieren (aber nicht die Ordner):</em>

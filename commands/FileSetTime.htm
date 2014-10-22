@@ -22,10 +22,10 @@
 
   <dt>YYYYMMDDHH24MISS</dt>
   <dd><p>Ist dieser Parameter leer oder nicht vorhanden, gilt standardmäßig die aktuelle Zeit. Ansonsten kann eine Zeit angegeben werden, die für diese Operation verwendet werden soll (siehe Bemerkungen zum Format). Jahre vor 1601 werden nicht unterstützt.</p>
-    <p>Dieser Parameter ist ein <a href="../Variables.htm#Expressions">Ausdruck</a>. Das heißt, müssen mehrere Variablen zu einem Zeitstempel verkettet werden, sollte der <a href="../Variables.htm#concat">Punkt-Operator</a> anstatt das Prozentzeichen verwendet werden. Zum Beispiel: <code>FileSetTime, Jahr <strong>.</strong> Monat <strong>.</strong> Tag, C:\Meine Datei.txt</code>.</p></dd>
+    <p>Dieser Parameter ist ein <a href="../Variables.htm#Expressions">Ausdruck</a>. Das heißt: Wenn mehrere Variablen zu einem Zeitstempel verkettet werden müssen, sollte der <a href="../Variables.htm#concat">Punkt-Operator</a> anstelle des Prozentzeichens verwendet werden. Zum Beispiel: <code>FileSetTime, Jahr <strong>.</strong> Monat <strong>.</strong> Tag, C:\Meine Datei.txt</code>.</p></dd>
 
   <dt>Dateimuster</dt>
-  <dd><p>Name einer Datei, eines Ordners oder einer musterbasierten Suche wie C:\Temp\*.tmp. <em>Dateimuster</em> befindet sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis, solange kein absoluter Pfad angegeben ist.</p>
+  <dd><p>Name einer Datei, eines Ordners oder eines Platzhaltermusters wie C:\Temp\*.tmp. <em>Dateimuster</em> wird im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet, wenn kein absoluter Pfad angegeben ist.</p>
     <p>Ist dieser Parameter nicht vorhanden, wird die aktuelle Datei von der innersten <a href="LoopFile.htm">Dateimuster-Schleife</a> verwendet.</p></dd>
 
   <dt>Zeitstempeltyp</dt>
@@ -36,14 +36,14 @@
 
   <dt>OrdnerEinbeziehen?</dt>
   <dd><p>0 (Standard) Ordner werden nicht mit einbezogen (nur Dateien). <br>
-1 Alle Dateien und Ordner, die mit der musterbasierten Suche übereinstimmen, werden mit einbezogen.<br>
+1 Alle Dateien und Ordner, die dem Platzhaltermuster entsprechen, werden mit einbezogen.<br>
 2 Nur Ordner werden mit einbezogen (keine Dateien).</p>
-      <p>Hinweis: Falls Dateimuster ein einzelner Ordner anstatt eine musterbasierte Suche ist, wird er immer mit einbezogen, unabhängig von dieser Einstellung.</p>
+      <p>Hinweis: Wenn Dateimuster ein einzelner Ordner statt ein Platzhaltermuster ist, wird er immer mit einbezogen, unabhängig von dieser Einstellung.</p>
       <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p></dd>
 
   <dt>Rekursiv?</dt>
-  <dd><p>0 (Standard) Unterordner werden nicht rekursiv behandelt.<br>
-  1 Unterordner werden rekursiv behandelt, so dass die darin enthaltenen Dateien und Unterordner mit einbezogen werden, wenn sie mit <em>Dateimuster</em> übereinstimmen. Alle Unterordner werden rekursiv behandelt, nicht nur solche, die mit <em>Dateimuster</em> übereinstimmen. Allerdings werden Dateien und Ordner, deren kompletter Pfadname länger als 259 Zeichen ist, übersprungen, als würde sie nicht existieren. Solche Dateien sind normalerweise selten, weil das Betriebssystem nicht erlaubt, dass diese erstellt werden können.</p>
+  <dd><p>0 (Standard) Unterordner werden nicht durchsucht.<br>
+  1 Unterordner werden rekursiv behandelt, so dass die darin enthaltenen Dateien und Unterordner mit einbezogen werden, wenn sie mit <em>Dateimuster</em> übereinstimmen. Alle Unterordner werden durchsucht, nicht nur solche, die dem <em>Dateimuster</em> entsprechen. Allerdings werden Dateien und Ordner, deren kompletter Pfadname länger als 259 Zeichen ist, übersprungen, als würde sie nicht existieren. Solche Dateien sind selten, weil sie normalerweise nicht erstellt werden dürfen.</p>
       <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p></dd>
 
 </dl>
@@ -51,10 +51,10 @@
 <h3>ErrorLevel</h3>
 <p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p>Bei <u>Misserfolg</u> wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf die Anzahl der Dateien gesetzt, die nicht geändert werden konnten, ansonsten auf 0. Wenn der angegebene Zeitstempel ungültig ist oder <em>Dateimuster</em> in einen leeren Wert aufgelöst wird, wird ErrorLevel auf 1 gesetzt.</p>
-<p>Falls Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> auf 0 gesetzt, oder auf den aktuellsten Rückgabewert der Systemfunktion GetLastError(). Ansonsten enthält A_LastError einen Fehlercode, der darauf hinweist, warum keine Dateien gefunden wurden.</p>
+<p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> auf 0 gesetzt, oder auf das aktuellste Ergebnis der Systemfunktion GetLastError(). Ansonsten enthält A_LastError einen Fehlercode, der kenntlich machen soll, warum keine Dateien gefunden wurden.</p>
 
 <h3>Bemerkungen</h3>
-<p>Das Zugriffsdatum einer Datei ist auf FAT16- &amp; FAT32-Datenträger ungenauer als auf NTFS-Datenträger.</p>
+<p>Das Zugriffsdatum einer Datei ist auf FAT16- &amp; FAT32-Datenträgern ungenauer als auf NTFS-Datenträgern.</p>
 <p><a name="YYYYMMDD"></a>YYYYMMDDHH24MISS besteht aus folgenden Elementen:</p>
 <table class="info">
   <tr>
@@ -82,7 +82,7 @@
     <td>2-stellige Sekunde (00-59)</td>
   </tr>
 </table>
-<p>Falls der YYYYMMDDHH24MISS-String nur teilweise angegeben ist (z. B. 200403), werden die restlichen Elemente, welche weggelassen worden sind, mit folgenden Standardwerten ersetzt:</p>
+<p>Falls der YYYYMMDDHH24MISS-String nur teilweise angegeben ist (z. B. 200403), werden die restlichen fehlenden Elemente mit folgenden Standardwerten ersetzt:</p>
 <p>MM: Monat 01<br>
   DD: Tag 01<br>
   HH24: Stunde 00<br>
@@ -90,7 +90,7 @@
   MI: Minute 00<br>
 SS: Sekunde 00</p>
 <p>Die integrierte Variable <a href="../Variables.htm#Now">A_Now</a> enthält die aktuelle Ortszeit im YYYYMMDDHH24MISS-Format. Ebenso enthält <a href="../Variables.htm#NowUTC">A_NowUTC</a> die aktuelle koordinierte Weltzeit.</p>
-<p><strong>Hinweis</strong>: Datum-Zeit-Werte können per <a href="EnvAdd.htm">EnvAdd</a> und <a href="EnvSub.htm">EnvSub</a> verglichen, addiert oder subtrahiert werden. Haben die Zeitwerte beim Vergleich unterschiedliche Stringlängen, sollten diese nicht mit "größer als" oder "kleiner als" verglichen werden, weil sie in diesem Fall als Zahlen behandelt werden. Zum Beispiel ist 20040201 aus numerischer Sicht immer kleiner (aber chronologisch größer) als 200401010533. Verwende stattdessen <a href="EnvSub.htm">EnvSub</a>, um herauszufinden, ob die Differenz zwischen denen positiv oder negativ ist.</p>
+<p><strong>Hinweis</strong>: Datum-Zeit-Werte können per <a href="EnvAdd.htm">EnvAdd</a> und <a href="EnvSub.htm">EnvSub</a> verglichen, addiert oder subtrahiert werden. Haben die Zeitwerte beim Vergleichen unterschiedliche Stringlängen, sollten diese nicht mit "größer als" oder "kleiner als" verglichen werden, weil sie in diesem Fall als Zahlen behandelt werden. Zum Beispiel ist 20040201 aus numerischer Sicht immer kleiner (aber chronologisch größer) als 200401010533. Verwende stattdessen <a href="EnvSub.htm">EnvSub</a>, um herauszufinden, ob die Differenz zwischen denen positiv oder negativ ist.</p>
 <h3>Siehe auch</h3>
 <p><a href="FileGetTime.htm">FileGetTime</a>, <a href="FileGetAttrib.htm">FileGetAttrib</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileGetSize.htm">FileGetSize</a>, <a href="FileGetVersion.htm">FileGetVersion</a>, <a href="FormatTime.htm">FormatTime</a>, <a href="LoopFile.htm">Dateimuster-Schleife</a>, <a href="EnvAdd.htm">EnvAdd</a>, <a href="EnvSub.htm">EnvSub</a></p>
 <h3>Beispiel</h3>

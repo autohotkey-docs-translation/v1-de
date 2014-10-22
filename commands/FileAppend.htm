@@ -14,26 +14,26 @@
 
 <h1>FileAppend</h1>
 
-<p>Schreibt Text an das Ende einer Datei (erstellt die Datei je nach Bedarf).</p>
+<p>Schreibt Text an das Ende einer Datei (und erstellt sie erst, falls notwendig).</p>
 
 <pre class="Syntax">FileAppend [, Text, Dateiname, Codierung]</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>Text</dt>
-  <dd><p>Der Text, welcher an der Datei angefügt wird. Dieser Text kann Zeilenumbruchszeichen (`n) enthalten, um neue Zeilen beginnen zu können. Außerdem kann mithilfe eines <a href="../Scripts.htm#continuation">Fortsetzungsbereichs</a> eine lange Zeile in mehreren kurzen Zeilen aufgeteilt werden.</p>
-      <p>Wenn der <em>Text</em>-Parameter leer ist, wird <em>Dateiname</em> als leere Datei erstellt (falls die Datei bereits existiert, wird nur das Erstellungsdatum aktualisiert).</p>
-    <p>Wenn der <em>Text</em>-Parameter den Inhalt von <a href="../misc/Clipboard.htm#ClipboardAll">ClipboardAll</a> enthält, wird <em>Dateiname</em> ohne Vorbehalt mit dem ganzen Zwischenspeicher überschrieben (d. h. <a href="FileDelete.htm">FileDelete</a> ist nicht notwendig).</p></dd>
+  <dd><p>Der Text, der an das Ende der Datei angefügt werden soll. Dieser Text kann Zeilenumbruchszeichen (`n) enthalten, um neue Zeilen beginnen zu können. Außerdem kann mithilfe eines <a href="../Scripts.htm#continuation">Fortsetzungsbereichs</a> eine lange Zeile in mehreren kurzen Zeilen aufgeteilt werden.</p>
+      <p>Wenn der <em>Text</em>-Parameter leer ist, wird <em>Dateiname</em> als leere Datei erstellt (wenn die Datei bereits existiert, wird nur ihr Änderungsdatum aktualisiert).</p>
+    <p>Enthält der <em>Text</em>-Parameter <a href="../misc/Clipboard.htm#ClipboardAll">%ClipboardAll%</a> oder eine Variable mit dem Wert von ClipboardAll, wird <em>Dateiname</em> ohne Vorbehalt mit dem kompletten Inhalt des Zwischenspeichers überschrieben (d. h. <a href="FileDelete.htm">FileDelete</a> ist nicht notwendig).</p></dd>
 
   <dt>Dateiname</dt>
   <dd><p>Der Name der Datei, die sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist.</p>
-    <p><strong>Binärmodus</strong>: Um den Text stattdessen im Binärmodus anzufügen, stellt ein Sternchen vor dem Dateinamen. Dadurch wird jedes LF-Zeichen (`n) als einzelner Zeilenvorschub (LF) geschrieben, anstatt standardmäßig CR+LF. Zum Beispiel: <code>*C:\Meine Unix-Datei.txt</code>.</p>
-    <p>Falls die Datei noch nicht offen ist (z. B. wegen einer <a href="LoopReadFile.htm">Datei-lesenden Schleife</a>), wird die Datei automatisch im Binärmodus geöffnet, wenn der <em>Text</em>-Parameter CR-LF-Paare (`r`n) enthält. Das heißt, dass die oben genannte Sternchenoption automatisch in Kraft tritt. Enthält <em>Text</em> Zeilenumbrüche in Form von `r`n, kann man die Performance durch Verwenden eines Sternchens erhöhen, weil das Programm nicht nach diesen Zeichen in <em>Text</em> suchen muss.</p>
+    <p><strong>Binärmodus</strong>: Um den Text im binären statt textuellen Modus anzufügen, muss an dem Dateinamen ein Sternchen vorangestellt werden. Dieser Modus schreibt jedes Zeilenumbruchszeichen (`n) als einzelnes LF-Zeichen (LF), anstatt üblicherweise als CR+LF. Zum Beispiel: <code>*C:\Meine Unix-Datei.txt</code>.</p>
+    <p>Falls die Datei noch nicht offen ist (z. B. wegen einer <a href="LoopReadFile.htm">Datei-lesenden Schleife</a>), wird die Datei automatisch im Binärmodus geöffnet, wenn der <em>Text</em>-Parameter CR-LF-Paare (`r`n) enthält. Das heißt, dass die oben genannte Sternchenoption automatisch in Kraft tritt. Ein Sternchen bei einem <em>Text</em> mit `r`n verbessert die Performance, weil das Programm nicht nach diesen Zeichen in <em>Text</em> suchen muss.</p>
     <p><strong><a name="stdout"></a>Standardausgabe (stdout)</strong>: Ein Sternchen (*) im Parameter <em>Dateiname</em> bewirkt, dass der <em>Text</em> zur Standardausgabe (stdout) gesendet wird. Solcher Text kann auf eine Datei umgeleitet, an eine EXE-Datei weitergeleitet oder von <a href="_ErrorStdOut.htm">originellen Texteditoren</a> abgefangen werden. Zum Beispiel wäre die folgende Zeile als Eingabeaufforderung gültig:</p>
       <pre>"%ProgramFiles%\AutoHotkey\AutoHotkey.exe" "Mein Script.ahk" &gt;"Fehlerprotokoll.txt"</pre>
-    <p>Allerdings wird der Text, der zur Standardausgabe gesendet wurde, nicht in der Eingabeaufforderung angezeigt. Als Übergangslösung kann die Ausgabe des Scripts an einen anderen Befehl oder ein anderes Programm weitergeleitet werden. Zum Beispiel:</p>
-      <pre>"%ProgramFiles%\AutoHotkey\AutoHotkey.exe" "My Script.ahk" |more</pre>
-      <pre>For /F "tokens=*" %L in ('""%ProgramFiles%\AutoHotkey\AutoHotkey.exe" "Mein Script .ahk""') do @Echo %L</pre>
+    <p>Allerdings wird ein zur Standardausgabe gesendeter Text nicht in der Eingabeaufforderung angezeigt, von wo aus die Zeile gestartet wurde. Dies kann umgangen werden, indem man die Ausgabe des Scripts an einen anderen Befehl oder Programm weiterleitet. Zum Beispiel:</p>
+      <pre>"%ProgramFiles%\AutoHotkey\AutoHotkey.exe" "Mein Script.ahk" |more</pre>
+      <pre>For /F "tokens=*" %L in ('""%ProgramFiles%\AutoHotkey\AutoHotkey.exe" "Mein Script.ahk""') do @Echo %L</pre>
     </dd>
 
   <dt>Codierung</dt>
@@ -44,32 +44,32 @@
 <h3>ErrorLevel</h3>
 <p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
-<p>Die Variable <a href="../Variables.htm#LastError">A_LastError</a> enthält den Rückgabewert der Systemfunktion GetLastError().</p>
+<p><a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
 
 <h3>Bemerkungen</h3>
-<p>Um eine bestehende Datei zu überschreiben, löscht sie vorher mit <a href="FileDelete.htm">FileDelete</a>.</p>
-<p>Die Zieldatei wird nach Anfügen des Textes automatisch geschlossen (außer wenn FileAppend im Einzelparameter-Modus innerhalb einer <a href="LoopReadFile.htm">Datei-lesenden/-schreibenden Schleife</a> verwendet wird).</p>
-<p><span class="ver">[AHK_L 42+]:</span> <a href="FileOpen.htm">FileOpen()</a> im Anfügen-Modus bietet mehr Kontrolle als FileAppend und lässt die Datei geöffnet, anstatt sie jedesmal neu zu öffnen und zu schließen. Sobald eine Datei im Anfügen-Modus geöffnet ist, kann der String mit <code>Datei.<a href="../objects/File.htm#Write">Write</a>(String)</code> angefügt werden. File-Objekte unterstützen auch binäre Verarbeitung mit <a href="../objects/File.htm#RawWrite">RawWrite</a>/<a href="../objects/File.htm#RawRead">RawRead</a> oder <a href="../objects/File.htm#WriteNum">Write<i>Num</i></a>/<a href="../objects/File.htm#ReadNum">Read<i>Num</i></a>, während FileAppend nur Text unterstützt.</p>
+<p>Wenn eine vorhandene Datei überschrieben werden soll, muss man sie mit <a href="FileDelete.htm">FileDelete</a> löschen, bevor man FileAppend verwendet.</p>
+<p>Die Zieldatei wird nach Anfügen des Textes automatisch geschlossen (außer wenn FileAppend in seinem Einzelparameter-Modus innerhalb einer <a href="LoopReadFile.htm">Datei-lesenden/-schreibenden Schleife</a> ist).</p>
+<p><span class="ver">[AHK_L 42+]:</span> <a href="FileOpen.htm">FileOpen()</a> im Anfügemodus bietet mehr Kontrolle als FileAppend und lässt die Datei geöffnet, anstatt sie jedesmal neu zu öffnen und zu schließen. Sobald eine Datei im Anfügemodus geöffnet ist, kann der String mit <code>File.<a href="../objects/File.htm#Write">Write</a>(String)</code> angefügt werden. File-Objekte unterstützen auch binäre Verarbeitung mit <a href="../objects/File.htm#RawWrite">RawWrite</a>/<a href="../objects/File.htm#RawRead">RawRead</a> oder <a href="../objects/File.htm#WriteNum">Write<i>Num</i></a>/<a href="../objects/File.htm#ReadNum">Read<i>Num</i></a>, während FileAppend nur Text unterstützt.</p>
 <h3>Siehe auch</h3>
 <p><a href="FileOpen.htm">FileOpen</a>/<a href="../objects/File.htm">File-Objekt</a>, <a href="FileRead.htm">FileRead</a>, <a href="LoopReadFile.htm">Datei-lesende Schleife</a>, <a href="FileReadLine.htm">FileReadLine</a>, <a href="IniWrite.htm">IniWrite</a>, <a href="FileDelete.htm">FileDelete</a>, <a href="OutputDebug.htm">OutputDebug</a>, <a href="../Scripts.htm#continuation">Fortsetzungsbereiche</a></p>
 <h3>Beispiel</h3>
 <pre class="NoIndent">FileAppend, Eine weitere Zeile.`n, C:\Meine Dokumente\Test.txt
 
-<em>; Das folgende Beispiel verwendet ein <a href="../Scripts.htm#continuation">Fortsetzungsbereich</a>, um die Lesbar- und Wartbarkeit zu verbessern:</em>
+<em>; Das folgende Beispiel verwendet ein <a href="../Scripts.htm#continuation">Fortsetzungsbereich</a>, um ein Text besser lesbar und verwaltbar zu machen:</em>
 FileAppend,
 (
 Eine Textzeile.
 Standardmäßig befindet sich das CR-Zeichen (Enter) zwischen der vorherigen und dieser Zeile.
-    Diese Zeile wird mit einem Tabulator eingerückt; Standardmäßig wird dieser Tabulator auch in der Datei geschrieben.
+    Diese Zeile wird mit einem Tabulator eingerückt; Standardmäßig wird dieser Tabulator auch in die Datei geschrieben.
 Variablenverweise wie %Var% werden standardmäßig mit dem Variableninhalt ersetzt.
 ), C:\Meine Datei.txt</pre>
 <p>&nbsp;</p>
-<pre class="NoIndent"><a name="FTP"></a><em>; Das folgende Beispiel demonstriert, wie das Hochladen per FTP automatisiert werden kann,
-; dazu wird der systeminterne FTP-Befehl verwendet. Dieses Script wurde auf Windows XP getestet.</em>
+<pre class="NoIndent"><a name="FTP"></a><em>; Das folgende Beispiel zeigt, wie das FTP-Hochladen mithilfe des systeminternen FTP-Befehls
+; automatisiert werden kann. Dieses Script wurde auf Windows XP getestet.</em>
 
-FTPCommandFile = %A_ScriptDir%\FTPCommands.txt
-FTPLogFile = %A_ScriptDir%\FTPLog.txt
-FileDelete %FTPCommandFile%  <em>; Falls das vorherige Ausführen vorzeitig beendet wurde.</em>
+FTPBefehlDatei = %A_ScriptDir%\FTPBefehle.txt
+FTPLogDatei = %A_ScriptDir%\FTPLog.txt
+FileDelete %FTPBefehlDatei%  <em>; Falls das vorherige Ausführen vorzeitig beendet wurde.</em>
 
 FileAppend,  <em>; Das Komma ist in diesem Fall erforderlich.</em>
 (
@@ -78,16 +78,16 @@ username
 password
 binary
 cd htdocs
-put %VarContainingNameOfTargetFile%
-delete SomeOtherFile.htm
-rename OldDateiname.htm NewDateiname.htm
+put %VarMitNamenDerZieldatei%
+delete EineAndereDatei.htm
+rename AlterDateiname.htm NeuerDateiname.htm
 ls -l
 quit
-), %FTPCommandFile%
+), %FTPBefehlDatei%
 
-RunWait %comspec% /c ftp.exe -s:"%FTPCommandFile%" &gt;"%FTPLogFile%"
-FileDelete %FTPCommandFile%  <em>; Aus Sicherheitsgründen löschen.</em>
-Run %FTPLogFile%  <em>; Zeigt das Protokoll zur Überprüfung an.</em></pre>
+RunWait %comspec% /c ftp.exe -s:"%FTPBefehlDatei%" &gt;"%FTPLogDatei%"
+FileDelete %FTPBefehlDatei%  <em>; Löscht sie aus Sicherheitsgründen.</em>
+Run %FTPLogDatei%  <em>; Zeigt das Protokoll zum Untersuchen an.</em></pre>
 
 </body>
 </html>

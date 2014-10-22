@@ -16,8 +16,8 @@
 
 <p>Teilt einen String in mehrere Teilstrings auf, basierend auf die angegebenen Trennzeichen.</p>
 
-<pre class="Syntax">StringSplit, AusgabeArray, EingabeVar [, Trennzeichen, ZeichenAuslassen]
-Array := StrSplit(String [, Trennzeichen, ZeichenAuslassen])  <em>; [v1.1.13+]</em></pre>
+<pre class="Syntax">StringSplit, AusgabeArray, EingabeVar [, Trennzeichen, ZuEntfernendeZeichen]
+Array := StrSplit(String [, Trennzeichen, ZuEntfernendeZeichen])  <em>; [v1.1.13+]</em></pre>
 <h3>Parameter</h3>
 <h4>StringSplit</h4>
 <dl>
@@ -27,13 +27,13 @@ Array := StrSplit(String [, Trennzeichen, ZeichenAuslassen])  <em>; [v1.1.13+]</
   <p>Um innerhalb einer <a href="../Functions.htm">Funktion</a> einen Pseudo-Array zu erstellen, das nicht lokal sondern global ist, muss MeinArray0 innerhalb der Funktion als globale Variable <a href="../Functions.htm#Global">deklariert</a> werden, bevor dieser Befehl verwendet wird (Das Gegenteil davon gilt für <a href="../Functions.htm#AssumeGlobal">global-behandelnde</a> Funktionen).</p></dd>
 
   <dt>EingabeVar</dt>
-  <dd><p>Name der Variable, deren Inhalt geparst werden soll. Der Name sollte nicht mit Prozentzeichen umschlossen werden, sofern nicht die Absicht besteht, den <em>Inhalt</em> der Variable als Namen zu verwenden. HINWEIS: <em>EingabeVar</em> darf keine Variable von <em>AusgabeArray</em> sein.</p></dd>
+  <dd><p>Name der Variable, deren Inhalt geparst werden soll. Umschließe den Namen nicht mit Prozentzeichen, es sei denn, du willst den <em>Inhalt</em> der Variable als Namen verwenden. HINWEIS: <em>EingabeVar</em> darf keine Variable von <em>AusgabeArray</em> sein.</p></dd>
 
   <dt>Trennzeichen</dt>
-  <dd><p>Ist dieser Parameter leer oder nicht vorhanden, wird jedes Zeichen von <em>EingabeVar</em> als einzelner Teilstring behandelt.</p>
-      <p>Ansonsten kann <em>Trennzeichen</em> ein oder mehr Zeichen enthalten (Unterscheidung zwischen Groß- und Kleinschreibung), die als Abgrenzungen zwischen den Teilstrings innerhalb von <em>EingabeVar</em> dienen sollen. Da die Trennzeichen nicht zu den Teilstrings gehören, werden sie nie in <em>AusgabeArray</em> kopiert. Befindet sich außerdem nichts zwischen einem Paar von Trennzeichen innerhalb von <em>EingabeVar</em>, wird das entsprechende Array-Element leer sein.</p>      
+  <dd><p>Fehlt dieser Parameter oder ist er leer, wird jedes Zeichen in <em>EingabeVar</em> als einzelner Teilstring behandelt.</p>
+      <p>Ansonsten kann <em>Trennzeichen</em> ein oder mehrere Zeichen enthalten (zeichengenau), um zu bestimmen, wo die Abgrenzungen zwischen den Teilstrings in <em>EingabeVar</em> erfolgen sollen. Da die Trennzeichen nicht zu den Teilstrings gehören, werden sie nie in <em>AusgabeArray</em> kopiert. Befindet sich außerdem nichts zwischen einem Paar von Trennzeichen innerhalb von <em>EingabeVar</em>, wird das entsprechende Array-Element leer sein.</p>      
       <p>Zum Beispiel: <code>`,</code> (ein Escapezeichen-versehenes Komma) würde den String jeweils bei einem Komma teilen. Ebenso würde %A_Tab%%A_Space% jedesmal ein neues Array-Element erstellen, wenn ein Leer- oder Tabulatorzeichen in <em>EingabeVar</em> vorkommt.</p>
-      <p>Es ist möglich, auch einen String als Trennung zu verwenden. Dazu ist es erforderlich, mithilfe von <a href="StringReplace.htm">StringReplace</a> alle Vorkommen des Strings mit einem Zeichen zu ersetzen, das im Text niemals literal vorkommen wird. Im folgenden Beispiel wird der String &lt;br&gt; als Trennung verwendet:</p>
+      <p>Es ist möglich, auch einen String als Trennung zu verwenden. Dazu ist es erforderlich, mithilfe von <a href="StringReplace.htm">StringReplace</a> alle Vorkommen des Strings mit einem Zeichen zu ersetzen, das im Text niemals literal vorkommen wird. Das folgende Beispiel zeigt, wie der String &lt;br&gt; als Trennung verwendet werden kann:</p>
 <pre>StringReplace, NeueHTML, HTMLString, &lt;br&gt;, ``, All  <em>; Ersetzt jedes &lt;br&gt; mit einem umgekehrten Häkchen.</em>
 StringSplit, MeinArray, NeueHTML, ``  <em>; Teilt den String jeweils bei einem umgekehrten Häkchen.</em></pre></dd>
 
@@ -48,24 +48,24 @@ StringSplit, MeinArray, NeueHTML, ``  <em>; Teilt den String jeweils bei einem u
   <dd><p>Ein String, der aufgeteilt werden soll.</p></dd>
 
   <dt>Trennzeichen</dt>
-  <dd><p>Ist dieser Parameter leer oder nicht vorhanden, wird jedes Zeichen des Eingabestrings als einzelner Teilstring behandelt.</p>
-      <p>Ansonsten kann <em>Trennzeichen</em> entweder ein einzelner String oder ein Array mit Strings sein, die als Abgrenzungen zwischen den Teilstrings dienen sollen. Da die Trennzeichen nicht zu den Teilstrings gehören, sind sie nie im Rückgabewert enthalten. Befindet sich außerdem nichts zwischen einem Paar von Trennzeichen innerhalb des Eingabestrings, wird das entsprechende Array-Element leer sein.</p>      
+  <dd><p>Fehlt dieser Parameter oder ist er leer, wird jedes Zeichen des Eingabestrings als einzelner Teilstring behandelt.</p>
+      <p>Ansonsten kann <em>Trennzeichen</em> entweder ein einzelner String oder ein Array mit Strings sein, um zu bestimmen, wo die Abgrenzungen zwischen den Teilstrings erfolgen sollen. Da die Trennzeichen nicht zu den Teilstrings gehören, sind sie nie im Rückgabewert enthalten. Befindet sich außerdem nichts zwischen einem Paar von Trennzeichen innerhalb des Eingabestrings, wird das entsprechende Array-Element leer sein.</p>      
       <p>Zum Beispiel: <code>"`,"</code> würde den String jeweils bei einem Komma teilen. Ebenso würde <code>[A_Tab, A_Space]</code> jedesmal ein neues Array-Element erstellen, wenn ein Leer- oder Tabulatorzeichen im Eingabestring vorkommt.</p></dd>
 
 </dl>
 <h4>Beides</h4>
 <dl>
 
-  <dt>ZeichenAuslassen</dt>
-  <dd><p>Eine optionale Liste von Zeichen (Unterscheidung zwischen Groß- und Kleinschreibung), die jeweils am Anfang und Ende eines Array-Elements weggelassen werden sollen. Wenn <em>ZeichenAuslassen</em> zum Beispiel <code>%A_Space%%A_Tab%</code> (StringSplit) oder <code>" `t"</code> (StrSplit) ist, werden Leer- oder Tabulatorzeichen jeweils am Anfang und Ende (aber nicht in der Mitte) eines Elements entfernt.</p>
-    <p>Falls <em>Trennzeichen</em> leer ist, kennzeichnet <em>ZeichenAuslassen</em>, welche Zeichen im Array weggelassen werden sollen.</p>
-    <p>Im Gegensatz zum letzten Parameter anderer Befehle müssen in <em>ZeichenAuslassen</em> bei StringSplit Kommas mit einem Escapezeichen versehen werden (`,).</p></dd>
+  <dt>ZuEntfernendeZeichen</dt>
+  <dd><p>Eine optionale Liste von Zeichen (Unterscheidung zwischen Groß- und Kleinschreibung), die jeweils am Anfang und Ende eines Array-Elements weggelassen werden sollen. Wenn <em>ZuEntfernendeZeichen</em> zum Beispiel <code>%A_Space%%A_Tab%</code> (StringSplit) oder <code>" `t"</code> (StrSplit) ist, werden Leer- oder Tabulatorzeichen jeweils am Anfang und Ende (aber nicht in der Mitte) eines Elements entfernt.</p>
+    <p>Falls <em>Trennzeichen</em> leer ist, kennzeichnet <em>ZuEntfernendeZeichen</em>, welche Zeichen im Array weggelassen werden sollen.</p>
+    <p>Im Gegensatz zum letzten Parameter anderer Befehle müssen in <em>ZuEntfernendeZeichen</em> bei StringSplit Kommas mit einem Escapezeichen versehen werden (`,).</p></dd>
 
 </dl>
 
 <h3>Bemerkungen</h3>
 <p>Falls die Array-Elemente bereits vorhanden sind, wird der StringSplit-Befehl die Werte nur von den ersten N Elementen ändern - N ist dabei die Anzahl der Teilstrings in <em>EingabeVar</em>. Alle bereits vorhandenen Elemente über N bleiben unverändert. Daher sollte man am besten das 0-Element (MeinArray0) verwenden, um festzustellen, wie viele Elemente tatsächlich mit diesem Befehl erstellt worden sind.</p>
-<p>Leerraumzeichen wie Leer- und Tabulatorzeichen werden beibehalten, sofern sie selbst keine Trennzeichen sind oder in <em>ZeichenAuslassen</em> vorkommen. Tabulator- und Leerzeichen können durch Aufrufen der <a href="Trim.htm">Trim</a>-Funktion an beiden Enden jeder Variable entfernt werden. Zum Beispiel: <code>MeinArray1 := Trim(MeinArray1)</code>.</p>
+<p>Leerraumzeichen wie Leer- und Tabulatorzeichen werden beibehalten, sofern sie selbst keine Trennzeichen sind oder in <em>ZuEntfernendeZeichen</em> vorkommen. Tabulator- und Leerzeichen können durch Aufrufen der <a href="Trim.htm">Trim</a>-Funktion an beiden Enden jeder Variable entfernt werden. Zum Beispiel: <code>MeinArray1 := Trim(MeinArray1)</code>.</p>
 <p>Um einen String mit kommagetrennten Werten (CSV-Format) aufzuteilen, ist es sinnvoll, stattdessen eine <a href="LoopParse.htm">Parsende Schleife</a> zu verwenden, da sie über eine integrierte CSV-Handhabung verfügt.</p>
 <p>Bevor die Felder aufgeteilt werden, können sie mit dem <a href="Sort.htm">Sort</a>-Befehl neu angeordnet werden.</p>
 <p>Wenn die Teilstrings nicht dauerhaft im Arbeitsspeicher vorhanden sein müssen, solltest du in Betracht ziehen, eine <a href="LoopParse.htm">Parsende Schleife</a> zu verwenden. Du könntest dadurch viel Speicherplatz sparen, vor allem, wenn <em>EingabeVar</em> sehr groß ist. Zum Beispiel:</p>

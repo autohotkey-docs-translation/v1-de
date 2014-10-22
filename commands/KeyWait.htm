@@ -14,22 +14,22 @@
 
 <h1>KeyWait</h1>
 
-<p>Wartet, bis eine Tastatur-, Maus- oder Joystick-Taste losgelassen oder gedrückt wird.</p>
+<p>Wartet, bis eine Tastatur-, Maus- oder Joystick-Taste losgelassen oder nach unten gedrückt wird.</p>
 
 <pre class="Syntax">KeyWait, Tastenname [, Optionen]</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>Tastenname</dt>
-  <dd><p>Ein einzelnes Zeichen der Tastatur oder ein Tastenname aus der <a href="../KeyList.htm">Tastenliste</a>, darunter auch Maus- und Joysticktasten. Anderweitige Joystick-Eigenschaften werden nicht unterstützt.</p>
-      <p>Alternativ kann ein eindeutiger virtueller Tastencode wie <code>{vkFF}</code> angegeben werden. Das ist vorallem dann nützlich, wenn die Taste weder einen Namen hat, noch beim Drücken ein sichtbares Zeichen erzeugt. Der virtuelle Tastencode kann ermittelt werden, wenn die Schritte im unteren Abschnitt der <a href="../KeyList.htm#SpecialKeys">Tastenliste</a> befolgt werden.</p></dd>
+  <dd><p>Dieser Parameter kann so ziemlich jedes Zeichen von der Tastatur oder ein Tastenname aus der <a href="../KeyList.htm">Tastenliste</a> sein, darunter auch Maus- und Joystick-Tasten. Abgesehen von den Joystick-Tasten werden andere Joystick-Attribute nicht unterstützt.</p>
+      <p>Ein eindeutiger virtueller Tastencode wie <code>vkFF</code> könnte man auch angeben. Dies ist in Ausnahmefällen nützlich, wo eine Taste keinen Namen hat und keine sichtbaren Zeichen beim Drücken erzeugt. Der virtuelle Tastencode einer solchen Taste kann durch Befolgen der Schritte am unteren Ende der <a href="../KeyList.htm#SpecialKeys">Tastenliste</a> ermittelt werden.</p></dd>
 
   <dt>Optionen</dt>
-  <dd><p>Sobald dieser Parameter leer ist, wartet der Befehl unendlich lang auf die Tastatur-, Maus- oder Joystick-Taste, bis sie physisch vom Benutzer losgelassen wird. Wenn allerdings der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> nicht installiert ist und der <em>Tastenname</em> eine Tastatur-Taste ist, die z. B. mithilfe des <a href="Send.htm">Send</a>-Befehls künstlich losgelassen wurde, dann wird die Taste auch als physisch losgelassen angesehen. Das gleiche gilt für Maustasten, wenn der <a href="_InstallMouseHook.htm">Maus-Hook</a> nicht installiert ist.</p>
-      <p>Optionen: Ein String mit beliebig vielen der folgenden Buchstaben (in beliebiger Reihenfolge, optional durch Leerzeichen getrennt):</p>
-      <p><strong>D</strong>: Warten, bis die Taste gedrückt wurde.</p>            
-      <p><strong>L</strong>: Überprüft den logischen Status der Taste, der dem Betriebssystem und aktivem Fenster glauben macht, dass die Taste gedrückt wurde (entspricht nicht unbedingt dem physischen Status). Diese Option wird bei Joystick-Tasten ignoriert.</p>
-      <p><strong>T</strong>: Zeitlimit (z. B. <code>T3</code>). Die Wartezeit in Sekunden, bevor das Script fortgesetzt und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt wird. Wenn die Taste den angegebenen Zustand erreicht, wartet der Befehl nicht länger, bis das Zeitlimit abgelaufen ist. Stattdessen wird sofort <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 0 gesetzt und das Script fortgesetzt.</p>
+  <dd><p>Fehlt dieser Parameter oder ist er leer, wird der Befehl unendlich lang auf die angegebene Tastatur-, Maus- oder Joystick-Taste warten, bis sie physisch vom Benutzer losgelassen wird. Bei nicht installiertem <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> ist das künstliche Loslassen von <em>Tastenname</em> (z. B. via <a href="Send.htm">Send</a>-Befehl) das gleiche wie, als hätte man sie physisch losgelassen. Bei nicht installiertem <a href="_InstallMouseHook.htm">Maus-Hook</a> gilt das gleiche wie oben, aber in Bezug auf Maustasten.</p>
+      <p>Optionen: Ein String mit einen oder mehreren der folgenden Buchstaben (in beliebiger Reihenfolge, optional durch Leerzeichen getrennt):</p>
+      <p><strong>D</strong>: Warten, bis die Taste nach unten gedrückt wurde.</p>            
+      <p><strong>L</strong>: Überprüft den logischen Status der Taste; dieser Status macht dem Betriebssystem und aktivem Fenster glauben, dass die Taste gedrückt wurde, welches aber nicht unbedingt dem physischen Status entspricht. Diese Option wird bei Joystick-Tasten ignoriert.</p>
+      <p><strong>T</strong>: Zeitlimit (z. B. <code>T3</code>). Die Wartezeit in Sekunden, bevor das Script fortgesetzt und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt wird. Erreicht die Taste den angegebenen Zustand, bevor das Zeitlimit abläuft, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> sofort auf 0 gesetzt und das Script weiter ausgeführt.</p>
       <p>Der Zeitlimit-Wert kann eine Fließkommazahl wie 2.5 sein, aber kein Hexadezimalwert wie 0x03.</p></dd>
 
 </dl>
@@ -37,19 +37,19 @@
 <h3>ErrorLevel</h3>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn der Befehl die Zeit überschritten hat, ansonsten auf 0.</p>
 <h3>Bemerkungen</h3>
-<p>Der physische Zustand einer Taste oder Maustaste wird in der Regel auch der logische Zustand sein. Sind jedoch Tastatur- und/oder Maus-Hooks installiert, kann genau wiedergegeben werden, ob der Benutzer eine Taste physisch gedrückt hält oder nicht. Mit dem <a href="KeyHistory.htm">KeyHistory</a>-Befehl oder -Menüpunkt kann überprüft werden, ob ein Hook in Benutzung ist. Mit <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> und/oder <a href="_InstallMouseHook.htm">#InstallMouseHook</a> können Hooks erzwungen werden.</p>
-<p>Während der Befehl in einem Wartezustand ist, können neue <a href="../misc/Threads.htm">Threads</a> mittels <a href="../Hotkeys.htm">Hotkey</a>, <a href="Menu.htm">benutzerdefinierte Menüeinträge</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
-<p>Es ist auch möglich, auf mehr als eine Taste zu warten, bis diese losgelassen werden. Zum Beispiel:</p>
+<p>Der physische Zustand einer Taste oder Maustaste wird in der Regel dasselbe sein wie der logische Zustand, sofern keine Tastatur- und/oder Maus-Hooks installiert sein. Ist das aber der Fall, kann ein Hook genau wiedergegeben, ob der Benutzer eine Taste physisch gedrückt hält oder nicht. Mit dem <a href="KeyHistory.htm">KeyHistory</a>-Befehl oder -Menüpunkt kannst du überprüfen, ob dein Script die Hooks benutzt. Durch Hinzufügen von <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> und/oder <a href="_InstallMouseHook.htm">#InstallMouseHook</a> können die Hooks im Script erzwungen werden.</p>
+<p>Während der Befehl in einem Wartezustand ist, können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkey</a>, <a href="Menu.htm">benutzerdefinierte Menüeinträge</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
+<p>Verwende mehrmals KeyWait, wenn du auf das Loslassen von zwei oder mehr Tasten warten willst. Zum Beispiel:</p>
 <pre>KeyWait Control  <em>; Wartet darauf, dass sowohl STRG als auch ALT losgelassen wird.</em>
 KeyWait Alt</pre>
-<p>Im Beispiel-Abschnitt von <a href="Input.htm">Input</a> wird gezeigt, wie auf das Drücken einer Taste gewartet wird, die zu einer bestimmten Reihe von Tasten gehört.</p>
+<p>Im Beispiel-Abschnitt von <a href="Input.htm">Input</a> wird gezeigt, wie auf das Drücken einer Taste, die zu einer bestimmten Reihe von Tasten gehört, gewartet werden kann.</p>
 <h3>Siehe auch</h3>
 <p><a href="GetKeyState.htm">GetKeyState</a>, <a href="../KeyList.htm">Tastenliste</a>, <a href="Input.htm">Input</a>, <a href="KeyHistory.htm">KeyHistory</a>, <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="_InstallMouseHook.htm">#InstallMouseHook</a>, <a href="ClipWait.htm">ClipWait</a>, <a href="WinWait.htm">WinWait</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Beispiel #1: Grundlagen:</em>
 KeyWait, a  <em>; Warten, bis die A-Taste losgelassen wird.</em>
 KeyWait, LButton, D  <em>; Wartet, bis die linke Maustaste gedrückt wird.</em>
-KeyWait, Joy1, D T3  <em>; Wartet 3 Sekunden, bis die erste Joystick-Taste gedrückt wird.</em>
+KeyWait, Joy1, D T3  <em>; Wartet bis zu 3 Sekunden, bis die erste Joystick-Taste gedrückt wird.</em>
 KeyWait, LAlt, L  <em>; Wartet, bis die linke ALT-Taste logisch losgelassen wird.</em></pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel #2: Ein einfacher Hotkey:</em>
@@ -59,9 +59,9 @@ MsgBox Sie haben die FESTSTELL-Taste gedrückt und losgelassen.
 return</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel #3: Neubelegung einer Tastatur- und Maustaste (dient nur zur Veranschaulichung,
-; die integrierte <a href="../misc/Remap.htm">Neubelegungsfunktion</a> ist leichter zu handhaben):
-; die linke Maustaste wird gedrückt gehalten, während NumpadAdd
-; gedrückt gehalten wird (NumpadAdd wird zur Maustaste).</em>
+; weil das integrierte <a href="../misc/Remap.htm">Neubelegungs-Feature</a> leichter zu handhaben wäre):
+; Die linke Maustaste wird gedrückt gehalten, während NumpadAdd unten ist, das effektiv
+; NumpadAdd in die linke Maustaste transformiert.</em>
 *NumpadAdd::
 MouseClick, left,,, 1, 0, D  <em>; Hält die linke Maustaste gedrückt.</em>
 KeyWait, NumpadAdd  <em>; Wartet, bis die Taste losgelassen wird.</em>
@@ -70,18 +70,18 @@ return</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel #4: Erkennt, ob eine Taste zweimal gedrückt wurde (ähnlich wie ein Doppelklick).
 ; Mit KeyWait wird das Auto-Wiederholungs-Feature daran gehindert, einen ungewollten Doppeldruck
-; zu erzeugen, wenn man die rechte STRG-Taste zum Modifizieren einer anderen Taste gedrückt hält.  Ermöglicht durch die
-; Aufrechterhaltung eines Hotkey-Threads, die die Autowiederholung blockiert, solange
-; #MaxThreadsPerHotkey auf dem Standardwert 1 ist.
-; Hinweis: Es gibt ein aufwändigeres Script im unteren Bereich der <a href="SetTimer.htm">SetTimer</a>-Seite, das zwischen einfaches, doppeltes und dreifaches Drücken unterscheidet.</em>
+; zu erzeugen, wenn man die rechte STRG-Taste zum Modifizieren einer anderen Taste gedrückt hält.  Dies geschieht durch
+; durch Aufrechterhalten des Hotkey-Threads, wodurch die Autowiederholung blockiert wird, solange
+; #MaxThreadsPerHotkey auf den Standardwert 1 ist.
+; Hinweis: Auf der <a href="SetTimer.htm">SetTimer</a>-Seite ganz unten gibt es ein ausführlicheres Script, um zwischen einfaches, doppeltes und dreifaches Drücken zu unterscheiden.</em>
 ~RControl::
 if (A_PriorHotkey &lt;&gt; "~RControl" or A_TimeSincePriorHotkey &gt; 400)
 {
-    <em>; Zu viel Zeit zwischen den Instanzen, daher kein zweimaliges Drücken.</em>
+    <em>; Zu viel Zeit zwischen den Instanzen, daher kein doppeltes Drücken.</em>
     KeyWait, RControl
     return
 }
-MsgBox Sie haben die rechte Steuerungstaste zweimal gedrückt.
+MsgBox Sie haben die rechte STRG-Taste doppelt gedrückt.
 return</pre>
 
 </body>
