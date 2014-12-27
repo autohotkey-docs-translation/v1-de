@@ -70,6 +70,16 @@ DispPtr := <a href="ComObjValue.htm">ComObjValue</a>(ComObject), ObjAddRef(DispP
   </tr>
 </table>
 
+<h3 id="ByRef">ByRef <span class="ver">[v1.1.17+]</span></h3>
+<p>Wenn der <a href="ComObjType.htm"><em>VarTyp</em></a> eines Wrapper-Objekts den VT_BYREF-Flag (0x4000) enthält, kann mit leeren Klammern <code>[]</code> der verwiesene Wert gelesen oder geschrieben werden.</p>
+<p>Beim Erstellen eines Verweises muss <em>Wert</em> die Speicheradresse einer Variable oder Puffer mit ausreichender Kapazität sein, um einen Wert des angegebenen Typs enthalten zu können. Zum Beispiel könnte man wie folgt eine Variable erstellen, in der eine VBScript-Funktion etwas schreiben kann:</p>
+<pre>VarSetCapacity(var, 24, 0)
+vref := ComObject(0x400C, &amp;var)  <em>; 0x400C ist eine Kombination von VT_BYREF und VT_VARIANT.</em>
+
+vref[] := "Eingabewert"
+sc.Run("Beispiel", vref)  <em>; sc sollte wie im <a href="#ByRefEx">unteren Beispiel</a> initialisiert werden.</em>
+MsgBox % vref[]</pre>
+
 <h3 id="Remarks">Allgemeine Bemerkungen</h3>
 <p>In den aktuellen Versionen wird jeder Funktionsaufruf, der mit "ComObj" beginnt und nicht mit den anderen COM-Funktionen übereinstimmt, eigentlich ComObjActive aufrufen. Zum Beispiel sind <code>ComObjEnwrap(DispPtr)</code> und <code>ComObjActive(DispPtr)</code> das gleiche wie <code>ComObject(DispPtr)</code> (<em>VarType</em> 9 ist inbegriffen). Allerdings wird dieses Verhalten in einer zukünftigen Version nicht mehr zur Verfügung stehen, daher ist es am besten, nur <code>ComObject()</code> und <code>ComObjActive()</code> zu verwenden, wie unten gezeigt.</p>
 <p>Wenn mit dieser Funktion ein IDispatch- oder IUnknown-Interface-Pointer gewrappt oder abgerufen wurde, erhöht sich standardmäßig die Referenzzählung des COM-Objekts. Daher muss der Interface-Pointer <a href="ObjAddRef.htm">manuell freigegeben werden</a>, wenn er nicht länger benötigt wird. Beim Freigeben des Wrapper-Objekts wird auch dessen Verweis automatisch freigegeben.</p>
@@ -80,8 +90,8 @@ DispPtr := <a href="ComObjValue.htm">ComObjValue</a>(ComObject), ObjAddRef(DispP
 
 <h3>Beispiele</h3>
 <p>ComObjUnwrap: Siehe <a href="ComObjConnect.htm#Examples">ComObjConnect</a>.</p>
-<pre class="NoIndent" id="ByRefEx"><em>; Beispiel: Übergibt ein VARIANT per Verweis an eine COM-Funktion.</em>
-
+<pre class="NoIndent" id="ByRefEx">
+<em>; Einleitung - ScriptControl benötigt eine 32-Bit-Version von AutoHotkey.</em>
 code =
 (
 Sub Beispiel(Var)
@@ -91,25 +101,27 @@ End Sub
 )
 sc := <a href="ComObjCreate.htm">ComObjCreate</a>("ScriptControl"), sc.Language := "VBScript", sc.AddCode(code)
 
+
+<em>; Beispiel: VARIANT-ByRef an eine COM-Funktion übergeben.</em>
 var := ComVar()
 var[] := "Eingabewert"
 sc.Run("Beispiel", var.ref)
 MsgBox % var[]
 
 
-<em>; ComVar: Erstellt ein Objekt, mit dem ein Wert per Verweis übergeben werden kann.
-;   ComVar[] ermittelt den Wert.
-;   ComVar[] := Wert bestimmt den Wert.
-;   ComVar.ref empfängt ein ByRef-Objekt für die Übergabe an eine COM-Funktion.</em>
+<em>; ComVar: Erstellt ein Objekt, mit dem ein Wert via ByRef übergeben werden kann.
+;   ComVar[] bekommt den Wert.
+;   ComVar[] := Val setzt den Wert.
+;   ComVar.ref bekommt ein ByRef-Objekt zum Übergeben an eine COM-Funktion.</em>
 ComVar(Type=0xC)
 {
     static <a href="../Objects.htm#Custom_Objects">base</a> := { __Get: "ComVarGet", __Set: "ComVarSet", __Delete: "ComVarDel" }
-    <em>; Erstellt ein Array von 1 VARIANT.  Diese Methode erlaubt es, dass sich integrierter Code
-    ; um alle Konvertierungen zwischen VARIANT und ahk-interne Typen kümmern darf.</em>
+    <em>; Erstellt ein Array mit 1 VARIANT.  Durch diese Methode kann der Built-In-Code sich um
+    ; alle Umwandlungen zwischen VARIANT und AutoHotkey's interne Typen kümmern.</em>
     arr := <a href="ComObjArray.htm">ComObjArray</a>(Type, 1)
-    <em>; Sperrt das Array und ermittelt einen Pointer, der auf das VARIANT verweist.</em>
+    <em>; Sperrt das Array und bekommt einen Pointer, der auf das VARIANT verweist.</em>
     DllCall("oleaut32\SafeArrayAccessData", "ptr", <a href="ComObjValue.htm">ComObjValue</a>(arr), "ptr*", arr_data)
-    <em>; Speichert das Array und ein Objekt, mit dem VARIANT per Verweis übergeben werden kann.</em>
+    <em>; Speichert das Array und ein Objekt, mit dem das VARIANT-ByRef übergeben werden kann.</em>
     return { ref: ComObject(0x4000|Type, arr_data), _: arr, base: base }
 }
 
@@ -124,7 +136,7 @@ ComVarSet(cv, v, p*) { <em>; Wird aufgerufen, wenn das Script ein unbekanntes Fe
 }
 
 ComVarDel(cv) { <em>; Wird aufgerufen, wenn das Objekt freigegeben wird.
-    ; Das muss gemacht werden, damit das interne Array freigegeben werden kann.</em>
+    ; Dies muss getan werden, so dass das interne Array freigegeben werden kann.</em>
     DllCall("oleaut32\SafeArrayUnaccessData", "ptr", ComObjValue(cv._))
 }
 </pre>

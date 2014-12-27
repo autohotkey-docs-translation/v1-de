@@ -22,7 +22,14 @@
 <dl>
 
   <dt>Dateiname</dt>
-  <dd><p>Name der zu öffnenden Datei, die sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist.</p></dd>
+  <dd>
+    <p>Name der zu öffnenden Datei, die sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist.</p>
+    <p><span class="ver">[v1.1.17+]:</span> Verwende ein Sternchen (oder zwei) wie unten gezeigt, um den Standard-Eingabe-/Ausgabe-/Fehlerstrom zu öffnen:</p>
+    <pre>
+FileOpen("*", "r")   <em>; für stdin</em>
+FileOpen("*", "w")   <em>; für stdout</em>
+FileOpen("**", "w")  <em>; für stderr</em></pre>
+  </dd>
 
   <dt>Flags</dt>
   <dd><p>Seit <span class="ver">[AHK_L 54]</span> entweder ein String mit Zeichen für den gewünschten Zugriffsmodus, gefolgt von anderen Optionen (optional getrennt durch Leerzeichen und Tabulatoren); oder seit <span class="ver">[AHK_L 42]</span> eine Kombination (Summe) von numerischen Flags. Unterstützte Werte werden in der folgenden Tabelle beschrieben.</p></dd>
@@ -97,9 +104,12 @@ MsgBox % File.ReadLine()
 
 <em>; Öffnet ein Konsolenfenster für diese Demonstration:</em>
 DllCall("AllocConsole")
-<em>; Öffnet die stdin/stdout-Handles der Anwendung mit der Option "`n".</em>
-stdin  := FileOpen(DllCall("GetStdHandle", "int", -10, "ptr"), "h `n")
-stdout := FileOpen(DllCall("GetStdHandle", "int", -11, "ptr"), "h `n")
+<em>; Öffnet die stdin/stdout-Ströme der Anwendung mit der Option "`n".</em>
+stdin  := FileOpen("*", "r `n")  <em>; Benötigt v1.1.17+</em>
+stdout := FileOpen("*", "w `n")
+<em>; Bei älteren Versionen:
+;   stdin  := FileOpen(DllCall("GetStdHandle", "int", -10, "ptr"), "h `n")
+;   stdout := FileOpen(DllCall("GetStdHandle", "int", -11, "ptr"), "h `n")</em>
 stdout.Write("Bitte Anfrage eingeben.`n\&gt; ")
 stdout.Read(0) <em>; Schreibpuffer leeren.</em>
 Abfrage := RTrim(stdin.ReadLine(), "`n")
