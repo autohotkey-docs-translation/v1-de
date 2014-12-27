@@ -14,44 +14,44 @@
 
 <h1>Pause</h1>
 
-<p>Pausiert den <a href="../misc/Threads.htm">aktuellen Thread</a> vom Script.</p>
+<p>Pausiert den <a href="../misc/Threads.htm">aktuellen Thread</a> des Scripts.</p>
 
-<pre class="Syntax">#p::Pause <em>; Drückt einmal WIN+P, um das Script zu pausieren. Drückt nochmal, um die Pause aufzuheben.</em>
+<pre class="Syntax">#p::Pause <em>; Drücke einmal WIN+P, um das Script zu pausieren. Drückt ihn nochmals, um die Pause aufzuheben.</em>
 Pause [, On|Off|Toggle, DarunterliegendenThreadEinbeziehen?]</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>On|Off|Toggle</dt>
-  <dd><p>Ist dieser Parameter leer oder nicht vorhanden, wird standardmäßig Toggle verwendet. Ansonsten kann eins der folgenden Wörter angegeben werden:</p>
-      <p><strong>Toggle</strong>: Pausiert den <a href="../misc/Threads.htm">aktuellen Thread</a>. Wenn aber der Thread darunter pausiert ist, wird der darunterliegende Thread fortgesetzt.</p>
+  <dd><p>Fehlt dieser Parameter oder ist er leer, gilt standardmäßig Toggle. Ansonsten kann eines der folgenden Wörter angegeben werden:</p>
+      <p><strong>Toggle</strong>: Pausiert den <a href="../misc/Threads.htm">aktuellen Thread</a>, aber wenn der Thread unter ihm pausiert ist, wird der darunterliegende Thread fortgesetzt.</p>
       <p><strong>On</strong>: Pausiert den aktuellen Thread.</p>
-      <p><strong>Off</strong>: Wenn der Thread unter dem aktuellen Thread pausiert ist, wird dessen Pause bei Wiederaufnahme aufgehoben. Ansonsten hat der Befehl keine Wirkung.<br>
+      <p><strong>Off</strong>: Wenn der Thread unter dem aktuellen Thread pausiert ist, wird er bei Wiederaufnahme im nicht-pausierten Zustand sein. Ansonsten hat der Befehl keine Wirkung.<br>
       </p></dd>
 
   <dt>DarunterliegendenThreadEinbeziehen?</dt>
-  <dd><p>Dieser Parameter wird bei <code>Pause Off</code> ignoriert, weil dabei immer der darunterliegende Thread einbezogen wird. Bei den anderen wird er ignoriert, es sei denn, Pause ist aktiviert (auch über Toggle).</p>
-      <p>Es kann eine der folgenden Zahlen angegeben werden:</p>
-      <p><strong>0</strong> (oder weggelassen): Der Befehl pausiert den aktuellen Thread; das heißt, dass dieser Thread jetzt den Pause-Befehl betreibt.</p>
-    <p><strong>1</strong>: Der Befehl markiert den Thread unter dem aktuellen Thread als pausiert, so dass dieser bei Wiederaufnahme den zurzeit laufenden Befehl (falls vorhanden) fertig ausführt und danach in einen pausierten Zustand versetzt wird. Falls unter dem aktuellen Thread kein weiterer Thread vorhanden ist, wird das Script selbst pausiert, wodurch <a href="SetTimer.htm">Timer</a> gestoppt werden (es wird das gleiche erreicht, wenn der Menüpunkt "Pause Script" ausgewählt wird, während das Script keine Threads hat).</p>
-    <p>Hinweis: <a href="../Variables.htm#IsPaused">A_IsPaused</a> enthält den Pausezustand vom darunterliegenden Thread.</p></dd>
+  <dd><p>Dieser Parameter wird bei <code>Pause Off</code> ignoriert, weil dies immer den darunterliegenden Thread einbezieht. Bei den anderen wird er ignoriert, sofern Pause nicht eingeschaltet wurde (einschließlich via Toggle).</p>
+      <p>Verwende eine der folgenden Nummern:</p>
+      <p><strong>0</strong> (oder weggelassen): Der Befehl pausiert den aktuellen Thread; also der Thread, der den Pause-Befehl ausgeführt hat.</p>
+    <p><strong>1</strong>: Der Befehl markiert den Thread unterhalb des aktuellen Threads als pausiert, so dass er bei Wiederaufnahme den zurzeit laufenden Befehl (falls vorhanden) fertig ausführt und dann in einem pausierten Zustand verfällt. Gibt es keinen Thread unterhalb des aktuellen Threads, wird das Script selbst pausiert, was <a href="SetTimer.htm">Timer</a> stoppen würde (dieser Effekt ist das gleiche wie, als hätte man den Menüpunkt "Pause Script" verwendet, während das Script keine Threads hat).</p>
+    <p>Hinweis: <a href="../Variables.htm#IsPaused">A_IsPaused</a> enthält den Pausezustand des darunterliegenden Threads.</p></dd>
 
 </dl>
 
 <h3>Bemerkungen</h3>
-<p>Im Gegensatz zum Befehl <a href="Suspend.htm">Suspend</a> - der <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a> deaktiviert - bewirkt das Pausieren, dass der <a href="../misc/Threads.htm">aktuelle Thread</a> eingefroren wird. Als Nebeneffekt werden alle unterbrochenen Thread darunter inaktiv sein.</p>
-<p>Sobald ein Thread pausiert ist, werden <a href="SetTimer.htm">Timer</a> nicht ausgeführt. Explizit gestartete Threads wie <a href="../Hotkeys.htm">Hotkeys</a> und <a href="Menu.htm">Menüpunkte</a> können hingegen weiterhin ausgeführt werden; sobald jedoch deren <a href="../misc/Threads.htm">Threads</a> enden, wird der darunterliegende Thread weiterhin pausiert sein. Das heißt, dass jeder Thread unabhängig von den anderen pausiert werden kann.</p>
-<p>Die Farbe des Tray-Icons wechselt von Grün auf Rot, sobald der <a href="../misc/Threads.htm">aktuelle Thread</a> vom Script im pausierten Zustand ist. Dieser Farbwechsel kann durch Einfrieren des Icons verhindert werden - das wird erreicht, wenn im letzten Parameter des Menu-Befehls eine 1 angegeben wird. Zum Beispiel:</p>
+<p>Im Gegensatz zu <a href="Suspend.htm">Suspend</a> - das <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a> deaktiviert - wird Pause den <a href="../misc/Threads.htm">aktuellen Thread</a> einfrieren. Als Nebeneffekt werden alle unterbrochenen Thread darunter inaktiv sein.</p>
+<p>Immer wenn ein Thread pausiert wird, werden <a href="SetTimer.htm">Timer</a> nicht laufen. Dagegen können explizit gestartete Threads wie <a href="../Hotkeys.htm">Hotkeys</a> und <a href="Menu.htm">Menüpunkte</a> weiterhin gestartet werden; aber wenn ihre <a href="../misc/Threads.htm">Threads</a> zum Ende kommen, wird der darunterliegende Thread weiterhin pausiert sein. Das heißt, dass jeder Thread pausiert werden kann, unabhängig voneinander.</p>
+<p>Die Farbe des Tray-Icons wechselt von Grün auf Rot, wenn der <a href="../misc/Threads.htm">aktuelle Thread</a> des Scripts in einem pausierten Zustand versetzt wird. Dieser Farbwechsel kann durch Einfrieren des Icons verhindert werden - dazu muss im letzten Parameter des Menu-Befehls eine 1 angegeben werden. Zum Beispiel:</p>
   <pre><a href="Menu.htm">Menu</a>, Tray, Icon, C:\Mein Icon.ico, , 1</pre>
-<p>Mit <a href="Thread.htm">Thread, NoTimers</a> können <a href="SetTimer.htm">Timer</a> deaktiviert werden, ohne dabei das ganze Script pausieren zu müssen.</p>
-<p>Der Pause-Befehl ist mit dem integrierten Menüpunkt "Pause Script" vergleichbar.</p>
-<p>Ein Script wird immer angehalten (wenn auch nicht offiziell pausiert), wenn ein <a href="Menu.htm">Menü</a> angezeigt wird (Tray-Menü, Menüleiste, GUI-Kontextmenü und so weiter).</p>
+<p>Um <a href="SetTimer.htm">Timer</a> ohne Pausieren des Scripts zu deaktivieren, verwende <a href="Thread.htm">Thread, NoTimers</a>.</p>
+<p>Der Pause-Befehl hat die gleiche Funktion wie der integrierte Menüpunkt "Pause Script".</p>
+<p>Ein Script wird immer angehalten (aber offiziell nicht pausiert), wenn man ein <a href="Menu.htm">Menü</a> beliebiger Art anzeigt (Tray-Menü, Menüleiste, GUI-Kontextmenü und so weiter).</p>
 <h3>Siehe auch</h3>
 <p><a href="Suspend.htm">Suspend</a>, <a href="Menu.htm">Menu</a>, <a href="ExitApp.htm">ExitApp</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="SetTimer.htm">SetTimer</a></p>
 <h3>Beispiele</h3>
-<pre class="NoIndent">Pause::Pause  <em>; Bewirkt, dass bei Drücken der PAUSE-Taste der Pausezustand des Scripts umgeschalten wird.</em>
-#p::Pause  <em>; Das gleiche wie oben, aber mit der Tastenkombination WIN+P.</em></pre>
+<pre class="NoIndent">Pause::Pause  <em>; Verbindet die Toggle-Funktion von Pause mit der PAUSE-Taste ...</em>
+#p::Pause  <em>; oder mit WIN+P oder einem anderen Hotkey.</em></pre>
 
-<pre id="PostMessage" class="NoIndent"><em>; Sendet ein Pause-Befehl an ein anderes Script.</em>
+<pre id="PostMessage" class="NoIndent"><em>; Sendet einen Pause-Befehl zu einem anderes Script.</em>
 <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>, On
 WM_COMMAND := 0x111
 ID_FILE_PAUSE := 65403
