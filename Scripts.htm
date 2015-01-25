@@ -5,8 +5,6 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="static/theme.css" rel="stylesheet" type="text/css" />
-<script src="static/jquery.js" type="text/javascript"></script>
-<script src="static/tree.jquery.js" type="text/javascript"></script>
 <script src="static/ga.js" type="text/javascript"></script>
 <script src="static/content.js" type="text/javascript"></script>
 </head>
@@ -152,15 +150,49 @@ Verwendung:
 <pre>AutoHotkey.exe [<i>Optionen</i>] [<i>Script-Dateiname</i>] [<i>Script-Parameter</i>]</pre>
 <p>Bei kompilierten Scripts ist das Format:</p>
 <pre>KompiliertesScript.exe [<i>Optionen</i>] [<i>Script-Parameter</i>]</pre>
-<p><strong>Optionen</strong> kann die folgenden Begriffe enthalten (oder leer bleiben): <br>
-/f oder /force -- Script bedingungslos starten und Warnmeldungen überspringen. <br>
-/r oder /restart -- Gibt an, dass das Script neu gestartet werden soll (das auch intern vom <a href="commands/Reload.htm">Reload</a>-Befehl verwendet wird).<br>
-/ErrorStdOut -- Sendet Syntaxfehler, die das Starten eines Scripts verhindert haben, zur Standardausgabe (stdout), anstatt ein Dialogfenster anzuzeigen. Siehe <a href="commands/_ErrorStdOut.htm">#ErrorStdOut</a> für weitere Details.<br>
-/Debug -- <span class="ver">[AHK_L 11+]:</span> Verbindet sich mit einem Debugger-Client. Für weitere Details, siehe <a href="#idebug">Interaktives Debuggen</a>.<br>
-<a name="CPn"></a>/CP<i>n</i> -- <span class="ver">[AHK_L 51+]:</span> Überschreibt den Standard-Zeichensatz, der zum Lesen der Script-Dateien verwendet wird. Weitere Details findet man in "<a href="#cp">Zeichensatz einer Script-Datei</a>".</p>
-<p><a name="defaultfile"></a><strong>Script-Dateiname</strong>: Dieser Parameter kann weggelassen werden, falls keine <em>Script-Parameter</em> vorhanden sind. Ist dieser Parameter nicht vorhanden, wird das Programm eine Datei auf einer der folgenden Standorte ausführen (oder bei Nachfrage erstellen):</p>
-<p><span class="ver">[AHK_L 51+]:</span> <code>%AhkExeDir%\%AhkExeName%.ahk</code> oder <code><a href="Variables.htm#MyDocuments">%A_MyDocuments%</a>\%AhkExeName%.ahk</code>, bei denen <em>%AhkExeDir%</em> und <em>%AhkExeName%</em> mit dem Verzeichnis und Dateinamen der ausführbaren Datei ohne ".exe" ersetzt wird, die zum Ausführen des Scripts benötigt werden.</p>
-<p><span class="ver">[Frühere Versionen]:</span> <code>AutoHotkey.ini</code> (im aktuellen Arbeitsverzeichnis) oder <code><a href="Variables.htm#MyDocuments">%A_MyDocuments%</a>\AutoHotkey.ahk</code>.</p>
+<p><strong>Optionen</strong> kann die folgenden Begriffe enthalten (oder leer bleiben):</p>
+<table class="info">
+  <tr><th>Option</th><th>Bedeutung</th></tr>
+  <tr id="SlashF">
+    <td>/f oder /force</td>
+    <td>Script bedingungslos starten und Warnmeldungen überspringen.</td>
+  </tr>
+  <tr id="SlashR">
+    <td>/r oder /restart</td>
+    <td>Gibt an, dass das Script neu gestartet werden soll (das auch intern vom <a href="commands/Reload.htm">Reload</a>-Befehl verwendet wird).</td>
+  </tr>
+  <tr id="ErrorStdOut">
+    <td>/ErrorStdOut</td>
+    <td>Sendet alle Syntaxfehler, die den Start eines Scripts verhindern, zur Standardfehlerausgabe (stderr), anstatt ein Dialogfenster anzuzeigen. Siehe <a href="commands/_ErrorStdOut.htm">#ErrorStdOut</a> für weitere Details. Dies kann mit /iLib kombiniert werden, um das Script auf seine Gültigkeit zu überprüfen, ohne es starten zu müssen.</td>
+  </tr>
+  <tr><th></th><th>Nicht von kompilierten Scripts unterstützt:</th></tr>
+  <tr id="SlashDebug">
+    <td>/Debug</td>
+    <td><span class="ver">[AHK_L 11+]:</span> Verbindet sich mit einem Debugger-Client. Für weitere Details, siehe <a href="#idebug">Interaktives Debuggen</a>.</td>
+  </tr>
+  <tr id="CPn">
+    <td>/CP<i>n</i></td>
+    <td><span class="ver">[AHK_L 51+]:</span> Überschreibt den Standard-Zeichensatz, der zum Lesen der Script-Dateien verwendet wird. Weitere Details findet man in "<a href="#cp">Zeichensatz einer Script-Datei</a>".</td>
+  </tr>
+  <tr>
+    <td>/iLib <em>"AusgabeDatei"</em></td>
+    <td>
+      <p><span class="ver">[v1.0.47+]:</span> AutoHotkey lädt das Sript, aber startet es nicht. Für jedes Script, das mithilfe des <a href="Functions.htm#lib">Library-Mechanismus</a> eingefügt wurde, werden zwei Zeilen in die Datei "<em>AusgabeDatei</em>" geschrieben. Diese Zeilen werden im folgenden Format geschrieben - dabei ist <em>LibVerz</em> der vollständige Pfad des Library-Ordners und <em>LibDatei</em> der Dateiname der Library:</p>
+<pre>#Include LibVerz\
+#IncludeAgain LibVerz\LibDatei.ahk</pre>
+      <p>Wenn die Ausgabedatei bereits existiert, wird sie überschrieben. <em>AusgabeDatei</em> kann <code>*</code> sein, um die Ausgabe in die Standardausgabe (stdout) zu schreiben.</p>
+      <p>Enthält das Script Syntaxfehler, kann die Ausgabedatei leer sein. Der Exitcode des Prozesses kann verwendet werden, um diesen Zustand zu erkennen; bei einem Syntaxfehler ist der Exitcode eine 2. Mit der /ErrorStdOut-Option kann die Fehlermeldung unterdrückt oder abgefangen werden.</p>
+    </td>
+  </tr>
+</table>
+
+<p><a name="defaultfile"></a><strong>Script-Dateiname</strong>: Dieser Parameter kann weggelassen werden, falls keine <em>Script-Parameter</em> vorhanden sind. Fehlt dieser Parameter (z. B. wenn man AutoHotkey direkt über das Startmenü startet), wird das Programm nach einer Scriptdatei namens <code><i>AutoHotkey</i>.ahk</code> suchen, und zwar in den folgenden Standorten von oben nach unten:</p>
+<ul>
+  <li>Das Verzeichnis, das die <a href="Variables.htm#AhkPath">ausführbare AutoHotkey-Datei</a> enthält.</li>
+  <li>Der Ordner "<a href="Variables.htm#MyDocuments">Dokumente</a>" des aktuellen Benutzers.</li>
+</ul>
+<p>Der Dateiname <code><i>AutoHotkey</i>.ahk</code> ist abhängig vom Namen der ausführbaren Datei, die zum Starten des Scripts verwendet wurde. Wenn du beispielsweise AutoHotkey.exe in MeinScript.exe umbenennst, versucht das Programm <code>MeinScript.ahk</code> zu finden. Startest du AutoHotkeyU32.exe ohne Parameter, sucht das Programm nach AutoHotkeyU32.ahk.</p>
+<p>Hinweis: In den Versionen vor <a href="AHKL_ChangeLog.htm#L51">Revision 51</a> suchte das Programm nach AutoHotkey.ini im Arbeitsverzeichnis, oder nach AutoHotkey.ahk in "Eigene Dokumente".</p>
 <p><span class="ver">[v1.1.17+]:</span> Verwende ein Sternchen (*) als Dateiname, um den Script-Text aus der Standardeingabe (stdin) zu lesen. Siehe als Beispiel <a href="commands/Run.htm#ExecScript">ExecScript()</a>.</p>
 <p><strong>Script-Parameter</strong>: Ein oder mehrere Strings, getrennt durch Leerzeichen, die an das Script übergeben werden sollen. Jeder Parameter, der Leerzeichen enthält, sollte in Anführungszeichen gesetzt werden. Soll ein Anführungszeichen übergeben werden, muss ein literaler umgekehrter Schrägstrich davor gesetzt werden (\"). Daraus folgt, dass jeder nachfolgende Schrägstrich in einem zitierten Parameter (wie "C:\Meine Dokumente<span class="red">\"</span>) als literales Anführungszeichen behandelt wird (das heißt, dass das Script den String C:\Meine Dokumente<span class="red">"</span> erhalten wird). Um solche Anführungszeichen zu entfernen, verwende <code><a href="commands/StringReplace.htm">StringReplace, 1, 1, <span class="red">"</span>,, All</a></code>.</p>
 <p>Das Script sieht eingehende Parameter als <a href="Variables.htm">Variablen</a> %1%, %2% und so weiter. Darüber hinaus enthält %0% die Anzahl an Parametern, die übergeben worden sind (0, wenn keine). Allerdings können diese Variablen nicht direkt in einem Ausdruck verwiesen werden, weil sie sonst als Zahlen anstatt als Variablen interpretiert werden. Das folgende Beispiel beendet das Script, falls zu wenig Parameter übergeben wurden:</p>
@@ -268,6 +300,7 @@ IfWinExist %Scriptpfad% ahk_class AutoHotkey
 <p><strong>Hinweis</strong>: Installer.ahk muss mit Administratorrechten ausgeführt werden, um richtig funktionieren zu können.</p>
 <p>In den neueren Versionen des Installers befindet sich an der unteren rechten Ecke ein Link, mit dem man die Setup-Dateien ohne Installation extrahieren kann. Ist diese Funktion vorhanden, kann man den Parameter <code>/E</code> angeben, um sie über die Kommandozeile aufrufen zu können. Zum Beispiel:</p>
 <pre>AutoHotkey110903_Install.exe /D=F:\AutoHotkey /E</pre>
+<p>Im automatischen Install/Uninstall-Modus werden laufende Script automatisch geschlossen, wo immer es notwendig ist. Verwende die <code>/R</code>-Option (benötigt v1.1.19.02+), um diese Scripts automatisch neu zu laden, unter Verwendung der EXE, mit der sie gerade laufen, <strong>ohne</strong> Befehlszeilenparameter. Diese Option wird nicht unterstützt, wenn man Installer.ahk zum Ändern der Einstellungen verwendet.</p>
 
 <h2>Script-Beispiele</h2>
 <p>Auf <a href="scripts/">dieser Seite</a> kann man einige nützliche Scripts finden.</p>

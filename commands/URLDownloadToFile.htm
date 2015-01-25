@@ -6,8 +6,6 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<script src="../static/jquery.js" type="text/javascript"></script>
-<script src="../static/tree.jquery.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
@@ -53,11 +51,42 @@ UrlDownloadToFile, ftp://benutzer:passwort@beispiel.com/Mein Verzeichnis, C:\Ver
 UrlDownloadToFile, http://someorg.org/archive.zip, C:\SomeOrg-Archiv.zip</pre>
 <pre id="WHR" class="NoIndent"><em>; Beispiel: Text in eine Variable herunterladen:</em>
 whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-whr.Open("GET", "http://ahkscript.org/download/1.1/version.txt")
+whr.Open("GET", "http://ahkscript.org/download/1.1/version.txt", true)
 whr.Send()
+<em>; Durch das 'true' oben und dem Aufruf unten bleibt das Script ansprechbar.</em>
+whr.WaitForResponse()
 version := whr.ResponseText
 MsgBox % version
 </pre>
+<pre id="XHR" class="NoIndent"><em>; Beispiel: Einen asynchronen HTTP-Request machen.</em>
+
+req := ComObjCreate("Msxml2.XMLHTTP")
+<em>; Öffnet einen Request mit aktivierter async.</em>
+req.open("GET", "http://ahkscript.org/download/1.1/version.txt", true)
+<em>; Setzt unsere Callback-Funktion (v1.1.17+).</em>
+req.onreadystatechange := Func("Ready")
+<em>; Sendet den Request.  Ready() wird aufgerufen, wenn es fertig ist.</em>
+req.send()
+<em>/*
+; Wenn du warten willst, brauchst du kein onreadystatechange.
+; Durch Setzen von async=true und Warten auf diese Weise bleibt das Script
+; ansprechbar, während der Download läuft, dagegen macht async=false
+; das Script unansprechbar.
+while req.readyState != 4
+    sleep 100
+*/</em>
+#Persistent
+
+Ready() {
+    global req
+    if (req.readyState != 4)  ; Noch nicht fertig.
+        return
+    if (req.status == 200 || req.status == 304) ; OK.
+        MsgBox % "Neueste AutoHotkey-Version ist: " req.responseText
+    else
+        MsgBox 16,, % "Status " req.status
+    ExitApp
+}</pre>
 
 </body>
 </html>

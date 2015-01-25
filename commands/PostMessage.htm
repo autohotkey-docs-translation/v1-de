@@ -6,8 +6,6 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<script src="../static/jquery.js" type="text/javascript"></script>
-<script src="../static/tree.jquery.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
@@ -56,12 +54,16 @@ SendMessage, Nachricht [, wParam, lParam, Steuerelement, Fenstertitel, Fensterte
 <h3>ErrorLevel</h3>
 <p><span class="ver">[v1.1.04+]</span> Diese Befehle sind in der Lage, bei Misserfolg eine Ausnahme auszulösen. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p>PostMessage: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn es ein Problem gab - z. B. wenn das Zielfenster oder Steuerelement nicht vorhanden ist. Ansonsten wird es auf 0 gesetzt.</p>
-<p>SendMessage: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf FAIL gesetzt, wenn es ein Problem gab oder der Befehl die Zeit überschritten hat. Ansonsten wird es auf das numerische Ergebnis der Nachricht gesetzt, das manchmal eine "Antwort" sein könnte, abhängig von der Art der Nachricht und ihrem Zielfenster. Dieses Ergebnis ist ein Integer zwischen 0 und 4294967295. Wenn das Ergebnis als vorzeichenbehafteter Integer vorgesehen ist, kann eine negative Zahl wie folgt offenbart werden:</p>
-<pre>NachrAntwort := ErrorLevel &gt; 0x7FFFFFFF ? -(~ErrorLevel) - 1 : ErrorLevel</pre>
+<p>SendMessage: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf FAIL gesetzt, wenn es ein Problem gab oder der Befehl die Zeit überschritten hat. Ansonsten wird es auf das numerische Ergebnis der Nachricht gesetzt, das manchmal eine "Antwort" sein könnte, abhängig von der Art der Nachricht und ihrem Zielfenster.</p>
+<p>Der mögliche Wertebereich ist abhängig davon, welches Zielfenster verwendet wird und welche Version von AutoHotkey läuft. Bei einer 32-Bit-Version von AutoHotkey, oder wenn das Zielfenster 32-Bit ist, wird das Ergebnis ein vorzeichenloser 32-Bit-Integer zwischen 0 und 4294967295 sein. Bei einer 64-Bit-Version von AutoHotkey mit einem 64-Bit-Fenster wird das Ergebnis ein vorzeichenbehafteter 64-Bit-Integer zwischen -9223372036854775808 und 9223372036854775807 sein.</p>
+<p>Wenn das Ergebnis ein vorzeichenbehafteter 32-Bit-Integer sein soll (ein Wert von -2147483648 bis 2147483648), kann es wie folgt auf 32-Bit gekürzt und in ein vorzeichenbehafteten Wert umgewandelt werden:</p>
+<pre>NachrAntwort := ErrorLevel &lt;&lt; 32 &gt;&gt; 32</pre>
+<p>Diese Umwandlung könnte auch in der 64-Bit-Version von AutoHotkey notwendig sein, weil die Ergebnisse von 32-Bit-Fenstern mit Nullen erweitert sind. Zum Beispiel würde ein Ergebnis von -1, zurückgegeben von einem 32-Bit-Fenster, in einer beliebigen AutoHotkey-Version als 0xFFFFFFFF  gesehen werden, aber ein Ergebnis von -1, zurückgegeben von einem 64-Bit-Fenster, in der 32-Bit-Version als 0xFFFFFFFF und in der 64-Bit-Version als -1.</p>
+
 <h3>Bemerkungen</h3>
 <p>Sei vorsichtig, wenn du solche Befehle verwendest - das Senden einer Nachricht zum falschen Fenster (oder Senden einer ungültigen Nachricht) kann dazu führen, dass die Zielanwendung sich falsch verhält oder abstürzt. Die meisten Anwendungen sind nicht darauf abgestimmt, bestimmte Arten von Nachrichten aus externen Quellen zu erwarten.</p>
 <p>PostMessage setzt die Nachricht in die Nachrichtenwarteschlange des Zielfensters. Dieser Befehl wartet nicht auf eine Bestätigung oder Antwort. SendMessage hingegen wartet, bis das Zielfenster die Nachricht verarbeitet hat oder bis das Zeitlimit überschritten wurde.</p>
-<p>Die Parameter <em>Nachricht</em>, <em>wParam</em> und <em>lParam</em> sollten alle ein Integer zwischen -2147483648 und 4294967295 (0xFFFFFFFF) sein. Ein Präfix von 0x kennzeichnet einen hexadezimalen Wert, wie bei allen Integer-Werten in AutoHotkey. Zum Beispiel wäre 0xFF das gleiche wie 255.</p>
+<p>Die <em>wParam</em>- und <em>lParam</em>-Parameter sollten Integer sein. Wenn AutoHotkey oder das Zielfenster 32-Bit ist, werden nur die unteren 32 Bits verwendet; also sollte der Wert zwischen -2147483648 und 4294967295 (0xFFFFFFFF) liegen. Wenn sowohl AutoHotkey als auch das Zielfenster 64-Bit sind, kann jeder Integer, <a href="../Variables.htm#cap">der von AutoHotkey unterstützt wird</a>, verwendet werden. Ein Präfix von 0x kennzeichnet einen hexadezimalen Wert, wie bei allen Integer-Werten in AutoHotkey. Zum Beispiel wäre 0xFF das gleiche wie 255.</p>
 <p>Es ist möglich, einen String via <em>wParam</em> oder <em>lParam</em> zu senden, indem man die Adresse einer Variable angibt. Das folgende Beispiel verwendet den <a href="../Variables.htm#amp">Adressoperator (&amp;)</a>, um dies zu tun:</p>
 <pre>SendMessage, 0xC, 0, <strong>&amp;MeineVar</strong>, ClassNN, Fenstertitel  <em>; 0XC ist WM_SETTEXT</em></pre>
 <p>Seit v1.0.43.06 wird ein String in MeineVar korrekt erkannt, der vom Empfänger der Nachricht eingefügt wurde, ohne dass zusätzliche Schritte notwendig sind. Dies funktioniert allerdings nur, wenn das erste Zeichen des Parameters ein Und-Zeichen (&amp;) ist; zum Beispiel würde <code>5+&amp;MeineVar</code> nicht funktionieren, sondern nur <code>&amp;MeineVar</code> oder <code>&amp;MeineVar+5</code>.</p>
