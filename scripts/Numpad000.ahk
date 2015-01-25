@@ -1,61 +1,61 @@
-; Numpad-Taste 000
+; Numpad 000 Key
 ; http://www.autohotkey.com
-; Dieses Beispiel-Script wandelt die 000-Sondertaste
-; bei einigen Ziffernblöcken in eine Gleichheitstaste.  Diese Aktion kann geändert werden,
-; wenn die Zeile "Send, =" je nach Bedarf mit einer anderen Zeile ersetzt wird.
+; This example script makes the special 000 key that appears on certain
+; keypads into an equals key.  You can change the action by replacing the
+; “Send, =” line with line(s) of your choice.
 
-#MaxThreadsPerHotkey 5  ; Erlaubt mehrere Threads für diesen Hotkey.
+#MaxThreadsPerHotkey 5  ; Allow multiple threads for this hotkey.
 $Numpad0::
 #MaxThreadsPerHotkey 1
-; Oben: Mit einem $ wird der Hook erzwungen, wodurch eine
-; Endlosschleife verhindert wird, da diese Subroutine selbst Numpad0 sendet,
-; ansonsten würde sie sich selbst rekursiv aufrufen.
-SetBatchLines, 100 ; Damit wird das Script ein wenig schneller ausgeführt.
-DelayBetweenKeys = 30 ; Diesen Wert anpassen, falls es nicht funktionieren sollte.
+; Above: Use the $ to force the hook to be used, which prevents an
+; infinite loop since this subroutine itself sends Numpad0, which
+; would otherwise result in a recursive call to itself.
+SetBatchLines, 100 ; Make it run a little faster in this case.
+DelayBetweenKeys = 30 ; Adjust this value if it doesn't work.
 if A_PriorHotkey = %A_ThisHotkey%
 {
-    if A_TimeSincePriorHotkey < %DelayBetweenKeys%
-    {
-        if Numpad0Count =
-            Numpad0Count = 2 ; d.h. dieser Tastendruck plus vorherigen Tastendruck.
-        else if Numpad0Count = 0
-            Numpad0Count = 2
-        else
-        {
-            ; Da wir hier sind, muss Numpad0Count wie bei
-            ; vorherigen Aufrufen eine 2 sein, das heißt, dass das hier
-            ; der dritte Tastendruck ist. Daher sollte die Hotkey-Sequenz
-            ; ausgeführt werden:
-            Numpad0Count = 0
-            Send, = ; ******* Die Aktion für die 000-Taste
-        }
-        ; In allen obigen Fällen kehren wir ohne weitere Aktion zurück:
-        CalledReentrantly = y
-        return
-    }
+	if A_TimeSincePriorHotkey < %DelayBetweenKeys%
+	{
+		if Numpad0Count =
+			Numpad0Count = 2 ; i.e. This one plus the prior one.
+		else if Numpad0Count = 0
+			Numpad0Count = 2
+		else
+		{
+			; Since we're here, Numpad0Count must be 2 as set by
+			; prior calls, which means this is the third time the
+			; the key has been pressed. Thus, the hotkey sequence
+			; should fire:
+			Numpad0Count = 0
+			Send, = ; ******* This is the action for the 000 key
+		}
+		; In all the above cases, we return without further action:
+		CalledReentrantly = y
+		return
+	}
 }
-; Ansonsten ist dieses Numpad0-Ereignis das erste in der Reihe
-; oder wurde zu lange nach dem ersten ausgeführt (z. B. hält
-; der Benutzer die Numpad0-Taste automatisch wiederholend gedrückt,
-; dass wir erlauben wollen).  Deshalb werden wir nach einer kurzen Verzögerung (während ein
-; anderes Numpad0-Hotkey-Ereignis diese Subroutine
-; wiederholend aufruft), die Taste senden, falls kein weiterer Aufruf
-; erfolgt:
+; Otherwise, this Numpad0 event is either the first in the series
+; or it happened too long after the first one (e.g. perhaps the
+; user is holding down the Numpad0 key to auto-repeat it, which
+; we want to allow).  Therefore, after a short delay -- during
+; which another Numpad0 hotkey event may re-entrantly call this
+; subroutine -- we'll send the key on through if no reentrant
+; calls occurred:
 Numpad0Count = 0
 CalledReentrantly = n
-; Während dieser Ruhephase kann diese Subroutine wiederholend
-; aufgerufen werden (d. h. ein simultaner "Thread", der parallel zum jetzigen
-; Aufruf ausgeführt wird):
+; During this sleep, this subroutine may be reentrantly called
+; (i.e. a simultaneous "thread" which runs in parallel to the
+; call we're in now):
 Sleep, %DelayBetweenKeys%
-if CalledReentrantly = y ; Ein anderer "Thread" hat diesen Wert geändert.
+if CalledReentrantly = y ; Another "thread" changed the value.
 {
-    ; Da es wiederholend aufgerufen wurde, war dieses Tastenereignis das
-    ; erste in der Sequenz, daher sollte es unterdrückt werden (im System versteckt werden):
-    CalledReentrantly = n
-    return
+	; Since it was called reentrantly, this key event was the first in
+	; the sequence so should be suppressed (hidden from the system):
+	CalledReentrantly = n
+	return
 }
-; Ansonsten gehört es nicht zur Sequenz, daher werden wir es normal senden.
-; Das heißt, dass die *echte* Numpad0-Taste gedrückt wurde, daher wollen
-; wir den normalen Effekt:
+; Otherwise it's not part of the sequence so we send it through normally.
+; In other words, the *real* Numpad0 key has been pressed, so we want it
+; to have its normal effect:
 Send, {Numpad0}
 return

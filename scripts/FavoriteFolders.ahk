@@ -1,186 +1,186 @@
-; Einfacher Zugriff auf Lieblingsordner -- von Savage
+; Easy Access to Favorite Folders -- by Savage
 ; http://www.autohotkey.com
-; Wenn die mittlere Maustaste gedrückt wird, während bestimmte
-; Fenstertypen aktiv sind, dann zeigt dieses Script ein Menü mit den Lieblingsordnern an.
-;   Nachdem ein Ordner ausgewählt wurde, wechselt das Script
-; wechselt das Script innerhalb des aktiven Fensters sofort auf diesen Ordner.  Die folgenden
-; Fenstertypen werden unterstützt: 1) Standard-Dialogfenster zum Öffnen oder Speichern von Dateien;
-; 2) Explorer-Fenster; 3) Konsolenfenster (Eingabeaufforderung).
-; Das Menü kann optional auch für nicht unterstützte Fenstertypen angezeigt
-; werden - in diesem Fall wird der ausgewählte Ordner in einem neuen
-; Explorer-Fenster geöffnet.
+; When you click the middle mouse button while certain types of
+; windows are active, this script displays a menu of your favorite
+; folders.  Upon selecting a favorite, the script will instantly
+; switch to that folder within the active window.  The following
+; window types are supported: 1) Standard file-open or file-save
+; dialogs; 2) Explorer windows; 3) Console (command prompt) windows.
+; The menu can also be optionally shown for unsupported window
+; types, in which case the chosen favorite will be opened as a new
+; Explorer window.
 
-; Hinweis: Wenn "Ansicht > Symbolleisten > Adressleiste" im Fenster-Explorer deaktiviert ist,
-; dann wird das Menü nicht angezeigt, wenn der unten ausgewählte Hotkey
-; ein Tilde-Zeichen hat.  Wenn ein Tilde-Zeichen vorhanden ist, dann wird das Menü angezeigt,
-; aber der Ordner bleibt wird in einem neuen Explorer-Fenster geöffnet, anstatt
-; das aktive Fenster auf diesen Ordner zu wechseln.
+; Note: In Windows Explorer, if "View > Toolbars > Address Bar" is
+; not enabled, the menu will not be shown if the hotkey chosen below
+; has a tilde.  If it does have a tilde, the menu will be shown
+; but the favorite will be opened in a new Explorer window rather
+; than switching the active Explorer window to that folder.
 
-; KONFIGURATION: HOTKEY AUSWÄHLEN
-; Wenn die aktuelle Maus mehr als 3 Tasten hat, dann kann
-; XButton1 (die 4.) oder XButton2 (die 5.) anstelle von MButton ausprobiert werden.
-; Modifizierte Maustasten (wie ^MButton) oder
-; ein Tastatur-Hotkey können auch verwendet werden.  Im Falle von MButton sollte das Tilde-Zeichen (~) als Präfix
-; verwendet werden, damit die normale Funktionalität von MButton nicht verloren geht,
-; sobald andere Fenstertypen wie ein Browser angeklickt werden.  Das Vorhandensein
-; eines Tilde-Zeichens hindert das Script daran, das Menü für
-; nicht unterstützte Fenstertypen anzuzeigen.  Das heißt, wenn kein Tilde-Zeichen vorhanden ist,
-; zeigt der Hotkey das Menü immer an; und nach dem Auswählen
-; eines Lieblingsordners, während ein nicht unterstützter Fenstertyp aktiv ist,
-; wird ein neues Explorer-Fenster geöffnet, um den Inhalt des Ordners
-; anzuzeigen.
+; CONFIG: CHOOSE YOUR HOTKEY
+; If your mouse has more than 3 buttons, you could try using
+; XButton1 (the 4th) or XButton2 (the 5th) instead of MButton.
+; You could also use a modified mouse button (such as ^MButton) or
+; a keyboard hotkey.  In the case of MButton, the tilde (~) prefix
+; is used so that MButton's normal functionality is not lost when
+; you click in other window types, such as a browser.  The presence
+; of a tilde tells the script to avoid showing the menu for
+; unsupported window types.  In other words, if there is no tilde,
+; the hotkey will always display the menu; and upon selecting a
+; favorite while an unsupported window type is active, a new
+; Explorer window will be opened to display the contents of that
+; folder.
 f_Hotkey = ~MButton
 
-; KONFIGURATION: LIEBLINGSORDNER AUSWÄHLEN
-; Aktualisiert den unteren Sonderkommentarbereich, um die Lieblingsordner
-; auszuwählen.  Bestimmt zuerst den Namen des Menüpunkts, gefolgt von einem
-; Semikolon und dem Namen des aktuellen Pfads vom Lieblingsordner.
-; Verwendet eine leere Zeile für eine Trennlinie.
+; CONFIG: CHOOSE YOUR FAVORITES
+; Update the special commented section below to list your favorite
+; folders.  Specify the name of the menu item first, followed by a
+; semicolon, followed by the name of the actual path of the favorite.
+; Use a blank line to create a separator line.
 
 /*
-MENÜELEMENTE <-- Diesen String nicht ändern.
+ITEMS IN FAVORITES MENU <-- Do not change this string.
 Desktop      ; %A_Desktop%
-Favoriten    ; %A_Desktop%\..\Favorites
-Eigene Dokumente ; %A_MyDocuments%
+Favorites    ; %A_Desktop%\..\Favorites
+My Documents ; %A_MyDocuments%
 
-Programme; %A_ProgramFiles%
+Program Files; %A_ProgramFiles%
 */
 
 
-; ENDE DER KONFIGURATION
-; Hier danach keine Änderungen durchführen, es sei denn, die allgemeine
-; Funktionalität des Scripts soll geändert werden.
+; END OF CONFIGURATION SECTION
+; Do not make changes below this point unless you want to change
+; the basic functionality of the script.
 
-#SingleInstance  ; Notwendig, da der Hotkey dynamisch erstellt wird.
+#SingleInstance  ; Needed since the hotkey is dynamically created.
 
 Hotkey, %f_Hotkey%, f_DisplayMenu
 StringLeft, f_HotkeyFirstChar, f_Hotkey, 1
-if f_HotkeyFirstChar = ~  ; Menü nur für bestimmte Fenstertypen anzeigen.
-    f_AlwaysShowMenu = n
+if f_HotkeyFirstChar = ~  ; Show menu only for certain window types.
+	f_AlwaysShowMenu = n
 else
-    f_AlwaysShowMenu = y
+	f_AlwaysShowMenu = y
 
-; Wird verwendet, um zuverlässig festzustellen, ob das Script kompiliert ist:
+; Used to reliably determine whether script is compiled:
 SplitPath, A_ScriptName,,, f_FileExt
-if f_FileExt = Exe  ; Menüpunkte von einer externen Datei lesen.
-    f_FavoritesFile = %A_ScriptDir%\Favorites.ini
-else  ; Menüpunkte direkt von diesem Script lesen.
-    f_FavoritesFile = %A_ScriptFullPath%
+if f_FileExt = Exe  ; Read the menu items from an external file.
+	f_FavoritesFile = %A_ScriptDir%\Favorites.ini
+else  ; Read the menu items directly from this script file.
+	f_FavoritesFile = %A_ScriptFullPath%
 
-;----Konfigurationsdatei lesen.
+;----Read the configuration file.
 f_AtStartingPos = n
 f_MenuItemCount = 0
 Loop, Read, %f_FavoritesFile%
 {
-    if f_FileExt <> Exe
-    {
-        ; Da die Menüpunkte direkt von diesem Script gelesen werden,
-        ; werden alle Zeilen übersprungen, bis die Startzeile
-        ; erreicht wird.
-        if f_AtStartingPos = n
-        {
-            IfInString, A_LoopReadLine, MENÜELEMENTE
-                f_AtStartingPos = y
-            continue  ; Neuen Schleifendurchlauf starten.
-        }
-        ; Ansonsten kennzeichnet das schließende Kommentarsymbol das Ende der Liste.
-        if A_LoopReadLine = */
-            break  ; Schleife unterbrechen
-    }
-    ; Menütrennlinien müssen auch mitgezählt werden, damit die Kompatibilität
-    ; mit A_ThisMenuItemPos gewährleistet wird:
-    f_MenuItemCount++
-    if A_LoopReadLine =  ; Leer kennzeichnet eine Trennlinie.
-        Menu, Favorites, Add
-    else
-    {
-        StringSplit, f_line, A_LoopReadLine, `;
-        f_line1 = %f_line1%  ; Führende und nachfolgende Leerzeichen entfernen.
-        f_line2 = %f_line2%  ; Führende und nachfolgende Leerzeichen entfernen.
-        ; Referenzen auf Variablen innerhalb jeden Feldes auflösen, und
-        ; ein neues Array-Element mit dem Ordnerpfad erstellen:
-        Transform, f_path%f_MenuItemCount%, deref, %f_line2%
-        Transform, f_line1, deref, %f_line1%
-        Menu, Favorites, Add, %f_line1%, f_OpenFavorite
-    }
+	if f_FileExt <> Exe
+	{
+		; Since the menu items are being read directly from this
+		; script, skip over all lines until the starting line is
+		; arrived at.
+		if f_AtStartingPos = n
+		{
+			IfInString, A_LoopReadLine, ITEMS IN FAVORITES MENU
+				f_AtStartingPos = y
+			continue  ; Start a new loop iteration.
+		}
+		; Otherwise, the closing comment symbol marks the end of the list.
+		if A_LoopReadLine = */
+			break  ; terminate the loop
+	}
+	; Menu separator lines must also be counted to be compatible
+	; with A_ThisMenuItemPos:
+	f_MenuItemCount++
+	if A_LoopReadLine =  ; Blank indicates a separator line.
+		Menu, Favorites, Add
+	else
+	{
+		StringSplit, f_line, A_LoopReadLine, `;
+		f_line1 = %f_line1%  ; Trim leading and trailing spaces.
+		f_line2 = %f_line2%  ; Trim leading and trailing spaces.
+		; Resolve any references to variables within either field, and
+		; create a new array element containing the path of this favorite:
+		Transform, f_path%f_MenuItemCount%, deref, %f_line2%
+		Transform, f_line1, deref, %f_line1%
+		Menu, Favorites, Add, %f_line1%, f_OpenFavorite
+	}
 }
-return  ;----Ende des automatischen Ausführungsbereichs.
+return  ;----End of auto-execute section.
 
 
-;----Ausgewählten Lieblingsordner öffnen
+;----Open the selected favorite
 f_OpenFavorite:
-; Array-Element abfangen, das dem ausgewählten Menüpunkt entspricht:
+; Fetch the array element that corresponds to the selected menu item:
 StringTrimLeft, f_path, f_path%A_ThisMenuItemPos%, 0
 if f_path =
-    return
-if f_class = #32770    ; Es ist ein Dialogfenster.
+	return
+if f_class = #32770    ; It's a dialog.
 {
-    if f_Edit1Pos <>   ; Und hat ein Edit1-Steuerelement.
-    {
-        ; Aktiviert das Fenster, sodass nachfolgende Klicks auch außerhalb des Dialogfensters
-        ; funktionieren, falls der Benutzer die mittlere Maustaste drückt:
-        WinActivate ahk_id %f_window_id%
-        ; Ermittelt jeden Dateinamen, der bereits im Feld vorhanden ist,
-        ; sodass er wiederhergestellt werden kann, nachdem zum neuen Ordner gewechselt wurde:
-        ControlGetText, f_text, Edit1, ahk_id %f_window_id%
-        ControlSetText, Edit1, %f_path%, ahk_id %f_window_id%
-        ControlSend, Edit1, {Enter}, ahk_id %f_window_id%
-        Sleep, 100  ; Bei einigen Dialogfenstern oder in einigen Fällen wird zusätzliche Zeit benötigt.
-        ControlSetText, Edit1, %f_text%, ahk_id %f_window_id%
-        return
-    }
-    ; dann springe ans Ende der Subroutine, um die Standardaktion auszuführen.
+	if f_Edit1Pos <>   ; And it has an Edit1 control.
+	{
+		; Activate the window so that if the user is middle-clicking
+		; outside the dialog, subsequent clicks will also work:
+		WinActivate ahk_id %f_window_id%
+		; Retrieve any filename that might already be in the field so
+		; that it can be restored after the switch to the new folder:
+		ControlGetText, f_text, Edit1, ahk_id %f_window_id%
+		ControlSetText, Edit1, %f_path%, ahk_id %f_window_id%
+		ControlSend, Edit1, {Enter}, ahk_id %f_window_id%
+		Sleep, 100  ; It needs extra time on some dialogs or in some cases.
+		ControlSetText, Edit1, %f_text%, ahk_id %f_window_id%
+		return
+	}
+	; else fall through to the bottom of the subroutine to take standard action.
 }
-else if f_class in ExploreWClass,CabinetWClass  ; Ordner im Explorer wechseln.
+else if f_class in ExploreWClass,CabinetWClass  ; In Explorer, switch folders.
 {
-    if f_Edit1Pos <>   ; Und hat ein Edit1-Steuerelement.
-    {
-        ControlSetText, Edit1, %f_path%, ahk_id %f_window_id%
-        ; Tekl hat Folgendes berichtet: "Wenn ich auf den Ordner L:\folder wechseln will,
-        ; dann zeigt die Adressleiste http://www.L:\folder.com. Als Übergangslösung
-        ; habe ich {right} vor {Enter} hinzugefügt":
-        ControlSend, Edit1, {Right}{Enter}, ahk_id %f_window_id%
-        return
-    }
-    ; dann springe ans Ende der Subroutine, um die Standardaktion auszuführen.
+	if f_Edit1Pos <>   ; And it has an Edit1 control.
+	{
+		ControlSetText, Edit1, %f_path%, ahk_id %f_window_id%
+		; Tekl reported the following: "If I want to change to Folder L:\folder
+		; then the addressbar shows http://www.L:\folder.com. To solve this,
+		; I added a {right} before {Enter}":
+		ControlSend, Edit1, {Right}{Enter}, ahk_id %f_window_id%
+		return
+	}
+	; else fall through to the bottom of the subroutine to take standard action.
 }
-else if f_class = ConsoleWindowClass ; CD im Konsolenfenster verwenden, um auf das Verzeichnis zu springen.
+else if f_class = ConsoleWindowClass ; In a console window, CD to that directory
 {
-    WinActivate, ahk_id %f_window_id% ; Weil es durch mclick manchmal deaktiviert wird.
-    SetKeyDelay, 0  ; ; Nur während des Hotkey-Threads wirksam.
-    IfInString, f_path, :  ; Es enthält einen Laufwerksbuchstaben
-    {
-        StringLeft, f_path_drive, f_path, 1
-        Send %f_path_drive%:{enter}
-    }
-    Send, cd %f_path%{Enter}
-    return
+	WinActivate, ahk_id %f_window_id% ; Because sometimes the mclick deactivates it.
+	SetKeyDelay, 0  ; This will be in effect only for the duration of this thread.
+	IfInString, f_path, :  ; It contains a drive letter
+	{
+		StringLeft, f_path_drive, f_path, 1
+		Send %f_path_drive%:{enter}
+	}
+	Send, cd %f_path%{Enter}
+	return
 }
-; Da oben keine Rückgabe erfolgt, gilt eins der folgenden Angaben:
-; 1) Es ist ein nicht unterstützter Fenstertyp, aber f_AlwaysShowMenu ist y (ja).
-; 2) Es ist ein unterstützter Fenstertyp, es fehlt jedoch ein Edit1-Steuerelement,
-;    um die benutzerdefinierte Aktion zu erleichtern, daher soll stattdessen die untere Standardaktion durchgeführt werden.
-Run, Explorer %f_path%  ; Könnte ohne Anführungszeichen mit mehr Systemen funktionieren.
+; Since the above didn't return, one of the following is true:
+; 1) It's an unsupported window type but f_AlwaysShowMenu is y (yes).
+; 2) It's a supported type but it lacks an Edit1 control to facilitate the custom
+;    action, so instead do the default action below.
+Run, Explorer %f_path%  ; Might work on more systems without double quotes.
 return
 
 
-;----Das Menü anzeigen
+;----Display the menu
 f_DisplayMenu:
-; Diese ersten paar Variablen werden hier bestimmt und von f_OpenFavorite verwendet:
+; These first few variables are set here and used by f_OpenFavorite:
 WinGet, f_window_id, ID, A
 WinGetClass, f_class, ahk_id %f_window_id%
-if f_class in #32770,ExploreWClass,CabinetWClass  ; Dialogfenster oder Explorer.
-    ControlGetPos, f_Edit1Pos,,,, Edit1, ahk_id %f_window_id%
-if f_AlwaysShowMenu = n  ; Das Menü sollte nur selektiv angezeigt werden.
+if f_class in #32770,ExploreWClass,CabinetWClass  ; Dialog or Explorer.
+	ControlGetPos, f_Edit1Pos,,,, Edit1, ahk_id %f_window_id%
+if f_AlwaysShowMenu = n  ; The menu should be shown only selectively.
 {
-    if f_class in #32770,ExploreWClass,CabinetWClass  ; Dialogfenster oder Explorer.
-    {
-        if f_Edit1Pos =  ; Das Steuerelement ist nicht vorhanden, daher das Menü nicht anzeigen
-            return
-    }
-    else if f_class <> ConsoleWindowClass
-        return ; Wenn anderer Fenstertyp, dann Menü nicht anzeigen.
+	if f_class in #32770,ExploreWClass,CabinetWClass  ; Dialog or Explorer.
+	{
+		if f_Edit1Pos =  ; The control doesn't exist, so don't display the menu
+			return
+	}
+	else if f_class <> ConsoleWindowClass
+		return ; Since it's some other window type, don't display menu.
 }
-; Ansonsten sollte das Menü für diesen Fenstertyp präsentiert werden:
+; Otherwise, the menu should be presented for this type of window:
 Menu, Favorites, show
 return

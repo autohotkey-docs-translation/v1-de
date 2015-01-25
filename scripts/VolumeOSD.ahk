@@ -1,69 +1,69 @@
-; Lautstärke-Bildschirmanzeige (OSD) -- von Rajat
+; Volume On-Screen-Display (OSD) -- by Rajat
 ; http://www.autohotkey.com
-; Dieses Script ermöglicht beliebige Hotkeys, die Gesamt- und/oder Wave-Lautstärke
-; zu erhöhen oder zu verringern.  Beide Lautstärken werden als Balkendiagramme
-; mit unterschiedlichen Farben angezeigt.
+; This script assigns hotkeys of your choice to raise and lower the
+; master and/or wave volume.  Both volumes are displayed as different
+; color bar graphs.
 
 ;_________________________________________________ 
-;_______Benutzereinstellungen_____________________________ 
+;_______User Settings_____________________________ 
 
-; Nur in diesem Bereich oder Hotkey-Bereich Änderungen durchführen!! 
+; Make customisation only in this area or hotkey area only!! 
 
-; Der Prozentwert, um wieviel die Lautstärke jedes Mal erhöht oder verringert wird:
+; The percentage by which to raise or lower the volume each time:
 vol_Step = 4
 
-; Wie lange die Balkendiagramme der Lautstärken angezeigt werden sollen:
+; How long to display the volume level bar graphs:
 vol_DisplayTime = 2000
 
-; Balkenfarbe der Gesamtlautstärke (siehe Hilfe-Datei, um präzisere
-; Farbtöne anzugeben):
+; Master Volume Bar color (see the help file to use more
+; precise shades):
 vol_CBM = Red
 
-; Balkenfarbe der Wave-Lautstärke
+; Wave Volume Bar color
 vol_CBW = Blue
 
-; Hintergrundfarbe
+; Background color
 vol_CW = Silver
 
-; Balkenposition auf dem Bildschirm.  Verwendet -1, um den Balken in dieser Abmessung zu zentrieren:
+; Bar's screen position.  Use -1 to center the bar in that dimension:
 vol_PosX = -1
 vol_PosY = -1
-vol_Width = 150  ; Balkenbreite
-vol_Thick = 12   ; Balkendicke
+vol_Width = 150  ; width of bar
+vol_Thick = 12   ; thickness of bar
 
-; Wenn die aktuelle Tastatur Multimedia-Tasten für die Lautstärke hat, dann
-; kannst du versuchen, die unteren Hotkeys so zu ändern, dass sie
-; Volume_Up, ^Volume_Up, Volume_Down und ^Volume_Down verwenden:
-HotKey, #Up, vol_MasterUp      ; Win+Pfeil nach oben
+; If your keyboard has multimedia buttons for Volume, you can
+; try changing the below hotkeys to use them by specifying
+; Volume_Up, ^Volume_Up, Volume_Down, and ^Volume_Down:
+HotKey, #Up, vol_MasterUp      ; Win+UpArrow
 HotKey, #Down, vol_MasterDown
-HotKey, +#Up, vol_WaveUp       ; Umschalt+Win+Pfeil nach oben
+HotKey, +#Up, vol_WaveUp       ; Shift+Win+UpArrow
 HotKey, +#Down, vol_WaveDown
 
 
-;___________________________________________
-;_____automatischer Ausführungsbereich_________ 
+;___________________________________________ 
+;_____Auto Execute Section__________________ 
 
-; HIER DANACH KEINE ÄNDERUNGEN DURCHFÜHREN (es sei denn, du weißt, was du tust).
+; DON'T CHANGE ANYTHING HERE (unless you know what you're doing).
 
 vol_BarOptionsMaster = 1:B ZH%vol_Thick% ZX0 ZY0 W%vol_Width% CB%vol_CBM% CW%vol_CW%
 vol_BarOptionsWave   = 2:B ZH%vol_Thick% ZX0 ZY0 W%vol_Width% CB%vol_CBW% CW%vol_CW%
 
-; Wenn die X-Position angegeben wurde, dann wird sie zu den Optionen hinzugefügt.
-; Ansonsten wird sie weggelassen, um den Balken horizontal zu zentrieren:
+; If the X position has been specified, add it to the options.
+; Otherwise, omit it to center the bar horizontally:
 if vol_PosX >= 0
 {
-    vol_BarOptionsMaster = %vol_BarOptionsMaster% X%vol_PosX%
-    vol_BarOptionsWave   = %vol_BarOptionsWave% X%vol_PosX%
+	vol_BarOptionsMaster = %vol_BarOptionsMaster% X%vol_PosX%
+	vol_BarOptionsWave   = %vol_BarOptionsWave% X%vol_PosX%
 }
 
-; Wenn die Y-Position angegeben wurde, dann wird sie zu den Optionen hinzugefügt.
-; Ansonsten wird sie weggelassen, um sie später zu berechnen:
+; If the Y position has been specified, add it to the options.
+; Otherwise, omit it to have it calculated later:
 if vol_PosY >= 0
 {
-    vol_BarOptionsMaster = %vol_BarOptionsMaster% Y%vol_PosY%
-    vol_PosY_wave = %vol_PosY%
-    vol_PosY_wave += %vol_Thick%
-    vol_BarOptionsWave = %vol_BarOptionsWave% Y%vol_PosY_wave%
+	vol_BarOptionsMaster = %vol_BarOptionsMaster% Y%vol_PosY%
+	vol_PosY_wave = %vol_PosY%
+	vol_PosY_wave += %vol_Thick%
+	vol_BarOptionsWave = %vol_BarOptionsWave% Y%vol_PosY_wave%
 }
 
 #SingleInstance
@@ -94,25 +94,25 @@ Gosub, vol_ShowBars
 return
 
 vol_ShowBars:
-; Um den Blinkeffekt zu unterdrücken, wird nur das Balkenfenster erstellt,
-; falls noch nicht vorhanden:
+; To prevent the "flashing" effect, only create the bar window if it
+; doesn't already exist:
 IfWinNotExist, vol_Wave
-    Progress, %vol_BarOptionsWave%, , , vol_Wave
+	Progress, %vol_BarOptionsWave%, , , vol_Wave
 IfWinNotExist, vol_Master
 {
-    ; Falls sich die Bildschirmauflösung ändert, wird hier die Position berechnet,
-    ; während das Script läuft:
-    if vol_PosY < 0
-    {
-        ; Wave-Balken direkt über den Balken der Gesamtlautstärke erstellen:
-        WinGetPos, , vol_Wave_Posy, , , vol_Wave
-        vol_Wave_Posy -= %vol_Thick%
-        Progress, %vol_BarOptionsMaster% Y%vol_Wave_Posy%, , , vol_Master
-    }
-    else
-        Progress, %vol_BarOptionsMaster%, , , vol_Master
+	; Calculate position here in case screen resolution changes while
+	; the script is running:
+	if vol_PosY < 0
+	{
+		; Create the Wave bar just above the Master bar:
+		WinGetPos, , vol_Wave_Posy, , , vol_Wave
+		vol_Wave_Posy -= %vol_Thick%
+		Progress, %vol_BarOptionsMaster% Y%vol_Wave_Posy%, , , vol_Master
+	}
+	else
+		Progress, %vol_BarOptionsMaster%, , , vol_Master
 }
-; Sobald beide Lautstärken vom Benutzer oder von einem externen Programm geändert werden, werden die neuen Lautstärken abgerufen:
+; Get both volumes in case the user or an external program changed them:
 SoundGet, vol_Master, Master
 SoundGet, vol_Wave, Wave
 Progress, 1:%vol_Master%

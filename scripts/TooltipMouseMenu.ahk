@@ -1,42 +1,42 @@
-; ToolTip-Mausmenü (benötigt XP/2k/NT) -- von Rajat
+; ToolTip Mouse Menu (requires XP/2k/NT) -- by Rajat
 ; http://www.autohotkey.com
-; Dieses Script zeigt ein aufklappbares Menü beim kurzen
-; Drücken der mittleren Maustaste an.  Ein Menüpunkt kann mit einem Linksklick ausgewählt werden.
-; Das Menü wird geschlossen, sobald außerhalb des Menüs mit der linken Maustaste geklickt wird.  Als aktuelle Verbesserung
-; kann der Inhalt des Menüs geändert werden, abhängig davon,
-; welcher Fenstertyp aktiv ist (Notepad und Word wurden hier als Beispiele verwendet).
+; This script displays a popup menu in response to briefly holding down
+; the middle mouse button.  Select a menu item by left-clicking it.
+; Cancel the menu by left-clicking outside of it.  A recent improvement
+; is that the contents of the menu can change depending on which type of
+; window is active (Notepad and Word are used as examples here).
 
-; Hier kann ein beliebiger Titel für das Menü angegeben werden:
+; You can set any title here for the menu:
 MenuTitle = -=-=-=-=-=-=-=-
 
-; Damit wird die Druckdauer der Maustaste bestimmt, bis das Menü angezeigt wird:
+; This is how long the mouse button must be held to cause the menu to appear:
 UMDelay = 20
 
 SetFormat, float, 0.0
-SetBatchLines, 10ms
+SetBatchLines, 10ms 
 SetTitleMatchMode, 2
 #SingleInstance
 
 
 ;___________________________________________
-;_____Menü-Definitionen_____________________
+;_____Menu Definitions______________________
 
-; Hier können die Menüpunkte erstellt oder bearbeitet werden.
-; Es dürfen keine Leerzeichen im Key-/Wert-/Sektionsnamen verwendet werden.
+; Create / Edit Menu Items here.
+; You can't use spaces in keys/values/section names.
 
-; Mach dir keine Sorgen über die Reihenfolge, das Menü wird sortiert.
+; Don't worry about the order, the menu will be sorted.
 
-MenuItems = Editor/Rechner/Bereich 3/Bereich 4/Bereich 5
+MenuItems = Notepad/Calculator/Section 3/Section 4/Section 5
 
 
 ;___________________________________________
-;______Hier dynamische Menüpunkte___________
+;______Dynamic menuitems here_______________
 
 ; Syntax:
-;     Dyn# = Menüpunkt|Fenstertitel
+;     Dyn# = MenuItem|Window title
 
 Dyn1 = MS Word|- Microsoft Word
-Dyn2 = Editor II|- Editor
+Dyn2 = Notepad II|- Notepad
 
 ;___________________________________________
 
@@ -44,96 +44,96 @@ Exit
 
 
 ;___________________________________________
-;_____Menübereiche__________________________
+;_____Menu Sections_________________________
 
-; Hier können die Menübereiche erstellt oder bearbeitet werden.
+; Create / Edit Menu Sections here.
 
-Editor:
+Notepad:
 Run, Notepad.exe
 Return
 
-Rechner:
+Calculator:
 Run, Calc
 Return
 
-Bereich3:
-MsgBox, 3 ausgewählt
+Section3:
+MsgBox, You selected 3
 Return
 
-Bereich4:
-MsgBox, 4 ausgewählt
+Section4:
+MsgBox, You selected 4
 Return
 
-Bereich5:
-MsgBox, 5 ausgewählt
+Section5:
+MsgBox, You selected 5
 Return
 
 MSWord:
-msgbox, Das ist ein dynamischer Eintrag (Word)
+msgbox, this is a dynamic entry (word)
 Return
 
-EditorII:
-msgbox, Das ist ein dynamischer Eintrag (Editor)
+NotepadII:
+msgbox, this is a dynamic entry (notepad)
 Return
 
 
 ;___________________________________________
-;_____Hotkey-Bereich________________________
+;_____Hotkey Section________________________
 
 ~MButton::
 HowLong = 0
 Loop
 {
-    HowLong ++
-    Sleep, 10
-    GetKeyState, MButton, MButton, P
-    IfEqual, MButton, U, Break
+	HowLong ++
+	Sleep, 10
+	GetKeyState, MButton, MButton, P
+	IfEqual, MButton, U, Break
 }
 IfLess, HowLong, %UMDelay%, Return
 
 
-; Dynamisches Menü vorbereiten
+;prepares dynamic menu
 DynMenu =
 Loop
 {
-    IfEqual, Dyn%a_index%,, Break
+	IfEqual, Dyn%a_index%,, Break
 
-    StringGetPos, ppos, dyn%a_index%, |
-    StringLeft, item, dyn%a_index%, %ppos%
-    ppos += 2
-    StringMid, win, dyn%a_index%, %ppos%, 1000
+	StringGetPos, ppos, dyn%a_index%, |
+	StringLeft, item, dyn%a_index%, %ppos%
+	ppos += 2
+	StringMid, win, dyn%a_index%, %ppos%, 1000
 
-    IfWinActive, %win%,
-        DynMenu = %DynMenu%/%item%
+	IfWinActive, %win%,
+		DynMenu = %DynMenu%/%item%
 }
 
 
-; Sortiertes Hauptmenü mit dynamisches Menü verbinden
+;Joins sorted main menu and dynamic menu
 Sort, MenuItems, D/
 TempMenu = %MenuItems%%DynMenu%
 
 
-; Frühere Einträge entfernen
+;clears earlier entries
 Loop
 {
-    IfEqual, MenuItem%a_index%,, Break
-    MenuItem%a_index% =
+	IfEqual, MenuItem%a_index%,, Break
+	MenuItem%a_index% =
 }
 
-; Neue Einträge erstellen
+;creates new entries
 Loop, Parse, TempMenu, /
 {
-    MenuItem%a_index% = %a_loopfield%
+	MenuItem%a_index% = %a_loopfield%
 }
 
-; Das Menü erstellen
+;creates the menu
 Menu = %MenuTitle%
 Loop
 {
-    IfEqual, MenuItem%a_index%,, Break
-    numItems ++
-    StringTrimLeft, MenuText, MenuItem%a_index%, 0
-    Menu = %Menu%`n%MenuText%
+	IfEqual, MenuItem%a_index%,, Break
+	numItems ++
+	StringTrimLeft, MenuText, MenuItem%a_index%, 0
+	Menu = %Menu%`n%MenuText%
 }
 
 MouseGetPos, mX, mY
@@ -148,14 +148,14 @@ MenuClick:
 HotKey, ~LButton, Off
 IfWinNotActive, %MenuTitle%
 {
-    ToolTip
-    Return
+	ToolTip
+	Return
 }
 
 MouseGetPos, mX, mY
 ToolTip
-mY -= 3        ; Platz, bevor die erste Zeile startet
-mY /= 13    ; Benötigter Platz jeder Zeile
+mY -= 3		;space after which first line starts
+mY /= 13	;space taken by each line
 IfLess, mY, 1, Return
 IfGreater, mY, %numItems%, Return
 StringTrimLeft, TargetSection, MenuItem%mY%, 0

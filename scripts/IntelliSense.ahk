@@ -1,159 +1,160 @@
-; IntelliSense -- von Rajat (benötigt XP/2k/NT)
+; IntelliSense -- by Rajat (requires XP/2k/NT)
 ; http://www.autohotkey.com
-; Dieses Script überwacht die Benutzereingaben beim Bearbeiten eines AutoHotkey-Scripts.  Sobald ein Befehl
-; gefolgt von einem Komma oder eines Leerzeichens eingegeben wird,
-; dann wird als Hilfe die Parameterliste des Befehls angezeigt.  Darüber hinaus kann Strg+F1 (oder
-; ein anderer Hotkey) gedrückt werden, um die Befehlsseite in der Hilfe-Datei anzuzeigen. ; Um die Parameterliste zu schließen, drückt Escape oder Enter.
+; This script watches while you edit an AutoHotkey script.  When it sees you
+; type a command followed by a comma or space, it displays that command's
+; parameter list to guide you.  In addition, you can press Ctrl+F1 (or
+; another hotkey of your choice) to display that command's page in the help
+; file. To dismiss the parameter list, press Escape or Enter.
 
-; Benötigt v1.0.41+
+; Requires v1.0.41+
 
-; KONFIGURATIONSBEREICH: Passt das Script mit den folgenden Variablen an.
+; CONFIGURATION SECTION: Customize the script with the following variables.
 
-; Der unten genannte Hotkey wird gedrückt, um die aktuelle Befehlsseite in der
-; Hilfedatei anzuzeigen:
+; The hotkey below is pressed to display the current command's page in the
+; help file:
 I_HelpHotkey = ^F1
 
-; Der nachfolgende String muss irgendwo im Titel des aktiven Fensters vorkommen,
-; damit IntelliSense bei der Benutzereingabe wirksam wird.  Macht sie leer,
-; damit IntelliSense alle Fenster bearbeitet.  Wenn sie Pad enthält,
-; dann werden Editoren wie Metapad, Notepad und Textpad bearbeitet.  Falls .ahk vorhanden ist,
-; dann ist IntelliSense nur wirksam, wenn eine .ahk-Datei im Editor offen ist.
+; The string below must exist somewhere in the active window's title for
+; IntelliSense to be in effect while you're typing.  Make it blank to have
+; IntelliSense operate in all windows.  Make it Pad to have it operate in
+; editors such as Metapad, Notepad, and Textpad.  Make it .ahk to have it
+; operate only when a .ahk file is open in Notepad, Metapad, etc.
 I_Editor = pad
 
-; Wenn der Wunsch besteht, ein anderes Icon für dieses Script zu verwenden,
-; damit es sich von anderen Scripts unterscheidet, gebt unten den Dateinamen an
-; (leer lassen für kein Icon). Zum Beispiel: E:\stuff\Pics\icons\GeoIcons\Information.ico
-I_Icon =
+; If you wish to have a different icon for this script to distinguish it from
+; other scripts in the tray, provide the filename below (leave blank to have
+; no icon). For example: E:\stuff\Pics\icons\GeoIcons\Information.ico
+I_Icon = 
 
-; ENDE DES KONFIGURATIONSBEREICHS (Hier danach keine Änderungen durchführen,
-; es sei denn, die allgemeine Funktionalität des Scripts soll geändert werden).
+; END OF CONFIGURATION SECTION (do not make changes below this point unless
+; you want to change the basic functionality of the script).
 
 SetKeyDelay, 0
 #SingleInstance
 
 if I_HelpHotkey <>
-    Hotkey, %I_HelpHotkey%, I_HelpHotkey
+	Hotkey, %I_HelpHotkey%, I_HelpHotkey
 
-; Tray-Icon ändern (falls ein Icon im Konfigurationsbereich angegeben wurde):
+; Change tray icon (if one was specified in the configuration section above):
 if I_Icon <>
-    IfExist, %I_Icon%
-        Menu, Tray, Icon, %I_Icon%
+	IfExist, %I_Icon%
+		Menu, Tray, Icon, %I_Icon%
 
-; Standort von AutoHotkey ermitteln:
+; Determine AutoHotkey's location:
 RegRead, ahk_dir, HKEY_LOCAL_MACHINE, SOFTWARE\AutoHotkey, InstallDir
-if ErrorLevel  ; Nichts gefunden, so in anderen häufigen Standorten nachschauen.
+if ErrorLevel  ; Not found, so look for it in some other common locations.
 {
-    if A_AhkPath
-        SplitPath, A_AhkPath,, ahk_dir
-    else IfExist ..\..\AutoHotkey.chm
-        ahk_dir = ..\..
-    else IfExist %A_ProgramFiles%\AutoHotkey\AutoHotkey.chm
-        ahk_dir = %A_ProgramFiles%\AutoHotkey
-    else
-    {
-        MsgBox AutoHotkey-Ordner konnte nicht gefunden werden.
-        ExitApp
-    }
+	if A_AhkPath
+		SplitPath, A_AhkPath,, ahk_dir
+	else IfExist ..\..\AutoHotkey.chm
+		ahk_dir = ..\..
+	else IfExist %A_ProgramFiles%\AutoHotkey\AutoHotkey.chm
+		ahk_dir = %A_ProgramFiles%\AutoHotkey
+	else
+	{
+		MsgBox Could not find the AutoHotkey folder.
+		ExitApp
+	}
 }
 
 ahk_help_file = %ahk_dir%\AutoHotkey.chm
 
-; Befehlssyntax lesen:
+; Read command syntaxes:
 Loop, Read, %ahk_dir%\Extras\Editors\Syntax\Commands.txt
 {
-    I_FullCmd = %A_LoopReadLine%
+	I_FullCmd = %A_LoopReadLine%
 
-    ; Anweisungen haben ein erstes Leerzeichen anstelle eines ersten Kommas.
-    ; So wird je nach dem verwendet, was zuerst als Endzeichen im Befehlsnamen vorkommt:
-    StringGetPos, I_cPos, I_FullCmd, `,
-    StringGetPos, I_sPos, I_FullCmd, %A_Space%
-    if (I_cPos = -1 or (I_cPos > I_sPos and I_sPos <> -1))
-        I_EndPos := I_sPos
-    else
-        I_EndPos := I_cPos
+	; Directives have a first space instead of a first comma.
+	; So use whichever comes first as the end of the command name:
+	StringGetPos, I_cPos, I_FullCmd, `,
+	StringGetPos, I_sPos, I_FullCmd, %A_Space%
+	if (I_cPos = -1 or (I_cPos > I_sPos and I_sPos <> -1))
+		I_EndPos := I_sPos
+	else
+		I_EndPos := I_cPos
 
-    if I_EndPos <> -1
-        StringLeft, I_CurrCmd, I_FullCmd, %I_EndPos%
-    else  ; Eine Anweisung/ein Befehl ohne Parameter.
-        I_CurrCmd = %A_LoopReadLine%
-
-    StringReplace, I_CurrCmd, I_CurrCmd, [,, All
-    StringReplace, I_CurrCmd, I_CurrCmd, %A_Space%,, All
-    StringReplace, I_FullCmd, I_FullCmd, ``n, `n, All
-    StringReplace, I_FullCmd, I_FullCmd, ``t, `t, All
-
-    ; Arrays mit Befehlsnamen und vollständige Befehlssyntax erstellen:
-    I_Cmd%A_Index% = %I_CurrCmd%
-    I_FullCmd%A_Index% = %I_FullCmd%
+	if I_EndPos <> -1
+		StringLeft, I_CurrCmd, I_FullCmd, %I_EndPos%
+	else  ; This is a directive/command with no parameters.
+		I_CurrCmd = %A_LoopReadLine%
+	
+	StringReplace, I_CurrCmd, I_CurrCmd, [,, All
+	StringReplace, I_CurrCmd, I_CurrCmd, %A_Space%,, All
+	StringReplace, I_FullCmd, I_FullCmd, ``n, `n, All
+	StringReplace, I_FullCmd, I_FullCmd, ``t, `t, All
+	
+	; Make arrays of command names and full cmd syntaxes:
+	I_Cmd%A_Index% = %I_CurrCmd%
+	I_FullCmd%A_Index% = %I_FullCmd%
 }
 
-; Input-Befehl verwenden, um die eingegebenen Befehle des Benutzers zu überwachen:
+; Use the Input command to watch for commands that the user types:
 Loop
 {
-    ; Editor-Fenster überprüfen:
-    WinGetTitle, ActiveTitle, A
-    IfNotInString, ActiveTitle, %I_Editor%
-    {
-        ToolTip
-        Sleep, 500
-        Continue
-    }
+	; Editor window check:
+	WinGetTitle, ActiveTitle, A
+	IfNotInString, ActiveTitle, %I_Editor%
+	{
+		ToolTip
+		Sleep, 500
+		Continue
+	}
+	
+	; Get all keys till endkey:
+	Input, I_Word, V, {enter}{escape}{space}`,
+	I_EndKey = %ErrorLevel%
+	
+	; Tooltip is hidden in these cases:
+	if I_EndKey in EndKey:Enter,EndKey:Escape
+	{
+		ToolTip
+		Continue
+	}
 
-    ; Alle Tasten bis zur Endtaste abrufen:
-    Input, I_Word, V, {enter}{escape}{space}`,
-    I_EndKey = %ErrorLevel%
+	; Editor window check again!
+	WinGetActiveTitle, ActiveTitle
+	IfNotInString, ActiveTitle, %I_Editor%
+	{
+		ToolTip
+		Continue
+	}
 
-    ; ToolTip wird in folgenden Fällen versteckt:
-    if I_EndKey in EndKey:Enter,EndKey:Escape
-    {
-        ToolTip
-        Continue
-    }
+	; Compensate for any indentation that is present:
+	StringReplace, I_Word, I_Word, %A_Space%,, All
+	StringReplace, I_Word, I_Word, %A_Tab%,, All
+	if I_Word =
+		Continue
+	
+	; Check for commented line:
+	StringLeft, I_Check, I_Word, 1
+	if (I_Check = ";" or I_Word = "If")  ; "If" seems a little too annoying to show tooltip for.
+		Continue
 
-    ; Nochmals Editor-Fenster überprüfen!
-    WinGetActiveTitle, ActiveTitle
-    IfNotInString, ActiveTitle, %I_Editor%
-    {
-        ToolTip
-        Continue
-    }
-
-    ; Jede vorhandene Einrückung ersetzen:
-    StringReplace, I_Word, I_Word, %A_Space%,, All
-    StringReplace, I_Word, I_Word, %A_Tab%,, All
-    if I_Word =
-        Continue
-
-    ; Kommentierte Zeile untersuchen:
-    StringLeft, I_Check, I_Word, 1
-    if (I_Check = ";" or I_Word = "If")  ; "If" ist scheinbar ein wenig störend, um dafür den ToolTip anzuzeigen.
-        Continue
-
-    ; Wort stimmt mit Befehl überein:
-    I_Index =
-    Loop
-    {
-        ; Es hilft der Performance, wenn dynamische Variablen nur einmal aufgelöst werden.
-        ; Darüber hinaus wird der eingefügte Wert in I_ThisCmd auch von der
-        ; I_HelpHotkey-Subroutine verwendet:
-        I_ThisCmd := I_Cmd%A_Index%
-        if I_ThisCmd =
-            break
-        if (I_Word = I_ThisCmd)
-        {
-            I_Index := A_Index
-            I_HelpOn = %I_ThisCmd%
-            break
-        }
-    }
-
-    ; Falls keine Übereinstimmung erfolgt, dann Benutzereingabe weiter überwachen:
-    if I_Index =
-        Continue
-
-    ; Übereinstimmende Befehle anzeigen, um den Benutzer zu führen:
-    I_ThisFullCmd := I_FullCmd%I_Index%
-    ToolTip, %I_ThisFullCmd%, A_CaretX, A_CaretY + 20
+	; Match word with command:
+	I_Index =
+	Loop
+	{
+		; It helps performance to resolve dynamic variables only once.
+		; In addition, the value put into I_ThisCmd is also used by the
+		; I_HelpHotkey subroutine:
+		I_ThisCmd := I_Cmd%A_Index%
+		if I_ThisCmd =
+			break
+		if (I_Word = I_ThisCmd)
+		{
+			I_Index := A_Index
+			I_HelpOn = %I_ThisCmd%
+			break
+		}
+	}
+	
+	; If no match then resume watching user input:
+	if I_Index =
+		Continue
+	
+	; Show matched command to guide the user:
+	I_ThisFullCmd := I_FullCmd%I_Index%
+	ToolTip, %I_ThisFullCmd%, A_CaretX, A_CaretY + 20
 }
 
 
@@ -162,26 +163,26 @@ I_HelpHotkey:
 WinGetTitle, ActiveTitle, A
 IfNotInString, ActiveTitle, %I_Editor%, Return
 
-ToolTip  ; Syntaxhelfer deaktivieren, da er zurzeit nicht benötigt wird.
+ToolTip  ; Turn off syntax helper since there is no need for it now.
 
-SetTitleMatchMode, 1  ; Falls es 3 ist. Diese Einstellung gilt nur für diesen Thread.
+SetTitleMatchMode, 1  ; In case it's 3. This setting is in effect only for this thread.
 IfWinNotExist, AutoHotkey Help
 {
-    IfNotExist, %ahk_help_file%
-    {
-        MsgBox, Hilfe-Datei konnte nicht gefunden werden: %ahk_help_file%.
-        return
-    }
-    Run, %ahk_help_file%
-    WinWait, AutoHotkey Help
+	IfNotExist, %ahk_help_file%
+	{
+		MsgBox, Could not find the help file: %ahk_help_file%.
+		return
+	}
+	Run, %ahk_help_file%
+	WinWait, AutoHotkey Help
 }
 
-if I_ThisCmd =  ; Stattdessen wird die aktuellste Benutzereingabe verwendet.
-    I_ThisCmd := I_Word
+if I_ThisCmd =  ; Instead, use what was most recently typed.
+	I_ThisCmd := I_Word
 
-; Der obere Befehl bestimmt das "zuletzt gefundene" Fenster, das unten verwendet wird:
+; The above has set the "last found" window which we use below:
 WinActivate
 WinWaitActive
-StringReplace, I_ThisCmd, I_ThisCmd, #, {#}  ; Führende # ersetzen, falls vorhanden.
+StringReplace, I_ThisCmd, I_ThisCmd, #, {#}  ; Replace leading #, if any.
 Send, !n{home}+{end}%I_HelpOn%{enter}
 return
