@@ -1,7 +1,7 @@
 translate = {
   hdSearchTxt: "Suchbegriff eingeben ...",
   hdSearchBtn: "Suchen",
-  hdSearchLnk: "'https://www.google.com/search?sitesearch=' + location.host + '&amp;q=' + query",
+  hdSearchLnk: "'https://www.google.com/search?sitesearch=' + location.host + '&q=' + query",
   sbContent: "Inhalt",
   sbIndex: "Index",
   ftLicense: "Lizenz:",
