@@ -12,17 +12,23 @@
 
 <h1>IniWrite</h1>
 
-<p>Schreibt einen Wert in eine normale INI-Datei.</p>
+<p>Schreibt einen Wert oder eine Sektion in eine normale INI-Datei.</p>
 
-<pre class="Syntax">IniWrite, Wert, Dateiname, Sektion [, Key]</pre>
+<pre class="Syntax">IniWrite, Wert, Dateiname, Sektion, Key
+IniWrite, Paare, Dateiname, Sektion</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>Wert</dt>
   <dd>
-      <p>Ein beliebiger Wert (String oder Nummer), der auf der rechten Seite des Gleichheitszeichens (=) neben dem <em>Key</em> geschrieben werden soll. Wenn der Text zu lang ist, kann er in mehreren kurzen Zeilen aufgeteilt werden (<a href="../Scripts.htm#continuation">Fortsetzungsbereich</a>), um ihn besser lesbar und verwaltbar zu machen.</p>
-      <p><span class="ver">[AHK_L 57+]:</span> Fehlt der <i>Key</i>-Parameter, sollte dieser Parameter den kompletten Inhalt einer Sektion enthalten, um sie ohne [Sektionsname]-Überschrift in die INI-Datei zu schreiben.</p>
-    </dd>
+    <p>Ein beliebiger Wert (String oder Nummer), der auf der rechten Seite des Gleichheitszeichens (=) neben dem <em>Key</em> geschrieben werden soll.</p>
+    <p>Wenn der Text zu lang ist, kann er in mehreren kurzen Zeilen aufgeteilt werden (<a href="../Scripts.htm#continuation">Fortsetzungsbereich</a>), um ihn besser lesbar und verwaltbar zu machen.</p>
+  </dd>
+  
+  <dt>Paare</dt>
+  <dd>
+    <p><span class="ver">[AHK_L 57+]:</span> Der komplette Inhalt einer Sektion, die in die INI-Datei geschrieben werden soll, ohne [Sektionsname]-Überschrift. <em>Key</em> muss weggelassen werden. <em>Paare</em> darf keine Leerzeilen enthalten. Wenn die Sektion bereits vorhanden ist, wird alles bis zum letzten Key-Value-Paar überschrieben. <em>Paare</em> kann Zeilen ohne Gleichheitszeichen (=) enthalten, allerdings könnte das zu inkonsistenten Ergebnissen führen. Kommentare können in die Datei geschrieben werden, allerdings werden sie wieder entfernt, sobald man <a href="IniRead.htm">IniRead</a> benutzt.</p>
+  </dd>
 
   <dt>Dateiname</dt>
   <dd><p>Der Name der Datei, die im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet wird, wenn kein absoluter Pfad angegeben ist.</p></dd>
@@ -38,10 +44,11 @@
 <p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
 <h3>Bemerkungen</h3>
-<p>Werte länger als 65.535 Zeichen dürften zu inkonsistenten Ergebnissen führen.</p>
+<p>Werte länger als 65.535 Zeichen können in die Datei geschrieben werden, allerdings könnte das zu inkonsistenten Ergebnissen führen, weil sie in der Regel nicht korrekt via <a href="IniRead.htm">IniRead</a> oder anderen Anwendungen gelesen werden können.</p>
 <p>Eine typische INI-Datei sieht wie folgt aus:</p>
 <pre>[Sektionsname]
 Key=Value</pre>
+<p>Neue Dateien werden entweder mit dem Standard-ANSI-Zeichensatz des Systems oder UTF-16 erstellt, abhängig von <a href="../Variables.htm#IsUnicode">der AutoHotkey-Version</a>. UTF-16-Dateien könnten mit einer Leerzeile beginnen, weil die erste Zeile die UTF-16-Bytereihenfolge-Markierung (BOM) enthält. Weiter unten findest du eine Möglichkeit, wie man dies umgehen kann.</p>
 <p><b>Unicode</b>: IniRead und IniWrite beziehen sich zum Lesen oder Schreiben von Werten auf die externen Funktionen <a href="http://msdn.microsoft.com/en-us/library/ms724353.aspx">GetPrivateProfileString</a> und <a href="http://msdn.microsoft.com/en-us/library/ms725501.aspx">WritePrivateProfileString</a>. Diese Funktionen unterstützen Unicode nur in UTF-16-Dateien; alle anderen Dateien verwenden den Standard-ANSI-Zeichensatz des Systems. In <a href="../Variables.htm#IsUnicode">Unicode-Scripts</a> verwendet IniWrite das UTF-16-Format bei jeder neuen Datei. Wenn das unerwünscht ist, muss man sicherstellen, dass die Datei existiert, bevor IniWrite aufgerufen wird. Zum Beispiel:</p>
 <pre>FileAppend,, KeinUnicode.ini, CP0 <em>; Der letzte Parameter ist in den meisten Fällen optional.</em></pre>
 <h3>Siehe auch</h3>

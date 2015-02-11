@@ -43,15 +43,15 @@
 <p>Das Fenster muss aktiv sein, damit ein Steuerelement fokussiert sein kann. Ist das Fenster nicht aktiv, wird <em>AusgabeVar</em> leer gemacht.</p>
 <p>Während ControlGetFocus mehrmals schnell ausgeführt wird (d. h. alle 500 ms oder schneller), kann der Benutzer wahrscheinlich keinen Doppelklick durchführen. Um dieses Problem zu vermeiden, kann die Systemfunktion GetGUIThreadInfo() mit <a href="DllCall.htm">DllCall</a> aufgerufen werden. Zum Beispiel:</p>
 <pre><em>; Dieses Script ermittelt die ahk_id (HWND) des fokussierten Steuerelements im aktiven Fenster.</em>
-GuiThreadInfoSize = 48
+GuiThreadInfoSize = 24 + (A_PtrSize * 6)
 VarSetCapacity(GuiThreadInfo, GuiThreadInfoSize)
 <a href="NumPut.htm">NumPut</a>(GuiThreadInfoSize, GuiThreadInfo, 0)
-if not DllCall("GetGUIThreadInfo", uint, 0, str, GuiThreadInfo)
+if not DllCall("GetGUIThreadInfo", "uint", 0, "ptr", &amp;GuiThreadInfo)
 {
     MsgBox GetGUIThreadInfo() hat einen Fehler entdeckt.
     return
 }
-FocusedHWND := <a href="NumGet.htm">NumGet</a>(GuiThreadInfo, 12)  <em>; Ermittelt das hwndFocus-Feld aus der Struktur.</em>
+FocusedHWND := <a href="NumGet.htm">NumGet</a>(GuiThreadInfo, 8 + A_PtrSize)  <em>; Ermittelt das hwndFocus-Feld aus der Struktur.</em>
 MsgBox % "Die ahk_id (HWND) des fokussierten Steuerelements ist " . FocusedHWND
 <em>; Diese ID kann für alle Steuerelement-Befehle verwendet werden.  Zum Beispiel:
 ; ControlGetText, AusgabeVar,, ahk_id %FocusedHWND%</em></pre>
