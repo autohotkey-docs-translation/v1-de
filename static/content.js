@@ -645,6 +645,7 @@ index = [
   ["base (Objekte)","Objects.htm#Custom_Objects"],
   ["Piepton via PC-Lautsprecher","commands/SoundBeep.htm"],
   ["between (ob var zwischen zwei Werten liegt)","commands/IfBetween.htm"],
+  ["Bind()","objects/Func.htm#Bind"],
   ["bitweise Operationen","Variables.htm#bitwise"],
   ["Blind-Modus von Send","commands/Send.htm#blind"],
   ["BlockInput","commands/BlockInput.htm"],
@@ -658,6 +659,7 @@ index = [
   ["Button-Liste (Maus und Joystick)","KeyList.htm"],
   ["Button-Status","commands/GetKeyState.htm"],
   ["ByRef","Functions.htm#ByRef"],
+  ["Call()","objects/Func.htm#Call"],
   ["callbacks","commands/RegisterCallback.htm"],
   ["zeichengenaue Strings","commands/StringCaseSense.htm"],
   ["Catch","commands/Catch.htm"],
@@ -1029,6 +1031,7 @@ index = [
   ["Objekte (allgemeine Information)","Objects.htm"],
   ["Objektfunktionen und -methoden","objects/Object.htm"],
   ["ObjAddRef()","commands/ObjAddRef.htm"],
+  ["ObjBindMethod()","commands/ObjBindMethod.htm"],
   ["ObjClone()","objects/Object.htm#Clone"],
   ["ObjGetAddress()","objects/Object.htm#GetAddress"],
   ["ObjGetCapacity()","objects/Object.htm#GetCapacity"],
@@ -1614,7 +1617,7 @@ function AddContent()
 function AddChmAndOnlineFeatures()
 {
   // Make all external links open a new tab/window.
-  $("a[href^='http:']").attr('target', '_blank');
+  $("a[href^='http']").attr('target', '_blank');
   
   (function() {
     var templ = $('<a class="ver"></a>');
