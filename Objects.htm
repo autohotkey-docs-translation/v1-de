@@ -31,7 +31,7 @@ ul.list_of_p li { margin: 1em 0; }
 <ul>
   <li><a href="objects/Object.htm"><b>Object</b></a> - scriptfähiges assoziatives Array.</li>
   <li><a href="objects/File.htm">File</a> - stellt eine Schnittstelle für die Dateibearbeitung bereit.</li>
-  <li><a href="objects/Func.htm">Func</a> - eine Funktion.</li>
+  <li><a href="objects/Functor.htm">Funktionsobjekte</a> - <a href="objects/Func.htm">Func</a>, <a href="objects/Functor.htm#BoundFunc">BoundFunc</a> oder <a href="objects/Functor.htm#User-Defined">benutzerdefiniert</a>.</li>
   <li><a href="commands/ComObjCreate.htm">ComObject</a> - Wrappt eine IDispatch-Schnittstelle (ein COM oder "Automatisierungsobjekt").</li>
 </ul>
 
@@ -139,6 +139,7 @@ x := "", y := ""             <em>; Ohne die obige Zeile würde dies hier die Obj
 <pre>obj.item(x) := y
 obj.item[x] := y</pre>
 <p id="cassign">Verbundzuweisungen wie <code>x.y += 1</code> und <code>--arr[1]</code> werden unterstützt.</p>
+<p><span class="ver">[v1.1.20+]:</span> Parameter können beim Abrufen oder Setzen von Eigenschaften weggelassen werden. Zum Beispiel <code>x[,2]</code>. Scripts können dies nutzen, indem sie Standardwerte für Parameter in <a href="#Custom_Classes_property">Eigenschaften</a> und <a href="#Meta_Functions">Meta-Funktionen</a> definieren. Den Methodennamen kann man zudem komplett weglassen, wie z. B. in <code>x[](a)</code>. Scripts können dies nutzen, indem sie einen Standardwert für den ersten Parameter der __Call-<a href="#Meta_Functions">Meta-Funktion</a> definieren, da er sonst nicht im Wert enthalten wäre. Beachte, dass sich dies von <code>x.(a)</code> unterscheidet, das das gleiche wie <code>x[""](a)</code> ist. Wenn man den Eigenschafts- oder Methodennamen beim Aufrufen eines COM-Objekts weglässt, wird sein "Standardelement" aufgerufen.</p>
 
 <h4>Keys</h4>
 <p>Es gibt einige Einschränkungen, welche Werte als Keys innerhalb von Objekten, die mit <code>[]</code>, <code>{}</code> oder dem <code>new</code>-Operator erstellt wurden, verwendet werden können:</p>
@@ -154,11 +155,13 @@ obj.item[x] := y</pre>
 <h3 id="Function_References">Funktionsverweise <span class="ver">[v1.1.00+]</span></h3>
 <p>Enthält die Variable <i>funk</i> einen Funktionsnamen, kann die Funktion über mehrere Wege aufgerufen werden: <code>%funk%()</code> oder <code>funk.()</code>. Allerdings muss dabei die Funktion jedes Mal neu aufgelöst werden. Sobald die Funktion mehr als einmal aufgerufen wird, würde die Effizienz darunter leiden. Zur Verbesserung der Performance speichert man den Funktionsverweis in eine Variable, um sie später wiederzuverwenden:</p>
 <pre>Funk := Func("MeineFunk")</pre>
-<p>Um eine Funktion per Verweis aufzurufen, muss die folgende Syntax verwendet werden:</p>
-<pre>Rückgabewert := Funk.(<i>Parameter</i>)</pre>
+<p>Eine Funktion kann mithilfe der folgenden Syntax per Verweis aufgerufen werden:</p>
+<pre>
+RückWert := %Func%(<i>Params</i>)     <em>; Benötigt v1.1.07+</em>
+RückWert := Func.Call(<i>Params</i>)  <em>; Benötigt v1.1.19+</em>
+RückWert := Func.(<i>Params</i>)      <em>; Nicht empfohlen</em>
+</pre>
 <p>Um mehr über zusätzliche Eigenschaften von Funktionsverweisen zu erfahren, siehe <a href="objects/Func.htm">Func-Objekt</a>.</p>
-<p><a name="ExitLimitation"></a><b>Bekannte Einschränkung:</b></p>
-<ul><li>Behoben seit v1.1.07.00: Wenn die Funktion, sowie eine von ihr aufgerufene Subroutine oder Funktion, <a href="commands/Exit.htm">Exit</a> verwendet, verhält sie sich so, als hätte der Funktionsaufruf einen neuen Thread erstellt. Das heißt, dass die Funktion sofort zu ihrem Aufrufer zurückkehrt, anstatt den aktuellen Thread zu terminieren. Allerdings kann Exit auch die Ursache dafür sein, dass das Script komplett beendet wird, wenn es nicht <a href="commands/_Persistent.htm">persistent</a> sein sollte.</li></ul>
 
 <h3 id="Usage_Arrays_of_Arrays"><a name="JaggedArrays"></a>Mehrdimensionale Arrays</h3>
 <p>AutoHotkey unterstützt "mehrdimensionale" Arrays - das sind Arrays innerhalb von anderen Arrays. Eine Tabelle beispielsweise könnte man als Array mit Reihen ansehen, bei dem jede Reihe ein Array mit Spalten ist. In diesem Fall kann der Inhalt der Spalte <code>y</code> von der Reihe <code>x</code> mit einer der folgenden Methoden gesetzt werden:</p>
@@ -240,7 +243,7 @@ obj2.test()</pre>
 </p>
 
 <h3 id="Custom_Classes">Klassen <span class="ver">[v1.1.00+]</span></h3>
-<p>Aufgrund der einfachen Nutzung und seines Bekanntheitsgrades kann das "class"-Schlüsselwort verwendet werden, um ein base-Objekt konstruieren zu können. Eine einfache Klassendefinition könnte wie folgt aussehen:</p>
+<p>Im Grunde ist eine "Klasse" eine Reihe oder Kategorie von Dingen, die einige Eigenschaften oder Attribute haben. Da ein <a href="#Custom_Objects">Base</a>- oder <a href="#Custom_Prototypes">Prototyp</a>-Objekt Eigenschaften und Verhaltensweisen für eine Reihe von Objekten definiert, kann man es auch als <em>Klassen</em>objekt bezeichnen. Der Einfachheit halber können Base-Objekte wie folgt mithilfe des Schlüsselworts "class" definiert werden:</p>
 <pre>class Klassenname extends BaseKlassenname
 {
     InstanzVar := Ausdruck
@@ -256,7 +259,7 @@ obj2.test()</pre>
         ...
     }
 
-    Eigenschaft[]
+    Eigenschaft[]  <em>; Die eckigen Klammern sind optional</em>
     {
         get {
             return ...
@@ -268,6 +271,7 @@ obj2.test()</pre>
 }
 </pre>
 <p>Beim Laden des Scripts würde mit diesem Beispiel ein Objekt konstruiert und in die globale (oder seit v1.1.05 in die <a href="Functions.htm#SuperGlobal">superglobale</a>) Variable <i>Klassenname</i> gespeichert werden. Vor v1.1.05 war es notwendig, eine Deklaration wie <code>global Klassenname</code> anzugeben, um diese Klasse innerhalb einer Funktion zu verweisen, sofern die Funktion nicht <a href="Functions.htm#AssumeGlobal">global-behandelnd</a> war. Wenn <code>extends BaseKlassenname</code> vorhanden ist, muss der <i>BaseKlassenname</i> der vollständige Name einer anderen Klasse sein (seit v1.1.11 spielt die Reihenfolge, in der sie definiert werden, keine Rolle mehr). Der vollständige Name jeder Klasse ist in <code><i>objekt</i>.__Class</code> gespeichert.</p>
+<p>Innerhalb dieser Dokumentation bedeutet das Wort "Klasse" in der Regel ein Klassenobjekt, das mit dem Schlüsselwort <code>class</code> erstellt wurde.</p>
 <p>Klassendefinitionen können Variablendeklarationen, Methodendefinitionen und Unterklassendefinitionen enthalten.</p>
 
 <h4 id="Custom_Classes_var">Instanzvariablen <span class="ver">[v1.1.01+]</span></h4>
@@ -349,6 +353,7 @@ class GMem
         DllCall("GlobalFree", "ptr", this.ptr)
     }
 }</pre>
+<p>__Delete wird nicht bei Objekten aufgerufen, die den Key "__Class" haben. <a href="#Custom_Classes">Klassenobjekte</a> haben standardmäßig diesen Key.</p>
 
 <h3 id="Meta_Functions">Meta-Funktionen</h3>
 <pre class="Syntax">
@@ -393,10 +398,9 @@ class <i>Klassenname</i> {
   <li><i>Set</i>: Wenn nur ein Key-Parameter angegeben wurde, speichere den Key und Wert in das Zielobjekt und gebe den zugewiesenen Wert zurück. Wenn mehrere Parameter angegeben wurden, erstelle ein neues Objekt und speichere es, und verwende dabei den ersten Parameter als Key; rufe dann das neue Objekt auf, um die restlichen Parameter zu behandeln. (Siehe <a href="#Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</a>.)</li>
 
 </ul>
-    
-<p><b>Bekannte Einschränkungen:</b></p>
-<ul><li>Das Verwenden von <code>return</code> ohne Wert ist dasselbe wie <code>return ""</code>. Dies könnte in einer zukünftigen Version geändert werden, so dass man mit <code>return</code> aus einer Meta-Funktion "flüchten" kann, ohne dabei das Standardverhalten überschreiben zu müssen.</li>
-<li>Siehe <a href="#ExitLimitation">Exit-Einschränkung</a>.</li></ul>
+
+<p><b>Bekannte Einschränkung:</b></p>
+<ul><li>Das Verwenden von <code>return</code> ohne Wert ist dasselbe wie <code>return ""</code>. Dies könnte in einer zukünftigen Version geändert werden, so dass man mit <code>return</code> aus einer Meta-Funktion "flüchten" kann, ohne dabei das Standardverhalten überschreiben zu müssen.</li></ul>
 
 <h4 id="Dynamic_Properties">Dynamische Eigenschaften</h4>
 <p>Mit <i>__Get</i> und <i>__Set</i> können Eigenschaften implementiert werden, deren Werte auf irgendeiner Weise berechnet oder beschränkt sind. Zum Beispiel können sie verwendet werden, um ein "Farbe"-Objekt mit R, G, B und RGB-Eigenschaften zu implementieren, wo tatsächlich nur der RGB-Wert gespeichert wird:</p>
@@ -469,7 +473,7 @@ Zwei(param1, param2) {
     ListVars
     Pause
 }</pre>
-<p>Diese Technik, kombiniert mit Klassendefinitionen, bietet eine bequeme Möglichkeit, dynamische Eigenschaften zu definieren, ähnlich wie im vorherigen Abschnitt:</p>
+<p>Mit dieser Technik kann ein Objekt erstellt werden, das als Meta-Funktion fungiert, um z. B. dynamische Eigenschaften zu definieren, ähnlich wie die im vorherigen Abschnitt. (Beachte allerdings, dass dieses Beispiel durch die <a href="#Custom_Classes_property">Unterstützung von Eigenschaften</a> ersetzt wurde.) Zum Beispiel:</p>
 <pre>blau := new Farbe(0x0000ff)
 MsgBox % blau.R "," blau.G "," blau.B
 

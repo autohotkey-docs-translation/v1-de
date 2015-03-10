@@ -15,17 +15,20 @@
 
 <p>Lässt eine Subroutine automatisch und wiederholend in einem angegebenen Zeitintervall laufen.</p>
 
-<pre class="Syntax">SetTimer [, Label, Periode|On|Off, Priorität]</pre>
+<pre class="Syntax">SetTimer [, Label, Periode|On|Off|Delete, Priorität]</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>Label</dt>
   <dd><p>Name des <a href="../misc/Labels.htm">Labels</a> oder <a href="../Hotkeys.htm">Hotkey-Labels</a>, der angesprungen werden soll, um die Befehle unterhalb von <em>Label</em> auszuführen, bis ein <a href="Return.htm">Return</a> oder <a href="Exit.htm">Exit</a> erreicht wurde. <em>Label</em> kann, wie Parameter und die meisten anderen Befehle auch, einen <a href="../Variables.htm">Variablenverweis</a> wie %MeinLabel% enthalten, um den gespeicherten Namen in der Variable als Ziel zu verwenden.</p>
-      <p><span class="ver">[v1.1.01+]:</span> Fehlt das <em>Label</em>, wird stattdessen <a href="../Variables.htm#ThisLabel">A_ThisLabel</a> verwendet. Zum Beispiel könnte <code>SetTimer,, Off</code> innerhalb einer Timer-Subroutine verwendet werden, um den Timer zu deaktivieren.</p></dd>
+  <p><span class="ver">[v1.1.01+]:</span> Fehlt das <em>Label</em>, wird stattdessen <a href="../Variables.htm#ThisLabel">A_ThisLabel</a> verwendet. Zum Beispiel könnte <code>SetTimer,, Off</code> innerhalb einer Timer-Subroutine verwendet werden, um den Timer zu deaktivieren.</p>
+  <p id="Functor"><span class="ver">[v1.1.20+]:</span> Wenn es kein gültiger Labelname ist, kann dieser Parameter der Name einer Funktion sein, oder ein einzelner Variablenverweis mit einem <a href="../objects/Functor.htm">Funktionsobjekt</a>. Zum Beispiel <code>SetTimer %funkobj%, 1000</code> oder <code>SetTimer %funkobj, 1000</code>. Andere Ausdrücke, die Objekte zurückgeben, werden zurzeit nicht unterstützt.</p>
+  </dd>
 
-  <dt>Periode|On|Off</dt>
+  <dt>Periode|On|Off|Delete</dt>
   <dd><p><strong>On</strong>: Reaktiviert einen zuvor deaktivierten Timer mit ihrer früheren <em>Periode</em>. Falls der Timer noch nicht vorhanden ist, wird er erstellt (mit einer Standardperiode von 250). Wenn ein Timer bereits vorhanden ist, der zuvor im <a href="#once">Nur-Einmal-Laufen-Modus</a> gestartet wurde, wird er auch dieses Mal nur einmal ausgeführt.</p>
       <p><strong>Off</strong>: Deaktiviert einen vorhandenen Timer.</p>
+      <p><strong>Delete</strong> <span class="ver">[v1.1.20+]</span>: Deaktiviert und entfernt einen vorhandenen Timer. Wenn der Timer mit einem <a href="../objects/Functor.htm">Funktionsobjekt</a> verbunden ist, wird das Objekt freigegeben. Nur das Ausschalten eines Timers wird das Objekt nicht freigeben.</p>
       <p><strong>Periode</strong>: Erstellt oder aktualisiert einen Timer, indem er diesen Parameter als <a href="#Precision">ungefähre</a> Zeitspanne verwendet, die erreicht werden soll, nachdem die <em>Label</em>-Subroutine gestartet wurde. Nachdem diese Zeitspanne erreicht wurde, wird <em>Label</em> nochmals ausgeführt (sofern das vorherige Label fertig ausgeführt wurde). Der Timer wird automatisch aktiviert. Um dies zu verhindern, muss der Befehl mit Off-Parameter direkt danach ein zweites Mal aufgerufen werden.</p>
       <p><em>Periode</em> muss ein Integer sein. Verwendet man eine Variable oder einen Ausdruck, werden Nachkommastellen ignoriert.</p>
       <p>Wenn dieser Parameter leer ist und:<br>

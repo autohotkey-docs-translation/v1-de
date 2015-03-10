@@ -23,6 +23,8 @@
   <li><a href="#Features">Benutzerdefinierte Kombinationen und Sonstige Features</a></li>
   <li><a href="#Wheel">Mausrad-Hotkeys</a></li>
   <li><a href="#Remarks">Tipps und Hinweise</a></li>
+  <li><a href="#AltTabDetail">Alt-Tab-Hotkeys</a></li>
+  <li><a href="#Function">Funktions-Hotkeys</a></li>
 </ul>
 
 <h2 id="Intro">Einführung und einfache Beispiele</h2>
@@ -174,6 +176,7 @@ Loop 2  <em>; &lt;-- Erhöhe diesen Wert, um das Scrollen zu beschleunigen.</em>
     SendMessage, 0x114, 1, 0, %fcontrol%, A  <em>; 0x114 ist WM_HSCROLL und die 1 danach SB_LINERIGHT.</em>
 return</pre>
 <p>Da Mausrad-Hotkeys nur Ereignisse beim Drücken erzeugen (nie beim Loslassen), können sie nicht als Hotkeys verwendet werden, die das Wort <a href="#keyup">"UP"</a> enthalten.</p>
+
 <h2 id="Remarks">Tipps und Hinweise</h2>
 <p>Jede Ziffernblocktaste kann dazu gebracht werden, je nach Status der NUM-Taste zwei verschiedene Hotkey-Subroutinen zu starten. Alternativ kann man eine Ziffernblocktaste auch dazu bringen, die gleiche Subroutine zu starten, unabhängig vom Status der NUM-Taste. Zum Beispiel:</p>
 <pre>NumpadEnd::
@@ -203,6 +206,7 @@ return</pre>
 <p>Ein Hotkey-Label kann als Ziel von <a href="commands/Gosub.htm">Gosub</a> oder <a href="commands/Goto.htm">Goto</a> verwendet werden. Zum Beispiel: <code>Gosub ^!s</code>.</p>
 <p>Häufig werden Hotkeys dazu verwendet, eine wiederholende Aktion zu starten und zu stoppen, wie z. B. mehrere Tastatureingaben oder Mausklicks. Ein Beispiel dazu findet man in <a href="FAQ.htm#repeat">diesem FAQ-Thema</a>.</p>
 <p>Jedes Script kann aus <a href="misc/Threads.htm">mehreren Threads</a> bestehen, wodurch es möglich ist, dass ein neuer Hotkey gestartet werden kann, obwohl eine vorherige Hotkey-Subroutine noch läuft. Zum Beispiel können neue Hotkeys gestartet werden, während eine <a href="commands/MsgBox.htm">MsgBox</a> mit dem aktuellen Hotkey angezeigt wird.</p>
+
 <h2 id="AltTabDetail">Alt-Tab-Hotkeys</h2>
 <p>Jeder Alt-Tab-Hotkey muss eine Kombination von zwei Tasten sein, das üblicherweise mit einem Und-Zeichen (&amp;) erreicht werden kann. Im folgenden Beispiel kann man die rechte ALT-Taste gedrückt halten und J oder K drücken, um das Alt-Tab-Menü durchzuschalten:</p>
 <pre>RAlt &amp; j::AltTab
@@ -232,5 +236,25 @@ return</pre>
 IfWinExist ahk_class #32771
     Send {Escape}{Alt up}  <em>; Schließt das Menü, ohne das ausgewählte Fenster zu aktivieren.</em>
 return</pre>
+
+<h2 id="Function">Funktions-Hotkeys <span class="ver">[v1.1.20+]</span></h2>
+<p>Es ist möglich, einem oder mehreren Hotkeys eine <a href="Functions.htm">Funktion</a> zuzuweisen, indem man sie wie folgt einfach direkt unter dem Hotkey-Label definiert:</p>
+<pre><em>; STRG+UMSCHALT+O, um den enthaltenen Ordner im Explorer zu öffnen.
+; STRG+UMSCHALT+E, um den Ordner zu öffnen und darin die aktuelle Datei zu markieren.
+; Unterstützt SciTE und Notepad++.</em>
+^+o::
+^+e::
+    editor_ordner_öffnen() {
+        WinGetTitle, pfad, A
+        if RegExMatch(pfad, "\*?\K(.*)\\[^\\]+(?= [-*] )", pfad)
+            if (FileExist(pfad) &amp;&amp; A_ThisHotkey = "^+e")
+                Run explorer.exe /select`,"%pfad%"
+            else
+                Run explorer.exe "%pfad1%"
+    }</pre>
+<p>Es dürfen nur Leerraumzeichen, Kommentare oder Direktiven zwischen den Hotkey-Labeln oder Labeln und der Funktion vorkommen. Es werden keine Labels erstellt, wenn Hotkeys auf diese Weise definiert werden; allerdings endet der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> beim ersten Hotkey, selbst wenn ihm eine Funktion zugewiesen wurde.</p>
+<p>Das Verwenden einer Funktion hat den Vorteil, dass lokale Variablen verwendet werden können, um so Konflikte zu vermeiden, wenn zwei oder mehr Hotkeys die gleichen Variablennamen für unterschiedliche Zwecke verwenden. Außerdem fördert es selbstdokumentierende Hotkeys, wie im Code oben, wo der Funktionsname den Hotkey beschreibt.</p>
+<p>Mit dem <a href="commands/Hotkey.htm">Hotkey</a>-Befehl kann man auch eine Funktion oder ein Funktionsobjekt einem Hotkey zuweisen.</p>
+
 </body>
 </html>

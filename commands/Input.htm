@@ -37,9 +37,11 @@ if AusgabeVar = %StrgC%
     MsgBox, Sie haben STRG+C gedrückt.
 ExitApp</pre>
       <p>Hinweis: STRG+A bis STRG+Z sind die Zeichen von <a href="../Functions.htm#Chr">Chr(1)</a> bis <a href="../Functions.htm#Chr">Chr(26)</a>. Außerdem ist es möglich, dass die <strong>M</strong>-Option einige Tastenkürzel wie STRG+NACH-LINKS dazu bringen kann, sich während eines Inputs falsch zu verhalten.</p>
-      <p><strong>T</strong>: Zeitlimit (z. B. <code>T3</code>). Die Anzahl an Sekunden, die gewartet werden sollen, bevor der Input beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Timeout gesetzt wird. Hat der Input die Zeit überschritten, wird <em>AusgabeVar</em> auf das gesetzt, was auch immer der Benutzer gerade eingegeben hat. Dieser Wert kann eine Fließkommazahl wie z. B. 2.5 sein.</p>      
-      <p><strong><a name="vis"></a>V</strong>: Sichtbar. Normalerweise wird die Eingabe des Benutzers blockiert (unsichtbar für das Betriebssystem). Verwende diese Option, um die Tastatureingaben des Benutzers direkt an das aktive Fenster senden zu lassen.</p>
-      <p><strong><a name="asterisk"></a>*</strong>: Platzhalter (überall finden). Normalerweise muss alles, was der Benutzer eingibt, exakt mit einem Element aus der <em>Vergleichsliste</em> übereinstimmen, damit der Input fortfahren kann. Verwende diese Option, um im gesamten Eingabetext eine Übereinstimmung häufiger finden zu können.</p></dd>
+      <p><strong>T</strong>: Zeitlimit (z. B. <code>T3</code>). Die Anzahl an Sekunden, die gewartet werden sollen, bevor der Input beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Timeout gesetzt wird. Hat der Input die Zeit überschritten, wird <em>AusgabeVar</em> auf das gesetzt, was auch immer der Benutzer gerade eingegeben hat. Dieser Wert kann eine Fließkommazahl wie z. B. 2.5 sein.</p>
+      <p id="vis"><strong>V</strong>: Sichtbar. Normalerweise wird die Eingabe des Benutzers blockiert (unsichtbar für das Betriebssystem). Verwende diese Option, um die Tastatureingaben des Benutzers direkt an das aktive Fenster senden zu lassen.</p>
+      <p id="asterisk"><strong>*</strong>: Platzhalter (überall finden). Normalerweise muss alles, was der Benutzer eingibt, exakt mit einem Element aus der <em>Vergleichsliste</em> übereinstimmen, damit der Input fortfahren kann. Verwende diese Option, um im gesamten Eingabetext eine Übereinstimmung häufiger finden zu können.</p>
+      <p id="E"><strong>E</strong> <span class="ver">[v1.1.20+]</span>: Behandelt Einzelzeichen-Endungstasten als Zeichencode anstatt als Tastencode. Dies ermöglicht konsistentere Ergebnisse, wenn sich das Tastaturlayout des aktiven Fensters vom Tastaturlayout des Scripts unterscheidet. Es verhindert auch Tastenkombinationen, die die angegebenen Endungszeichen bei der Eingabe eigentlich nicht erzeugen können; wenn <code>@</code> beispielsweise eine Endungstaste wäre, würde sie auf einem US-Layout via UMSCHALT+2 ausgelöst werden, aber nicht via STRG+UMSCHALT+2 (wenn die E-Option verwendet wird). Wenn zusätzlich noch die <strong>C</strong>-Option angegeben ist, unterscheidet das Endungszeichen zwischen Groß- und Kleinschreibung.</p>
+      </dd>
 
   <dt>Endtasten</dt>
   <dd><p>Eine Liste mit null oder mehreren Tasten, die den Input beenden können, sobald eine von denen gedrückt wird (die <em>Endtaste</em> selbst wird nicht in <em>AusgabeVar</em> geschrieben). Ein auf diese Weise beendeter Input setzt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort EndKey, gefolgt von einem Doppelpunkt und den Namen der <em>Endtaste</em>. Beispiele: <code>EndKey:.</code>, <code>EndKey:Escape</code>.</p>
@@ -81,8 +83,13 @@ ExitApp</pre>
     <td>Der Input stimmt mit einem Element aus der <em>Vergleichsliste</em> überein.</td>
   </tr>
   <tr>
-    <td>EndKey:name</td>
-    <td>Eine der <em>Endtasten</em> wurde zum Beenden des Inputs gedrückt. In diesem Fall wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort EndKey gesetzt, gefolgt von einem Doppelpunkt und den Namen der Endtaste ohne Klammern, z. B. "EndKey:Enter", "EndKey:Escape", etc.</td>
+    <td>Endtaste:<em>Name</em></td>
+    <td>
+      <p>Eine der <em>Endtasten</em> wurde zum Beenden des Inputs gedrückt. In diesem Fall wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort EndKey gesetzt, gefolgt von einem Doppelpunkt und den Namen der Endtaste ohne Klammern, z. B. "EndKey:Enter", "EndKey:Escape", etc.</p>
+      <p>Beachte, dass <em>Name</em> der "normalisierte" Name der Taste ist, egal wie sie in <em>Endtasten</em> geschrieben wurde. Zum Beispiel würde sowohl {Esc} als auch {vk1B} "ErrorLevel:Escape" erzeugen. Mit <a href="../Functions.htm#GetKeyName">GetKeyName()</a> kann der normalisierte Name abgerufen werden.</p>
+      <p>Wenn die <a href="#E">E-Option</a> verwendet wurde, wird <em>Name</em> das aktuell eingegebene Zeichen sein (falls zutreffend). Ansonsten wird der Name auf Basis des aktiven Tastaturlayouts vom Script bestimmt.</p>
+      <p>Vor <span class="ver">[v1.1.20]</span>, wenn der VK-Code der Endungstaste im Bereich von 0x41 (A) bis 0x5A (Z) war, enthielt ErrorLevel üblicherweise das entsprechende ASCII-Zeichen, selbst wenn es nicht für das aktuelle Tastaturlayout korrekt war. In v1.1.20 und höher wird das korrekte Zeichen verwendet. Verwendet man ein Zeichen im Bereich von A bis Z, wird es aus Gründen der Rückwärtskompatibilität großgeschrieben sein; ansonsten in der Regel kleingeschrieben.</p>
+    </td>
   </tr>
 </table>
 <h3>Bemerkungen</h3>

@@ -12,28 +12,66 @@
 
 <h1>OnMessage()</h1>
 
-<p>Bestimmt eine <a href="../Functions.htm">Funktion</a>, die automatisch aufgerufen werden soll, wenn das Script die angegebene Nachricht empfängt.</p>
+<p>Bestimmt eine <a href="../Functions.htm">Funktion</a> oder ein <a href="../objects/Functor.htm">Funktionsobjekt</a>, die automatisch aufgerufen werden sollen, wenn das Script die angegebene Nachricht empfängt.</p>
 
-<pre class="Syntax">OnMessage(NachrNummer [, "Funktionsname", MaxThreads])</pre>
+<pre class="Syntax">OnMessage(NachrNummer [, Funktion, MaxThreads])</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>NachrNummer</dt>
   <dd><p>Die Nummer der Nachricht zwischen 0 und 4294967295 (0xFFFFFFFF), die überwacht oder abgefragt werden soll. Sofern das Überwachen einer <a href="../misc/SendMessageList.htm">Systemnachricht</a> nicht erforderlich ist (also eine unter 0x400), sollte man am besten eine Nummer verwenden, die größer ist als 4096 (0x1000). Dies verringert die Chance, dass interne Nachrichten von AutoHotkey gestört werden.</p></dd>
 
-  <dt>Funktionsname</dt>
-  <dd><p>Ein <a href="../Functions.htm">Funktion</a>sname, der in Anführungszeichen gesetzt werden muss, wenn er ein literaler String ist. Diese Funktion wird automatisch aufgerufen, wenn das Script die <em>NachrNummer</em> empfängt. Lass diesen Parameter weg, um den Namen der Funktion abzurufen, die gerade <em>NachrNummer</em> überwacht (leer, wenn es keine gibt). Verwende einen leeren String ("") oder eine leere Variable, um das Überwachen der <em>NachrNummer</em> auszuschalten.</p></dd>
+  <dt>Funktion</dt>
+  <dd><p>Der Name einer <a href="../Functions.htm">Funktion</a>, oder seit <span class="ver">[v1.1.20+]</span> ein <a href="../objects/Functor.htm">Funktionsobjekt</a>. Um einen literalen Funktionsnamen zu übergeben, muss er in Anführungszeichen gesetzt werden.</p>
+  <p>Wie die Funktion registriert wird und welcher Rückgabewert von OnMessage erfolgt, hängt davon ab, ob dieser Parameter ein String oder ein Funktionsobjekt ist. Einzelheiten findest du unter <a href="#Name_v_Object">Funktionsname vs. Objekt</a>.</p>
+  </dd>
 
-  <dt>MaxThreads<br>
-    <span class="ver">[v1.0.47+]</span></dt>
-  <dd><p><a name="MaxThreads"></a>Normalerweise lässt man diesen Parameter (Integer) weg, um die überwachende Funktion jeweils auf einen einzigen <a href="../misc/Threads.htm">Thread</a> zu begrenzen. Dies ist üblicherweise das Beste, weil das Script sonst Nachrichten in chronologisch falscher Reihenfolge abarbeiten würde, wann immer die überwachende Funktion sich selbst unterbricht. Demzufolge kann <em>Critical</em> als Alternative zu <em>MaxThreads</em> verwendet werden, wie es <a href="#Critical">weiter unten</a> beschrieben wird.</p></dd>
+  <dt>MaxThreads <span class="ver">[v1.0.47+]</span></dt>
+  <dd><p><a name="MaxThreads"></a>Normalerweise lässt man diesen Parameter (Integer) weg, um die überwachende Funktion jeweils auf einen einzigen <a href="../misc/Threads.htm">Thread</a> zu begrenzen. Dies ist üblicherweise das Beste, weil das Script sonst Nachrichten in chronologisch falscher Reihenfolge abarbeiten würde, wann immer die überwachende Funktion sich selbst unterbricht. Demzufolge kann <em>Critical</em> als Alternative zu <em>MaxThreads</em> verwendet werden, wie es <a href="#Critical">weiter unten</a> beschrieben wird.</p>
+  <p><span class="ver">[v1.1.20+]:</span> Standardmäßig werden mehrere Funktionen, die für eine einzige <em>NachrNummer</em> registriert sind, in der Reihenfolge aufgerufen, wie sie registriert wurden. Um eine Funktion zu registrieren, die vor allen anderen registrierten Funktionen erfolgen soll, muss ein negativer Wert bei <em>MaxThreads</em> angegeben werden. Zum Beispiel würde <code>OnMessage(Nachr, Fn,-2)</code> die Funktion <code>Fn</code> vor allen anderen registrierten Funktionen für die Nachricht <em>Nachr</em> aufrufen, und maximal 2 Threads für <em>Fn</em> erlauben. Wenn die Funktion allerdings bereits registriert ist, wird die Reihenfolge nicht geändert, sofern sie nicht de- und dann neuregistriert wurde.</p></dd>
 
 </dl>
 
-<h3>Rückgabewerte</h3>
-<p>Fehlt <em>Funktionsname</em>, wird OnMessage den Namen der Funktion zurückgeben, die gerade <em>NachrNummer</em> überwacht (leer, wenn es keine gibt).</p>
-<p>Wenn <em>Funktionsname</em> explizit leer ist (also ""), wird OnMessage den Namen der Funktion zurückgeben, die gerade <em>NachrNummer</em> überwacht (leer, wenn es keine gibt), und dann die Überwachung von <em>NachrNummer</em> deaktivieren.</p>
-<p>Wenn <em>Funktionsname</em> angegeben ist: Sollte <em>NachrNummer</em> bereits überwacht werden, wird OnMessage den Namen dieser Funktion zurückgeben und die neue Funktion in Kraft setzen. Ansonsten wird OnMessage den <em>Funktionsname</em>n die <em>NachrNummer</em> überwachen lassen und dann den gleichen <em>Funktionsname</em>n zurückgeben. In jedem Fall wird ein leerer Wert bei einem Fehler zurückgegeben. Fehler treten auf, wenn <em>Funktionsname</em>: 1) nicht existiert (weil zum Beispiel die Anführungszeichen bei <em>Funktionsname</em> fehlen); 2) mehr als vier Parameter akzeptiert; oder 3) in v1.0.48.05 oder älter <a href="../Functions.htm#ByRef">ByRef</a>- oder <a href="../Functions.htm#optional">optionale</a> Parameter hat. OnMessage wird auch fehlschlagen, wenn bereits 500 Nachrichten überwacht werden.</p>
+<h3 id="Name_v_Object">Funktionname vs. Objekt</h3>
+<p>OnMessage's Rückgabewert und Verhalten sind abhängig davon, ob der <em>Funktion</em>sparameter ein Funktionsname oder ein Objekt ist.</p>
+
+<h4>Funktionsname</h4>
+<p>Aus Gründen der Abwärtskompatibilität kann höchstens eine Funktion via Name registriert werden, um jede einzigartige <em>NachrNummer</em> zu überwachen -- dies wird auch als "Legacy"-Überwachung bezeichnet.</p>
+<p>Wenn die Legacy-Überwachung das erste Mal registriert wird, ist die Tatsache, ob sie vor oder nach zuvor registrierten Überwachungen aufgerufen wird, abhängig vom <em>MaxThreads</em>-Parameter. Die Überwachung dahingehend zu ändern, eine andere Funktion aufzurufen, beeinflusst nicht die Reihenfolge, sofern die Überwachung nicht erst deregistriert wird.</p>
+<p>Folgendes registriert oder ändert die Legacy-Überwachung für <em>NachrNummer</em> (lass die Anführungszeichen weg, wenn du eine Variable übergeben willst):</p>
+<pre class="Syntax">Name := OnMessage(NachrNummer, "Funktionsname")</pre>
+<p>Der Rückgabewert ist einer der folgenden:</p>
+<ul>
+  <li>Ein leerer String bei <a href="#Failure">Fehlschlag</a>.</li>
+  <li>Der Name der vorherigen Funktion, sofern es eine gab.</li>
+  <li>Ansonsten der Name der neuen Funktion.</li>
+</ul>
+<p>Folgendes deregistriert die aktuelle Legacy-Überwachung für <em>NachrNummer</em> (falls vorhanden) und gibt ihren Namen zurück (leer, wenn sie keinen hat):</p>
+<pre class="Syntax">Name := OnMessage(NachrNummer, "")</pre>
+<p>Folgendes gibt den Namen der aktuellen Legacy-Überwachung für <em>NachrNummer</em> zurück (leer, wenn sie keinen hat):</p>
+<pre class="Syntax">Name := OnMessage(NachrNummer)</pre>
+
+<h4>Funktionsobjekt</h4>
+<p>Beliebig viele <a href="../objects/Functor.htm">Funktionsobjekte</a> (einschließlich <a href="../objects/Func.htm">normale Funktionen</a>) können die angegebene <em>NachrNummer</em> überwachen.</p>
+<p>Beide folgenden Zeilen registrieren ein Funktionsobjekt, das <strong>nach</strong> allen zuvor registrierten Funktionen aufgerufen wird:</p>
+<pre class="Syntax">
+OnMessage(NachrNummer, FunkObj)     <em>; Option 1</em>
+OnMessage(NachrNummer, FunkObj, 1)  <em>; Option 2 (MaxThreads = 1)</em>
+</pre>
+<p>Folgendes registriert ein Funktionsobjekt, das <strong>vor</strong> allen zuvor registrierten Funktionen aufgerufen wird:</p>
+<pre class="Syntax">OnMessage(NachrNummer, FunkObj, -1)</pre>
+<p>Um ein Funktionsobjekt zu deregistrieren, muss 0 bei <em>MaxThreads</em> angegeben werden:</p>
+<pre class="Syntax">OnMessage(NachrNummer, FunkObj, 0)</pre>
+
+<h3 id="Failure">Misserfolg</h3>
+<p>Misserfolg tritt auf, wenn <em>Funktion</em>:</p>
+<ol>
+  <li>kein Objekt ist, kein Name einer benutzerdefinierten Funktion ist, oder ein leerer String ist;</li>
+  <li>wissentlich mehr als vier Parameter benötigt; oder</li>
+  <li>in v1.0.48.05 oder älter <a href="../Functions.htm#ByRef">ByRef</a>- oder <a href="../Functions.htm#optional">optionale</a> Parameter hat.</li>
+</ol>
+<p>In v1.1.19.03 oder älter tritt Misserfolg auch auf, wenn das Script versucht, eine neue Nachricht zu überwachen, während bereits 500 Nachrichten überwacht werden.</p>
+<p>Wenn <em>Funktion</em> ein Objekt ist, wird bei Misserfolg eine Ausnahme ausgelöst. Ansonsten wird ein leerer String zurückgegeben.</p>
 
 <h3>Die Parameter der Funktion</h3>
 <p>Eine <a href="../Functions.htm">Funktion</a>, die in OnMessage zum Überwachen von einer oder mehreren Nachrichten angegeben wurde, akzeptiert bis zu vier Parameter:</p>
@@ -66,6 +104,7 @@ NachrÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des
 <h3>Was die Funktion per <em>Return</em> zurückgeben sollte</h3>
 <p>Verwendet eine überwachende Funktion <a href="Return.htm">Return</a> ohne Parameter oder mit einem leeren Wert wie "" (oder verwendet sie überhaupt kein Return), wird die eingehende Nachricht beim Erreichen des Funktionsendes normal fortgesetzt. Das gleiche passiert, wenn man das Ende der Funktion via <a href="Exit.htm">Exit</a> erzwingt oder einen Laufzeitfehler verursacht (der beispielsweise durch <a href="Run.htm">Ausführen</a> einer nicht-existierenden Datei ausgelöst werden kann). Vewendet man als Rückgabewert hingegen einen Integer, wird dieser Wert sofort als Antwort gesendet; das heißt, dass das Programm die Nachricht nicht weiter fortsetzen wird. Zum Beispiel könnte eine Funktion, die WM_LBUTTONDOWN (0x201) überwacht, einen Integer zurückgeben, um das Zielfenster daran zu hindern, benachrichtigt zu werden, dass ein Mausklick erfolgt ist. In vielen Fällen (z. B. als eine Nachricht, empfangen via <a href="PostMessage.htm">PostMessage</a>) ist es egal, welcher Integer zurückgegeben wird; aber im Zweifelsfall ist eine 0 am sichersten.</p>
 <p>Der Bereich von gültigen Rückgabewerten ist abhängig davon, ob die script-ausführende EXE-Datei 32- oder 64-Bit ist. Bei einem 32-Bit-Script (<code><a href="../Variables.htm#PtrSize">A_PtrSize</a> = 4</code>) müssen die Rückgabewerte in einem Bereich von -2<sup>31</sup> und 2<sup>32</sup>-1 sein, und bei einem 64-Bit-Script  (<code><a href="../Variables.htm#PtrSize">A_PtrSize</a> = 8</code>) in einem Bereich von -2<sup>63</sup> und 2<sup>63</sup>-1.</p>
+<p><span class="ver">[v1.1.20+]:</span> Mehrere Funktionen, die eine bestimmte Nachrichtennummer überwachen, werden nacheinander aufgerufen, bis eine von denen einen nicht-leeren Wert zurückgibt.</p>
 
 <h3 id="Remarks">Allgemeine Bemerkungen</h3>
 <p>Im Gegensatz zu einem normalen Funktionsaufruf wird die überwachende Funktion, wenn sie eine neue Nachricht empfängt, als neuer <a href="../misc/Threads.htm">Thread</a> aufgerufen. Aus diesem Grund beginnt die Funktion mit den Standardeinstellungen bei Befehlen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>. Diese Standardeinstellungen können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
@@ -79,7 +118,7 @@ NachrÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des
 <p>Zeigt das Script einen Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> an, werden Nachrichten, die via PostMessage zu einem Steuerelement gesendet werden, nicht überwacht. Zeigt das Script beispielsweise eine MsgBox an und klickt der Benutzer innerhalb eines GUI-Fensters auf einen Button, wird die WM_LBUTTONDOWN-Nachricht direkt zum Button gesendet, ohne dass die überwachende Funktion aufgerufen wird.</p>
 <p>Zwar kann ein externes Programm direkt via PostThreadMessage() oder anderen API-Funktionen Nachrichten zu einem Script-Thread senden, allerdings könnten dabei Nachrichten verloren gehen, wenn das Script einen Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt. Stattdessen ist es besser, Nachrichten zum Hauptfenster des Scripts oder zu einem seiner GUI-Fenster zu senden.</p>
 <h3>Siehe auch</h3>
-<p><a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="OnExit.htm">OnExit</a>, <a href="../misc/Clipboard.htm#OnClipboardChange">OnClipboardChange</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fensternachrichten</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Critical.htm">Critical</a>, <a href="DllCall.htm">DllCall()</a></p>
+<p><a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fensternachrichten</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Critical.htm">Critical</a>, <a href="DllCall.htm">DllCall()</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Beispiel: Das folgende Script zeigt, wie Mausklicks innerhalb eines GUI-Fensters überwacht werden können.
 ; Verwandtes Thema: <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a></em>

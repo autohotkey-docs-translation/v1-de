@@ -23,8 +23,10 @@
 
   <dt>SteuerelementID</dt>
   <dd><p>Wenn das Ziel-Steuerelement eine zugeordnete Variable hat, kann der Name der Variable als <em>SteuerelementID</em> angegeben werden (diese Methode hat Vorrang vor der nächsten Methode). Aus diesem Grund empfiehlt es sich, jedes Steuerelement mit einer Variable zu verbinden, so dass es später via GuiControl oder GuiControlGet zugreifbar ist, selbst wenn es nicht eingabefähig ist (z. B. GroupBox oder Text).</p>
-      <p>Ansonsten kann <em>SteuerelementID</em> entweder ClassNN (Klassenname und Instanznummer des Steuerelements) oder der Text des Steuerelements sein, die beide mit Windows Spy ermittelt werden können. Verwendet man Text, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>. Hinweis: Der Dateiname eines Picture-Steuerelements (der zum Zeitpunkt seiner Erstellung angegeben wurde) kann auch als <em>SteuerelementID</em> verwendet werden.</p>
-      <p><span class="ver">[v1.1.04+]:</span> <em>SteuerelementID</em> kann das <a href="Gui.htm#HwndOutputVar">HWND</a> eines Steuerelements sein. Wie bei allen anderen Werten für SteuerelementID auch, muss das Gui angegeben werden, falls sich das Steuerelement nicht auf dem Standard-Gui befindet.</p></dd>
+  <p>Ansonsten kann <em>SteuerelementID</em> entweder ClassNN (Klassenname und Instanznummer des Steuerelements) oder der Text des Steuerelements sein, die beide mit Windows Spy ermittelt werden können. Verwendet man Text, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>. Hinweis: Der Dateiname eines Picture-Steuerelements (der zum Zeitpunkt seiner Erstellung angegeben wurde) kann auch als <em>SteuerelementID</em> verwendet werden.</p>
+  <p><span class="ver">[v1.1.04+]:</span> <em>SteuerelementID</em> kann das <a href="Gui.htm#HwndOutputVar">HWND</a> eines Steuerelements sein.</p>
+  <p>Befindet sich das Steuerelement nicht auf dem Standard-GUI, <strong>muss der Name des GUI auch angegeben werden</strong> -- außer in <span class="ver">[v1.1.20+]</span>, wenn <em>SteuerelementID</em> ein HWND ist, da jedes HWND einzigartig ist. Siehe <a href="#Remarks">Bemerkungen</a>, um mehr darüber zu erfahren.</p>
+  </dd>
 
   <dt>Param3</dt>
   <dd><p>Dieser Parameter kann weggelassen werden, solange er nicht von einem Unterbefehl aus der unteren Liste benötigt wird.</p></dd>
@@ -78,12 +80,16 @@ GuiControl, Font, MeinEdit  <em>; Setzt die obere Schrift für ein Steuerelement
 <p>Im nächsten Beispiel wird der OK-Button zum neuen Standard-Button gemacht:</p>
 <pre>GuiControl, +Default, OK</pre>
 <p>Zwar werden <a href="../misc/Styles.htm">Styles</a> und erweiterte Styles auch erkannt, allerdings können ein paar von denen nicht angewendet oder entfernt werden, nachdem ein Steuerelement erstellt wurde. ErrorLevel wird auf 0 gesetzt, wenn mindestens eine der angegebenen Änderungen erfolgreich durchgeführt wurde. Ansonsten wird es auf 1 gesetzt, um zu zeigen, dass keine einzige Änderung angewendet werden konnte. Auch wenn eine Änderung erfolgreich angewendet wurde, hat das Steuerelement immer noch die Wahl, sie zu ignorieren.</p>
+<p id="Functor"><span class="ver">[v1.1.20+]:</span> Um ein <a href="../objects/Functor.htm">Funktionsobjekt</a> zum Behandeln von <a href="Gui.htm#label">Ereignissen des Steuerelements</a> zu setzen, muss <em>Param3</em> ein einzelner Variablenverweis sein, wie es in den folgenden beiden Beispielen gezeigt wird. Andere Ausdrücke, die Objekte zurückgeben, werden zurzeit nicht unterstützt.</p>
+<pre>GuiControl +g, <i>SteuerelementID</i>, %FunkObj%
+GuiControl +g, <i>&gt;SteuerelementID</i>, % FunkObj
+</pre>
 
 <h3 id="Remarks">Bemerkungen</h3>
 <p>Um neben dem Standard-Fenster auch ein anderes Fenster einzubeziehen (siehe unten), muss dessen Name oder Nummer, gefolgt von einem Doppelpunkt, vor dem Unterbefehl wie folgt eingefügt werden:</p>
 <pre>GuiControl, MeinGui:Show, MeinButton
 GuiControl, MeinGui:, MeineListBox, Element1|Element2</pre>
-<p>Dies ist auch dann notwendig, wenn <em>SteuerelementID</em> eine zugeordnete Variable oder HWND eines Steuerelements ist.</p>
+<p>Dies ist auch dann notwendig, wenn <em>SteuerelementID</em> die zugeordnete Variable eines Steuerelements ist, da jede Variable für mehrere GUI-Fenster verwendet werden kann. In <span class="ver">[v1.1.20+]</span> kann der GUI-Name weggelassen werden, wenn <em>SteuerelementID</em> das HWND eines Steuerelements ist.</p>
 <p>Ein GUI-<a href="../misc/Threads.htm">Thread</a> wird wie jeder andere Thread definiert, der aufgrund einer GUI-Aktion gestartet wurde. Zu den GUI-Aktionen gehört beispielsweise das Auswählen eines Menüpunkts oder das Ausführen eines <a href="Gui.htm#label">g-Labels</a> (z. B. beim Drücken eines Buttons).</p>
 <p>Der <a href="Gui.htm#DefaultWin">Standardfenstername</a> für einen GUI-Thread ist der Name des Fensters, das diesen Thread gestartet hat. Nicht-GUI-Threads verwenden standardmäßig eine 1.</p>
 

@@ -33,7 +33,7 @@ toc = [
       {label:"Object",path:"objects/Object.htm"},
       {label:"Enumerator-Objekt",path:"objects/Enumerator.htm"},
       {label:"File-Objekt",path:"objects/File.htm"},
-      {label:"Func-Objekt",path:"objects/Func.htm"}
+      {label:"Funktionsobjekte",path:"objects/Functor.htm"}
     ]}
   ]},
   {label:"Zu AutoHotkey 1.1 wechseln",children:
@@ -164,7 +164,7 @@ toc = [
     {label:"Asc",path:"Functions.htm#Asc"},
     {label:"Chr",path:"Functions.htm#Chr"},
     {label:"FileExist",path:"Functions.htm#FileExist"},
-	{label:"Format",path:"commands/Format.htm"},
+    {label:"Format",path:"commands/Format.htm"},
     {label:"GetKeyName/VK/SC",path:"Functions.htm#GetKeyName"},
     {label:"GetKeyState",path:"Functions.htm#GetKeyState"},
     {label:"InStr",path:"Functions.htm#InStr"},
@@ -173,6 +173,8 @@ toc = [
     {label:"IsLabel",path:"Functions.htm#IsLabel"},
     {label:"NumGet",path:"commands/NumGet.htm"},
     {label:"NumPut",path:"commands/NumPut.htm"},
+    {label:"OnClipboardChange",path:"commands/OnClipboardChange.htm"},
+    {label:"OnExit",path:"commands/OnExit.htm"},
     {label:"OnMessage",path:"commands/OnMessage.htm"},
     {label:"RegExMatch",path:"commands/RegExMatch.htm"},
     {label:"RegExReplace",path:"commands/RegExReplace.htm"},
@@ -647,6 +649,7 @@ index = [
   ["Blind-Modus von Send","commands/Send.htm#blind"],
   ["BlockInput","commands/BlockInput.htm"],
   ["Blöcke (Zeilen innerhalb von Klammern)","commands/Block.htm"],
+  ["BoundFunc-Objekt","objects/Functor.htm#BoundFunc"],
   ["Break","commands/Break.htm"],
   ["Puffern / Zwischenspeichern","commands/_MaxThreadsBuffer.htm"],
   ["integrierte Funktionen","Functions.htm#BuiltIn"],
@@ -754,6 +757,7 @@ index = [
   ["DriveGet","commands/DriveGet.htm"],
   ["DriveSpaceFree","commands/DriveSpaceFree.htm"],
   ["DropDownList-Steuerelemente (GUI)","commands/GuiControls.htm#DropDownList"],
+  ["Dynamische Funktionsaufrufe","Functions.htm#DynCall"],
   ["Edit","commands/Edit.htm"],
   ["Edit-Steuerelemente (GUI)","commands/GuiControls.htm#Edit"],
   ["Else","commands/Else.htm"],
@@ -1036,7 +1040,7 @@ index = [
   ["ObjRelease()","commands/ObjAddRef.htm"],
   ["ObjRemove()","objects/Object.htm#Remove"],
   ["ObjSetCapacity()","objects/Object.htm#SetCapacity"],
-  ["OnClipboardChange (label)","misc/Clipboard.htm#OnClipboardChange"],
+  ["OnClipboardChange","commands/OnClipboardChange.htm"],
   ["OnExit","commands/OnExit.htm"],
   ["OnMessage()","commands/OnMessage.htm"],
   ["Öffnen einer Datei","commands/FileReadLine.htm"],
@@ -1319,13 +1323,16 @@ index = [
 translate = {
   hdSearchTxt: "Suchbegriff eingeben ...",
   hdSearchBtn: "Suchen",
-  hdSearchLnk: "'https://www.google.com/search?sitesearch=' + location.host + '&q=' + query",
+  hdSearchLnk: "https://www.google.com/search?sitesearch=ragnar-f.github.io&q={0}",
   sbContent: "Inhalt",
   sbIndex: "Index",
   ftLicense: "Lizenz:",
   ftExtra: " | Übersetzung: Harald Bootz",
   cdSelectBtn: "Markieren",
-  cdDownloadBtn: "Download"
+  cdDownloadBtn: "Download",
+  verToolTipAHK_L: "Gilt für:\nAutoHotkey_L Revision {0} und höher\nAutoHotkey v1.0.90.00 und höher",
+  verToolTipDefault: "Gilt für AutoHotkey {0} und höher",
+  tutLocalMessage: "Da du dir diese Dokumentation lokal anschaust, hast du wahrscheinlich AutoHotkey bereits installiert und kannst bei Abschnitt b fortfahren.",
 };
 if (!IsInsideCHM() && !IsSearchBot())
 {
@@ -1385,13 +1392,13 @@ function AddContent()
 
     $('.header #search-btn').on('click', function() {
       var query = $(".header #q").val();
-      document.location = eval(translate.hdSearchLnk);
+      document.location = translate.hdSearchLnk.format(query);
     });
 
     $('.header #search-form').on('submit', function(event) {
         event.preventDefault();
         var query = $(".header #q").val();
-        document.location = eval(translate.hdSearchLnk);
+        document.location = translate.hdSearchLnk.format(query);
     });
 
     //
@@ -1616,13 +1623,11 @@ function AddChmAndOnlineFeatures()
       var jel = $(el);
       var m, title, href, text = jel.text();
       if (m = /AHK_L (\d+)\+/.exec(text)) {
-        title = 'Applies to:\n'
-          + '  AutoHotkey_L Revision ' + m[1] + ' and later\n'
-          + '  AutoHotkey v1.0.90.00 and later';
+        title = translate.verToolTipAHK_L.format(m[1]);
         href = '/docs/AHKL_ChangeLog.htm#L' + m[1];
         text = text.replace(m[0], 'v1.0.90+'); // For users who don't know what AHK_L was.
       } else if (m = /v\d\.\d\.(\d+\.)?\d+/.exec(text)) {
-        title = 'Applies to AutoHotkey ' + m[0] + ' and later';
+        title = translate.verToolTipDefault.format(m[0]);
         if (!m[1])
           m[0] = m[0] + '.00';
         if (m[0] <= 'v1.0.48.05')
@@ -1742,3 +1747,8 @@ function IsSearchBot()
 {
   return navigator.userAgent.match(/googlebot|bingbot|slurp/i);
 }
+
+String.prototype.format = function() {
+  var args = arguments;
+  return this.replace(/\{(\d+)\}/g, function(m, n) { return args[n]; });
+};

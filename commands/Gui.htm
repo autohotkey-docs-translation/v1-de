@@ -268,7 +268,11 @@ Gui, Show</pre>
 
 <h2 id="Events">Speichern von und Reagieren auf Benutzereingaben</h2>
 <p><strong><a name="var"></a>V</strong>: Variable. Verbindet eine Variable mit einem Steuerelement. Nach dem Buchstaben V kann der Name einer globalen Variable angegeben werden (oder eine <a href="../Functions.htm#ByRef">lokale ByRef-Variable</a>, die auf eine globale Variable verweist, oder eine <a href="../Functions.htm#static">statische Variable</a> seit v1.0.46.01). Zum Beispiel würde <code><strong>v</strong>MeinEdit</code> den Inhalt des Steuerelements in die Variable <em>MeinEdit</em> speichern, sobald <a href="#Submit">Gui</a> Submit verwendet wird. Das Zuweisen von Variablen ist auch bei Steuerelementen hilfreich, die nicht eingabefähig sind (z. B. ein Text oder GroupBox), weil die Namen solcher Variablen beim Verwenden von <a href="GuiControl.htm">GuiControl</a>, <a href="GuiControlGet.htm">GuiControlGet</a> und <a href="../Variables.htm#GuiControl">A_GuiControl</a> auch als eindeutige Kennung für Steuerelemente dienen können. Hinweis: <a href="#Submit">Gui Submit</a> ändert weder die Inhalte der Variablen von nicht-eingabefähigen Steuerelementen (z. B. Text oder GroupBox), noch von anderen, wie in ihren Sektionen beschrieben (z. B. <a href="ListView.htm">ListView</a> und <a href="TreeView.htm">TreeView</a>).</p>
-<p><strong><a name="label"></a>G</strong>: Gosub (g-label). Startet automatisch eine Subroutine, wenn der Benutzer ein Steuerelement anklickt oder ändert. Gebe nach dem Buchstaben G den Namen des <a href="../misc/Labels.htm">Labels</a> an, das ausgeführt werden soll. Man kann <code>gCancel</code> angeben, um ein indirektes <a href="#Cancel">Gui Cancel</a> durchzuführen (aber falls ein Label namens "Cancel" im Script bereits vorkommt, wird dieser stattdessen ausgeführt). Die Subroutine kann auf folgende integrierte Variablen zurückgreifen: <a href="../Variables.htm#Gui">A_Gui</a>, <a href="../Variables.htm#GuiControl">A_GuiControl</a>, <a href="../Variables.htm#GuiEvent">A_GuiEvent</a> und <a href="../Variables.htm#EventInfo">A_EventInfo</a>.</p>
+<p id="label"><strong>G</strong>: Gosub (g-label). Startet automatisch eine Subroutine oder Funktion, wenn der Benutzer ein Steuerelement anklickt oder ändert. Gebe nach dem Buchstaben G den Namen des <a href="../misc/Labels.htm">Labels</a> an, das ausgeführt werden soll. Man kann <code>gCancel</code> angeben, um ein indirektes <a href="#Cancel">Gui Cancel</a> durchzuführen (aber falls ein Label namens "Cancel" im Script bereits vorkommt, wird dieser stattdessen ausgeführt). Die Subroutine kann auf folgende integrierte Variablen zurückgreifen: <a href="../Variables.htm#Gui">A_Gui</a>, <a href="../Variables.htm#GuiControl">A_GuiControl</a>, <a href="../Variables.htm#GuiEvent">A_GuiEvent</a> und <a href="../Variables.htm#EventInfo">A_EventInfo</a>.</p>
+<p><span class="ver">[v1.1.20+]:</span> Wenn es kein gültiger Labelname ist, kann stattdessen ein Funktionsname verwendet werden. Alternativ kann mit dem <a href="GuiControl.htm#Functor">GuiControl</a>-Befehl ein <a href="../objects/Functor.htm">Funktionsobjekt</a> mit dem Steuerelement verbunden werden. Die Funktion kann optional die folgenden Parameter akzeptieren (wo <code>gCtrlEvent</code> die Funktion setzt):</p>
+<pre class="Syntax">CtrlEvent(CtrlHwnd, GuiEvent, EventInfo, ErrorLevel)</pre>
+<p>Die Bedeutung der Parameter ist vom Typ des Steuerelements abhängig.</p>
+
 <h2 id="OtherOptions">Steuerelemente: Gewöhnliche Styles und Optionen</h2>
 <p>Hinweis: Vorzeichenlose Eigenschaften werden standardmäßig hinzugefügt; zum Beispiel ist <code>Wrap</code> das gleiche wie <code>+Wrap</code>. Dagegen würde <code>-Wrap</code> die Eigenschaft zur Zeilenumbrechung entfernen.</p>
 <p><strong><a name="AltSubmit"></a>AltSubmit</strong>: Verwendet eine alternative Übermittlungsmethode. Bei DropDownList, ComboBox oder ListBox bewirkt <a href="#Submit">Gui Submit</a>, dass die Position des ausgewählten Elements gespeichert wird, anstatt dessen Text. ComboBox: Ist kein Element ausgewählt, wird der Text im Eingabefeld abgespeichert; DropDownList oder ListBox: Ist kein Element ausgewählt, werden ihre <a href="#var">zugewiesenen Ausgabevariablen</a> leer gemacht. Hinweis: AltSubmit beeinflusst auch das Verhalten von <a href="GuiControlGet.htm">GuiControlGet</a>, wenn der Inhalt von solchen Steuerelementen abgerufen wird.</p>
@@ -293,17 +297,38 @@ Gui, Show</pre>
 <p><strong>(Unbenannter Style)</strong>: Verwende ein Plus- oder Minuszeichen, gefolgt von einer dezimalen oder hexadezimalen <a href="../misc/Styles.htm">Style-Nummer</a>. Vorzeichenlose Styles werden standardmäßig hinzugefügt.</p>
 <p><strong>(Unbenannter ExStyle)</strong>: Verwende ein Plus- oder Minuszeichen, gefolgt von dem Buchstaben "E" und einer dezimalen oder hexadezimalen erweiterten Style-Nummer. Vorzeichenlose Styles werden standardmäßig hinzugefügt. Zum Beispiel würde <code>E0x200</code> den WS_EX_CLIENTEDGE-Style hinzufügen, der einen Rahmen mit abgesenktem Rand bereitstellt, welcher gut geeignet für Picture-Steuerelemente und ähnliches ist. Weitere nicht-dokumentierte Styles findet man auf <a href="http://www.microsoft.com">www.microsoft.com</a>, z. B. mit der Suche nach WS_EX_CLIENTEDGE.</p>
 
-<h2 id="Remarks"><strong><a name="Labels"></a></strong>Fensterereignisse</h2>
+<h2 id="Labels">Fensterereignisse</h2>
 <p>Die folgenden Label (Subroutinen) werden automatisch einem GUI-Fenster zugeordnet, falls diese im Script vorhanden sind:</p>
+<ul>
+  <li><a href="#GuiClose">GuiClose</a></li>
+  <li><a href="#GuiEscape">GuiEscape</a></li>
+  <li><a href="#GuiSize">GuiSize</a></li>
+  <li><a href="#GuiContextMenu">GuiContextMenu</a></li>
+  <li><a href="#GuiDropFiles">GuiDropFiles</a></li>
+</ul>
+<p><span class="ver">[v1.1.20+]:</span> Wenn ein Label nicht für das angegebene Ereignis existiert, kann stattdessen eine Funktion mit diesem Namen aufgerufen werden. Die Funktion kann optional das <a href="#GuiHwndOutputVar">HWND</a> des GUI über ihren ersten Parameter abrufen. Einige Ereignisse haben zusätzliche Parameter.</p>
+<p><a href="#MultiWin">Abgesehen vom ersten Fenster</a> müssen bei anderen Fenstern deren Namen oder Nummern (falls vorhanden) angegeben werden, damit sie die oben genannten Labels verwenden können. Zum Beispiel würden 2GuiEscape und 2GuiClose die Standard-Label des zweiten Fensters sein, während <em>MeinGui</em>GuiEscape und <em>MeinGui</em>GuiClose die Standard-Label für <em>MeinGui</em> sind. Um einen benutzerdefinierten Präfix zu setzen, verwende <code><a href="#PlusLabel">Gui +Label</a></code>.</p>
+
 <p><strong><a name="GuiClose"></a>GuiClose</strong>: Startet, wenn das Fenster mit einer der folgenden Methoden geschlossen wird: Drücken des X-Buttons in der Titelleiste, Auswählen von "Schließen" im Systemmenü oder per <a href="WinClose.htm">WinClose</a>. Fehlt dieses Label, bewirkt das Schließen des Fensters, dass es einfach versteckt wird, was den gleichen Effekt hat wie <a href="#Cancel">Gui Cancel</a>. Einer der häufigsten Maßnahmen für GuiClose ist <a href="ExitApp.htm">ExitApp</a>. Zum Beispiel:</p>
 <pre>GuiClose:
 ExitApp</pre>
+<p><span class="ver">[v1.1.20+]:</span> Wenn GuiClose eine Funktion ist, wird das GUI standardmäßig geschlossen. Die Funktion kann das verhindern, indem sie wie folgt einen Integer ungleich null zurückgibt:</p>
+<pre>GuiClose(GuiHwnd) {  <em>; Dieser Parameter ist optional.</em>
+    MsgBox 4,, Wollen Sie wirklich das GUI schließen?
+    ifMsgBox No
+        return true  <em>; true = 1</em>
+}</pre>
+
 <p><strong><a name="GuiEscape"></a>GuiEscape</strong>: Startet, wenn der Benutzer die ESC-Taste drückt, während das GUI-Fenster aktiv ist. Fehlt dieses Label, wird das Drücken der ESC-Taste nichts bewirken. Bekannte Einschränkung: Sollte das erste Steuerelement im Fenster deaktiviert sein (wahrscheinlich abhängig vom Typ des Steuerelements), wird das GuiEscape-Label nicht ausgeführt. Dieser Effekt könnte auch durch andere Umstände ausgelöst werden.</p>
+
 <p><strong><a name="GuiSize"></a>GuiSize</strong>: Startet, wenn das Fenster skaliert, minimiert, maximiert oder wiederhergestellt wird. Die integrierten Variablen <a href="../Variables.htm#GuiWidth">A_GuiWidth</a> und <a href="../Variables.htm#GuiWidth">A_GuiHeight</a> enthalten jeweils die neue Breite und Höhe des Client-Fensterbereichs (das ist der Bereich ohne Rahmen, Titelleiste und Menüleiste). Außerdem enthalten <a href="../Variables.htm#EventInfo">A_EventInfo</a> und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> jeweils eine der folgenden Zahlen:</p>
 <p>0: Das Fenster wurde wiederhergestellt oder dessen Größe auf normale Weise geändert, wie durch Ziehen des Rahmens.<br>
   1: Das Fenster wurde minimiert.<br>
   2: Das Fenster wurde maximiert.</p>
 <p>Ein Script kann GuiSize dazu verwenden, die Position und Größe der Steuerelemente neu anzupassen, während der Benutzer die Größe des Fensters ändert. Dieser Ablauf kann z. B. mit dem <a href="http://www.autohotkey.net/%7ETitan/anchor.html">"Anchor"-Script von Titan</a> via <a href="_Include.htm">#Include</a> vereinfacht werden.</p>
+<p><span class="ver">[v1.1.20+]:</span> Wenn GuiSize eine Funktion ist, sind seine Parameter wie folgt:</p>
+<pre class="Syntax">GuiSize(GuiHwnd, EventInfo, Breite, Höhe)</pre>
+
 <p><strong><a name="GuiContextMenu"></a>GuiContextMenu</strong>: Startet immer dann, wenn der Benutzer ein Rechtsklick im Fenster macht (außer Titelleiste und Menüleiste). Es wird auch gestartet, wenn die MENÜ-Taste oder UMSCHALT+F10 gedrückt wird. Im Gegensatz zu den meisten anderen GUI-Labels können mehrere <a href="../misc/Threads.htm">Threads</a> von diesem Label vorhanden sein. Innerhalb des GuiContextMenu-Labels sind folgende integrierte Variablen verfügbar:</p>
 <ol>
   <li><a href="../Variables.htm#GuiControl">A_GuiControl</a>, die den <a href="../Variables.htm#GuiControl">Text oder Variablennamen</a> des Steuerelements enthält, das das Ereignis empfangen hat (leer, wenn nichts).</li>
@@ -314,6 +339,10 @@ ExitApp</pre>
   <li>A_GuiEvent, die das Wort "RightClick" enthält, wenn der Benutzer ein Rechtsklick macht, oder "Normal", wenn das Menü durch die MENÜ-Taste oder UMSCHALT+F10 ausgelöst worden ist.</li>
 </ol>
 <p>Hinweis: Da die Steuerelemente <a href="GuiControls.htm#Edit">Edit</a> und <a href="GuiControls.htm#MonthCal">MonthCal</a> ihre eigenen Kontextmenüs haben, wird ein Rechtsklick auf solche Steuerelemente GuiContextMenu nicht starten.</p>
+<p><span class="ver">[v1.1.20+]:</span> Wenn GuiContextMenu eine Funktion ist, sind seine Parameter wie folgt:</p>
+<pre class="Syntax">GuiContextMenu(GuiHwnd, CtrlHwnd, EventInfo, IstRechtsklick, X, Y)</pre>
+<p><em>CtrlHwnd</em> ist leer, wenn das Ereignis nicht über einen Steuerelement abgerufen wurde. <em>IstRechtsklick</em> ist wahr, wenn A_GuiEvent den String RightClick enthält.</p>
+
 <p><strong><a name="GuiDropFiles"></a>GuiDropFiles</strong>: Startet immer dann, wenn Dateien oder Ordner per Drag&amp;Drop auf das Fenster abgelegt worden sind (wenn das Label bereits läuft, werden Drop-Ereignisse ignoriert). Innerhalb des GuiDropFiles-Labels sind folgende integrierte Variablen verfügbar:</p>
 <ol>
   <li><a href="../Variables.htm#GuiControl">A_GuiControl</a>, die den <a href="../Variables.htm#GuiControl">Text oder Variablennamen</a> des Steuerelements enthält, auf dem die Dateien abgelegt worden sind (leer, wenn keine).</li>
@@ -343,7 +372,15 @@ Sort, FileList
 Loop, parse, FileList, `n
     MsgBox Dateinummer %A_Index% ist:`n%A_LoopField%.</pre>
 <p>Soll Drag&amp;Drop nur vorübergehend bei einem Fenster deaktiviert werden, entferne den WS_EX_ACCEPTFILES-Style per <code>Gui -E0x10</code>. Mit <code>Gui +E0x10</code> kann das wieder aktiviert werden.</p>
+<p><span class="ver">[v1.1.20+]:</span> Wenn GuiDropFiles eine Funktion ist, sind seine Parameter wie im unten gezeigten Beispiel. <em>CtrlHwnd</em> ist leer, wenn Dateien auf das GUI selbst abgelegt wurden. <em>DateiArray</em> ist ein <a href="../Objects.htm#Usage_Simple_Arrays">Array (Objekt)</a> mit Dateinamen, wo <code>DateiArray[1]</code> die erste Datei ist und <code>DateiArray.MaxIndex()</code> die Anzahl der Dateien zurückgibt. Mit einer <a href="For.htm">For-Schleife</a> kann man die Dateien durchgehen:</p>
+<pre>GuiDropFiles(GuiHwnd, DateiArray, CtrlHwnd, X, Y) {
+    for i, file in DateiArray
+        MsgBox Datei %i% ist:`n%file%
+}
+</pre>
+
 <p><strong>Erkennen von und reagieren auf andere Ereignisse</strong>: Andere Arten von GUI-Ereignissen können per <a href="OnMessage.htm">OnMessage()</a> erkannt und verarbeitet werden. Zum Beispiel kann ein Script dazu gebracht werden, immer dann kontextabhängige Hilfe per ToolTip anzuzeigen, wenn der Benutzer den Mauszeiger über bestimmte Steuerelemente im Fenster bewegt. Siehe dazu das <a href="#ExToolTip">Beispiel mit GUI-ToolTip</a>.</p>
+
 <h2><a name="MultiWin" id="MultiWin"></a>Mehrere GUI-Fenster erstellen</h2>
 <p>Um neben dem <a href="#DefaultWin">Standard-Fenster</a> auch andere Fenster bearbeiten zu können, füge dessen Name oder Nummer (oder seit v1.1.03 dessen <a href="#GuiHwndOutputVar">HWND</a>) gefolgt von einem Doppelpunkt vor dem Unterbefehl wie folgt ein:</p>
 <pre>Gui, <strong>MeinGui:</strong>Add, Text,, Text für das Über-Fenster.
@@ -351,7 +388,7 @@ Gui, <strong>MeinGui:</strong>Show</pre>
 <p>Mit <code><a href="#Default">Gui MeinGui:Default</a></code> kann verhindert werden, dass das oben genannte Präfix "MeinGui:" angegeben werden muss. Innerhalb eines <a href="#DefaultWin">GUI-Threads</a>, der das gleiche Fenster verarbeitet, welches den Thread ausgeführt hat, ist das Präfix außerdem nicht notwendig.</p>
 <p id="Name"><span class="ver">[v1.1.03+]:</span> Für die Gui-Namen gelten die gleichen Regeln wie bei <a href="../Variables.htm#Variable_names">Variablennamen</a>. Jede Nummer größer als 99 oder länger als zwei Zeichen (wie z. B. 0x01) muss das HWND eines vorhandenen Gui-Fensters sein, denn ansonsten würde dieser Befehl fehlschlagen. Je nach verfügbaren Systemressourcen können beliebig viele Fenster erstellt werden.</p>
 <p><span class="ver">[v1.1.04+]:</span> Mit <a href="#New">Gui, New</a> können beliebig viele unbenannte GUI-Fenster erstellt werden.</p>
-<p>Abgesehen vom ersten Fenster müssen bei anderen Fenstern deren Namen oder Nummern (falls vorhanden) angegeben werden, damit sie die oben genannten Labels verwenden können. Zum Beispiel würden 2GuiEscape und 2GuiClose die Standard-Label des zweiten Fensters sein, während <em>MeinGui</em>GuiEscape und <em>MeinGui</em>GuiClose die Standard-Label für <em>MeinGui</em> sind. Um benutzerdefinierte Labelnamen zu verwenden, siehe <code><a href="#PlusLabel">Gui +Label</a></code>.</p>
+
 <h2 id="DefaultWin">GUI-Ereignisse, Threads und Subroutinen</h2>
 <p>Ein GUI-<a href="../misc/Threads.htm">Thread</a> wird wie jeder andere Thread definiert, der aufgrund einer GUI-Aktion gestartet wurde. Zu den GUI-Aktionen gehört beispielsweise das Auswählen eines <a href="#Menu">Menüpunkts</a> oder das Ausführen eines <a href="#label">g-Labels</a> (z. B. beim Drücken eines Buttons).</p>
 <p>Bei einem GUI-Thread ist der <strong><a href="#MultiWin">Standardfenstername</a></strong> der Name des Fensters, das diesen Thread gestartet hat. Nicht-GUI-Threads verwenden standardmäßig eine 1.</p>

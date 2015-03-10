@@ -15,6 +15,67 @@
 <p>Ältere Änderungen können in <a href="ChangeLogHelp.htm">Archivierte Änderungen</a> gefunden werden.</p><!--new revisions go here-->
 
 
+<h2 id="v1.1.20.00">1.1.20.00 - 8. März 2015</h2>
+<h4>Neue Features:</h4>
+<p>Erweitert: Hotkey-, Menu-, SetTimer-, Gui- und Gui-Steuerelement-Ereignisse akzeptieren nun <a href="misc/Labels.htm#Functions">eine Funktion anstelle eines Labels</a>, wenn kein Label gefunden wird.</p>
+<p>Erweitert: Hotkey-, Menu-, SetTimer-, Gui- und Gui-Steuerelement-Ereignisse akzeptieren nun ein <a href="objects/Functor.htm">Funktionsobjekt</a>. Hinzugefügt: Delete-Unterbefehl für SetTimer zum Freigeben des Objekts.</p>
+<p>Erweitert: Bei <a href="commands/OnMessage.htm">OnMessage()</a> ist es nun möglich, dass eine beliebige Anzahl von Funktionen oder Funktionsobjekten eine einzelne Nachricht überwachen können.</p>
+<p>Hinzugefügt: <a href="commands/OnExit.htm">OnExit()</a> und <a href="commands/OnClipboardChange.htm">OnClipboardChange()</a>, die ein Funktionsname oder -objekt akzeptieren.</p>
+<p>Hinzugefügt: Hotkey-Label können nun <a href="Hotkeys.htm#Function">auf eine Funktionsdefinition verweisen</a>.</p>
+<p>Hinzugefügt: <a href="commands/Format.htm#ULT">U/L/T-Modifikatoren</a> zum Umwandeln in Groß-/Kleinschreibung mit Format().</p>
+<p>Hinzugefügt: <a href="commands/Input.htm#E">E-Option</a> für den Input-Befehl, um Endungszeichen als Zeichen statt als Tastencode zu behandeln.</p>
+<p>Hinzugefügt: Unterstützung von ** (stderr) in FileAppend.</p>
+<p>Hinzugefügt: <a href="commands/ObjBindMethod.htm">ObjBindMethod(obj, method, args*)</a> und <a href="objects/Func.htm#Bind">Func.Bind(args*)</a>. </p>
+
+<h4>Änderungen:</h4>
+<p>Geändert: AHK verhält sich nun anders, wenn das Hauptscript nicht gefunden wird:</p>
+<ul>
+  <li>Wenn kein Script angegeben wurde und keine Standard-Script-Dateien gefunden wurden, wird die neue <a href="Welcome.htm">Willkommensseite</a> in der Hilfe-Datei angezeigt.</li>
+  <li>Wenn ein Script angegeben wurde oder wenn die Hilfe-Datei fehlt (oder einen anderen Namen hat als die EXE-Datei), wird nur eine Fehlermeldung angezeigt.</li>
+</ul>
+<p>Geändert: WinActivate wird das Fenster nun wiederherstellen, wenn es bereits aktiv, aber minimiert ist.</p>
+<p>Geändert: WinActivate sucht nun nach einem sichtbaren Fenster, um es zu aktivieren, wenn DetectHiddenWindows ausgeschaltet und das aktive Fenster versteckt ist, anstatt nichts zu tun.</p>
+<p>Geändert: A_CaretX/A_CaretY verwenden nun eine andere Methode zum Abrufen der Position der Texteinfügemarke.</p>
+<ul>
+  <li>Sie geben häufiger einen leeren Wert zurück, wenn die echte Position der Texteinfügemarke nicht ermittelt werden kann, anstatt die obere linke Position des aktiven Fensters zurückzugeben.</li>
+  <li>Um so Nebeneffekte zu reduzieren.</li>
+  <li>Funktioniert auch in Konsolenfenstern.</li>  
+</ul>
+<p>Geändert: A_OSVersion verwendet nun <a href="http://msdn.microsoft.com/en-us/library/ff561910">RtlGetVersion()</a>, um Windows 10 und hoffentlich auch zukünftige Versionen erkennen zu können.</p>
+<p>Geändert: A_OSVersion gibt nun eine Versionsnummer im Format "Haupt.Neben.Build" zurück, wenn es keinen Namen für das Betriebssystem hat.</p>
+<p>Geändert: Objekte unterstützen nun <code>x[,y]</code>, <code>x.y[,z]</code> und <code>x[](y)</code>.</p>
+<ul>
+  <li>Benutzerdefinierte Objekte können das nutzen, indem man Standardwerte für Parameter von Eigenschaften und Meta-Funktionen angibt. Bei __Call wird der erste Parameter weggelassen, wie in <code>x.__Call(,y)</code>.</li>
+  <li>COM-Objekte rufen DISPID_VALUE auf, wenn der Elementname weggelassen wird. Zum Beispiel würde <code>x[]</code> die Standardeigenschaft von x abrufen, und mit <code>fn[]()</code> könnte man JScript-Funktionen aufrufen.</li>
+</ul>
+<p>Einige interne Änderungen, um Fehler zu beheben, Codegröße zu reduzieren oder Performance zu verbessern, sowie:</p>
+<ul>
+  <li>Änderungen, wie #if und statische Variableninitialisierungen beim Laden geparst werden.</li>
+  <li>Änderungen, wie { Blöcke } beim Laden geparst werden.</li>
+</ul>
+
+<h4>Fehlerbehebungen:</h4>
+<p>Behoben: VK-zu-Tastenname-Umwandlungen für die Tasten von 'A' bis 'Z' berücksichtigen nun das Tastaturlayout.</p>
+<ul>
+  <li>Betrifft: GetKeyName, Hotkey-Steuerelement, A_PriorKey, KeyHistory und Input EndKey ErrorLevel (außer wo UMSCHALT-Taste benötigt wird).</li>
+  <li>Alle anderen Tasten, einschließlich solche, die Nicht-ASCII-Buchstaben erzeugen, wurden bereits auf Basis von AutoHotkey's aktuellem Tastaturlayout umgewandelt.</li>
+</ul>
+<p>Behoben: FileAppend's * (stdout) berücksichtigt nun den Codierung-Parameter, anstatt immer ANSI-Text auszugeben.</p>
+<p>Behoben: Auto-Skalierung von GUIs mit nur einem Scrollbalken.</p>
+<p>Behoben: <code>Exception(m, n)</code> verursachte einen Absturz, wenn n sehr weit die Grenzen überschritten hat.</p>
+<p>Behoben: GuiContextMenu setzt A_GuiEvent nun korrekt in x64.</p>
+<p>Behoben: FileGetSize übergab manchmal ein unbestimmtes Ergebnis, wenn die Datei nicht existiert oder nicht geöffnet werden kann.</p>
+<p>Behoben: Thread-Unterbrechungen speichern und stellen ErrorLevel besser wieder her, wodurch folgendes behoben wird:</p>
+<ul>
+  <li>Kürzen von Strings länger als 127 Zeichen.</li>
+  <li>Verwerfen von Objekten.</li>
+  <li>Unterbrechungen durch Timer ließen manchmal ErrorLevel im hexadezimalen Format zurückgeben.</li>
+</ul>
+<p>Behoben: ControlClick-Pos-Modus ignoriert nun deaktivierte Steuerelemente.</p>
+<p>Behoben: Merkwürdiges Verhalten, wenn Gui +MaxSize kleiner als +MinSize ist.</p>
+<p>Behoben: GuiControl/Get benötigte einen Gui-Namen, wenn ein Steuerelement-HWND angegeben wurde.</p>
+<p>Behoben: Meta-Funktionen beeinträchtigten Zeilennummern, die von Exception() gemeldet werden.</p>
+
 <h2 id="v1.1.19.03">1.1.19.03 - 11. Februar 2015</h2>
 <p>Verbessert: Neubelegung erlaubt nun <code>scXXX::Y</code>, wenn das aktuelle Tastaturlayout das <code>ScXXX</code> nicht einem VK-Code zugeordnet hat. Allerdings muss <code>Y</code> noch auf dem aktuellen Tastaturlayout vorhanden sein.</p>
 <p>Behoben: <code>break n</code> funktioniert nun korrekt, wenn <code>until</code> vorhanden ist, anstatt den Thread zu beenden.</p>
@@ -875,7 +936,7 @@
 
 <h2 id="L34">Revision 34 - 24. Oktober 2009</h2>
 <p>Geändert: Das Setzen eines Wertes auf einen leeren String innerhalb eines Objekts speichert nun den leeren String, anstatt das Key-Value-Paar vom Objekt zu entfernen. _Remove kann weiterhin verwendet werden, um Key-Value-Paare vollständig zu entfernen.</p>
-<p>Geändert: Befehlsnamen müssen mit einem Leerzeichen, Tabulator oder Komma terminiert werden. Die folgenden Zeichen umgehen nicht länger diese Anforderung: <span class="Code">&lt;&gt;:+-*/!~&amp;|^[]</span>. Zum Beispiel werden Syntaxfehler wie <span class="Code">MsgBox&lt; foo</span> und <code>If!foo</code> nun bei der Ladezeit abgefangen.</p>
+<p>Geändert: Befehlsnamen müssen mit einem Leerzeichen, Tabulator oder Komma terminiert werden. Die folgenden Zeichen umgehen nicht länger diese Anforderung: <code>&lt;&gt;:+-*/!~&amp;|^[]</code>. Zum Beispiel werden Syntaxfehler wie <code>MsgBox&lt; foo</code> und <code>If!foo</code> nun bei der Ladezeit abgefangen.</p>
 <p>Behoben: Return behandelt nun Ausdrücke korrekt, wodurch eine Variable ein Objekt enthalten kann. Zum Beispiel sollte <code>Return x:=y</code>, <code>Return (x)</code>, <code>Return x,...</code> und ähnliches nun richtig funktionieren (<code>Return x</code> hat bereits funktioniert).</p>
 <p>Behoben: Multi-Parameter get/set unterstützte Meta-Funktionen für mehrere Objekte nicht richtig (wie z. B. für <code>x</code> <i>und</i> <code>x[y]</code> im Ausdruck <code>x[y,z]</code>).</p>
 <p>Behoben: Hintereinanderfolgende Objektzuweisungen wie z. B. <code>x[y]:=z</code> in <code>r:=x[y]:=z</code> ergaben keine Zahlen oder Objekte - fehlerhaft seit L33.</p>
