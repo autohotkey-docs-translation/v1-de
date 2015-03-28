@@ -14,9 +14,13 @@
 
 <p>Ruft die Inhalte des angegebenen Registry-Subkeys einzeln ab.</p>
 
+<pre class="Syntax">Loop, Reg, Rootkey[\Key, Modus]  <em>; v1.1.21+ (empfohlen)</em></pre>
 <pre class="Syntax">Loop, Rootkey [, Key, SubkeysEinbeziehen?, Rekursiv?]</pre>
 <h3>Parameter</h3>
 <dl>
+
+  <dt>Reg <span class="ver">[v1.1.21+]</span></dt>
+  <dd><p>Das literale Wort <code>Reg</code> (ungenaue Groß- und Kleinschreibung). Dies kann weder eine Variable noch ein Ausdruck sein. Wenn dieses Schlüsselwort vorhanden ist, muss zwischen <em>Key</em> und <em>Rootkey</em> ein Schrägstrich statt Komma angegeben werden, außerdem können beide in einer einzelnen Variable vorkommen. Zum Beispiel <code>Loop, Reg, HKLM\Software</code> oder <code>Loop, Reg, %VollständigerPfadvonKey%</code>.</p></dd>
 
   <dt>Rootkey</dt>
   <dd><p>Muss entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC) sein.</p>
@@ -24,6 +28,13 @@
 
   <dt>Key</dt>
   <dd><p>Name des Keys (z. B. Software\BeliebigeAnwendung). Fehlt dieser Parameter oder ist er leer, werden die Inhalte von <em>Rootkey</em> abgerufen.</p></dd>
+  
+  <dt>Modus <span class="ver">[v1.1.21+]</span></dt>
+  <dd><p>Keine oder mehrere der folgenden Buchstaben:</p>
+    <p><code>K</code>: Keys einbeziehen.<br>
+    <code>V</code>: Werte einbeziehen. Werte werden auch einbezogen, wenn K und V fehlen.<br>
+    <code>R</code>: Subkeys werden einbezogen. Wenn R fehlt, werden Keys und Werte innerhalb der Subkeys von <em>Key</em> nicht mit einbezogen.</p>
+  </dd>
 
   <dt>SubkeysEinbeziehen?</dt>
   <dd><p>0 (Standard) Subkeys innerhalb von <em>Key</em> werden nicht abgerufen (nur die Werte).<br>
@@ -95,7 +106,7 @@ Loop, HKEY_CURRENT_USER, Software\Microsoft\Internet Explorer\TypedURLs
     RegDelete</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel: Ein funktionierendes Testscript:</em>
-Loop, HKEY_CURRENT_USER, Software\Microsoft\Windows, 1, 1
+Loop, Reg, HKEY_CURRENT_USER\Software\Microsoft\Windows, KVR
 {
     if a_LoopRegType = key
         Wert =
@@ -118,19 +129,19 @@ return
 
 RegSuche:
 RegSucheFortfahren = y
-Loop, HKEY_LOCAL_MACHINE, , 1, 1
+Loop, Reg, HKEY_LOCAL_MACHINE, KVR
 {
     Gosub, RegEintragUntersuchen
     if RegSucheFortfahren = n <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
         return
 }
-Loop, HKEY_USERS, , 1, 1
+Loop, Reg, HKEY_USERS, KVR
 {
     Gosub, RegEintragUntersuchen
     if RegSucheFortfahren = n <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
         return
 }
-Loop, HKEY_CURRENT_CONFIG, , 1, 1
+Loop, Reg, HKEY_CURRENT_CONFIG, KVR
 {
     Gosub, RegEintragUntersuchen
     if RegSucheFortfahren = n <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>

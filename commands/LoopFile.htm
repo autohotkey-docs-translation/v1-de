@@ -14,21 +14,32 @@
 
 <p>Ruft die angegebenen Dateien oder Ordner einzeln ab.</p>
 
+<pre class="Syntax">Loop, Files, Dateimuster [, Modus]  <em>; v1.1.21+ (empfohlen)</em></pre>
 <pre class="Syntax">Loop, Dateimuster [, OrdnerEinbeziehen?, Rekursiv?]</pre>
 <h3>Parameter</h3>
 <dl>
 
+  <dt>Files <span class="ver">[v1.1.21+]</span></dt>
+  <dd><p>Das literale Wort <code>Files</code> (ungenaue Groß- und Kleinschreibung) Dies kann weder eine Variable noch ein Ausdruck sein.</p></dd>
+
   <dt>Dateimuster</dt>
   <dd><p>Name einer Datei, eines Ordners oder eines Platzhaltermusters wie <code>C:\Temp\*.tmp</code>. <em>Dateimuster</em> wird im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet, wenn kein absoluter Pfad angegeben ist.</p>
     <p>Sowohl Sternchen als auch Fragezeichen werden als Platzhalter unterstützt. Eine Übereinstimmung erfolgt, wenn das Muster entweder im langen/normalen oder <a href="#LoopFileShortName">8.3-kurzen Dateinamen</a> erscheint.</p>
-    <p>Enthält dieser Parameter eine einzelne Datei oder Ordner (also ohne Platzhalter), und ist <em>Rekursiv</em> auf 1 gesetzt, werden mehrere Übereinstimmungen gefunden, wenn der angegebene Dateiname in mehreren durchsuchten Ordnern erscheint.</p></dd>
+    <p>Wenn dieser Parameter eine einzelne Datei oder ein Ordner ist (also ohne Platzhalter), und enthält <em>Rekursiv</em> eine 1 oder <em>Modus</em> ein <code>R</code>, werden mehrere Übereinstimmungen gefunden, wenn der angegebene Dateiname in mehreren Ordnern vorkommt.</p></dd>
+
+  <dt>Modus <span class="ver">[v1.1.21+]</span></dt>
+  <dd><p>Keine oder mehrere der folgenden Buchstaben:</p>
+    <p><code>D</code>: Verzeichnisse (Ordner) einbeziehen.<br>
+    <code>F</code>: Dateien einbeziehen. Dateien werden auch einbezogen, wenn F und D fehlen.<br>
+    <code>R</code>: Unterverzeichnisse (Unterordner) werden auch mit einbezogen. Wenn R fehlt, werden Dateien und Ordner in den Unterordnern nicht mit einbezogen.</p>
+  </dd>
 
   <dt>OrdnerEinbeziehen?</dt>
   <dd><p>Dieser Parameter kann entweder eine der folgenden Ziffern enthalten, oder leer sein, um den Standardwert zu verwenden:<br>
       0 (Standard) Ordner werden nicht abgerufen (nur Dateien).<br>
   1 Alle Dateien und Ordner, die dem Platzhaltermuster entsprechen, werden abgerufen.<br>
   2 Nur Ordner werden abgerufen (keine Dateien).</p></dd>
-
+  
   <dt>Rekursiv?</dt>
   <dd>Dieser Parameter kann entweder eine der folgenden Ziffern enthalten, oder leer sein, um den Standardwert zu verwenden:<br>
       0 (Standard) Unterordner werden nicht durchsucht.<br>
@@ -108,9 +119,9 @@
 <p>Um relative statt absolute Dateipfade während einer rekursiven Suche abzurufen, muss mit <a href="SetWorkingDir.htm">SetWorkingDir</a> auf den Basisordner gewechselt werden, bevor die Schleife erfolgt, und lass dann den Pfad in der Schleife weg (z. B. <code>Loop, *.*, 0, 1</code>). Dadurch wird <a href="#LoopFileFullPath">A_LoopFileFullPath</a> den relativen Pfad zum Basisordner der Datei enthalten.</p>
 <p>Eine Dateimuster-Schleife kann sich selbst unterbrechen, wenn sie Dateien oder Ordner innerhalb ihres eigenen Bereichs erstellt oder umbenennt. Wenn sie Dateien beispielsweise via <a href="FileMove.htm">FileMove</a> oder auf eine andere Art umbenennen würde, könnten solche Dateien zweimal gefunden werden: einmal mit ihrem alten Namen und nochmals mit ihrem neuen Namen. Um dies zu umgehen, sollte man die Dateien nur umbenennen, nachdem man eine Liste von ihnen erstellt hat. Zum Beispiel:</p>
 <pre>Dateiliste =
-Loop *.jpg
+Loop, Files, *.jpg
    Dateiliste = %Dateiliste%%A_LoopFileName%`n
-Loop, parse, Dateiliste, `n
+Loop, Parse, Dateiliste, `n
    FileMove, %A_LoopField%, umbenannt_%A_LoopField%</pre>
 <p>Dateien in einem NTFS-Dateisystem werden wahrscheinlich immer in alphabetischer Reihenfolge abgerufen. Die Reihenfolge bei anderen Dateisystemen ist unbestimmt. Mit dem <a href="Sort.htm">Sort</a>-Befehl kann sichergestellt werden, dass die Dateien in einer bestimmten Reihenfolge sortiert sind, wie im Beispiel-Abschnitt unten gezeigt.</p>
 <p>Dateien und Ordner mit einem kompletten Pfad länger als 259 Zeichen werden übersprungen, als wären sie nicht vorhanden. Solche Dateien sind selten, weil sie normalerweise nicht erstellt werden dürfen.</p>
@@ -119,7 +130,7 @@ Loop, parse, Dateiliste, `n
 <p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="SplitPath.htm">SplitPath</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Beispiel #1:</em>
-Loop, %A_ProgramFiles%\*.txt, , 1  <em>; Durchsucht Unterordner.</em>
+Loop Files, %A_ProgramFiles%\*.txt, R  <em>; Durchsucht Unterordner.</em>
 {
     MsgBox, 4, , Dateiname = %A_LoopFileFullPath%`n`nWeiter?
     IfMsgBox, No
@@ -130,7 +141,7 @@ Loop, %A_ProgramFiles%\*.txt, , 1  <em>; Durchsucht Unterordner.</em>
 SetBatchLines, -1  <em>; Führt die Operation mit maximaler Geschwindigkeit aus.</em>
 OrdnerGrößeKB = 0
 FileSelectFolder, Ordner  <em>; Fordert den Benutzer auf, einen Ordner auszuwählen.</em>
-Loop, %Ordner%\*.*, , 1
+Loop, Files, %Ordner%\*.*, R
     OrdnerGrößeKB += %A_LoopFileSizeKB%
 MsgBox Der Ordner %Ordner% hat eine Größe von %OrdnerGrößeKB% KB.</pre>
 <p>&nbsp;</p>
@@ -150,10 +161,10 @@ Loop, parse, Dateiliste, `n
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel #4: Ruft Dateinamen ab, sortiert nach Änderungsdatum:</em>
 Dateiliste =
-Loop, %A_MyDocuments%\Fotos\*.*, 1
+Loop, Files, %A_MyDocuments%\Fotos\*.*, FD  <em>; Bezieht Dateien und Ordner mit ein.</em>
     Dateiliste = %Dateiliste%%A_LoopFileTimeModified%`t%A_LoopFileName%`n
 Sort, Dateiliste  <em>; Sortiert nach Datum.</em>
-Loop, parse, Dateiliste, `n
+Loop, Parse, Dateiliste, `n
 {
     if A_LoopField =  <em>; Ignoriert das letzte LF-Zeichen (leere Element) am Ende der Liste.</em>
         continue
@@ -166,7 +177,7 @@ Loop, parse, Dateiliste, `n
 <pre class="NoIndent"><em>; Beispiel #5: Kopiert nur Quelldateien in das Ziel, die neuer sind als ihr Gegenstück:</em>
 KopiereWennNeuer:
 <em>; Der Aufrufer hat die Variablen KopieQuellmuster und KopieZiel für uns gesetzt.</em>
-Loop, %KopieQuellmuster%
+Loop, Files, %KopieQuellmuster%
 {
     kopiere_es = n
     IfNotExist, %KopieZiel%\%A_LoopFileName%  <em>; Kopiert immer die Zieldatei, wenn sie noch nicht existiert.</em>

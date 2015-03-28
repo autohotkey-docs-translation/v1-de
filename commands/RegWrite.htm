@@ -14,7 +14,8 @@
 
 <p>Schreibt einen Wert in die Registry.</p>
 
-<pre class="Syntax">RegWrite, Werttyp, Rootkey, Subkey [, Wertname, Wert]</pre>
+<pre class="Syntax">RegWrite, Werttyp, Rootkey\Subkey [, Wertname, Wert]  <em>; v1.1.21+</em>
+RegWrite, Werttyp, Rootkey, Subkey [, Wertname, Wert]</pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -22,10 +23,13 @@
   <dd><p>Muss entweder REG_SZ, REG_EXPAND_SZ REG_MULTI_SZ, REG_DWORD oder REG_BINARY sein.</p></dd>
 
   <dt>Rootkey</dt>
-  <dd><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC). Um den Zugriff auf eine Remote-Registry zu ermöglichen, muss der Computername und ein Doppelpunkt wie folgt vorangestellt werden: \\workstation01:HKEY_LOCAL_MACHINE</p></dd>
+  <dd><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC). Um den Zugriff auf eine Remote-Registry zu ermöglichen, muss der Computername und ein Doppelpunkt (oder seit v1.1.21 ein Schrägstrich) wie folgt vorangestellt werden: <code>\\workstation01:HKEY_LOCAL_MACHINE</code></p></dd>
 
   <dt>Subkey</dt>
   <dd><p>Der Name des Subkeys (z. B. Software\BeliebigeAnwendung). Fehlt der <em>Subkey</em>-Parameter, wird er erstellt (einschließlich seine Elternelemente, falls nötig). Lässt man <em>Subkey</em> leer, wird der Wert direkt in <em>Rootkey</em> geschrieben (obwohl einige Betriebssysteme es ablehnen, in der obersten Ebene von HKEY_CURRENT_USER zu schreiben).</p></dd>
+  
+  <dt>Rootkey\Subkey <span class="ver">[v1.1.21+]</span></dt>
+  <dd><p>Wenn unmittelbar nach <em>Rootkey</em> ein Schrägstrich (<code>\</code>) erfolgt, werden <em>Rootkey</em> und <em>Subkey</em> zu einem einzelnen Parameter zusammengeführt.</p></dd>
 
   <dt>Wertname</dt>
   <dd><p>Der Name des Wertes, der geschrieben werden soll. Fehlt dieser Parameter oder ist er leer, wird der Standardwert von <em>Subkey</em> verwendet - das ist der Wert, der in RegEdit als "(Standard)" angezeigt wird.</p></dd>
@@ -50,9 +54,14 @@
 <h3>Siehe auch</h3>
 <p><a href="RegDelete.htm">RegDelete</a>, <a href="RegRead.htm">RegRead</a>, <a href="LoopReg.htm">Registry-Schleife</a>, <a href="SetRegView.htm">SetRegView</a>, <a href="IniWrite.htm">IniWrite</a></p>
 <h3>Beispiele</h3>
-<pre class="NoIndent">RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, SOFTWARE\Testkey, Wertname, Testwert
+<pre class="NoIndent">RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, SOFTWARE\Testkey, MeinWertname, Testwert
 RegWrite, REG_BINARY, HKEY_CURRENT_USER, Software\TEST_APP, TEST_NAME, 01A9FF77
-RegWrite, REG_MULTI_SZ, HKEY_CURRENT_USER, Software\TEST_APP, TEST_NAME, Zeile1`nZeile2</pre>
+RegWrite, REG_MULTI_SZ, HKEY_CURRENT_USER, Software\TEST_APP, TEST_NAME, Zeile1`nZeile2
+
+<em>; Alternative Syntax (benötigt v1.1.21+):</em>
+RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SOFTWARE\Testkey, MeinWertname, Testwert
+RegWrite, REG_BINARY, HKEY_CURRENT_USER\Software\TEST_APP, TEST_NAME, 01A9FF77
+RegWrite, REG_MULTI_SZ, HKEY_CURRENT_USER\Software\TEST_APP, TEST_NAME, Zeile1`nZeile2</pre>
 
 </body>
 </html>
