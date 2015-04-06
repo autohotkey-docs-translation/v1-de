@@ -12,27 +12,27 @@
 
 <h1>Script-Kompatibilität</h1>
 
-<p>Die meisten Scripts, die noch auf AutoHotkey 1.0 basieren, müssen nicht extra geändert werden, um sie für AutoHotkey 1.1 lauffähig zu machen. Bei einigen Scripts kann es jedoch vorkommen, dass sie nicht mehr ordnungsgemäß funktionieren, weil sich beide Versionen doch in manchen Punkten unterscheiden. Die meisten Benutzer müssen sich keine Sorgen machen, da die besonders problematischen Unterschiede nur auf erweiterte Funktionalitäten wie DllCall zutreffen.</p>
-<p>AutoHotkey 1.1 kennt man auch unter den Namen "AutoHotkey_L". AutoHotkey 1.0 hat seit längere Zeit die Bezeichnung "AutoHotkey Basic". Da frühere Versionen von AutoHotkey_L noch Versionsnummern im 1.0-Format haben, wird dieses Dokument die beiden Entwicklungszweige von AutoHotkey per Namen nennen, um es verständlicher zu machen.</p>
-<p class="note"><strong>Hinweis:</strong> Einige der häufigsten Probleme entstehen durch Änderungen, die zur Unterstützung von Unicode-Text erforderlich waren. Mit der ANSI-Version von AutoHotkey_L können diese Probleme umgangen werden.</p>
+<p>Viele Scripts, die noch auf AutoHotkey 1.0 basieren, müssen nicht für AutoHotkey 1.1 geändert werden. Bei wenigen Ausnahmen können aber aufgrund von notwendigen Unterschieden zwischen den zwei Versionen  Probleme auftreten. Da die meisten problematischen Unterschiede nur erweiterte Funktionalitäten wie DllCall betreffen, müssen sich die meisten Benutzer keine Sorgen machen.</p>
+<p>AutoHotkey 1.1 kennt man auch unter den Namen "AutoHotkey_L". AutoHotkey 1.0 hat seit längere Zeit die Bezeichnung "AutoHotkey Basic". Einige alte Versionen von AutoHotkey_L benutzten 1.0.* als Versionsnummer, daher wird sich dieses Dokument auf die Namen statt Versionsnummern der beiden Entwicklungszweige von AutoHotkey beziehen.</p>
+<p class="note"><strong>Hinweis:</strong> Einige der häufigsten Probleme rühren daher, dass Änderungen vorgenommen worden sind, um Unicode-Text unterstützen zu können. Mit der ANSI-Version von AutoHotkey_L können solche Probleme umgangen werden.</p>
 
 <h3>Grundlagen</h3>
 <p>Hohe Auswirkung:</p>
 <ul>
   <li><a href="#Syntax_Errors">Bestimmte Syntaxfehler werden nicht länger toleriert</a></li>
   <li><a href="#FileRead">FileRead könnte beschädigte Binärdaten zurückgeben</a></li>
-  <li><a href="#Names">Variablen- und Funktionsnamen können nicht mehr [, ] oder ? enthalten</a></li>
+  <li><a href="#Names">Variablen- und Funktionsnamen dürfen [, ] oder ? nicht mehr enthalten</a></li>
 </ul>
 <p>Mittlere Auswirkung:</p>
 <ul>
   <li><a href="#Transform">Der <em>Unicode</em>-Unterbefehl von Transform ist in Unicode-Versionen nicht verfügbar</a></li>
-  <li><a href="#Default_Script">AutoHotkey.ahk wird anstelle von AutoHotkey.ini ausgeführt</a></li>
+  <li><a href="#Default_Script">AutoHotkey.ahk wird anstelle von AutoHotkey.ini gestartet</a></li>
   <li><a href="#SetFormat">SetFormat, Integer, <strong>H</strong> unterscheidet zwischen Groß- und Kleinschreibung</a></li>
   <li><a href="#LastError">A_LastError wird von noch mehr Befehlen geändert</a></li>
-  <li><a href="#MsgBox">MsgBox behandelt Kommas konsequenter</a></li>
+  <li><a href="#MsgBox">MsgBoxen behandeln Kommas konsequenter</a></li>
   <li><a href="#GuiOwner">Gui +Owner überschreibt zusätzliche Styles</a></li>
   <li><a href="#DPIScale">DPI-Skalierung ist für GUIs standardmäßig aktiviert</a></li>
-  <li><a href="#VistaSound">SoundSet und SoundGet funktionieren besser in Vista und höher</a></li>
+  <li><a href="#VistaSound">SoundSet und SoundGet funktionieren in Vista und höher besser</a></li>
   <li><a href="#Tilde">Tilde (~) hat Einfluss darauf, wie benutzerdefinierte Modifikatortasten funktionieren</a></li>
   <li><a href="#ComboUpDown"><code>x &amp; y::</code> bewirkt, dass sowohl <code>x::</code> als auch <code>x up::</code> ausgelöst werden, sobald x losgelassen wird</a></li>
 </ul>
@@ -41,7 +41,7 @@
   <li><a href="#IfIs">If <em>Var</em> is <em>Typ</em> ignoriert standardmäßig das Gebietsschema des Betriebssystems</a></li>
   <li><a href="#Window_Groups">GroupActivate setzt ErrorLevel; <em>Label</em> von GroupAdd funktioniert anders</a></li>
   <li><a href="#Run">Run und RunWait interpretieren das <em>Ziel</em> unterschiedlich</a></li>
-  <li><a href="#ControlZ">STRG+Z wird nicht als EOF (End of File) interpretiert</a></li>
+  <li><a href="#ControlZ">STRG+Z wird nicht als End-of-File (Dateiende) interpretiert</a></li>
   <li><a href="#Compatibility_Mode">Der Kompatibilitätsmodus kann irreführend sein</a></li>
   <li><a href="#IsCompiled">A_IsCompiled ist immer schreibgeschützt</a></li>
   <li><a href="#Escaped_Whitespace">Führende und nachfolgende `t-Sequenzen werden nicht länger verworfen</a></li>
@@ -62,7 +62,7 @@
 <h2 id="Basic">Grundlagen</h2>
 
 <h3 id="Syntax_Errors"><a name="Validation"></a>Syntaxfehler</h3>
-<p>Bestimmte Syntaxfehler, die bei AutoHotkey Basic toleriert wurden, sind bei AutoHotkey_L nicht mehr zugelassen. Viele dieser Fehler kann man einfach korrigieren, sobald sie entdeckt werden. Die folgenden Fehler werden sofort nach dem Starten eines Scripts erkannt; das heißt, dass diese korrigiert werden müssen, bevor das Script starten kann:</p>
+<p>Bestimmte Syntaxfehler, die bei AutoHotkey Basic toleriert wurden, sind bei AutoHotkey_L nicht mehr zugelassen. Viele dieser Fehler kann man einfach korrigieren, sobald sie entdeckt werden. Die folgenden Fehler werden sofort nach dem Starten eines Scripts erkannt, und müssen korrigiert werden, bevor das Script startet:</p>
 <ul>
   <li>Zwischen dem Namen eines Befehls und seinen Parametern muss ein Leerzeichen, Tabulatorzeichen oder Komma vorkommen. Zum Beispiel sind <code>MsgBox&lt; foo</code> und <code>If!foo</code> keine gültigen Angaben.</li>
   <li><code>Hotkey, If<i>Irgendetwas</i></code>, bei dem <i>Irgendetwas</i> ungültig ist, wird nicht toleriert.</li>
