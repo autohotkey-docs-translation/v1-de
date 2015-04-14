@@ -10,5 +10,5 @@ translate = {
   cdDownloadBtn: "Download",
   verToolTipAHK_L: "Gilt für:\nAutoHotkey_L Revision {0} und höher\nAutoHotkey v1.0.90.00 und höher",
   verToolTipDefault: "Gilt für AutoHotkey {0} und höher",
-  tutLocalMessage: "Da du dir diese Dokumentation lokal anschaust, hast du wahrscheinlich AutoHotkey bereits installiert und kannst bei Abschnitt b fortfahren.",
+  tutLocalMessage: "Da du dir diese Dokumentation lokal anschaust, hast du AutoHotkey wahrscheinlich bereits installiert und kannst bei Abschnitt b fortfahren."
 };

@@ -689,7 +689,7 @@ index = [
   ["Befehlzeilenparameter","Scripts.htm#cmd"],
   ["Befehle, alphabetisch sortiert","commands/index.htm"],
   ["CommentFlag","commands/_CommentFlag.htm"],
-  ["Kommentare in Scripts","Scripts.htm"],
+  ["Kommentare in Scripts","Scripts.htm#Comments"],
   ["ComObj...()","commands/ComObjActive.htm"],
   ["ComObjActive()","commands/ComObjActive.htm"],
   ["ComObjArray()","commands/ComObjArray.htm"],
@@ -1045,6 +1045,7 @@ index = [
   ["ObjHasKey()","objects/Object.htm#HasKey"],
   ["ObjInsert()","objects/Object.htm#Insert"],
   ["ObjInsertAt()","objects/Object.htm#InsertAt"],
+  ["ObjLength()","objects/Object.htm#Length"],
   ["ObjMaxIndex()","objects/Object.htm#MinMaxIndex"],
   ["ObjMinIndex()","objects/Object.htm#MinMaxIndex"],
   ["ObjNewEnum()","objects/Object.htm#NewEnum"],
@@ -1268,6 +1269,7 @@ index = [
   ["TV_GetSelection()","commands/TreeView.htm#TV_GetSelection"],
   ["TV_GetText()","commands/TreeView.htm#TV_GetText"],
   ["TV_Modify()","commands/TreeView.htm#TV_Modify"],
+  ["TV_SetImageList()","commands/TreeView.htm#TV_SetImageList"],
   ["Unicode-Text und -Clipboard","commands/Transform.htm"],
   ["Until","commands/Until.htm"],
   ["UpDown-Steuerelemente (GUI)","commands/GuiControls.htm#UpDown"],
@@ -1352,7 +1354,7 @@ translate = {
   cdDownloadBtn: "Download",
   verToolTipAHK_L: "Gilt für:\nAutoHotkey_L Revision {0} und höher\nAutoHotkey v1.0.90.00 und höher",
   verToolTipDefault: "Gilt für AutoHotkey {0} und höher",
-  tutLocalMessage: "Da du dir diese Dokumentation lokal anschaust, hast du wahrscheinlich AutoHotkey bereits installiert und kannst bei Abschnitt b fortfahren.",
+  tutLocalMessage: "Da du dir diese Dokumentation lokal anschaust, hast du AutoHotkey wahrscheinlich bereits installiert und kannst bei Abschnitt b fortfahren."
 };
 if (!IsInsideCHM() && !IsSearchBot())
 {
@@ -1361,26 +1363,32 @@ if (!IsInsideCHM() && !IsSearchBot())
 }
 $(document).ready(AddChmAndOnlineFeatures);
 
-function GetVirtualDir()
+function GetWorkingDir() 
 {
-  var href = location.href;
-  return href.substr(0, href.lastIndexOf('/docs'));
+  var wDir = '';
+  var pathArray = GetScriptDir().split('/');
+  for (i = 0; i < pathArray.length - 1; i++)
+    wDir += pathArray[i] + "/";
+  return wDir.substr(0, wDir.lastIndexOf('/'));
 }
 
-function GetScriptDir() {
+function GetScriptDir()
+{
+  var scriptPath = '';
   var scriptEls = document.getElementsByTagName('script');
-  var thisScriptEl = scriptEls[scriptEls.length - 1];
-  var scriptPath = thisScriptEl.src;
-  return scriptPath.substr(0, scriptPath.lastIndexOf('/') + 1);
+  for (i = 0; i < scriptEls.length; i++)
+    if (scriptEls[i].src)
+      scriptPath = scriptEls[i].src;
+  return scriptPath.substr(0, scriptPath.lastIndexOf('/'));
 }
 
 function BuildStructure()
 {
-  var vdir = GetVirtualDir();
-  var header  = '<div class="header"><table class="hdr-table"><tr><td class="hdr-image"><a href="' + vdir + '/' + '"><img src="' + vdir + '/docs/static/ahk_logo_no_text.png" width="217" height="70" alt="AutoHotkey"></a></td><td class="hdr-search"><form id="search-form"><input id="q" size="30" type="text" placeholder="' + translate.hdSearchTxt + '"></form><div id="search-btn">' + translate.hdSearchBtn + '</div></td><td class="hdr-language"><ul><li>Language<ul class="second"><li id="lng-btn-en">English</li><li id="lng-btn-de">Deutsch</li><li id="lng-btn-cn">&#20013;&#25991;</li></ul></li></ul></td></tr></table></div>';
+  var wDir = GetWorkingDir();
+  var header  = '<div class="header"><table class="hdr-table"><tr><td class="hdr-image"><a href="' + wDir + '/"><img src="' + wDir + '/static/ahk_logo_no_text.png" width="217" height="70" alt="AutoHotkey"></a></td><td class="hdr-search"><form id="search-form"><input id="q" size="30" type="text" placeholder="' + translate.hdSearchTxt + '"></form><div id="search-btn">' + translate.hdSearchBtn + '</div></td><td class="hdr-language"><ul><li>Language<ul class="second"><li id="lng-btn-en">English</li><li id="lng-btn-de">Deutsch</li><li id="lng-btn-cn">&#20013;&#25991;</li></ul></li></ul></td></tr></table></div>';
   var main_1  = '<div class="main-content"><div id="app-body"><div id="headerbar"></div><div class="left-col"><ul class="nav"><li id="sb_content" class="selected"><span>' + translate.sbContent + '</span></li><li id="sb_index"><span>' + translate.sbIndex + '</span></li></ul><div id="sidebar"></div><div id="keywords" style="display: none;"><input id="IndexEntry" type="text"><select id="indexcontainer" name="IndexListbox" class="docstyle" size="20"></select></div></div><div class="right-col"><div id="main-content">';
   var main_2  = '</div></div><div class="float-clear"></div></div></div>';
-  var footer  = '<div class="footer"><b>Copyright</b> &copy; 2003-' + new Date().getFullYear() + ' ' + location.host + ' - <span id="ftLicense">' + translate.ftLicense + '</span> <a href="' + vdir + '/docs/license.htm">GNU General Public License</a><span id="ftExtra">' + translate.ftExtra + '</span></div>';
+  var footer  = '<div class="footer"><b>Copyright</b> &copy; 2003-' + new Date().getFullYear() + ' ' + location.host + ' - <span id="ftLicense">' + translate.ftLicense + '</span> <a href="' + wDir + '/license.htm">GNU General Public License</a><span id="ftExtra">' + translate.ftExtra + '</span></div>';
   document.write(header + main_1);
   $(document).ready(function() { $('body').append(main_2 + footer); });
 }
@@ -1390,8 +1398,8 @@ function AddContent()
   $(window).unload(function () { $(window).unbind('unload'); }); // disable firefox's bfcache
 
   $(document).ready(function() {
-    var vdir = GetVirtualDir();
-    var urlpath = location.href.replace(vdir + '/', '');
+    var wDir = GetWorkingDir();
+    var relPath = location.href.replace(wDir + '/', '');
 
     //
     // set last used state of sidebar
@@ -1468,13 +1476,13 @@ function AddContent()
     // language button
     //
 
-    var en = 'http://ahkscript.org/';
-    var de = 'http://ragnar-f.github.io/';
-    var cn = 'http://ahkcn.sourceforge.net/';
+    var en = 'http://ahkscript.org/docs/';
+    var de = 'http://ragnar-f.github.io/docs/';
+    var cn = 'http://ahkcn.sourceforge.net/docs/';
 
-    $('#lng-btn-en').on('click', function() { document.location = en + urlpath; } );
-    $('#lng-btn-de').on('click', function() { document.location = de + urlpath; } );
-    $('#lng-btn-cn').on('click', function() { document.location = cn + urlpath; } );
+    $('#lng-btn-en').on('click', function() { document.location = en + relPath; } );
+    $('#lng-btn-de').on('click', function() { document.location = de + relPath; } );
+    $('#lng-btn-cn').on('click', function() { document.location = cn + relPath; } );
 
     $('.hdr-table .hdr-language').find('li').mouseenter(function() {
       $(this).children('ul').show();
@@ -1503,7 +1511,7 @@ function AddContent()
             return true;
       },
       onCreateLi:       function(node, $li) {
-        if ("docs/" + node.path == urlpath)
+        if (node.path == relPath)
         {
           node_matched.push(node);
         }
@@ -1514,7 +1522,7 @@ function AddContent()
       var node = event.node;
       $(this).tree('toggle', node);
       if (node.path)
-        window.location = vdir + "/docs/" + node.path;
+        window.location = wDir + "/" + node.path;
     });
 
     //
@@ -1541,7 +1549,7 @@ function AddContent()
 
     for (var i = 0, len = index.length; i < len; i++)
     {
-      newContent += '<option value="docs/' + index[i][1] + '">' + index[i][0] + '</option>';
+      newContent += '<option value="' + index[i][1] + '">' + index[i][0] + '</option>';
     };
 
     $("#indexcontainer").html(newContent);
@@ -1582,7 +1590,7 @@ function AddContent()
     // pre-select keyword list sidebar item
     //
 
-    var sb_index_lastselected = $('[value="' + urlpath + '"]').index() + 1;
+    var sb_index_lastselected = $('[value="' + relPath + '"]').index() + 1;
     var sb_index_item_last = $('#indexcontainer :nth-child(' + sb_index_lastselected + ')');
     sb_index_item_last.prop('selected', true);
 
@@ -1623,7 +1631,7 @@ function AddContent()
         if (iSelect >= 0) {
           var URL = document.getElementById("indexcontainer").item(iSelect).value;
           if (URL.length > 0) {
-            window.location = vdir + '/' + URL;
+            window.location = wDir + '/' + URL;
           }
         }
       }
@@ -1644,20 +1652,20 @@ function AddChmAndOnlineFeatures()
       var m, title, href, text = jel.text();
       if (m = /AHK_L (\d+)\+/.exec(text)) {
         title = translate.verToolTipAHK_L.format(m[1]);
-        href = '/docs/AHKL_ChangeLog.htm#L' + m[1];
+        href = '/AHKL_ChangeLog.htm#L' + m[1];
         text = text.replace(m[0], 'v1.0.90+'); // For users who don't know what AHK_L was.
       } else if (m = /v\d\.\d\.(\d+\.)?\d+/.exec(text)) {
         title = translate.verToolTipDefault.format(m[0]);
         if (!m[1])
           m[0] = m[0] + '.00';
         if (m[0] <= 'v1.0.48.05')
-          href = '/docs/ChangeLogHelp.htm#' + m[0];
+          href = '/ChangeLogHelp.htm#' + m[0];
         else
-          href = '/docs/AHKL_ChangeLog.htm#' + m[0];
+          href = '/AHKL_ChangeLog.htm#' + m[0];
       } else return;
       jel.replaceWith(templ.clone(true)
         .attr('title', title)
-        .attr('href', GetVirtualDir() + href)
+        .attr('href', GetWorkingDir() + href)
         .text(text)
         );
     });
