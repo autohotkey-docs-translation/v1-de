@@ -38,7 +38,7 @@ SendMessage, Nachricht [, wParam, lParam, Steuerelement, Fenstertitel, Fensterte
   <dd><p>Ein Fenstertitel oder sonstige Kriterien, die das Zielfenster ermitteln sollen. Siehe <a href="../misc/WinTitle.htm">Fenstertitel</a>.</p></dd>
 
   <dt>Fenstertext</dt>
-  <dd><p>In diesem Parameter kann ein Teilstring angegeben werden, der in einem Textelement des Zielfensters vorkommt (abrufbar mit Windows Spy). Versteckte Textelemente werden auch erkannt, sofern <a href="DetectHiddenText.htm">DetectHiddenText</a> aktiv ist.</p></dd>
+  <dd><p>In diesem Parameter kann eine Zeichenkette angegeben werden, die in einem Textelement des Zielfensters vorkommt (abrufbar mit Windows Spy). Versteckte Textelemente werden auch erkannt, sofern <a href="DetectHiddenText.htm">DetectHiddenText</a> aktiv ist.</p></dd>
 
   <dt>Titelausnahme</dt>
   <dd><p>Ignoriert Fenster, deren Titel diesen Wert enthalten.</p></dd>
@@ -64,16 +64,16 @@ SendMessage, Nachricht [, wParam, lParam, Steuerelement, Fenstertitel, Fensterte
 <p>Sei vorsichtig, wenn du solche Befehle verwendest - das Senden einer Nachricht zum falschen Fenster (oder Senden einer ungültigen Nachricht) kann dazu führen, dass die Zielanwendung sich falsch verhält oder abstürzt. Die meisten Anwendungen sind nicht darauf abgestimmt, bestimmte Arten von Nachrichten aus externen Quellen zu erwarten.</p>
 <p>PostMessage setzt die Nachricht in die Nachrichtenwarteschlange des Zielfensters. Dieser Befehl wartet nicht auf eine Bestätigung oder Antwort. SendMessage hingegen wartet, bis das Zielfenster die Nachricht verarbeitet hat oder bis das Zeitlimit überschritten wurde.</p>
 <p>Die <em>wParam</em>- und <em>lParam</em>-Parameter sollten Integer sein. Wenn AutoHotkey oder das Zielfenster 32-Bit ist, werden nur die unteren 32 Bits verwendet; also sollte der Wert zwischen -2147483648 und 4294967295 (0xFFFFFFFF) liegen. Wenn sowohl AutoHotkey als auch das Zielfenster 64-Bit sind, kann jeder Integer, <a href="../Variables.htm#cap">der von AutoHotkey unterstützt wird</a>, verwendet werden. Ein Präfix von 0x kennzeichnet einen hexadezimalen Wert, wie bei allen Integer-Werten in AutoHotkey. Zum Beispiel wäre 0xFF das gleiche wie 255.</p>
-<p>Es ist möglich, einen String via <em>wParam</em> oder <em>lParam</em> zu senden, indem man die Adresse einer Variable angibt. Das folgende Beispiel verwendet den <a href="../Variables.htm#amp">Adressoperator (&amp;)</a>, um dies zu tun:</p>
+<p>Es ist möglich, eine Zeichenkette via <em>wParam</em> oder <em>lParam</em> zu senden, indem man die Adresse einer Variable angibt. Das folgende Beispiel verwendet den <a href="../Variables.htm#amp">Adressoperator (&amp;)</a>, um dies zu tun:</p>
 <pre>SendMessage, 0xC, 0, <strong>&amp;MeineVar</strong>, ClassNN, Fenstertitel  <em>; 0XC ist WM_SETTEXT</em></pre>
-<p>Seit v1.0.43.06 wird ein String in MeineVar korrekt erkannt, der vom Empfänger der Nachricht eingefügt wurde, ohne dass zusätzliche Schritte notwendig sind. Dies funktioniert allerdings nur, wenn das erste Zeichen des Parameters ein Und-Zeichen (&amp;) ist; zum Beispiel würde <code>5+&amp;MeineVar</code> nicht funktionieren, sondern nur <code>&amp;MeineVar</code> oder <code>&amp;MeineVar+5</code>.</p>
-<p>Ein literaler bzw. in Anführungszeichen gesetzter String kann auch gesendet werden (in diesem Fall sollte der &amp;-Operator weggelassen werden):</p>
+<p>Seit v1.0.43.06 wird eine Zeichenkette in MeineVar korrekt erkannt, der vom Empfänger der Nachricht eingefügt wurde, ohne dass zusätzliche Schritte notwendig sind. Diese Erkennung funktioniert allerdings nur, wenn das erste Zeichen des Parameters ein Und-Zeichen (&amp;) ist; zum Beispiel würde <code>5+&amp;MeineVar</code> nicht funktionieren, sondern nur <code>&amp;MeineVar</code> oder <code>&amp;MeineVar+5</code>.</p>
+<p>Eine literale bzw. in Anführungszeichen gesetzte Zeichenkette kann auch gesendet werden (in diesem Fall sollte der &amp;-Operator weggelassen werden):</p>
 <pre>Run Notepad
 WinWaitActive Unbenannt - Editor
 SendMessage, 0xC, 0, <strong>"Neuer Editor-Titel"</strong>  <em>; 0XC ist WM_SETTEXT</em></pre>
 <p>Um eine Nachricht zu allen Fenstern im Betriebssystem zu senden - einschließlich solcher, die versteckt oder deaktiviert sind - ist es erforderlich, <code>ahk_id 0xFFFF</code> in <em>Fenstertitel</em> anzugeben (0xFFFF ist HWND_BROADCAST). Diese Technik sollte nur für Nachrichten benutzt werden, die zum Broadcasten geeignet sind, wie z. B.:</p>
 <pre>SendMessage, 0x1A,,,, ahk_id 0xFFFF  <em>; 0x1A ist WM_SETTINGCHANGE</em></pre>
-<p>Mit <a href="OnMessage.htm">OnMessage()</a> kann ein Script eine Nachricht abfangen.</p>
+<p>Mit <a href="OnMessage.htm">OnMessage()</a> kann ein Skript eine Nachricht abfangen.</p>
 <p>Um mehr über das Verwenden solcher Befehle zu erfahren, siehe <a href="../misc/SendMessage.htm">Tutorial zum Senden von Nachrichten</a>.</p>
 <p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
 
@@ -112,10 +112,10 @@ if ErrorLevel &lt;&gt; FAIL
 }
 <em>; Siehe <a href="../misc/Winamp.htm">Winamp automatisieren</a> für mehr Informationen.</em>
 
-<em>; Um die Prozess-ID eines AHK-Scripts zu finden (eine Alternative zu "<a href="WinGet.htm">WinGet PID</a>"):</em>
+<em>; Um die Prozess-ID eines AHK-Skripts zu finden (eine Alternative zu "<a href="WinGet.htm">WinGet PID</a>"):</em>
 SetTitleMatchMode, 2
 DetectHiddenWindows, on
-SendMessage, 0x44, 0x405, 0, , BeliebigesScript.ahk - AutoHotkey v
+SendMessage, 0x44, 0x405, 0, , BeliebigesSkript.ahk - AutoHotkey v
 MsgBox %ErrorLevel% ist die Prozess-ID.</pre>
 
 </body>

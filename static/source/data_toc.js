@@ -3,7 +3,7 @@ toc = [
   {label:"Tutorial (Schnellstart)",path:"Tutorial.htm"},
   {label:"FAQ (häufig gestellte Fragen)",path:"FAQ.htm"},
   {label:"Befehls- und Funktionsliste",path:"commands/index.htm"},
-  {label:"Script-Beispiele",path:"scripts/index.htm"},
+  {label:"Skript-Beispiele",path:"scripts/index.htm"},
   {label:"Aktuelle Änderungen",path:"AHKL_ChangeLog.htm"},
   {label:"Grundlagen und Syntax",children:
   [
@@ -11,7 +11,7 @@ toc = [
     {label:"Hotstrings & Auto-Ersetzen",path:"Hotstrings.htm"},
     {label:"Neubelegung von Tasten",path:"misc/Remap.htm"},
     {label:"Tastenliste (Tastatur, Maus, Joystick)",path:"KeyList.htm"},
-    {label:"Scripts",path:"Scripts.htm"},
+    {label:"Skripte",path:"Scripts.htm"},
     {label:"Variablen und Ausdrücke",path:"Variables.htm"},
     {label:"Funktionen",path:"Functions.htm"},
     {label:"Debugger-Clients (DBGp)",path:"AHKL_DBGPClients.htm"},
@@ -31,7 +31,7 @@ toc = [
   {label:"Zu AutoHotkey 1.1 wechseln",children:
   [
     {label:"Neue Features von AutoHotkey_L",path:"AHKL_Features.htm"},
-    {label:"Script-Kompatibilität",path:"Compat.htm"}
+    {label:"Skript-Kompatibilität",path:"Compat.htm"}
   ]},
   {label:"Umgebungsverwaltung",children:
   [
@@ -133,7 +133,7 @@ toc = [
     [
       {label:"Loop",path:"commands/Loop.htm"},
       {label:"Loop (Dateien & Ordner)",path:"commands/LoopFile.htm"},
-      {label:"Loop (String parsen)",path:"commands/LoopParse.htm"},
+      {label:"Loop (Zeichenkette parsen)",path:"commands/LoopParse.htm"},
       {label:"Loop (Dateiinhalt lesen)",path:"commands/LoopReadFile.htm"},
       {label:"Loop (Registry)",path:"commands/LoopReg.htm"}
     ]},
@@ -151,7 +151,7 @@ toc = [
     {label:"Until",path:"commands/Until.htm"},
     {label:"While-Schleife",path:"commands/While.htm"}
   ]},
-  {label:"Integrierte Funktionen",path:"Functions.htm",children:
+  {label:"Built-in-Funktionen",path:"Functions.htm",children:
   [
     {label:"Asc",path:"Functions.htm#Asc"},
     {label:"Chr",path:"Functions.htm#Chr"},
@@ -311,14 +311,14 @@ toc = [
     {label:"SoundSet",path:"commands/SoundSet.htm"},
     {label:"SoundSetWaveVolume",path:"commands/SoundSetWaveVolume.htm"}
   ]},
-  {label:"Stringverwaltung",children:
+  {label:"Zeichenkettenverwaltung",children:
   [
     {label:"Format()",path:"commands/Format.htm"},
 	{label:"FormatTime",path:"commands/FormatTime.htm"},
     {label:"IfInString/IfNotInString",path:"commands/IfInString.htm"},
     {label:"If Var [not] in/contains Vergleichsliste",path:"commands/IfIn.htm"},
     {label:"InStr()",path:"Functions.htm#InStr"},
-    {label:"Loop (String parsen)",path:"commands/LoopParse.htm"},
+    {label:"Loop (Zeichenkette parsen)",path:"commands/LoopParse.htm"},
     {label:"RegExMatch()",path:"commands/RegExMatch.htm"},
     {label:"RegExReplace()",path:"commands/RegExReplace.htm"},
     {label:"SetEnv (Var = Wert)",path:"commands/SetEnv.htm"},

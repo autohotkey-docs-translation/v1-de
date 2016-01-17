@@ -12,25 +12,25 @@
 
 <h1>RegExReplace() <span class="ver">[v1.0.45+]</span></h1>
 
-<p>Ersetzt Vorkommen eines Musters (regulärer Ausdruck) innerhalb eines Strings.</p>
+<p>Ersetzt Vorkommen eines Musters (regulärer Ausdruck) innerhalb einer Zeichenkette.</p>
 
 <pre class="Syntax">NeuerStr := RegExReplace(Heuhaufen, NadelRegEx [, Ersatz = "", AusgabeVarAnzahl = "", Limit = -1, Startposition = 1])</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>NeuerStr</dt>
-  <dd><p>RegExReplace() gibt eine Version von <em>Heuhaufen</em> zurück, deren Inhalte von der Operation ersetzt wurden. Wenn nichts ersetzt werden konnte, wird <em>Heuhaufen</em> unverändert zurückgegeben. Wenn ein Fehler auftritt (z. B. ein Syntaxfehler innerhalb von <em>NadelRegEx</em>), wird <em>Heuhaufen</em> unverändert zurückgegeben (außer in den Versionen vor 1.0.46.06, die einen leeren String zurückgaben) und ErrorLevel auf einen der <a href="#ErrorLevel">unteren Werte</a> gesetzt, anstatt auf 0.</p></dd>
+  <dd><p>RegExReplace() gibt eine Version von <em>Heuhaufen</em> zurück, deren Inhalte von der Operation ersetzt wurden. Wenn nichts ersetzt werden konnte, wird <em>Heuhaufen</em> unverändert zurückgegeben. Wenn ein Fehler auftritt (z. B. ein Syntaxfehler innerhalb von <em>NadelRegEx</em>), wird <em>Heuhaufen</em> unverändert zurückgegeben (außer in den Versionen vor 1.0.46.06, die eine leere Zeichenkette zurückgaben) und ErrorLevel auf einen der <a href="#ErrorLevel">unteren Werte</a> gesetzt, anstatt auf 0.</p></dd>
 
   <dt>Heuhaufen</dt>
-  <dd><p>Ein String, dessen Inhalt durchsucht und ersetzt werden soll.</p></dd>
+  <dd><p>Eine Zeichenkette, deren Inhalt durchsucht und ersetzt werden soll.</p></dd>
 
   <dt>NadelRegEx</dt>
-  <dd><p>Ein Muster im PCRE-Format (Perl-kompatibler regulärer Ausdruck), das gesucht werden soll. Die <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> des Musters (falls vorhanden) müssen am Anfang des Strings eingefügt werden, gefolgt von einer schließenden Klammer. Zum Beispiel würde das Muster "<span class="red">i)</span>abc.*123" die Option "zeichenungenau" einschalten und nach "abc" suchen, gefolgt von 0 oder mehreren Vorkommen eines beliebigen Zeichens, gefolgt von "123". Wenn es keine Optionen gibt, ist das ")" optional; zum Beispiel wäre ")abc" das gleiche wie "abc".</p></dd>
+  <dd><p>Ein Muster im PCRE-Format (Perl-kompatibler regulärer Ausdruck), das gesucht werden soll. Die <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> des Musters (falls vorhanden) müssen am Anfang der Zeichenkette eingefügt werden, gefolgt von einer schließenden Klammer. Zum Beispiel würde das Muster "<span class="red">i)</span>abc.*123" die Option "zeichenungenau" einschalten und nach "abc" suchen, gefolgt von 0 oder mehreren Vorkommen eines beliebigen Zeichens, gefolgt von "123". Wenn es keine Optionen gibt, ist das ")" optional; zum Beispiel wäre ")abc" das gleiche wie "abc".</p></dd>
 
   <dt>Ersatz</dt>
-  <dd><p><a name="BackRef"></a>Ein reiner String (also kein regulärer Ausdruck), der jede gefundene Übereinstimmung ersetzen soll. Er kann Rückverweise wie z. B. $1 enthalten; $1 würde den Teilstring aus dem <em>Heuhaufen</em> einbringen, der zum ersten <a href="../misc/RegEx-QuickRef.htm#subpat">Teilmuster</a> passt. $0 bis $9 sind die einfachsten Rückverweise - $0 ist der Teilstring des gesamten Musters, $1 ist der Teilstring des ersten Teilmusters, $2 ist der zweite, und so weiter. Bei Rückverweisen über 9 (und optional auch solche unter 9) müssen die Nummern in geschweiften Klammern gesetzt werden, zum Beispiel: ${10}, ${11}, und so weiter. Bei <a href="RegExMatch.htm#NamedSubPat">benannten Teilmustern</a> müssen die Namen in geschweiften Klammern gesetzt werden; z. B. ${Teilmustername}. Wenn man ein literales $ angeben will, muss $$ verwendet werden (dieses Zeichen ist das einzige, das so eine Sonderbehandlung benötigt; alle anderen Zeichen müssen nicht mit einem Escapezeichen versehen werden).</p>
+  <dd><p><a name="BackRef"></a>Eine reine Zeichenkette (also kein regulärer Ausdruck), die jede gefundene Übereinstimmung ersetzen soll. Er kann Rückverweise wie z. B. $1 enthalten; $1 würde die Teilzeichenkette aus dem <em>Heuhaufen</em> einbringen, die zum ersten <a href="../misc/RegEx-QuickRef.htm#subpat">Teilmuster</a> passt. $0 bis $9 sind die einfachsten Rückverweise - $0 ist die Teilzeichenkette des gesamten Musters, $1 ist die Teilzeichenkette des ersten Teilmusters, $2 ist die zweite, und so weiter. Bei Rückverweisen über 9 (und optional auch solche unter 9) müssen die Nummern in geschweiften Klammern gesetzt werden, zum Beispiel: ${10}, ${11}, und so weiter. Bei <a href="RegExMatch.htm#NamedSubPat">benannten Teilmustern</a> müssen die Namen in geschweiften Klammern gesetzt werden; z. B. ${Teilmustername}. Wenn man ein literales $ angeben will, muss $$ verwendet werden (dieses Zeichen ist das einzige, das so eine Sonderbehandlung benötigt; alle anderen Zeichen müssen nicht mit einem Escapezeichen versehen werden).</p>
       <p>Um die Groß- bzw. Kleinschreibung eines Teilmusters zu ändern, kann man nach $ eines der folgenden Zeichen verwenden: U oder u (Großschreibung), L oder l (Kleinschreibung), T oder t (Titelschreibung; das heißt, dass bei jedem Wort das erste Zeichen großgeschrieben und die restlichen Zeichen kleingeschrieben sind). Zum Beispiel würden sowohl $U1 als auch $U{1} den ersten Teilmuster in eine großgeschriebene Version umwandeln.</p>
-      <p>Rückverweise, die nicht existieren, und solche, die mit nichts im <em>Heuhaufen</em> übereinstimmen - z. B. eines der Teilmuster in "(abc)|(xyz)" - werden in leere Strings umgewandelt.</p></dd>
+      <p>Rückverweise, die nicht existieren, und solche, die mit nichts im <em>Heuhaufen</em> übereinstimmen - z. B. eines der Teilmuster in "(abc)|(xyz)" - werden in leere Zeichenketten umgewandelt.</p></dd>
 
   <dt>AusgabeVarAnzahl</dt>
   <dd><p>Der Name einer Variable ohne Anführungszeichen, in der die Anzahl gespeichert werden soll, wie oft der Heuhaufen ersetzt wurde (0, wenn keine).</p></dd>
@@ -39,7 +39,7 @@
   <dd><p>Fehlt <em>Limit</em>, gilt standardmäßig -1, dadurch werden <strong>alle</strong> Vorkommen des Musters ersetzt, die im <em>Heuhaufen</em> gefunden wurden. Ansonsten kann man angeben, wie oft der Heuhaufen ersetzt werden soll. Der <em>Heuhaufen</em>-Bereich rechts neben der letzten Ersetzung bleibt unverändert.</p></dd>
 
   <dt>Startposition</dt>
-  <dd><p>Fehlt <em>Startposition</em>, gilt standardmäßig 1 (das erste Zeichen von <em>Heuhaufen</em>). Ansonsten kann eine 2 angegeben werden, um beim zweiten Zeichen zu beginnen, eine 3, um beim dritten Zeichen zu beginnen, und so weiter. Wenn <em>Startposition</em> die Länge von <em>Heuhaufen</em> überschreitet, beginnt die Suche bei einem leeren String am <em>Heuhaufen</em>-Ende (wodurch nichts ersetzt werden kann).</p>
+  <dd><p>Fehlt <em>Startposition</em>, gilt standardmäßig 1 (das erste Zeichen von <em>Heuhaufen</em>). Ansonsten kann eine 2 angegeben werden, um beim zweiten Zeichen zu beginnen, eine 3, um beim dritten Zeichen zu beginnen, und so weiter. Wenn <em>Startposition</em> die Länge von <em>Heuhaufen</em> überschreitet, beginnt die Suche bei einer leeren Zeichenkette am <em>Heuhaufen</em>-Ende (wodurch nichts ersetzt werden kann).</p>
       <p>Wenn <em>Startposition</em> kleiner als 1 ist, gilt sie als Offset vom <em>Heuhaufen</em>-Ende. Zum Beispiel würde 0 beim letzten Zeichen und -1 beim vorletzten Zeichen beginnen. Wenn <em>Startposition</em> das linke <em>Heuhaufen</em>-Ende überschreiten will, wird der gesamte <em>Heuhaufen</em> durchsucht.</p>
       <p>Egal welchen Wert man als <em>Startposition</em> verwendet - der Rückgabewert ist immer eine komplette Kopie von <em>Heuhaufen</em>; der einzige Unterschied könnte sein, dass mehr von seiner linken Seite unverändert bleibt, verglichen zu den Auswirkungen, wenn die <em>Startposition</em> eine 1 wäre.</p></dd>
 
@@ -49,14 +49,14 @@
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> kann folgendes enthalten:</p>
 <ul>
   <li>Eine 0 - das heißt, dass keine Fehler aufgetreten sind.</li>
-  <li>Einen String in folgender Form: <em>Compile error N at offset M: Beschreibung</em>. In diesem String ist <em>N</em> die PCRE-Fehlernummer, <em>M</em> die Position des betroffenen Zeichens innerhalb des regulären Ausdrucks und <em>Beschreibung</em> ein Text, der den Fehler beschreibt.</li>
-  <li>Eine negative Zahl - das heißt, dass ein Fehler beim <em>Ausführen</em> des regulären Ausdrucks aufgetreten ist. Zwar kommen solche Fehler selten vor, allerdings sind die am häufigsten auftretenden Fehler "zu viele mögliche Übereinstimmungen mit leeren Strings" (-22), "Rekursion zu tief" (-21) und "Limit der Übereinstimmung erreicht" (-8). Wenn dies geschieht, solltest du versuchen, das Muster restriktiver zu machen - ersetze zum Beispiel jedes * mit einem ?, + oder einem Limit wie {0,3}, sofern es möglich ist.</li>
+  <li>Eine Zeichenkette in folgender Form: <em>Compile error N at offset M: Beschreibung</em>. In dieser Zeichenkette ist <em>N</em> die PCRE-Fehlernummer, <em>M</em> die Position des betroffenen Zeichens innerhalb des regulären Ausdrucks und <em>Beschreibung</em> ein Text, der den Fehler beschreibt.</li>
+  <li>Eine negative Zahl - das heißt, dass ein Fehler beim <em>Ausführen</em> des regulären Ausdrucks aufgetreten ist. Zwar kommen solche Fehler selten vor, allerdings sind die am häufigsten auftretenden Fehler "zu viele mögliche Übereinstimmungen mit leeren Zeichenketten" (-22), "Rekursion zu tief" (-21) und "Limit der Übereinstimmung erreicht" (-8). Wenn dies geschieht, solltest du versuchen, das Muster restriktiver zu machen - ersetze zum Beispiel jedes * mit einem ?, + oder einem Limit wie {0,3}, sofern es möglich ist.</li>
 </ul>
 <h3>Optionen</h3>
 <p>Unter den <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> findest du Modifikatoren wie z. B. "<span class="red">i)</span>abc", der die Zeichengenauigkeit im Muster "abc" ausschalten würde.</p>
 <h3>Performance</h3>
-<p>Zum Ersetzen von einfachen Teilstrings solltest du <a href="StringReplace.htm">StringReplace</a> verwenden, weil es schneller als RegExReplace() ist.</p>
-<p>Wenn dir die maximale Anzahl an Ersetzungen bekannt ist, kannst du die Performance durch Einfügen diesen Wertes in den <em>Limit</em>-Parameter verbessern, weil die Suche früh stoppen kann (dies könnte auch die Speicherauslastung auf dem System während der Operation reduzieren). Wenn du beispielsweise weißt, dass nur eine Übereinstimmung am Anfang eines langen Strings sein kann, könntest du ein Limit von 1 angeben.</p>
+<p>Zum Ersetzen von einfachen Teilzeichenketten solltest du <a href="StringReplace.htm">StringReplace</a> verwenden, weil es schneller als RegExReplace() ist.</p>
+<p>Wenn dir die maximale Anzahl an Ersetzungen bekannt ist, kannst du die Performance durch Einfügen diesen Wertes in den <em>Limit</em>-Parameter verbessern, weil die Suche früh stoppen kann (dies könnte auch die Speicherauslastung auf dem System während der Operation reduzieren). Wenn du beispielsweise weißt, dass nur eine Übereinstimmung am Anfang einer langen Zeichenkette sein kann, könntest du ein Limit von 1 angeben.</p>
 <p>Um die Performance zu verbessern, werden die 100 zuletzt verwendeten regulären Ausdrücke zwischengespeichert (in kompilierter Form).</p>
 <p>Die <a href="../misc/RegEx-QuickRef.htm#Study">S-Option</a> kann manchmal die Performance eines regulären Ausdrucks verbessern, der häufig verwendet wird (z. B. in einer Schleife).</p>
 <h3>Bemerkungen</h3>
@@ -70,7 +70,7 @@
 <pre class="NoIndent">NeuerStr := RegExReplace("abc123123", "123$", "xyz")  <em>; Gibt "abc123xyz" zurück, weil durch $ eine Übereinstimmung nur am Ende vorkommen darf.</em>
 NeuerStr := RegExReplace("abc123", "i)^ABC")  <em>; Gibt 123 zurück, weil eine Übereinstimmung aufgrund der Zeichenungenauigkeits-Option möglich gemacht wurde.</em>
 NeuerStr := RegExReplace("abcXYZ123", "abc<span class="red">(.*)</span>123", "aaa<span class="red">$1</span>zzz")  <em>; Gibt "aaaXYZzzz" mithilfe des <a href="#BackRef">Rückverweises</a> <span class="red">$1</span> zurück.</em>
-NeuerStr := RegExReplace("abc123abc456", "abc\d+", "", ErsetzungsAnzahl)  <em>; Gibt ein leeren String zurück und speichert eine 2 in ErsetzungsAnzahl.</em>
+NeuerStr := RegExReplace("abc123abc456", "abc\d+", "", ErsetzungsAnzahl)  <em>; Gibt eine leere Zeichenkette zurück und speichert eine 2 in ErsetzungsAnzahl.</em>
 
 <em>; Allgemeine RegEx-Beispiele können in der <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a> gefunden werden.</em></pre>
 
