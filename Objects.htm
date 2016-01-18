@@ -54,17 +54,19 @@ Array := Array(Element1, Element2, ..., ElementN)</pre>
 <pre>Wert := Array[Index]</pre>
 <p>Zuweisen eines Elements:</p>
 <pre>Array[Index] := Wert</pre>
-<p>Anfügen eines Elements:</p>
-<pre>Array.<a href="objects/Object.htm#Insert">Insert</a>(Wert)</pre>
 <p>Einfügen beliebig vieler Elemente ab einem bestimmten Index:</p>
-<pre>Array.<a href="objects/Object.htm#Insert">Insert</a>(Index, Wert, Wert2, ...)</pre>
+<pre>Array.<a href="objects/Object.htm#InsertAt">InsertAt</a>(Index, Wert, Wert2, ...)</pre>
+<p>Anfügen eines oder von mehreren Elementen:</p>
+<pre>Array.<a href="objects/Object.htm#Push">Push</a>(Wert, Wert2, ...)</pre>
 <p>Entfernen eines Elements:</p>
-<pre>EntfernterWert := Array.<a href="objects/Object.htm#Remove">Remove</a>(Index)</pre>
-<p>Sofern Array nicht leer ist, können <a href="objects/Object.htm#MinMaxIndex">MinIndex</a> und <a href="objects/Object.htm#MinMaxIndex">MaxIndex</a> den niedrigsten und höchsten Index vom Array zurückgeben. Während der niedrigste Index fast immer 1 ist, wird MaxIndex üblicherweise die Anzahl der Elemente zurückgeben. Um die Inhalte des Arrays zu durchlaufen, benutzt man entweder den Index oder eine For-Schleife. Zum Beispiel:</p>
+<pre>EntfernterWert := Array.<a href="objects/Object.htm#RemoveAt">RemoveAt</a>(Index)</pre>
+<p>Entfernen des letzten Elements:</p>
+<pre>EntfernterWert := Array.<a href="objects/Object.htm#Pop">Pop</a>()</pre>
+<p>Sofern Array nicht leer ist, können <a href="objects/Object.htm#MinMaxIndex">MinIndex</a> und <a href="objects/Object.htm#MinMaxIndex">MaxIndex</a>/<a href="objects/Object.htm#Length">Length</a> den niedrigsten und höchsten Index des Arrays zurückgeben. Während der niedrigste Index fast immer 1 ist, wird MaxIndex üblicherweise die Anzahl der Elemente zurückgeben. Sind aber keine Integer-Keys vorhanden, gibt MaxIndex eine leere Zeichenkette zurück, während Length eine 0 zurückgibt. Um die Inhalte des Arrays zu durchlaufen, benutzt man entweder den Index oder eine For-Schleife. Zum Beispiel:</p>
 <pre>array := ["eins", "zwei", "drei"]
 
-<em>; Iteriert von 1 bis Anzahl der Elemente:</em>
-<a href="commands/Loop.htm">Loop</a> % array.MaxIndex()
+<em>; Durchläuft das Array von 1 bis zu seinem Ende:</em>
+<a href="commands/Loop.htm">Loop</a> % array.Length()
     MsgBox % array[A_Index]
 
 <em>; Enumeriert die Inhalte des Arrays:</em>
@@ -82,13 +84,13 @@ Array := Object("KeyA", ValueA, "KeyB", ValueB, ..., "KeyZ", ValueZ)</pre>
 <p>Zuweisen eines Elements:</p>
 <pre>Array[Key] := Value</pre>
 <p>Entfernen eines Elements:</p>
-<pre>RemovedValue := Array.<a href="objects/Object.htm#Remove">Remove</a>(Key)</pre>
+<pre>EntfernterWert := Array.<a href="objects/Object.htm#Delete">Delete</a>(Key)</pre>
 <p>Enumerieren von Elementen:</p>
 <pre>array := {zehn: 10, zwanzig: 20, dreißig: 30}
 <a href="commands/For.htm">For</a> key, value in array
     MsgBox %key% = %value%</pre>
 <p>Assoziative Arrays können lückenhaft gefüllt werden - zum Beispiel enthält <code>{1: "a", 1000: "b"}</code> nur zwei Key-Value-Paare, nicht 1000.</p>
-<p id="same_thing">Inzwischen ist dir vielleicht schon aufgefallen, dass sich die Syntaxen von assoziativen Arrays und von einfachen Arrays sehr ähneln. In der Tat sind sie beide dasselbe in v1.x. Das Behandeln von <code>[]</code> als einfaches lineares Array stellt sicher, dass dessen Rolle eindeutig zugeordnet werden kann, und erhöht die Chance, dass dein Skript auch mit einer zukünftigen Version von AutoHotkey noch funktionieren wird, bei der die Implementierung geändert wurde.</p>
+<p id="same_thing">In AutoHotkey v1.x sind einfache Arrays und assoziative Arrays das gleiche. Das Behandeln von <code>[]</code> als einfaches lineares Array stellt sicher, dass dessen Rolle eindeutig zugeordnet werden kann, und erhöht die Chance, dass dein Skript auch mit einer zukünftigen Version von AutoHotkey noch funktionieren wird, wo vielleicht zwischen einfachem und assoziativem Array unterschieden wird.</p>
 
 <h3 id="Usage_Objects">Objekte</h3>
 <p>Abrufen einer Eigenschaft:</p>
@@ -104,7 +106,7 @@ Array := Object("KeyA", ValueA, "KeyB", ValueB, ..., "KeyZ", ValueZ)</pre>
 Objekt.Eigenschaft[Parameter] := Wert</pre>
 <p><strong>Siehe auch</strong>: <a href="objects/Object.htm">Objekt</a>, <a href="objects/File.htm">File-Objekt</a>, <a href="objects/Func.htm">Func-Objekt</a>, <a href="commands/ComObjCreate.htm">COM-Objekt</a></p>
 <p><b>Bekannte Einschränkung:</b></p>
-<ul><li>Zurzeit wird <code><span class="dull">x</span>.y[z]<span class="dull">()</span></code> als <code><span class="dull">x</span>["y", z]<span class="dull">()</span></code> behandelt, was aber nicht unterstützt wird. Als Übergangslösung kann man <code><span class="red">(</span><span class="dull">x.y</span><span class="red">)</span>[z]()</code> benutzen, das <code>x.y</code>  zuerst auswerten und dann das Ergebnis als Ziel des Methodenaufrufs verwenden würde. Beachte, dass bei <code>x.y[z].()</code> diese Einschränkung nicht zutrifft, weil es wie <code>(x.y[z]).()</code> ausgewertet werden würde.</li></ul>
+<ul><li>Zurzeit wird <code><span class="dull">x</span>.y[z]<span class="dull">()</span></code> als <code><span class="dull">x</span>["y", z]<span class="dull">()</span></code> behandelt, was aber nicht unterstützt wird. Als Übergangslösung kann man <code><span class="red">(</span><span class="dull">x.y</span><span class="red">)</span>[z]()</code> benutzen, das <code>x.y</code>  zuerst auswerten und dann das Ergebnis als Ziel des Methodenaufrufs verwenden würde. Beachte, dass <code>x.y[z].Call()</code> diese Einschränkung nicht hat, weil es genauso wie <code>(x.y[z]).Call()</code> ausgewertet wird.</li></ul>
 
 <h3 id="Usage_Freeing_Objects">Freigeben von Objekten</h3>
 <p>Skripte geben Objekte nicht explizit frei. Sobald der letzte Verweis auf ein Objekt freigegeben ist, wird das Objekt automatisch freigegeben. Ein Verweis, der in einer Variable gespeichert ist, wird automatisch freigegeben, wenn diese Variable irgendeinen anderen Wert zugewiesen bekommt. Zum Beispiel:</p>
@@ -285,7 +287,7 @@ obj2.test()</pre>
 <p>Statische bzw. Klassenvariablen gehören nur der Klasse selbst, aber sie können von abgeleiteten Objekten vererbt werden (einschließlich Unterklassen). Sie werden wie Instanzvariablen deklariert, aber unter Verwendung des static-Schlüsselworts:</p>
 <pre>static KlassenVar := Ausdruck</pre>
 <p>Statische Deklarationen werden nur einmal ausgewertet - bevor der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> erfolgt, und in der Reihenfolge, wie sie im Skript vorkommen. Jede Deklaration speichert einen Wert in das Klassenobjekt. Jeder Variablenverweis im <i>Ausdruck</i> wird als global angesehen.</p>
-<p>Um auf eine Klassenvariable zugreifen zu können, muss immer die Klasse oder das abgeleitete Objekt angegeben werden; zum Beispiel <code><b>Klassenname</b>.KlassenVar</code>.</p>
+<p>Um etwas in eine Klassenvariable speichern zu können, muss immer das Klassenobjekt angegeben werden; zum Beispiel <code><b>Klassenname</b>.KlassenVar := Wert</code>. Wenn ein Objekt <em>x</em> von <em>Klassenname</em> abgeleitet wurde und wenn <em>x</em> selbst nicht den Key "KlassenVar" enthält, dann kann <code>x.KlassenVar</code> auch verwendet werden, dynamisch den Wert von <code>Klassenname.KlassenVar</code> abzurufen. Allerdings würde <code>x.KlassenVar := y</code> den Wert in <em>x</em> speichern, und nicht in <em>Klassenname</em>.</p>
 <p><span class="ver">[v1.1.08+]:</span> Deklarationen wie <code>static x.y := z</code> werden auch unterstützt, sofern <code>x</code> zuvor in dieser Klasse deklariert wurde. <code>static x := {}, x.y := 42</code> würde beispielsweise <code>x</code>  deklarieren und außerdem <code><i>Klassenname</i>.x.y</code> initialisieren.</p>
 
 <h4 id="Custom_Classes_class">Verschachtelte Klassen</h4>

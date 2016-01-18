@@ -392,12 +392,12 @@ Return
    send, ack
 Return
 
-::acheiv::achiev
+:*:acheiv::achiev
 ::achievment::achievement
 ::acquaintence::acquaintance
 :*:adquir::acquir
 ::aquisition::acquisition
-::agravat::aggravat
+:*:agravat::aggravat
 :*:allign::align
 ::ameria::America
 </pre>
@@ -917,18 +917,13 @@ If Var1 &lt; %Var2%                   <em>; Ohne Klammern ist das if traditionel
 							</li>
 							<li>Einfügen von Werten
 								<div class="indented" >
-									Keys und Werte können auch über die <code>Insert</code>-"Methode" in ein Objekt eingefügt werden. Eine Methode ist so etwas wie eine Funktion, aber sie gehört zu einem Objekt.<br />
+									Keys und Werte können auch in ein Objekt eingefügt werden, wenn man folgende Methoden verwendet.<br />
 									<br />
-									Die Insert-Methode kann auf drei Arten aufgerufen werden:<br />
+									<code>MeinObjekt.InsertAt(Index, Wert1, Wert2, Wert3...)</code><br />
+									<i>Index</i> ist ein beliebiger Integer-Key. Diese Methode wird ALLE höheren Integer-Keys um die Anzahl der eingefügten Werte nach oben verschieben, selbst wenn Lücken vorhanden sind (fügst du beispielsweise zwischen den Keys 1 und 100 einen Wert in Key 50 ein, wird der Key 100 auf 101 verschoben).<br />
 									<br />
-									<code>MeinObjekt.Insert(Index, Wert1, Wert2, Wert3...)</code><br />
-									Fehlt der Index/Key, wird standardmäßig der höchste Integer-Key plus eins verwendet.<br />
-									<br />
-									<code>MeinObjekt.Insert(Wert)</code><br />
-									Wenn du einen Integer-Key angibst, werden ALLE höheren Integer-Keys auf die nächst höhere Nummer verschoben, selbst wenn Lücken vorhanden sind (wenn beispielsweise nur die Keys 1 und 100 existieren, wird, sobald du einen Wert in Key 50 speicherst, Key 100 auf Key 101 verschoben.<br />
-									<br />
-									<code>MeinObjekt.Insert(Key, Wert)</code><br />
-									Wenn du einen Integer-Key verwendest und mehrere Werte hast, wäre jeder zusätzliche Wert der Index des vorherigen Wertes, plus eins. Es verschiebt ALLE höheren Integer-Keys um die Anzahl der angegebenen Werte, nach den gleichen Regeln, als würdest du nur einen einzelnen Wert hinzufügen.
+									<code>MeinObjekt.Push(Wert1, Wert2, Wert3...)</code><br />
+									Diese Methode bewirkt, dass die Werte an das Ende des Arrays <i>MeinObjekt</i>  "angefügt" werden. Das heißt, dass die Werte bei dem höchsten Integer-Key plus eins eingefügt werden.<br />
 								</div>
 							</li>
 						</ol>
@@ -943,31 +938,30 @@ If Var1 &lt; %Var2%                   <em>; Ohne Klammern ist das if traditionel
 							</li>
 							<li>Entfernen des Keys<br />
 								<div class="indented" >
-									Ein weitere Möglichkeit zum Entfernen des Keys <i>und</i> des Wertes ist es, den Key gemeinsam zu entfernen. Dazu muss die <code>Remove</code>-Methode aufgerufen werden. Es gibt mehrere Möglichkeiten, wie man diese Methode verwendet, aber im Prinzip tun sie alle das gleiche.
+									Es gibt mehrere Wege, wie der Key <i>und gleichzeitig auch</i> sein Wert entfernt werden kann. Da gibt es:
 								</div>
 								<ol>
-									<li><code>EntfernterWert := MeinObjekt.Remove(BeliebigerKey)</code>
+									<li><code>EntfernterWert := MeinObjekt.Delete(BeliebigerKey)</code>
 										<div class="indented">
-											Wenn du die Remove-Methode auf diese Weise verwendest, wird sie den angegebenen Key löschen und dann, sofern er ein Integer-Key ist, jeden höheren Key um 1 nach unten verschieben (ähnlich wie die Insert-Methode, die die Keys um 1 nach oben verschiebt).<br />
-											<br />
-											Der zurückgegebene Wert wird der Inhalt des Keys "BeliebigerKey" sein.
+											Der vorherige Wert von <code>MeinObjekt[BeliebigerKey]</code> wird in <i>EntfernterWert</i> gespeichert.
 										</div>
 									</li>
-									<li><code>AnzahlEntfernterKeys := MeinObjekt.Remove(ErsterKey, LetzterKey)</code>
+									<li><code>AnzahlEntfernterKeys := MeinObjekt.Delete(ErsterKey, LetzterKey)</code>
 										<div class="indented">
-											Das Verwenden der Remove-Methode auf diese Weise erlaubt es dir, einen Bereich von Nummer/Integer-Keys zwischen ErsterKey und LetzterKey zu entfernen. Nach dem Entfernen der Keys werden alle höheren Nummer/Integer-Keys nach unten verschoben, um die Lücke zu füllen, so dass der Key direkt über LetzterKey absofort ErsterKey sein kann. Dieser Sachverhalt entpricht der Funktionsweise der Insert-Methode mit mehreren angegebenen Werten.<br />
+											Die auf diese Weise verwendete Delete-Methode erlaubt es dir, einen Bereich von Integer- (nummerierten) oder Zeichenketten-Keys zwischen ErsterKey und LetzterKey zu entfernen.<br />
 											<br />
 											Der zurückgegebene Wert ist die Anzahl der Keys, die entfernt wurden - er kann nützlich sein, wenn du eine Lücke zwischen deinen Keys hast (wenn du z. B. die Keys 1, 3 und 4 angegeben hast, wird AnzahlEntfernterKeys eine 3 sein, weil nur 3 Keys entfernt werden konnten)
 										</div>
 									</li>
-									<li><code>MeinObjekt.Remove()</code>
+									<li><code>MeinObjekt.Pop()</code>
 										<div class="indented">
 											Entfernt den höchsten Integer-Key, und gibt den Wert zurück. Höhere Keys als diesen gibt es nicht.
 										</div>
 									</li>
-									<li><code>MeinObjekt.Remove(BeliebigerKey, "")</code>
+									<li><code>EntfernterWert := MeinObjekt.RemoveAt(Index)</code><br />
+									<code>AnzahlEntfernterKeys := MeinObjekt.RemoveAt(Index, Länge)</code>
 										<div class="indented">
-											Wenn du bei der ErsterKey-LetzterKey-Syntax eine leere Zeichenkette ("") in LetzterKey verwendest, kannst du einen Integer-Key löschen, ohne alle anderen Keys um 1 nach unten verschieben zu müssen. Dies kann sehr hilfreich sein, wenn du dein Objekt als assoziatives Array mit numerischen Keys behandeln willst, anstatt als indexiertes Array.
+											Diese Methode entfernt alle Keys von <i>Index</i> bis <i>Index + Länge - 1</i>. Wenn <i>Länge</i> fehlt, gilt standardmäßig 1. Nach dem Entfernen der Keys werden alle höheren Integer-Keys (nummerierten) nach unten verschoben, um die Lücke zu füllen, so dass der Wert bei <i>Index + Länge</i>, sofern vorhanden, nun bei <i>Index</i> sein wird. Dieser Sachverhalt entpricht der Funktionsweise der InsertAt-Methode mit mehreren angegebenen Werten.
 										</div>
 									</li>
 								</ol>

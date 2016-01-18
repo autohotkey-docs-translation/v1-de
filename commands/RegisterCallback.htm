@@ -44,39 +44,58 @@
 
 <h3>Die Parameter der Callback-Funktion</h3>
 <p>Eine <a href="../Functions.htm">Funktion</a>, die einer Callback-Adresse zugewiesen ist, kann bis zu 31 Parameter akzeptieren. <a href="../Functions.htm#optional">Optionale Parameter</a> sind erlaubt, so dass die Funktion von mehr als einem Aufrufer aufgerufen werden kann.</p>
-<p><strong>32-Bit</strong>: Alle eingehenden Parameter sind vorzeichenlose 32-Bit-Integer. Wenn ein eingehender Parameter als vorzeichenbehafteter Integer vorgesehen ist, können negative Zahlen mit einem der folgenden Beispielen offenbart werden:</p>
+<p>Das richtige Interpretieren von Parametern erfordert ein gutes Verständnis darüber, wie die x86-Aufrufkonvention funktioniert. Da Autohotkey keine typisierten Parameter besitzt, besteht Callback's Parameterliste voraussichtlich aus Integern, von denen einige neuinterpretiert werden müssen.</p>
+
+<p><strong>AutoHotkey 32-bit:</strong> Alle eingehenden Parameter sind vorzeichenlose 32-Bit-Integer. Kleinere Typen werden auf 32 Bit erweitert, während größere Typen in mehreren 32-Bit-Parametern aufgeteilt werden.</p>
+<p>Wenn ein eingehender Parameter als vorzeichenbehafteter Integer vorgesehen ist, können negative Zahlen mit einem der folgenden Beispielen offenbart werden:</p>
 <pre><em>; Methode #1</em>
 if wParam &gt; 0x7FFFFFFF
     wParam := -(~wParam) - 1
 
 <em>; Methode #2: Beruht auf der Tatsache, dass AutoHotkey von sich aus vorzeichenbehaftete 64-Bit-Integer verwendet.</em>
 wParam := wParam &lt;&lt; 32 &gt;&gt; 32</pre>
-<p><strong>64-Bit</strong>: Alle eingehenden Parameter sind vorzeichenbehaftete 64-Bit-Integer. AutoHotkey unterstützt von sich aus keine vorzeichenlose 64-Bit-Integers.</p>
+
+<p><strong>AutoHotkey 64-bit:</strong> Alle eingehenden Parameter sind vorzeichenbehaftete 64-Bit-Integer. AutoHotkey unterstützt von sich aus keine vorzeichenlose 64-Bit-Integers. Kleinere Typen werden auf 64 Bit erweitert, während größere Typen immer via Adresse übergeben werden.</p>
+
+<p><strong>AutoHotkey 32-bit/64-bit:</strong> Wenn ein eingehender Parameter als 8-Bit- oder 16-Bit-Wert (oder 32-Bit in x64) vorgesehen ist, kann es passieren, dass die höheren Bits des Wertes "Müll" enthalten - so etwas könnte man mithilfe des bitweisen UNDs herausfiltern:</p>
+<pre>Callback(UCharParam, UShortParam, UIntParam) {
+    UCharParam &amp;= 0xFF
+    UShortParam &amp;= 0xFFFF
+    UIntParam &amp;= 0xFFFFFFFF
+    <em>;...</em>
+}</pre>
 <p>Wenn ein eingehender Parameter als Zeichenkette vorgesehen ist, dann ist das, was aktuell empfangen wird, die aktuelle Adresse der Zeichenkette. Mit <a href="StrPutGet.htm">StrGet</a> kann die Zeichenkette selbst abgerufen werden:</p>
 <pre>MeineZeichenkette := StrGet(MeinParameter)  <em>; AHK_L 46+</em></pre>
 <p>Wenn ein eingehender Parameter die Adresse einer Struktur ist, kann man die einzelnen Elementen durch Befolgen der Schritte in "<a href="DllCall.htm#struct">DllCall-Strukturen</a>" extrahieren.</p>
-<p id="Indirect"><span class="ver">[AHK_L 60+]:</span> Wenn die Funktion als <a href="../Functions.htm#Variadic">variadisch</a> deklariert ist, wird der letzte Parameter die <i>Adresse</i> des ersten Callback-Parameters erhalten, der einem Skriptparameter nicht zugewiesen wurde. Zum Beispiel:</p>
-<pre>callback := RegisterCallback("Func", "F", 1)  <em>; Parameteranzahl muss angegeben werden.</em>
-Func("Funktion wurde direkt aufgerufen.")  <em>; Ruft Func direkt auf.</em>
-DllCall(callback, float, 10.5)  <em>; Ruft Func via Callback auf.</em>
-Func(params*) {
+
+<p id="Indirect"><strong>Parameter via Adresse empfangen</strong> <span class="ver">[AHK_L 60+]</span>: Wenn die Funktion als <a href="../Functions.htm#Variadic">variadisch</a> deklariert ist, wird der letzte Parameter die <i>Adresse</i> des ersten Callback-Parameters erhalten, der einem Skript-Parameter nicht zugewiesen wurde. Zum Beispiel:</p>
+<pre>
+callback := RegisterCallback("DieFunktion", "F", 1)  <em>; Parameteranzahl muss angegeben werden.</em>
+DieFunktion("DieFunktion wurde direkt aufgerufen.")  <em>; Ruft DieFunktion direkt auf.</em>
+DllCall(callback, float, 10.5, int64, 42)        <em>; Ruft DieFunktion via Callback auf.</em>
+DieFunktion(params*) {
     if IsObject(params)
         MsgBox % params[1]
     else
-        MsgBox % <a href="NumGet.htm">NumGet</a>(params+0, 0, "float")
+        MsgBox % <a href="NumGet.htm">NumGet</a>(params+0, "float") ", " NumGet(params+A_PtrSize, "int64")
 }</pre>
 <p>Die meisten Callbacks verwenden die <i>stdcall</i>-Aufrufkonvention, die eine feste Anzahl an Parametern voraussetzt. In solchen Fällen muss <i>Parameteranzahl</i> beim Erstellen des Callbacks angegeben werden. Die <i>Parameteranzahl</i> kann in 64-Bit-Builds und bei <i>Cdecl</i>-Callbacks in 32-Bit-Builds weggelassen werden - in solchen Fällen werden alle optionalen Parameter ihre Standardwerte erhalten, und bei der Berechnung der Adresse ignoriert, um in <i>params</i> gespeichert zu werden.</p>
+
 <h3>Was die Funktion per <em>Return</em> zurückgeben sollte</h3>
-<p>Wenn die Funktion ein <a href="Return.htm">Return</a> verwendet, dessen Parameter entweder fehlt oder einen leeren Wert wie "" hat (oder überhaupt kein Return verwendet), wird eine 0 an <em>Adresse</em>'s Aufrufer zurückgegeben. Ansonsten sollte die Funktion einen Integer zwischen -2147483648 und 4294967295 zurückgeben, der dann an <em>Adresse</em>'s Aufrufer zurückgegeben wird.</p>
+<p>Wenn die Funktion ein <a href="Return.htm">Return</a> verwendet, dessen Parameter entweder fehlt oder einen leeren Wert wie "" hat (oder überhaupt kein Return verwendet), wird eine 0 an den Aufrufer des Callbacks zurückgegeben. Ansonsten sollte die Funktion einen Integer zurückgeben, der dann an den Aufrufer zurückgegeben wird. AutoHotkey 32-bit kürzt Rückgabewerte auf 32 Bit, während AutoHotkey 64-bit Rückgabewerte im 64-Bit-Format unterstützt. Zurückgegebene Strukturen größer als diesen Wert werden nicht unterstützt.</p>
+
 <h3 id="Threads">Fast vs. Slow</h3>
 <p>Der Standard/Slow-Modus lässt die Funktion mit den Standardeinstellungen von Befehlen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> beginnen. Diese Standardeinstellungen können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
 <p>Der <a href="#Fast">Fast-Modus</a> erbt hingegen die globalen Einstellungen von einem <a href="../misc/Threads.htm">Thread</a>, der zum Zeitpunkt des Funktionsaufrufs aktiv war. Desweiteren werden jegliche Änderungen, die die Funktion bei globalen Einstellungen gemacht hat (einschließlich <a href="../misc/ErrorLevel.htm">ErrorLevel</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>), auch für den <a href="../misc/Threads.htm">aktuellen Thread</a> wirksam. Demzufolge sollte der Fast-Modus nur verwendet werden, wenn bekannt ist, in welchen Threads die Funktion aufgerufen wird.</p>
 <p>Um die eigene Unterbrechung (oder von einem anderen Thread) zu verhindern, kann ein Callback <a href="Critical.htm">Critical</a> in der ersten Zeile verwenden. Allerdings ist dies nicht effektiv, wenn die Funktion indirekt via eingehende Nachricht kleiner als 0x312 aufgerufen wird (das Erhöhen von Critical's <a href="Critical.htm#Interval">Intervall</a> könnte helfen). Desweiteren kann <a href="Critical.htm">Critical</a> die Funktion nicht daran zu hindern, etwas zu tun, das zum indirekten Selbstaufruf führen könnte, wie z. B. durch <a href="PostMessage.htm">SendMessage</a> oder <a href="DllCall.htm">DllCall</a>.</p>
+
 <h3>Speicher</h3>
 <p>Jede Verwendung von RegisterCallback() bekommt eine kleine Speichermenge zugewiesen (32 Bytes plus System-Overhead). Da das Betriebssystem diesen Speicher automatisch beim Beenden des Skripts freigibt, muss jedes Skript, das eine kleine <em>feste</em> Anzahl an Callbacks zugewiesen bekommt, den Speicher nicht explizit freigegeben. Dagegen sollte ein Skript, das RegisterCallback() unendlich oft aufruft, folgende Funktion bei jedem unbenutzten Callback aufrufen:</p>
 <pre>DllCall("GlobalFree", "Ptr", Adresse, "Ptr")</pre>
+
 <h3>Siehe auch</h3>
 <p><a href="DllCall.htm">DllCall()</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="Sort.htm#callback">Sort's Callback</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fensternachrichten</a>, <a href="../misc/Threads.htm">Threads</a></p>
+
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Beispiel: Das folgende Skript zeigt eine Zusammenfassung aller Fenster auf höchster Ebene an.</em>
 

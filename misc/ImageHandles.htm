@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Bild-Handles</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/ga.js" type="text/javascript"></script>
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+
+<body>
+<h1>Bild-Handles <span class="ver">[v1.1.23+]</span></h1>
+
+<p>Mit der folgenden Syntax kannst du ein Icon- oder Bitmap-Handle anstelle eines Bild-Dateinamens verwenden:</p>
+<pre class="Syntax">HBITMAP:<i>Bitmap-Handle</i>
+HICON:<i>Icon-Handle</i></pre>
+<p>Ersetze <em>Bitmap-Handle</em> oder <em>Icon-Handle</em> mit dem eigentlichen Handle-Wert. Zum Beispiel <code>hicon:%handle%</code> (oder <code>"hicon:" handle</code> in einem <a href="../Variables.htm#Expressions">Ausdruck</a>), wo <em>handle</em> eine Variable ist, die ein Icon-Handle enthält.</p>
+<p>Die folgenden Befehle unterstützen diese Syntax:</p>
+<ul>
+  <li><a href="../commands/GuiControls.htm#Picture">Gui Add, Picture</a> (und <a href="../commands/GuiControl.htm">GuiControl</a> beim Setzen des Inhalts von einem Picture-Steuerelement).</li>
+  <li><a href="../commands/ListView.htm#IL_Add">IL_Add</a></li>
+  <li><a href="../commands/LoadPicture.htm">LoadPicture</a></li>
+  <li><a href="../commands/GuiControls.htm#SB_SetIcon">SB_SetIcon</a></li>
+  <li><a href="../commands/ImageSearch.htm">ImageSearch</a></li>
+  <li><a href="../commands/Menu.htm#Icon">Menu Tray, Icon</a> oder <a href="../commands/Menu.htm#MenuIcon">Menu <em>Menüname</em>, Icon</a></li>
+  <li><a href="../commands/Progress.htm">SplashImage</a></li>
+</ul>
+<p>Ein Bitmap- oder Icon-Handle ist ein numerischer Wert, der eine Bitmap oder ein Icon im Arbeitsspeicher kennzeichnet. Die Mehrheit der Skripte müssen nie auf Handles zurückgreifen, weil AutoHotkey sich in den meisten Fällen darum kümmert, das Bild aus einer Datei zu laden und es wieder freizugeben, wenn es nicht länger benötigt wird. Die oben gezeigte Syntax sollte man nur einsetzen, wenn das Skript ein Icon- oder Bitmap-Handle aus einer anderen Quelle bezieht, z. B. durch Senden der WM_GETICON-Nachricht an ein Fenster. Man kann sie auch in Kombination mit <a href="../commands/LoadPicture.htm">LoadPicture</a> verwenden, um ein mehrfaches Laden eines Bildes aus einer Datei zu vermeiden.</p>
+<p>Standardmäßig behandelt AutoHotkey das Handle, als ob das Bild aus einer Datei geladen wurde - zum Beispiel wird eine Bitmap auf einem Picture-Steuerelement gelöscht, wenn das GUI zerstört wird, und ein Bild wird in der Regel sofort gelöscht, wenn dessen Größe geändert werden muss. Um das zu verhindern, kannst du ein Sternchen zwischen dem Doppelpunkt und dem Handle einfügen. Zum Beispiel: <code>hbitmap:*%handle%</code> (oder <code>"hbitmap:*" handle</code> in einem Ausdruck). Diese Methode zwingt den Befehl, außer ImageSearch, eine Kopie des Bildes anzulegen.</p>
+
+<h3 id="Examples">Beispiele</h3>
+<pre class="NoIndent"><em>; Zeigt ein Menü der ersten n Dateien an, die dem Muster entsprechen, und ihre Icons.</em>
+Muster = %A_ScriptDir%\*
+n = 15
+
+<em>; Stellt Speicher für eine SHFILEINFOW-Struktur bereit.</em>
+VarSetCapacity(Dateiinfo, Dateigröße := A_PtrSize + 688)
+
+Loop, Files, %Muster%, FD
+{
+    <em>; Fügt ein Menüpunkt für jede Datei ein.</em>
+    Menu F, Add, %A_LoopFileName%, nix
+    
+    <em>; Ruft das Icon der Datei ab.</em>
+    if DllCall("shell32\SHGetFileInfoW", "wstr", A_LoopFileFullPath
+        , "uint", 0, "ptr", &amp;Dateiinfo, "uint", Dateigröße, "uint", 0x100)
+    {
+        hicon := NumGet(Dateiinfo, 0, "ptr")
+        <em>; Setzt das Icon des Menüpunktes.</em>
+        Menu F, Icon, %A_Index%&amp;, HICON:%hicon%
+        <em>; Da wir hier ":" anstelle von ":*" verwenden, wird das Icon automatisch
+        ; freigegeben, wenn das Programm beendet oder wenn das Menü oder der Menüpunkte gelöscht wird.</em>
+    }
+}
+until A_Index = n
+Menu F, Show
+nix:
+return
+</pre>
+<p>Siehe auch: <a href="../commands/LoadPicture.htm">LoadPicture</a>.</p>
+&nbsp;
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>LoadPicture</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/ga.js" type="text/javascript"></script>
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>LoadPicture <span class="ver">[v1.1.23+]</span></h1>
+
+<p>Lädt ein Bild von einer Datei und gibt ein Bitmap- oder Icon-Handle zurück.</p>
+<pre class="Syntax">Handle := LoadPicture(Dateiname [, Optionen, ByRef Bildtyp])</pre>
+
+<h3>Parameter</h3>
+<dl>
+
+  <dt>Dateiname</dt>
+  <dd><p></p></dd>
+  
+  <dt>Optionen</dt>
+  <dd>
+    <p>Eine Zeichenkette von null oder mehreren der folgenden Optionen, die jeweils durch ein Leer- oder Tabulatorzeichen voneinander getrennt sind:</p>
+    <p><strong>W</strong><em>n</em> und <strong>H</strong><em>n</em>: Die Breite und Höhe, mit der das Bild geladen werden soll - <em>n</em> muss ein Integer sein. Wenn eine Abmessung wegfällt oder -1 ist, wird sie unter Beibehaltung des Seitenverhältnisses automatisch auf Basis der anderen Abmessung berechnet. Wenn beide Abmessungen fehlen, gilt die Originalgröße des Bildes. Wenn eine der Abmessungen 0 ist, wird für diese Abmessung die Originalgröße verwendet. Zum Beispiel: <code>"w80 h50"</code>, <code>"w48 h-1"</code> oder <code>"w48"</code> (behält Seitenverhältnis bei), <code>"h0 w100"</code> (verwendet Originalhöhe, aber überschreibt Breite).</p>
+    <p><strong>Icon</strong><em>n</em>: Kennzeichnet, welches Icon von einer Datei mit mehreren Icons geladen werden soll (in der Regel eine EXE- oder DLL-Datei). Wenn <em>n</em> ungleich null ist, muss die Datei ein Icon enthalten. Zum Beispiel würde <code>"Icon2"</code> das zweite Icon von der Datei laden.</p>
+    <p><strong>GDI+</strong>: Verwende GDI+ zum Laden eines Bildes, falls verfügbar. Zum Beispiel <code>"GDI+ w100"</code>.</p>
+  </dd>
+  
+  <dt>Bildtyp</dt>
+  <dd><p>Der Name einer Variable ohne Anführungszeichen, in der ein Integer gespeichert werden soll, der den Typ des Handles repräsentiert, welcher zurückgegeben wird: 0 (IMAGE_BITMAP), 1 (IMAGE_ICON) oder 2 (IMAGE_CURSOR). Fehlt dieser Parameter oder ist er keine Variable, wird der Rückgabewert immer ein Bitmap-Handle sein (Icon/Cursor werden umgewandelt, falls nötig).</p></dd>
+
+</dl>
+
+<h3 id="Remarks">Bemerkungen</h3>
+<p>LoadPicture unterstützt auch <a href="../misc/ImageHandles.htm">die Handle-Syntax</a>, z. B. zum Erstellen eines skalierten Bildes auf Basis einer Icon- oder Bitmap-Ressource, die bereits in den Speicher geladen worden ist, oder zum Konvertieren eines Icons in eine Bitmap durch Weglassen von <em>Bildtyp</em>.</p>
+
+<h3>Siehe auch</h3>
+<p><a href="../misc/ImageHandles.htm">Bild-Handles</a></p>
+
+<h3 id="Examples">Beispiel</h3>
+<pre class="NoIndent"><em>; Vorab-Laden und Wiederverwenden einiger Bilder.</em>
+
+Bilder := []
+<em>; Findet einige Bilder zum Anzeigen.</em>
+Loop, Files, %A_WinDir%\Web\Wallpaper\*.jpg, R
+{
+    <em>; Lädt jedes Bild und fügt es in den Array ein.</em>
+    Bilder.Push(LoadPicture(A_LoopFileFullPath))
+}
+if !Bilder.Length()
+{
+    <em>; Wenn das passiert, muss du den Pfad auf der Loop-Zeile darüber ändern.</em>
+    MsgBox, Keine Bilder gefunden!  Probiere ein anderes Verzeichnis aus.
+    ExitApp
+}
+<em>; Fügt das Picture-Steuerelement hinzu, unter Beibehaltung des Seitenverhältnisses vom ersten Bild.</em>
+Gui, Add, Pic, w600 h-1 vBild +Border, % "HBITMAP:*" Bilder.1
+Gui, Show
+Loop 
+{
+    <em>; Wechselt auf ein anderes Bild!</em>
+    GuiControl, , Bild, % "HBITMAP:*" Bilder[Mod(A_Index, Bilder.Length())+1]
+    Sleep 3000
+}
+return
+GuiClose:
+GuiEscape:
+ExitApp</pre>
+
+</body>
+</html>

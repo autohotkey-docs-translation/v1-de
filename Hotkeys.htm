@@ -80,25 +80,32 @@ return</pre>
       <p>Soll ALTGR allerdings selbst zum Hotkey werden, verwende folgende Kombination (ohne den oben genannten Hotkeys):</p>
       <pre>LControl &amp; RAlt::MsgBox Sie haben ALTGR gedrückt.</pre></td>
   </tr>
-  <tr>
+  <tr id="wildcard">
     <td><strong>*</strong></td>
-    <td><p><a name="wildcard"></a>Platzhalter: Führt den Hotkey auch dann aus, wenn zusätzliche Modifikatortasten gedrückt gehalten werden. Das wird oft in Verbindung mit der <a href="misc/Remap.htm">Neubelegung</a> von Tasten verwendet. Zum Beispiel:</p>
+    <td><p>Platzhalter: Führt den Hotkey auch dann aus, wenn zusätzliche Modifikatortasten gedrückt gehalten werden. Das wird oft in Verbindung mit der <a href="misc/Remap.htm">Neubelegung</a> von Tasten verwendet. Zum Beispiel:</p>
       <pre>*#c::Run Calc.exe  <em>; WIN+C, UMSCHALT+WIN+C und STRG+WIN+C usw. werden den folgenden Hotkey auslösen.</em>
 *ScrollLock::Run Notepad  <em>; Die ROLLEN-Taste löst den folgenden Hotkey aus, selbst wenn Modifikatortasten gedrückt gehalten werden.</em></pre></td>
   </tr>
-  <tr>
+  <tr id="Tilde">
     <td><strong>~</strong></td>
-    <td><p><a name="Tilde"></a>Beim Drücken des Hotkeys wird seine ursprüngliche Funktion nicht blockiert (bzw. nicht im System versteckt). In den beiden folgenden Beispielen wird der Mausklick des Benutzers weiterhin an das aktive Fenster gesendet:</p>
+    <td><p>Beim Drücken des Hotkeys wird seine ursprüngliche Funktion nicht blockiert (bzw. nicht im System versteckt). In den beiden folgenden Beispielen wird der Mausklick des Benutzers weiterhin an das aktive Fenster gesendet:</p>
       <pre>~RButton::MsgBox Sie haben die rechte Maustaste gedrückt.
 ~RButton &amp; C::MsgBox Sie haben C gedrückt, während die rechte Maustaste gedrückt wird.</pre>
-      <p>Hinweise: 1) Im Gegensatz zu den anderen Präfix-Symbolen darf das Tilde-Präfix in einigen Hotkey-<a href="commands/_IfWinActive.htm#variant">Varianten</a> vorkommen und in anderen nicht; 2) Spezielle Hotkeys, die etwas mit <a href="#alttab">Alt-Tab</a> zu tun haben, ignorieren immer das Tilde-Präfix.</p>
-      <p><span class="ver">[v1.1.14+]:</span> Fügt man das Tilde-Präfix an eine benutzerdefinierte Modifikatortaste, die auch als eigener Hotkey dient, wird dieser Hotkey ausgelöst, sobald die Taste gedrückt wird, anstatt sie bis zum Loslassen der Taste hinauszuzögern. Zum Beispiel wird der oben genannte Hotkey <em>~RButton</em> ausgelöst, sobald die Maustaste gedrückt wird. Vor v1.1.14 (oder ohne Tilde-Präfix) wurde er erst nach dem Loslassen der Maustaste ausgelöst, aber nur, wenn die Tastenkombination <em>RButton &amp; C</em> nicht aktiviert war.</p>
+      <p>Im Gegensatz zu den anderen Präfix-Symbolen darf das Tilde-Präfix in einigen Hotkey-<a href="commands/_IfWinActive.htm#variant">Varianten</a> vorkommen und in anderen nicht. Fügt man ein Tilde allerdings an die <a href="#prefix">Präfixtaste</a> einer beliebigen benutzerdefinierten Kombination, die weder ausgeschaltet noch suspendiert wurde, dann wird Tilde das Verhalten dieser Präfixtaste bei <em>allen</em> Kombinationen beeinflussen.</p>
+      <p>Spezielle Hotkeys, die etwas mit <a href="#alttab">Alt-Tab</a> zu tun haben, ignorieren immer das Tilde-Präfix.</p>
+      <p><span class="ver">[v1.1.14+]:</span> Fügt man das Tilde-Präfix an eine benutzerdefinierte Modifikatortaste (<a href="#prefix">Präfixtaste</a>), die auch als eigener Hotkey dient, dann wird dieser Hotkey ausgelöst, sobald die Taste gedrückt wird, anstatt sie bis zum Loslassen der Taste hinauszuzögern. Zum Beispiel wird der oben genannte Hotkey <em>~RButton</em> ausgelöst, sobald die Maustaste gedrückt wird. Vor v1.1.14 (oder ohne Tilde-Präfix) wurde er erst nach dem Loslassen der Maustaste ausgelöst, aber nur, wenn die Tastenkombination <em>RButton &amp; C</em> nicht aktiviert war.</p>
+      <p>Fügt man das Tilde-Präfix nur an die benutzerdefinierte Kombination und nicht an den kombinationslosen Hotkey, wird die native Funktion der Taste weiterhin blockiert. Im folgenden Beispiel wird gezeigt, wie durch Halten der AppsKey-Taste ein ToolTip angezeigt wird, ohne das Kontextmenü auszulösen:</p>
+      <pre>AppsKey::ToolTip Drücke &lt; oder &gt; zum Durchschalten der Fenster.
+AppsKey Up::ToolTip
+~AppsKey &amp; &lt;::Send !+{Esc}
+~AppsKey &amp; &gt;::Send !{Esc}</pre>
     </td>
   </tr>
   <tr id="prefixdollar">
     <td><strong>$</strong></td>
     <td>
       <p>Dieses Präfix ist normalerweise nur notwendig, wenn das Skript den <a href="commands/Send.htm">Send</a>-Befehl verwendet, um Tasten zu senden, die den Hotkey selbst enthalten, der sich ansonsten selbst auslösen würde. Das $-Präfix erzwingt den <a href="commands/_InstallKeybdHook.htm">Tastatur-Hook</a> zum Implementieren des Hotkeys, wodurch als Nebeneffekt der <a href="commands/Send.htm">Send</a>-Befehl den Hotkey nicht mehr auslösen kann. Dieser Präfix ist das gleiche wie, als hätte man <code><a href="commands/_UseHook.htm">#UseHook</a></code> irgendwo vor der Hotkey-Definition angegeben.</p>
+      <p>Das $-Präfix hat keinen Effekt auf Maus-Hotkeys, weil sie immer den Maus-Hook verwenden. Es hat außerdem keinen Effekt auf Hotkeys, die bereits den Tastatur-Hook benötigen, einschließlich aller Tastatur-Hotkeys mit den Modifikatoren <a href="#Tilde">Tilde (~)</a> oder <a href="#wildcard">Platzhalter (*)</a>, Taste-Oben-Hotkeys und benutzerdefinierten Kombinationen.</p>
       <p><span class="ver">[v1.1.06+]:</span> <a href="commands/_InputLevel.htm">#InputLevel</a> und <a href="commands/SendLevel.htm">SendLevel</a> ermöglichen zusätzliche Kontrolle darüber, welche Hotkeys und Hotstrings durch den Send-Befehl ausgelöst werden sollen.</p>
     </td>
   </tr>
@@ -110,7 +117,7 @@ return</pre>
 </pre>
       <p>"Up" kann auch bei normalen Hotkeys verwendet werden. Zum Beispiel: <code>^!r Up::MsgBox Sie haben STRG+ALT+R gedrückt und losgelassen</code>. Das funktioniert auch mit <a href="#combo">kombinierten Hotkeys</a> (z. B. <code>F1 &amp; e Up::</code>).</p>      
       <p>Einschränkungen: 1) "Up" funktioniert nicht bei <a href="KeyList.htm">Joystick-Tasten</a>; und 2) Ein "Up"-Hotkey ohne entsprechend normalem/gedrücktem Gegenstück wird diese Taste komplett übernehmen, um zu verhindern, dass sie stecken bleibt. Dieses Verhalten kann beispielsweise unterdrückt werden, wenn ein <a href="#Tilde">Tilde-Präfix</a> hinzugefügt wird (z. B. <code><strong>~</strong>LControl up::</code>).</p>
-	  <p>Mit einer ähnlichen Methode kann ein Hotkey zu einer Präfix-Taste gemacht werden. Der Vorteil davon ist, dass der Hotkey beim Loslassen nur ausgeführt wird, wenn keine andere Taste gedrückt wird, während er gedrückt gehalten wird. Zum Beispiel:</p>
+      <p>Mit einer ähnlichen Methode kann ein Hotkey zu einer Präfix-Taste gemacht werden. Der Vorteil davon ist, dass der Hotkey beim Loslassen nur ausgeführt wird, wenn keine andere Taste gedrückt wird, während er gedrückt gehalten wird. Zum Beispiel:</p>
       <pre>LControl &amp; F1::Return  <em>; Macht die linke STRG-Taste zu einem Präfix, wenn sie mindestens einmal vor "&amp;" verwendet wird.</em>
 LControl::MsgBox Sie haben LControl ohne Auswirkung losgelassen.</pre></td>
   </tr>
@@ -141,9 +148,9 @@ WheelDown::Send {Volume_Down} <em>;</em>
 
 <h2 id="Features">Benutzerdefinierte Kombinationen und Sonstige Features</h2>
 <p><a name="combo"></a>Mithilfe von " &amp; " kann eine benutzerdefinierte Kombination von zwei Tasten (außer Joystick-Tasten) definiert werden. Im folgenden Beispiel würde der Hotkey ausgelöst werden, wenn man Numpad0 gedrückt hält und danach die zweite Taste drückt:</p>
-<pre>Numpad0 <strong>&amp;</strong> Numpad1::MsgBox, Sie haben Numpad1 gedrückt, während Numpad0 gedrückt wurde.
+<pre id="prefix">Numpad0 <strong>&amp;</strong> Numpad1::MsgBox, Sie haben Numpad1 gedrückt, während Numpad0 gedrückt wurde.
 Numpad0 <strong>&amp;</strong> Numpad2::Run Notepad</pre>
-<p><a name="prefix"></a>Im obigen Beispiel wird Numpad0 eine <em>Präfix-Taste</em>; allerdings verliert Numpad0 dadurch seine ursprüngliche Funktion, wenn sie selbst gedrückt wird. Um das zu vermeiden, kann man die Numpad0-Taste wie folgt konfigurieren, damit sie eine neue Aktion durchführen kann:</p>
+<p>Im obigen Beispiel wird Numpad0 eine <em>Präfix-Taste</em>; allerdings verliert Numpad0 dadurch seine ursprüngliche Funktion, wenn sie selbst gedrückt wird. Um das zu vermeiden, kann man die Numpad0-Taste wie folgt konfigurieren, damit sie eine neue Aktion durchführen kann:</p>
 <pre>Numpad0::WinMaximize A   <em>; Maximiert das aktive/vorderste Fenster.</em>
 Numpad0::Send {Numpad0}  <em>; Numpad0 erzeugt beim <i>Loslassen</i> eine Numpad0-Tastatureingabe. Siehe unteren Kommentar.</em></pre>
 <p>Das Vorhandensein einer der oben genannten benutzerdefinierten Tastenkombinationen bewirkt, dass Numpad0 <em>losgelassen</em> wird, um die angegebene Aktion durchführen zu können, aber nur, wenn man keine andere Taste drückte, während Numpad0 gedrückt gehalten wurde. Seit v1.1.14 kann dieses Verhalten durch Anfügen des <a href="#Tilde">Tilde-Präfixes</a> an beiden Hotkeys unterdrückt werden.</p>
@@ -183,7 +190,7 @@ return</pre>
 Numpad1::
 MsgBox, Dieser Hotkey wurde gestartet, egal ob die NUM-Taste An ist oder nicht.
 return</pre>
-<p>Sobald der Tilde-Operator (~) mit einer <a href="#prefix">Präfix-Taste</a> verwendet wird, würde dieses Präfix immer das aktive Fenster erreichen. Zum Beispiel würde bei beiden folgenden Hotkeys das aktive Fenster alle Rechtsklick-Ereignisse empfangen, obwohl das Tilde-Zeichen nur in einer der Definitionen vorkommt:</p>
+<p>Wenn der <a href="#Tilde">Tilde-Operator (~)</a> einmal in Verbindung mit einer <a href="#prefix">Präfixtaste</a> verwendet wurde, ändert er das Verhalten dieser Präfixtaste bei allen Kombinationen. Zum Beispiel würde bei beiden folgenden Hotkeys das aktive Fenster alle Rechtsklick-Ereignisse empfangen, obwohl das Tilde-Zeichen nur in einer der Definitionen vorkommt:</p>
 <pre>~RButton &amp; LButton::MsgBox Sie haben die linke Maustaste gedrückt, während die rechte gedrückt wurde.
 RButton &amp; WheelUp::MsgBox Sie haben das Mausrad nach oben gedreht, während die rechte Maustaste gedrückt wurde.</pre>
 <p>Der <a href="commands/Suspend.htm">Suspend</a>-Befehl kann vorübergehend alle Hotkeys deaktivieren, außer solche, bei denen eine Ausnahme gemacht worden ist. Um solche Hotkeys gezielt zu bestimmen, verwende <a href="commands/_IfWinActive.htm">#IfWinActive/Exist</a>.</p>
