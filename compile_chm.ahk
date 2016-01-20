@@ -1,3 +1,15 @@
+#NoEnv
+SetBatchLines, -1
+SetWorkingDir, % A_ScriptDir
+
+if (A_PtrSize = 8) {
+    try
+        RunWait "%A_AhkPath%\..\AutoHotkeyU32.exe" "%A_ScriptFullPath%"
+    catch
+        MsgBox 16,, This script must be run with AutoHotkey 32-bit, due to use of the ScriptControl COM component.
+    ExitApp
+}
+
 ; Change this path if the loop below doesn't find your hhc.exe,
 ; or leave it as-is if hhc.exe is somewhere in %PATH%.
 hhc := "hhc.exe"
@@ -13,21 +25,30 @@ for i, env_var in ["ProgramFiles", "ProgramFiles(x86)", "ProgramW6432"]
     }
 }
 
-; Convert UTF-8 to ISO-8859-1 because chm doesn't support UTF-8
-TempDir := A_Temp "\compile_chm"
+; Convert files to ISO-8859-1 because chm doesn't support UTF-8
+TempDir := A_Temp "\compile_chm\"
+
 FileCreateDir, % TempDir
-FileCopyDir, % A_ScriptDir, % TempDir, 1
+Loop, Files, *.*, DR
+    if !(A_LoopFileFullPath ~= ".git")
+        FileCreateDir, % TempDir A_LoopFileFullPath
+
 FileEncoding, UTF-8
-Loop, % TempDir "\*.htm",, 1
+Loop, Files, *.*, FR
 {
-    FileRead, filecontent, % A_LoopFileLongPath
-    StringReplace, filecontent, filecontent, "text/html; charset=UTF-8", "text/html; charset=ISO-8859-1"
-    FileDelete, % A_LoopFileLongPath
-    FileAppend, % filecontent, % A_LoopFileLongPath, CP28591
+    if (A_LoopFileExt = "htm")
+    {
+        FileRead, filecontent, % A_LoopFileLongPath
+        StringReplace, filecontent, filecontent, "text/html; charset=UTF-8", "text/html; charset=ISO-8859-1"
+        FileAppend, % filecontent, % TempDir A_LoopFileFullPath, CP28591
+    }
+    else
+        FileCopy, % A_LoopFileLongPath, % TempDir A_LoopFileFullPath
 }
 
 ; Rebuild Index.hhk and Table of Contents.hhc.
-RunWait "%A_AhkPath%" "%TempDir%\static\source\CreateFiles4Help.ahk"
+RunWait "%A_AhkPath%" "%TempDir%static\source\CreateFiles4Help.ahk"
+RunWait "%A_AhkPath%" "static\source\CreateFiles4Help.ahk"
 
 ; Compile AutoHotkey.chm.
 RunWait %hhc% "%TempDir%\Project.hhp"
