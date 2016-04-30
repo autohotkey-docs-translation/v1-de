@@ -159,7 +159,7 @@ toc = [
     {label:"Format",path:"commands/Format.htm"},
     {label:"GetKeyName/VK/SC",path:"Functions.htm#GetKeyName"},
     {label:"GetKeyState",path:"Functions.htm#GetKeyState"},
-    {label:"InStr",path:"Functions.htm#InStr"},
+    {label:"InStr",path:"commands/InStr.htm"},
     {label:"IsByRef",path:"Functions.htm#IsByRef"},
     {label:"IsFunc",path:"Functions.htm#IsFunc"},
     {label:"IsLabel",path:"Functions.htm#IsLabel"},
@@ -176,7 +176,7 @@ toc = [
     {label:"StrPut/StrGet",path:"commands/StrPutGet.htm"},
     {label:"StrReplace",path:"commands/StringReplace.htm"},
     {label:"StrSplit",path:"commands/StringSplit.htm"},
-    {label:"SubStr",path:"Functions.htm#SubStr"},
+    {label:"SubStr",path:"commands/SubStr.htm"},
     {label:"VarSetCapacity",path:"commands/VarSetCapacity.htm"},
     {label:"WinActive",path:"commands/WinActive.htm"},
     {label:"WinExist",path:"commands/WinExist.htm"}
@@ -317,7 +317,7 @@ toc = [
 	{label:"FormatTime",path:"commands/FormatTime.htm"},
     {label:"IfInString/IfNotInString",path:"commands/IfInString.htm"},
     {label:"If Var [not] in/contains Vergleichsliste",path:"commands/IfIn.htm"},
-    {label:"InStr()",path:"Functions.htm#InStr"},
+    {label:"InStr()",path:"commands/InStr.htm"},
     {label:"Loop (Zeichenkette parsen)",path:"commands/LoopParse.htm"},
     {label:"RegExMatch()",path:"commands/RegExMatch.htm"},
     {label:"RegExReplace()",path:"commands/RegExReplace.htm"},
@@ -337,7 +337,7 @@ toc = [
     {label:"StrPut()/StrGet()",path:"commands/StrPutGet.htm"},
     {label:"StrReplace()",path:"commands/StringReplace.htm"},
     {label:"StrSplit()",path:"commands/StringSplit.htm"},
-    {label:"SubStr()",path:"Functions.htm#SubStr"},
+    {label:"SubStr()",path:"commands/SubStr.htm"},
     {label:"Trim()",path:"commands/Trim.htm"}
   ]},
   {label:"Fensterverwaltung",children:

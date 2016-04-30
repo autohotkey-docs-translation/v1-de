@@ -167,7 +167,7 @@ toc = [
     {label:"Format",path:"commands/Format.htm"},
     {label:"GetKeyName/VK/SC",path:"Functions.htm#GetKeyName"},
     {label:"GetKeyState",path:"Functions.htm#GetKeyState"},
-    {label:"InStr",path:"Functions.htm#InStr"},
+    {label:"InStr",path:"commands/InStr.htm"},
     {label:"IsByRef",path:"Functions.htm#IsByRef"},
     {label:"IsFunc",path:"Functions.htm#IsFunc"},
     {label:"IsLabel",path:"Functions.htm#IsLabel"},
@@ -184,7 +184,7 @@ toc = [
     {label:"StrPut/StrGet",path:"commands/StrPutGet.htm"},
     {label:"StrReplace",path:"commands/StringReplace.htm"},
     {label:"StrSplit",path:"commands/StringSplit.htm"},
-    {label:"SubStr",path:"Functions.htm#SubStr"},
+    {label:"SubStr",path:"commands/SubStr.htm"},
     {label:"VarSetCapacity",path:"commands/VarSetCapacity.htm"},
     {label:"WinActive",path:"commands/WinActive.htm"},
     {label:"WinExist",path:"commands/WinExist.htm"}
@@ -325,7 +325,7 @@ toc = [
 	{label:"FormatTime",path:"commands/FormatTime.htm"},
     {label:"IfInString/IfNotInString",path:"commands/IfInString.htm"},
     {label:"If Var [not] in/contains Vergleichsliste",path:"commands/IfIn.htm"},
-    {label:"InStr()",path:"Functions.htm#InStr"},
+    {label:"InStr()",path:"commands/InStr.htm"},
     {label:"Loop (Zeichenkette parsen)",path:"commands/LoopParse.htm"},
     {label:"RegExMatch()",path:"commands/RegExMatch.htm"},
     {label:"RegExReplace()",path:"commands/RegExReplace.htm"},
@@ -345,7 +345,7 @@ toc = [
     {label:"StrPut()/StrGet()",path:"commands/StrPutGet.htm"},
     {label:"StrReplace()",path:"commands/StringReplace.htm"},
     {label:"StrSplit()",path:"commands/StringSplit.htm"},
-    {label:"SubStr()",path:"Functions.htm#SubStr"},
+    {label:"SubStr()",path:"commands/SubStr.htm"},
     {label:"Trim()",path:"commands/Trim.htm"}
   ]},
   {label:"Fensterverwaltung",children:
@@ -952,7 +952,7 @@ index = [
   ["Installer-Optionen","Scripts.htm#install"],
   ["InstallKeybdHook","commands/_InstallKeybdHook.htm"],
   ["InstallMouseHook","commands/_InstallMouseHook.htm"],
-  ["InStr()","Functions.htm#InStr"],
+  ["InStr()","commands/InStr.htm"],
   ["Integer (ob es dies ist)","commands/IfIs.htm"],
   ["integer (SetFormat)","commands/SetFormat.htm"],
   ["Interrupt","commands/Thread.htm"],
@@ -1227,9 +1227,9 @@ index = [
   ["StatusBarGetText","commands/StatusBarGetText.htm"],
   ["StatusBarWait","commands/StatusBarWait.htm"],
   ["StrGet()","commands/StrPutGet.htm"],
-  ["Zeichenkette (danach suchen)","Functions.htm#InStr"],
-  ["Zeichenkette: InStr()","Functions.htm#InStr"],
-  ["Zeichenkette: SubStr()","Functions.htm#SubStr"],
+  ["Zeichenkette (danach suchen)","commands/InStr.htm"],
+  ["Zeichenkette: InStr()","commands/InStr.htm"],
+  ["Zeichenkette: SubStr()","commands/SubStr.htm"],
   ["StringCaseSense","commands/StringCaseSense.htm"],
   ["StringGetPos","commands/StringGetPos.htm"],
   ["StringLeft","commands/StringLeft.htm"],
@@ -1248,7 +1248,7 @@ index = [
   ["StrSplit()","commands/StringSplit.htm"],
   ["Strukturen, via DllCall","commands/DllCall.htm#struct"],
   ["Styles für GUI-Befehle","misc/Styles.htm"],
-  ["SubStr()","Functions.htm#SubStr"],
+  ["SubStr()","commands/SubStr.htm"],
   ["Subtrahieren","commands/EnvSub.htm"],
   ["Superglobale Variablen","Functions.htm#SuperGlobal"],
   ["Suspend","commands/Suspend.htm"],
@@ -1381,6 +1381,7 @@ translate = {
   verToolTipDefault: "Gilt für AutoHotkey {0} und höher",
   tutLocalMessage: "Da du dir diese Dokumentation lokal anschaust, hast du AutoHotkey wahrscheinlich bereits installiert und kannst bei Abschnitt b fortfahren."
 };
+
 if (!IsInsideCHM() && !IsSearchBot())
 {
   BuildStructure();
