@@ -20,7 +20,7 @@
   <li><a href="#ListBox">ListBox</a>, <a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a></li>
   <li><a href="#Link">Link</a>, <a href="#Hotkey">Hotkey</a>, <a href="#DateTime">DateTime</a></li>
   <li><a href="#MonthCal">MonthCal</a>, <a href="#Slider">Slider</a>, <a href="#Progress">Progress</a></li>
-  <li><a href="#GroupBox">GroupBox</a>, <a href="#Tab">Tab2</a>, <a href="#StatusBar">StatusBar</a></li>
+  <li><a href="#GroupBox">GroupBox</a>, <a href="#Tab">Tab3</a>, <a href="#StatusBar">StatusBar</a></li>
   <li><a href="#ActiveX">ActiveX</a> (z. B. Internet Explorer Control)</li>
   <li><a href="#Custom">Custom</a></li>
 </ul>
@@ -301,10 +301,17 @@ SS: Sekunde 00</p>
 <pre>Gui, Add, GroupBox, w400 h300, Geographische Kriterien</pre>
 <p>Standardmäßig kann der Titel einer GroupBox nur einzeilig sein. Das kann durch die Angabe von <code>Wrap</code> in den Optionen des Steuerelements überschrieben werden.</p>
 <p>Um die Anzahl der Zeilen innerhalb des Steuerelements zu bestimmen (oder dessen Höhe und Breite), siehe <a href="Gui.htm#PosSize">Position und Größe von Steuerelementen anpassen</a>.</p>
-<span id="Tab2"></span><h2 id="Tab">Tab2</h2>
+
+<span id="Tab2"></span><h2 id="Tab">Tab3</h2>
 <p>Beschreibung: Ein großes Steuerelement mit mehreren Seiten, von denen jede weitere Steuerelemente enthalten kann. Von nun an werden diese Seiten "Tabs" genannt.</p>
-<p><strong>Tab2 vs. Tab</strong>: Seit v1.0.47.05 gibt es das Tab2-Steuerelement, das im originalen Tab-Steuerelement seltene Probleme beim Neuzeichnen behebt (z. B. beim Aktivieren eines GUI-Fensters durch Anklicken bestimmter Bereiche in Steuerelementen wie Scrollleisten). Das ursprüngliche Tab-Steuerelement wird aufgrund der Abwärtskompatibilität beibehalten, weil Tab2 das Tab-Steuerelement erst einfügen wird, wenn es Steuerelemente in Navigationsreihenfolge der TAB-Taste enthält. Neue Skripte sollten wenn möglich immer Tab2 verwenden. Beispiel:</p>
-<pre>Gui, Add, Tab2,, Allgemein|Ansicht|Darstellung|Einstellungen</pre>
+<p>Es gibt drei Arten des Tab-Steuerelements:</p>
+<ul>
+  <li><strong>Tab3</strong> <span class="ver">[v1.1.23.00+]</span>: Tab3 behebt einige Probleme, die bei Tab2 und Tab auftreten. Steuerelemente werden innerhalb eines unsichtbaren "Tab-Dialogfensters" platziert, das mit dem Tab-Steuerelement verschoben und kleiner/größer gemacht wird. Das Tab-Steuerelement ist standardmäßig an das Windows-Design angepasst.</li>
+  <li><strong>Tab2</strong> <span class="ver">[v1.0.47.05+]</span>: Tab2 behebt seltene Probleme im originalen Tab-Steuerelement, wenn etwas neugezeichnet werden muss, aber mit <a href="#Tab2_Issues">unerwünschten Nebeneffekten</a>.</li>
+  <li><strong>Tab</strong>: Tab bleibt aus Gründen der Abwärtskompatibilität erhalten, weil es sich von <a href="#Tab_vs">Tab2 und Tab3 unterscheidet</a>.</li>
+</ul>
+<p>Beispiel:</p>
+<pre>Gui, Add, Tab3,, Allgemein|Ansicht|Darstellung|Einstellungen</pre>
 <p id="ChooseTab">Im oberen Beispiel enthält der letzte Parameter eine mit senkrechten Strichen getrennte Liste von Tabnamen. Wenn einer der Tabs zu Beginn vorab ausgewählt sein soll, müssen nach diesem Tab zwei senkrechte Striche erfolgen (z. B. <code>Rot|Grün||Blau</code>). Alternativ kann man auch das Wort <strong>Choose</strong> in <em>Optionen</em> angeben, unmittelbar gefolgt von der Nummer des Elements, um es vorab auszuwählen. Zum Beispiel würde <code>Choose5</code> den fünften Tab vorab auswählen (wie bei den anderen Optionen auch, kann das eine Variable sein, wie z. B. <code>Choose%Var%</code>). Mit <a href="GuiControl.htm">GuiControl</a> kann der ausgewählte Tab geändert, Tabs hinzugefügt oder Tabs entfernt werden, nachdem das Steuerelement erstellt worden ist.</p>
 <p id="TabCmd">Nach dem Erstellen eines Tab-Steuerelements gehören Steuerelemente, die danach erfolgen, automatisch dem ersten Tab. Das kann jederzeit wie folgt geändert werden:</p>
 <pre>Gui, Tab  <em>; Zukünftige Steuerelemente sind nicht Teil des Tab-Steuerelements.</em>
@@ -314,11 +321,37 @@ Gui, Tab, Name  <em>; Zukünftige Steuerelemente gehören dem Tab, dessen Name m
 Gui, Tab, Name,, Exact  <em>; Das gleiche wie oben, aber mit exakter Übereinstimmung (mit Groß/Klein-Unterscheidung).</em></pre>
 <p>Es ist auch möglich, irgendeins der obigen Beispielen zu verwenden, um Steuerelemente einem Tab oder Tab-Steuerelement zuzuweisen, das noch nicht vorhanden ist (außer bei der <em>Name</em>-Methode). In diesem Fall aber werden die unten beschriebenen Optionen zur relativen Positionierung nicht unterstützt.</p>
 <p>Positionierung: Bei jedem Tab oder Tab-Steuerelement, das sein erstes Untersteuerelement erhält, wird dieses Untersteuerelement eine spezielle Standardposition unter Berücksichtigung folgender Bedingungen haben: 1) Fehlt sowohl die X- als auch Y-Koordinate, wird das erste Untersteuerelement auf die obere linke Ecke des Tab-Steuerelements positioniert (mit einem Standard-<a href="Gui.htm#Margin">Abstand</a>). Die restlichen Untersteuerelemente werden jeweils unter dem vorherigen Steuerelement positioniert; 2) Sind die Positionierungsoptionen <a href="Gui.htm#PosPlus">X+n und/oder Y+n</a> angegeben, wird das Untersteuerelement relativ zur linken oberen Ecke des Innenbereichs vom Tab-Steuerelement positioniert. Zum Beispiel würde die Angabe von <code>x+10 y+10</code> bewirken, dass das Steuerelement 10 Pixel nach rechts und 10 Pixel nach unten von der linken oberen Ecke positioniert wird.</p>
-<p>Untersteuerelemente müssen nicht unbedingt innerhalb der Grenzen des Tab-Steuerelements vorkommen: Sie werden weiterhin immer dann versteckt und sichtbar gemacht, wenn deren Tab ausgewählt oder abgewählt wird. Dieses Verhalten ist besonders für den unten beschriebenen Buttons-Style geeignet.</p>
 <p>Wenn man den Befehl <a href="Gui.htm#Submit">Gui Submit</a> verwendet, wird in die <a href="Gui.htm#var">zugeordnete Ausgabevariable</a> des Steuerelements (falls vorhanden) der Name des aktuell ausgewählten Tabs gespeichert. Hat das Steuerelement jedoch die <a href="Gui.htm#AltSubmit">AltSubmit</a>-Eigenschaft, wird in die Ausgabevariable stattdessen die Positionsnummer des Tabs (der erste Tab ist 1, der zweite ist 2 und so weiter) gespeichert.</p>
 <p>Ein <a href="Gui.htm#label">g-Label</a> wie <code><strong>g</strong>MeineSubroutine</code> kann in den Optionen des Steuerelements eingefügt werden. Diese Option lässt das Label <em>MeineSubroutine</em> immer dann starten, wenn der Benutzer auf einen anderen Tab wechselt. Hat das Tab-Steuerelement sowohl ein <a href="Gui.htm#label">g-Label</a> als auch eine <a href="Gui.htm#var">Ausgabevariable</a>, wird die Ausgabevariable beim Wechseln des Tabs auf den zuvor ausgewählten Tabnamen gesetzt (oder bei <a href="Gui.htm#AltSubmit">AltSubmit</a> auf die Nummer).</p>
 <p>Navigation mit der Tastatur: Der Benutzer kann mit STRG+BILD-AUF oder mit STRG+BILD-AB zwischen den Tabs wechseln. Befindet sich der Tastaturfokus auf einem Steuerelement, das nicht zum Tab-Steuerelement gehört, wird das erste Tab-Steuerelement des Fensters angesteuert. STRG+TAB und STRG+UMSCHALT+TAB können auch verwendet werden, aber mit der Ausnahme, dass sie nicht funktionieren, wenn das aktuell fokussierte Steuerelement ein mehrzeiliges Eingabefeld ist.</p>
 <p>Jedes Fenster kann nicht mehr als 255 Tab-Steuerelemente enthalten. Jedes Tab-Steuerelement kann nicht mehr als 256 Tabs (Seiten) haben. Darüber hinaus ist es nicht möglich, dass ein Tab-Steuerelement weitere Tab-Steuerelemente enthalten kann.</p>
+
+<h3 id="Tab_vs">Tab3 vs. Tab2 vs. Tab</h3>
+<p id="Tab_Parent"><strong>Übergeordnetes Fenster:</strong> Das übergeordnete Fenster eines Steuerelements hat sowohl Einfluss auf die Positionierung und Sichtbarkeit des Steuerelements als auch auf die Navigationsreihenfolge via TAB-Taste. Ein Untersteuerelement innerhalb eines vorhandenen Tab3-Steuerelements verwendet als übergeordnetes Fenster das sogenannte "Tab-Dialogfenster", welches den Anzeigebereich des Tab-Steuerelements ausfüllt. Alle anderen Steuerelemente, einschließlich der Untersteuerelemente von Tab oder Tab2, verwenden als übergeordnetes Fenster nur das GUI-Fenster selbst.</p>
+<p id="Tab_Positioning"><strong>Positionierung:</strong> Untersteuerelemente von Tab und Tab2 sind nicht unbedingt an den Grenzen des Tab-Steuerelements gebunden: Sie werden weiterhin immer dann versteckt und sichtbar gemacht, wenn deren Tab ausgewählt oder abgewählt wird. Dieses Verhalten ist besonders für den unten beschriebenen Buttons-Style geeignet.</p>
+<p>Wenn man ein Untersteuerelement einem Tab3-Steuerelement zuweist, <em>bevor</em> das Tab3-Steuerelement erstellt wird, dann verhält sich das Untersteuerelement so, als hätte man es in ein Tab- oder Tab2-Steuerelement eingefügt. Alle anderen Untersteuerelemente sind nur innerhalb des Anzeigebereichs des Tab-Steuerelements sichtbar.</p>
+<p>Beim Verschieben eines Tab3-Steuerelements werden auch seine Untersteuerelemente verschoben. Dieses Verhalten trifft nicht auf Tab- und Tab2-Steuerelemente zu.</p>
+<p>Wenn man im seltenen Fall ein Steuerelement via <a href="WinMove.htm">WinMove</a> (oder gleichwertigem DllCall-Aufruf) verschiebt, müssen die Koordinaten relativ zum übergeordneten Fenster des Steuerelements sein, welches nicht unbedingt das GUI sein muss (siehe <a href="#Tab_Parent">oben</a>). <a href="GuiControl.htm#Move">GuiControl Move</a> hingegen nimmt immer GUI-Koordinaten und <a href="ControlMove.htm">ControlMove</a> immer die Fensterkoordinaten, unabhängig vom übergeordneten Fenster des Steuerelements.</p>
+<p id="Tab_TabOrder"><strong>Navigationsreihenfolge via TAB-Taste:</strong> Die Reihenfolge der hinzugefügten Steuerelemente bestimmt die Reihenfolge der Navigation via TAB-Taste. Bei Tab-Steuerelementen ist die Reihenfolge zusätzlich abhängig davon, welche Art von Tab-Steuerelement verwendet wird:</p>
+<ul>
+  <li>Innerhalb der Navigationsreihenfolge via TAB-Taste können die Untersteuerelemente von Tab und Tab2 mit anderen Steuerelementen vermischt werden.</li>
+  <li>Tab2 setzt seine Tab-Buttons in der Reihenfolgenliste unter seinen Untersteuerelementen.</li>
+  <li>Tab3 gruppiert seine Untersteuerelemente innerhalb der Reihenfolgenliste und fügt sie unter den Tab-Buttons ein.</li>
+</ul>
+<p id="Tab_Notifs"><strong>Benachrichtigungen (Tab3):</strong> Gewöhnliche und <a href="#Custom">benutzerdefinierte</a> Steuerelemente senden Benachrichtigungen in der Regel an ihre <a href="#Tab_Parent">übergeordneten Fenster</a>. WM_COMMAND, WM_NOTIFY, WM_VSCROLL, WM_HSCROLL oder WM_CTLCOLOR-Benachrichtigungen, die an das <a href="#Tab_Parent">Tab-Dialogfenster</a> eines Tab3-Steuerelements gesendet werden, werden an das GUI-Fenster weitergeleitet und können via <a href="OnMessage.htm">OnMessage</a> abgefangen werden. Wenn das Tab-Steuerelement das aktuelle Windows-Design verwendet und wenn die Option <a href="Gui.htm#BackgroundTrans">+BackgroundTrans</a> fehlt, wird WM_CTLCOLORSTATIC vollkommen vom Tab-Dialogfenster berücksichtigt und nicht weitergeleitet. Andere Benachrichtigungen (z. B. benutzerdefinierte Benachrichtigungen) werden nicht unterstützt.</p>
+<p id="Tab2_Issues"><strong>Bekannte Probleme mit Tab2:</strong></p>
+<ul>
+  <li><a href="Gui.htm#BackgroundTrans">BackgroundTrans</a> funktioniert nicht in einem Tab2-Steuerelement.</li>
+  <li><a href="#ActiveX">WebBrowser</a>-Steuerelemente werden nicht korrekt neu gezeichnet.</li>
+  <li>AnimateWindow und möglicherweise andere Win32-API-Aufrufe können dazu führen, dass die Untersteuerelemente des Tab-Steuerelements verschwinden.</li>
+</ul>
+<p id="Tab_Issues"><strong>Bekannte Probleme mit Tab:</strong></p>
+<ul>
+  <li>Beim Aktivieren eines GUI-Fensters durch Anklicken bestimmter Bereiche in Steuerelementen wie Scrollleisten können Neuzeichnungsprobleme entstehen.</li>
+  <li><a href="Gui.htm#BackgroundTrans">BackgroundTrans</a> funktioniert nicht, wenn das Tab-Steuerelement eine ListView enthält.</li>
+  <li><a href="#ActiveX">WebBrowser</a>-Steuerelemente sind unsichtbar.</li>
+</ul>
+
 <h3>Tab-Optionen</h3>
 <p><strong>Choose</strong>: Siehe <a href="#ChooseTab">oben</a>.</p>
 <p><strong>-Background</strong>: Überschreibt die <a href="Gui.htm#Color">benutzerdefinierte Hintergrundfarbe des Fensters</a> und verwendet die Standardfarbe des Tab-Steuerelements vom Betriebssystem. Verwende <code>+Theme -Background</code>, um das Tab-Steuerelement an das aktuelle Desktop-Theme anzupassen. Allerdings werden dadurch die meisten Steuerelementarten im Tab-Steuerlement merkwürdig dargestellt, weil deren Hintergründe nicht mit dem Hintergrund des Tab-Steuerelements übereinstimmen. Bei einigen Steuerelementarten (wie <a href="#Text">Text</a>) kann das Problem behoben werden, wenn BackgroundTrans in deren Optionen eingefügt wird.</p>
