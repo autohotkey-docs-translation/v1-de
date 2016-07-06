@@ -81,7 +81,7 @@ MsgBox % vref[]</pre>
 <h3 id="Remarks">Allgemeine Bemerkungen</h3>
 <p>In den aktuellen Versionen wird jeder Funktionsaufruf, der mit "ComObj" beginnt und nicht mit den anderen COM-Funktionen übereinstimmt, eigentlich ComObjActive aufrufen. Zum Beispiel sind <code>ComObjEnwrap(DispPtr)</code> und <code>ComObjActive(DispPtr)</code> das gleiche wie <code>ComObject(DispPtr)</code> (<em>VarType</em> 9 ist inbegriffen). Allerdings wird dieses Verhalten in einer zukünftigen Version nicht mehr zur Verfügung stehen, daher ist es am besten, nur <code>ComObject()</code> und <code>ComObjActive()</code> zu verwenden, wie unten gezeigt.</p>
 <p>Wenn mit dieser Funktion ein IDispatch- oder IUnknown-Interface-Pointer gewrappt oder abgerufen wurde, erhöht sich standardmäßig die Referenzzählung des COM-Objekts. Daher muss der Interface-Pointer <a href="ObjAddRef.htm">manuell freigegeben werden</a>, wenn er nicht länger benötigt wird. Beim Freigeben des Wrapper-Objekts wird auch dessen Verweis automatisch freigegeben.</p>
-<p><b>Bekannte Einschränkung:</b> Jedes Mal, wenn ein COM-Objekt gewrappt wurde, wird ein neues Wrapper-Objekt erstellt. Vergleiche und Zuweisungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> behandeln die zwei Wrapper-Objekte einzigartig, selbst wenn sie das gleiche COM-Objekt enthalten.</p>
+<p><b>Bekannte Einschränkung:</b> Jedes Mal, wenn ein COM-Objekt gewrappt wurde, wird ein neues Wrapper-Objekt erstellt. Vergleiche und Zuweisungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> behandeln die zwei Wrapper-Objekte getrennt voneinander, selbst wenn sie das gleiche COM-Objekt enthalten.</p>
 
 <h3 id="Related">Siehe auch</h3>
 <p><a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjConnect.htm">ComObjConnect</a>, <a href="ComObjError.htm">ComObjError</a>, <a href="ComObjFlags.htm">ComObjFlags</a>, <a href="ObjAddRef.htm">ObjAddRef/ObjRelease</a>, <a href="ComObjQuery.htm">ComObjQuery</a>, <a href="https://msdn.microsoft.com/de-de/library/ms221467.aspx">GetActiveObject (MSDN)</a></p>
@@ -110,7 +110,7 @@ MsgBox % var[]
 <em>; ComVar: Erstellt ein Objekt, mit dem ein Wert via ByRef übergeben werden kann.
 ;   ComVar[] bekommt den Wert.
 ;   ComVar[] := Val setzt den Wert.
-;   ComVar.ref bekommt ein ByRef-Objekt zum Übergeben an eine COM-Funktion.</em>
+;   ComVar.ref bekommt ein ByRef-Objekt, das eine COM-Funktion nutzen kann.</em>
 ComVar(Type=0xC)
 {
     static <a href="../Objects.htm#Custom_Objects">base</a> := { __Get: "ComVarGet", __Set: "ComVarSet", __Delete: "ComVarDel" }
@@ -134,7 +134,7 @@ ComVarSet(cv, v, p*) { <em>; Wird aufgerufen, wenn das Skript ein unbekanntes Fe
 }
 
 ComVarDel(cv) { <em>; Wird aufgerufen, wenn das Objekt freigegeben wird.
-    ; Dies muss getan werden, so dass das interne Array freigegeben werden kann.</em>
+    ; Notwendig, damit das interne Array freigegeben werden kann.</em>
     DllCall("oleaut32\SafeArrayUnaccessData", "ptr", ComObjValue(cv._))
 }
 </pre>
