@@ -1,7 +1,7 @@
 translate = {
   hdSearchTxt: "Suchbegriff eingeben ...",
   hdSearchBtn: "Suchen",
-  hdSearchLnk: "https://www.google.com/search?sitesearch=ragnar-f.github.io&q={0}",
+  hdSearchLnk: "https://www.google.com/search?sitesearch=ahkde.github.io&q={0}",
   sbContent: "Inhalt",
   sbIndex: "Index",
   ftLicense: "Lizenz:",
