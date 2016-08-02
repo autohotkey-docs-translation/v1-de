@@ -20,7 +20,8 @@
   <li><a href="#Intro">Einführung und einfache Beispiele</a></li>
   <li><a href="#Symbols">Tabelle mit Präfix-Symbolen (Modifikatoren)</a></li>
   <li><a href="#Context">Kontextabhängige Hotkeys</a></li>
-  <li><a href="#Features">Benutzerdefinierte Kombinationen und Sonstige Features</a></li>
+  <li><a href="#combo">Benutzerdefinierte Kombinationen</a></li>
+  <li><a href="#Features">Sonstige Features</a></li>
   <li><a href="#Wheel">Mausrad-Hotkeys</a></li>
   <li><a href="#Remarks">Tipps und Hinweise</a></li>
   <li><a href="#AltTabDetail">Alt-Tab-Hotkeys</a></li>
@@ -146,14 +147,30 @@ WheelUp::Send {Volume_Up}     <em>; Mausrad über die Taskleiste: Lautstärke er
 WheelDown::Send {Volume_Down} <em>;</em>
 </pre>
 
-<h2 id="Features">Benutzerdefinierte Kombinationen und Sonstige Features</h2>
-<p id="combo">Mithilfe von " &amp; " kann eine benutzerdefinierte Kombination von zwei Tasten (außer Joystick-Tasten) definiert werden. Im folgenden Beispiel würde der Hotkey ausgelöst werden, wenn man Numpad0 gedrückt hält und danach die zweite Taste drückt:</p>
+<h2 id="combo">Benutzerdefinierte Kombinationen</h2>
+<p>Mithilfe von " &amp; " kann eine benutzerdefinierte Kombination von zwei Tasten (außer Joystick-Tasten) definiert werden. Im folgenden Beispiel würde der Hotkey ausgelöst werden, wenn man Numpad0 gedrückt hält und danach die zweite Taste drückt:</p>
 <pre id="prefix">Numpad0 <strong>&amp;</strong> Numpad1::MsgBox, Sie haben Numpad1 gedrückt, während Numpad0 gedrückt wurde.
 Numpad0 <strong>&amp;</strong> Numpad2::Run Notepad</pre>
-<p>Im obigen Beispiel wird Numpad0 eine <em>Präfix-Taste</em>; allerdings verliert Numpad0 dadurch seine ursprüngliche Funktion, wenn sie selbst gedrückt wird. Um das zu vermeiden, kann man die Numpad0-Taste wie folgt konfigurieren, damit sie eine neue Aktion durchführen kann:</p>
+<p><strong>Die Präfixtasten verlieren ihre ursprüngliche Funktion:</strong> Im obigen Beispiel wurde Numpad0 als <em>Präfixtaste</em> definiert; wenn man nur diese Taste drückt, wird nichts passieren. Um das zu vermeiden, kann man die Numpad0-Taste wie folgt konfigurieren, damit sie eine neue Aktion durchführen kann:</p>
 <pre>Numpad0::WinMaximize A   <em>; Maximiert das aktive/vorderste Fenster.</em>
 Numpad0::Send {Numpad0}  <em>; Numpad0 erzeugt beim <i>Loslassen</i> eine Numpad0-Tastatureingabe. Siehe unteren Kommentar.</em></pre>
-<p>Das Vorhandensein einer der oben genannten benutzerdefinierten Tastenkombinationen bewirkt, dass Numpad0 <em>losgelassen</em> wird, um die angegebene Aktion durchführen zu können, aber nur, wenn man keine andere Taste drückte, während Numpad0 gedrückt gehalten wurde. Seit v1.1.14 kann dieses Verhalten durch Anfügen des <a href="#Tilde">Tilde-Präfixes</a> an beiden Hotkeys unterdrückt werden.</p>
+<p><strong>Auslösen beim Loslassen:</strong> Das Vorhandensein einer der oben genannten benutzerdefinierten Tastenkombinationen bewirkt, dass Numpad0 <em>losgelassen</em> wird, um die angegebene Aktion durchführen zu können, aber nur, wenn man keine andere Taste drückte, während Numpad0 gedrückt gehalten wurde. Seit v1.1.14 kann dieses Verhalten durch Anfügen des <a href="#Tilde">Tilde-Präfixes</a> an beiden Hotkeys unterdrückt werden.</p>
+<p id="combo_mods"><strong>Modifikatoren:</strong> Im Gegensatz zu normalen Hotkeys verhalten sich benutzerdefinierte Hotkeys so, als gelte bei ihnen standardmäßig der <a href="#wildcard">Platzhalter-Modifikator (*)</a>. Zum Beispiel wird <code>1 &amp; 2::</code> auch dann aktiviert, wenn man STRG oder ALT gedrückt hält, während <code>^1::</code> nur via STRG+1 aktiviert werden kann, und nicht via STRG+ALT+1.</p>
+<p>In Verbindung mit vordefinierten Modifikatortasten funktionieren normale Hotkeys in der Regel besser als "benutzerdefinierte" Kombinationen. Zum Beispiel wäre <code>&lt;+s::</code> empfehlenswerter als <code>LShift &amp; s::</code>.</p>
+<p>Kombinationen von drei oder mehr Tasten werden nicht unterstützt. Kombinationen, die deine Tastatur-Hardware unterstützt, können in der Regel mithilfe von <a href="commands/_If.htm">#If</a> und <a href="commands/GetKeyState.htm">GetKeyState</a> erkannt werden, aber die Ergebnisse können inkonsistent sein. Zum Beispiel:</p>
+<pre><em>; Halte die MENÜ- und ALT-Taste gedrückt, und drücke dann Bindestrich (-).</em>
+#if GetKeyState("AppsKey", "P")
+Alt &amp; -::MsgBox Hotkey aktiviert.
+
+<em>; Notwendig, wenn ALT zuerst gedrückt gehalten wird:</em>
+#if GetKeyState("Alt", "P")
+AppsKey &amp; -::MsgBox Hotkey aktiviert.
+
+<em>; , &amp; . &amp; -::</em>
+#if GetKeyState(",") &amp;&amp; GetKeyState(".")
+-::MsgBox</pre>
+
+<h2 id="Features">Sonstige Features</h2>
 <p><strong>NUM-, FESTSTELL- und ROLLEN-Taste</strong>: Diese Tasten können dazu gezwungen werden, "AlwaysOn" (immer an) oder "AlwaysOff" (immer aus) zu sein. Zum Beispiel: <code><a href="commands/SetNumScrollCapsLockState.htm">SetNumlockState</a> AlwaysOn</code>.</p>
 <p><strong>Explorer-Tastenkürzel überschreiben</strong>: Die vordefinierten Hotkeys von Windows wie WIN+E (#e) und WIN+R (#r) können einzeln überschrieben werden, indem man ihnen im Skript einfach eine Aktion zuweist. Siehe "<a href="misc/Override.htm">Überschreiben oder Deaktivieren von Hotkeys</a>" für Details.</p>
 <p id="alttab"><strong>Alt-Tab ersetzen</strong>: Hotkeys können eine alternative Methode für Alt-Tab bereitstellen. Zum Beispiel ermöglichen dir die folgenden zwei Hotkeys, Alt-Tab mit deiner rechten Hand durchzuführen:</p>

@@ -219,7 +219,7 @@ static GesamtVersuche = 0, VorherErgebnis</pre>
 <p id="ArrayConfusion"><strong>Oft auftretende Verwechslungsgefahr</strong>: Jeder <em>nicht</em>-dynamische Verweis auf eine Variable erstellt diese Variable in dem Moment, wo das Skript gestartet wird. Zum Beispiel: Außerhalb einer Funktion würde <code>MsgBox %Array1%</code> die Array1-Variable als globale Variable erstellen, in dem Moment, wo das Skript gestartet wird. Innerhalb einer Funktion würde <code>MsgBox %Array1%</code> die Array1-Variable als lokale Variable erstellen, in dem Moment, wo das Skript gestartet wird (solange der <a href="#AssumeGlobal">global-behandelnder Modus</a> nicht aktiv ist), selbst wenn Array und Array0 als global deklariert sind.</p>
 <h2 id="DynCall">Dynamisches Aufrufen einer Funktion</h2>
 <p>Seit v1.0.47.06 kann eine Funktion (auch eine <a href="#BuiltIn">Built-in-Funktion</a>) mithilfe von Prozentzeichen dynamisch aufgerufen werden. Zum Beispiel würde <code>%Var%(x, "Fuchs")</code> die Funktion aufrufen, deren Name in <em>Var</em> enthalten ist. Ebenso würde <code>Funktion%A_Index%()</code> Funktion1(), Funktion2() und so weiter aufrufen, abhängig vom aktuellen Wert in A_Index.</p>
-<p>Seit v1.1.07.00 kann <em>Var</em> in <code>%Var%()</code> einen Funktionsnamen, <a href="objects/Func.htm">Funktionsverweis</a> oder ein <a href="Objects.htm#Objects_as_Functions">Funktion-nachahmendes Objekt</a> enthalten. Falls die Funktion nicht existiert, wird stattdessen die __Call-Meta-Funktion des <a href="Objects.htm#Default_Base_Object">Standard-base-Objekts</a> aufgerufen.</p>
+<p>Seit v1.1.07.00 kann <em>Var</em> in <code>%Var%()</code> einen Funktionsnamen oder ein <a href="objects/Functor.htm">Funktionsobjekt</a> enthalten. Falls die Funktion nicht existiert, wird stattdessen die __Call-Meta-Funktion des <a href="Objects.htm#Default_Base_Object">Standard-base-Objekts</a> aufgerufen.</p>
 <p>Kann die Funktion aufgrund einer der unten genannten Gründe nicht aufgerufen werden, stoppt die Auswertung des Ausdrucks, der den Aufruf enthält, vorzeitig ohne Meldung, was zu widersprüchlichen Ergebnissen führen könnte:</p>
 <ul>
   <li>Aufrufen einer nicht-existierenden Funktion, das mithilfe von <code>If <a href="#IsFunc">IsFunc</a>(VariableMitFunktionsname)</code> verhindert werden kann. Die <a href="#define">Definition</a> der aufgerufenen Funktion (außer <a href="#BuiltIn">Built-in-Funktionen</a>) muss explizit im Skript vorkommen (zum Beispiel über <a href="commands/_Include.htm">#Include</a> oder einem nicht-dynamischen Aufruf einer <a href="#lib">Library-Funktion</a>).</li>
@@ -314,23 +314,58 @@ Pfad-zur-gerade-laufenden-AutoHotkey.exe\Lib\  <em>; Standard-Library.</em></pre
 <p><strong>RegisterCallback()</strong>: Erstellt eine Maschinencode-Adresse, die, wenn sie aufgerufen wird, den Aufruf an eine Funktion im Skript weiterleitet. Siehe <a href="commands/RegisterCallback.htm">RegisterCallback()</a> für Details.</p>
 <p><strong>Trim()</strong> <span class="ver">[AHK_L 31+]:</span> Entfernt bestimmte Zeichen vom Anfang und/oder Ende einer Zeichenkette. Siehe <a href="commands/Trim.htm">Trim()</a> für Details.</p>
 <p><strong>VarSetCapacity(VarName [, BenötigteKapazität, Füllbyte])</strong>: Vergrößert die Aufnahmekapazität einer Variable oder gibt deren Speicher frei. Siehe <a href="commands/VarSetCapacity.htm">VarSetCapacity()</a> für Details.</p>
-<h3 id="Math">Allgemeine Mathematik</h3>
-<p>Hinweis: Mathematische Funktionen geben generell einen leeren Wert (leere Zeichenkette) zurück, falls einer der eingehenden Parameter nicht numerisch ist.</p>
-<p id="Abs"><strong>Abs(Zahl)</strong>: Gibt den absoluten Wert von <em>Zahl</em> zurück. Der Rückgabewert hat den gleichen Typ wie <em>Zahl</em> (Integer oder Gleitkommazahl).</p>
-<p id="Ceil"><strong>Ceil(Zahl)</strong>: Gibt <em>Zahl</em> zurück, aufgerundet auf den nächsten Integer (ohne .00-Suffix). Zum Beispiel ist <code>Ceil(1.2)</code> gleich 2 und <code>Ceil(-1.2)</code> gleich -1.</p>
-<p id="Exp"><strong>Exp(N)</strong>: Gibt <em>e</em> zurück (ungefähr 2,71828182845905), potenziert mit <em>N</em>. Der Parameter <em>N</em> kann negativ sein und einen Dezimalpunkt enthalten. Um neben <em>e</em> noch andere Zahlen zu potenzieren, verwende den <a href="Variables.htm#pow">**-Operator</a>.</p>
-<p id="Floor"><strong>Floor(Zahl)</strong>: Gibt <em>Zahl</em> zurück, abgerundet auf den nächsten Integer (ohne .00-Suffix). Zum Beispiel ist <code>Floor(1.2)</code> gleich 1 und <code>Floor(-1.2)</code> gleich -2.</p>
-<p id="Log"><strong>Log(Zahl)</strong>: Gibt den Logarithmus (Basis 10) von <em>Zahl</em> zurück. Das Ergebnis ist eine <a href="commands/SetFormat.htm">Gleitkommazahl</a>. Wenn <em>Zahl</em> negativ ist, wird eine leere Zeichenkette zurückgegeben.</p>
-<p id="Ln"><strong>Ln(Zahl)</strong>: Ermittelt den Logarithmus (Basis e) von <em>Zahl</em>. Das Ergebnis ist eine <a href="commands/SetFormat.htm">Gleitkommazahl</a>. Wenn <em>Zahl</em> negativ ist, wird eine leere Zeichenkette zurückgegeben.</p>
-<p id="Mod"><strong>Mod(Dividend, Divisor)</strong>: Modulo. Gibt den Rest zurück, wenn der <em>Dividend</em> durch den <em>Divisor</em> geteilt wird. Das Vorzeichen des Ergebnisses entspricht dem Vorzeichen des ersten Parameters. Zum Beispiel sind <code>Mod(5, 3)</code> und <code>Mod(5, -3)</code> gleich 2, aber <code>Mod(-5, 3)</code> und <code>Mod(-5, -3)</code> gleich -2. Wenn einer der beiden Parameter eine Gleitkommazahl ist, wird das Ergebnis ebenfalls eine Gleitkommazahl sein. Zum Beispiel ist <code>Mod(5.0, 3)</code> gleich 2.0 und <code>Mod(5, 3.5)</code> gleich 1.5. Ist der zweite Parameter eine 0, gibt die Funktion ein leeres Ergebnis (leere Zeichenkette) zurück.</p>
-<p id="Round"><strong>Round(Zahl [, N])</strong>: Ist <em>N</em> nicht vorhanden oder eine 0, wird <em>Zahl</em> auf den nächsten Integer gerundet. Ist <em>N</em> eine positive Zahl, wird <em>Zahl</em> auf <em>N</em> Dezimalstellen gerundet. Ist <em>N</em> negativ, wird <em>Zahl</em> auf <em>N</em> Stellen nach links gerundet. Zum Beispiel ist <code>Round(345, -1)</code> gleich 350 und <code>Round(345, -2)</code> gleich 300. Im Gegensatz zu <a href="commands/Transform.htm">Transform Round</a> hat das Ergebnis keinen .000-Suffix, wenn <em>N</em> weggelassen wird oder kleiner als 1 ist. Seit v1.0.44.01 zeigt ein Wert in <em>N</em>, der größer als 0 ist, genau <em>N</em> Dezimalstellen an, anstatt <a href="commands/SetFormat.htm">SetFormat</a> zu berücksichtigen. Man kann das verhindern, wenn man eine weitere mathematische Operation beim Rückgabewert von Round() durchführt; zum Beispiel: <code>Round(3.333, 1)<strong>+0</strong></code>.</p>
-<p id="Sqrt"><strong>Sqrt(Zahl)</strong>: Gibt die Quadratwurzel von <em>Zahl</em> zurück. Das Ergebnis ist eine <a href="commands/SetFormat.htm">Gleitkommazahl</a>. Wenn <em>Zahl</em> negativ ist, gibt die Funktion ein leeres Ergebnis (String) zurück.</p>
-<h3>Trigonometrie</h3>
-<p><strong id="Sin">Sin(Zahl)</strong> | <strong id="Cos">Cos(Zahl)</strong> | <strong id="Tan">Tan(Zahl)</strong>: Gibt den trigonometrischen Sinus|Kosinus|Tangens von <em>Zahl</em> zurück. <em>Zahl</em> muss als Bogenmaß angegeben werden.</p>
-<p id="ASin"><strong>ASin(Zahl)</strong>: Gibt den Arkussinus (die Zahl, deren Sinus <em>Zahl</em> ist) als Bogenmaß zurück. Wenn <em>Zahl</em> kleiner als -1 oder größer als 1 ist, gibt die Funktion ein leeres Ergebnis (leere Zeichenkette) zurück.</p>
-<p id="ACos"><strong>ACos(Zahl)</strong>: Gibt den Arkuskosinus (die Zahl, deren Kosinus <em>Zahl</em> ist) als Bogenmaß zurück. Wenn <em>Zahl</em> kleiner als -1 oder größer als 1 ist, gibt die Funktion ein leeres Ergebnis (leere Zeichenkette) zurück.</p>
-<p id="ATan"><strong>ATan(Zahl)</strong>: Gibt den Arkustangens (die Zahl, deren Tangens <em>Zahl</em> ist) als Bogenmaß zurück.</p>
-<p><strong>Hinweis</strong>: Soll Bogenmaß in Grad umgewandelt werden, multipliziere es mit 180/pi (ungefähr 57.29578). Um ein Grad-Wert in Bogenmaß umzuwandeln, kann es mit pi/180 (ungefähr 0.01745329252) multipliziert werden. Der Wert von pi (ungefähr 3.141592653589793) ist viermal der Arkustangens von 1.</p>
+<h3 id="Math">Mathematik</h3>
+<p>Klicke auf einen Funktionsnamen, um mehr darüber zu erfahren.</p>
+<table class="info">
+  <tr>
+    <th>Funktion</th>
+    <th>Beschreibung</th>
+  </tr>
+  <tr id="Abs">
+    <td><a href="commands/Math.htm#Abs">Abs</a></td>
+    <td>Gibt den absoluten Wert von <em>Zahl</em> zurück.</td>
+  </tr>
+  <tr id="Ceil">
+    <td><a href="commands/Math.htm#Ceil">Ceil</a></td>
+    <td>Gibt <em>Zahl</em> zurück, welche auf den nächsten Integer aufgerundet ist (ohne .00-Suffix).</td>
+  </tr>
+  <tr id="Exp">
+    <td><a href="commands/Math.htm#Exp">Exp</a></td>
+    <td>Gibt <em>e</em> zurück (ungefähr 2.71828182845905), potenziert mit <em>N</em>.</td>
+  </tr>
+  <tr id="Floor">
+    <td><a href="commands/Math.htm#Floor">Floor</a></td>
+    <td>Gibt <em>Zahl</em> zurück, welche auf den nächsten Integer abgerundet ist (ohne .00-Suffix).</td>
+  </tr>
+  <tr id="Log">
+    <td><a href="commands/Math.htm#Log">Log</a></td>
+    <td>Gibt den Logarithmus (Basis 10) von <em>Zahl</em> zurück.</td>
+  </tr>
+  <tr id="Ln">
+    <td><a href="commands/Math.htm#Ln">Ln</a></td>
+    <td>Ermittelt den Logarithmus (Basis e) von <em>Zahl</em>.</td>
+  </tr>
+  <tr id="Mod">
+    <td><a href="commands/Math.htm#Mod">Mod</a></td>
+    <td>Gibt den Rest zurück, wenn <em>Dividend</em> durch <em>Divisor</em> geteilt wird.</td>
+  </tr>
+  <tr id="Round">
+    <td><a href="commands/Math.htm#Round">Round</a></td>
+    <td>Gibt <em>Zahl</em> zurück, welche auf <em>N</em> Dezimalstellen gerundet ist.</td>
+  </tr>
+  <tr id="Sqrt">
+    <td><a href="commands/Math.htm#Sqrt">Sqrt</a></td>
+    <td>Gibt die Quadratwurzel von <em>Zahl</em> zurück.</td>
+  </tr>
+  <tr>
+    <td><span id="Sin"></span><span id="Cos"></span><span id="Tan"></span><a href="commands/Math.htm#Sin">Sin</a> / <a href="commands/Math.htm#Cos">Cos</a> / <a href="commands/Math.htm#Tan">Tan</a></td>
+    <td>Gibt den trigonometrischen Sinus/Kosinus/Tangens von <em>Zahl</em> zurück.</td>
+  </tr>
+  <tr>
+    <td><span id="ASin"></span><span id="ACos"></span><span id="ATan"></span><a href="commands/Math.htm#ASin">ASin</a> / <a href="commands/Math.htm#ACos">ACos</a> / <a href="commands/Math.htm#ATan">ATan</a></td>
+    <td>Gibt den Arkussinus/Arkuskosinus/Arkustangens als Bogenmaß zurück.</td>
+  </tr>
+</table>
 <h3>Sonstige Funktionen</h3>
 <p><a href="https://github.com/polyethene/AutoHotkey-Scripts/blob/master/Functions.ahk">Befehlsfunktionen von Polyethene</a>: Bietet für jeden AutoHotkey-Befehl, der eine Ausgabevariable hat, eine aufrufbare Funktion. Diese Library kann per <a href="commands/_Include.htm">#Include</a> in jedem Skript eingefügt werden.</p>
 </body>

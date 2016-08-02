@@ -28,7 +28,7 @@
 <p>Aufgrund von Gestaltungsrichtlinien sollten die Namen der Variablen nur Buchstaben, Zahlen und Unterstriche enthalten (zum Beispiel: <em>PositionZeiger</em>, <em>Gesamt_Elemente</em> und <em>Eintrag_ist_gültig</em>). Wenn du dich an solchen Richtlinien hältst, können andere Programmierer dein Skript besser verstehen. Außerdem erhöht das die Chance, dass du mit deinen eigenen Skripten besser zurechtkommst, wenn du sie erneut lesen musst.</p>
 <p>Variablennamen, die nur aus Ziffern bestehen, sind prinzipiell nur bei <a href="Scripts.htm#cmd">eingehenden Befehlszeilenparametern</a> von Bedeutung. Innerhalb von <a href="#Expressions">Ausdrücken</a> werden Ziffern nicht als Variablen interpretiert, weil sie zum Berechnen eines Wertes dienen.</p>
 <p>Innerhalb von Ausdrücken sind Variablennamen wie <em>AND</em>, <em>OR</em> und <em>NOT</em> ungeeignet, weil sie als <a href="#Operators">Operatoren</a> interpretiert werden. Das Verwenden solcher Namen innerhalb eines Ausdrucks würde eine angemessene Evaluierung verhindern.</p>
-<p><strong>Speichern von Variablenwerten</strong>: Es gibt zwei Methoden, wie eine Zeichenkette oder Zahl in eine Variable gespeichert werden kann: Traditions- und Ausdrucksmethode. Bei der Traditionsmethode werden Werte via <a href="commands/SetEnv.htm">Gleichheitszeichenoperator (=)</a> gespeichert. Solche Werte können <strong>ohne Anführungszeichen versehene</strong> Zeichenketten und in Prozentzeichen gesetzte Variablen sein. Zum Beispiel:</p>
+<p id="assigning"><strong>Speichern von Variablenwerten</strong>: Es gibt zwei Methoden, wie eine Zeichenkette oder Zahl in eine Variable gespeichert werden kann: Traditions- und Ausdrucksmethode. Bei der Traditionsmethode werden Werte via <a href="commands/SetEnv.htm">Gleichheitszeichenoperator (=)</a> gespeichert. Solche Werte können <strong>ohne Anführungszeichen versehene</strong> Zeichenketten und in Prozentzeichen gesetzte Variablen sein. Zum Beispiel:</p>
 <pre>MeineZahl = 123
 MeineZeichenkette = Das ist eine literale Zeichenkette.
 KopieVonVar = %Var%  <em>; Bei dem Operator "=" sind Prozentzeichen notwendig, um den Inhalt einer Variable abzurufen.</em></pre>
@@ -41,7 +41,7 @@ KopieVonVar := Var  <em>; Bei dem Operator ":=" werden Prozentzeichen weggelasse
 <pre>MeineVar =
 MeineVar := ""</pre>
 <p>Die obigen Anführungszeichen sollten nur bei dem Operator ":=" verwendet werden. Wären sie bei dem Operator "=" angegeben, würden zwei Anführungszeichen direkt in die Variable gespeichert werden.</p>
-<p><strong>Abrufen von Variablenwerten</strong>: Wie beim Speichern von Werten auch, gibt es zwei Methoden zum Abrufen von Werten: Traditions- und Ausdrucksmethode. Bei der Traditionsmethode müssen die Namen der Variablen mit Prozentzeichen umschlossen werden, um ihre Inhalte abrufen zu können. Zum Beispiel:</p>
+<p id="retrieving"><strong>Abrufen von Variablenwerten</strong>: Wie beim Speichern von Werten auch, gibt es zwei Methoden zum Abrufen von Werten: Traditions- und Ausdrucksmethode. Bei der Traditionsmethode müssen die Namen der Variablen mit Prozentzeichen umschlossen werden, um ihre Inhalte abrufen zu können. Zum Beispiel:</p>
 <pre><a href="commands/MsgBox.htm">MsgBox</a> Der Wert in der Variable namens Var ist %Var%.
 KopieVonVar = %Var%</pre>
 <p>Bei der Ausdrucksmethode müssen die Prozentzeichen weggelassen und Zeichenketten in Anführungszeichen gesetzt werden. Funktionsgemäß sind die folgenden Beispiele mit den vorherigen Beispielen identisch:</p>
@@ -79,9 +79,12 @@ Weitersuchen := true</pre>
 <a href="commands/Loop.htm">Loop</a> <strong>%</strong> Iterationen + 1
 <a href="commands/WinSet.htm">WinSet</a>, Transparent, <strong>%</strong> X + 100
 <a href="commands/WinSet.htm">Control</a>, Choose, <strong>%</strong> AktuelleAuswahl - 1</pre>
+
 <h2 id="Operators">Operatoren innerhalb von Ausdrücken</h2>
 <p>Operatoren mit gleichwertiger Priorität, wie z. B. Multiplizieren (*) und Dividieren, (/), werden von links nach rechts ausgewertet, sofern nicht anders unten angegeben. Ein Operator mit niedrigerer Priorität, wie z. B. Addieren (+), wird erst ausgewertet, wenn ein höherer Operator, wie z. B. Multiplizieren (*), ausgewertet wurde. Zum Beispiel würde 3 + 2 * 2 wie 3 + (2 * 2) ausgewertet werden. Mit runden Klammern können die Prioritäten wie folgt überschrieben werden: (3 + 2) * 2</p>
-<p>In der Regel werden leere Werte (leere Zeichenketten) bei einer mathematischen Operation <strong>nicht</strong> als Null angesehen. Stattdessen werden sie als Fehler behandelt - der Fehler bewirkt, dass dieser Teil des Ausdrucks eine leere Zeichenkette zurückgibt. Wenn beispielsweise eine Variable namens X leer wäre, würde der Ausdruck X+1 einen leeren Wert statt eine 1 zurückgeben.</p>
+<p>In der Regel werden leere Werte (leere Zeichenketten) oder nicht-numerische Werte bei einer mathematischen Operation <strong>nicht</strong> als Null angesehen. Stattdessen werden sie als Fehler behandelt - der Fehler bewirkt, dass dieser Teil des Ausdrucks eine leere Zeichenkette zurückgibt. Wenn beispielsweise eine Variable namens X leer wäre, würde der Ausdruck X+1 einen leeren Wert statt eine 1 zurückgeben.</p>
+<p>Aus historischen Gründen werden <em>in Anführungszeichen gesetzte</em> numerische Zeichenketten wie <code>"123"</code> immer als nicht-numerisch angesehen, wenn sie direkt in einem Ausdruck verwendet werden (aber nicht, wenn sie in einer Variable gespeichert sind oder von einer Funktion zurückgegeben werden). Dieser nicht-numerische Attribut kann mit <a href="#concat">Verkettungen</a> erzwungen werden, demzufolge werden Ausdrücke wie <code>"0x" n</code> einen nicht-numerischen Wert erzeugen (selbst wenn n gültige hexadezimale Ziffern enthält). Dieses Problem kann man umgehen, indem man den Wert in eine Variable speichert oder ihn via Funktion, wie z. B. <a href="Functions.htm#Round">Round()</a>, übergibt. Skripte sollten keine in Anführungszeichen gesetzte literale Zahlen enthalten, weil dieses Verhalten eventuell in einer zukünftigen Version geändert wird.</p>
+
 <h3>Ausdrucksoperatoren (in absteigender Priorität)</h3>
 <table class="info">
   <tr id="ref">
@@ -133,7 +136,7 @@ Weitersuchen := true</pre>
     </strong></td>
     <td><p><strong>Multiplizieren (*)</strong>: Das Ergebnis ist ein Integer, wenn beide Eingabewerte Integer sind, ansonsten ist es eine Gleitkommazahl.</p>
       <p id="divide"><strong>Echtes Dividieren (/)</strong>: Im Gegensatz zu <a href="commands/EnvDiv.htm">EnvDiv</a> wird die echte Division immer eine Gleitkommazahl zurückgeben, auch dann, wenn beide Eingabewerte Integer sind. Zum Beispiel wäre <code>3/2</code> gleich 1.5 statt 1, und <code>4/2</code> gleich 2.0 statt 2.</p>
-      <p id="FloorDivide"><strong>Floor-Dividieren (//)</strong>: Der Doppel-Schrägstrich-Operator verwendet die leistungsstarke Integer-Division, wenn beide Eingabewerte Integer sind. Zum Beispiel wäre <code>5//3</code> gleich 1 und <code>5//-3</code> gleich -1. Wenn einer der beiden Eingabewerte eine Gleitkommazahl ist, wird die Gleitkomma-Division erfolgen und das Ergebnis auf den nächstmöglichen linksbefindlichen Integer gekürzt. Zum Beispiel wäre <code>5//3.0</code> gleich 1.0 und <code>5.0//-3</code> gleich -2.0. Das Ergebnis wird im Gleitkommaformat gespeichert, selbst wenn das Ergebnis dieser Gleitkomma-Division ein Integer ist. Für Modulo, siehe <a href="Functions.htm#Mod">Mod()</a>.</p>
+      <p id="FloorDivide"><strong>Floor-Dividieren (//)</strong>: Der Doppel-Schrägstrich-Operator verwendet die leistungsstarke Integer-Division, wenn beide Eingabewerte Integer sind. Zum Beispiel wäre <code>5//3</code> gleich 1 und <code>5//-3</code> gleich -1. Wenn einer der beiden Eingabewerte eine Gleitkommazahl ist, wird die Gleitkomma-Division erfolgen und das Ergebnis auf den nächstmöglichen linksbefindlichen Integer gekürzt. Zum Beispiel wäre <code>5//3.0</code> gleich 1.0 und <code>5.0//-3</code> gleich -2.0. Das Ergebnis wird im Gleitkommaformat gespeichert, selbst wenn das Ergebnis dieser Gleitkomma-Division ein Integer ist. Für Modulo, siehe <a href="commands/Math.htm#Mod">Mod()</a>.</p>
     <p>Die Operatoren <a href="commands/EnvMult.htm">*=</a> und <a href="commands/EnvDiv.htm">/=</a> sind eine Kurzschreibweise, um den Wert in einer Variable mit einem anderen Wert zu multiplizieren oder dividieren. Zum Beispiel würde <code>Var *= 2</code> das gleiche Ergebnis wie <code>Var := Var * 2</code> erzeugen (die erste Methode ist performanter).</p>
     <p>Eine Division durch 0 erzeugt ein leeres Ergebnis (leere Zeichenkette).</p></td>
   </tr>
@@ -232,7 +235,7 @@ Weitersuchen := true</pre>
         &lt;&lt;=</strong>
     </td>
     <td><p><strong>Zuweisung</strong>. Führt eine Operation auf den Inhalt einer Variable aus und speichert das Ergebnis wieder in die gleiche Variable (bevor die Version 1.0.46 veröffentlicht wurde, konnten sie als Operator nur ganz links auf der Zeile stehen, zudem wurden nur die ersten fünf Operatoren unterstützt). Der einfachste Zuweisungsoperator ist das <a href="commands/SetExpression.htm">Doppelpunkt-Gleich (:=)</a> - dieser Operator kann das Ergebnis eines Ausdrucks in eine Variable speichern. Da sie eine Kurzschreibweise eines Operators sind, findest du ihre Beschreibung jeweils beim dazugehörigen Operator in dieser Tabelle. Beispiel 1: <code>Var //= 2</code> führt eine <a href="#FloorDivide">Floor-Division</a> durch, um <em>Var</em> mit 2 zu teilen, und speichert dann das Ergebnis wieder in <em>Var</em>. Beispiel 2: <code>Var <strong>.=</strong> "abc"</code> ist die Kurzschreibweise für <code>Var := Var <strong>.</strong> "abc"</code>.</p>
-      <p>Im Gegensatz zu den meisten anderen Operatoren werden Zuweisungen von rechts nach links ausgewertet. Demzufolge würde eine Zeile wie <code>Var1 := Var2 := 0</code> eine 0 in <em>Var2</em> speichern und dann <em>Var2</em> in <em>Var1</em> speichern.</p>      
+      <p>Im Gegensatz zu den meisten anderen Operatoren werden Zuweisungen von rechts nach links ausgewertet. Demzufolge würde eine Zeile wie <code>Var1 := Var2 := 0</code> eine 0 in <em>Var2</em> speichern und dann <em>Var2</em> in <em>Var1</em> speichern.</p>
     <p>Verwendet man eine Zuweisung als Eingabewert eines anderen Operators, wird ihr Wert die Variable selbst sein. Zum Beispiel wäre der Ausdruck <code>(Var += 2) &gt; 50</code> wahr, wenn der gerade eben erhöhte Wert in <em>Var</em> größer als 50 ist. Mit diesem Verfahren könnte man auch eine Zuweisung via <a href="Functions.htm#ByRef">ByRef</a> übergeben oder ihre <a href="#amp">Adresse</a> verwenden; zum Beispiel: <code>&amp;(x:="abc")</code>.</p>
     <p>Die Priorität der Zuweisungsoperatoren erhöht sich automatisch, wenn dadurch ein Syntaxfehler verhindert oder ein besseres Verhalten bereitgestellt werden kann. Zum Beispiel: Die Auswertung von <code>not x := y</code> entspräche <code>not (x := y)</code>, <code>++Var := X</code> entspräche <code>++(Var := X)</code>; und <code>Z &gt; 0 ? X := 2 : Y := 2</code> entspräche <code>Z &gt; 0 ? (X := 2) : (Y := 2)</code>.</p>
     <p>Bekannte Einschränkungen durch Abwärtskompatibilität (die in einer zukünftigen Version behoben werden): 1) Wenn <strong>/=</strong> als Operator ganz links in einem Ausdruck steht und nicht zu einer <a href="#comma">Mehrfachanweisung</a> gehört, erfolgt die <a href="#FloorDivide">Floor-Division</a>, sofern keiner der Eingabewerte eine Gleitkommazahl ist (ansonsten wird <strong>/=</strong> die <a href="#divide">echte Division</a> durchführen); 2) <a href="commands/EnvAdd.htm">Datum/Zeit-Berechnung</a> wird von <strong>+=</strong> und <strong>-=</strong> nur unterstützt, wenn dieser Operator ganz links auf der Zeile vorkommt; 3) Die Operatoren <strong>+=</strong>, <strong>-=</strong> und *= behandeln leere Variablen als 0, solange sie einzeln auf einer Zeile vorkommen; zum Beispiel würde sowohl <code>y := 1, x += 1</code> als auch <code>MsgBox % x -= 3</code> ein leeres Ergebnis erzeugen, falls x leer ist.</p></td>
@@ -248,11 +251,16 @@ Weitersuchen := true</pre>
         round()<br>
     
     abs()</strong></p></td>
-    <td>Diese und andere built-interne mathematischen Funktionen findest du <a href="Functions.htm#Math">hier</a>.</td>
+    <td>Diese und andere built-interne mathematischen Funktionen findest du <a href="commands/Math.htm">hier</a>.</td>
+  </tr>
+  <tr>
+    <td style="text-align:center; white-space:nowrap"><p><strong>%func%()</strong></p></td>
+    <td>Siehe <a href="Functions.htm#DynCall">Dynamisches Aufrufen einer Funktion</a>.</td>
   </tr>
   <tr>
     <td style="text-align:center"><strong>func.()</strong></td>
-    <td><p><span class="ver">[AHK_L 48+]:</span> Versucht, eine Methode mit leerem Namen des Objekts <i>func</i> aufzurufen. Üblicherweise ist das die Standardmethode des Objekts. Wenn <i>func</i> kein Objekt enthält, wird stattdessen das <a href="Objects.htm#Default_Base_Object">Standard-base-Objekt</a> aufgerufen.</p>
+    <td><p><strong>Veraltet:</strong> Diese Syntax wird nicht mehr empfohlen. Benutze stattdessen <code>%func%()</code> (für Funktionsnamen und Objekte) oder <code>func.Call()</code> (für Funktionsobjekte).</p>
+    <p><span class="ver">[AHK_L 48+]:</span> Versucht, eine Methode mit leerem Namen des Objekts <i>func</i> aufzurufen. Üblicherweise ist das die Standardmethode des Objekts. Wenn <i>func</i> kein Objekt enthält, wird stattdessen das <a href="Objects.htm#Default_Base_Object">Standard-base-Objekt</a> aufgerufen.</p>
     <p><span class="ver">[v1.0.95+]:</span> Enthält <i>func</i> einen Funktionsnamen, wird die benannte Funktion aufgerufen.</p></td>
   </tr>
   <tr>
@@ -614,7 +622,7 @@ MsgBox,  %Laufzeit% Millisekunden sind verstrichen.</pre>
     <td>Diese Variablen enthalten die X- und Y-Koordinaten bei <a href="commands/Gui.htm#GuiContextMenu">GuiContextMenu</a>- und <a href="commands/Gui.htm#GuiDropFiles">GuiDropFiles</a>-Ereignissen. Die Koordinaten sind relativ zur linken oberen Ecke des Fensters. <span class="ver">[v1.1.11+]:</span> Diese Werte sind von der <a href="commands/Gui.htm#DPIScale">DPI-Skalierung</a> abhängig.</td>
   </tr>
   <tr>
-    <td><span id="GuiEvent"></span><span id="GuiControlEvent">A_GuiEvent<br><span class="small80">oder A_GuiControlEvent</span></span></td>
+    <td><span id="GuiEvent"></span><span id="GuiControlEvent"></span>A_GuiEvent<br><span class="small80">oder A_GuiControlEvent</span></td>
     <td><p>Das Ereignis, welches den <a href="misc/Threads.htm">aktuellen Thread</a> gestartet hat. Wenn dieser Thread von etwas gestartet wurde, das keine <a href="commands/Gui.htm">GUI-Aktion</a> ist, dann ist diese Variable leer. Ansonsten enthält sie eine der folgenden Zeichenketten:</p>
       <p><strong>Normal</strong>: Das Ereignis wurde durch einen Linksklick oder durch Tastatureingaben ausgelöst (Pfeiltasten, Tabulatortaste, Leertaste, unterstrichene Tastenkürzel und so weiter). Dieser Wert wird auch bei Menüleistenelementen und Sonderereignissen wie GuiClose und GuiEscape verwendet.</p>
       <p><strong>DoubleClick</strong>: Das Ereignis wurde durch einen Doppelklick ausgelöst. Hinweis: Der erste Klick des Doppelklicks löst weiterhin ein <em>Normal</em>-Ereignis aus. Das heißt, dass die Subroutine zweimal gestartet wird: einmal beim ersten Klick und nochmals beim zweiten Klick.</p>

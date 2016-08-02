@@ -33,16 +33,64 @@ SendEvent Tasten</pre>
 
 </dl>
 
-<p id="SendRaw"><strong>Raw-Modus</strong>: Der <em>SendRaw</em>-Befehl interpretiert alle Zeichen literal, anstatt beispielsweise {Enter} in ENTER-Taste, ^c in STRG+C und so weiter umzuwandeln. Allerdings gelten weiterhin die normalen Regeln für Escapesequenzen, Variablenverweise und Ausdrücke, da diese verarbeitet werden, bevor der Befehl ausgeführt wird. Um den Raw-Modus bei SendInput, SendPlay oder SendEvent zu verwenden, muss <a href="#Raw">{Raw}</a> als erstes Element in der Zeichenkette angegeben werden; zum Beispiel: <code>SendInput {Raw}abc</code>.</p>
-<p><strong>Normal-Modus</strong>: Wenn der Raw-Modus nicht aktiv ist, werden folgende Zeichen als Modifikatoren behandelt (solche Modifikatoren beeinflussen nur die direkt anliegende Taste):</p>
-<p><span class="red">!</span>: Sendet eine ALT-Taste. Zum Beispiel würde <code>Send Das ist ein Text!a</code> die Tasten "Das ist ein Text" senden und dann ALT+A drücken. <strong>Hinweis</strong>: !A hat in einigen Programmen einen anderen Effekt als !a. Das liegt daran, dass !A die Tastenkombination ALT+UMSCHALT+A und !a die Tastenkombination ALT+A drücken würde. Im Zweifelsfall sollte man immer Kleinbuchstaben verwenden.</p>
-<p><span class="red">+</span>: Sendet eine UMSCHALT-Taste. Zum Beispiel würde <code>Send +abC</code> den Text "AbC" senden, und <code>Send !+a</code> würde ALT+UMSCHALT+A drücken.</p>
-<p><span class="red">^</span>: Sendet eine STRG-Taste. Zum Beispiel würde <code>Send ^!a</code> die Tastenkombination STRG+ALT+A drücken, und <code>Send ^{Home}</code> würde STRG+POS1 senden. <strong>Hinweis</strong>: ^A hat in einigen Programmen einen anderen Effekt als ^a. Das liegt daran, dass ^A die Tastenkombination STRG+UMSCHALT+A und ^a die Tastenkombination STRG+A drücken würde. Im Zweifelsfall sollte man immer Kleinbuchstaben verwenden.</p>
-<p><span class="red">#</span>: Sendet eine WIN-Taste, demzufolge würde <code>Send #e</code> die WIN-Taste gedrückt halten und dann den Buchstaben "e" drücken.</p>
+<p id="SendRaw"><strong>Raw-Modus</strong> - <em>SendRaw</em> oder <a href="#Raw">{Raw}</a>: Die Zeichen <code>^+!#{}</code> werden literal interpretiert, anstatt z. B. <code>{Enter}</code> in ENTER, <code>^c</code> in STRG+C usw. zu übersetzen. Um den Raw-Modus bei SendInput, SendPlay oder SendEvent zu verwenden, muss <a href="#Raw">{Raw}</a> als erstes Element in der Zeichenkette angegeben werden; zum Beispiel: <code>SendInput {Raw}abc</code>.</p>
+<p>Der <em>Raw-Modus</em> hat keinen Einfluss auf die Interpretation von <a href="_EscapeChar.htm">Escapesequenzen</a>, <a href="../Variables.htm#retrieving">Variablenverweise</a> und <a href="../Variables.htm#Expressions">Ausdrücke</a>. Zum Beispiel würde <code>SendRaw, ``100`%</code> die Zeichenkette <code>`100%</code> senden. Beim <a href="ControlSend.htm">ControlSend</a> müssen zudem literale Kommas mit einem Escapezeichen versehen werden (<code>`,</code>).</p>
+<p id="specialchars"><strong>Normal-Modus</strong>: Wenn der Raw-Modus nicht aktiv ist, haben folgende Symbole eine besondere Bedeutung: <code>!+^#{}</code></p>
+<p>Die Modifikatoren <code>!+^#</code> beeinflussen nur die direkt darauffolgende Taste. Um die entsprechende Modifikatortaste eigenständig zu senden, muss der Tastenname in geschweiften Klammern gesetzt werden. Um eine Taste nur gedrückt zu halten oder loszulassen, muss nach dem Tastennamen das Wort "down" oder "up" erfolgen, wie unten gezeigt.</p>
+<style>
+#modifierkeys td:not(:last-child) { white-space: nowrap; text-align: center }
+</style>
+<table id="modifierkeys" class="info">
+  <tr>
+    <th>Symbol</th>
+    <th>Key</th>
+    <th>Drücken</th>
+    <th>Loslassen</th>
+    <th>Beispiele</th>
+  </tr>
+  <tr>
+    <td>!</td>
+    <td>{Alt}</td>
+    <td>{Alt down}</td>
+    <td>{Alt up}</td>
+    <td><code>Send !a</code> drückt ALT+a</td>
+  </tr>
+  <tr>
+    <td>+</td>
+    <td>{Shift}</td>
+    <td>{Shift down}</td>
+    <td>{Shift up}</td>
+    <td><code>Send +abC</code> sendet den Text "AbC"<br>
+    <code>Send !+a</code> drückt ALT+UMSCHALT+a</td>
+  </tr>
+  <tr>
+    <td>^</td>
+    <td>{Ctrl}</td>
+    <td>{Ctrl down}</td>
+    <td>{Ctrl up}</td>
+    <td><code>Send ^{Home}</code> drückt STRG+POS1</td>
+  </tr>
+  <tr>
+    <td>#</td>
+    <td>{LWin}<br>{RWin}</td>
+    <td>{LWin down}<br>{RWin down}</td>
+    <td>{LWin up}<br>{RWin up}</td>
+    <td><code>Send #e</code> hält die WIN-Taste gedrückt und drückt dann den Buchstaben "e"</td>
+  </tr>
+  <tr>
+    <th>Symbol</th>
+    <th colspan="4">Bedeutung</th>
+  </tr>
+  <tr>
+    <td>{ }</td>
+    <td colspan="4" style="white-space: normal; text-align: left">Mit geschweiften Klammern werden <a href="#keynames">Tastennamen und andere Optionen</a> umschlossen, um spezielle Zeichen literal zu senden. Zum Beispiel wäre <code>{Tab}</code> die TAB-Taste und <code>{!}</code> ein literales Ausrufezeichen.</td>
+  </tr>
+</table>
+<p><strong>Hinweis</strong>: Großbuchstaben werden durch Senden der UMSCHALT-Taste erzeugt, daher würde z. B. <code>A</code> in einigen Programmen eine andere Wirkung als <code>a</code> erzielen. Zum Beispiel würde <code>!A</code> ALT+UMSCHALT+A und <code>!a</code> ALT+a drücken. Im Zweifelsfall sollte man immer Kleinbuchstaben verwenden.</p>
 <p><br>
 <strong id="SendInput">SendInput</strong> und <strong id="SendPlay">SendPlay</strong> <span class="ver">[v1.0.43+]:</span> SendInput und SendPlay verwenden die gleiche Syntax wie Send, allerdings sind sie in der Regel schneller und zuverlässiger. Desweiteren puffern sie alle physischen Tastatur- oder Mausaktivitäten während des Send-Befehls, um das Vermischen der Benutzereingaben mit den gesendeten Eingaben zu verhindern. Verwende <a href="SendMode.htm">SendMode</a>, um Send zum Synonym für SendInput oder SendPlay zu machen. Um mehr Details über jeden Modus zu erfahren, siehe <a href="#SendInputDetail">SendInput</a> und <a href="#SendPlayDetail">SendPlay</a>.</p>
 <p id="SendEvent"><strong>SendEvent</strong> <span class="ver">[v1.0.43+]:</span> SendEvent sendet Tastatureingaben mit der gleichen Methode wie der <em>Send</em>-Befehl vor Version 1.0.43. Die Sendegeschwindigkeit von Tastatureingaben wird mit <a href="SetKeyDelay.htm">SetKeyDelay</a> bestimmt. Standardmäßig ist <em>Send</em> das Synonym für <em>SendEvent</em>; allerdings kann es via <a href="SendMode.htm">SendMode</a> zum Synonym für <a href="#SendInputDetail">SendInput</a> oder <a href="#SendPlayDetail">SendPlay</a> gemacht werden.</p>
-<p><strong>Tastennamen</strong>: Die folgende Tabelle listet alle speziellen Tasten auf, die gesendet werden können (jeder Tastenname muss mit geschweiften Klammern umschlossen werden):</p>
+<p id="keynames"><strong>Tastennamen</strong>: Die folgende Tabelle listet alle speziellen Tasten auf, die gesendet werden können (jeder Tastenname muss mit geschweiften Klammern umschlossen werden):</p>
 <table class="info">
   <tr>
     <th>Tastenname</th>
@@ -458,7 +506,7 @@ SendEvent Tasten</pre>
   <tr id="Raw">
     <td><strong>{Raw}</strong><br>
     <span class="ver">[v1.0.43+]</span></td>
-    <td>Sendet die Tastatureingaben genau so, wie sie angegeben sind, anstatt {Enter} in ENTER-Taste, <code>^c</code> in STRG+C und so weiter umzuwandeln. Zwar muss {Raw} nicht am Anfang der Zeichenkette vorkommen, allerdings bleibt es, wenn es einmal angegeben wurde, für den Rest des Strings aktiv.</td>
+    <td>Aktiviert den <a href="#SendRaw"><em>Raw-Modus</em></a>, wodurch die folgenden Zeichen literal interpretiert werden: <code>^+!#{}</code>. Zwar muss <code>{Raw}</code> nicht am Anfang der Zeichenkette vorkommen, allerdings bleibt es, wenn es einmal angegeben wurde, für den Rest der Zeichenkette aktiv.</td>
   </tr>
 </table>
 

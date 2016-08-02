@@ -115,7 +115,7 @@ obj := ""  <em>; Gibt den letzten Verweis frei, wodurch das Objekt freigegeben w
 <p>In diesem Zusammenhang wird ein Verweis, der in einem Feld eines anderen Objekts gespeichert ist, freigegeben, wenn dieses Feld irgendeinen anderen Wert zugewiesen bekommt oder vom Objekt entfernt wird. Dies gilt auch für Arrays, weil sie eigentlich Objekte sind.</p>
 <pre>arr := [{}]  <em>; Erstellt ein Array, das ein Objekt enthält.</em>
 arr[1] := {}  <em>; Erstellt ein zweites Objekt, wodurch das erste Objekt indirekt freigegeben wird.</em>
-arr.Remove(1)  <em>; Entfernt und gibt das zweite Objekt frei.</em></pre>
+arr.RemoveAt(1)  <em>; Entfernt und gibt das zweite Objekt frei.</em></pre>
 <p id="Circular_References">Da alle Verweise auf ein Objekt freigegeben werden müssen, bevor das Objekt freigegeben werden kann, können Objekte mit Zirkelbezügen nicht automatisch freigegeben werden. Wenn beispielsweise <code>x.child</code> auf <code>y</code> verweist und <code>y.parent</code> auf <code>x</code> verweist, würde es nicht genügen, <code>x</code> und <code>y</code> zu leeren, weil das Parent-Objekt noch einen Verweis auf das Child-Objekt enthält, und umgekehrt. Um diese Situation in den Griff zu bekommen, muss der Zirkelbezug entfernt werden.</p>
 <pre>
 x := {}, y := {}             <em>; Erstellt zwei Objekte.</em>
@@ -150,7 +150,8 @@ obj.item[x] := y</pre>
   <li>Als Folge des oben genannten Punktes wird das Zeichenkettenformat von Integer-Werten nicht beibehalten. Zum Beispiel wären <code>x[0x10]</code>, <code>x[16]</code> und <code>x[00016]</code> dasselbe. Dies gilt auch für numerische Zeichenketten ohne Dezimalpunkt.</li>
   <li>In Anführungszeichen gesetzte Zeichenketten werden in v1.x als rein nicht-numerisch angesehen. Zum Beispiel wären <code>x[1]</code> und <code>x["1"]</code> <i>nicht</i> dasselbe. Wenn darüber hinaus eine in Anführungszeichen gesetzte Zeichenkette mit einem anderen Wert verkettet wird (wie in <code>"0x" x</code>), wird das Ergebnis als rein nicht-numerisch angesehen. Allerdings gilt das nicht für Variablen - beispielsweise wären <code>x[1]</code> und <code>x[y:="1"]</code> dasselbe. Dieses Problem wird in v2 behoben. Deshalb sollte man verhindern, numerische Literale in Anführungszeichen als Keys zu verwenden.</li>
   <li>Gleitkommazahlen werden nicht als Keys unterstützt - stattdessen werden sie in Zeichenketten umgewandelt. In v1.x behalten literale Gleitkommazahlen ihr ursprüngliches Format, während reine Gleitkommazahlen (wie z. B. das Ergebnis von <code>0+1.0</code> oder <code>Sqrt(y)</code>) das aktuelle <a href="commands/SetFormat.htm">Float-Format</a> erzwingen. Um Widersprüche zu vermeiden und die Verständlichkeit zu verbessern, sollte man verhindern, literale Gleitkommazahlen als Keys zu verwenden.</li>
-  <li>Der Zeichenketten-Key <a href="#Custom_Objects">"base"</a> hat eine besondere Bedeutung, außer in Verbindung mit <a href="objects/Object.htm#Insert">Insert</a>.</li>
+  <li>Standardmäßig kann mit dem Zeichenketten-Key "base" das <a href="#Custom_Objects">base-Objekt</a> des Objekts abgerufen oder gesetzt werden, und wäre demzufolge nicht dazu geeignet, gewöhnliche Werte mithilfe einer normalen Zuweisung abzuspeichern. Wenn ein Wert allerdings auf andere Weise abgespeichert wird (z. B. <code><a href="objects/Object.htm#RawSet">ObjRawSet</a>(Object, "base", "")</code> oder <code><a href="objects/Object.htm#SetCapacity">Object.SetCapacity</a>("base", 0)</code>, wird sich der base-Key wie ein beliebige Zeichenkette verhalten.</li>
+  <li><a href="objects/Object.htm">Built-In-Methoden</a> wie "Length" können als Keys verwendet werden, aber sobald man einen Wert in sie speichert, verlieren sie ihre ursprüngliche Funktion (es sei denn, dieser Wert selbst verweist auf die entsprechende Funktion, wie z. B. <em>ObjLength</em>).</li>
 </ul>
 
 <h2 id="Extended_Usage">Erweiterte Grundlagen</h2>
@@ -193,7 +194,7 @@ Tabelle.base.__Set(Tabelle, x, y, Inhalt)     <em>; B</em></pre>
 
 <em>; Ruft jede Funktion auf und übergibt "foo" als Parameter:</em>
 Loop 2
-    array[A_Index].("foo")
+    array[A_Index].Call("foo")
 
 <em>; Ruft jede Funktion auf und übergibt indirekt das Array selbst als Parameter:</em>
 Loop 2
@@ -308,7 +309,7 @@ Methode()
 }
 </pre>
 
-<p id="Custom_Classes_base">Innerhalb einer Methode kann das Pseudo-Schlüsselwort <code>base</code> verwendet werden, um auf Super-Klassen-Versionen von Methoden zugreifen zu können, oder auf Eigenschaften, die in einer abgeleiteten Klasse überschrieben werden. Zum Beispiel würde <code>base.Methode()</code>, wenn man es in der Klasse oben definiert, eine Version von <em>Methode</em> aufrufen, die über <em>BaseKlassenname</em> definiert wurde. <a href="#Meta_Functions">Meta-Funktionen</a> werden nicht aufgerufen; ansonsten verhält sich <code>base.Methode()</code> wie <code>BaseKlassenname.Methode.(this)</code>. Das heißt,</p>
+<p id="Custom_Classes_base">Innerhalb einer Methode kann das Pseudo-Schlüsselwort <code>base</code> verwendet werden, um auf Super-Klassen-Versionen von Methoden zugreifen zu können, oder auf Eigenschaften, die in einer abgeleiteten Klasse überschrieben werden. Zum Beispiel würde <code>base.Methode()</code>, wenn man es in der Klasse oben definiert, eine Version von <em>Methode</em> aufrufen, die über <em>BaseKlassenname</em> definiert wurde. <a href="#Meta_Functions">Meta-Funktionen</a> werden nicht aufgerufen; ansonsten verhält sich <code>base.Methode()</code> wie <code>BaseKlassenname.Methode.Call(this)</code>. Das heißt,</p>
 <ul>
   <li>dass <code>base.Methode()</code> immer dort das Base der Klasse aufruft, wo die aktuelle Methode definiert wurde, selbst wenn <code>this</code> von einer <em>Unterklasse</em> von dieser oder einer anderen Klasse vollständig abgeleitet ist.</li>
   <li>dass <code>base.Methode()</code> implizit <code>this</code> als ersten (versteckten) Parameter übergibt.</li>
@@ -385,7 +386,7 @@ class <i>Klassenname</i> {
   <li>Wenn mehrere Parameter bei <i>get</i> oder <i>set</i> angegeben wurden und ein Key gefunden wurde, überprüfe seinen Wert. Ist dieser Wert ein Objekt, rufe es auf, um die restlichen Parameter zu behandeln, und tue nichts weiter.</li>
   <li>Wenn ein Key gefunden wurde,<br>
     <i>Get</i>: Gebe den Wert zurück.<br>
-    <i>Call</i>: Wenn der Wert ein Funktionsname oder <a href="#Function_References">Verweis</a> ist, rufe es auf und übergebe dabei das Zielobjekt als ersten Parameter (<code>this</code>).</li>
+    <i>Call</i>: Versuch den Wert aufzurufen und übergib das Zielobjekt als ersten Parameter (<code>this</code>). Der Wert sollte ein Funktionsname oder <a href="objects/Functor.htm">Funktionsobjekt</a> sein.</li>
 </ul>
 <p>Wenn eine Meta-Funktion einen passenden Key im Objekt beinhaltet, aber keinen <code>return</code> verwendet, ist das Verhalten das gleiche wie, als wäre der Key bereits zu Beginn im Objekt da gewesen. Um zu erfahren, wie __Set funktioniert, siehe <a href="#Subclassing_aoa">Mehrdimensionale Arrays bei Unterklassen</a>.</p>
 <p>Wenn die Operation immer noch nicht behandelt wurde, überprüfe, ob es eine Built-in-Methode oder -Eigenschaft ist:</p>
@@ -405,9 +406,11 @@ class <i>Klassenname</i> {
 <ul><li>Das Verwenden von <code>return</code> ohne Wert ist dasselbe wie <code>return ""</code>. Dieser Sachverhalt wird vielleicht in einer zukünftigen Version geändert, so dass man mit <code>return</code> aus einer Meta-Funktion "flüchten" kann, ohne dabei das Standardverhalten überschreiben zu müssen.</li></ul>
 
 <h4 id="Dynamic_Properties">Dynamische Eigenschaften</h4>
-<p>Mit <i>__Get</i> und <i>__Set</i> können Eigenschaften implementiert werden, deren Werte auf irgendeiner Weise berechnet oder beschränkt sind. Zum Beispiel können sie verwendet werden, um ein "Farbe"-Objekt mit R, G, B und RGB-Eigenschaften zu implementieren, wo tatsächlich nur der RGB-Wert gespeichert wird:</p>
+<p>Mit der <a href="#Custom_Classes_property">Eigenschaftssyntax</a> können Eigenschaften definiert werden, die jedes Mal, wenn sie ausgewertet werden, einen Wert berechnen, aber jede Eigenschaft muss im Voraus bekannt und einzeln im Skript definiert sein. Mit <em>__Get</em> und <em>__Set</em> können hingegen Eigenschaften implementiert werden, die das Skript nicht vorher kennen muss.</p>
+<p>Zum Beispiel könnte man ein "Proxy"-Objekt erstellen, das Eigenschaften über das Netzwerk (oder über einen beliebig anderen Kanal) anfordern könnte. Ein Remote-Server würde dann mit dem Wert von der Eigenschaft antworten, den das Proxy-Objekt dann an seinen Aufrufer weiterleiten könnte. Auch wenn der Name jeder Eigenschaft im Voraus bekannt war, wäre es unlogisch, jede Eigenschaft einzeln in der Proxy-Klasse zu definieren, da jede Eigenschaft dasselbe tun würde (einen Netzwerk-Request senden). Meta-Funktionen erhalten die Eigenschaftsnamen als Parameter und wären daher eine gute Lösung für dieses Problem.</p>
+<p>Eine weitere Verwendungsmöglichkeit von <em>__Get</em> und <em>__Set</em> wäre es, eine Reihe von verwandten Eigenschaften zu implementieren, die Code unter sich aufteilen. In dem Beispiel unten werden sie verwendet, um ein "Farbe"-Objekt mit R, G, B und RGB-Eigenschaften zu implementieren, wo tatsächlich nur der RGB-Wert gespeichert wird:</p>
 <pre>rot := new Farbe(0xff0000), rot.R -= 5
-cyan := new Farbe(0x00ffff)
+cyan := new Farbe(0), cyan.G := 255, cyan.B := 255
 
 MsgBox % "rot: " rot.R "," rot.G "," rot.B " = " rot.RGB
 MsgBox % "cyan: " cyan.R "," cyan.G "," cyan.B " = " cyan.RGB
@@ -419,74 +422,59 @@ class Farbe
         this.RGB := aRGB
     }
 
+    static Verschiebung := {R:16, G:8, B:0}
+
     __Get(aName)
     {
-        if (aName = "R")
-            return (this.RGB &gt;&gt; 16) &amp; 255
-        if (aName = "G")
-            return (this.RGB &gt;&gt; 8) &amp; 255
-        if (aName = "B")
-            return this.RGB &amp; 255
+        <em>; <span class="red">HINWEIS:</span> this.Verschiebung würde hier eine Endlosschleife erzeugen!</em>
+        Verschiebung := Farbe.Verschiebung[aName]  <em>; Ermittelt die Anzahl der zu verschiebenden Bits.</em>
+        if (Verschiebung != "")  <em>; Ist sie eine bekannte Eigenschaft?</em>
+            return (this.RGB &gt;&gt; Verschiebung) &amp; 0xff
+        <em>; <span class="red">HINWEIS:</span> Ein 'return' hier würde this.RGB kaputtmachen.</em>
     }
 
     __Set(aName, aWert)
     {
-        if aName in R,G,B
+        if ((Verschiebung := Farbe.Verschiebung[aName]) != "")
         {
-            aWert &amp;= 255
+            aWert &amp;= 255  <em>; Kürzt es auf eine geeignete Länge.
 
-            if      (aName = "R")
-                this.RGB := (aWert &lt;&lt; 16) | (this.RGB &amp; ~0xff0000)
-            else if (aName = "G")
-                this.RGB := (aWert &lt;&lt; 8)  | (this.RGB &amp; ~0x00ff00)
-            else  <em>; (aName = "B")</em>
-                this.RGB :=  aWert        | (this.RGB &amp; ~0x0000ff)
+            ; Errechnet und speichert den neuen RGB-Wert.</em>
+            this.RGB := (aWert &lt;&lt; Verschiebung) | (this.RGB &amp; ~(0xff &lt;&lt; Verschiebung))
 
-            <em>; 'Return' muss verwendet werden, um zu kennzeichnen, dass kein neues Key-Value-Paar erstellt werden sollte.
-            ; Dies definiert auch, was in 'x' von 'x := clr[name] := val' gespeichert werden soll:</em>
+            <em>; 'Return' ist notwendig, um die Erstellung eines neuen Key-Value-Paares zu verhindern.
+            ; Dies bestimmt auch, was in dem 'x' in 'x := clr[name] := val' gespeichert wird:</em>
             return aWert
+        }
+        <em>; <span class="red">HINWEIS:</span> Ein 'return' hier würde this._RGB und this.RGB kaputtmachen.</em>
+    }
+
+    <em>; Meta-Funktionen können mit Eigenschaften vermischt werden:</em>
+    RGB {
+        get {
+            <em>; Als Hex-Wert zurückgeben:</em>
+            return format("0x{:06x}", this._RGB)
+        }
+        set {
+            return this._RGB := value
         }
     }
 }</pre>
+<p>In diesem Fall hätte man stattdessen die <a href="#Custom_Classes_property">Eigenschaftssyntax</a> verwenden können, wo Code untereinander aufgeteilt werden kann, indem man jede Eigenschaft eine zentrale Methode aufrufen lässt. Meta-Funktionen sollte man wenn möglich vermeiden, da ein hohes Risiko besteht, dass sie falsch verwendet werden (siehe die roten Hinweise oben).</p>
 
 <h4 id="Objects_as_Functions">Objekte als Funktionen</h4>
-<p>Wenn ein Aufruf wie <code>obj.func(param)</code> erfolgt, könnte <i>obj.func</i> einen Funktionsnamen oder ein Objekt enthalten. Enthält <i>obj.func</i> ein Objekt, wird dieses Objekt mit <i>obj</i> aufgerufen, anstatt mit dem Methodennamen wie in <code>(obj.func)[obj]()</code>. Da in den meisten Fällen <code>obj.func[obj]</code> nicht vorhanden ist, wird stattdessen die __Call-<a href="#Meta_Functions">Meta-Funktion</a> von <i>obj.func</i> aufgerufen. Damit könnte man das Verhalten der Funktionsaufrufe auf einer abstrakten Weise ändern, wie es im folgenden Beispiel gezeigt wird:</p>
-<pre><em>; Erstellt ein Prototyp für ein Array mit Funktionen.</em>
-FuncArrayType := {__Call: "FuncType_Call"}
-<em>; Erstellt ein Array mit Funktionen.</em>
-funcArray := {1: "Eins", 2: "Zwei", base: FuncArrayType}
-<em>; Erstellt ein Objekt, das das Array als Methode verwendet.</em>
-obj := {func: funcArray}
-<em>; Ruft die Methode auf.</em>
-obj.func("foo", "bar")
-
-FuncType_Call(func, obj, params*)
-{
-    <em>; Ruft eine Liste mit Funktionen auf.</em>
-    Loop % ObjMaxIndex(func)
-        func[A_Index](params*)
-}
-
-Eins(param1, param2) {
-    ListVars
-    Pause
-}
-Zwei(param1, param2) {
-    ListVars
-    Pause
-}</pre>
-<p>Mit dieser Technik kann ein Objekt erstellt werden, das als Meta-Funktion fungiert, um z. B. dynamische Eigenschaften zu definieren, ähnlich wie die im vorherigen Abschnitt. (Beachte allerdings, dass dieses Beispiel durch die <a href="#Custom_Classes_property">Unterstützung von Eigenschaften</a> ersetzt wurde.) Zum Beispiel:</p>
+<p>Siehe <a href="objects/Functor.htm#User-Defined">Funktionsobjekte</a>, wie Objekte erstellt werden können, die sich wie Funktionen verhalten.</p>
+<p>Ein Funktionsobjekt kann sich auch wie eine Meta-Funktion verhalten, um z. B. dynamische Eigenschaften zu definieren, die denen im vorherigen Abschnitt ähneln. Obwohl man die <a href="#Custom_Classes_property">Eigenschaftssyntax</a> immer wenn möglich verwenden sollte, zeigt das Beispiel unten das Potenzial von Meta-Funktionen, um neue Konzepte oder Verhaltensmuster zu implementieren, oder um die Struktur des Skripts zu ändern.</p>
 <pre>blau := new Farbe(0x0000ff)
 MsgBox % blau.R "," blau.G "," blau.B
 
-class Eigenschaften
+class Eigenschaften extends <a href="objects/Functor.htm#class_FunctionObject">Funktionsobjekt</a>
 {
     __Call(aTarget, aName, aParams*)
     {
-        <em>; Falls dieses Eigenschaftsobjekt eine Definition für diese Halb-Eigenschaft enthält, ruft es auf.
-        ; Achtet darauf, nicht this.HasKey(aName) zu verwenden, da das sonst in  __Call rekursiv ausgeführt wird.</em>
-        if IsObject(aZiel) &amp;&amp; ObjHasKey(this, aName)
-            return this[aName].(aZiel, aParams*)
+        <em>; Falls dieses Eigenschaftsobjekt eine Definition für diese Halb-Eigenschaft enthält, wird es aufgerufen.</em>
+        if ObjHasKey(this, aName)
+            return this[aName].Call(aZiel, aParams*)
     }
 }
 
@@ -600,15 +588,8 @@ Default__Warn(nonobj, p1="", p2="", p3="", p4="")
 
 <h2 id="Implementation">Implementierung</h2>
 <span id="Refs"></span><h3 id="Reference_Counting">Referenzzählung</h3>
-<p>AutoHotkey verwendet ein einfaches Referenzzählungsmechanismus, um Ressourcen eines Objekts freizugeben, das nicht länger im Skript gebraucht wird. Skript-Autoren sollten diesen Mechanismus nur aufrufen, wenn man direkt mit unverwalteten Pointer, die auf Objekte verweisen, arbeiten muss. Für weitere Informationen, siehe <a href="commands/ObjAddRef.htm">ObjAddRef</a>.</p>
-<pre><em>; Erhöht die Referenzzählung des Objekts, um "es am Leben zu erhalten":</em>
-<a href="commands/ObjAddRef.htm">ObjAddRef</a>(Adresse)
-...
-<em>; Verringert die Referenzzählung des Objekts, so dass es freigegeben werden kann:</em>
-ObjRelease(Adresse)
-</pre>
-<p>ObjAddRef muss nicht verwendet werden, wenn eine Adresse zunächst per <code><a href="#AddressCast">Object(obj)</a></code> bezogen wird.</p>
-<p>Generell sollte jede neue Kopie einer Objektadresse als Objektverweis behandelt werden, außer dass das Skript wie vorgesehen für den Aufruf von ObjAddRef und/oder ObjRelease verantwortlich ist. Würde man beispielsweise eine Adresse mit so etwas wie <code>x := Adresse</code> kopieren, sollte ObjAddRef aufgerufen werden, um die Referenzzählung zu erhöhen. Ebenso sollte ObjRelease aufgerufen werden, wenn eine bestimmte Kopie der Objektadresse durchgeführt wurde. Dadurch wird sichergestellt, dass das Objekt freigegeben wird, wenn der letzte Verweis auf dieses Objekt verloren geht - und nicht vorher.</p>
+<p>AutoHotkey verwendet ein einfaches Referenzzählungsmechanismus, um Ressourcen eines Objekts freizugeben, das nicht länger im Skript gebraucht wird. Skript-Autoren sollten diesen Mechanismus nur aufrufen, wenn man direkt mit unverwalteten <a href="#Implementation_Pointers">Pointer, die auf Objekte verweisen</a>, arbeiten muss.</p>
+<p>In AutoHotkey v1.1 werden temporäre Verweise, die innerhalb eines Ausdrucks erstellt (aber nirgendwo gespeichert) werden, direkt nach ihrer Verwendung freigegeben. Zum Beispiel würde <code>Fn(&amp;{})</code> eine ungültige Adresse an die Funktion übergeben, weil der temporäre Verweis, zurückgegeben von <code>{}</code>, direkt nach dem Auswerten des <a href="Variables.htm#amp">Adresse-von</a>-Operators freigegeben wird.</p>
 <p>Wenn Code beim Freigeben des letzten Verweises auf ein Objekt ausgeführt werden soll, muss man die <a href="#Custom_NewDelete">__Delete</a>-Meta-Funktion implementieren.</p>
 <p><b>Bekannte Einschränkungen:</b></p>
 <ul>
@@ -618,12 +599,21 @@ ObjRelease(Adresse)
 <p>Das Betriebssystem kann den benutzten Speicher vom Objekt wieder verwenden, sobald das Programm beendet wird. Allerdings wird <a href="#Custom_NewDelete">__Delete</a> erst aufgerufen, wenn alle Verweise auf das Objekt freigegeben worden sind. Das kann wichtig sein, wenn andere Ressourcen freigegeben werden, die nicht automatisch vom Betriebssystem wieder verwendet werden, wie zum Beispiel temporäre Dateien.</p>
 
 <span id="AddressCast"></span><h3 id="Implementation_Pointers">Pointer auf Objekte</h3>
-<p>In einigen seltenen Fällen kann es erforderlich sein, ein Objekt per DllCall an einen externen Code zu übergeben oder ein Objekt in eine binäre Datenstruktur zu speichern, um es später abrufen zu können. Eine Objektadresse kann per <code>x := &amp;obj</code> abgerufen werden; wenn die Variable <i>obj</i> allerdings geleert wird, könnte das Objekt vorzeitig freigegeben werden. Mit ObjAddRef, wie oben gezeigt, oder mit der <code>Object()</code>-Funktion, wie unten gezeigt, kann sichergestellt werden, dass so etwas nicht passiert:</p>
-<pre>Adresse := Object(Objekt)</pre>
-<p>Darüber hinaus kann man mit dieser Funktion die Adresse wieder in ein Verweis umwandeln:</p>
+<p>In einigen seltenen Fällen kann es erforderlich sein, ein Objekt per DllCall an einen externen Code zu übergeben oder ein Objekt in eine binäre Datenstruktur zu speichern, um es später abrufen zu können. Die Adresse eines Objekts kann via <code>Adresse := &amp;Objekt</code> abgerufen werden; dies würde allerdings effektiv zwei Verweise auf das Objekt erzeugen, aber das Programm kennt nur den einen in <em>Objekt</em>. Wenn der letzte <em>bekannte</em> Verweis auf das Objekt freigegeben wurde, wird das Objekt gelöscht. Demzufolge muss das Skript das Objekt darüber informieren, dass es einen Verweis erhalten hat. Es gibt zwei Wege, um das zu erreichen:</p>
+<pre><em>; Methode #1: Referenzzählung explizit erhöhen.</em>
+Adresse := &amp;Objekt
+<a href="commands/ObjAddRef.htm">ObjAddRef</a>(Adresse)
+
+<em>; Methode #2: Object() benutzen, das die Referenzzählung erhöht und eine Adresse zurückgibt.</em>
+Adresse := Object(Objekt)</pre>
+<p>Mit dieser Funktion kann man auch eine Adresse wieder in ein Verweis umwandeln:</p>
 <pre>Objekt := Object(Adresse)</pre>
-<p>In jedem Fall wird die <a href="#Refs">Referenzzählung</a> des Objekts automatisch erhöht, um ein vorzeitiges Freigeben des Objekts zu verhindern.</p>
-<p>Beachte, dass diese Funktionen ebenso für Objekte gelten, die nicht mit <a href="#Arrays">Object()</a> erstellt wurden, wie <a href="commands/ComObjCreate.htm">COM-Objekt-Wrapper</a> oder <a href="objects/File.htm">File-Objekte</a>.</p>
+<p>In jedem Fall muss das Skript das Objekt außerdem darüber informieren, dass es mit diesem Verweis fertig ist:</p>
+<pre><em>; Verringert die Referenzzählung des Objekts, damit es freigegeben werden kann:</em>
+<a href="commands/ObjAddRef.htm">ObjRelease</a>(Adresse)
+</pre>
+<p>Generell sollte jede neue Kopie einer Objektadresse als seperater Objektverweis behandelt werden, demzufolge sollte das Skript ObjAddRef aufrufen, wenn es eine Kopie erhält, und sofort ObjRelease aufrufen, bevor es eine verliert. Würde man beispielsweise eine Adresse mit so etwas wie <code>x := Adresse</code> kopieren, sollte ObjAddRef aufgerufen werden. Ebenso sollte das Skript ObjRelease aufrufen, wenn es mit <em>x</em> fertig ist (oder dabei ist den Wert von <em>x</em> zu überschreiben).</p>
+<p>Beachte, dass die Object()-Funktion sogar auf Objekte angewendet werden kann, die sie selbst nicht erstellt hat, wie z. B. <a href="commands/ComObjCreate.htm">COM-Objekt-Wrapper</a> oder <a href="objects/File.htm">File-Objekte</a>.</p>
 
 </body>
 </html>
