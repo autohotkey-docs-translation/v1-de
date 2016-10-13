@@ -293,7 +293,7 @@ IfWinExist %Skriptpfad% ahk_class AutoHotkey
 <pre>AutoHotkey110800_Install.exe /S</pre>
 <p>Um anstelle des Standardverzeichnisses ein anderes Verzeichnis anzugeben, verwende den /D-Parameter (lässt man /S weg, würde /D das Standardverzeichnis ändern, welches vom Installer angezeigt wird). Zum Beispiel:</p>
 <pre>AutoHotkey110800_Install.exe /S /D=C:\Programme\AutoHotkey</pre>
-<p>Falls AutoHotkey zuvor installiert wurde, erkennt der Installer automatisch, welche Version von AutoHotkey.exe als Standardeinstellung gesetzt werden soll. Ansonsten gilt als Standardeinstellung Unicode 32-Bit oder Unicode 64-Bit, abhängig davon, ob das Betriebssystem im 64-Bit-Format ist. Soll die Standardversion überschrieben werden, übergebe einen der folgenden Parameter:</p>
+<p><strong>Version</strong>: Falls AutoHotkey zuvor installiert wurde, erkennt der Installer automatisch, welche Version von AutoHotkey.exe als Standardeinstellung gesetzt werden soll. Ansonsten gilt als Standardeinstellung Unicode 32-Bit oder Unicode 64-Bit, abhängig davon, ob das Betriebssystem im 64-Bit-Format ist. Soll die Standardversion überschrieben werden, übergebe einen der folgenden Parameter:</p>
 <ul>
   <li><code>/A32</code> oder <code>/ANSI</code>: ANSI 32-Bit.</li>
   <li><code>/U64</code> oder <code>/x64</code>: Unicode 64-Bit (nur bei 64-Bit-Systemen möglich).</li>
@@ -301,14 +301,40 @@ IfWinExist %Skriptpfad% ahk_class AutoHotkey
 </ul>
 <p>Das folgende Beispiel installiert AutoHotkey automatisch und setzt ANSI 32-Bit als Standardversion:</p>
 <pre>AutoHotkey110800_Install.exe /S /A32</pre>
-<p>Um AutoHotkey automatisch zu deinstallieren, übergebe den Parameter <code>/Uninstall</code> an Installer.ahk. Zum Beispiel:</p>
+<p><strong>Deinstallieren</strong>: Um AutoHotkey automatisch zu deinstallieren, übergebe den Parameter <code>/Uninstall</code> an Installer.ahk. Zum Beispiel:</p>
 <pre>"C:\Programme\AutoHotkey\AutoHotkey.exe" "C:\Programme\AutoHotkey\Installer.ahk" /Uninstall</pre>
 <p>In Versionen älter als 1.1.08.00 muss <code>uninst.exe /S</code> verwendet werden. Zum Beispiel:</p>
 <pre>"C:\Programme\AutoHotkey\uninst.exe" /S</pre>
 <p><strong>Hinweis</strong>: Installer.ahk muss mit Administratorrechten ausgeführt werden, um richtig funktionieren zu können.</p>
-<p>In den neueren Versionen des Installers befindet sich an der unteren rechten Ecke ein Link, mit dem man die Setup-Dateien ohne Installation extrahieren kann. Ist diese Funktion vorhanden, kann man den Parameter <code>/E</code> angeben, um sie über die Kommandozeile aufrufen zu können. Zum Beispiel:</p>
+<p><strong>Extrahieren</strong>: In den neueren Versionen des Installers befindet sich an der unteren rechten Ecke ein Link, mit dem man die Setup-Dateien ohne Installation extrahieren kann. Wenn diese Funktion vorhanden ist, kann sie mit der Befehlszeilenoption <code>/E</code> aufgerufen werden. Zum Beispiel:</p>
 <pre>AutoHotkey110903_Install.exe /D=F:\AutoHotkey /E</pre>
-<p>Im automatischen Install/Uninstall-Modus werden laufende Skripte automatisch geschlossen, wo immer es notwendig ist. Verwende die <code>/R</code>-Option (benötigt v1.1.19.02+), um diese Skripte automatisch neu zu laden, unter Verwendung der EXE, mit der sie gerade laufen, <strong>ohne</strong> Befehlszeilenparameter. Diese Option wird nicht unterstützt, wenn man Installer.ahk zum Ändern der Einstellungen verwendet.</p>
+<p><strong>Skripte neustarten</strong> <span class="ver">[v1.1.19.02+]</span>: Im automatischen Install/Uninstall-Modus werden laufende Skripte automatisch geschlossen, wo immer es notwendig ist. Verwende die <code>/R</code>-Option , um diese Skripte automatisch neu zu laden, unter Verwendung der EXE, mit der sie gerade laufen, <strong>ohne</strong> Befehlszeilenparameter. Das Setup wird versuchen, die Skripte via Explorer zu starten, daher werden sie nicht mit Administratorrechten laufen, wenn UAC aktiv ist.</p>
+
+<p id="Installer_IsHostApp"><strong>Taskleistenschaltflächen</strong> <span class="ver">[v1.1.08+]</span>: Standardmäßig werden in Windows 7 oder höher Taskleistenschaltflächen von mehreren Skripten automatisch zu einer Taskleistenschaltfläche zusammengefasst. Die Option <em>Separate taskbar buttons</em> (Separate Taskleistenschaltflächen) deaktiviert dieses Verhalten, indem sie jede ausführbare AutoHotkey-Datei als <a href="https://msdn.microsoft.com/de-de/library/ee872121#APPLICATIONS">Host-App (IsHostApp)</a> registriert.</p>
+<p><span class="ver">[v1.1.24.02+]:</span> Installationen via Befehlszeile können <code>/IsHostApp</code> oder <code>/IsHostApp=1</code> benutzen, um die Option zu aktivieren, und <code>/IsHostApp=0</code>, um sie zu deaktivieren.</p>
+
+<h3 id="Installer_uiAccess">Mit UI-Access ausführen <span class="ver">[v1.1.24.02+]</span></h3>
+<p>Das Installer-GUI hat die Option "Add 'Run with UI Access' to context menus" ('Mit UI-Access ausführen' in das Kontextmenü einfügen). Diese Kontextmenü-Option bietet einen Workaround für häufig auftretende <a href="FAQ.htm#uac">UAC-bezogene Probleme</a>, damit das Skript administrative Programme automatisieren kann - ohne dass das Skript mit Administratorrechten laufen muss. Um das zu erreichen, wird der Installer Folgendes tun:</p>
+<ul>
+  <li>AutoHotkeyA32.exe, AutoHotkeyU32.exe und (sofern vorhanden) AutoHotkeyU64.exe in AutoHotkey*_UIA.exe umbenennen.</li>
+  <li><a href="https://msdn.microsoft.com/de-de/library/ee671610">uiAccess-Attribut</a> im integrierten Manifest jeder UIA-Datei setzen.</li>
+  <li>Ein selbst-signiertes digitales Zertifikat namens "AutoHotkey" erstellen und jede UIA-Datei signieren.</li>
+  <li>Die Kontextmenü-Option registrieren, um die entsprechende EXE-Datei ausführen zu können.</li>
+</ul>
+<p>Wenn irgendeine dieser UIA-Dateien vor der Installation vorhanden sein sollte, wird der Installer sie automatisch aktualisieren, selbst wenn die uiAccess-Option inaktiv ist.</p>
+<p>Installationen via Befehlszeile können <code>/uiAccess</code> oder <code>/uiAccess=1</code> benutzen, um die Option zu aktivieren, und <code>/uiAccess=0</code>, um sie zu deaktivieren. Standardmäßig wird der Installer die Option aktivieren, wenn UAC aktiv ist und wenn die UI-Access-Kontextmenü-Option vor der Installation vorhanden war.</p>
+<p>Skripte, die andere Skripte mit UI-Access ausführen müssen, können einfach <a href="commands/Run.htm">Run</a> benutzen, um die entsprechende UIA.EXE-Datei mit den normalen <a href="#cmd">Befehlszeilenparametern</a> auszuführen.</p>
+<p><strong>Bekannte Einschränkungen:</strong>:</p>
+<ul>
+  <li>UIA ist nur wirksam, wenn der Speicherort der Datei vertrauenswürdig ist; zum Beispiel ein Unterverzeichnis im Programme-Ordner.</li>
+  <li>UIA.EXE-Dateien funktionieren nur auf anderen Computern, wenn das digitale Zertifikat, welches zum Erstellen dieser Dateien benutzt wurde, auch auf diesen Computern installiert ist.</li>
+  <li>UIA.EXE-Dateien können aufgrund von Sicherheitseinschränkungen nicht via CreateProcess gestartet werden. Stattdessen kann ShellExecute benutzt werden. <a href="commands/Run.htm">Run</a> versucht beides.</li>
+  <li>UIA.EXE-Dateien können nicht modifiziert werden, weil das ansonsten deren digitale Signatur ungültig machen würde.</li>
+  <li>Da die "Integritätsstufe" von UIA-Programmen sich von anderen Programmen unterscheidet, haben sie nur Zugriff auf Objekte, die von anderen UIA-Programmen registriert worden sind. Zum Beispiel würde <code><a href="commands/ComObjActive.htm">ComObjActive</a>("Word.Application")</code> fehlschlagen, weil Word nicht für UI-Access markiert wurde.</li>
+  <li>Die eigenen Fenster des Skripts können aus Sicherheitsgründen nur von UIA-Programmen/Skripten automatisiert werden.</li>
+  <li>Das Ausführen eines Nicht-UIA-Skripts, das einen Maus-Hook benutzt (selbst ein einfaches <code>#InstallMouseHook</code>), könnte alle Maus-Hotkeys blockieren, wenn die Maus auf ein Fenster eines UIA-Skripts zeigt, oder sogar Hotkeys, die vom UIA-Skript selbst implementiert worden sind. Ein Workaround wäre, UIA-Skripte zuletzt zu laden.</li>
+</ul>
+<p>Schau dir <a href="https://autohotkey.com/board/topic/70449-enable-interaction-with-administrative-programs/">Enable interaction with administrative programs</a> (Interaktion mit administrativen Programmen ermöglichen) im Archiv-Forum an, um mehr zu erfahren.</p>
 
 <h2>Skript-Beispiele</h2>
 <p>Auf <a href="scripts/">dieser Seite</a> kann man einige nützliche Skripte finden.</p>
