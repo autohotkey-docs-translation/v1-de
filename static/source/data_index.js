@@ -302,7 +302,7 @@ index = [
   ["current directory","commands/SetWorkingDir.htm"],["Aktuelles Verzeichnis","commands/SetWorkingDir.htm"],
   ["current thread","misc/Threads.htm"],["Aktueller Thread","misc/Threads.htm"],
   ["Cursor-Form","Variables.htm#Cursor"],
-  ["custom combination hotkeys","Hotkeys.htm#Features"],["benutzerdefinierte Kombinations-Hotkeys","Hotkeys.htm#Features"],
+  ["custom combination hotkeys","Hotkeys.htm#combo"],["benutzerdefinierte Kombinations-Hotkeys","Hotkeys.htm#combo"],
   ["Custom-Steuerelemente (GUI)","commands/GuiControls.htm#Custom"],
   ["dates and times (compare)","commands/EnvSub.htm"],["Datum & Zeit vergleichen","commands/EnvSub.htm"],
   ["dates and times (math)","commands/EnvAdd.htm"],["Datum & Zeit berechnen","commands/EnvAdd.htm"],
