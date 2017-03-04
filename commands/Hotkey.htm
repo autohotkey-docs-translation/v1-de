@@ -16,7 +16,8 @@
 
 <pre class="Syntax">Hotkey, Tastenname [, Label, Optionen]
 Hotkey, IfWinActive/Exist [, Fenstertitel, Fenstertext]
-Hotkey, If [, Ausdruck]</pre>
+Hotkey, If [, Ausdruck]
+Hotkey, If, % Funktionsobjekt</pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -57,8 +58,14 @@ Hotkey, If [, Ausdruck]</pre>
 
   <dt>IfWinActive<br>
     
-    IfWinExist</dt>
-  <dd><p>(IfWin<strong>Not</strong>Active und IfWin<strong>Not</strong>Exist werden auch unterstützt). Diese Unterbefehle machen alle danach erstellten Hotkeys kontextabhängig. Siehe <a href="#IfWin">unten</a> für weitere Details.</p></dd>
+    IfWinExist<br>
+    
+    IfWinNotActive<br>
+    
+    IfWinNotExist<br>
+    If, Ausdruck<br>
+    If, % Funktionsobjekt</dt>
+  <dd><p>Diese Unterbefehle machen alle danach erstellten Hotkeys kontextabhängig. Siehe <a href="#IfWin">unten</a> für weitere Details.</p></dd>
 
   <dt>Fenstertitel<br>
     Fenstertext</dt>
@@ -67,9 +74,16 @@ Hotkey, If [, Ausdruck]</pre>
 
   <dt id="If">If, Ausdruck</dt>
   <dd>
-    <p><span class="ver">[AHK_L]:</span> Gegenstück von <a href="_If.htm">#If <i>Ausdruck</i></a>. <em>Ausdruck</em> muss ein Ausdruck sein, der irgendwo im Skript mit der #If-Direktive verwendet wurde. Zwar kann dieser Befehl keine neuen Ausdrücke erstellen, allerdings kann er neue Hotkeys unter Verwendung eines vorhandenen Ausdrucks erstellen. Siehe <a href="_If.htm#ex4">4. Beispiel von #If</a>.</p>
+    <p><span class="ver">[AHK_L 4+]:</span> Verbindet nachfolgend erstellte Hotkeys mit dem angegebenen #If-Ausdruck. <em>Ausdruck</em> muss ein Ausdruck sein, der irgendwo im Skript mit der #If-Direktive verwendet wurde. Zwar kann dieser Befehl keine neuen Ausdrücke erstellen, allerdings kann er neue Hotkeys unter Verwendung eines vorhandenen Ausdrucks erstellen. Siehe <a href="_If.htm#ex4">4. Beispiel von #If</a>.</p>
     <p><strong>Hinweis:</strong> Der Hotkey-Befehl benutzt die Zeichenkette, die du ihm gegeben hast, nicht den ursprünglichen Quellcode. Kommas und Dereferenzzeichen (Prozentzeichen) werden interpretiert, <em>bevor</em> der Befehl aufgerufen wird, und müssen daher mit Escapezeichen versehen werden, wenn sie zum ursprünglichen Ausdruck gehören. <a href="_EscapeChar.htm">Escapesequenzen</a> werden aufgelöst, während das Skript geladen wird, demzufolge werden nur die resultierenden Zeichen berücksichtigt; Zum Beispiel sind <code>Hotkey, If, x = "`t"</code> und <code>Hotkey, If, % "x = """ A_Tab """"</code> das gleiche wie <code>#If x = "`t"</code>.</p>
     <p><strong>Bekannte Einschränkung</strong>: Enthält <em>Ausdruck</em> einen <code>AND</code>/<code>OR</code>-Operator, wird er nicht als vorhandener Ausdruck anerkannt. Als Übergangslösung kann man den gleichwertigen <code>&amp;&amp;</code>/<code>||</code>-Operator verwenden - sowohl im originalen #If-Ausdruck als auch in dem, der an den Hotkey-Befehl übergeben wurde.</p>
+  </dd>
+  
+  <dt id="IfFn">If, % Funktionsobjekt</dt>
+  <dd>
+    <p><span class="ver">[v1.1.25+]:</span> Verbindet nachfolgend erstellte Hotkeys mit dem angegebenen <a href="../objects/Functor.htm">Funktionsobjekt</a>. Solche Hotkeys werden nur ausgeführt, wenn der Aufruf des angegebenen Funktionsobjekts eine Zahl ungleich 0 zurückgibt. Das ist wie <code>Hotkey, If, Ausdruck</code>, außer dass jeder Hotkey mehrere <a href="#variant">Varianten</a> haben kann (eine pro Objekt). <em>Funktionsobjekt</em> muss eine einzelne Variable sein (kein Ausdruck), die ein Objekt mit einer <em>Call</em>-Methode enthält. Die Funktion oder <em>Call</em>-Methode kann einen Parameter akzeptieren - den <a href="../Variables.htm#ThisHotkey">Namen</a> des Hotkeys.</p>
+    <p>Sobald das Objekt an dem Hotkey-Befehl übergeben wurde, wird es nie gelöscht (aber Speicher vom Betriebssystem zurückgefordert, wenn der Prozess beendet wird).</p>
+    <p>Das <a href="#ExampleIfFn">Drei-Tasten-Kombinations-Beispiel</a> unten benutzt diesen Unterbefehl.</p>
   </dd>
 
 </dl>
@@ -77,6 +91,7 @@ Hotkey, If [, Ausdruck]</pre>
 <h3 id="ErrorLevel">ErrorLevel</h3>
 <p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> ändert sich nur, wenn: 1) der erste Parameter IfWin[Not]Active/Exist ist - in diesem Fall wird ErrorLevel bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt; oder 2) das Wort UseErrorLevel in den <em>Optionen</em> vorhanden ist.</p>
+<p><span class="ver">[v1.1.25+]:</span> Ist der erste Parameter "If", wird eine Ausnahme ausgelöst, wenn der zweite Parameter ungültig ist oder eine Speicherzuweisung fehlschlägt. ErrorLevel wird in solchen Fällen nicht gesetzt, aber wäre bei Erfolg immer noch 0.</p>
 <table class="info">
   <tr>
     <th>Fehler</th>
@@ -130,14 +145,16 @@ if ErrorLevel in 5,6
 <p>Die <a href="_InstallKeybdHook.htm">Tastatur</a>- und/oder <a href="_InstallMouseHook.htm">Maus</a>-Hooks werden bei diesem Befehl je nach Bedarf automatisch installiert oder entfernt.</p>
 <p>Zwar kann der Hotkey-Befehl Hotkeys von anderen Skripten nicht direkt aktivieren oder deaktivieren, allerdings kann er sie durch Erstellen oder Aktivieren der gleichen Hotkeys <a href="../misc/Override.htm">überschreiben</a>. Das hängt von mehreren Faktoren ab: 1) Ob der Hotkey, der überschrieben werden soll, ein <a href="ListHotkeys.htm">Hook-Hotkey</a> im anderen Skript ist (Hotkeys ohne Hook können immer überschrieben werden); 2) Die Tatsache, dass die zuletzt gestarteten Hotkeys im Skript generell Vorrang vor den Hotkeys aus den anderen Skripten haben; 3) Ob der <a href="_InstallKeybdHook.htm">Tastatur</a>- oder <a href="_InstallMouseHook.htm">Maus</a>-Hook beim Aktivieren oder Erstellen des Hotkeys erneut aktiviert wird (in diesem Fall ist das Überschreiben immer erfolgreich).</p>
 <p>Sobald ein Skript mindestens einen Hotkey hat, wird es persistent; das heißt, dass <a href="ExitApp.htm">ExitApp</a> anstelle von Exit verwendet werden muss, um dieses Skript beenden zu können. Hotkey-Skripte sind zudem automatisch <a href="_SingleInstance.htm">#SingleInstance</a> (einzeln vorkommend), sofern nicht <code>#SingleInstance, Off</code> verwendet wurde.</p>
-<h3 id="IfWin">Bemerkungen zu <em>Hotkey, IfWinXX [, Fenstertitel, Fenstertext]</em></h3>
-<p>Die "Hotkey IfWin"-Befehle erlauben das Erstellen oder Ändern von kontextabhängigen <a href="../Hotkeys.htm">Hotkeys</a>, während das Skript läuft (Direktiven wie <a href="_IfWinActive.htm">#IfWinActive/Exist</a> sind hingegen von der Position abhängig und werden bereits vor dem Ausführen des Skripts wirksam). Zum Beispiel:</p>
+
+<h3 id="IfWin">Bemerkungen zu <em>Hotkey, If</em></h3>
+<p>Die "Hotkey If"-Befehle erlauben das Erstellen oder Ändern von kontextabhängigen <a href="../Hotkeys.htm">Hotkeys</a>, während das Skript läuft (Direktiven wie <a href="_If.htm">#IfWinActive/Exist</a> sind hingegen von der Position abhängig und werden bereits vor dem Ausführen des Skripts wirksam). Zum Beispiel:</p>
 <pre>Hotkey, IfWinActive, ahk_class Notepad
 Hotkey, ^!e, MeinLabel  <em>; Erstellt einen Hotkey, der nur im Texteditor funktioniert.</em></pre>
-<p>Das Verwenden von "Hotkey IfWin" macht alle danach erstellten oder geänderten <a href="../Hotkeys.htm">Hotkeys</a> kontextabhängig. Darüber hinaus schließen sich die IfWin-Unterbefehle gegenseitig aus; das heißt, dass nur der aktuellste Unterbefehl aktiv sein wird.</p>
-<p>Um die Kontextabhängigkeit zu deaktivieren (so dass danach erstellte Hotkeys für alle Fenster gelten), muss ein beliebiger IfWin-Unterbefehl ohne den Parametern <em>Fenstertitel und Fenstertext</em> angegeben werden. Zum Beispiel: <code>Hotkey, IfWinActive</code>.</p>
-<p>Sollte "Hotkey IfWin" nie im Skript verwendet werden, wird nur die zuletzt verwendete <a href="_IfWinActive.htm">#IfWin</a>-Direktive (falls vorhanden) für den Hotkey-Befehl wirksam.</p>
-<p>Wenn ein Maus- oder Tastatur-Hotkey via IfWin deaktiviert wurde, wird er seine ursprüngliche Funktion durchführen; das heißt, dass er an das aktive Fenster übergeben wird, als gäbe es diesen Hotkey nicht. Es gibt eine Ausnahme: Joystick-Hotkeys: Zwar funktioniert IfWin, allerdings kann es nicht verhindern, dass andere Programme das Drücken einer Taste sehen können.</p>
+<p>Das Verwenden von "Hotkey If" macht alle danach erstellten oder geänderten <a href="../Hotkeys.htm">Hotkeys</a> kontextabhängig. Darüber hinaus schließen sich die If-Unterbefehle gegenseitig aus; das heißt, dass nur der aktuellste Unterbefehl aktiv sein wird.</p>
+<p>Um die Kontextabhängigkeit zu deaktivieren (so dass danach erstellte Hotkeys für alle Fenster gelten), muss ein beliebiger If-Unterbefehl ohne Parameter angegeben werden. Zum Beispiel: <code>Hotkey, If</code> oder <code>Hotkey, IfWinActive</code>.</p>
+<p>Sollte "Hotkey If" nie im Skript verwendet werden, wird nur die zuletzt verwendete <a href="_If.htm">#If</a>- oder <a href="_IfWinActive.htm">#IfWin</a>-Direktive (falls vorhanden) für den Hotkey-Befehl wirksam.</p>
+<p>Wenn ein Maus- oder Tastatur-Hotkey via If-Unterbefehl oder Direktive deaktiviert wurde, wird er seine ursprüngliche Funktion durchführen; das heißt, dass er an das aktive Fenster übergeben wird, als gäbe es diesen Hotkey nicht. Joystick-Hotkeys werden allerdings immer übergeben, egal ob sie deaktiviert sind oder nicht.</p>
+
 <h3 id="variant">Hotkey-Varianten (-Duplikate)</h3>
 <p>Ein bestimmter Hotkey kann mehr als einmal erstellt werden, wenn für jede Definition ein anderes IfWin-Kriterium angegeben wird. Auch bekannt als <em>Hotkey-Varianten</em>. Zum Beispiel:</p>
 <pre>Hotkey, IfWinActive, ahk_class Notepad
@@ -167,6 +184,36 @@ Hotkey, ^!a, , T5  <em>; Erlaubt 5 Threads für diesen Hotkey.</em>
 
 Hotkey, IfWinActive, ahk_class Notepad
 Hotkey, ^!c, MeinLabelFürNotepad  <em>; Erstellt STRG+ALT+C als Hotkey, der nur im Texteditor funktioniert.</em></pre>
+
+<pre class="NoIndent" id="ExampleIfFn"><em>; Mit diesem GUI kannst du primitive Drei-Tasten-Kombinations-Hotkeys registrieren:</em>
+Gui Add, Text, xm, Präfixtaste:
+Gui Add, Edit, yp x100 w100 vPräfix, Space
+Gui Add, Text, xm, Suffix-Hotkey:,
+Gui Add, Edit, yp x100 w100  vSuffix, f &amp; j
+Gui Add, Button, Default, Registrieren
+Gui Show
+return
+
+ButtonRegistrieren() {
+    global
+    Gui Submit, NoHide
+    local fn
+    fn := Func("HotkeySollteAuslösen").Bind(Präfix)
+    Hotkey If, % fn
+    Hotkey % Suffix, HotkeyAuslösen
+}
+
+HotkeySollteAuslösen(Präfix, thisHotkey) {
+    return GetKeyState(Präfix)
+}
+
+HotkeyAuslösen() {
+    MsgBox %A_ThisHotkey%
+}
+
+GuiClose:
+GuiEscape:
+ExitApp</pre>
 
 </body>
 </html>
