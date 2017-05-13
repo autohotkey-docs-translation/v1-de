@@ -1,6 +1,6 @@
 toc = [
   {label:"Kurzübersicht",path:"AutoHotkey.htm"},
-  {label:"Grundlagen und Syntax",children:
+  {label:"Nutzung und Syntax",children:
   [
     {label:"Hotkeys",path:"Hotkeys.htm"},
     {label:"Hotstrings & Auto-Ersetzen",path:"Hotstrings.htm"},
@@ -9,6 +9,8 @@ toc = [
     {label:"Skripte",path:"Scripts.htm"},
     {label:"Variablen und Ausdrücke",path:"Variables.htm"},
     {label:"Funktionen",path:"Functions.htm"},
+    {label:"Label",path:"misc/Labels.htm"},
+    {label:"Threads",path:"misc/Threads.htm"},
     {label:"Debugger-Clients (DBGp)",path:"AHKL_DBGPClients.htm"},
     {label:"Objekte",path:"Objects.htm",children:
     [
@@ -16,11 +18,7 @@ toc = [
       {label:"Erweiterte Grundlagen",path:"Objects.htm#Extended_Usage"},
       {label:"Benutzerdefinierte Objekte",path:"Objects.htm#Custom_Objects"},
       {label:"Standard-base-Objekt",path:"Objects.htm#Default_Base_Object"},
-      {label:"Implementierung",path:"Objects.htm#Implementation"},
-      {label:"Object",path:"objects/Object.htm"},
-      {label:"Enumerator-Objekt",path:"objects/Enumerator.htm"},
-      {label:"File-Objekt",path:"objects/File.htm"},
-      {label:"Funktionsobjekte",path:"objects/Functor.htm"}
+      {label:"Implementierung",path:"Objects.htm#Implementation"}
     ]}
   ]},
   {label:"Häufig gestellte Fragen",path:"FAQ.htm"},
@@ -73,6 +71,7 @@ toc = [
     {label:"FileCreateShortcut",path:"commands/FileCreateShortcut.htm"},
     {label:"FileDelete",path:"commands/FileDelete.htm"},
     {label:"FileEncoding",path:"commands/FileEncoding.htm"},
+    {label:"FileExist",path:"commands/FileExist.htm"},
     {label:"FileGetAttrib",path:"commands/FileGetAttrib.htm"},
     {label:"FileGetShortcut",path:"commands/FileGetShortcut.htm"},
     {label:"FileGetSize",path:"commands/FileGetSize.htm"},
@@ -161,13 +160,18 @@ toc = [
     {label:"ListView",path:"commands/ListView.htm"},
     {label:"TreeView",path:"commands/TreeView.htm"},
     {label:"IfMsgBox",path:"commands/IfMsgBox.htm"},
+    {label:"Bild-Handles",path:"misc/ImageHandles.htm"},
     {label:"InputBox",path:"commands/InputBox.htm"},
+    {label:"LoadPicture",path:"commands/LoadPicture.htm"},
     {label:"Menu",path:"commands/Menu.htm"},
+    {label:"MenuGetHandle",path:"commands/MenuGetHandle.htm"},
+    {label:"MenuGetName",path:"commands/MenuGetName.htm"},
     {label:"MsgBox",path:"commands/MsgBox.htm"},
     {label:"OnMessage",path:"commands/OnMessage.htm"},
     {label:"Progress",path:"commands/Progress.htm"},
     {label:"SplashImage",path:"commands/Progress.htm"},
     {label:"SplashTextOn/SplashTextOff",path:"commands/SplashTextOn.htm"},
+    {label:"Styles für Fenster/Steuerelement",path:"misc/Styles.htm"},
     {label:"ToolTip",path:"commands/ToolTip.htm"},
     {label:"TrayTip",path:"commands/TrayTip.htm"}
   ]},
@@ -175,6 +179,10 @@ toc = [
   [
     {label:"Abs",path:"commands/Math.htm#Abs"},
     {label:"Ceil",path:"commands/Math.htm#Ceil"},
+    {label:"EnvAdd (und Datumsberechnung)",path:"commands/EnvAdd.htm"},
+    {label:"EnvDiv",path:"commands/EnvDiv.htm"},
+    {label:"EnvMult",path:"commands/EnvMult.htm"},
+    {label:"EnvSub (und Datumsdifferenz)",path:"commands/EnvSub.htm"},
     {label:"Exp",path:"commands/Math.htm#Exp"},
     {label:"Floor",path:"commands/Math.htm#Floor"},
     {label:"Log",path:"commands/Math.htm#Log"},
@@ -252,6 +260,16 @@ toc = [
     {label:"URLDownloadToFile",path:"commands/URLDownloadToFile.htm"},
     {label:"VarSetCapacity",path:"commands/VarSetCapacity.htm"}
   ]},
+  {label:"Objekttypen",children:
+  [
+    {label:"Object",path:"objects/Object.htm"},
+    {label:"Enumerator-Objekt",path:"objects/Enumerator.htm"},
+    {label:"Exception-Objekt",path:"commands/Throw.htm#Exception"},
+    {label:"File-Objekt",path:"objects/File.htm"},
+    {label:"Func-Objekt",path:"objects/Func.htm"},
+    {label:"Funktionsobjekte",path:"objects/Functor.htm"},
+    {label:"RegExMatch-Objekt",path:"commands/RegExMatch.htm#MatchObject"},
+  ]},
   {label:"Prozess",children:
   [
     {label:"Process",path:"commands/Process.htm"},
@@ -293,6 +311,7 @@ toc = [
     {label:"InStr",path:"commands/InStr.htm"},
     {label:"Loop (Zeichenkette parsen)",path:"commands/LoopParse.htm"},
     {label:"Ord",path:"commands/Ord.htm"},
+    {label:"RegEx-Kurzübersicht",path:"misc/RegEx-QuickRef.htm"},
     {label:"RegExMatch",path:"commands/RegExMatch.htm"},
     {label:"RegExReplace",path:"commands/RegExReplace.htm"},
     {label:"SetEnv (Var = Wert)",path:"commands/SetEnv.htm"},
@@ -340,6 +359,7 @@ toc = [
       {label:"GroupClose",path:"commands/GroupClose.htm"},
       {label:"GroupDeactivate",path:"commands/GroupDeactivate.htm"}
     ]},
+    {label:"Fenstertitel",path:"misc/WinTitle.htm"},
     {label:"#WinActivateForce",path:"commands/_WinActivateForce.htm"},
     {label:"DetectHiddenText",path:"commands/DetectHiddenText.htm"},
     {label:"DetectHiddenWindows",path:"commands/DetectHiddenWindows.htm"},

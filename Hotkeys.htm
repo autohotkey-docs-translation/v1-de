@@ -85,7 +85,8 @@ return</pre>
     <td><strong>*</strong></td>
     <td><p>Platzhalter: Führt den Hotkey auch dann aus, wenn zusätzliche Modifikatortasten gedrückt gehalten werden. Das wird oft in Verbindung mit der <a href="misc/Remap.htm">Neubelegung</a> von Tasten verwendet. Zum Beispiel:</p>
       <pre>*#c::Run Calc.exe  <em>; WIN+C, UMSCHALT+WIN+C und STRG+WIN+C usw. werden den folgenden Hotkey auslösen.</em>
-*ScrollLock::Run Notepad  <em>; Die ROLLEN-Taste löst den folgenden Hotkey aus, selbst wenn Modifikatortasten gedrückt gehalten werden.</em></pre></td>
+*ScrollLock::Run Notepad  <em>; Die ROLLEN-Taste löst den folgenden Hotkey aus, selbst wenn Modifikatortasten gedrückt gehalten werden.</em></pre>
+      <p>Platzhalter-Hotkeys benutzen immer den Tastatur-Hook, ebenso wie jeder andere Hotkey, der mit einem Platzhalter-Hotkey übereinstimmen würde. Zum Beispiel würde <code>*a::</code> bewirken, dass <code>^a::</code> auch auf den Hook zurückgreift.</p></td>
   </tr>
   <tr id="Tilde">
     <td><strong>~</strong></td>
@@ -100,13 +101,14 @@ return</pre>
 AppsKey Up::ToolTip
 ~AppsKey &amp; &lt;::Send !+{Esc}
 ~AppsKey &amp; &gt;::Send !{Esc}</pre>
+      <p>Wenn mindestens eine Variante eines Tastatur-Hotkeys den Tilde-Modifikator hat, dann benutzt dieser Hotkey immer den Tastatur-Hook.</p>
     </td>
   </tr>
   <tr id="prefixdollar">
     <td><strong>$</strong></td>
     <td>
       <p>Dieses Präfix ist normalerweise nur notwendig, wenn das Skript den <a href="commands/Send.htm">Send</a>-Befehl verwendet, um Tasten zu senden, die den Hotkey selbst enthalten, der sich ansonsten selbst auslösen würde. Das $-Präfix erzwingt den <a href="commands/_InstallKeybdHook.htm">Tastatur-Hook</a> zum Implementieren des Hotkeys, wodurch als Nebeneffekt der <a href="commands/Send.htm">Send</a>-Befehl den Hotkey nicht mehr auslösen kann. Dieser Präfix ist das gleiche wie, als hätte man <code><a href="commands/_UseHook.htm">#UseHook</a></code> irgendwo vor der Hotkey-Definition angegeben.</p>
-      <p>Das $-Präfix hat keinen Effekt auf Maus-Hotkeys, weil sie immer den Maus-Hook verwenden. Es hat außerdem keinen Effekt auf Hotkeys, die bereits den Tastatur-Hook benötigen, einschließlich aller Tastatur-Hotkeys mit den Modifikatoren <a href="#Tilde">Tilde (~)</a> oder <a href="#wildcard">Platzhalter (*)</a>, Taste-Oben-Hotkeys und benutzerdefinierten Kombinationen.</p>
+      <p>Das $-Präfix hat keinen Effekt auf Maus-Hotkeys, weil sie immer den Maus-Hook verwenden. Es hat außerdem keinen Effekt auf Hotkeys, die bereits den Tastatur-Hook benötigen, einschließlich aller Tastatur-Hotkeys mit den Modifikatoren <a href="#Tilde">Tilde (~)</a> oder <a href="#wildcard">Platzhalter (*)</a>, Taste-Oben-Hotkeys und benutzerdefinierten Kombinationen. Mit <a href="commands/ListHotkeys.htm">ListHotkeys</a> kann man feststellen, ob ein bestimmter Hotkey den Tastatur-Hook benutzt.</p>
       <p><span class="ver">[v1.1.06+]:</span> <a href="commands/_InputLevel.htm">#InputLevel</a> und <a href="commands/SendLevel.htm">SendLevel</a> ermöglichen zusätzliche Kontrolle darüber, welche Hotkeys und Hotstrings durch den Send-Befehl ausgelöst werden sollen.</p>
     </td>
   </tr>
@@ -118,6 +120,7 @@ AppsKey Up::ToolTip
 </pre>
       <p>"Up" kann auch bei normalen Hotkeys verwendet werden. Zum Beispiel: <code>^!r Up::MsgBox Sie haben STRG+ALT+R gedrückt und losgelassen</code>. Das funktioniert auch mit <a href="#combo">kombinierten Hotkeys</a> (z. B. <code>F1 &amp; e Up::</code>).</p>      
       <p>Einschränkungen: 1) "Up" funktioniert nicht bei <a href="KeyList.htm">Joystick-Tasten</a>; und 2) Ein "Up"-Hotkey ohne entsprechend normalem/gedrücktem Gegenstück wird diese Taste komplett übernehmen, um zu verhindern, dass sie stecken bleibt. Dieses Verhalten kann beispielsweise unterdrückt werden, wenn ein <a href="#Tilde">Tilde-Präfix</a> hinzugefügt wird (z. B. <code><strong>~</strong>LControl up::</code>).</p>
+      <p>UP-Hotkeys und ihre entsprechenden DOWN-Parts (sofern vorhanden) benutzen immer den Tastatur-Hook.</p>
       <p>Mit einer ähnlichen Methode kann ein Hotkey zu einer Präfix-Taste gemacht werden. Der Vorteil davon ist, dass der Hotkey beim Loslassen nur ausgeführt wird, wenn keine andere Taste gedrückt wird, während er gedrückt gehalten wird. Zum Beispiel:</p>
       <pre>LControl &amp; F1::Return  <em>; Macht die linke STRG-Taste zu einem Präfix, wenn sie mindestens einmal vor "&amp;" verwendet wird.</em>
 LControl::MsgBox Sie haben LControl ohne Auswirkung losgelassen.</pre></td>
@@ -169,6 +172,7 @@ AppsKey &amp; -::MsgBox Hotkey aktiviert.
 <em>; , &amp; . &amp; -::</em>
 #if GetKeyState(",") &amp;&amp; GetKeyState(".")
 -::MsgBox</pre>
+<p><strong>Tastatur-Hook:</strong> Benutzerdefinierte Kombinationen mit Tastatur-Tasten benutzen immer den Tastatur-Hook, ebenso wie alle Hotkeys, die die Präfixtaste als Suffix benutzen. Zum Beispiel würde <code>a &amp; b::</code> bewirken, dass <code>^a::</code> immer den Hook benutzt.</p>
 
 <h2 id="Features">Sonstige Features</h2>
 <p><strong>NUM-, FESTSTELL- und ROLLEN-Taste</strong>: Diese Tasten können dazu gezwungen werden, "AlwaysOn" (immer an) oder "AlwaysOff" (immer aus) zu sein. Zum Beispiel: <code><a href="commands/SetNumScrollCapsLockState.htm">SetNumlockState</a> AlwaysOn</code>.</p>

@@ -181,10 +181,18 @@ Gui Show, h70, Test</pre>
 <p>Siehe separate Seiten für <a href="ListView.htm">ListView</a> und <a href="TreeView.htm">TreeView</a>.</p>
 
 <h2 id="Link">Link <span class="ver">[v1.1.06+]</span></h2>
-<p>Beschreibung: Ein Text-Steuerelement, das anklickbare Links enthalten kann. Link-Steuerelemente verwenden die HTML-Sprache (Hypertext Markup Language), von der nur das A-Tag unterstützt wird. Innerhalb des öffnenden Tags kann ein Attribut in Form von Attribut="Wert" angegeben werden. Normalerweise wird hierbei ein ID- oder HREF-Attribut verwendet, zum Beispiel:</p>
+<p>Beschreibung: Ein Text-Steuerelement, das anklickbare Links enthalten kann. Link-Steuerelemente verwenden die HTML-Sprache (Hypertext Markup Language), von der nur das A-Tag unterstützt wird. Innerhalb des öffnenden Tags kann ein Attribut in Form von HREF="Wert" oder ID="Wert" angegeben werden. Zum Beispiel:</p>
 <pre>Gui, Add, Link,, Das ist ein &lt;a href="https://autohotkey.com"&gt;Link&lt;/a&gt;
-Gui, Add, Link,, Links können überall im Text angegeben werden, wie beispielsweise &lt;a id="1"&gt;hier&lt;/a&gt; oder &lt;a id="2"&gt;dort&lt;/a&gt;</pre>
-<p>Die Klicks auf einem Link werden automatisch behandelt, wenn das HREF-Attribut gesetzt und ausführbar ist (z. B. eine URL oder ein Befehl). Wenn das HREF-Attribut nicht verwendet wird oder nicht ausführbar ist, kann ein <a href="Gui.htm#label">g-Label</a> wie <code><strong>g</strong>MeineSubroutine</code> gestartet werden, sofern vorhanden. Dabei wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf den Attributswert gesetzt, sodass der angeklickte Link identifiziert werden kann.</p>
+Gui, Add, Link,, Links können überall im Text angegeben werden, wie beispielsweise &lt;a id="A"&gt;hier&lt;/a&gt; oder &lt;a id="B"&gt;dort&lt;/a&gt;</pre>
+<p>Wenn das HREF-Attribut angegeben ist und einen gültigen Wert in Form eines ausführbaren Befehls oder einer URL enthält, wird dieser Wert wie bei einem <a href="Run.htm">Run</a>-Befehl ausgeführt. Allerdings kann ein ausführbarer Befehl keine doppelten Anführungszeichen enthalten. Eine URL kann in der Regel prozentkodierte Zeichen wie <code>`%22</code> enthalten, aber diese werden vom Webbrowser des Benutzers interpretiert, nicht vom Link-Steuerelement.</p>
+<p>Hat das Steuerelement ein <a href="Gui.htm#label">g-Label</a> wie z. B. <code><strong>g</strong>MeineSubroutine</code>, wird das Label gestartet, wann immer ein Link ohne HREF-Attribut angeklickt wird oder wenn der Befehl oder die URL nicht ausgeführt werden kann. Die Subroutine kann auf folgende Variablen zurückgreifen:</p>
+<ul>
+  <li>A_GuiEvent enthält den Typ des Ereignisses; momentan immer das Wort "Normal".</li>
+  <li>A_EventInfo enthält den 1-basierenden Index des Links.</li>
+  <li>ErrorLevel enthält den HREF-Attributwert des Links, falls vorhanden; ansonsten den ID-Attributwert des Links oder eine leere Zeichenkette.</li>
+</ul>
+<p>Wenn das g-Label eine Funktion ist, kann es die folgenden Parameter akzeptieren:</p>
+<pre class="Syntax">MeineFunktion(StrlmntHwnd, GuiEreignis, LinkIndex, HrefOderID)</pre>
 
 <h2 id="Hotkey">Hotkey</h2>
 <p>Beschreibung: Ein Feld, das zwar wie ein einzeiliges Edit-Steuerelement aussieht, aber stattdessen eine Tastenkombination akzeptiert, die der Benutzer gedrückt hat. Drückt der Benutzer beispielsweise STRG+ALT+C auf einer deutschen Tastatur, würde das Feld "STRG + ALT + C" anzeigen. Beispiel:</p>
@@ -363,7 +371,7 @@ Gui, Tab, Name,, Exact  <em>; Das gleiche wie oben, aber mit exakter Übereinsti
 <p><strong>Choose</strong>: Siehe <a href="#ChooseTab">oben</a>.</p>
 <p><strong>-Background</strong>: Überschreibt die <a href="Gui.htm#Color">benutzerdefinierte Hintergrundfarbe des Fensters</a> und verwendet die Standardfarbe des Tab-Steuerelements vom Betriebssystem. Verwende <code>+Theme -Background</code>, um das Tab-Steuerelement an das aktuelle Desktop-Theme anzupassen. Allerdings werden dadurch die meisten Steuerelementarten im Tab-Steuerlement merkwürdig dargestellt, weil deren Hintergründe nicht mit dem Hintergrund des Tab-Steuerelements übereinstimmen. Bei einigen Steuerelementarten (wie <a href="#Text">Text</a>) kann das Problem behoben werden, wenn BackgroundTrans in deren Optionen eingefügt wird.</p>
 <p><strong>Buttons</strong>: Erstellt eine Reihe von Buttons auf der oberen Seite des Steuerelements, statt eine Reihe von Tabs (in diesem Fall wird standardmäßig kein Rahmen angezeigt, weil die Anzeigefläche dabei typischerweise keine Steuerelemente enthält).</p>
-<p><strong>Left/Right/Bottom</strong>: Verwende eins dieser Wörter, um die Tabs an der linken, rechten oder unteren Seite anzuzeigen, anstatt an der oberen. Für Left und Right gelten Einschränkungen, siehe dazu <a href="../misc/Styles.htm#tcs_vertical">TCS_VERTICAL</a>.</p>
+<p><strong>Left/Right/Bottom</strong>: Verwende eins dieser Wörter, um die Tabs an der linken, rechten oder unteren Seite anzuzeigen, anstatt an der oberen. Für Left und Right gelten Einschränkungen, siehe dazu <a href="../misc/Styles.htm#TCS_VERTICAL">TCS_VERTICAL</a>.</p>
 <p><strong>-Wrap</strong>: Verhindert, dass die Tabs mehr als eine Reihe verbrauchen (sind hierbei zu viele Tabs vorhanden, werden Buttons mit Pfeilen angezeigt, die der Benutzer drücken kann, um zwischen den Tabs zu wechseln).</p>
 <p>Um die Anzahl der Textreihen innerhalb des Steuerelements zu bestimmen (oder deren Höhe und Breite), siehe <a href="Gui.htm#PosSize">Position und Größe von Steuerelementen anpassen</a>.</p>
 <p><strong>Symbole in Tabs</strong>: Mit <a href="PostMessage.htm">SendMessage</a> kann ein Symbol neben dem Tabnamen angezeigt werden. Siehe dazu den Forumsbeitrag <a href="http://www.autohotkey.com/forum/topic6060.html">Icons in tabs</a>.</p>
@@ -477,8 +485,8 @@ else if A_GuiEvent = N
         return
 
     <em>; Extrahiert Infos aus der NMIPADDRESS-Struktur</em>
-    iField := NumGet(A_EventInfo + 2*A_PtrSize + 4, "int")
-    iValue := NumGet(A_EventInfo + 2*A_PtrSize + 8, "int")
+    iField := NumGet(A_EventInfo + 2*A_PtrSize + 0, "int")
+    iValue := NumGet(A_EventInfo + 2*A_PtrSize + 4, "int")
     if iValue &gt;= 0
         ToolTip Feld #%iField% geändert: %iValue%
     else
