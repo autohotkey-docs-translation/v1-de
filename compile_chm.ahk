@@ -25,6 +25,9 @@ for i, env_var in ["ProgramFiles", "ProgramFiles(x86)", "ProgramW6432"]
     }
 }
 
+; Rebuild Index.hhk and Table of Contents.hhc.
+RunWait "%A_AhkPath%" "static\source\CreateFiles4Help.ahk"
+
 ; Convert files to ISO-8859-1 because chm doesn't support UTF-8
 TempDir := A_Temp "\compile_chm\"
 
@@ -46,9 +49,7 @@ Loop, Files, *.*, FR
         FileCopy, % A_LoopFileLongPath, % TempDir A_LoopFileFullPath
 }
 
-; Rebuild Index.hhk and Table of Contents.hhc.
-RunWait "%A_AhkPath%" "%TempDir%static\source\CreateFiles4Help.ahk"
-RunWait "%A_AhkPath%" "static\source\CreateFiles4Help.ahk"
+FileMove %TempDir%static\content.chm.js, %TempDir%static\content.js, 1
 
 ; Compile AutoHotkey.chm.
 RunWait %hhc% "%TempDir%\Project.hhp"
