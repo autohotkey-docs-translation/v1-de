@@ -112,7 +112,7 @@ h := DllCall("OpenProcess", "UInt", 0x0400, "Int", false, "UInt", ErrorLevel, "P
 DllCall("Advapi32.dll\OpenProcessToken", "Ptr", h, "UInt", 32, "PtrP", t)
 VarSetCapacity(ti, 16, 0)  <em>; Struktur mit Berechtigungen</em>
 NumPut(1, ti, 0, "UInt")  <em>; Setzt einen Eintrag in das Array mit Berechtigungen ...</em>
-<em>; Ermittelt die lokale eindeutige ID der Debug-Berechtigung:</em>
+<em>; Ermittelt den lokalen eindeutigen Identifikator der Debug-Berechtigung:</em>
 DllCall("Advapi32.dll\LookupPrivilegeValue", "Ptr", 0, "Str", "SeDebugPrivilege", "Int64P", luid)
 NumPut(luid, ti, 4, "Int64")
 NumPut(2, ti, 12, "UInt")  <em>; Aktiviert diese Berechtigung: SE_PRIVILEGE_ENABLED = 2</em>
@@ -122,10 +122,10 @@ DllCall("CloseHandle", "Ptr", t)  <em>; Schließt diesen Zugriffstoken-Handle, u
 DllCall("CloseHandle", "Ptr", h)  <em>; Schließt diesen Prozess-Handle, um Speicher freizugeben.</em>
 
 hModule := DllCall("LoadLibrary", "Str", "Psapi.dll")  <em>; Erhöht die Performance durch Vorausladen der Library.</em>
-s := VarSetCapacity(a, s)  <em>; Ein Array, in der die Liste der Prozess-IDs gespeichert wird:</em>
+s := VarSetCapacity(a, s)  <em>; Ein Array, in der die Liste der Prozessidentifikatoren gespeichert wird:</em>
 c := 0  <em>; Zähler für die Prozess-IDs</em>
 DllCall("Psapi.dll\EnumProcesses", "Ptr", &amp;a, "UInt", s, "UIntP", r)
-Loop, % r // 4  <em>; Parst das Array in IDs als DWORDs (32 Bit):</em>
+Loop, % r // 4  <em>; Parst das Array mit Identifikatoren als DWORDs (32 Bit):</em>
 {
    id := NumGet(a, A_Index * 4, "UInt")
    <em>; Öffnet Prozess mit: PROCESS_VM_READ (0x0010) | PROCESS_QUERY_INFORMATION (0x0400)</em>
