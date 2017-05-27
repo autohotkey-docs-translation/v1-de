@@ -13,7 +13,7 @@
 
 <h1>WinLIRC-Client</h1>
 
-<p>Dieses Skript empfängt Nachrichten von <a href="http://winlirc.sourceforge.net">WinLIRC</a>, sobald eine Taste der Fernbedienung gedrückt wird. Außerdem kann damit Winamp, Windows Media Player und so weiter automatisiert werden. Es ist einfach zu konfigurieren. Wenn zum Beispiel WinLIRC einen Button namens "VolUp" auf der Fernbedienung erkennt, dann wird ein Label namens VolUp erstellt und der Befehl <code>SoundSet +5</code> darunter verwendet, um die Lautstärke der Soundkarte um 5 % zu erhöhen.
+<p>Dieses Skript empfängt Benachrichtigungen von <a href="http://winlirc.sourceforge.net">WinLIRC</a>, sobald eine Taste der Fernbedienung gedrückt wird. Außerdem kann damit Winamp, Windows Media Player und so weiter automatisiert werden. Es ist einfach zu konfigurieren. Wenn zum Beispiel WinLIRC einen Button namens "VolUp" auf der Fernbedienung erkennt, dann wird ein Label namens VolUp erstellt und der Befehl <code>SoundSet +5</code> darunter verwendet, um die Lautstärke der Soundkarte um 5 % zu erhöhen.
 </p>
 <p><a href="WinLIRC.ahk">Dieses Skript herunterladen</a>  |  <a href="index.htm">Andere Beispiel-Skripte</a>  |  <a href="../AutoHotkey.htm">Home</a></p>
 
@@ -143,10 +143,10 @@ DetectHiddenWindows Off
 
 <em>; Sobald das Betriebssystem dem Skript meldet, dass eingehende Daten darauf warten,
 ; empfangen zu werden, wird eine Funktion ausgeführt, um die Daten zu lesen:</em>
-NotificationMsg = 0x5555  <em>; Eine beliebige Nachrichtenzahl, aber größer als 0x1000.</em>
+NotificationMsg = 0x5555  <em>; Eine beliebige Meldungsnummer, aber größer als 0x1000.</em>
 OnMessage(NotificationMsg, "ReceiveData")
 
-<em>; Die Verbindung einstellen, um das Skript zu benachrichtigen, sobald neue Daten eingetroffen sind.
+<em>; Die Verbindung einstellen, um das Skript via Meldung zu benachrichtigen, sobald neue Daten eingetroffen sind.
 ; Dadurch wird verhindert, dass die Verbindung abgefragt werden muss, daher verringert sich der Ressourcenverbrauch.</em>
 FD_READ = 1     <em>; Wird empfangen, falls lesbare Daten verfügbar sind.</em>
 FD_CLOSE = 32   <em>; Wird empfangen, falls die Verbindung unterbrochen wurde.</em>
@@ -211,7 +211,7 @@ ReceiveData(wParam, lParam)
 ; bei der Verbindung eintreffen.  Sie liest die Daten aus WinLIRC und führt entsprechende Aktionen abhängig
 ; vom Inhalt durch.</em>
 {
-    Critical  <em>; Verhindert, dass die Nachricht von einer anderen Nachricht verworfen wird, da der Thread bereits ausgeführt wird.</em>
+    Critical  <em>; Verhindert, dass die Meldung von einer anderen Meldung verworfen wird, da der Thread bereits ausgeführt wird.</em>
     socket := wParam
     ReceivedDataSize = 4096  <em>; Hoher Wert, falls viele Daten zwischengespeichert werden, weil eine Verzögerung beim Verarbeiten der vorherigen Daten auftreten kann.</em>
 
@@ -235,7 +235,7 @@ ReceiveData(wParam, lParam)
     <em>; 0000000000eab154 00 Tastenname Fernbedienungsname</em>
     Loop, parse, ReceivedData, `n, `r
     {
-        if A_LoopField in ,BEGIN,SIGHUP,END  <em>; Leere Zeilen und Startnachricht von WinLIRC ignorieren.</em>
+        if A_LoopField in ,BEGIN,SIGHUP,END  <em>; Leere Zeilen und Startmeldungen von WinLIRC ignorieren.</em>
             continue
         ButtonName =  <em>; Leer machen, falls weniger als 3 Felder unten gefunden werden.</em>
         Loop, parse, A_LoopField, %A_Space%  <em>; Tastenname extrahieren, der sich im dritten Feld befindet.</em>
@@ -260,7 +260,7 @@ ReceiveData(wParam, lParam)
             PrevButtonTime := A_TickCount
         }
     }
-    return 1  <em>; Dem Programm melden, dass die Nachricht nicht weiter verarbeitet werden muss.</em>
+    return 1  <em>; Dem Programm melden, dass die Meldung nicht weiter verarbeitet werden muss.</em>
 }
 
 

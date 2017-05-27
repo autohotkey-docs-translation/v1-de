@@ -12,14 +12,14 @@
 
 <h1>OnMessage()</h1>
 
-<p>Bestimmt eine <a href="../Functions.htm">Funktion</a> oder ein <a href="../objects/Functor.htm">Funktionsobjekt</a>, die automatisch aufgerufen werden sollen, wenn das Skript die angegebene Nachricht empfängt.</p>
+<p>Bestimmt eine <a href="../Functions.htm">Funktion</a> oder ein <a href="../objects/Functor.htm">Funktionsobjekt</a>, die automatisch aufgerufen werden sollen, wenn das Skript die angegebene Meldung empfängt.</p>
 
-<pre class="Syntax">OnMessage(NachrNummer [, Funktion, MaxThreads])</pre>
+<pre class="Syntax">OnMessage(Meldenummer [, Funktion, MaxThreads])</pre>
 <h3>Parameter</h3>
 <dl>
 
-  <dt>NachrNummer</dt>
-  <dd><p>Die Nummer der Nachricht zwischen 0 und 4294967295 (0xFFFFFFFF), die überwacht oder abgefragt werden soll. Sofern das Überwachen einer <a href="../misc/SendMessageList.htm">Systemnachricht</a> nicht erforderlich ist (also eine unter 0x400), sollte man am besten eine Nummer verwenden, die größer ist als 4096 (0x1000). Diese Methode verringert die Chance, dass interne Nachrichten von AutoHotkey gestört werden.</p></dd>
+  <dt>Meldenummer</dt>
+  <dd><p>Die Nummer einer Meldung zwischen 0 und 4294967295 (0xFFFFFFFF), die überwacht oder abgefragt werden soll. Sofern das Überwachen einer <a href="../misc/SendMessageList.htm">Systemmeldung</a> nicht erforderlich ist (also eine unter 0x400), sollte man am besten eine Nummer verwenden, die größer ist als 4096 (0x1000). Diese Methode verringert die Chance, dass interne Meldungen von AutoHotkey gestört werden.</p></dd>
 
   <dt>Funktion</dt>
   <dd><p>Der Name einer <a href="../Functions.htm">Funktion</a>, oder seit <span class="ver">[v1.1.20+]</span> ein <a href="../objects/Functor.htm">Funktionsobjekt</a>. Um einen literalen Funktionsnamen zu übergeben, muss er in Anführungszeichen gesetzt werden.</p>
@@ -27,8 +27,8 @@
   </dd>
 
   <dt id="MaxThreads">MaxThreads <span class="ver">[v1.0.47+]</span></dt>
-  <dd><p>Normalerweise lässt man diesen Parameter (Integer) weg, um die überwachende Funktion jeweils auf einen einzigen <a href="../misc/Threads.htm">Thread</a> zu begrenzen. Diese Methode ist üblicherweise am sinnvollsten, weil das Skript sonst Nachrichten in chronologisch falscher Reihenfolge abarbeiten würde, wann immer die überwachende Funktion sich selbst unterbricht. Demzufolge kann <em>Critical</em> als Alternative zu <em>MaxThreads</em> verwendet werden, wie es <a href="#Critical">weiter unten</a> beschrieben wird.</p>
-  <p><span class="ver">[v1.1.20+]:</span> Standardmäßig werden mehrere Funktionen, die für eine einzige <em>NachrNummer</em> registriert sind, in der Reihenfolge aufgerufen, wie sie registriert wurden. Um eine Funktion zu registrieren, die vor allen anderen registrierten Funktionen erfolgen soll, muss ein negativer Wert bei <em>MaxThreads</em> angegeben werden. Zum Beispiel würde <code>OnMessage(Nachr, Fn,-2)</code> die Funktion <code>Fn</code> vor allen anderen registrierten Funktionen für die Nachricht <em>Nachr</em> aufrufen, und maximal 2 Threads für <em>Fn</em> erlauben. Wenn die Funktion allerdings bereits registriert ist, wird die Reihenfolge nicht geändert, sofern sie nicht de- und dann neuregistriert wurde.</p></dd>
+  <dd><p>Normalerweise lässt man diesen Parameter (Integer) weg, um die überwachende Funktion jeweils auf einen einzigen <a href="../misc/Threads.htm">Thread</a> zu begrenzen. Diese Methode ist üblicherweise am sinnvollsten, weil das Skript sonst Meldungen in chronologisch falscher Reihenfolge abarbeiten würde, wann immer die überwachende Funktion sich selbst unterbricht. Demzufolge kann <em>Critical</em> als Alternative zu <em>MaxThreads</em> verwendet werden, wie es <a href="#Critical">weiter unten</a> beschrieben wird.</p>
+  <p><span class="ver">[v1.1.20+]:</span> Standardmäßig werden mehrere Funktionen, die für eine einzige <em>Meldenummer</em> registriert sind, in der Reihenfolge aufgerufen, wie sie registriert wurden. Um eine Funktion zu registrieren, die vor allen anderen registrierten Funktionen erfolgen soll, muss ein negativer Wert bei <em>MaxThreads</em> angegeben werden. Zum Beispiel würde <code>OnMessage(Meld, Fn,-2)</code> die Funktion <code>Fn</code> vor allen anderen registrierten Funktionen für <em>Meld</em> aufrufen, und maximal 2 Threads für <em>Fn</em> erlauben. Wenn die Funktion allerdings bereits registriert ist, wird die Reihenfolge nicht geändert, sofern sie nicht de- und dann neuregistriert wurde.</p></dd>
 
 </dl>
 
@@ -36,32 +36,32 @@
 <p>OnMessage's Rückgabewert und Verhalten sind abhängig davon, ob der <em>Funktion</em>sparameter ein Funktionsname oder ein Objekt ist.</p>
 
 <h4>Funktionsname</h4>
-<p>Aus Gründen der Abwärtskompatibilität kann höchstens eine Funktion via Name registriert werden, um jede einzigartige <em>NachrNummer</em> zu überwachen -- dies wird auch als "Legacy"-Überwachung bezeichnet.</p>
+<p>Aus Gründen der Abwärtskompatibilität kann höchstens eine Funktion via Name registriert werden, um jede einzigartige <em>Meldenummer</em> zu überwachen -- dies wird auch als "Legacy"-Überwachung bezeichnet.</p>
 <p>Wenn die Legacy-Überwachung das erste Mal registriert wird, ist die Tatsache, ob sie vor oder nach zuvor registrierten Überwachungen aufgerufen wird, abhängig vom <em>MaxThreads</em>-Parameter. Die Überwachung dahingehend zu ändern, eine andere Funktion aufzurufen, beeinflusst nicht die Reihenfolge, sofern die Überwachung nicht erst deregistriert wird.</p>
-<p>Folgendes registriert oder ändert die Legacy-Überwachung für <em>NachrNummer</em> (lass die Anführungszeichen weg, wenn du eine Variable übergeben willst):</p>
-<pre class="Syntax">Name := OnMessage(NachrNummer, "Funktionsname")</pre>
+<p>Folgendes registriert oder ändert die Legacy-Überwachung für <em>Meldenummer</em> (lass die Anführungszeichen weg, wenn du eine Variable übergeben willst):</p>
+<pre class="Syntax">Name := OnMessage(Meldenummer, "Funktionsname")</pre>
 <p>Der Rückgabewert ist einer der folgenden:</p>
 <ul>
   <li>Eine leere Zeichenkette bei <a href="#Failure">Fehlschlag</a>.</li>
   <li>Der Name der vorherigen Funktion, sofern es eine gab.</li>
   <li>Ansonsten der Name der neuen Funktion.</li>
 </ul>
-<p>Folgendes deregistriert die aktuelle Legacy-Überwachung für <em>NachrNummer</em> (falls vorhanden) und gibt ihren Namen zurück (leer, wenn sie keinen hat):</p>
-<pre class="Syntax">Name := OnMessage(NachrNummer, "")</pre>
-<p>Folgendes gibt den Namen der aktuellen Legacy-Überwachung für <em>NachrNummer</em> zurück (leer, wenn sie keinen hat):</p>
-<pre class="Syntax">Name := OnMessage(NachrNummer)</pre>
+<p>Folgendes deregistriert die aktuelle Legacy-Überwachung für <em>Meldenummer</em> (falls vorhanden) und gibt ihren Namen zurück (leer, wenn sie keinen hat):</p>
+<pre class="Syntax">Name := OnMessage(Meldenummer, "")</pre>
+<p>Folgendes gibt den Namen der aktuellen Legacy-Überwachung für <em>Meldenummer</em> zurück (leer, wenn sie keinen hat):</p>
+<pre class="Syntax">Name := OnMessage(Meldenummer)</pre>
 
 <h4>Funktionsobjekt</h4>
-<p>Beliebig viele <a href="../objects/Functor.htm">Funktionsobjekte</a> (einschließlich <a href="../objects/Func.htm">normale Funktionen</a>) können die angegebene <em>NachrNummer</em> überwachen.</p>
+<p>Beliebig viele <a href="../objects/Functor.htm">Funktionsobjekte</a> (einschließlich <a href="../objects/Func.htm">normale Funktionen</a>) können die angegebene <em>Meldenummer</em> überwachen.</p>
 <p>Beide folgenden Zeilen registrieren ein Funktionsobjekt, das <strong>nach</strong> allen zuvor registrierten Funktionen aufgerufen wird:</p>
 <pre class="Syntax">
-OnMessage(NachrNummer, FunkObj)     <em>; Option 1</em>
-OnMessage(NachrNummer, FunkObj, 1)  <em>; Option 2 (MaxThreads = 1)</em>
+OnMessage(Meldenummer, FunkObj)     <em>; Option 1</em>
+OnMessage(Meldenummer, FunkObj, 1)  <em>; Option 2 (MaxThreads = 1)</em>
 </pre>
 <p>Folgendes registriert ein Funktionsobjekt, das <strong>vor</strong> allen zuvor registrierten Funktionen aufgerufen wird:</p>
-<pre class="Syntax">OnMessage(NachrNummer, FunkObj, -1)</pre>
+<pre class="Syntax">OnMessage(Meldenummer, FunkObj, -1)</pre>
 <p>Um ein Funktionsobjekt zu deregistrieren, muss 0 bei <em>MaxThreads</em> angegeben werden:</p>
-<pre class="Syntax">OnMessage(NachrNummer, FunkObj, 0)</pre>
+<pre class="Syntax">OnMessage(Meldenummer, FunkObj, 0)</pre>
 
 <h3 id="Failure">Misserfolg</h3>
 <p>Misserfolg tritt auf, wenn <em>Funktion</em>:</p>
@@ -70,55 +70,55 @@ OnMessage(NachrNummer, FunkObj, 1)  <em>; Option 2 (MaxThreads = 1)</em>
   <li>wissentlich mehr als vier Parameter benötigt; oder</li>
   <li>in v1.0.48.05 oder älter <a href="../Functions.htm#ByRef">ByRef</a>- oder <a href="../Functions.htm#optional">optionale</a> Parameter hat.</li>
 </ol>
-<p>In v1.1.19.03 oder älter tritt Misserfolg auch auf, wenn das Skript versucht, eine neue Nachricht zu überwachen, während bereits 500 Nachrichten überwacht werden.</p>
+<p>In v1.1.19.03 oder älter tritt Misserfolg auch auf, wenn das Skript versucht, eine neue Meldung zu überwachen, während bereits 500 Meldungen überwacht werden.</p>
 <p>Wenn <em>Funktion</em> ein Objekt ist, wird bei Misserfolg eine Ausnahme ausgelöst. Ansonsten wird eine leere Zeichenkette zurückgegeben.</p>
 
 <h3>Die Parameter der Funktion</h3>
-<p>Eine <a href="../Functions.htm">Funktion</a>, die in OnMessage zum Überwachen von einer oder mehreren Nachrichten angegeben wurde, akzeptiert bis zu vier Parameter:</p>
-<pre>MeineNachrichtenüberwachung(wParam, lParam, msg, hwnd)
+<p>Eine <a href="../Functions.htm">Funktion</a>, die in OnMessage zum Überwachen von einer oder mehreren Meldungen angegeben wurde, akzeptiert bis zu vier Parameter:</p>
+<pre>MeineMeldeüberwachung(wParam, lParam, msg, hwnd)
 {
     ... Funktionsbereich ...
 }</pre>
 <p>Zwar können die Parameter einen beliebigen Namen haben, allerdings müssen sie in einer bestimmten Reihenfolge zugewiesen werden:</p>
-<p>Parameter #1: WPARAM-Wert der Nachricht.<br>
-Parameter #2: LPARAM-Wert der Nachricht.<br>
-Parameter #3: Nachrichtennummer, die dort gebraucht wird, wo eine Funktion mehr als eine Nachricht überwacht.<br>
-Parameter #4: HWND (eindeutige ID) des Fensters oder Steuerelements, zu dem die Nachricht gesendet wurde. Das HWND kann in Verbindung mit <a href="../misc/WinTitle.htm#ahk_id">ahk_id</a> verwendet werden.</p>
+<p>Parameter #1: WPARAM-Wert der Meldung.<br>
+Parameter #2: LPARAM-Wert der Meldung.<br>
+Parameter #3: Meldungsnummer, die dort gebraucht wird, wo eine Funktion mehr als eine Meldung überwacht.<br>
+Parameter #4: HWND (eindeutige ID) des Fensters oder Steuerelements, zu dem die Meldung gesendet wurde. Das HWND kann in Verbindung mit <a href="../misc/WinTitle.htm#ahk_id">ahk_id</a> verwendet werden.</p>
 <p>WPARAM und LPARAM sind vorzeichenlose 32-Bit-Integer (von 0 bis 2<sup>32</sup>-1) oder vorzeichenbehaftete 64-Bit-Integer (von -2<sup>63</sup> bis 2<sup>63</sup>-1), abhängig davon, ob die skript-ausführende EXE-Datei 32- oder 64-Bit ist. Wenn bei einem 32-Bit-Skript ein eingehender Parameter als vorzeichenbehafteter Integer vorgesehen ist, können negative Zahlen zum Beispiel wie folgt offenbart werden:</p>
 <pre>if (A_PtrSize = 4 &amp;&amp; wParam &gt; 0x7FFFFFFF)  <em>; Das Überprüfen von <a href="../Variables.htm#PtrSize">A_PtrSize</a> stellt sicher, dass das Skript 32-Bit ist.</em>
     wParam := -(~wParam) - 1</pre>
-<p>Du kannst eine oder mehrere Parameter vom Ende der Liste weglassen, wenn du die entsprechende Information nicht benötigst. Zum Beispiel würde eine Funktion, definiert als <code>MeineNachrichtenüberwachung(wParam, lParam)</code>, nur die ersten zwei Parameter empfangen, und eine, definiert als <code>MeineNachrichtenüberwachung()</code>, gar keine von  ihnen.</p>
+<p>Du kannst eine oder mehrere Parameter vom Ende der Liste weglassen, wenn du die entsprechende Information nicht benötigst. Zum Beispiel würde eine Funktion, definiert als <code>MeineMeldeüberwachung(wParam, lParam)</code>, nur die ersten zwei Parameter empfangen, und eine, definiert als <code>MeineMeldeüberwachung()</code>, gar keine von  ihnen.</p>
 
 <h3>Weitere verfügbare Informationen für die Funktion</h3>
 <p>Neben den oben genannten Parametern kann die Funktion auch auf die Werte der folgenden Built-in-Variablen zurückgreifen:</p>
 <ul>
-  <li><a href="../Variables.htm#Gui">A_Gui</a>: Wenn die Nachricht zu einem GUI-Fenster oder -Steuerelement gesendet wurde, wird A_Gui die <a href="Gui.htm#MultiWin">Nummer des GUI-Fensters</a> sein (dieses Fenster ist auch das <a href="Gui.htm#DefaultWin">Standard-GUI-Fenster</a> der Funktion).</li>
-  <li><a href="../Variables.htm#GuiControl">A_GuiControl</a>: Wenn die Nachricht zu einem GUI-Steuerelement gesendet wurde, wird A_GuiControl den Variablennamen des Steuerelements oder einen anderen Wert, wie in <a href="../Variables.htm#GuiControl">A_GuiControl</a> beschrieben, enthalten. Einige Steuerelemente können bestimmte Nachrichtentypen nie empfangen. Klickt der Benutzer beispielsweise auf ein <a href="GuiControls.htm#Text">Text-Steuerelement</a>, würde das Betriebssystem die WM_LBUTTONDOWN-Nachricht nicht zum Steuerelement, sondern zum übergeordneten Fenster senden; demzufolge ist A_GuiControl leer.</li>
-  <li><a href="../Variables.htm#GuiX">A_GuiX</a> und <a href="../Variables.htm#GuiY">A_GuiY</a>: Beide enthalten -2147483648, wenn die eingehende Nachricht via <a href="PostMessage.htm">SendMessage</a> gesendet wurde. Wenn sie via <a href="PostMessage.htm">PostMessage</a> gesendet wurde, enthalten beide Variablen die Koordinaten des Mauszeigers (relativ zum Bildschirm), die während des Sendens gegolten haben.</li>
-  <li><a href="../Variables.htm#EventInfo">A_EventInfo</a>: Enthält 0, wenn die eingehende Nachricht via SendMessage gesendet wurde. Wenn sie via PostMessage gesendet wurde, enthält die Variable die <a href="../Variables.htm#TickCount">Tick-Count-Zeit</a>, die während des Sendens gegolten hat.</li>
+  <li><a href="../Variables.htm#Gui">A_Gui</a>: Wenn die Meldung zu einem GUI-Fenster oder -Steuerelement gesendet wurde, wird A_Gui die <a href="Gui.htm#MultiWin">Nummer des GUI-Fensters</a> sein (dieses Fenster ist auch das <a href="Gui.htm#DefaultWin">Standard-GUI-Fenster</a> der Funktion).</li>
+  <li><a href="../Variables.htm#GuiControl">A_GuiControl</a>: Wenn die Meldung zu einem GUI-Steuerelement gesendet wurde, wird A_GuiControl den Variablennamen des Steuerelements oder einen anderen Wert, wie in <a href="../Variables.htm#GuiControl">A_GuiControl</a> beschrieben, enthalten. Einige Steuerelemente können bestimmte Meldungstypen nie empfangen. Klickt der Benutzer beispielsweise auf ein <a href="GuiControls.htm#Text">Text-Steuerelement</a>, würde das Betriebssystem die WM_LBUTTONDOWN-Meldung nicht zum Steuerelement, sondern zum übergeordneten Fenster senden; demzufolge ist A_GuiControl leer.</li>
+  <li><a href="../Variables.htm#GuiX">A_GuiX</a> und <a href="../Variables.htm#GuiY">A_GuiY</a>: Beide enthalten -2147483648, wenn die eingehende Meldung via <a href="PostMessage.htm">SendMessage</a> gesendet wurde. Wenn sie via <a href="PostMessage.htm">PostMessage</a> gesendet wurde, enthalten beide Variablen die Koordinaten des Mauszeigers (relativ zum Bildschirm), die während des Sendens gegolten haben.</li>
+  <li><a href="../Variables.htm#EventInfo">A_EventInfo</a>: Enthält 0, wenn die eingehende Meldung via SendMessage gesendet wurde. Wenn sie via PostMessage gesendet wurde, enthält die Variable die <a href="../Variables.htm#TickCount">Tick-Count-Zeit</a>, die während des Sendens gegolten hat.</li>
 </ul>
-<p>Das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> einer überwachenden Funktion ist zu Beginn das übergeordnete Fenster, zu dem die Nachricht gesendet wurde (selbst wenn sie zu einem Steuerelement gesendet wurde). Ist das Fenster versteckt, aber kein GUI-Fenster (z. B. das Hauptfenster des Skripts), muss zuvor <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> aktiviert werden. Zum Beispiel:</p>
+<p>Das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> einer überwachenden Funktion ist zu Beginn das übergeordnete Fenster, zu dem die Meldung gesendet wurde (selbst wenn sie zu einem Steuerelement gesendet wurde). Ist das Fenster versteckt, aber kein GUI-Fenster (z. B. das Hauptfenster des Skripts), muss zuvor <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> aktiviert werden. Zum Beispiel:</p>
 <pre>DetectHiddenWindows On
-NachrÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des Fensters, zu dem die Nachricht gesendet wurde.</em></pre>
+MeldÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des Fensters, zu dem die Meldung gesendet wurde.</em></pre>
 
 <h3>Was die Funktion per <em>Return</em> zurückgeben sollte</h3>
-<p>Verwendet eine überwachende Funktion <a href="Return.htm">Return</a> ohne Parameter oder mit einem leeren Wert wie "" (oder verwendet sie überhaupt kein Return), wird die eingehende Nachricht beim Erreichen des Funktionsendes normal fortgesetzt. Das gleiche passiert, wenn man das Ende der Funktion via <a href="Exit.htm">Exit</a> erzwingt oder einen Laufzeitfehler verursacht (der beispielsweise durch <a href="Run.htm">Ausführen</a> einer nicht-existierenden Datei ausgelöst werden kann). Vewendet man als Rückgabewert hingegen einen Integer, wird dieser Wert sofort als Antwort gesendet; das heißt, dass das Programm die Nachricht nicht weiter fortsetzen wird. Zum Beispiel könnte eine Funktion, die WM_LBUTTONDOWN (0x201) überwacht, einen Integer zurückgeben, um das Zielfenster daran zu hindern, benachrichtigt zu werden, dass ein Mausklick erfolgt ist. In vielen Fällen (z. B. als eine Nachricht, empfangen via <a href="PostMessage.htm">PostMessage</a>) ist es egal, welcher Integer zurückgegeben wird; aber im Zweifelsfall ist eine 0 am sichersten.</p>
+<p>Verwendet eine überwachende Funktion <a href="Return.htm">Return</a> ohne Parameter oder mit einem leeren Wert wie "" (oder verwendet sie überhaupt kein Return), wird die eingehende Meldung beim Erreichen des Funktionsendes normal fortgesetzt. Das gleiche passiert, wenn man das Ende der Funktion via <a href="Exit.htm">Exit</a> erzwingt oder einen Laufzeitfehler verursacht (der beispielsweise durch <a href="Run.htm">Ausführen</a> einer nicht-existierenden Datei ausgelöst werden kann). Vewendet man als Rückgabewert hingegen einen Integer, wird dieser Wert sofort als Antwort gesendet; das heißt, dass das Programm die Meldung nicht weiter fortsetzen wird. Zum Beispiel könnte eine Funktion, die WM_LBUTTONDOWN (0x201) überwacht, einen Integer zurückgeben, um das Zielfenster daran zu hindern, benachrichtigt zu werden, dass ein Mausklick erfolgt ist. In vielen Fällen (z. B. als eine Meldung, empfangen via <a href="PostMessage.htm">PostMessage</a>) ist es egal, welcher Integer zurückgegeben wird; aber im Zweifelsfall ist eine 0 am sichersten.</p>
 <p>Der Bereich von gültigen Rückgabewerten ist abhängig davon, ob die skript-ausführende EXE-Datei 32- oder 64-Bit ist. Bei einem 32-Bit-Skript (<code><a href="../Variables.htm#PtrSize">A_PtrSize</a> = 4</code>) müssen die Rückgabewerte in einem Bereich von -2<sup>31</sup> und 2<sup>32</sup>-1 sein, und bei einem 64-Bit-Skript  (<code><a href="../Variables.htm#PtrSize">A_PtrSize</a> = 8</code>) in einem Bereich von -2<sup>63</sup> und 2<sup>63</sup>-1.</p>
-<p><span class="ver">[v1.1.20+]:</span> Mehrere Funktionen, die eine bestimmte Nachrichtennummer überwachen, werden nacheinander aufgerufen, bis eine von denen einen nicht-leeren Wert zurückgibt.</p>
+<p><span class="ver">[v1.1.20+]:</span> Mehrere Funktionen, die eine bestimmte Meldungsnummer überwachen, werden nacheinander aufgerufen, bis eine von denen einen nicht-leeren Wert zurückgibt.</p>
 
 <h3 id="Remarks">Allgemeine Bemerkungen</h3>
-<p>Im Gegensatz zu einem normalen Funktionsaufruf wird die überwachende Funktion, wenn sie eine neue Nachricht empfängt, als neuer <a href="../misc/Threads.htm">Thread</a> aufgerufen. Aus diesem Grund beginnt die Funktion mit den Standardeinstellungen bei Befehlen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>. Diese Standardeinstellungen können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
-<p>Nachrichten, die via SendMessage (statt PostMessage) zu einem Steuerelement gesendet wurden, werden nicht überwacht, weil das Betriebssystem diese Nachrichten direkt auf das Steuerelement überträgt, ohne dass jemand etwas mitbekommt. Für system-generierte Nachrichten ist das selten ein Problem, weil die meisten von ihnen via PostMessage gesendet werden.</p>
+<p>Im Gegensatz zu einem normalen Funktionsaufruf wird die überwachende Funktion, wenn sie eine neue Meldung empfängt, als neuer <a href="../misc/Threads.htm">Thread</a> aufgerufen. Aus diesem Grund beginnt die Funktion mit den Standardeinstellungen bei Befehlen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>. Diese Standardeinstellungen können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
+<p>Meldungen, die via SendMessage (statt PostMessage) zu einem Steuerelement gesendet wurden, werden nicht überwacht, weil das Betriebssystem diese Meldungen direkt auf das Steuerelement überträgt, ohne dass jemand etwas mitbekommt. Für system-generierte Meldungen ist das selten ein Problem, weil die meisten von ihnen via PostMessage gesendet werden.</p>
 <p>Jedes Skript, das OnMessage irgendwo aufruft, ist automatisch <a href="_Persistent.htm">persistent</a>. Außerdem darf es standardmäßig nur einmal vorkommen, sofern man das nicht mit <a href="_SingleInstance.htm">#SingleInstance</a> überschreibt.</p>
-<p id="Critical">Kommt eine Nachricht an, während die Funktion noch läuft, wird die Funktion nicht erneut aufgerufen (außer wenn <a href="#MaxThreads">MaxThreads</a> größer als 1 ist); stattdessen wird die Nachricht so behandelt, als wurde sie nicht überwacht. Wenn dies nicht erwünscht ist, muss man <a href="Critical.htm">Critical</a>  in der ersten Zeile der Funktion verwenden, um eine Nachricht größer gleich 0x312 zwischenspeichern zu können. Alternativ könnte <a href="Thread.htm">Thread Interrupt</a> das gleiche bewirken, sofern die Funktion genug Zeit zum Beenden hat. Eine Nachricht kleiner als 0x312 kann hingegen nicht via Critical oder "Thread Interrupt" zwischengespeichert werden (seit v1.0.46 kann Critical allerdings verwendet werden, um die Nachrichten <a href="Critical.htm#Interval">seltener</a> überprüfen zu lassen, so dass die Funktion mehr Zeit zum Beenden hat). Um zu garantieren, dass solche Nachrichten nicht verloren gehen, muss die Funktion innerhalb von 6 Millisekunden zum Ende kommen (dieses Limit kann mit <a href="Critical.htm#Interval"><em>Critical 30</em></a> erhöht werden). Eine Möglichkeit, dies zu tun, ist es, einen zukünftigen Thread in die Warteschlange zu setzen, indem man eine überwachte Nachrichtennummer größer als 0x312 via <a href="PostMessage.htm">PostMessage</a> sendet. Die Funktion dieser Nachricht sollte <a href="Critical.htm">Critical</a> in der ersten Zeile verwenden, um sicherzustellen, dass ihre Nachrichten zwischengespeichert werden.</p>
-<p>Kommt eine überwachte Nachricht kleiner als 0x312 an, während das Skript absolut unterbrechungsfrei ist - z. B. während ein <a href="Menu.htm">Menü</a> angezeigt wird, <a href="SetKeyDelay.htm">KeyDelay</a>/<a href="SetMouseDelay.htm">MouseDelay</a> im Gange ist oder die Zwischenablage <a href="_ClipboardTimeout.htm">offen</a> ist - wird die Funktion der Nachricht nicht aufgerufen und die Nachricht so behandelt, als wurde sie nicht überwacht. Im Gegensatz dazu wird eine überwachte Nachricht größer gleich 0x312 während diesen unterbrechungsfreien Perioden zwischengespeichert; das heißt, dass ihre Funktion aufgerufen wird, wenn das Skript wieder unterbrochen werden kann.</p>
-<p>Kommt eine überwachte Nachricht kleiner als 0x312 an, während das Skript aufgrund von <a href="Thread.htm">Thread Interrupt</a> oder <a href="Critical.htm">Critical</a> unterbrechungsfrei ist, wird der aktuelle Thread unterbrochen, so dass die Funktion aufgerufen werden kann. Im Gegensatz dazu wird eine überwachte Nachricht größer gleich 0x312 zwischengespeichert, bis der Thread endet oder wieder unterbrochen werden kann.</p>
-<p>Die <a href="../misc/Threads.htm">Priorität</a> von OnMessage-Threads ist immer 0. Demzufolge werden keine Nachrichten überwacht oder zwischengespeichert, wenn der aktuelle Thread eine Priorität höher als 0 hat.</p>
-<p>Sei vorsichtig, wenn du Systemnachrichten (solche unter 0x400) überwachst. Kommt eine überwachende Funktion beispielsweise nicht schnell genug zum Ende, kann die Antwort auf die Nachricht länger dauern als vom System erwartet, was zu Nebeneffekten führen könnte. Unerwünschtes Verhalten kann auch auftreten, wenn eine überwachende Funktion die Nachricht durch Zurückgeben eines Integers nicht weiter fortsetzen lässt, während das System etwas anderes erwartet.</p>
-<p>Zeigt das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> an, werden Nachrichten, die via PostMessage zu einem Steuerelement gesendet werden, nicht überwacht. Zeigt das Skript beispielsweise eine MsgBox an und klickt der Benutzer innerhalb eines GUI-Fensters auf einen Button, wird die WM_LBUTTONDOWN-Nachricht direkt zum Button gesendet, ohne dass die überwachende Funktion aufgerufen wird.</p>
-<p>Zwar kann ein externes Programm direkt via PostThreadMessage() oder anderen API-Funktionen Nachrichten zu einem Skript-Thread senden, allerdings könnten dabei Nachrichten verloren gehen, wenn das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt. Stattdessen ist es besser, Nachrichten zum Hauptfenster des Skripts oder zu einem seiner GUI-Fenster zu senden.</p>
+<p id="Critical">Kommt eine Meldung an, während die Funktion noch läuft, wird die Funktion nicht erneut aufgerufen (außer wenn <a href="#MaxThreads">MaxThreads</a> größer als 1 ist); stattdessen wird die Meldung so behandelt, als wurde sie nicht überwacht. Wenn dies nicht erwünscht ist, muss man <a href="Critical.htm">Critical</a>  in der ersten Zeile der Funktion verwenden, um eine Meldung größer gleich 0x312 zwischenspeichern zu können. Alternativ könnte <a href="Thread.htm">Thread Interrupt</a> das gleiche bewirken, sofern die Funktion genug Zeit zum Beenden hat. Eine Meldung kleiner als 0x312 kann hingegen nicht via Critical oder "Thread Interrupt" zwischengespeichert werden (seit v1.0.46 kann Critical allerdings verwendet werden, um die Meldungen <a href="Critical.htm#Interval">seltener</a> überprüfen zu lassen, so dass die Funktion mehr Zeit zum Beenden hat). Um zu garantieren, dass solche Meldungen nicht verloren gehen, muss die Funktion innerhalb von 6 Millisekunden zum Ende kommen (dieses Limit kann mit <a href="Critical.htm#Interval"><em>Critical 30</em></a> erhöht werden). Eine Möglichkeit, dies zu tun, ist es, einen zukünftigen Thread in die Warteschlange zu setzen, indem man eine überwachte Meldungsnummer größer als 0x312 via <a href="PostMessage.htm">PostMessage</a> sendet. Die Funktion dieser Meldung sollte <a href="Critical.htm">Critical</a> in der ersten Zeile verwenden, um sicherzustellen, dass ihre Meldungen zwischengespeichert werden.</p>
+<p>Kommt eine überwachte Meldung kleiner als 0x312 an, während das Skript absolut unterbrechungsfrei ist - z. B. während ein <a href="Menu.htm">Menü</a> angezeigt wird, <a href="SetKeyDelay.htm">KeyDelay</a>/<a href="SetMouseDelay.htm">MouseDelay</a> im Gange ist oder die Zwischenablage <a href="_ClipboardTimeout.htm">offen</a> ist - wird die Funktion der Meldung nicht aufgerufen und die Meldung so behandelt, als wurde sie nicht überwacht. Im Gegensatz dazu wird eine überwachte Meldung größer gleich 0x312 während diesen unterbrechungsfreien Perioden zwischengespeichert; das heißt, dass ihre Funktion aufgerufen wird, wenn das Skript wieder unterbrochen werden kann.</p>
+<p>Kommt eine überwachte Meldung kleiner als 0x312 an, während das Skript aufgrund von <a href="Thread.htm">Thread Interrupt</a> oder <a href="Critical.htm">Critical</a> unterbrechungsfrei ist, wird der aktuelle Thread unterbrochen, so dass die Funktion aufgerufen werden kann. Im Gegensatz dazu wird eine überwachte Meldung größer gleich 0x312 zwischengespeichert, bis der Thread endet oder wieder unterbrochen werden kann.</p>
+<p>Die <a href="../misc/Threads.htm">Priorität</a> von OnMessage-Threads ist immer 0. Demzufolge werden keine Meldungen überwacht oder zwischengespeichert, wenn der aktuelle Thread eine Priorität höher als 0 hat.</p>
+<p>Sei vorsichtig, wenn du Systemmeldungen (solche unter 0x400) überwachst. Kommt eine überwachende Funktion beispielsweise nicht schnell genug zum Ende, kann die Antwort auf die Meldung länger dauern als vom System erwartet, was zu Nebeneffekten führen könnte. Unerwünschtes Verhalten kann auch auftreten, wenn eine überwachende Funktion die Meldung durch Zurückgeben eines Integers nicht weiter fortsetzen lässt, während das System etwas anderes erwartet.</p>
+<p>Zeigt das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> an, werden Meldungen, die via PostMessage zu einem Steuerelement gesendet werden, nicht überwacht. Zeigt das Skript beispielsweise eine MsgBox an und klickt der Benutzer innerhalb eines GUI-Fensters auf einen Button, wird die WM_LBUTTONDOWN-Meldung direkt zum Button gesendet, ohne dass die überwachende Funktion aufgerufen wird.</p>
+<p>Zwar kann ein externes Programm direkt via PostThreadMessage() oder anderen API-Funktionen Meldungen zu einem Skript-Thread senden, allerdings könnten dabei Meldungen verloren gehen, wenn das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt. Stattdessen ist es besser, Meldungen zum Hauptfenster des Skripts oder zu einem seiner GUI-Fenster zu senden.</p>
 <h3>Siehe auch</h3>
-<p><a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fensternachrichten</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Critical.htm">Critical</a>, <a href="DllCall.htm">DllCall()</a></p>
+<p><a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Critical.htm">Critical</a>, <a href="DllCall.htm">DllCall()</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Beispiel: Das folgende Skript zeigt, wie Mausklicks innerhalb eines GUI-Fensters überwacht werden können.
 ; Verwandtes Thema: <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a></em>
@@ -163,24 +163,24 @@ WM_QUERYENDSESSION(wParam, lParam)
         return false  <em>; Verbietet dem OS das Herunterfahren/Abmelden.</em>
 }</pre>
 
-<pre class="NoIndent"><em>; Beispiel: Zeigt, wie ein Skript eine benutzerdefinierte Nachricht und bis zu zwei Zahlen von einem anderen Skript oder Programm empfängt
+<pre class="NoIndent"><em>; Beispiel: Zeigt, wie ein Skript eine benutzerdefinierte Meldung und bis zu zwei Zahlen von einem anderen Skript oder Programm empfängt
 ; (Schaue dir das Beispiel danach an, wie man Zeichenketten sendet).</em>
 
-OnMessage(0x5555, "NachrÜberwachung")
-OnMessage(0x5556, "NachrÜberwachung")
+OnMessage(0x5555, "Meldeüberwachung")
+OnMessage(0x5556, "Meldeüberwachung")
 
-NachrÜberwachung(wParam, lParam, msg)
+Meldeüberwachung(wParam, lParam, msg)
 {
     <em>; Damit die Funktion schnell zum Ende kommen kann, ist es besser, ein ToolTip zu verwenden,</em>
     <em>; weil so etwas wie eine MsgBox dies verhindern würde:</em>
-    ToolTip Nachricht %msg% angekommen:`nWPARAM: %wParam%`nLPARAM: %lParam%
+    ToolTip Meldung %msg% angekommen:`nWPARAM: %wParam%`nLPARAM: %lParam%
 }
 
 <em>; Mit den folgenden Zeilen innerhalb eines anderen Skripts kann die Funktion im oberen Skript ausgeführt werden:</em>
 SetTitleMatchMode 2
 DetectHiddenWindows On
 if WinExist("Empfänger.ahk ahk_class AutoHotkey")
-    PostMessage, 0x5555, 11, 22  <em>; Aufgrund von WinExist() wird die Nachricht zum "<a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundenen Fenster</a>" gesendet.</em>
+    PostMessage, 0x5555, 11, 22  <em>; Aufgrund von WinExist() wird die Meldung zum "<a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundenen Fenster</a>" gesendet.</em>
 DetectHiddenWindows Off  <em>; Kann nach PostMessage wieder deaktiviert werden.</em></pre>
 
 <pre class="NoIndent" id="SendString"><em>; Beispiel: Sendet eine Zeichenkette mit beliebiger Länge an ein anderes Skript.  Um dieses Beispiel
@@ -198,7 +198,7 @@ Empfange_WM_COPYDATA(wParam, lParam)
     Datenkopie := StrGet(ZeichenketteAdresse)  <em>; Kopiert die Zeichenkette aus der Struktur.</em>
     <em>; Zeige die Zeichenkette via ToolTip statt MsgBox an, so dass wir rechtzeitig fertig werden:</em>
     ToolTip %A_ScriptName%`nhat die folgende Zeichenkette empfangen:`n%Datenkopie%
-    return true  <em>; Die Rückgabe einer 1 (wahr) ist der übliche Weg, um diese Nachricht zu bestätigen.</em>
+    return true  <em>; Die Rückgabe einer 1 (wahr) ist der übliche Weg, um diese Meldung zu bestätigen.</em>
 }
 
 <em>; Speichere das folgende Skript als "<strong>Sender.ahk</strong>" und starte es:  Drücke danach den Hotkey WIN+LEERTASTE.</em>
@@ -212,12 +212,12 @@ Ergebnis := Sende_WM_COPYDATA(ZuSendendeZeichenkette, ZielSkriptTitel)
 if Ergebnis = FAIL
     MsgBox SendMessage fehlgeschlagen. Gibt es den folgenden Fenstertitel?:`n%ZielSkriptTitel%
 else if Ergebnis = 0
-    MsgBox Nachricht wurde gesendet, aber das Zielfenster hat mit 0 geantwortet, was bedeuten könnte, dass sie ignoriert wurde.
+    MsgBox Meldung wurde gesendet, aber das Zielfenster hat mit 0 geantwortet, was bedeuten könnte, dass sie ignoriert wurde.
 return
 
 Sende_WM_COPYDATA(ByRef ZuSendendeZeichenkette, ByRef ZielSkriptTitel)  <em>; ByRef verbraucht in diesem Fall weniger Speicher.
 ; Diese Funktion sendet den angegebenen String zum angegebenen Fenster und gibt die Anwort zurück.
-; Die Antwort ist 1, wenn das Zielfenster die Nachricht akzeptiert hat, oder 0, wenn die Nachricht ignoriert wurde.</em>
+; Die Antwort ist 1, wenn das Zielfenster die Meldung akzeptiert hat, oder 0, wenn die Meldung ignoriert wurde.</em>
 {
     VarSetCapacity(KopieDatenStrukt, 3*A_PtrSize, 0)  <em>; Richtet den Speicherbereich der Struktur ein.</em>
     <em>; Zuerst wird das cbData-Element der Struktur auf die Größe der Zeichenkette gesetzt, einschließlich dem Null-Terminator.</em>
@@ -236,7 +236,7 @@ Sende_WM_COPYDATA(ByRef ZuSendendeZeichenkette, ByRef ZielSkriptTitel)  <em>; By
     return ErrorLevel  <em>; Gibt SendMessage's Antwort zum Aufrufer zurück.</em>
 }</pre>
 
-<pre class="NoIndent"><em>; Beispiel: Siehe <a href="../scripts/WinLIRC.htm">WinLIRC-Client-Skript</a>, wie OnMessage() zum Empfangen von Nachrichten verwendet
+<pre class="NoIndent"><em>; Beispiel: Siehe <a href="../scripts/WinLIRC.htm">WinLIRC-Client-Skript</a>, wie OnMessage() zum Empfangen von Meldungen verwendet
 ; werden kann, die über die Netzwerkverbindung gesendet wurden.</em></pre>
 
 </body>
