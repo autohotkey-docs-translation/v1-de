@@ -1,14 +1,25 @@
 translate = {
-  hdSearchTxt: "Suchbegriff eingeben ...",
-  hdSearchBtn: "Suchen",
-  hdSearchLnk: "https://www.google.com/search?sitesearch=ahkde.github.io&q={0}",
-  sbContent: "Inhalt",
-  sbIndex: "Index",
-  ftLicense: "Lizenz:",
-  ftExtra: " | Übersetzung: Harald Bootz",
-  cdSelectBtn: "Markieren",
-  cdDownloadBtn: "Download",
-  verToolTipAHK_L: "Gilt für:\nAutoHotkey_L Revision {0} und höher\nAutoHotkey v1.0.90.00 und höher",
-  verToolTipDefault: "Gilt für AutoHotkey {0} und höher",
-  tutLocalMessage: "Da du dir diese Dokumentation lokal anschaust, hast du AutoHotkey wahrscheinlich bereits installiert und kannst bei Abschnitt b fortfahren."
+  // Sidebar
+  "Content":"Inhalt",
+  "Index":"Index",
+  "Type in the keyword to find:":"Zu suchendes Schlüsselwort:",
+  "Search":"Suchen",
+  "Type in the word(s) to search for:":"Suchbegriff(e) eintragen:",
+  // Oberleiste
+  "Hide/Show sidebar":"Sidebar verstecken/anzeigen",
+  "Home page":"Homepage",
+  "en":"de",
+  "Change language":"Sprache wechseln",
+  "v1":true,
+  "Change AHK version":"AHK-Version wechseln",
+  "https://lexikos.github.io/v2/docs/":"https://ahkde.github.io/v2/docs/",
+  "Go back":"Eine Seite zurück",
+  "Go forward":"Eine Seite vor",
+  "Change font size":"Schriftgröße ändern",
+  "Print current document":"Aktuelle Seite drucken",
+  // Inhalt
+  "Select code":"Code auswählen",
+  "Download code":"Code herunterladen",
+  "Applies to:\nAutoHotkey_L Revision {0} and later\nAutoHotkey v1.0.90.00 and later":"Gilt für:\nAutoHotkey_L Revision {0} und höher\nAutoHotkey v1.0.90.00 und höher",
+  "Applies to AutoHotkey {0} and later":"Gilt für AutoHotkey {0} und höher"
 };
