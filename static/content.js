@@ -720,9 +720,18 @@ function modifyStructure()
   // Display or hide the sidebar:
   function displaySidebar(display) {
     cache.displaySidebar = display;
-    $('#head .h-tabs').toggle(display);
-    $('#left').toggle(display);
-    $('#left').focus();
+    var headTabs = $('#head .h-tabs');
+    var leftArea = $('#left');
+    var props = {width: 0, visibility: "hidden"};
+    if (display) {
+      headTabs.removeAttr('style');
+      leftArea.removeAttr('style');
+    }
+    else {
+      headTabs.css(props);
+      leftArea.css(props);
+    }
+    leftArea.focus();
   }
 
   // Show the specified tab:
@@ -733,7 +742,7 @@ function modifyStructure()
     t.removeClass('selected')
      .eq(pos).addClass('selected');
     s.css("visibility", "hidden")
-     .eq(pos).css("visibility", "visible")
+     .eq(pos).css("visibility", "inherit")
      .find('input').focus().select();
   }
 }
