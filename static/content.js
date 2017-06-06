@@ -610,12 +610,10 @@ function modifyStructure()
     var $parent = $this.parent();
     cache[$parent.attr('class')].scrollPos = $this.scrollTop();
   });
-  // Select the item on click, scroll to it and store its index
-  // relative to its parent:
+  // Select the item on click and scroll to it:
   ListBox.on('click', '> a', function() {
     var $this = $(this);
     var $parent = $this.parent();
-    var $grandparent = $parent.parent();
     // Scroll the item into view:
     if (!isScrolledIntoView($this, $parent)) {
       var half = ($parent.height() + $parent.offset().top) / 2;
@@ -624,19 +622,21 @@ function modifyStructure()
       else
         $this[0].scrollIntoView(); // Move up
     }
-    // Store the item's index relative to its parent:
-    cache[$grandparent.attr('class')].clickItem = $this.index();
     // Select the item:
     $('.selected', $parent).removeClass('selected');
     $this.addClass('selected');
     return false;
   });
-  // Open the link on double-click or touch (for mobile):
+  // Open the link on double-click or touch (for mobile) and store its index
+  // relative to its parent:
   var touchmoved;
   ListBox.on('dblclick touchend', '> a', function() {
     if (touchmoved != true) {
       var $this = $(this);
       var $parent = $this.parent();
+      var $grandparent = $parent.parent();
+      // Store the item's index relative to its parent:
+      cache[$grandparent.attr('class')].clickItem = $this.index();
       window.location = $this.attr('href');
       $this.focus();
     }
