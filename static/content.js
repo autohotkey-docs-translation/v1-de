@@ -767,6 +767,41 @@ function addFeatures()
     }
   }
 
+  // --- Responsive tables (mobile) ---
+
+  if (isMobile()) {
+    $('table').each( function() {
+      $this = $(this);
+      var tr = $('tr', $this);
+      var th = {}, table = "";
+      $this.hide();
+      var id = $this.attr('id');
+      table += (id !== undefined) ? '<table id="'+id+'"' : '<table';
+      table += ' class="mobile">';
+      for(var i = 0; i < tr.length; i++)
+      {
+        if (tr.eq(i).children('th').length) {
+          th = $('th', tr.eq(i));
+          continue;
+        }
+        var td = $('td', tr.eq(i));
+        var id = tr.eq(i).attr('id');
+        table += (id !== undefined) ? '<tbody id="'+id+'">' : '<tbody>';
+        for(var n = 0; n < td.length; n++)
+        {
+          var id = td.eq(n).attr('id');
+          table += (id !== undefined) ? '<tr id="'+id+'">' : '<tr>';
+          var first = (th.length) ? th.eq(n).html() : ""
+          table += '<td>'+first+'</td><td>'+td.eq(n).html()+'</td></tr>';
+        }
+        table += '</tbody>';
+      }
+      table += '</table>';
+      $this.after(table);
+      $this.remove();
+    });
+  }
+
   // --- Generate anchors for anchor-less head lines ---
 
   $('h1, h2, h3, h4, h5, h6').each(function(index) {
@@ -913,7 +948,7 @@ function isSearchBot() {
 // --- Check if the browser is small enough to be a mobile app ---
 
 function isMobile() {
-  return (window.screen.width < 600);
+  return ($(window).width() < 600);
 }
 
 // --- Check if an element is visible after scrolling ---
