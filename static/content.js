@@ -726,6 +726,7 @@ function modifyStructure()
     if (display) {
       headTabs.removeAttr('style');
       leftArea.removeAttr('style');
+      $('input', leftArea).focus();
     }
     else {
       headTabs.css(props);
