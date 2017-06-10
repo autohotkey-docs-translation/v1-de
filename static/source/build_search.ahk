@@ -1,6 +1,7 @@
 %"_requires_v2_"%
 #Warn
 SetWorkingDir %A_ScriptDir%\..\..
+FileEncoding("UTF-8")
 
 common_words1 := "
 (Join| C
@@ -48,25 +49,25 @@ why|will|with|word|work|world|would|write|year|you|your|was
 ; it causes odd results with partial searches, such as "if" getting results
 ; for "IfEqual" etc. but not plain "if", because it isn't indexed.  Omitting
 ; those words currently only saves about 30KB.
-global word_pattern := "#[a-zA-Z]{2,}+(?!::)|"
-    . "\b(?!"
-        . "\d+\b|"
-        . "0[xX][0-9a-fA-F]+\b|"
-        . "\d[0-9a-fA-F]+\b|"
-        ; . "(?i)(" common_words ")\b|"
-        . "_+\b)"
-    . "\w{2,}(['.]\w+)?\b"  ;(-\w+)*
-word_pattern := "#[a-zA-Z]{2,}+(?!::)|"
-    . "\b("
+global word_pattern := "#\p{L}{2,}+(?!::)|"
+    . "(?<![\p{L}\d_])(?!"
+        . "\d+(?![\p{L}\d_])|"
+        . "0[xX][0-9a-fA-F]+(?![\p{L}\d_])|"
+        . "\d[0-9a-fA-F]+(?![\p{L}\d_])|"
+        ; . "(?i)(" common_words ")(?![\p{L}\d_])|"
+        . "_+(?![\p{L}\d_]))"
+    . "[\p{L}\d_]{2,}(['.][\p{L}\d_]+)?(?![\p{L}\d_])"  ;(-\w+)*
+word_pattern := "#\p{L}{2,}+(?!::)|"
+    . "(?<![\p{L}\d_])("
         . "\d+|"
         . "0[xX][0-9a-fA-F]+|"
         . "\d[0-9a-fA-F]+|"
-        ; . "(?i)(" common_words ")\b|"
+        ; . "(?i)(" common_words ")(?![\p{L}\d_])|"
         . "_+|"
         . "https?://\S+"
-    . ")\b(*SKIP)(*FAIL)|"
-    . "\b[A-Z]\w+\.\w+\b|"
-    . "\b\w{2,}('\w+)?\b"  ;(-\w+)*
+    . ")(?![\p{L}\d_])(*SKIP)(*FAIL)|"
+    . "(?<![\p{L}\d_])\p{Lu}[\p{L}\d_]+\.[\p{L}\d_]+(?![\p{L}\d_])|"
+    . "(?<![\p{L}\d_])[\p{L}\d_]{2,}('[\p{L}\d_]+)?(?![\p{L}\d_])"  ;(-\w+)*
 
 global index, files, filewords, files_map, titles_map, titles
 
@@ -124,7 +125,7 @@ ScanFiles()
         static js_keywords := "boolean|break|byte|case|catch|char|continue|default|delete|do|double|else|false|final|finally|float|for|function|if|in|instanceof|int|long|new|null|return|short|switch|this|throw|true|try|typeof|var|void|while|with"
             . "|class|const|debugger|enum|export|extends|import|super"  ; These probably only in JScript.
         word := StrLower(SubStr(word, 2))
-        if word ~= "(?!\b(%js_keywords%)\b)^[a-z_]\w*$"
+        if word ~= "(?!\b(%js_keywords%)\b)^[\p{Ll}_][\p{L}\d_]*$"
             s .= word ':"'
         else
             s .= '"' word '":"'
