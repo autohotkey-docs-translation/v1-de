@@ -752,12 +752,6 @@ function modifyStructure()
 
 function addFeatures()
 {
-  // --- Ensure navigating to anchor ---
-
-  if (location.hash && (!$('#right').scrollTop())) {
-    setTimeout(function() { $(location.hash)[0].scrollIntoView(); }, 1);
-  }
-
   // --- Highlight search words with jQuery Highlight plugin ---
 
   if (cache.clickTab == 2) {
@@ -801,6 +795,12 @@ function addFeatures()
       $this.after(table);
       $this.remove();
     });
+  }
+
+  // --- Ensure navigating to anchor ---
+
+  if (location.hash && (!$('#right').scrollTop())) {
+    setTimeout(function() { $(location.hash)[0].scrollIntoView(); }, 1);
   }
 
   // --- Generate anchors for anchor-less head lines ---
