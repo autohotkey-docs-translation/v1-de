@@ -709,10 +709,20 @@ function modifyStructure()
     cache.save();
   });
 
-  // --- Goto new anchor if anchor of the same site is changing ---
+  // --- Perform actions on anchor change ---
 
   $(window).on('hashchange', function() {
-    $(location.hash)[0].scrollIntoView();
+    anchor = $(location.hash);
+    if (!anchor.length)
+      return;
+    // Goto anchor again after reloading the page:
+    anchor[0].scrollIntoView();
+    // When using mobile device hide sidebar and goto anchor:
+    if (isMobile())
+      setTimeout( function() {
+        displaySidebar(false);
+        anchor[0].scrollIntoView();
+      }, 200);
   });
 
   // --- Local Function Definitions ---
