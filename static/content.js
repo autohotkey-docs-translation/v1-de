@@ -852,11 +852,11 @@ function addFeatures()
   $('pre').wrap('<div class="codeMain">');
   $('div.codeMain').wrap('<div class="codeContainer">');
   $('div.codeContainer').prepend('<div class="codeHeader">');
-  $('div.codeHeader').html('<a id="selectCode">' + T('Select code') + '</a>');
-  $('div.codeContainer:not(:has(pre.Syntax)) div.codeHeader').append(' | <a id="downloadCode">' + T('Download code') + '</a>');
+  $('div.codeHeader').html('<a class="selectCode">' + T('Select code') + '</a>');
+  $('div.codeContainer:not(:has(pre.Syntax)) div.codeHeader').append(' | <a class="downloadCode">' + T('Download code') + '</a>');
 
   // Select the code on click:
-  $('a#selectCode').on('click', function() {
+  $('a.selectCode').on('click', function() {
     var doc = document
       , text = $('pre', $(this).parent().next())[0]
       , range, selection
@@ -875,7 +875,7 @@ function addFeatures()
   });
 
   // Download the code on click:
-  $('a#downloadCode').on('click', function(e) {
+  $('a.downloadCode').on('click', function(e) {
     var textToWrite = '\ufeff' + $(this).parent().next().text().replace(/\n/g, "\r\n");
     var textFileAsBlob = new Blob([textToWrite], {type:'text/csv'});
     var fileNameToSaveAs = location.pathname.match(/([^\/]+)(?=\.\w+$)/)[0] + "-Script.ahk";
