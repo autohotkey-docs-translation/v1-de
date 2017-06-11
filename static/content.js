@@ -797,12 +797,6 @@ function addFeatures()
     });
   }
 
-  // --- Ensure navigating to anchor ---
-
-  if (location.hash && (!$('#right').scrollTop())) {
-    setTimeout(function() { $(location.hash)[0].scrollIntoView(); }, 1);
-  }
-
   // --- Generate anchors for anchor-less head lines ---
 
   $('h1, h2, h3, h4, h5, h6').each(function(index) {
@@ -818,6 +812,15 @@ function addFeatures()
     }
     $(this).wrapInner('<a href="#' + $(this).attr('id') + '"></a>');
   });
+
+  // --- Ensure navigating to anchor ---
+
+  if (location.hash)
+  {
+    var requested_hash = location.hash.slice(1);
+    location.hash = '';
+    location.hash = requested_hash;
+  }
 
   // --- Open external links in a new tab/window ---
 
