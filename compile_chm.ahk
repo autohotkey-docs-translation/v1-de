@@ -21,7 +21,10 @@ for i, env_var in ["ProgramFiles", "ProgramFiles(x86)", "ProgramW6432"]
     }
 }
 
-SetWorkingDir %A_ScriptDir%\docs\static
+SetWorkingDir %A_ScriptDir%\static
+
+; Rebuild Index.hhk.
+RunWait "%A_AhkPath%" source\CreateFiles4Help.ahk
 
 ; Compile AutoHotkey.chm.
 RunWait %hhc% "%A_ScriptDir%\Project.hhp"
