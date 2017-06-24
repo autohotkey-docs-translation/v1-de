@@ -1,4 +1,4 @@
-translate = {
+translateData = {
   // Sidebar
   "Content":"Inhalt",
   "Index":"Index",
@@ -17,6 +17,10 @@ translate = {
   "Go forward":"Eine Seite vor",
   "Change font size":"Schriftgröße ändern",
   "Print current document":"Aktuelle Seite drucken",
+  // ALT+... Tastenkürzel (muss in Großbuchstaben sein)
+  "C":"I",
+  "N":true,
+  "S":true,
   // Inhalt
   "Select code":"Code auswählen",
   "Download code":"Code herunterladen",

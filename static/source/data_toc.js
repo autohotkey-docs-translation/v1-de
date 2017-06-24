@@ -1,4 +1,4 @@
-toc = [
+tocData = [
   ["Kurzübersicht","AutoHotkey.htm"],
   ["Nutzung und Syntax","",
   [
