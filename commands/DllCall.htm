@@ -87,7 +87,7 @@
   <p>Wenn die Kompatibilität mit älteren Versionen von AutoHotkey erforderlich ist, kann ein Variablentyp wie folgt verwendet werden:</p>
   <pre>Ptr := A_PtrSize ? "Ptr" : "UInt" <em>; Wenn A_PtrSize nicht definiert ist, gilt stattdessen UInt.</em>
 DllCall("DeleteFile", Ptr, &amp;Dateiname) <em>; Lass die Anführungszeichen bei Ptr weg.</em></pre>
-  <p>Hinweis: Zum Übergeben eines <strong>NULL</strong>-Handles oder -Pointers muss der Integer 0 verwendet werden.</p></td>
+  <p>Hinweis: Um einen <strong>NULL</strong>-Handle oder -Pointer zu übergeben, übergibt man den Integer 0.</p></td>
 </tr>
 <tr id="asterisk">
   <td>* oder P<br>
@@ -127,7 +127,7 @@ DllCall("DeleteFile", Ptr, &amp;Dateiname) <em>; Lass die Anführungszeichen bei
 <pre>hModule := DllCall("<strong>LoadLibrary</strong>", "Str", "MeineFunktionen.dll", "Ptr")  <em>; Verhindert, dass DllCall() die Library in der Schleife laden muss.</em>
 Loop, C:\Meine Dokumente\*.*, , 1
     Ergebnis := DllCall("MeineFunktionen\BackupFile", "Str", A_LoopFileFullPath)
-DllCall("<strong>FreeLibrary</strong>", "Ptr", hModule)  <em>; Zum Freigeben des Speichers kann die DLL nach ihrer Verwendung entladen werden.</em></pre>
+DllCall("<strong>FreeLibrary</strong>", "Ptr", hModule)  <em>; Um Speicher freizugeben, kann die DLL nach ihrer Verwendung entladen werden.</em></pre>
 <p>Seit v1.0.46.08 kann eine noch schnellere Performance erreicht werden, wenn man im Voraus die Adresse der Funktion nachschlägt. Zum Beispiel:</p>
 <pre><em>; Das folgende Beispiel zeigt, wie man LoadLibrary anstelle von GetModuleHandle verwenden kann, wenn die DLL noch nicht geladen ist.</em>
 <strong>MulDivProc</strong> := DllCall("GetProcAddress", Ptr, DllCall("GetModuleHandle", Str, "<strong>kernel32</strong>", "Ptr"), AStr, "<strong>MulDiv</strong>", "Ptr")
@@ -146,12 +146,12 @@ Loop 500
 <p>4) Verwende <code>MeinInteger := <a href="NumGet.htm">NumGet</a>(MeineStruktur, 4, "UInt")</code>, um beliebige Integer von der Struktur abzurufen. Ersetze 4 mit dem Offset des Zielelements in der Struktur. Das erste Element ist immer bei Offset 0. Das zweite Element ist bei Offset 0 plus die Größe des ersten Elements (in der Regel 4). Elemente nach dem zweiten sind bei dem Offset des vorherigen Feldes plus die Größe des vorherigen Feldes. Die meisten Elemente wie DWORD, INT und <a href="#Int">andere Typen von 32-Bit-Integer</a> haben eine Größe von 4 Bytes. Ersetze "UInt" mit dem geeigneten Typ oder lass es weg, falls das Element ein Pointer oder Handle ist.</p>
 <p>Siehe <a href="#ExStruct">Strukturbeispiele</a> für weitere Verwendungsmöglichkeiten.</p>
 <h3 id="limits">Bekannte Einschränkungen</h3>
-<p>Wenn die <a href="../Variables.htm#amp">Adresse einer Variable</a> (z. B. <code>&amp;MeineVar</code>) an eine Funktion übergeben wird und die Funktion die Länge des Variableninhalts ändert, verhält sich die Variable bei nachfolgender Verwendung nicht mehr korrekt. Dieses Problem kann nur behoben werden, wenn einer der folgenden Punkte durchgeführt wird: 1) Übergebe MeineVar nicht als Ptr/Adresse, sondern als <a href="#str">"Str"</a>-Argument; 2) Seit v1.0.44.03 kann <code><a href="VarSetCapacity.htm#neg1">VarSetCapacity(MeineVar, -1)</a></code> aufgerufen werden, um die intern gespeicherte Länge der Variable zu aktualisieren, nachdem DllCall aufgerufen wurde.</p>
+<p>Wenn die <a href="../Variables.htm#amp">Adresse einer Variable</a> (z. B. <code>&amp;MeineVar</code>) an eine Funktion übergeben wird und die Funktion die Länge des Variableninhalts ändert, verhält sich die Variable bei nachfolgender Verwendung nicht mehr korrekt. Um dieses Problem zu beheben, gibt es folgende Lösungen: 1) Übergebe MeineVar nicht als Ptr/Adresse, sondern als <a href="#str">"Str"</a>-Argument; 2) Seit v1.0.44.03 kann <code><a href="VarSetCapacity.htm#neg1">VarSetCapacity(MeineVar, -1)</a></code> aufgerufen werden, um die intern gespeicherte Länge der Variable zu aktualisieren, nachdem DllCall aufgerufen wurde.</p>
 <p>Jede binäre Null, die per Funktion in eine Variable gespeichert wurde, versteckt alle Daten, die rechts neben der Null vorkommen; das heißt, dass solche Daten weder zugreifbar sind noch von den meisten Befehlen und Funktionen geändert werden können. Allerdings können solche Daten per <a href="../Variables.htm#amp">Adressoperatoren</a>, <a href="NumPut.htm">NumPut</a>/<a href="NumGet.htm">NumGet</a> und DllCall selbst manipuliert werden.</p>
 <p>Eine Funktion, die die Adresse von einer der übergebenen Zeichenketten zurückgibt, könnte eine gleiche Zeichenkette zurückgeben, aber auf einer anderen Speicheradresse als erwartet. Zum Beispiel würde der Aufruf von <code>CharLower(CharUpper(MeineVar))</code> in einer Programmiersprache dazu führen, dass der Inhalt von <em>MeineVar</em> in Kleinbuchstaben umgewandelt wird. Macht man aber das gleiche mit DllCall(), würde <em>MeineVar</em> nach folgendem Aufruf großgeschrieben sein, weil CharLower eine andere/temporäre Zeichenkette bearbeitet hat, dessen Inhalt identisch zu <em>MeineVar</em> war:</p>
 <pre>MeineVar = ABC
 Ergebnis := DllCall("CharLower", <strong><u>str</u></strong>, DllCall("CharUpper", Str, MeineVar, <strong><u>Str</u></strong>), Str)</pre>
-<p>Um dieses Problem zu umgehen, müssen die zwei unterstrichenen "Str"-Werte oben mit Ptr ersetzt werden. Dadurch wird der Rückgabewert von CharUpper als reine Adresse interpretiert, der dann als Integer an CharLower übergeben wird.</p>
+<p>Um dieses Problem zu umgehen, ersetzt man die zwei unterstrichenen "Str"-Werte oben mit Ptr. Dadurch wird der Rückgabewert von CharUpper als reine Adresse interpretiert, der dann als Integer an CharLower übergeben wird.</p>
 <p>Bestimmte Einschränkungen können auftreten, wenn es um Zeichenketten geht. Für weitere Informationen, siehe <a href="../Compat.htm#DllCall">Skript-Kompatibilität</a>.</p>
 <h3 id="COM">Component Object Model (COM)</h3>
 <p>COM-Objekte, die per VBScript und ähnliche Sprachen zugreifbar sind, kann man üblicherweise auch über AutoHotkey via <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjActive.htm">ComObjActive</a> und built-interner <a href="../Objects.htm#Usage_Objects">Objekt-Syntax</a> zugreifen.</p>
@@ -266,7 +266,7 @@ ZuLesendeBytes := VarSetCapacity(TestZeichenkette, StrLen(TestZeichenkette))
 <strong>DllCall</strong>("CloseHandle", Ptr, hFile)  <em>; Schließt die Datei.</em>
 MsgBox Die folgende Zeichenkette wurde aus der Datei gelesen: %TestZeichenkette%</pre>
 
-<pre class="NoIndent" id="HideCursor"><em>; Beispiel: Versteckt den Mauszeiger, wenn man WIN+C drückt. Um den Mauszeiger wieder sichtbar zu machen, drücke nochmals WIN+C.
+<pre class="NoIndent" id="HideCursor"><em>; Beispiel: Versteckt den Mauszeiger, wenn man WIN+C drückt. Um den Mauszeiger wieder sichtbar zu machen, drückt man nochmals WIN+C.
 ; Dieses Skript stammt von <a href="http://www.autohotkey.com/forum/topic6107.html">www.autohotkey.com/forum/topic6107.html</a></em>
 
 OnExit, ZeigeCursor  <em>; Stellt sicher, dass der Mauszeiger beim Beenden des Skripts wieder sichtbar gemacht wird.</em>

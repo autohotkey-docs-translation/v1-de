@@ -118,7 +118,7 @@ obj := ""  <em>; Gibt den letzten Verweis frei, wodurch das Objekt freigegeben w
 <pre>arr := [{}]  <em>; Erstellt ein Array, das ein Objekt enthält.</em>
 arr[1] := {}  <em>; Erstellt ein zweites Objekt, wodurch das erste Objekt indirekt freigegeben wird.</em>
 arr.RemoveAt(1)  <em>; Entfernt und gibt das zweite Objekt frei.</em></pre>
-<p id="Circular_References">Da alle Verweise auf ein Objekt freigegeben werden müssen, bevor das Objekt freigegeben werden kann, können Objekte mit Zirkelbezügen nicht automatisch freigegeben werden. Wenn beispielsweise <code>x.child</code> auf <code>y</code> verweist und <code>y.parent</code> auf <code>x</code> verweist, würde es nicht genügen, <code>x</code> und <code>y</code> zu leeren, weil das Parent-Objekt noch einen Verweis auf das Child-Objekt enthält, und umgekehrt. Um diese Situation in den Griff zu bekommen, muss der Zirkelbezug entfernt werden.</p>
+<p id="Circular_References">Da alle Verweise auf ein Objekt freigegeben werden müssen, bevor das Objekt freigegeben werden kann, können Objekte mit Zirkelbezügen nicht automatisch freigegeben werden. Wenn beispielsweise <code>x.child</code> auf <code>y</code> verweist und <code>y.parent</code> auf <code>x</code> verweist, würde es nicht genügen, <code>x</code> und <code>y</code> zu leeren, weil das Parent-Objekt noch einen Verweis auf das Child-Objekt enthält, und umgekehrt. Um diese Situation in den Griff zu bekommen, entfernt man den Zirkelbezug.</p>
 <pre>
 x := {}, y := {}             <em>; Erstellt zwei Objekte.</em>
 x.child := y, y.parent := x  <em>; Erstellt ein Zirkelbezug.</em>
@@ -283,14 +283,14 @@ anderesObj.test()</pre>
 <p>Eine <em>Instanzvariable</em> ist eine Variable, von der jede Instanz der Klasse (also jedes Objekt, das von der Klasse abgeleitet wurde) eine eigene Kopie hat. Sie werden wie normale Zuweisungen deklariert, ohne dass das Präfix <code>this.</code> angegeben werden muss (dies gilt nur in der Klassendefinition):</p>
 <pre>InstanzVar := Ausdruck</pre>
 <p>Solche Deklarationen werden jedes Mal ausgewertet, wenn eine neue Instanz der Klasse mit dem <a href="#Custom_NewDelete">new</a>-Schlüsselwort erstellt wird. Für diesen Zweck ist der Methodenname <code>__Init</code> reserviert und sollte daher nicht vom Skript verwendet werden. Die <a href="#Custom_NewDelete">__New()</a>-Methode wird aufgerufen, sobald alle Deklarationen dieser Art (auch solche, die in base-Klassen definiert wurden) ausgewertet worden sind. <em>Ausdruck</em> kann mit <code>this</code> auf andere Instanzvariablen und Methoden zugreifen, aber alle anderen Variablenverweise werden als global angesehen.</p>
-<p>Um auf eine Instanzvariable zugreifen zu können, muss immer das Zielobjekt angegeben werden; zum Beispiel <code><b>this</b>.InstanzVar</code>.</p>
+<p>Um auf eine Instanzvariable zugreifen zu können (sogar innerhalb einer Methode), gibt man immer das Zielobjekt an; zum Beispiel <code><b>this</b>.InstanzVar</code>.</p>
 <p><span class="ver">[v1.1.08+]:</span> Deklarationen wie <code>x.y := z</code> werden auch unterstützt, sofern <code>x</code> zuvor in dieser Klasse deklariert wurde. <code>x := {}, x.y := 42</code> würde beispielsweise <code>x</code>  deklarieren und außerdem <code>this.x.y</code> initialisieren.</p>
 
 <h4 id="Custom_Classes_staticvar">Statische bzw. Klassenvariablen <span class="ver">[v1.1.00.01+]</span></h4>
 <p>Statische bzw. Klassenvariablen gehören nur der Klasse selbst, die aber von abgeleiteten Objekten (einschließlich Unterklassen) geerbt werden können. Solche Variablen müssen mit dem Schlüsselwort "static" deklariert werden:</p>
 <pre>static KlassenVar := Ausdruck</pre>
 <p>Statische Deklarationen werden nur einmal ausgewertet - bevor der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> erfolgt, und in der Reihenfolge, wie sie im Skript vorkommen. Jede Deklaration speichert einen Wert in das Klassenobjekt. Jeder Variablenverweis in <i>Ausdruck</i> wird als global angesehen.</p>
-<p>Um einer Klassenvariable etwas zuweisen zu können, muss immer das Klassenobjekt angegeben werden; zum Beispiel <code><b>Klassenname</b>.KlassenVar := Wert</code>. Wenn ein Objekt <em>x</em> von <em>Klassenname</em> abgeleitet wurde und wenn <em>x</em> selbst nicht den Key "KlassenVar" enthält, kann mit <code>x.KlassenVar</code> zudem der Wert von <code>Klassenname.KlassenVar</code> dynamisch abgerufen werden. Allerdings würde <code>x.KlassenVar := y</code> den Wert nicht in <em>Klassenname</em>, sondern in <em>x</em> speichern.</p>
+<p>Um einer Klassenvariable etwas zuweisen zu können, gibt man immer das Klassenobjekt an; zum Beispiel <code><b>Klassenname</b>.KlassenVar := Wert</code>. Wenn ein Objekt <em>x</em> von <em>Klassenname</em> abgeleitet wurde und wenn <em>x</em> selbst nicht den Key "KlassenVar" enthält, kann mit <code>x.KlassenVar</code> zudem der Wert von <code>Klassenname.KlassenVar</code> dynamisch abgerufen werden. Allerdings würde <code>x.KlassenVar := y</code> den Wert nicht in <em>Klassenname</em>, sondern in <em>x</em> speichern.</p>
 <p><span class="ver">[v1.1.08+]:</span> Deklarationen wie <code>static x.y := z</code> werden auch unterstützt, sofern <code>x</code> zuvor in dieser Klasse deklariert wurde. <code>static x := {}, x.y := 42</code> würde beispielsweise <code>x</code> deklarieren und außerdem <code><i>Klassenname</i>.x.y</code> initialisieren.</p>
 
 <h4 id="Custom_Classes_class">Verschachtelte Klassen</h4>
@@ -592,7 +592,7 @@ Default__Warn(nonobj, p1="", p2="", p3="", p4="")
 <span id="Refs"></span><h3 id="Reference_Counting">Referenzzählung</h3>
 <p>AutoHotkey verwendet einen einfachen Referenzzählungsmechanismus, um automatisch Ressourcen freizugeben,falls ein Objekt nicht länger in einem Skript benötigt bzw. verwiesen wird. Skript-Autoren sollten diesen Mechanismus nicht explizit aufrufen, es sei denn, sie müssen sich direkt mit unverwalteten <a href="#Implementation_Pointers">Objekt-Pointern</a> befassen.</p>
 <p>In AutoHotkey v1.1 werden temporäre Verweise, die innerhalb eines Ausdrucks erstellt (aber nirgendwo gespeichert) werden, direkt nach ihrer Verwendung freigegeben. Zum Beispiel würde <code>Fn(&amp;{})</code> eine ungültige Adresse an die Funktion übergeben, weil der temporäre Verweis, zurückgegeben von <code>{}</code>, direkt nach dem Auswerten des <a href="Variables.htm#amp">Adresse-von</a>-Operators freigegeben wird.</p>
-<p>Um eine Aktion nach Freigabe des letzten Objektverweises durchzuführen, muss die <a href="#Custom_NewDelete">__Delete</a>-Meta-Funktion implementiert werden.</p>
+<p>Um eine Aktion nach Freigabe des letzten Objektverweises durchzuführen, implementiert man die <a href="#Custom_NewDelete">__Delete</a>-Meta-Funktion.</p>
 <p><b>Bekannte Einschränkungen:</b></p>
 <ul>
   <li>Zirkelbezüge müssen unterbrochen werden, bevor ein Objekt freigegeben werden kann. Siehe <a href="#Circular_References">Freigeben von Objekten</a>, um anhand eines Beispiels mehr darüber zu erfahren.</li>

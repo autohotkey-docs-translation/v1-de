@@ -26,7 +26,7 @@ RunWait, Ziel [, Arbeitsverz, Max|Min|Hide|UseErrorLevel, AusgabeVarPID]</pre>
 
   <dt>Ziel</dt>
   <dd><p>Ein Dokument, eine URL, eine ausführbare Datei (.exe, .com, .bat und so weiter), eine Verknüpfung (.lnk) oder ein <a href="#verbs">Systemverb</a> (siehe Bemerkungen). Wenn das <em>Ziel</em> eine lokale Datei ist, ohne dass ein Pfad angegeben wurde, wird <a href="../Variables.htm#WorkingDir">A_WorkingDir</a> zuerst durchsucht. Wenn eine Datei dort nicht gefunden wurde, wird das System nach dieser Datei suchen und sie gegebenenfalls starten, sofern sie integriert ("bekannt") ist, wie z. B. in einem der PATH-Ordner.</p>
-      <p>Um Parameter übergeben zu können, müsen sie unmittelbar nach dem Programm- oder Dokumentnamen eingefügt werden. Wenn ein Parameter Leerzeichen enthält, sollte man ihn sicherheitshalber in Anführungszeichen setzen (auch wenn es in einigen Fällen ohne sie funktionieren würde).</p></dd>
+      <p>Damit Parameter übergeben werden können, müssen sie unmittelbar nach dem Programm- oder Dokumentnamen erfolgen. Wenn ein Parameter Leerzeichen enthält, sollte man ihn sicherheitshalber in Anführungszeichen setzen (auch wenn es in einigen Fällen ohne sie funktionieren würde).</p></dd>
 
   <dt>Arbeitsverz</dt>
   <dd><p>Das Arbeitsverzeichnis, in dem das Ziel gestartet werden soll. Umschließe den Namen nicht mit Anführungszeichen, selbst wenn er Leerzeichen enthält. Fehlt dieser Parameter, wird das Arbeitsverzeichnis des Skripts verwendet (<a href="../Variables.htm#WorkingDir">A_WorkingDir</a>).</p></dd>
@@ -44,7 +44,7 @@ RunWait, Ziel [, Arbeitsverz, Max|Min|Hide|UseErrorLevel, AusgabeVarPID]</pre>
 
   <dt>AusgabeVarPID</dt>
   <dd><p>Name der Variable, in der die eindeutige <a href="Process.htm">Prozess-ID (PID)</a> des neu gestarteten Programms gespeichert werden soll. Die Variable wird leer gemacht, wenn die PID nicht ermittelt werden konnte - dies passiert üblicherweise nur, wenn ein Systemverb, ein Dokument oder eine Verknüpfung gestartet wird, anstatt eine ausführbare Datei. RunWait unterstützt diesen Parameter auch, allerdings muss seine <em>AusgabeVarPID</em> in einem <a href="../misc/Threads.htm">anderen Thread</a> überprüft werden (ansonsten wäre die PID ungültig, weil der Prozess nach RunWait nicht mehr existiert).</p>
-      <p>Nachdem der Run-Befehl eine PID ermittelt hat, kann es sein, dass Fenster, die vom Prozess erstellt werden, noch nicht verfügbar sind. Um wenigstens auf die Erstellung eines Fensters zu warten, solltest du <code><a href="WinWait.htm">WinWait</a> ahk_pid %AusgabeVarPID%</code> verwenden.</p></dd>
+      <p>Nachdem der Run-Befehl eine PID ermittelt hat, kann es sein, dass Fenster, die vom Prozess erstellt werden, noch nicht verfügbar sind. Verwenden Sie <code><a href="WinWait.htm">WinWait</a> ahk_pid %AusgabeVarPID%</code>, um wenigstens auf eines dieser Fenster zu warten.</p></dd>
 
 </dl>
 <h3>ErrorLevel</h3>
@@ -71,7 +71,7 @@ Run ::{645ff040-5081-101b-9f08-00aa002f954e}  <em>; Öffnet den Papierkorb.</em>
   <tr>
     <td>properties</td>
     <td>Öffnet das Explorer-Eigenschaftsfenster für die angegebene Datei. Zum Beispiel: <code>Run, properties "C:\Meine Datei.txt"</code>.<br>
-    Hinweis: Das Eigenschaftsfenster wird automatisch geschlossen, sobald das Skript beendet wird. Um das zu verhindern, muss man <a href="WinWait.htm">WinWait</a> verwenden, um auf das Erscheinen des Fensters zu warten, und dann <a href="WinWaitClose.htm">WinWaitClose</a>, um auf das Schließen des Fensters zu warten.</td>
+    Hinweis: Das Eigenschaftsfenster wird automatisch geschlossen, sobald das Skript beendet wird. Um das zu verhindern, wartet man via <a href="WinWait.htm">WinWait</a>, bis das Fenster erscheint, und dann via <a href="WinWaitClose.htm">WinWaitClose</a>, bis der Benutzer das Fenster schließt.</td>
   </tr>
   <tr>
     <td>find</td>
@@ -119,8 +119,8 @@ MsgBox A_IsAdmin: %A_IsAdmin%`nCommand line: %full_command_line%</pre>
 <p>Das Beispiel kann jederzeit nach Belieben angepasst werden:</p>
 <ul>
   <li>Wenn das Skript immer Adminrechte benötigt, sollte man A_IsAdmin ein zweites Mal überprüfen lassen, falls <em>*RunAs</em> die Rechte des Skripts nicht erhöhen konnte (weil z. B. UAC deaktiviert ist).</li>
-  <li>Um das Skript nach Abbrechen der UAC-Nachfrage weiterlaufen zu lassen, muss ExitApp in den Try-Block verschoben werden.</li>
-  <li>Um das Skript nach fehlgeschlagenem Neustart weiterlaufen zu lassen (weil die Skriptdatei z. B. geändert oder gelöscht wurde), muss ExitApp entfernt und Run mit RunWait ersetzt werden. Bei Erfolg lässt <code>/restart</code> die neue Instanz die alte Instanz terminieren. Bei Misserfolg wird die neue Instanz beendet und RunWait abgeschlossen.</li>
+  <li>Um das Skript nach Abbrechen der UAC-Nachfrage weiterlaufen zu lassen, verschiebt man ExitApp in den Try-Block.</li>
+  <li>Um das Skript nach fehlgeschlagenem Neustart weiterlaufen zu lassen (weil die Skriptdatei z. B. geändert oder gelöscht wurde), entfernt man ExitApp und ersetzt Run mit RunWait. Bei Erfolg lässt <code>/restart</code> die neue Instanz die alte Instanz terminieren. Bei Misserfolg wird die neue Instanz beendet und RunWait abgeschlossen.</li>
 </ul>
 <p><span class="ver">[v1.0.92.01+]:</span> Wenn UAC aktiviert ist, wird der AutoHotkey-Installer das Verb <em>RunAs</em> bei <em>.ahk</em>-Dateien registrieren, wodurch <code>Run *RunAs skript.ahk</code> ein Skript als Administrator starten kann - mit der vordefinierten ausführbaren Datei.</p>
 

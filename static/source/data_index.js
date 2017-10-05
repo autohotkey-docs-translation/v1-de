@@ -234,7 +234,7 @@ indexData = [
   ["ByRef","Functions.htm#ByRef"],
   ["Call-Methode (Func-Objekt)","objects/Func.htm#Call"],
   ["callbacks","commands/RegisterCallback.htm"],
-  ["case sensitive strings","commands/StringCaseSense.htm"],["zeichengenaue Zeichenketten","commands/StringCaseSense.htm"],
+  ["case sensitive strings","commands/StringCaseSense.htm"],["Groß-/Kleinschreibung-sensitive Zeichenketten","commands/StringCaseSense.htm"],
   ["Catch","commands/Catch.htm"],
   ["Ceil()","commands/Math.htm#Ceil"],
   ["Changelog","AHKL_ChangeLog.htm"],

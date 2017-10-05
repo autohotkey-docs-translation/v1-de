@@ -13,13 +13,13 @@
 <h1>Clipboard und <a href="#ClipboardAll">ClipboardAll</a></h1>
 
 <p><em>Clipboard</em> ist eine Built-in-<a href="../Variables.htm">Variable</a>, die den aktuellen Inhalt der Windows-Zwischenablage enthält, falls dieser in Textform ist. <em><a href="#ClipboardAll">ClipboardAll</a></em> hingegen enthält alles von der Zwischenablage, wie z. B. Bilder und Formatierung.</p>
-<p id="CopiedFiles">Jede Textzeile in <em>Clipboard</em> endet normalerweise mit einem CR- und LF-Zeichen, die im Skript als <code>`r`n</code> ausgedrückt werden können. Dateien (die beispielsweise mit STRG+C kopiert wurden) gelten als Text: Sie werden automatisch in ihren Dateinamen umgewandelt (mit vollständigem Pfad), sobald <em>Clipboard</em> im Skript verwendet wird. Um die Dateien einzeln zu extrahieren, befolgt dieses Beispiel:</p>
+<p id="CopiedFiles">Jede Textzeile in <em>Clipboard</em> endet normalerweise mit einem CR- und LF-Zeichen, die im Skript als <code>`r`n</code> ausgedrückt werden können. Dateien (die beispielsweise mit STRG+C kopiert wurden) gelten als Text: Sie werden automatisch in ihren Dateinamen umgewandelt (mit vollständigem Pfad), sobald <em>Clipboard</em> im Skript verwendet wird. Das folgende Beispiel zeigt, wie die Dateien einzeln extrahiert werden können:</p>
 <pre><a href="../commands/LoopParse.htm">Loop, parse</a>, clipboard, `n, `r
 {
     MsgBox, 4, , Dateinummer %A_Index% ist %A_LoopField%.`n`nWeiter?
     IfMsgBox, No, break
 }</pre>
-<p>Um die Dateinamen in alphabetischer Reihenfolge zu sortieren, verwendet den <a href="../commands/Sort.htm">Sort</a>-Befehl. Um die Dateinamen von der Zwischenablage in eine Datei zu schreiben, verwendet <code><a href="../commands/FileAppend.htm">FileAppend</a>, %clipboard%`r`n, C:\Meine Datei.txt</code>. Um die Versuchsdauer zu ändern, wie oft die Zwischenablage geöffnet werden soll (wenn sie beispielsweise von einer anderen Anwendung benutzt wird), verwendet <a href="../commands/_ClipboardTimeout.htm">#ClipboardTimeOut</a>.</p>
+<p>Mit dem <a href="../commands/Sort.htm">Sort</a>-Befehl können die Dateinamen in alphabetischer Reihenfolge sortiert werden. Um die Dateinamen aus der Zwischenablage in eine Datei zu schreiben, nutzt man <code><a href="../commands/FileAppend.htm">FileAppend</a>, %clipboard%`r`n, C:\Meine Datei.txt</code>. Mit <a href="../commands/_ClipboardTimeout.htm">#ClipboardTimeOut</a> kann man einstellen, wie lange das Skript versuchen soll, die Zwischenablage zu öffnen (wenn die Zwischenablage zum Beispiel von einer anderen Anwendung blockiert wird).</p>
 <strong>Einfache Beispiele:</strong>
 <pre>clipboard = eigener Text   <em>; Ersetzt die Zwischenablage mit neuem Inhalt.</em>
 clipboard =   <em>; Leert die Zwischenablage.</em>
@@ -40,7 +40,7 @@ Clipboard := ClipSicherung   <em>; Originale Zwischenablage wiederherstellen. Be
 ClipSicherung =   <em>; Speicher freigeben, falls die Zwischenablage sehr groß war.</em></pre>
 <p><em>ClipboardAll</em> könnte auch in einer Datei gespeichert werden (im diesen Modus wird FileAppend die vorhandene Datei immer überschreiben):</p>
 <pre><a href="../commands/FileAppend.htm">FileAppend</a>, %ClipboardAll%, C:\Firmenlogo.clip <em>; Die Dateierweiterung spielt hierbei keine Rolle.</em></pre>
-<p>Um die Datei später wieder in die Zwischenablage zu laden (oder in eine Variable), befolgt dieses Beispiel:</p>
+<p>Das folgende Beispiel zeigt, wie die Datei später wieder in die Zwischenablage (oder in eine Variable) geladen werden kann:</p>
 <pre><a href="../commands/FileRead.htm">FileRead</a>, Clipboard, <strong>*c</strong> C:\Firmenlogo.clip <em>; Beachtet, dass *c vor dem Dateinamen stehen muss.</em></pre>
 <h3>Hinweise</h3>
 <p><em>ClipboardAll</em> ist leer, sobald es nicht wie oben beschrieben verwendet wird. Darüber hinaus wird <em>ClipboardAll</em> nicht in <a href="../Variables.htm#comma">kommagetrennten Ausdrücken</a> unterstützt; das heißt, dass diese Variable alleine auf einer Zeile stehen muss, wie z. B. <code>ClipSicherung := ClipboardAll</code>.</p>
@@ -48,7 +48,7 @@ ClipSicherung =   <em>; Speicher freigeben, falls die Zwischenablage sehr groß 
 <p>Falls <em>ClipboardAll</em> nicht in der Lage ist, eine oder mehrere Datenobjekte (Formate) von der Zwischenablage abzurufen, werden die Objekte ausgelassen und die restlichen gespeichert.</p>
 <p>Eine Variable, die Daten von der Zwischenablage enthält, kann wie folgt in eine andere Variable kopiert werden: <code>ClipSicherung2 := ClipSicherung</code>.</p>
 <p>Mit <a href="../commands/ClipWait.htm">ClipWait</a> kann festgestellt werden, wann die Zwischenablage Daten enthält (wahlweise auch Daten, die kein Text sind).</p>
-<p><a href="../commands/StringLen.htm">StrLen / StringLen</a> kann dazu verwendet werden, die Gesamtgröße einer Variable zu ermitteln, der <em>ClipboardAll</em> zugewiesen worden ist. Um die Größe bei den Unicode-Versionen von AutoHotkey abzurufen (in Bytes), muss die Länge mit 2 multipliziert werden. Mithilfe von <a href="../Variables.htm#IsUnicode">A_IsUnicode</a> können ANSI- und Unicode-Versionen wie folgt unterstützt werden: <code>Größe := StrLen(ClipSicherung) * (A_IsUnicode ? 2 : 1)</code>.</p>
+<p><a href="../commands/StringLen.htm">StrLen / StringLen</a> kann dazu verwendet werden, die Gesamtgröße einer Variable zu ermitteln, der <em>ClipboardAll</em> zugewiesen worden ist. Um die Größe bei den Unicode-Versionen von AutoHotkey abzurufen (in Bytes), muss die Länge mit 2 multipliziert werden. <a href="../Variables.htm#IsUnicode">A_IsUnicode</a> kann verwendet werden, um ANSI- und Unicode-Versionen zu unterstützen. Zum Beispiel: <code>Größe := StrLen(ClipSicherung) * (A_IsUnicode ? 2 : 1)</code>.</p>
 <p>Variablen, denen <em>ClipboardAll</em> zugewiesen worden ist, können mit den Operatoren "&lt;&gt;" und "=" miteinander verglichen werden (aber nicht direkt mit <em>ClipboardAll</em>). Im folgenden Beispiel wird zunächst die Länge jeder Variable überprüft. Falls das nicht reicht, können die Variablen noch wie folgt verglichen werden:</p>
 <pre>if ClipSicherung1 &lt;&gt; %ClipSicherung2%   <em>; <u>Muss</u> eine IF-Anweisung im alten Stil sein, kein Ausdruck.</em>
     MsgBox Die zwei gespeicherten Zwischenablagen sind unterschiedlich.</pre>

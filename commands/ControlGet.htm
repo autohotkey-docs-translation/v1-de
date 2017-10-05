@@ -27,7 +27,7 @@
 
   <dt>Steuerelement</dt>
   <dd><p>Kann entweder das ClassNN (Klassenname und Instanznummer des Steuerelements) oder der Text des Steuerelements sein, das beides mit Windows Spy ermittelt werden kann. Verwendet man Text, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>. Wenn dieser Parameter leer ist, wird das oberste Steuerelement des Fensters benutzt.</p>
-    <p>Um ein Steuerelement per HWND (Windows Handle) anzusteuern, muss der <em>Steuerelement</em>-Parameter leer gelassen und <code>ahk_id %SteuerelementHwnd%</code> im <em>Fenstertitel</em>-Parameter angegeben werden (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist). Das HWND eines Steuerelements wird üblicherweise per <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p></dd>
+    <p>Um ein Steuerelement via HWND (Windows Handle) anzusteuern, lässt man den <em>Steuerelement</em>-Parameter leer und übergibt <code>ahk_id %SteuerelementHwnd%</code> als <em>Fenstertitel</em>-Parameter (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist). Das HWND eines Steuerelements wird üblicherweise per <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p></dd>
 
   <dt>Fenstertitel</dt>
   <dd><p>Ein Fenstertitel oder sonstige Kriterien, die das Zielfenster ermitteln sollen. Siehe <a href="../misc/WinTitle.htm">Fenstertitel</a>.</p></dd>
@@ -59,7 +59,7 @@
 <em>Count Col</em>: Ermittelt die Spaltenanzahl des Steuerelements (oder -1, falls die Anzahl nicht ermittelt werden kann).</p>
 <p>HINWEIS: Einige Anwendungen speichern ihren ListView-Text vertraulich, wodurch deren Text nicht abgerufen werden kann. In diesem Fall wird ErrorLevel üblicherweise auf 0 gesetzt (signalisiert Erfolg), aber alle abgerufenen Felder leer sein. Beachte zudem, dass <a href="_MaxMem.htm">#MaxMem</a> keinen Einfluss darauf hat, wie viel Text aus einem ListView abgerufen werden kann.</p>
 <p>Bei Erfolg wird ErrorLevel auf 0 gesetzt. Bei Misserfolg wird ErrorLevel auf 1 gesetzt und <em>AusgabeVar</em> leer gemacht. Fehler treten auf, wenn: 1) das angegebene Fenster oder Steuerelement nicht existiert; 2) das Steuerelement nicht vom Typ SysListView32 ist; 3) der Prozess mit dem ListView nicht geöffnet werden konnte, da er gesperrt ist oder Benutzerrechte fehlen; 4) die <a href="#ColN">Col<em>N</em>-Option</a> auf eine nicht-existierende Spalte verweist.</p>
-<p>Um die Reihen und Felder aus einem ListView einzeln zu extrahieren, verwende eine <a href="LoopParse.htm">Parsende Schleife</a> wie folgt:</p>
+<p>Um die Reihen und Felder aus einem ListView einzeln zu extrahieren, verwendet man eine <a href="LoopParse.htm">Parsende Schleife</a>. Zum Beispiel:</p>
 <pre>ControlGet, Liste, List, Selected, SysListView321, Fenstertitel
 Loop, Parse, Liste, `n  <em>; Reihen sind durch Zeilenvorschübe (`n) abgegrenzt.</em>
 {
@@ -72,18 +72,18 @@ Loop, Parse, Liste, `n  <em>; Reihen sind durch Zeilenvorschübe (`n) abgegrenzt
 ; 0 kennzeichnet die erste Spalte (1 die zweite, 2 die dritte und so weiter). 80 ist die neue Breite.
 ; Ersetze 80 mit -1, um die Spaltenbreite automatisch anzupassen. Ersetze 80 mit -2, um das gleiche unter Berücksichtigung der Spaltenkopfbreite zu bewirken.</em></pre>
 <p><u>ListBox, ComboBox, DropDownList</u>: Der gesamte Text wird vom Steuerelement ermittelt (das heißt, dass die oben genannten ListView-Optionen wie <em>Count</em> und <em>Selected</em> nicht unterstützt werden).</p>
-<p>Jede Reihe, außer die letzte, endet mit einem Zeilenumbruch (`n). Um die Einträge einzeln abzurufen, verwende eine <a href="LoopParse.htm">Parsende Schleife</a> wie folgt:</p>
+<p>Jede Reihe, außer die letzte, endet mit einem Zeilenumbruch (`n). Um die Einträge einzeln abzurufen, verwendet man eine <a href="LoopParse.htm">Parsende Schleife</a>. Zum Beispiel:</p>
 <pre>ControlGet, Liste, List,, ComboBox1, Fenstertitel
 Loop, Parse, Liste, `n
     MsgBox Eintragsnummer %A_Index% ist %A_LoopField%.</pre>
 <p><strong>Checked</strong>: Setzt <em>AusgabeVar</em> auf 1, wenn ein Kontrollkästchen oder Optionsfeld markiert ist, ansonsten auf 0.</p>
 <p><strong>Enabled</strong>: Setzt <em>AusgabeVar</em> auf 1, wenn <em>Steuerelement</em> aktiviert ist, ansonsten auf 0.</p>
 <p><strong>Visible</strong>: Setzt <em>AusgabeVar</em> auf 1, wenn <em>Steuerelement</em> sichtbar ist, ansonsten auf 0.</p>
-<p><strong>Tab</strong>: Setzt <em>AusgabeVar</em> auf die Tab-Nummer eines SysTabControl32-Steuerelements. Der erste Tab ist 1, der zweite ist 2 und so weiter. Um stattdessen die Gesamtanzahl der Tabs (Seiten) eines Tab-Steuerelements zu ermitteln, befolge dieses Beispiel:</p>
+<p><strong>Tab</strong>: Setzt <em>AusgabeVar</em> auf die Tab-Nummer eines SysTabControl32-Steuerelements. Der erste Tab ist 1, der zweite ist 2 und so weiter. Das folgende Beispiel zeigt, wie stattdessen die Gesamtanzahl der Tabs (Seiten) eines Tab-Steuerelements ermittelt werden kann:</p>
 <pre><a href="PostMessage.htm">SendMessage</a>, 0x1304,,, SysTabControl321, Fenstertitel  <em>; 0x1304 ist TCM_GETITEMCOUNT.</em>
 Tabanzahl = %ErrorLevel%</pre>
 <p><strong>FindString, Zeichenkette</strong>: Setzt <em>AusgabeVar</em> auf die Eintragsnummer eines ListBox- oder ComboBox-Steuerelements, die zu einem Eintrag gehört, der genau mit der <em>Zeichenkette</em> übereinstimmt. Der erste Eintrag im Steuerelement ist 1, der zweite ist 2 und so weiter. Erfolgt keine Übereinstimmung, wird <em>AusgabeVar</em> leer gemacht und ErrorLevel auf 1 gesetzt.</p>
-<p><strong>Choice</strong>: Setzt <em>AusgabeVar</em> auf den Namen des derzeit ausgewählten Eintrags in einem ListBox- oder ComboBox-Steuerelement. Um stattdessen die Positionsnummer des ausgewählten Eintrags zu ermitteln, befolge dieses Beispiel (verwendet aber nur eine der beiden Zeilen):</p>
+<p><strong>Choice</strong>: Setzt <em>AusgabeVar</em> auf den Namen des derzeit ausgewählten Eintrags in einem ListBox- oder ComboBox-Steuerelement. Das folgende Beispiel zeigt, wie stattdessen die Positionsnummer des ausgewählten Eintrags ermittelt werden kann (verwenden Sie aber nur eine der beiden Zeilen):</p>
 <pre><a href="PostMessage.htm">SendMessage</a>, 0x188, 0, 0, ListBox1, Fenstertitel  <em>; 0x188 ist LB_GETCURSEL (bei einer ListBox).</em>
 <a href="PostMessage.htm">SendMessage</a>, 0x147, 0, 0, ComboBox1, Fenstertitel  <em>; 0x147 ist CB_GETCURSEL (bei einer DropDownList oder ComboBox).</em>
 ChoicePos = %ErrorLevel%  <em>; Das wird -1 sein, wenn kein Eintrag ausgewählt ist.</em>
@@ -101,7 +101,7 @@ ChoicePos += 1  <em>; Wandelt 0-basiert in 1-basiert um, so dass der erste Eintr
 <p>Bei Erfolg wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 0 gesetzt. Bei Misserfolg (z. B. ein nicht-existierendes Fenster oder Steuerelement), wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt und <em>AusgabeVar</em> leer gemacht.</p>
 <h3>Bemerkungen</h3>
 <p>Im Gegensatz zu Befehlen, die ein Steuerelement ändern, hat ControlGet keine automatische Verzögerung (d. h. ControlGet wird nicht von <a href="SetControlDelay.htm">SetControlDelay</a> beeinflusst).</p>
-<p>Mit <a href="MouseGetPos.htm">MouseGetPos</a> kann das ClassNN oder HWND vom Steuerelement erfasst werden, das sich gerade eben unter dem Mauszeiger befindet. Mit <a href="WinGet.htm">WinGet ControlList</a> kann eine Liste mit Steuerelementen von einem Fenster abgerufen werden.</p>
+<p>Mit <a href="MouseGetPos.htm">MouseGetPos</a> kann das ClassNN oder HWND des Steuerelements ermittelt werden, auf dem der Mauszeiger gerade zeigt. Mit <a href="WinGet.htm">WinGet ControlList</a> kann eine Liste mit Steuerelementen von einem Fenster abgerufen werden.</p>
 <p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
 
 <h3>Siehe auch</h3>
