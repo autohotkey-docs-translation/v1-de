@@ -20,7 +20,7 @@
 
   <dt>Steuerelement-oder-Pos</dt>
   <dd><p>Ist dieser Parameter leer, wird das oberste Steuerelement des Fensters angeklickt (oder das Fenster selbst, falls es keine Steuerelemente hat). Ansonsten wird eine der unteren Methoden verwendet.</p>
-      <p>Modus 1 (Position): Geben Sie die Koordinaten X und Y an, die sich auf die obere linke Ecke des Zielfensters beziehen. Die X-Koordinate muss vor der Y-Koordinate angegeben werden, außerdem muss mindestens ein Leer- oder Tabulatorzeichen zwischen denen vorkommen. Zum Beispiel: <code>X55 Y33</code>. Befindet sich auf den angegebenen Koordinaten ein Steuerelement, wird das Klickereignis auf genau diesen Koordinaten gesendet. Ist dort kein Steuerelement, wird die Aktion an das Fenster selbst gesendet (funktioniert nicht bei jedem Fenster). Hinweis: In diesem Modus werden die <em>Option</em>sbuchstaben X und Y ignoriert.</p>      
+      <p>Modus 1 (Position): Geben Sie die Koordinaten X und Y relativ zur oberen linken Ecke des Zielfensters an. Die X-Koordinate muss vor der Y-Koordinate angegeben werden, außerdem muss mindestens ein Leer- oder Tabulatorzeichen zwischen denen vorkommen. Zum Beispiel: <code>X55 Y33</code>. Befindet sich auf den angegebenen Koordinaten ein Steuerelement, wird das Klickereignis auf genau diesen Koordinaten gesendet. Ist dort kein Steuerelement, wird die Aktion an das Fenster selbst gesendet (funktioniert nicht bei jedem Fenster). Hinweis: In diesem Modus werden die <em>Option</em>sbuchstaben X und Y ignoriert.</p>      
       <p>Modus 2 (ClassNN oder Text): Geben Sie entweder ClassNN (Klassenname und Instanznummer des Steuerelements) oder Name/Text des Steuerelements an, die beide per Windows Spy ermittelt werden können. Beim Name/Text wird das Übereinstimmungsverhalten mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> bestimmt.</p>
       <p>Standardmäßig hat der zweite Modus Vorrang vor dem ersten Modus. Zum Beispiel würde bei einem Steuerelement, dessen Text oder Klassenname im Format "Xnnn Ynnn" ist (eher unwahrscheinlich), der zweite Modus in Kraft treten. Besteht die Absicht, dieses Verhalten zu überschreiben und den ersten Modus zu verwenden, muss das Wort "Pos" wie folgt in <em>Optionen</em> angegeben werden: <code>ControlClick, x255 y152, Fenstertitel,,,, Pos</code>.</p>
       <p>Um ein Steuerelement via HWND (Windows Handle) anzusteuern, lässt man diesen Parameter leer und übergibt <code>ahk_id %SteuerelementHwnd%</code> als <em>Fenstertitel</em>-Parameter (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist). Das HWND eines Steuerelements wird üblicherweise per <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p></dd>
@@ -46,9 +46,9 @@
       <p><strong>NA</strong> <span class="ver">[v1.0.45+]:</span> Kann die Zuverlässigkeit verbessern. Siehe <a href="#Reliability">Zuverlässigkeit</a> weiter unten.</p>
       <p><strong>D</strong>: Drückt die Maustaste nach unten, aber lässt sie nicht mehr los (erzeugt ein Down-Ereignis). Fehlt sowohl die <strong>D</strong>- als auch <strong>U</strong>-Option, wird ein vollständiger Mausklick (drücken und loslassen) gesendet.</p>
       <p><strong>U</strong>: Lässt die Maustaste los (erzeugt ein Up-Ereignis). Diese Option sollte nicht verwendet werden, wenn die <strong>D</strong>-Option bereits aktiv ist (und umgekehrt).</p>
-      <p><strong>Pos</strong>: Bewirkt innerhalb von <em>Optionen</em>, dass der X/Y-Positionierungsmodus bedingungslos verwendet wird, wie oben beim Parameter <em>Steuerelement-oder-Pos</em> beschrieben.</p>
-      <p><strong>Xn</strong>: Ersetzen Sie <strong>n</strong> mit der X-Position, auf die geklickt werden soll, bezogen auf die obere linke Ecke des Steuerelements. Ansonsten erfolgt der Mausklick auf der horizontalen Mitte des Steuerelements.</p>
-      <p><strong>Yn</strong>: Ersetzen Sie <strong>n</strong> mit der Y-Position, auf die geklickt werden soll, bezogen auf die obere linke Ecke des Steuerelements. Ansonsten erfolgt der Mausklick auf der vertikalen Mitte des Steuerelements.</p>
+      <p><strong>Pos</strong>: Fügen Sie das Wort Pos in den <em>Optionen</em> ein, um den X/Y-Positionierungsmodus vom <em>Steuerelement-oder-Pos</em>-Parameter zu erzwingen.</p>
+      <p><strong>Xn</strong>: Geben Sie für <strong>n</strong> die zu klickende X-Position relativ zur oberen linken Ecke des Steuerelements an. Ansonsten erfolgt der Mausklick auf der horizontalen Mitte des Steuerelements.</p>
+      <p><strong>Yn</strong>: Geben Sie für <strong>n</strong> die zu klickende Y-Position relativ zur oberen linken Ecke des Steuerelements an. Ansonsten erfolgt der Mausklick auf der vertikalen Mitte des Steuerelements.</p>
       <p>Verwenden Sie dezimale (nicht hexadezimale) Zahlen bei den Optionen <strong>X</strong> und <strong>Y</strong>.</p></dd>
 
   <dt>Titelausnahme</dt>
@@ -65,7 +65,7 @@
 <h3 id="Reliability">Zuverlässigkeit</h3>
 <p>Zur Verbesserung der Zuverlässigkeit (besonders, wenn der Benutzer die Maus während des ControlClick-Befehls physisch bewegt) könnte das eine oder andere vielleicht weiterhelfen:</p>
 <p>1) Benutzen Sie <code><a href="SetControlDelay.htm">SetControlDelay -1</a></code> vor ControlClick. Dadurch wird verhindert, dass die Maustaste beim Klicken gedrückt gehalten wird, wodurch Störungen durch physischen Mausbewegungen des Benutzers reduziert werden.</p>
-<p>2) Fügen Sie NA im sechsten Parameter (<em>Optionen</em>) ein. Zum Beispiel:</p>
+<p>2) Fügen Sie NA in den sechsten Parameter (<em>Optionen</em>) ein. Zum Beispiel:</p>
 <pre>SetControlDelay -1
 ControlClick, Toolbar321, Fenstertitel,,,, NA</pre>
 <p><code>NA</code> verhindert, dass das Fenster als aktiv markiert wird und dass sich die Eingabeverarbeitungen des Fensters und des Skripts vermischen, wodurch Störungen durch physischen Mausbewegungen unterdrückt werden (aber üblicherweise nur, wenn das Fenster inaktiv ist). Allerdings funktioniert diese Methode nicht bei allen Fenster- und Steuerelementarten.</p>
