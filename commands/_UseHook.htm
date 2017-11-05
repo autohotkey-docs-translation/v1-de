@@ -12,31 +12,31 @@
 
 <h1>#UseHook</h1>
 
-<p>Erzwingt die Verwendung des Hooks, um alle oder einige Tastatur-<a href="../Hotkeys.htm">Hotkeys</a> zu implementieren.</p>
+<p>Bewirkt, dass alle oder einige Tastatur-<a href="../Hotkeys.htm">Hotkeys</a> mit dem Hook implementiert werden.</p>
 
 <pre class="Syntax">#UseHook [On|Off]</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>On|Off</dt>
-  <dd><p>#UseHook, ohne eins der folgenden Wörter danach, ist das gleiche wie, als würde man <code>#UseHook On</code> angeben.</p>
-      <p><strong>On</strong>: Der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> wird verwendet, um alle Tastatur-Hotkeys zwischen hier und der nächsten Direktive <code>#UseHook OFF</code> (falls vorhanden) zu implementieren.</p>
-    <p><strong>Off</strong>: Hotkeys werden mit der Standardmethode implementiert (wenn möglich mit RegisterHotkey(), ansonsten per Tastatur-Hook).</p></dd>
+  <dd><p>Wenn #UseHook ohne Parameter angegeben wird, gilt standardmäßig <code>#UseHook On</code>.</p>
+      <p><strong>On</strong>: Der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> wird genutzt, um alle Tastatur-Hotkeys zwischen hier und der nächsten Direktive <code>#UseHook OFF</code> (falls vorhanden) zu implementieren.</p>
+    <p><strong>Off</strong>: Hotkeys werden mit der Standardmethode (RegisterHotkey() wenn möglich, ansonsten der Tastatur-Hook) implementiert.</p></dd>
 
 </dl>
 
 <h3>Bemerkungen</h3>
-<p>Ein Tastatur-Hotkey wird üblicherweise mit der Windows-API-Funktion RegisterHotkey() implementiert, wann immer es möglich ist. Unter bestimmten Bedingungen könnte sich die Reaktionsfähigkeit der Hotkeys erhöhen, wenn stattdessen der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> verwendet wird.</p>
-<p>Das Aktivieren dieser Direktive ist das gleiche wie, als würde man bei den betroffenen Hotkeys den <a href="../Hotkeys.htm#prefixdollar">$-Präfix</a> angeben.</p>
-<p><code>#UseHook</code> sollte, wie jede andere Direktive auch, nicht wie ein Befehl im Skript positioniert werden (beispielsweise macht es keinen Sinn, die Direktive in eine Subroutine zu setzen). Diese Direktive wird nur beim Starten des Skripts ausgeführt, danach nie wieder. Positionieren Sie diese Direktive stattdessen direkt vor dem Hotkey, der als erstes von ihr beeinflusst werden soll.</p>
-<p>Standardmäßig können Hotkeys, die den <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> verwenden, nicht durch den <a href="Send.htm">Send</a>-Befehl ausgelöst werden. Ebenso können Maus-Hotkeys nicht durch Befehle wie <a href="Click.htm">Click</a> ausgelöst werden, weil alle Maus-Hotkeys den <a href="_InstallMouseHook.htm">Maus-Hook</a> verwenden. Verwenden Sie stattdessen <a href="Gosub.htm">Gosub</a>, um direkt zur Hotkey-Subroutine zu springen. Zum Beispiel: <code>Gosub #LButton</code>.</p>
+<p>Normalerweise wird die Windows-API-Funktion RegisterHotkey() wann immer möglich genutzt, um einen Tastatur-Hotkey zu implementieren. Allerdings ist die Reaktionsfähigkeit von Hotkeys unter Umständen besser, wenn stattdessen der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> verwendet wird.</p>
+<p>Diese Direktive auf ON zu setzen ist das gleiche wie, als würde man in den Definitionen der Hotkeys, die davon betroffen sein sollen, das <a href="../Hotkeys.htm#prefixdollar">$-Präfix</a> nutzen.</p>
+<p><code>#UseHook</code> sollte wie alle anderen Direktiven nicht positioniert werden -- Direktiven werden nur einmal beim Start des Skripts verarbeitet -- als wäre sie ein Befehl (beispielsweise ist es sinnlos, die Direktive in eine Subroutine zu setzen). Positionieren Sie diese Direktive stattdessen direkt vor dem ersten Hotkey-Label, der von ihr beeinflusst werden soll.</p>
+<p>Standardmäßig können Hotkeys, die den <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> nutzen, nicht durch den <a href="Send.htm">Send</a>-Befehl ausgelöst werden. Ebenso können Maus-Hotkeys nicht durch Befehle wie <a href="Click.htm">Click</a> ausgelöst werden, weil solche Hotkeys immer den <a href="_InstallMouseHook.htm">Maus-Hook</a> nutzen. Um das zu umgehen, wählt man einfach den direkten Weg und springt stattdessen mit <a href="Gosub.htm">Gosub</a> zu der Subroutine des Hotkeys. Zum Beispiel: <code>Gosub #LButton</code>.</p>
 <p><span class="ver">[v1.1.06+]:</span> <a href="_InputLevel.htm">#InputLevel</a> und <a href="SendLevel.htm">SendLevel</a> ermöglichen zusätzliche Kontrolle darüber, welche Hotkeys und Hotstrings durch den Send-Befehl ausgelöst werden sollen.</p>
 <p>Ist diese Direktive im Skript nicht angegeben, gilt standardmäßig OFF.</p>
 
 <h3>Siehe auch</h3>
 <p><a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="_InstallMouseHook.htm">#InstallMouseHook</a>, <a href="ListHotkeys.htm">ListHotkeys</a>, <a href="_InputLevel.htm">#InputLevel</a></p>
 <h3>Beispiel</h3>
-<pre class="NoIndent">#UseHook  <em>; Erzwingt die Verwendung des Hooks bei nachfolgenden Hotkeys.</em>
+<pre class="NoIndent">#UseHook  <em>; Bewirkt, dass die nachfolgenden Hotkeys den Hook verwenden.</em>
 #x::MsgBox, Dieser Hotkey wird mit dem Hook implementiert.
 #y::MsgBox, Dieser auch.
 #UseHook off

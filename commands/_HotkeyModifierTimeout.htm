@@ -19,23 +19,23 @@
 <dl>
 
   <dt>Millisekunden</dt>
-  <dd><p>Die Länge des Intervalls in Millisekunden. Enthält dieser Parameter -1, kommt es niemals zum Timeout (Modifikatortasten werden nach dem Senden immer wieder nach unten gedrückt). Enthält dieser Parameter eine 0, erfolgt immer ein Timeout (Modifikatortasten werden niemals wieder nach unten gedrückt).</p></dd>
+  <dd><p>Die Länge des Intervalls in Millisekunden. Dieser Wert kann -1 sein, um die Modifikatoren nie das Zeitlimit überschreiten zu lassen (sie sind nach dem Send-Befehl dauerhaft im gedrückten Zustand), oder 0, um die Modifikatoren immer das Zeitlimit überschreiten zu lassen (sie sind danach nie im gedrückten Zustand).</p></dd>
 
 </dl>
 <h3>Bemerkungen</h3>
 <p>Diese Direktive <strong>muss nicht</strong> verwendet werden, wenn:</p>
 <ul>
-  <li>Hotkeys ihre Tastatureingaben mit den Methoden <a href="Send.htm#SendInput">SendInput</a> oder <a href="Send.htm#SendPlay">SendPlay</a> senden. Das liegt daran, dass solche Methoden das physische Drücken und Loslassen der Tasten solange nach hinten verschieben, bis das Ende des Send-Befehls erreicht wurde.</li>
-  <li>das Skript den Tastatur-Hook installiert hat (kann mit "View-&gt;Key history" in der Menüleiste des Hauptfensters oder mit dem <a href="KeyHistory.htm">KeyHistory</a>-Befehl überprüft werden). Das liegt daran, dass der Hook nachverfolgen kann, welche Modifikatortasten (ALT/STRG/WIN/UMSCHALT) der Benutzer physisch gedrückt hält, ohne das Zeitlimit verwenden zu müssen.</li>
+  <li>Hotkeys ihre Tastatureingaben mit den Methoden <a href="Send.htm#SendInput">SendInput</a> oder <a href="Send.htm#SendPlay">SendPlay</a> senden. Solche Methoden zögern das physische Drücken und Loslassen der Tasten solange hinaus, bis das Ende des Send-Befehls erreicht ist.</li>
+  <li>das Skript den Tastatur-Hook installiert hat (mit dem Hauptfenster-Menüpunkt "View-&gt;Key history" oder dem <a href="KeyHistory.htm">KeyHistory</a>-Befehl können Sie prüfen, ob Ihr Skript den Hook nutzt). Der Hook behält den Überblick darüber, welche Modifikatortasten (ALT/STRG/WIN/UMSCHALT) der Benutzer physisch gedrückt hält, und kann deshalb auf das Zeitlimit verzichten.</li>
 </ul>
 <p>Am folgenden Beispiel wird gezeigt, wie diese Direktive funktioniert: <code>^!a::Send, abc</code>.</p>
-<p>Der <a href="Send.htm">Send</a>-Befehl wird zuallererst, sobald er ausgeführt wird, die STRG- und ALT-Taste loslassen, so dass die Zeichen richtig gesendet werden können. Nachdem die Tasten gesendet wurden, hat der Befehl keine Möglichkeit zu erkennen, ob er STRG und ALT sicher wieder nach unten drücken kann (falls der Benutzer diese Tasten weiterhin gedrückt hält). Ist die vergangene Zeit kleiner als die angegebenen Millisekunden, wird der Befehl annehmen, dass der Benutzer keine Chance hatte, die Modifikatortasten loszulassen, und wird sie daher wieder nach unten drücken, um sie an ihren physischen Status anzupassen. Ansonsten werden die Modifikatortasten nicht nochmal nach unten gedrückt. Außerdem muss der Benutzer sie loslassen und wieder drücken, wenn er die gleiche oder eine andere Taste modifizieren will.</p>
-<p>Das Zeitlimit sollte auf einen Wert gesetzt werden, das kleiner ist als die Zeitmenge, die der Benutzer üblicherweise benötigt, um Modifikatortasten eines Hotkeys gedrückt zu halten. Ansonsten könnte es passieren, dass die Modifikatortasten wieder auf die gedrückte Position gesetzt werden (stecken bleiben), auch dann, wenn der Benutzer sie nicht physisch gedrückt hält.</p>
-<p>Es ist möglich, die Notwendigkeit dieser Direktive wie folgt auf ein Minimum zu reduzieren oder vollständig zu entfernen:</p>
+<p>Bevor der <a href="Send.htm">Send</a>-Befehl seine Ausführung beginnt, lässt er die STRG- und ALT-Tasten los, damit die Zeichen richtig gesendet werden. Nachdem der Befehl die Tasten gesendet hat, weiß er nicht, ob er STRG und ALT sicher wieder in den gedrückten Zustand versetzen kann (falls der Benutzer diese Tasten weiterhin gedrückt hält). Wenn die aktuell verstrichene Zeit unterhalb des Zeitlimits liegt, geht der Befehl davon aus, dass der Benutzer noch nicht die Gelegenheit hatte, die Modifikatortasten loszulassen, und wird sie deshalb passend zu ihrem physischen Status wieder in den gedrückten Zustand versetzen. Ansonsten bleiben die Modifikatortasten im losgelassenen Zustand; das heißt, dass der Benutzer die Modifikatortasten loslassen und wieder drücken muss, damit sie eine andere Taste modifizieren können.</p>
+<p>Das Zeitlimit sollte kleiner sein als die Zeit, die der Benutzer üblicherweise zum Gedrückthalten der Modifikatoren eines Hotkeys benötigt, bevor er sie wieder loslässt. Ansonsten könnte es passieren, dass die Modifikatoren wieder in den gedrückten Zustand versetzt werden (hängen bleiben), auch dann, wenn der Benutzer sie nicht physisch gedrückt hält.</p>
+<p>Greifen Sie auf eine der folgenden Möglichkeiten zurück, um die Notwendigkeit dieser Direktive auf ein Minimum zu reduzieren oder vollständig zu entfernen:</p>
 <ul>
-  <li>Installieren Sie den Tastatur-Hook durch Hinzufügen der Zeile <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> irgendwo im Skript.</li>
-  <li>Verwenden Sie nicht das traditionelle <a href="Send.htm#SendEvent">SendEvent</a>, sondern <a href="Send.htm#SendInput">SendInput</a> oder <a href="Send.htm#SendPlay">SendPlay</a>.</li>
-  <li>Wenn Sie die traditionelle <a href="Send.htm#SendEvent">SendEvent</a>-Methode verwenden, könnte es helfen, <a href="SetKeyDelay.htm">SetKeyDelay</a> auf 0 oder -1 zu setzen, um die Tastatureingaben schneller zu senden.</li>
+  <li>Installieren Sie den Tastatur-Hook, indem Sie irgendwo im Skript die Zeile <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> einfügen.</li>
+  <li>Verwenden Sie <a href="Send.htm#SendInput">SendInput</a> oder <a href="Send.htm#SendPlay">SendPlay</a> anstelle von <a href="Send.htm#SendEvent">SendEvent</a>.</li>
+  <li>Setzen Sie bei der traditionellen <a href="Send.htm#SendEvent">SendEvent</a>-Methode den ersten Parameter von <a href="SetKeyDelay.htm">SetKeyDelay</a> auf 0 oder -1, um die Tastatureingaben schneller senden zu lassen.</li>
 </ul>
 <p>Ist diese Direktive im Skript nicht angegeben, gilt standardmäßig 50.</p>
 <h3>Siehe auch</h3>
