@@ -245,31 +245,46 @@ SucheFortsetzen := true</pre>
     <td><p><strong>Komma (Mehrfachanweisung)</strong> <span class="ver">[v1.0.46+]</span>. Kommas können genutzt werden, um mehrere Teilausdrücke auf einer Zeile zu schreiben. Diese Vorgehensweise wird häufig angewendet, um mehrere Zuweisungen oder Funktionsaufrufe zu gruppieren. Zum Beispiel: <code>x := 1<strong>,</strong> y += 2<strong>,</strong> ++index, func()</code>. Solche Anweisungen werden von links nach rechts ausgeführt. Hinweis: Eine Zeile, die mit einem Komma (oder einem anderen Operator) beginnt, wird automatisch mit der darüberliegenden Zeile <a href="Scripts.htm#continuation">verbunden</a>. Siehe auch: <a href="#CommaPerf">Komma-Performance</a>.</p>
       <p>In v1.0.46.01+ wird ein Gleichheitszeichen, das direkt nach einem Komma und einer Variable erfolgt, automatisch als <a href="commands/SetExpression.htm">Zuweisung (:=)</a> behandelt. Alle Teilausdrücke in der folgenden Mehrfachanweisung sind beispielsweise Zuweisungen: <code>x := 1, y = 2, a = b = c</code>. Neue Skripte sollten sich nicht auf dieses Verhalten verlassen, weil es eventuell noch geändert wird. Diese Regel gilt nur für einfache Variablen und nicht für <a href="#ref">Doppeldereferenzierungen</a>; die folgende Mehrfachanweisung enthält beispielsweise nur eine Zuweisung: <code>x:=1, %y%=2</code></p></td>
   </tr>
+</table>
+<p>Die folgenden Arten von Teilausdrücken überschreiben die Priorität bzw. die Reihenfolge der Auswertung:</p>
+<table class="info">
+  <tr>
+    <td style="text-align:center"><strong>(</strong><em>Ausdruck</em><strong>)</strong></td>
+    <td><p>Ein beliebiger in Klammern gesetzter Teilausdruck. <code>(3 + 2) * 2</code> beispielsweise würde <code>3 + 2</code> zuerst auswerten.</p></td>
+  </tr>
   <tr>
     <td style="text-align:center; white-space:nowrap"><p><strong>mod()<br>
         
         round()<br>
     
     abs()</strong></p></td>
-    <td>Diese und andere mathematischen Funktionen finden Sie <a href="commands/Math.htm">hier</a>.</td>
+    <td><strong>Funktionsaufruf</strong>. Der Name einer Funktion muss unmittelbar danach mit einer runden Startklammer beginnen, ohne Leer- oder Tabulatorzeichen dazwischen. Einzelheiten finden Sie unter <a href="Functions.htm">Funktionen</a>.</td>
   </tr>
   <tr>
-    <td style="text-align:center; white-space:nowrap"><p><strong>%func%()</strong></p></td>
+    <td style="text-align:center; white-space:nowrap"><p><strong>%</strong><em>func</em><strong>%()</strong></p></td>
     <td>Siehe <a href="Functions.htm#DynCall">Dynamisches Aufrufen einer Funktion</a>.</td>
   </tr>
   <tr>
-    <td style="text-align:center"><strong>func.()</strong></td>
+    <td style="text-align:center"><em>func</em><strong>.()</strong></td>
     <td><p><strong>Veraltet:</strong> Diese Syntax wird nicht empfohlen. Benutzen Sie stattdessen <code>%func%()</code> (für Funktionsnamen und Objekte) oder <code>func.Call()</code> (für Funktionsobjekte).</p>
     <p><span class="ver">[AHK_L 48+]:</span> Versucht, eine namenlose Methode des Objekts <i>func</i> aufzurufen. Üblicherweise ist das die Standardmethode des Objekts. Wenn <i>func</i> kein Objekt enthält, wird stattdessen das <a href="Objects.htm#Default_Base_Object">Standard-Base-Objekt</a> aufgerufen.</p>
     <p><span class="ver">[v1.0.95+]:</span> Enthält <i>func</i> einen Funktionsnamen, wird die benannte Funktion aufgerufen.</p></td>
   </tr>
   <tr>
-    <td style="text-align:center"><strong>F(<i>p</i>*)</strong></td>
-    <td><span class="ver">[AHK_L 60+]:</span> Siehe <a href="Functions.htm#Variadic">Variadische Funktionen</a>.</td>
+    <td style="text-align:center">Fn(<strong><em>Parameter</em>*</strong>)</td>
+    <td><p><span class="ver">[AHK_L 60+]:</span> <a href="Functions.htm#VariadicCall">Variadischer Funktionsaufruf</a>. <em>Parameter</em> ist ein Array (Objekt), das Parameterwerte enthält.</p></td>
   </tr>
   <tr>
-    <td style="text-align:center"><strong>x[y]</strong></td>
-    <td><span class="ver">[AHK_L 31+]:</span> <strong>Objektzugriff</strong>. Ruft einen Wert ab, setzt einen Wert oder ruft eine Methode des Objekts <i>x</i> auf. Hierbei muss <i>y</i> eine Parameterliste oder ein berechneter Methodenname sein. Siehe <a href="Objects.htm#Usage_Simple_Arrays">Array-Syntax</a> und <a href="Objects.htm#Usage_Objects">Objekt-Syntax</a>.</td>
+    <td style="text-align:center"><strong>x[y]<br>[a, b, c]</strong></td>
+    <td>
+      <p><span class="ver">[AHK_L 31+]:</span> <strong>Zugriff auf Objektelemente</strong>. Ruft einen Wert ab, setzt einen Wert oder ruft eine Methode des Objekts <i>x</i> auf. Hierbei muss <i>y</i> eine Parameterliste sein, oder ein Ausdruck, der einen Methodennamen zurückgibt.</p>
+      <p><span class="ver">[v1.0.97+]:</span> <strong>Direkte Array-Schreibweise</strong>. Wenn vor der eckigen Startklammer kein Wert (oder Teilausdruck, der einen Wert zurückgibt) angegeben ist, wird sie stattdessen als Beginn eines direkt geschriebenen Arrays interpretiert. <code>[a, b, c]</code> beispielsweise ist das gleiche wie <code>Array(a, b, c)</code> (a, b und c sind Variablen).</p>
+      <p>Siehe <a href="Objects.htm#Usage_Simple_Arrays">Array-Syntax</a> und <a href="Objects.htm#Usage_Objects">Objekt-Syntax</a>, um mehr zu erfahren.</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center"><strong>{a: b, c: d}</strong></td>
+    <td><p><span class="ver">[v1.0.97+]:</span> <strong>Direkte Objekt-Schreibweise</strong>. Erstellt ein Objekt oder assoziatives Array. <code>x := {a: b}</code> beispielsweise ist das gleiche wie <code>x := Object("a", b)</code> oder <code>x := Object(), x.a := b</code>. Siehe <a href="Objects.htm#Usage_Associative_Arrays">Assoziative Arrays</a>, um mehr zu erfahren.</p></td>
   </tr>
 </table>
 <br>
