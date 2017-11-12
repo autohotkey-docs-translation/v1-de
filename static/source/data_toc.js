@@ -34,7 +34,7 @@ tocData = [
     ["EnvSet","commands/EnvSet.htm"],
     ["EnvUpdate","commands/EnvUpdate.htm"],
     ["OnClipboardChange","commands/OnClipboardChange.htm"],
-    ["SysGet","commands/SysGet.htm"],
+    ["SysGet","commands/SysGet.htm"]
   ]],
   ["Externe Libraries","",
   [
