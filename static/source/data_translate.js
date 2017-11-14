@@ -12,7 +12,6 @@ translateData = {
   "Change language":"Sprache wechseln",
   "v1":true,
   "Change AHK version":"AHK-Version wechseln",
-  "https://lexikos.github.io/v2/docs/":"https://ahkde.github.io/v2/docs/",
   "Edit page on GitHub":"Seite auf GitHub bearbeiten",
   "https://github.com/Lexikos/AutoHotkey_L-Docs/edit/master/docs/":"https://github.com/ahkde/docs/edit/master/",
   "Go back":"Eine Seite zurück",
