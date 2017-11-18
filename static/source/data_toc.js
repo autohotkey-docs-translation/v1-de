@@ -171,6 +171,7 @@ tocData = [
     ["Progress","commands/Progress.htm"],
     ["SplashImage","commands/Progress.htm"],
     ["SplashTextOn/SplashTextOff","commands/SplashTextOn.htm"],
+    ["Standard-Windows-Schriftarten","misc/FontsStandard.htm"],
     ["Styles für Fenster/Steuerelement","misc/Styles.htm"],
     ["ToolTip","commands/ToolTip.htm"],
     ["TrayTip","commands/TrayTip.htm"]
