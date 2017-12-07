@@ -15,32 +15,32 @@
 <p>Öffnet/Schließt ein CD- oder DVD-Laufwerk, oder ändert die Datenträgerbezeichnung eines Laufwerks.</p>
 
 <pre class="Syntax">Drive, Unterbefehl [, Laufwerk, Wert]</pre>
-<p>Die Parameter Unterbefehl, Laufwerk und Wert sind voneinander abhängig und können wie folgt verwendet werden.</p>
+<p>Die Parameter Unterbefehl, Laufwerk und Wert sind voneinander abhängig und können wie folgt genutzt werden.</p>
 <p><strong>Label, Laufwerk [, NeueBezeichnung]</strong>: Ändert <em>Laufwerk</em>'s Datenträgerbezeichnung in <em>NeueBezeichnung</em> (wenn <em>NeueBezeichnung</em> fehlt, wird das Laufwerk keine Bezeichnung haben). <em>Laufwerk</em> ist der Laufwerksbuchstabe, gefolgt von einem Doppelpunkt und einem optionalen umgekehrten Schrägstrich (UNC-Netzwerkpfade und zugeordnete Laufwerke wären auch möglich). Zum Beispiel: <code>Drive, Label, C:, Seagate200</code>.</p>
 <p>Die aktuelle Bezeichnung eines Laufwerks kann wie folgt abgerufen werden: <code><a href="DriveGet.htm">DriveGet</a>, AusgabeVar, Label, C:</code>.</p>
 <br>
-<p><strong>Lock, Laufwerk</strong>: Verhindert, dass das angegebene Laufwerk ausgefahren werden kann. Zum Beispiel: <code>Drive, Lock, D:</code>. Die meisten Laufwerke können nicht im offenen Zustand gesperrt werden. Allerdings könnte die Sperrung immernoch erfolgen, nachdem das Laufwerk geschlossen wurde. Dieser Befehl hat keine Auswirkung auf Laufwerke, die keine Sperrung zulassen (trifft auf die meisten schreibgeschützten Laufwerke zu). Die Sperrung eines Laufwerks bleibt auch nach Beendigung des verantwortlichen Skripts bestehen. Andere Skripte, Programme oder ein Neustart des Systems können die Sperrung wieder aufheben. Wenn das angegebene Laufwerk nicht vorhanden ist oder die Sperrfunktion nicht unterstützt, wird ErrorLevel auf 1 gesetzt. Ansonsten wird es auf 0 gesetzt.</p>
+<p><strong>Lock, Laufwerk</strong>: Verhindert, dass das angegebene Laufwerk ausgefahren werden kann. Zum Beispiel: <code>Drive, Lock, D:</code>. Die meisten Laufwerke können nicht im geöffneten Zustand gesperrt werden. Allerdings könnte die Sperrung immer noch erfolgen, nachdem das Laufwerk geschlossen wurde. Dieser Befehl hat keine Auswirkung auf Laufwerke, die keine Sperrung zulassen (trifft auf die meisten schreibgeschützten Laufwerke zu). Die Sperrung eines Laufwerks bleibt auch nach Beendigung des verantwortlichen Skripts bestehen. Andere Skripte, Programme oder ein Neustart des Systems können die Sperrung wieder aufheben. Wenn das angegebene Laufwerk nicht vorhanden ist oder die Sperrfunktion nicht unterstützt, wird ErrorLevel auf 1 gesetzt. Ansonsten wird es auf 0 gesetzt.</p>
 <br>
-<p><strong>Unlock, Laufwerk</strong>: Kehrt das Obengenannte um. <em>Unlock</em> muss mehrmals ausgeführt werden, falls das Laufwerk mehrmals gesperrt wurde (zumindest bei einigen Laufwerken). Wenn man beispielsweise <code>Drive, Lock, D:</code> dreimal ausführen würde, wäre wiederrum dreimal <code>Drive, Unlock, D:</code> notwendig, um die Sperrung wieder aufzuheben. Genau aus diesem Grund und der Tatsache, dass der gesperrte Zustand eines Laufwerks nicht ermittelt werden kann, wäre es ratsam, diesen Zustand in eine <a href="../Variables.htm">Variable</a> zu speichern, um die Übersicht zu  behalten.</p>
+<p><strong>Unlock, Laufwerk</strong>: Kehrt den oben genannten Punkt um. <em>Unlock</em> muss mehrmals ausgeführt werden, falls das Laufwerk mehrmals gesperrt wurde (zumindest bei einigen Laufwerken). Wenn man beispielsweise <code>Drive, Lock, D:</code> dreimal ausführen würde, wäre wiederum dreimal <code>Drive, Unlock, D:</code> notwendig, um die Sperrung aufzuheben. Genau aus diesem Grund und der Tatsache, dass der gesperrte Zustand eines Laufwerks nicht ermittelt werden kann, wäre es ratsam, diesen Zustand in eine <a href="../Variables.htm">Variable</a> zu speichern, um die Übersicht zu  behalten.</p>
 <br>
 <p><strong>Eject [, Laufwerk, 1]</strong>: Bewirkt, dass ein CD- oder DVD-Laufwerk aus- oder eingefahren wird (um andere Medien- oder Gerätetypen auszufahren, siehe das DllCall-Beispiel ganz unten).</p>
 <p>Wenn <em>Laufwerk</em> fehlt, wird das Standard-CD/DVD-Laufwerk verwendet. Um das Laufwerk auszufahren/zu öffnen, lässt man den letzten Parameter weg. Um das Laufwerk einzufahren/zu schließen, schreibt man im letzten Parameter eine 1; zum Beispiel: <code>Drive, Eject, D:, 1</code>.</p>
 <p>Während <em>Drive Eject</em> das Laufwerk ein- oder ausfährt, wartet das Skript. Befindet sich das Laufwerk bereits in richtiger Position (offen oder geschlossen), wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 0 gesetzt (also "kein Fehler").</p>
-<p>Es kann sein, dass <em>Drive Eject </em> nicht funktionieren wird, wenn das Laufwerk über das Netzwerk zugreifbar ist, oder kein CD/DVD-Laufwerk ist. In solchen oder sonstigen Fällen wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p>
-<p>Es ist möglich, den vorherigen Zustand des Laufwerks zu ermitteln. Man lässt das Skript einfach die Zeit messen, die der Befehl zum Ausführen benötigt. Zum Beispiel würde der folgende Hotkey das Laufwerk jeweils in den entgegengesetzten Zustand (offen oder geschlossen) schalten:</p>
+<p><em>Drive Eject</em> wird eventuell nicht funktionieren, wenn das angegebene Laufwerk ein Netzwerk- oder Nicht-CD/DVD-Laufwerk ist. Wenn es in solchen Fällen oder aus einem anderen Grund fehlschlägt, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p>
+<p>Um den vorherigen Zustand des Laufwerks zu ermitteln, misst man einfach die Zeit, die der Befehl zum Ausführen benötigt. Der folgende Hotkey beispielsweise schaltet das Laufwerk jeweils in den entgegengesetzten Zustand (offen oder geschlossen):</p>
 <pre>#c::
 Drive, Eject
-<em>; Wenn der Befehl schnell durchgeführt wurde, war das Laufwerk wahrscheinlich bereits offen.
-; In diesem Fall wird es eingefahren:</em>
+<em>; Wenn der Befehl schnell ausgeführt wurde, war das Laufwerk wahrscheinlich schon ausgefahren.
+; In diesem Fall kann es eingefahren werden:</em>
 if A_TimeSinceThisHotkey &lt; 1000  <em>; Passen Sie diese Zeit an, falls notwendig.</em>
     Drive, Eject,, 1
 return</pre>
 <p>Mit <a href="DriveGet.htm">DriveGet</a> kann der Medienstatus eines CD- oder DVD-Laufwerks (läuft, angehalten, offen, usw.) ermittelt werden.</p>
 <h3>ErrorLevel</h3>
-<p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
+<p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
 <h3>Bemerkungen</h3>
-<p>Das folgende Beispiel zeigt, wie außer CD/DVD noch andere Medien-/Gerätetypen ausgefahren werden können:</p>
+<p>Das folgende Beispiel zeigt, wie außer CD/DVD noch andere Typen von Medien/Geräten ausgefahren werden können:</p>
 <pre><em>; Fügen Sie in die erste Zeile den gewünschten Laufwerksbuchstaben ein (alle anderen Zeilen können ignoriert werden).</em>
 Laufwerksbuchstabe = I:  <em>; Tragen Sie hier das Laufwerk ein, das ausgefahren werden soll.</em>
 

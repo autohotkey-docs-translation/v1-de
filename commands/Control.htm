@@ -12,7 +12,7 @@
 
 <h1>Control</h1>
 
-<p>Ermöglicht eine Vielzahl von Änderungen an einem Steuerelement.</p>
+<p>Führt eine Vielzahl von Änderungen an einem Steuerelement durch.</p>
 
 <pre class="Syntax">Control, Befehl [, Wert, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme]</pre>
 <h3>Parameter</h3>
@@ -23,13 +23,13 @@
 
   <dt>Steuerelement</dt>
   <dd><p>Kann entweder das ClassNN (Klassenname und Instanznummer des Steuerelements) oder der Text des Steuerelements sein, das beides mit Windows Spy ermittelt werden kann. Verwendet man Text, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>. Wenn dieser Parameter leer ist, wird das oberste Steuerelement des Fensters benutzt.</p>
-    <p>Um ein Steuerelement via HWND (Windows Handle) anzusteuern, lässt man den <em>Steuerelement</em>-Parameter leer und übergibt <code>ahk_id %SteuerelementHwnd%</code> als <em>Fenstertitel</em>-Parameter (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist). Das HWND eines Steuerelements wird üblicherweise per <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p></dd>
+    <p>Um ein Steuerelement via HWND (Windows Handle) anzusteuern, lässt man den <em>Steuerelement</em>-Parameter leer und übergibt <code>ahk_id %SteuerelementHwnd%</code> als <em>Fenstertitel</em>-Parameter (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist). Das HWND eines Steuerelements wird üblicherweise per <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p></dd>
 
   <dt>Fenstertitel</dt>
   <dd><p>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie auf der Seite <a href="../misc/WinTitle.htm">Fenstertitel-Parameter &amp; Zuletzt Gefundenes Fenster</a>.</p></dd>
 
   <dt>Fenstertext</dt>
-  <dd><p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem mitgelieferten Windows Spy Tool aufgedeckt werden). Versteckte Textelemente werden auch erkannt, sofern <a href="DetectHiddenText.htm">DetectHiddenText</a> aktiv ist.</p></dd>
+  <dd><p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem mitgelieferten Windows Spy Tool aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p></dd>
 
   <dt>Titelausnahme</dt>
   <dd><p>Ignoriert Fenster, deren Titel diesen Wert enthalten.</p></dd>
@@ -40,35 +40,35 @@
 </dl>
 
 <h3>Befehl, Wert</h3>
-<p>Die Parameter <em>Befehl</em> und <em>Wert</em> sind voneinander abhängig und können wie folgt verwendet werden.</p>
+<p>Die Parameter <em>Befehl</em> und <em>Wert</em> sind voneinander abhängig und können wie folgt genutzt werden.</p>
 <p><strong>Check</strong>: Markiert einen Radio-Button oder eine CheckBox.</p>
 <p><strong>Uncheck</strong>: Entfernt die Markierung von einem Radio-Button oder einer CheckBox.</p>
 <p><strong>Enable</strong>: Aktiviert ein Steuerelement, das zuvor deaktiviert wurde.</p>
 <p><strong>Disable</strong>: Deaktiviert oder "ergraut" ein Steuerelement.</p>
-<p><strong>Show</strong>: Steuerelement einblenden, das zuvor ausgeblendet wurde.</p>
-<p><strong>Hide</strong>: Steuerelement ausblenden. Außerdem ist es möglich, die Tastenkombination des Steuerelements (unterstrichener Buchstabe) mit <code>Control Disable</code> zu unterbinden.</p>
-<p><strong>Style, N</strong> <u>oder</u> <strong>ExStyle, N</strong>: Ändert jeweils den Style oder Extended Style eines Steuerelements. Wenn das erste Zeichen von <strong>N</strong> ein Plus- oder Minuszeichen ist, wird einer oder mehrere Styles in <strong>N</strong> jeweils hinzugefügt oder entfernt. Wenn das erste Zeichen von N ein Zirkumflex (^) ist, wird einer oder mehrere Styles jeweils auf den entgegengesetzten Zustand gesetzt. Wenn das erste Zeichen in <strong>N</strong> eine Ziffer ist, wird der Style des Steuerelements komplett überschrieben. <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn das Fenster/Steuerelement nicht gefunden wird oder wenn der Style nicht benutzt werden darf.</p>
-<p>Bei bestimmten Style-Änderungen ist es notwendig, dass das komplette Fenster per <a href="WinSet.htm">WinSet Redraw</a> neu gezeichnet werden muss. Zudem listet die <a href="../misc/Styles.htm">Style-Tabelle</a> einige Style-Nummern auf. Zum Beispiel:</p>
-<pre>Control, Style, ^0x800000, Edit1, Fenstertitel  <em>; Setzt den WS_BORDER-Style auf den entgegengesetzten Zustand.</em></pre>
-<p><strong>ShowDropDown</strong>: Öffnet eine ComboBox, so dass deren Auswahlmöglichkeiten sichtbar werden.</p>
-<p><strong>HideDropDown</strong>: Kehrt das Obengenannte um.</p>
-<p><strong>TabLeft [, Count]</strong> und <strong>TabRight [, Count]</strong>: Verschiebt den Tab in einem SysTabControl32 ein oder mehrmals nach links oder rechts. <em>Count</em> ist automatisch 1, wenn dieser Parameter leer oder weggelassen wird. Um einen Tab stattdessen via Nummer auszuwählen, ersetzt man die 5 unten mit der gewünschten Tabnummer, subtrahiert um 1. Das heißt, dass 0 den ersten Tab auswählt, 1 den zweiten Tab auswählt und so weiter:</p>
+<p><strong>Show</strong>: Macht ein Steuerelement, das zuvor versteckt wurde, wieder sichtbar.</p>
+<p><strong>Hide</strong>: Versteckt ein Steuerelement. Wen Sie außerdem verhindern wollen, dass das Steuerelement via Tastenkürzel (unterstrichener Buchstabe) angesteuert werden kann, müssen Sie es via <code>Control Disable</code> deaktivieren.</p>
+<p><strong>Style, N</strong> <u>oder</u> <strong>ExStyle, N</strong>: Ändert den Style oder erweiterten Style eines Steuerelements. Wenn das erste Zeichen von <strong>N</strong> ein Plus- oder Minuszeichen ist, werden die in <strong>N</strong> angegebenen Styles hinzugefügt oder entfernt. Wenn das erste Zeichen ein Zirkumflex (^) ist, werden die in N angegebenen Styles auf den entgegengesetzten Zustand geschaltet. Wenn das erste Zeichen eine Ziffer ist, wird der Style des Steuerelements komplett überschrieben; das heißt, das der Style zu <strong>N</strong> wird. <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn das angezielte Fenster/Steuerelement nicht gefunden wird oder wenn der Style nicht angewendet werden darf.</p>
+<p>Die Änderungen einiger Styles werden erst wirksam, wenn das komplette Fenster via <a href="WinSet.htm">WinSet Redraw</a> neu gezeichnet wurde. Die <a href="../misc/Styles.htm">Style-Tabelle</a> beinhaltet eine Auflistung einiger Styles. Zum Beispiel:</p>
+<pre>Control, Style, ^0x800000, Edit1, Fenstertitel  <em>; Schaltet den WS_BORDER-Style auf den entgegengesetzten Zustand.</em></pre>
+<p><strong>ShowDropDown</strong>: Klappt eine ComboBox auf, um ihre Auswahlmöglichkeiten sichtbar zu machen.</p>
+<p><strong>HideDropDown</strong>: Kehrt den oben genannten Punkt um.</p>
+<p><strong>TabLeft [, Schritte]</strong> und <strong>TabRight [, Schritte]</strong>: Verschiebt die Tabauswahl in einem SysTabControl32 um einen oder mehrere Tabs nach links oder rechts. Wenn <em>Schritte</em> fehlt oder leer ist, gilt standardmäßig 1. Um einen Tab stattdessen direkt via Nummer anzusteuern, ersetzt man die unten hervorgehobene 5 mit der Tabnummer, die ausgewählt werden soll, und subtrahiert sie um 1. Das heißt, dass 0 den ersten Tab auswählt, 1 den zweiten Tab auswählt und so weiter:</p>
 <pre><a href="PostMessage.htm">SendMessage</a>, 0x1330, <span class="red">5</span>,, SysTabControl321, Fenstertitel  <em>; 0x1330 ist TCM_SETCURFOCUS.</em>
-Sleep 0  <em>; Diese und die nächste Zeile sind nur bei bestimmten Tab-Steuerelementen notwendig.</em>
+Sleep 0  <em>; Diese und die nächste Zeile sind nur für bestimmte Tab-Steuerelemente notwendig.</em>
 SendMessage, 0x130C, <span class="red">5</span>,, SysTabControl321, Fenstertitel  <em>; 0x130C ist TCM_SETCURSEL.</em></pre>
-<p><strong>Add, Zeichenkette</strong>: Fügt die <em>Zeichenkette</em> als neuen Eintrag ans Ende einer ListBox oder ComboBox hinzu (und möglicherweise andere Steuerelemente).</p>
-<p><strong>Delete, N</strong>: Entfernt den N-ten Eintrag aus einer ListBox oder ComboBox. <em>N</em> muss für das erste Element eine 1 sein, für das Zweite eine 2, und so weiter.</p>
-<p><strong>Choose, N</strong>: Setzt die Auswahl auf den N-ten Eintrag innerhalb einer ListBox oder ComboBox. <em>N</em> muss für das erste Element eine 1 sein, für das Zweite eine 2, und so weiter. Im folgenden Beispiel wird gezeigt, wie alle Einträge innerhalb einer <em>Mehrfachauswahl</em>-Listbox gleichzeitig ausgewählt werden können:</p>
-<pre><a href="PostMessage.htm">PostMessage</a>, 0x185, 1, -1, ListBox1, Fenstertitel  <em>; Alle ListBox-Einträge auswählen. 0x185 ist LB_SETSEL.</em></pre>
-<p><strong>ChooseString, Zeichenkette</strong>: Setzt die Auswahl auf den ersten Eintrag innerhalb einer ListBox oder ComboBox, dessen führender Teil mit der <em>Zeichenkette</em> übereinstimmt. Die Suche unterscheidet nicht zwischen Groß- und Kleinschreibung. Enthält eine ListBox/ComboBox beispielsweise den Eintrag "UNIX-Text", würde es genügen, das Wort unix (kleingeschrieben) anzugeben, um es auszuwählen.</p>
-<p><strong>EditPaste, Zeichenkette</strong>: Fügt die <em>Zeichenkette</em> an der Einfügemarke innerhalb eines Eingabefeldes ein (der Inhalt der <a href="../misc/Clipboard.htm">Zwischenablage</a> ist davon nicht betroffen).</p>
+<p><strong>Add, Zeichenkette</strong>: Bewirkt, dass <em>Zeichenkette</em> als neuer Eintrag an das untere Ende einer ListBox oder ComboBox (und eventuell andere Steuerelemente) hinzugefügt wird.</p>
+<p><strong>Delete, N</strong>: Entfernt den N-ten Eintrag aus einer ListBox oder ComboBox. Geben Sie für <em>N</em> eine 1 an, um den ersten Eintrag auszuwählen, eine 2 für den zweiten Eintrag, und so weiter.</p>
+<p><strong>Choose, N</strong>: Setzt die Auswahl in einer ListBox oder ComboBox auf den N-ten Eintrag. Geben Sie für <em>N</em> eine 1 an, um den ersten Eintrag auszuwählen, eine 2 für den zweiten Eintrag, und so weiter. Die folgenden Beispiele zeigen, wie alle Einträge innerhalb einer <em>Mehrfachauswahl</em>-Listbox ausgewählt werden können:</p>
+<pre><a href="PostMessage.htm">PostMessage</a>, 0x185, 1, -1, ListBox1, Fenstertitel  <em>; Wählt alle ListBox-Einträge aus. 0x185 ist LB_SETSEL.</em></pre>
+<p><strong>ChooseString, Zeichenkette</strong>: Setzt die Auswahl in einer ListBox oder ComboBox auf den ersten Eintrag, der mit <em>Zeichenkette</em> beginnt. Die Suche unterscheidet nicht zwischen Groß- und Kleinschreibung. Wenn eine ListBox/ComboBox beispielsweise den Eintrag "UNIX-Text" enthält, würde es genügen, das Wort unix (kleingeschrieben) anzugeben, um es auszuwählen.</p>
+<p><strong>EditPaste, Zeichenkette</strong>: Fügt <em>Zeichenkette</em> an dem Textcursor eines Edit-Steuerelements ein (der Inhalt der <a href="../misc/Clipboard.htm">Zwischenablage</a> ist davon nicht betroffen).</p>
 <h3>ErrorLevel</h3>
-<p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
+<p><span class="ver">[v1.1.04+]</span> Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
 <h3>Bemerkungen</h3>
-<p>Um die Zuverlässigkeit des Befehls zu verbessern, erfolgt nach jeder Verwendung automatisch eine Verzögerung (außer bei <em>Style</em> und <em>ExStyle</em>). Diese Verzögerung kann per <a href="SetControlDelay.htm">SetControlDelay</a> geändert werden.</p>
-<p>Mit <a href="MouseGetPos.htm">MouseGetPos</a> kann das ClassNN oder HWND des Steuerelements ermittelt werden, auf dem der Mauszeiger gerade zeigt.</p>
-<p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
+<p>Um die Zuverlässigkeit des Befehls zu verbessern, erfolgt jedes Mal, wenn er ausgeführt wurde, automatisch eine Verzögerung (außer bei <em>Style</em> und <em>ExStyle</em>). Diese Verzögerung kann via <a href="SetControlDelay.htm">SetControlDelay</a> geändert werden.</p>
+<p><a href="MouseGetPos.htm">MouseGetPos</a> kann genutzt werden, um das ClassNN oder HWND des Steuerelements unterhalb des Mauszeigers zu ermitteln.</p>
+<p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
 
 <h3>Siehe auch</h3>
 <p><a href="SetControlDelay.htm">SetControlDelay</a>, <a href="ControlGet.htm">ControlGet</a>, <a href="GuiControl.htm">GuiControl</a>, <a href="ControlGetText.htm">ControlGetText</a>, <a href="ControlSetText.htm">ControlSetText</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="WinSet.htm">WinSet</a></p>
