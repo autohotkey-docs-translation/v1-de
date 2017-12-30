@@ -834,7 +834,7 @@ indexData = [
   ["Transform","commands/Transform.htm"],
   ["Transparenz eines Fensters","commands/WinSet.htm#trans"],
   ["Tray-Symbol","Program.htm#tray-icon"],
-  ["tray menu (customizing)","commands/Menu.htm"],["Infobereichsmenü anpassen","commands/Menu.htm"],
+  ["tray menu (customizing)","commands/Menu.htm"],["Tray-Menü anpassen","commands/Menu.htm"],
   ["TrayTip","commands/TrayTip.htm"],
   ["TreeView-Steuerelemente (GUI)","commands/TreeView.htm"],
   ["Trim","commands/AutoTrim.htm"],
