@@ -92,7 +92,7 @@ a::b  <em>; Bringt 'a' dazu, sich im Texteditor wie 'b' zu verhalten.</em>
 ^!b::
 ToolTip Sie haben %A_ThisHotkey% gedrückt.
 return</pre>
-<p>Seit v1.1.06 kann <a href="../commands/_InputLevel.htm">#InputLevel</a> als alternativer Weg verwendet werden, um das Standardverhalten zu überschreiben. Zum Beispiel:</p>
+<p>In <span class="ver">[v1.1.06+]</span> kann <a href="../commands/_InputLevel.htm">#InputLevel</a> als alternativer Weg verwendet werden, um das Standardverhalten zu überschreiben. Zum Beispiel:</p>
 <pre>#InputLevel 1
 a::b
 
@@ -104,7 +104,7 @@ return</pre>
 <p id="actually">Beim Starten eines Skripts wird jede Neubelegung in ein <a href="../Hotkeys.htm">Hotkey</a>-Paar umgewandelt. Zum Beispiel würde ein Skript, das <code>a::b</code> enthält, eigentlich folgende zwei Hotkeys enthalten:</p>
 <pre>*<strong>a</strong>::
 SetKeyDelay -1   <em>; Ist die Zieltaste eine Maustaste, dann stattdessen SetMouseDelay.</em>
-Send <a href="../commands/Send.htm#blind">{Blind}</a>{<strong>b</strong> DownTemp}  <em>; DownTemp ist wie Down, außer dass andere Send-Befehle im Skript nicht davon ausgehen, dass "b" beim Senden unten bleiben soll.</em>
+Send <a href="../commands/Send.htm#blind">{Blind}</a>{<strong>b</strong> <a href="../commands/Send.htm#DownR">DownR</a>}  <em>; DownR ist wie Down, außer dass andere Send-Befehle im Skript nicht davon ausgehen, dass "b" beim Senden unten bleiben soll.</em>
 return
 
 *<strong>a up</strong>::
@@ -113,15 +113,16 @@ Send {Blind}{<strong>b</strong> Up}
 return</pre>
 <p>Allerdings unterscheiden sich die obigen Hotkeys unter folgenden Umständen:</p>
 <ol>
-  <li>Wenn die Originaltaste LCtrl und die Zieltaste eine ALT-Taste ist, wird die Zeile <code>Send {Blind}{LAlt DownTemp}</code> durch <code>Send {Blind}<strong>{LCtrl Up}</strong>{LAlt DownTemp}</code> ersetzt. Das Gleiche gilt, wenn die Originaltaste RCtrl ist, aber dann stattdessen <code>{RCtrl up}</code>.</li>
+  <li>Wenn die Originaltaste LCtrl und die Zieltaste eine ALT-Taste ist, wird die Zeile <code>Send {Blind}{LAlt DownR}</code> durch <code>Send {Blind}<strong>{LCtrl Up}</strong>{LAlt DownR}</code> ersetzt. Das Gleiche gilt, wenn die Originaltaste RCtrl ist, aber dann stattdessen <code>{RCtrl up}</code>.</li>
   <li>Wenn eine Tastatur-Taste dazu gebracht wird, eine Maustaste zu sein (z. B. <code>RCtrl::RButton</code>), verwenden die obigen Hotkeys SetMouseDelay statt SetKeyDelay. Darüber hinaus wird der erste Hotkey oben mit dem folgenden Hotkey ersetzt, um das Auto-Wiederholungs-Feature der Tastatur daran zu hindern, wiederholende Mausklicks zu generieren:
     <pre>*RCtrl::
 SetMouseDelay -1
 if not GetKeyState("RButton")  <em>; wenn die rechte Maustaste noch nicht unten ist ...</em>
-    Send {Blind}{RButton DownTemp}
+    Send {Blind}{RButton DownR}
 return</pre>
   </li>
 </ol>
+<p>Vor <span class="ver">[v1.1.27]</span> wurde <a href="../commands/Send.htm#DownTemp">DownTemp</a> statt <a href="../commands/Send.htm#DownR">DownR</a> verwendet.</p>
 <p>Beachten Sie, dass SetKeyDelay's zweiter Parameter (<a href="../commands/SetKeyDelay.htm#dur">Druckdauer</a>) bei den Hotkeys oben fehlt. Das liegt daran, dass die Druckdauer nicht auf Nur-Unten- oder Nur-Oben-Ereignisse angewendet wird, wie z. B. <code>{b down}</code> und <code>{b up}</code>. Allerdings wird sie auf Änderungen in Bezug auf den Zustand der Tasten UMSCHALT, STRG, ALT und WIN angewendet, das Neubelegungen wie <code>a::B</code> oder <code>a::^b</code> beeinflusst. Folglich würde jede Druckdauer, die im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> in Kraft gesetzt wird, für alle Neubelegungen gelten.</p>
 <p>Ein Tastenpaar kann nicht direkt zu einer einzigen Taste neubelegt werden (z. B. ist <code>a &amp; c::b</code> keine gültige Schreibweise). Allerdings ist es möglich, diesen Effekt nachzuahmen, indem man die Up- und Down-Hotkeys von ganz oben stattdessen verwendet: ersetzen Sie <code>*a::</code> mit <code>a &amp; c::</code>, und <code>*a up::</code> mit <code>a &amp; c up::</code>.</p>
 <p>Da Neubelegungen in Hotkeys umgewandelt werden, wie oben beschrieben, können sie vom <a href="../commands/Suspend.htm">Suspend</a>-Befehl beeinflusst werden. Ebenso könnte der <a href="../commands/Hotkey.htm">Hotkey</a>-Befehl eine Neubelegung deaktivieren oder ändern. Zum Beispiel würden die zwei folgenden Befehle die Neubelegung <code>a::b</code> deaktivieren.</p>

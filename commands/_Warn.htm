@@ -22,24 +22,25 @@
   <dt>Warnungstyp</dt>
   <dd>
       <p>Die Art der Warnung, die aktiviert oder deaktiviert werden soll. Fehlt dieser Parameter, gilt standardmäßig <i>All</i>.</p>
-      <p><strong>UseUnsetLocal</strong> oder <strong>UseUnsetGlobal</strong>: Sie werden gewarnt, wenn eine Variable gelesen wird, die vorher weder einen Wert zugewiesen bekommen hat noch via <a href="VarSetCapacity.htm">VarSetCapacity</a> initialisiert wurde. Wenn die Variable absichtlich leer sein soll, weist man ihr eine leere Zeichenkette zu, um diese Warnung zu unterdrücken.</p>
+      <p id="UseUnset"><strong>UseUnsetLocal</strong> oder <strong>UseUnsetGlobal</strong>: Sie werden gewarnt, wenn eine Variable gelesen wird, die vorher weder einen Wert zugewiesen bekommen hat noch via <a href="VarSetCapacity.htm">VarSetCapacity</a> initialisiert wurde. Wenn die Variable absichtlich leer sein soll, weist man ihr eine leere Zeichenkette zu, um diese Warnung zu unterdrücken.</p>
       <p>Dieser Warnungstyp wurde für lokale und globale Variablen aufgeteilt, weil globale Variablen aufgrund ihrer persistenten und skriptweiten Art in der Regel nicht initialisiert werden. Dies könnte der Grund sein, warum einige Skriptautoren diese Art der Warnung nur für lokale Variablen aktivieren wollen.</p>
       <pre>#Warn
 <em>;y := ""  ; Dies würde die Warnung unterdrücken.</em>
 x := y    <em>; y hat keinen Wert zugewiesen bekommen.</em></pre>
-      <p><strong>UseEnv</strong>: Sie werden gewarnt, wenn das Skript automatisch eine Umgebungsvariable anstelle einer leeren Skriptvariable nutzt. Das kann passieren, wenn der Name einer Umgebungsvariable zufällig mit dem Namen einer Skriptvariable übereinstimmt. Diese Warnung erscheint, sobald das Skript auf die Variable zugreift, aber nicht, wenn <a href="_NoEnv.htm">#NoEnv</a> im Skript angegeben ist (aus mehreren Gründen empfohlen).</p>
+      <p id="UseEnv"><strong>UseEnv</strong>: Sie werden gewarnt, wenn das Skript automatisch eine Umgebungsvariable anstelle einer leeren Skriptvariable nutzt. Das kann passieren, wenn der Name einer Umgebungsvariable zufällig mit dem Namen einer Skriptvariable übereinstimmt. Diese Warnung erscheint, sobald das Skript auf die Variable zugreift, aber nicht, wenn <a href="_NoEnv.htm">#NoEnv</a> im Skript angegeben ist (aus mehreren Gründen empfohlen).</p>
       <pre>#Warn
 <em>;#NoEnv             ; Fügen Sie dies hinzu, wenn "temp" nicht als Umgebungsvariable gedacht ist.</em>
 <em>;EnvGet temp, TEMP  ; Dies würde den Wert der Umgebungsvariable in eine Skriptvariable kopieren.</em>
 temp := ""          <em>; Trotz dieser Zeile scheint temp immer noch einen Wert zu haben.</em>
 MsgBox % temp       <em>; Dies greift auf die Umgebungsvariable "TEMP" zu.</em></pre>
-      <p><strong>LocalSameAsGlobal</strong>: Bevor das Skript seine Ausführung beginnt, werden Sie gewarnt, wenn <em>undeklarierte</em> lokale Variablen den gleichen Namen haben wie globale Variablen. Diese Warnung soll Fehler vermeiden, die auftreten können, wenn man vergessen hat, eine globale Variable innerhalb einer Funktion vor dem Zugriffsversuch zu deklarieren. Wenn die globale Variable tatsächlich lokal sein soll, kann die Warnung mit einer Deklaration wie <code>local x</code> oder <code>static y</code> unterdrückt werden.</p>
+      <p id="LocalSameAsGlobal"><strong>LocalSameAsGlobal</strong>: Bevor das Skript seine Ausführung beginnt, werden Sie gewarnt, wenn <em>undeklarierte</em> lokale Variablen den gleichen Namen haben wie globale Variablen. Diese Warnung soll Fehler vermeiden, die auftreten können, wenn man vergessen hat, eine globale Variable innerhalb einer Funktion vor dem Zugriffsversuch zu deklarieren. Wenn die globale Variable tatsächlich lokal sein soll, kann die Warnung mit einer Deklaration wie <code>local x</code> oder <code>static y</code> unterdrückt werden. Diese Warnung wird niemals für Variablen innerhalb einer <a href="../Functions.htm#ForceLocal">lokal-erzwingenden</a> Funktion angezeigt.</p>
       <pre>#Warn
 g := 1
 ShowG() {       <em>; Die Warnung wird sogar angezeigt, wenn die Funktion nicht aufgerufen wird.</em>
     <em>;global g   ; &lt;-- Dies ist erforderlich, um auf die globale Variable zuzugreifen.</em>
     MsgBox % g  <em>; Ohne Deklaration ist "g" eine leere lokale Variable.</em>
 }</pre>
+      <p id="ClassOverwrite"><strong>ClassOverwrite</strong> <span class="ver">[v1.1.27+]</span>: Bevor das Skript seine Ausführung beginnt, werden Sie gewarnt, wenn Zuweisungen eine Klassenvariable überschreiben. Zum Beispiel wird <code>box := new Box</code> eine Warnung anzeigen, wenn <em>Box</em> eine Klasse ist, da dies die Klasse überschreiben würde (die als superglobal definierte <em>Box</em>-Variable). Warnungen werden auch für Ausgabevariablen von Befehlen angezeigt, nicht aber für ByRef-Parameter.</p>
       <p><strong>All</strong>: Wendet den angegebenen <em>Warnungsmodus</em> auf alle unterstützten Warnungstypen an.</p>
     </dd>
 
@@ -65,7 +66,7 @@ x := EnvVar       <em>; Okay, da #NoEnv nicht verwendet wurde.</em>
 x := NotAnEnvVar  <em>; Warnung.</em>
 </pre>
 <h3>Siehe auch</h3>
-<p><a href="../Functions.htm#Locals">Lokale und globale Variablen</a></p>
+<p><a href="../Functions.htm#Local">Lokale und globale Variablen</a></p>
 <h3>Beispiel</h3>
 <pre class="NoIndent">
 #Warn All, Off                    <em>; Deaktiviert alle Warnungen.  Das ist der voreingestellte Zustand.</em>

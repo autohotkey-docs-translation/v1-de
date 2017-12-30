@@ -11,21 +11,29 @@
 
 <body>
 <h1>Arrays</h1>
+<p>In AutoHotkey gibt es zwei verschiedene Typen von Dingen, die etwas mit Arrays zu tun haben:</p>
+<ul>
+  <li><a href="#object-based">Objekt-basierende Arrays</a></li>
+  <li><a href="#pseudo">Pseudo-Arrays</a> (nicht zur Verwendung empfohlen)</li>
+</ul>
+<p class="note"><strong>Hinweis</strong>: Die folgenden Code-Beispiele zeigen verschiedene Ansätze, die zum gleichen Endergebnis führen.</p>
 
-<h2 id="Associative_Arrays">Assoziative Arrays <span class="ver">[AHK_L 31+]</span></h2>
-<p>Eigenständige assoziative Arrays können durch den Aufruf von <a href="../Objects.htm#Arrays">Object()</a> erstellt werden. Zum Beispiel:</p>
-<pre><em>; Erstellt das Array, das zunächst leer ist:</em>
-Array := Object()
+<h2 id="object-based">Objekt-basierende Arrays <span class="ver">[AHK_L 31+]</span></h2>
+<p>Solche Arrays können <a href="../Objects.htm#Usage_Associative_Arrays">assoziative Arrays</a> oder <a href="../Objects.htm#Usage_Simple_Arrays">einfache Arrays</a> sein. Assoziative Arrays werden mit der Object-Funktion oder mit geschweiften Klammern erstellt, während einfache Arrays mit der Array-Funktion oder mit eckigen Klammern erstellt werden. Weitere Informationen finden Sie unter <a href="../Tutorial.htm#s7">AutoHotkey Anfänger-Tutorial</a> oder <a href="../Objects.htm">Objekte</a>.</p>
+
+<p>Das folgende Beispiel zeigt die Verwendung eines einfachen Arrays:</p>
+<pre><em>; Erstellt ein Array, das zunächst leer ist:</em>
+Array := [] <em>; oder Array := Array()</em>
 
 <em>; Schreibt in das Array:</em>
-Loop, Read, C:\Gästeliste.txt <em>; Diese Schleife ruft jede Zeile der Datei einzeln ab.</em>
+Loop, Read, %A_WinDir%\system.ini <em>; Diese Schleife ruft jede Zeile der Datei einzeln ab.</em>
 {
-    Array.Insert(A_LoopReadLine) <em>; Fügt diese Zeile ans Array an.</em>
+    Array.Push(A_LoopReadLine) <em>; Fügt diese Zeile ans Array an.</em>
 }
 
 <em>; Liest vom Array:
 ; Loop % Array.MaxIndex()   ; Traditionellerer Ansatz.</em>
-for index, element in Array <em>; Empfohlener Ansatz in den meisten Fällen.</em>
+for index, element in Array <em>; Enumeration ist in den meisten Fällen empfohlen.</em>
 {
     <em>; Beim Verwenden von "Loop" müssen die Indexe fortlaufende Nummern von 1 bis zur Anzahl
     ; der Elemente im Array sein (oder sie müssen innerhalb der Schleife berechnet werden).
@@ -36,10 +44,10 @@ for index, element in Array <em>; Empfohlener Ansatz in den meisten Fällen.</em
     MsgBox % "Elementnummer " . index . " ist " . element
 }</pre>
 <p>Damit wird nur ein kleiner Teil der <a href="../Objects.htm">Objekt</a>-<a href="../objects/Object.htm">Funktionalität</a> angezeigt. Elemente können gesetzt, abgerufen, eingefügt, entfernt und enumeriert werden. Neben Zahlen können auch Zeichenketten und Objekte als Keys verwendet werden. Objekte können als Werte in andere Objekte gespeichert und als Funktionsparameter oder Rückgabewerte übergeben werden. Zudem können Objekte mit neuer Funktionalität <a href="../Objects.htm#Custom_Objects">erweitert</a> werden.</p>
-<p>Obwohl Insert() und Enumeratoren ihren Nutzen haben, finden es einige Benutzer einfacher, den traditionelleren Ansatz zu verwenden:</p>
+<p>Obwohl Push() und Enumeratoren ihren Nutzen haben, finden es einige Benutzer einfacher, den traditionelleren Ansatz zu verwenden (die auskommentierten Zeilen sind die entsprechenden Counterparts, die die unten beschriebenen <a href="#pseudo">Pseudo-Arrays</a> verwenden):</p>
 <pre>
   <em>; Jedes Array muss vorher initialisiert werden:</em>
-  Array := Object()
+  Array := []
 
 <em>; Array%j% := A_LoopField</em>
   Array[j] := A_LoopField
@@ -48,7 +56,7 @@ for index, element in Array <em>; Empfohlener Ansatz in den meisten Fällen.</em
   Array[j, k] := A_LoopReadLine
 
   ArrayAnzahl := 0
-  Loop, Read, C:\Gästeliste.txt
+  Loop, Read, %A_WinDir%\system.ini
   {
       ArrayAnzahl += 1
     <em>; Array%ArrayAnzahl% := A_LoopReadLine</em>
@@ -63,19 +71,19 @@ for index, element in Array <em>; Empfohlener Ansatz in den meisten Fällen.</em
       MsgBox % "Elementnummer " . A_Index . " ist " . Array[A_Index]
   }
 </pre>
-<p><i>ArrayAnzahl</i> bleibt aus Bequemlichkeit eine Variable, die aber mit <code>Array.Anzahl := <i>n</i></code> in das Array selbst gespeichert oder mit <code>Array.<a href="../objects/Object.htm#MinMaxIndex">_MaxIndex()</a></code> ersetzt werden kann. Falls der Index nicht mit 1 beginnen soll, dann könnte auch <code>Array.<a href="../objects/Object.htm#MinMaxIndex">_MinIndex()</a></code> verwendet werden.</p>
+<p><i>ArrayAnzahl</i> bleibt aus Bequemlichkeit eine Variable, die aber mit <code>Array.Anzahl := <i>n</i></code> in das Array selbst gespeichert oder mit <code>Array.<a href="../objects/Object.htm#MinMaxIndex">MaxIndex</a>()</code> ersetzt werden kann. Falls der Index nicht mit 1 beginnen soll, dann könnte auch <code>Array.<a href="../objects/Object.htm#MinMaxIndex">MinIndex</a>()</code> verwendet werden.</p>
 
 <h2 id="pseudo">Pseudo-Arrays</h2>
+  <p class="note"><strong>Hinweis</strong>: Verwenden Sie nach Möglichkeit immer das oben erwähnte Objekt-basierende Array. Es ist einem Pseudo-Array in fast allen Aspekten überlegen: Es ist platzsparend, flexibler, übersichtlicher und ähnelt vielen anderen Programmiersprachen.</p>
 <p>Pseudo-Arrays sind meistens konzeptionell: Jedes Array ist eigentlich nur eine Sammlung von durchnummerierten <a href="../Variables.htm">Variablen</a> oder <a href="../Functions.htm">Funktionen</a>, die als <em>Elemente</em> des Arrays wahrgenommen werden. In AutoHotkey werden diese Elemente in keiner Weise miteinander verknüpft.</p>
-<p>Zusätzlich zu Befehlen wie <a href="../commands/StringSplit.htm">StringSplit</a> und "<a href="../commands/WinGet.htm">WinGet List</a>", die Arrays erstellen, können auch Befehle zur Erstellung eines Arrays verwendet werden, die eine Ausgabevariable akzeptieren oder einen Wert in eine Variable speichern. Das einfachste Beispiel dafür ist der <a href="../commands/SetExpression.htm">Zuweisungsoperator (:=)</a>, wie unten dargestellt:</p>
+<p>Zusätzlich zu Befehlen wie <a href="../commands/StringSplit.htm">StringSplit</a> und <a href="../commands/WinGet.htm#List">WinGet List</a>, die Arrays erstellen, können auch Befehle zur Erstellung eines Arrays verwendet werden, die eine Ausgabevariable akzeptieren oder einen Wert in eine Variable speichern. Das einfachste Beispiel dafür ist der <a href="../commands/SetExpression.htm">Zuweisungsoperator (:=)</a>, wie unten dargestellt:</p>
 <pre>Array%j% := A_LoopField</pre>
 <p>Außerdem sind auch mehrdimensionale Arrays möglich, indem ein beliebiges Trennzeichen zwischen den Indexen verwendet wird. Zum Beispiel:</p>
 <pre>Array%j%_%k% := A_LoopReadLine</pre>
-<br>
 <p>Das folgende Beispiel verdeutlicht, wie ein Array erstellt und auf ihm zugegriffen werden kann. In diesem Fall werden mehrere Namen aus einer Textdatei abgerufen:</p>
 <pre><em><strong>; Schreibt in das Array:</strong></em>
 ArrayAnzahl = 0
-Loop, Read, C:\Gästeliste.txt   <em>; Diese Schleife ruft jede Zeile der Datei einzeln ab.</em>
+Loop, Read, %A_WinDir%\system.ini   <em>; Diese Schleife ruft jede Zeile der Datei einzeln ab.</em>
 {
     ArrayAnzahl += 1  <em>; Behält im Blick, wie viele Elemente im Array sind.</em>
     Array%ArrayAnzahl% := A_LoopReadLine  <em>; Speichert diese Zeile ins nächste Array-Element.</em>

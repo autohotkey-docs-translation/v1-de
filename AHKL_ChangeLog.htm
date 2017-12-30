@@ -15,6 +15,67 @@
 <p>Ältere Änderungen können in <a href="ChangeLogHelp.htm">Archivierte Änderungen</a> gefunden werden.</p><!--new revisions go here-->
 
 
+<h2 id="v1.1.27.00">1.1.27.00 - 25. Dezember 2017</h2>
+<h4>Änderungen:</h4>
+<p>AU3_Spy.exe wurde durch WindowSpy.ahk ersetzt.</p>
+<ul>
+  <li>AU3_Spy.exe wird immer noch gestartet, wenn WindowSpy.ahk nicht gefunden wird.</li>
+  <li>Es folgt nun standardmäßig dem fokussierten Steuerelement und verfügt über eine Checkbox, um Fenster und Steuerelement zu veranlassen, der Maus zu folgen.</li>
+  <li>Es nimmt nicht länger einen globalen Hotkey (WIN+A) in Anspruch. Halten Sie stattdessen STRG oder UMSCHALT gedrückt, um Aktualisierungen zu pausieren (lassen Sie sie nach dem Fokussieren von Window Spy wieder los).</li>
+  <li>Es ist nun in Windows 10 möglich, mit ALT+TAB zu Window Spy zu wechseln, ohne dass sich die Inhalte der GUI ändern.</li>
+</ul>
+<p>Geändert: <a href="commands/Send.htm#AZ">a-z bedeutet nun vk41-vk5A</a>, wenn sie im Tastaturlayout fehlen, außer im Raw-Modus oder beim Senden einzelner unveränderter Zeichen. Dadurch können Hotkeys und gesendete Tastenkürzel intuitiver mit bestimmten nicht-englischen Tastaturlayouts umgehen.</p>
+<p>Geändert: Send nutzt in den ANSI-Versionen nun <a href="http://msdn.microsoft.com/de-de/library/ms646310">SendInput()</a> anstelle von Alt+nnnnn, um <a href="commands/Send.htm#characters">spezielle Zeichen</a> zu senden.</p>
+<p>Geändert: Es gelten nun andere Regeln zum <a href="commands/_MenuMaskKey.htm">Maskieren von ALT/WIN</a> nach dem Drücken eines Hook-Hotkeys:</p>
+<ul>
+  <li>Explizit gesendete ALT/WIN-KeyUp-Ereignisse können maskiert werden. Dies behebt Neubelegungen wie <code>AppsKey::RWin</code>, allerdings ist es möglich, dass Hotkeys, die zum Aktivieren des Startmenüs gedacht sind, neue Übergangslösungen erfordern.</li>
+  <li>Wenn ALT/WIN logisch, aber nicht physisch nach unten gedrückt ist, verursachen nur Hotkeys, die ALT/WIN erfordern (z. B. <code>#a::</code>, nicht <code>*a::</code>), eine Maskierung. Auf diese Weise kann eine Neubelegung oder ein Platzhalter-Hotkey das KeyUp-Ereignis senden, ohne dass es maskiert werden muss.</li>
+  <li>Nicht unterdrückte Hotkeys wie z. B. <code>~#a::</code> verursachen keine Maskierung mehr, da das nicht unterdrückte KeyDown/KeyUp-Ereignis ausreicht, um ein Menü zu verhindern. Maus-Hotkeys wie <code>~*MButton::</code> unterdrücken das Startmenü nicht mehr, wenn sie mit der WIN-Taste kombiniert werden. Es kann manuell mit <code>Send {Blind}{vk07}</code> oder ähnlichem unterdrückt werden.</li>
+  <li>Der Tastatur-Hook verfolgt nun Ereignisse in Bezug auf ALT/WIN, so dass die Maskierungstaste nicht mehr gesendet werden muss, wenn ALT/WIN bereits durch ein anderes Ereignis (physisch oder gesendet) maskiert wurde.</li>
+</ul>
+<p class="warning">Die Hotkeys <code>~LWin::</code> und <code>~RWin::</code> unterdrücken das Startmenü nicht mehr. Siehe <a href="commands/_MenuMaskKey.htm">#MenuMaskKey</a> für Details und eine Übergangslösung.</p>
+<p>Hinzugefügt: VK- oder SC-Tastennamen werden nun korrekt validiert, damit Namen wie "sc01ungültig" nicht mehr als Tasten erkannt werden.</p>
+<p class="warning">Skripte, die Hotkeys im Format <code>VKnnSCnnn::</code> enthalten, müssen korrigiert werden, indem man <code>SCnnn</code> entfernt, das zuvor ignoriert wurde.</p>
+<p>Hilfedatei: Die Seitenleiste des HTML Help Viewer wurde durch die neue HTML5-Seitenleiste ersetzt, die von Ragnar-F entwickelt wurde.</p>
+
+<h4>Neue Features:</h4>
+<ul>
+<li>Hinzugefügt: Neue interne Funktionen <a href="commands/Math.htm#Min">Min</a>/<a href="commands/Math.htm#Max">Max</a>. [PR #84 von Ragnar-F]</li>
+<li>Hinzugefügt: <a href="Variables.htm#Args">A_Args</a> als Alternative zu den nummerierten Variablen.</li>
+<li>Hinzugefügt: <a href="Functions.htm#ForceLocal">Force-Local-Modus</a> für Funktionen.</li>
+<li>Hinzugefügt: <a href="commands/_Warn.htm#ClassOverwrite">#Warn ClassOverwrite</a>.</li>
+<li>Hinzugefügt: <a href="commands/Send.htm#SendText">{Text}-Modus</a> für Send und <a href="Hotstrings.htm#T">T-Option</a> für Hotstrings. Dieser Modus ist so ähnlich wie der Raw-Modus, nur zuverlässiger.</li>
+<li>Hinzugefügt: <a href="commands/Send.htm#DownR">{<em>Taste</em> <strong>DownR</strong>}</a>, das nun von der Neubelegung genutzt wird, um Probleme mit <code>AppsKey::RWin</code> und ähnlichem zu beheben.</li>
+</ul>
+
+<h4>Fehlerbehebungen:</h4>
+<ul>
+<li>Behoben: Beim Laden von Symbolen wird nicht mehr standardmäßig ID 0 verwendet, wenn der Index ungültig ist.</li>
+<li>Behoben: VK↔SC-Umbelegung von PrintScreen. SC→VK war bereits unter Vista und höher korrekt.</li>
+<li>Behoben: Das Hotkey-Steuerelement gab in einigen Fällen nicht den Namen, sondern scXXX zurück.</li>
+<li>Behoben: ListVars verursachte einen Absturz, wenn ein ByRef-Parameter auf eine Variable verweist, die ein Objekt enthält. [PR #86 von HotKeyIt]</li>
+<li>Behoben: Einige (sehr unwahrscheinliche) Speicherlecks.</li>
+<li>Behoben: Menü-Handles wurden nicht freigegeben, wenn nur die voreingestellten Menüpunkte genutzt werden.</li>
+<li>Behoben: Der Standard-Menüpunkt wurde nicht in fetter Schrift dargestellt, wenn er ein Untermenü und einen Win32-Menü-Handle hat.</li>
+<li>Behoben: Send verwendet nun den korrekten Modifikatorstatus bei Unicode-Zeichen.</li>
+<li>Behoben: <code>ControlSend {u n}</code>, wobei u Unicode ist, das n-mal gesendet werden soll, nicht nur 1-mal.</li>
+<li>Behoben: Kein inkonsistentes Verhalten mehr von ALTGR zwischen verschiedenen Betriebssystemversionen. Bezogen auf <code>RAlt::</code>, das wiedereinmal das System unter Windows 10 dazu veranlasste, die linke STRG-Taste  "loszulassen", wie es vor v1.1.26.01 der Fall war (aber im Gegensatz zu den alten Versionen verhindert es, dass das KeyUp-Ereignis der rechten ALT-Taste das aktive Fenster erreicht). Diese Änderung sollte sich nicht auf Layouts ohne ALTGR auswirken.</li>
+<li>Behoben: <code>Menu Tray, Icon</code> und SB_SetIcon erlauben nun Bitmaps.</li>
+<li>Behoben: Menüpunkte verschwinden nicht mehr, wenn ein Cursor als Menüpunktsymbol gesetzt ist.</li>
+<li>Verbessert: Das Starten von Window Spy und der Hilfedatei:
+<ul>
+  <li>Wenn AutoHotkey installiert ist, aber die aktuelle ausführbare Datei sich in einem anderen Verzeichnis befindet (z. B. portabel), wird die installierte Datei nicht mehr bevorzugt, da es sich um die falsche Version handeln kann. Es kann immer noch als Fallback verwendet werden.</li>
+  <li>Wenn die Datei nicht gestartet werden kann, wird die Fehlermeldung im Dialogfenster angezeigt, nicht in der Titelleiste.</li>
+</ul></li>
+<li>Behoben: Einzeilige Hotkeys mit Ausdrücken, die mit <code>sc</code> oder <code>vk</code> beginnen.</li>
+<li>Behoben: Die Hotkey-Modifikatoren <code>&gt;</code>/<code>&lt;</code> erlaubten, dass beide Tasten gedrückt werden konnten. Zum Beispiel konnte <code>&lt;^A</code> fälschlicherweise durch LCtrl+RCtrl+A ausgelöst werden, wodurch der Hotkey <code>&lt;&gt;^A</code> nicht funktionieren konnte.</li>
+<li>Behoben: Automatisch-ersetzende Hotstrings fügten den direkt geschriebenen Text "{Raw}" in einigen Fällen ein (insbesondere, wenn der Ersatztext <code>{Raw}</code> enthält und die Optionen O, R und * nicht verwendet wurden).</li>
+<li>Behoben: Einige Hotkeys nutzten den Hook nicht, wenn sie mit einem Platzhalter-Hotkey übereinstimmen, abhängig von der Reihenfolge der Definition.</li>
+<li>Behoben: KeyDown-Hotkeys werden nun auf "reg" zurückgesetzt, wenn sie nur "k-hook" waren, weil ein entsprechender KeyUp-Hotkey deaktiviert wurde. (Vor v1.1.07.03 geschah dies bereits, aber der KeyDown-Hotkey wurde nie auf "k-hook" gesetzt, wenn er nach dem KeyUp definiert wurde.)</li>
+<li>Behoben: Hook-Hotkeys ignorieren nun Modifikatoränderungen, die mit <code>Send !^+#{key}</code> oder beim Senden von Unicode-Zeichen vorgenommen wurden. Dies stellt Send wieder her, wie es vor v1.1.06 bei SendLevel 0 war, behält aber das v1.1.06+ Verhalten bei SendLevel &gt;= 1 bei, so dass Send die richtigen Hotkeys auslösen kann.</li>
+<li>Verbessert: Die Chancen wurden erhöht, dass Send von einem "reg"-Hotkey wie <code>^m::Send x</code> den Status des Modifikators wiederherstellt, wenn Send zum ersten Mal aufgerufen wird. Dadurch ist es unwahrscheinlicher, dass beim erstmaligen Drücken ein anderes (und unerwartetes) Ergebnis erzeugt wird, wie z. B. xmmm statt xxxx.</li>
+</ul>
+
 <h2 id="v1.1.26.01">1.1.26.01 - 16. Juli 2017</h2>
 <p>Behoben: RegDelete (ohne Parameter) schlug fehl, wenn A_LoopRegSubKey leer ist, z. B. beim Enumerieren von Keys direkt unter dem Root-Key.</p>
 <p>Behoben: <code>RAlt/LAlt::</code> konnte manchmal die Aktivierung des Menüs nicht verhindern, nachdem der Benutzer mit Alt-Tab das Fenster verließ und es reaktivierte.</p>
@@ -63,7 +124,7 @@
 <p>Behoben: Der Debugger erwartet nun base64 bei <code>property_set -t integer/float</code>, gemäß der DBGp-Spezifikation.</p>
 
 <h2 id="v1.1.24.02">1.1.24.02 - 13. Oktober 2016</h2>
-<p>Hinzugefügt: Option <a href="Scripts.htm#Installer_uiAccess">Run with UI Access</a> (mit UI-Access ausführen) für den Installer.</p>
+<p>Hinzugefügt: Option <a href="Program.htm#Installer_uiAccess">Run with UI Access</a> (mit UI-Access ausführen) für den Installer.</p>
 <p>Hinzugefügt: Dokumentation für <a href="commands/GuiControls.htm#Tab_Autosize">Automatische Größenanpassung</a> von Tab3.</p>
 <p>Folgende Tab3-Bugs wurden behoben:</p>
 <ul>
@@ -716,7 +777,7 @@
 <p>Behoben: FileRemoveDir hat den ErrorLevel nicht richtig gesetzt.</p>
 
 <h2 id="v1.1.04.00">1.1.04.00 - 11. September 2011</h2>
-<p><strong>Diese Version enthält eine Vielzahl gravierender Änderungen.</strong></p>
+<p class="warning"><strong>Warnung</strong>: Diese Version enthält eine Vielzahl gravierender Änderungen.</p>
 <p>Unterstützung für Ausnahmebehandlung hinzugefügt: <a href="commands/Try.htm">Try</a>/<a href="commands/Catch.htm">Catch</a>/<a href="commands/Throw.htm">Throw</a> und <a href="commands/Throw.htm#Exception">Exception()</a>.</p>
 <p>Hinzugefügt: Standardausgabemodus (StdOut) für <a href="commands/_Warn.htm">#Warn</a>.</p>
 <p>Hinzugefügt: Option <a href="commands/Gui.htm#GuiHwndOutputVar">Gui +HwndVARNAME</a>.</p>

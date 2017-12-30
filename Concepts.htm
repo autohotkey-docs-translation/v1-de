@@ -1,0 +1,338 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Konzepte und Konventionen</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="static/theme.css" rel="stylesheet" type="text/css" />
+<script src="static/content.js" type="text/javascript"></script>
+<script src="static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+<h1>Konzepte und Konventionen</h1>
+<p>Dieses Dokument behandelt einige allgemeine Konzepte und Konventionen, die von AutoHotkey verwendet werden, wobei der Schwerpunkt eher auf Erklärungen als auf Code liegt. Es wird nicht davon ausgegangen, dass der Leser über Vorkenntnisse in Scripting oder Programmierung verfügt, aber er sollte für neue Fachbegriffe offen sein.</p>
+<p>Genauere Informationen zur Syntax finden Sie unter <a href="Language.htm">Skriptsprache</a>.</p>
+
+<h2>Inhaltsverzeichnis</h2>
+<ul>
+  <li><a href="#values">Werte</a>
+  <ul>
+    <li><a href="#strings">Zeichenketten (Strings)</a></li>
+    <li><a href="#numbers">Zahlen</a></li>
+    <li><a href="#boolean">Logische (boolesche) Werte</a></li>
+    <li><a href="#nothing">Nichts</a></li>
+    <li><a href="#objects">Objekte</a></li>
+    <li><a href="#object-protocol">Objektorientierte Schnittstelle</a></li>
+  </ul></li>
+  <li><a href="#variables">Variablen</a>
+  <ul>
+    <li><a href="#uninitialised-variables">Nicht initialisierte Variablen</a></li>
+    <li><a href="#built-in-variables">Interne Variablen</a></li>
+    <li><a href="#environment-variables">Umgebungsvariablen</a></li>
+    <li><a href="#caching">Caching</a></li>
+  </ul></li>
+  <li><a href="#functions">Funktionen/Befehle</a></li>
+  <li><a href="#control-flow">Ablaufsteuerung</a></li>
+  <li><a href="#details">Details</a>
+  <ul>
+    <li><a href="#string-encoding">Zeichenkettencodierung</a></li>
+    <li><a href="#pure-numbers">Reine Zahlen</a></li>
+    <li><a href="#names">Namen</a></li>
+    <li><a href="#variable-references">Variablenverweise vs. Werte</a></li>
+    <li><a href="#references-to-objects">Verweise zu Objekten</a></li>
+  </ul></li>
+  </ul>
+</ul><!-- TODO:
+Scope/declarations
+Technical terms: dynamic, default
+Classes
+Exception handling
+-->
+
+
+<h2 id="values">Werte</h2>
+<p>Ein <em>Wert</em> repräsentiert eine einzelne Information innerhalb eines Programms. Zum Beispiel wäre das der Name einer zu sendenden Taste oder eines zu startenden Programms, die Anzahl der Tastendrücke, der Titel eines zu aktivierenden Fensters, oder was auch immer innerhalb des Programms oder Skripts eine Bedeutung hat.</p>
+<p>AutoHotkey unterstützt folgende Typen von Werten:</p>
+<ul>
+  <li><a href="#strings">Zeichenketten</a> (Strings)</li>
+  <li><a href="#numbers">Zahlen</a> (Integer und Gleitkommazahlen)</li>
+  <li><a href="#objects">Objekte</a></li>
+</ul>
+<p>Einige andere verwandte Konzepte:</p>
+<ul>
+  <li><a href="#boolean">Logische (boolesche) Werte</a></li>
+  <li><a href="#nothing">Nichts</a></li>
+</ul>
+
+<h3 id="strings">Zeichenketten (Strings)</h3>
+<p>Eine <em>Zeichenkette</em> ist einfach nur Text. Jede Zeichenkette ist eigentlich eine Sequenz, Folge oder <em>Kette</em> von Zeichen. Sie kann aber auch als einzelne Entität gesehen werden. Die <em>Länge</em> einer Zeichenkette repräsentiert die Anzahl der Zeichen in der Sequenz, während die <em>Position</em> eines Zeichens innerhalb der Zeichenkette lediglich die fortlaufende Nummer dieses Zeichens ist. Gemäß der Konvention von AutoHotkey befindet sich das erste Zeichen auf Position 1.</p>
+<p>Eine Kette von Zahlen (oder von anderen unterstützten <a href="#numbers">Zahlenformaten</a>) wird automatisch als Zahl interpretiert, wenn eine mathematische Operation oder ein Vergleich dies erfordert.</p>
+<p>Wie literaler (direkt geschriebener) Text innerhalb des Skripts geschrieben werden soll, hängt vom Kontext ab. Weitere Informationen finden Sie unter <a href="Language.htm#legacy-syntax">Altmodische Syntax</a> und <a href="Language.htm#strings">Zeichenketten (in Ausdrücken)</a>.
+<p>Eine genauere Erklärung der Funktionsweise von Zeichenketten finden Sie unter <a href="#string-encoding">Zeichenkettencodierung</a>.</p>
+
+<h3 id="numbers">Zahlen</h3>
+<p>AutoHotkey unterstützt folgende Zahlenformate:</p>
+<ul>
+  <li>Dezimale Integer (ganze Zahlen), wie z. B. <code>123</code>, <code>00123</code> oder <code>-1</code>.</li>
+  <li>Hexadezimale Integer, wie z. B. <code>0x7B</code>, <code>0x007B</code> oder <code>-0x1</code>.</li>
+  <li>Dezimale Gleitkommazahlen (floating-point numbers), wie z. B. <code>3.14159</code>.</li>
+</ul>
+<p>Hexadezimale Zahlen müssen das <code>0x</code>- oder <code>0X</code>-Präfix verwenden, wenn nicht anders in der Dokumentation vermerkt. Dieses Präfix muss nach einem Vorzeichen wie <code>+</code> oder <code>-</code>, falls vorhanden, und vor führenden Nullen erfolgen. Zum Beispiel wäre <code>0x001</code> gültig, aber nicht <code>000x1</code>.</p>
+<p>Zahlen, die mit einem Dezimalpunkt geschrieben werden, gelten immer als Gleitkommazahlen, auch wenn die Nachkommastelle eine Null ist. <code>42</code> und <code>42.0</code> beispielsweise sind in der Regel das gleiche, aber dies trifft nicht immer zu. Die wissenschaftliche Schreibweise wird ebenfalls erkannt, allerdings nur, wenn ein Dezimalpunkt vorhanden ist (z. B. <code>1.0e4</code> und <code>-2.1E-4</code>).</p>
+<p>Das Dezimaltrennzeichen ist immer ein Punkt, auch wenn in den Ländereinstellungen des Benutzers ein Komma angegeben ist.</p>
+<p>Wenn eine Zahl in eine Zeichenkette umgewandelt wird, wird sie je nach aktuellem <a href="commands/SetFormat.htm#General_Remarks">Integer- oder Gleitkomma-Format</a> formatiert. Obwohl der <a href="commands/SetFormat.htm">SetFormat</a>-Befehl genutzt werden kann, um das aktuelle Format zu ändern, ist es in der Regel besser, die <a href="commands/Format.htm">Format</a>-Funktion zu nutzen, um eine Zeichenkette zu formatieren. Gleitkommazahlen können auch mit der <a href="commands/Math.htm#Round">Round</a>-Funktion formatiert werden.</p>
+<p>Details über den Bereich und die Genauigkeit von numerischen Werten finden Sie unter <a href="#pure-numbers">Reine Zahlen</a>.</p>
+
+<h3 id="boolean">Logische (boolesche) Werte</h3>
+<p>Ein <em>boolescher</em> bzw. logischer Wert kann entweder <em>True</em> (wahr) oder <em>False</em> (falsch) sein. Logische Werte werden genutzt, um etwas wiederzugeben, das exakt zwei mögliche Zustände hat, wie z. B. die <em>Wahrheit</em> eines Ausdrucks. Der Ausdruck <code>(x &lt;= y)</code> beispielsweise wäre <em>True</em> bzw. wahr, wenn x kleiner gleich y ist. Ein logischer Wert könnte auch <em>Yes</em> oder <em>No</em>, <em>On</em> oder <em>Off</em>, <em>Down</em> oder <em>Up</em> (z. B. bei <a href="commands/GetKeyState.htm">GetKeyState</a>) und so weiter repräsentieren.</p>
+<p>AutoHotkey hat keinen spezifischen logischen Wertetyp, deshalb verwendet es den Integer-Wert <code>0</code> für False und <code>1</code> für True. Wenn ein Wert entweder True oder False sein muss, wird ein leerer Wert oder ein Wert von 0 als False und alle anderen Werte als True angesehen. (Objekte werden immer als True angesehen.)</p>
+<p>Die Wörter <code>True</code> und <code>False</code> sind <a href="#built-in-variables">interne Variablen</a>, die 1 und 0 enthalten. Sie können verwendet werden, um ein Skript besser lesbar zu machen.</p>
+
+<h3 id="nothing">Nichts</h3>
+<p>AutoHotkey hat keinen Wert, der eindeutig <em>nichts</em>, <em>null</em>, <em>nil</em> oder <em>undefined</em> repräsentiert, wie es in anderen Sprachen der Fall ist. Stattdessen hat oft eine leere Zeichenkette (eine Zeichenkette mit einer Länge von 0) diese Bedeutung.</p>
+<p>Wenn eine <a href="#variables">Variable</a> oder ein Parameter als "leer" bezeichnet wird, meint man damit in der Regel eine leere Zeichenkette (eine Zeichenkette mit einer Länge von 0).</p>
+
+<h3 id="objects">Objekte</h3>
+<p>Grundsätzlich gibt es zwei Ansichten von Objekten:</p>
+<ul>
+  <li>Ein Objekt enthält eine Gruppe von Werten, die als einzelner Wert behandelt werden kann. Ein Objekt könnte z. B. ein <em>Array</em> oder eine Folge von Elementen sein, oder eine Reihe von verwandten Werten, wie z. B. die X- und Y-Koordinaten einer Position auf dem Bildschirm. Objekte können genutzt werden, um komplexe Strukturen zu bilden, indem sie mit anderen Objekten kombiniert werden.</li>
+  <li>Ein Objekt kann eine <em>Sache</em>, einen <em>Service</em> oder etwas anderes darstellen und dem Skript die Möglichkeit bieten, mit dieser Sache oder diesem Service zu interagieren. Ein <em>BankAccount</em>-Objekt beispielsweise hat eventuell Eigenschaften wie Kontonummer, aktueller Saldo und Kontoinhaber sowie Methoden zur Auszahlung oder Einzahlung eines Betrags.</li>
+</ul>
+<p>Die richtige Verwendung von Objekten (und insbesondere von <a href="Objects.htm#Custom_Classes">Klassen</a>) kann zu einem <em>modularen</em> und <em>wiederverwendbaren</em> Code verhelfen. Modularer Code ist in der Regel einfacher zu testen, zu verstehen und zu pflegen. So kann man z. B. einen Codeabschnitt verbessern oder modifizieren, ohne die Details anderer Abschnitte kennen zu müssen und ohne entsprechende Änderungen an diesen Abschnitten vornehmen zu müssen. Wiederverwendbarer Code spart Zeit, weil er das Schreiben und Testen von Code für gleiche oder ähnliche Aufgaben überflüssig macht.</p>
+<p>Wenn Sie ein Objekt einer <a href="#variables">Variable</a> zuweisen, z. B. <code>meinObj := {}</code>, sollten Sie beachten, dass nicht das Objekt selbst, sondern ein <a href="#references-to-objects"><em>Verweis</em></a> zu diesem Objekt gespeichert wird. Kopiert man diese Variable, z. B. <code>deinObj := meinObj</code>, wird ein neuer Verweis zum <em>gleichen</em> Objekt erstellt. Eine Änderung wie <code>meinObj.ans := 42</code> würde sich sowohl in <code>meinObj.ans</code> als auch in <code>deinObj.ans</code> widerspiegeln, da beide auf dasselbe Objekt verweisen. <code>meinObj := Object()</code> wirkt sich jedoch nur auf die <em>meinObj</em>-Variable aus, nicht auf die <em>deinObj</em>-Variable, die immer noch auf das ursprüngliche Objekt verweist.</p>
+
+<h3 id="object-protocol">Objektorientierte Schnittstelle</h3>
+<p class="note">Dieser Abschnitt baut auf folgenden Konzepten auf, die in späteren Abschnitten behandelt werden: <a href="#variables">Variablen</a>, <a href="#functions">Funktionen</a></p>
+<p>Objekte arbeiten nach dem Prinzip der <em>Meldungsübermittlung</em>. Sie wissen nicht, wo sich der Code oder die Variablen eines Objekts tatsächlich befinden, also müssen Sie eine Meldung an das Objekt übergeben, wie z. B. "gib mir <em>foo</em>" oder "gehe zu <em>bar</em>", und sich darauf verlassen, dass das Objekt auf die Meldung reagiert. Objekte in AutoHotkey unterstützen die folgenden grundlegenden Meldungen:</p>
+<ul>
+  <li><strong>Get</strong> - Abrufen eines Wertes.</li>
+  <li><strong>Set</strong> - Setzen eines Wertes via <code>:=</code>.</li>
+  <li><strong>Call</strong> - Aufrufen einer Methode via <code>()</code>.</li>
+</ul>
+<p>Jede Meldung kann optional einen oder mehrere <a href="#parameters">Parameter</a>  enthalten (und bei <strong>Set</strong> den Wert). Für gewöhnlich gibt es mindestens einen Parameter, der als Name einer Eigenschaft oder Methode, eines Keys oder eines Array-Indexes interpretiert wird, je nachdem, welches Objekt vorliegt und wie Sie es verwenden. Die Parameter einer Meldung werden durch drei verschiedene Muster angegeben: <code>.Name</code>, <code>[Parameter]</code> und <code>(Parameter)</code>, wobei <em>Name</em> ein direkt geschriebener <a href="#names">Name oder Identifikator</a>, und <em>Parameter</em> eine Liste von Parametern (als Teilausdrücke) ist, die leer sein kann (<code>[]</code> oder <code>()</code>).</p>
+<p>Bei <strong>Get</strong> und <strong>Set</strong> können <code>.Name</code> und <code>[Parameter]</code> untereinander getauscht oder kombiniert werden:</p>
+<pre>meinObj[Param1, Param2, ..., ParamN]
+meinObj.Name
+meinObj.Name[Param2, ..., ParamN]
+</pre>
+<p>Bei <strong>Call</strong> können <code>.Name</code> und <code>[Parameter]</code> untereinander getauscht werden, immer gefolgt von <code>(Parameter)</code>:</p>
+<pre>meinObj.Name(Param2, ..., ParamN)
+meinObj[Param1](Param2, ..., ParamN)
+</pre>
+<p>Beachten Sie, dass <code>Name</code>, sofern vorhanden, zum ersten Parameter wird. <code>meinObj.Name</code> ist das gleiche wie <code>meinObj["Name"]</code>, während <code>meinObj.123</code> das gleiche wie <code>meinObj[123]</code> ist. Dies gilt für jeden Objekttyp, daher ist es jederzeit möglich, den Namen einer Eigenschaft oder Methode zu berechnen, während das Skript läuft, anstatt ihn direkt in das Skript einzufügen.</p>
+<p>Obwohl <em>Name</em> oder <em>Param1</em> als erster Parameter betrachtet wird, sollten Sie daran denken, dass es sich hierbei nur um <em>Meldungen</em> handelt, und das dem Objekt freigestellt ist, mit ihnen in irgendeiner Weise zu interagieren. In einem Methodenaufruf wie oben gezeigt verwendet das Objekt normalerweise <em>Name</em> oder <em>Param1</em>, um zu identifizieren, welche Methode aufgerufen werden soll, und <em>Param2</em> und so weiter, um sie der Methode zu übergeben. In diesem Fall ist <em>Param2</em> in Wirklichkeit der erste Parameter der Methode.</p>
+<p>Im Allgemeinen hat <strong>Set</strong> die gleiche Bedeutung wie eine Zuweisung und verwendet daher den gleichen Operator:</p>
+<pre>meinObj[Param1, Param2, ..., ParamN] := Wert
+meinObj.Name := Wert
+meinObj.Name[Param2, ..., ParamN] := Wert
+</pre>
+<p>Derzeit gibt es für <strong>Set</strong> auch eine "hybride" Syntax, auf die man aber besser verzichten sollte:</p>
+<pre>meinObj.Name(Param2, ..., ParamN) := Wert
+</pre>
+<p>Technisch gesehen wird der <code>Wert</code> als letzter Parameter der <em>Set</em>-Nachricht übergeben; dieses Detail ist jedoch für Skript-Autoren fast nie relevant. Im Allgemeinen kann man es sich einfach als "der zugeordnete Wert" vorstellen.</p>
+
+<h2 id="variables">Variablen</h2>
+<p>Eine Variable ermöglicht es Ihnen, einen Namen als Platzhalter für einen Wert zu verwenden. Diesen Wert können Sie jederzeit ändern, während das Skript läuft. Ein Hotkey könnte z. B. eine Variable <code>press_count</code> verwenden, um zu zählen, wie oft er gedrückt wurde, und jedes Mal eine andere Taste senden, wenn <code>press_count</code> ein Vielfaches von 3 ist (jeder dritte Tastendruck). Auch eine Variable, der nur einmal ein Wert zugewiesen wird, kann nützlich sein. Zum Beispiel können Sie die Variable <code>WebBrowserTitle</code> nutzen, um die Aktualisierung Ihres Codes zu erleichtern, wenn Sie Ihren bevorzugten Webbrowser ändern oder wenn sich der <a href="misc/WinTitle.htm">Titel</a> oder die <a href="misc/WinTitle.htm#ahk_class">Fensterklasse</a> durch ein Software-Update ändert.</p>
+<p>In AutoHotkey werden Variablen erstellt, sobald man sie verwendet. Jede Variable ist <em>nicht</em> permanent auf einen einzelnen <a href="#values">Datentyp</a> beschränkt, sondern kann stattdessen einen Wert beliebigen Typs enthalten: Zeichenkette, Zahl oder Objekt. Jede Variable ist zu Beginn leer; das heißt, dass jede neu erstellte Variable eine leere Zeichenkette enthält, bis ihr ein anderer Wert zugewiesen wird.</p>
+<p>Eine Variable hat drei Hauptaspekte:</p>
+<ul>
+  <li>Der <em>Name</em> der Variable.</li>
+  <li>Die Variable selbst.</li>
+  <li>Der <em>Wert</em> der Variable.</li>
+</ul>
+<p>Einem Variablennamen sind Beschränkungen auferlegt - siehe <a href="#names">Namen</a> für Details. Kurz gesagt, es ist am sichersten, sich an Namen zu halten, die aus ASCII-Buchstaben (Groß-/Kleinschreibung ist egal), Ziffern und Unterstrichen bestehen, und Namen zu vermeiden, die mit einer Ziffer beginnen.</p>
+<p>Ein Variablenname hat einen <strong><em>Gültigkeitsbereich</em></strong>, der definiert, wo im Code dieser Name genutzt werden kann, um auf diese bestimmte Variable zu verweisen; mit anderen Worten, wo die Variable <em>sichtbar</em> ist. Wenn eine Variable innerhalb eines bestimmten Gültigkeitsbereichs nicht sichtbar ist, kann derselbe Name auf eine andere Variable verweisen. Beide Variablen können zur gleichen Zeit existieren, aber nur eine ist für jeden Teil des Skripts sichtbar. <a href="Functions.htm#Global">Globale Variablen</a> sind im "globalen Bereich" (also außerhalb von Funktionen) sichtbar, die aber in der Regel <a href="Functions.htm#Global">deklariert</a> werden müssen, um sie innerhalb einer Funktion sichtbar zu machen. <a href="Functions.htm#Local">Lokale Variablen</a> sind nur innerhalb der Funktion sichtbar, die sie erzeugt hat.</p>
+<p>Eine Variable kann als Container oder Speicherort für einen Wert angesehen werden. In der Dokumentation werden Sie häufig darauf stoßen, dass der Wert einer Variable als <em>Inhalt der Variable</em> bezeichnet wird. Bei einer Variable <code>x := 42</code> kann man auch sagen, dass die Variable x die Zahl 42 als Wert hat, oder dass der Wert von x eine 42 ist.</p>
+<p>Es ist wichtig zu wissen, dass eine Variable und ihr Wert nicht dasselbe sind. Zum Beispiel könnten wir sagen: "<code>meinArray</code> ist ein Array", aber was wir wirklich meinen ist, dass meinArray eine Variable ist, die einen Verweis zu einem Array enthält. Wir nehmen eine Abkürzung, indem wir den Namen der Variable verwenden, um auf ihren Wert zu verweisen, aber "meinArray" ist eigentlich nur der Name der Variable; das Array-Objekt weiß nicht, dass es einen Namen hat, und könnte von vielen verschiedenen Variablen (bzw. von vielen Namen) angesprochen werden.</p>
+
+<h3 id="uninitialised-variables">Nicht initialisierte Variablen</h3>
+<p>Eine Variable zu <em>initialisieren</em> bedeutet, ihr einen Startwert zuzuweisen. Obwohl das Programm automatisch alle Variablen initialisiert (standardmäßig mit einer leeren Zeichenkette), ist es empfehlenswert, dass ein Skript seine Variablen immer initialisiert, bevor sie eingesetzt werden. Auf diese Weise kann jeder, der das Skript liest, sehen, welche Variablen das Skript verwenden wird und welche Startwerte sie erwartungsgemäß haben werden.</p>
+<p>Normalerweise ist es notwendig, dass das Skript jede Variable initialisiert, die eine Zahl enthalten soll. <code>x := x + 1</code> beispielsweise wird nicht funktionieren, wenn x noch nie einen Wert zugewiesen wurde, da die <em>leere Zeichenkette</em> als nicht-numerisch angesehen wird. Das Skript sollte ihr einen Startwert zuweisen, wie z. B. <code>x := 0</code>. Es gibt einige Fälle, wo leere Werte als 0 behandelt <em>werden</em>, aber es ist besser, sich nicht darauf zu verlassen.</p>
+<p>Skript-Autoren können die <a href="commands/_Warn.htm">#Warn</a>-Direktive nutzen, um Instanzen zu finden, wo das Skript eine Variable noch nicht initialisiert hat.</p>
+
+<h3 id="built-in-variables">Interne Variablen</h3>
+<p>Eine Vielzahl von Variablen sind fest in das Programm integriert und normal abrufbar. Solche Variablen, außer <a href="misc/Clipboard.htm">Clipboard</a>, <a href="misc/ErrorLevel.htm">ErrorLevel</a> und <a href="Scripts.htm#cmd">Befehlszeilenparameter</a>, sind schreibgeschützt; das heißt, dass man ihren Inhalt nicht ändern kann. Gemäß der Konvention beginnen die meisten dieser Variablen mit dem Präfix <code>A_</code>, daher ist es am besten, dieses Präfix nicht für eigene Variablen zu verwenden.</p>
+<p>Einige Variablen wie <a href="Variables.htm#KeyDelay">A_KeyDelay</a> und <a href="Variables.htm#TitleMatchMode">A_TitleMatchMode</a> spiegeln Einstellungen wider, die das Verhalten des Skripts steuern, und separate Werte für jeden <a href="misc/Threads.htm">Thread</a> aufbewahren. Dadurch können Subroutinen, die von neuen Threads gestartet werden (z.B. für Hotkeys, Menüs, Timer und so weiter), Einstellungen ändern, ohne andere Threads zu beeinflussen.</p>
+<p>Einige spezielle Variablen werden nicht periodisch aktualisiert, sondern ihr Wert wird abgerufen oder berechnet, wenn das Skript auf die Variable verweist. Eine solche Variable ist zum Beispiel <a href="misc/Clipboard.htm">Clipboard</a>, die den aktuellen Inhalt der Zwischenablage abruft, oder <a href="variables.htm#TimeSinceThisHotkey">A_TimeSinceThisHotkey</a>, die die Anzahl der Millisekunden berechnet, die seit dem Drücken des Hotkeys vergangen sind.</p>
+<p>Siehe auch: <a href="Variables.htm#BuiltIn">Liste von internen Variablen</a>.</p>
+
+<h3 id="environment-variables">Umgebungsvariablen</h3>
+<p>Umgebungsvariablen werden vom Betriebssystem verwaltet. Sie können sich eine Liste von Umgebungsvariablen anzeigen lassen, wenn Sie in der Windows-Konsole SET eingeben und ENTER drücken.</p>
+<p>Mit <a href="commands/EnvSet.htm">EnvSet</a> kann eine neue Umgebungsvariable erstellt oder der Inhalt einer vorhandenen Umgebungsvariable geändert werden. Solche Ergänzungen und Änderungen sind nur für das Skript sichtbar und werden im restlichen System ignoriert. Allerdings erben alle Programme oder Skripte, die das Skript via <a href="commands/Run.htm">Run</a> oder <a href="commands/Run.htm">RunWait</a> startet, in der Regel eine Kopie der Umgebungsvariablen des übergeordneten Skripts.</p>
+<p>Es wird empfohlen, dass alle neuen Skripte Umgebungsvariablen wie Path via <a href="commands/EnvGet.htm">EnvGet</a> abrufen:</p>
+<pre>EnvGet, AusgabeVar, Path  <em>; Zur Erläuterung, siehe #NoEnv.</em></pre>
+<p>Wenn in einem Skript die <a href="commands/_NoEnv.htm">#NoEnv</a>-Direktive fehlt, wird beim Lesen einer leeren Variable stattdessen der Wert der Umgebungsvariable mit diesem Namen zurückgeben, falls vorhanden. Dies kann zu Verwirrung führen, daher wird empfohlen, dass alle neuen Skripte #NoEnv verwenden.</p>
+
+<h3 id="caching">Caching</h3>
+<p>Obwohl eine Variable üblicherweise zum Speichern eines einzelnen Wertes gedacht ist, und dieser Wert einen bestimmten Typ (Zeichenkette, Zahl oder Objekt) hat, wandelt AutoHotkey automatisch zwischen Zahlen und Zeichenketten bei Fällen wie <code>meineZkette + 1</code> und <code>MsgBox %meineZahl%</code> um. Da solche Umwandlungen sehr häufig vorkommen können, wird jedes Mal, wenn eine Variable umgewandelt wird, das Ergebnis in der Variable <em>zwischengespeichert</em>.</p>
+<p>Tatsächlich kann eine Variable zur selben Zeit sowohl eine Zeichenkette als auch eine Zahl enthalten. Normalerweise verbessert das die Performance des Skripts ohne Nachteile, aber wenn eine Variable sowohl eine Zahl als auch eine Zeichenkette enthält, ist es nun eine Zahl oder ist es eine Zeichenkette?  Diese Mehrdeutigkeit führt in mindestens zwei Fällen zu unerwartetem Verhalten:</p>
+<ol>
+  <li>COM-Objekte. Um Parameter an ein COM-Objekt zu übergeben, muss das Programm den Inhalt der Variable in eine Zahl <em>oder</em> Zeichenkette umwandeln. Einige COM-Objekte lösen eine Ausnahme aus, wenn der falsche Wertetyp übergeben wird. Wenn eine Variable beide Wertetypen hat, wird die Zahl verwendet. Normalerweise erhält man damit das richtige Ergebnis, manchmal aber auch nicht.</li>
+  <li>Objekte haben nicht die Möglichkeit, sowohl eine Zahl als auch eine Zeichenkette als Key oder Wert zu speichern. Da Zahlen speichereffizienter sind, wird, wenn eine Variable beide Wertetypen hat, die Zahl verwendet (außer bei Gleitkommazahlen, die als Keys verwendet werden).</li>
+</ol>
+<p>Der Slow-Modus von <a href="commands/SetFormat.htm">SetFormat</a> bewirkt, dass beim Zuweisen einer reinen Zahl diese Zahl in eine Zeichenkette umgewandelt wird. Bei Integern wird die Zahl ebenfalls gespeichert, daher hat dies keine nachteiligen Auswirkungen außer auf die Performance. Bei Gleitkommazahlen wird die Zahl nicht gespeichert, da SetFormat die Genauigkeit des Wertes beeinflusst und eventuell sogar alle Nachkommastellen wegkürzt. Das heißt im Endeffekt, dass der Slow-Mode von SetFormat verhindert, dass reine Gleitkommazahlen in Variablen gespeichert werden.</p>
+<p>Wenn man die Adresse einer Variable nimmt, wird der Wert der Variable direkt in eine Zeichenkette umgewandelt und das Caching deaktiviert, bis sich die Adresse der Variable ändert (dies geschieht, wenn sich ihre Kapazität ändert). Das liegt zum einen an der Abwärtskompatibilität und zum anderen daran, dass das Skript den Wert über seine Adresse jederzeit indirekt ändern kann, was den Cache ungenau macht.</p>
+
+<h3>Siehe auch</h3>
+<ul>
+  <li><a href="Variables.htm#Intro">Variablen</a>: Grundlagen und Beispiele.</li>
+  <li><a href="Variables.htm#cap">Kapazität und Speicher einer Variable</a>: Einzelheiten über die Limitierungen.</li>
+</ul>
+
+<h2 id="functions">Funktionen/Befehle</h2>
+<p>Eine <em>Funktion</em> oder ein <em>Befehl</em> ist das Werkzeug des Skripts, um <em>etwas zu tun</em>.</p>
+<p>Im Grunde sind Funktionen und Befehle dasselbe, deshalb gelten die hier erläuterten Konzepte für beide.  Die lange Geschichte von AutoHotkey v1 und die Ausrichtung zur Abwärtskompatibilität haben jedoch zu einer Trennung zwischen <em>Befehlen</em>, die die altmodische Syntax erfordern, und <em>Funktionen</em>, die eine Ausdruckssyntax erfordern, geführt.</p>
+<p>Befehle und Funktionen haben unterschiedliche Einsatzmöglichkeiten. Einige Funktionen führen lediglich eine einfache Berechnung durch, während andere sofort sichtbare Effekte erzielen, wie z. B. das Verschieben eines Fensters. Eine der Stärken von AutoHotkey ist die Leichtigkeit, mit der Skripte andere Programme automatisieren und viele andere häufige Aufgaben erledigen können, indem man einfach nur ein paar Funktionen aufruft. Beispiele finden Sie in der <a href="commands/index.htm">Befehls- und Funktionsliste</a>.</p>
+<p>In dieser Dokumentation werden einige gebräuchliche Wörter auf eine Art und Weise verwendet, die für jemanden ohne Vorkenntnisse nicht offensichtlich ist. Nachfolgend finden Sie einige solcher Wörter/Phrasen, die häufig in Bezug auf Funktionen und Befehle genutzt werden:</p>
+<dl>
+  <dt id="call">Ein Befehl oder eine Funktion aufrufen <dd>
+  <p>Der <em>Aufruf</em> von Funktionen oder Befehlen bewirkt, dass das Programm diese startet, ausführt oder auswertet. Das heißt, dass ein <em>Funktionsaufruf</em> die Kontrolle des Skripts vorübergehend an die Funktion übergibt. Wenn die Funktion ihren Zweck erfüllt hat, gibt sie die Kontrolle via <em>Return</em> wieder an das Skript zurück. Das heißt, dass jeglicher Code nach dem Funktionsaufruf erst ausgeführt wird, wenn die Funktion ihr Ende erreicht hat.</p>
+  <p>Manchmal ist es jedoch so, dass eine Funktion oder ein Befehl abgeschlossen ist, bevor ihre Auswirkungen für den Benutzer sichtbar werden. Zum Beispiel könnte der <a href="commands/Send.htm">Send</a>-Befehl bereits seine Tastatureingaben <em>gesendet</em> haben, bevor sie überhaupt ihr Ziel erreicht und ihre gewollte Wirkung erzielt haben.</p>
+  <dt id="parameters">Parameter <dd>
+  <p>Normalerweise akzeptieren Befehle oder Funktionen einen oder mehrere <em>Parameter</em>, mit denen die Funktionsweise und das Ziel bestimmt werden kann. Jeder Parameter ist ein <a href="#values">Wert</a>, z. B. eine Zeichenkette oder Zahl. Die Parameter von <a href="commands/WinMove.htm">WinMove</a> beispielsweise bestimmen, welches Fenster wohin verschoben werden soll.  Parameter werden auch als <em>Argumente</em> bezeichnet. Gängige Abkürzungen sind <em>Param</em> und <em>Arg</em>.</p>
+  <dt id="pass-parameters">Parameter übergeben <dd>
+  <p>Parameter werden an eine Funktion oder an einen Befehl <em>übergeben</em>; das heißt, dass für jeden Parameter der Funktion oder des Befehls beim Aufrufen ein Wert angegeben ist. Zum Beispiel kann man den Namen einer Taste an <a href="commands/GetKeyState.htm">GetKeyState</a> <em>übergeben</em>, um festzustellen, ob diese Taste gedrückt gehalten wird.</p>
+  <dt id="return-a-value">Einen Wert zurückgeben <dd>
+  <p>Funktionen geben ein Wert via <em>Return</em> zurück, deshalb wird das Ergebnis der Funktion oft als <em>Rückgabewert</em> bezeichnet. <a href="commands/StringLen.htm">StrLen</a> beispielsweise gibt die Anzahl der Zeichen zurück, die in einer Zeichenkette enthalten sind. Befehle geben ein Ergebnis nicht direkt zurück, sondern speichern das Ergebnis in eine <a href="#variables">Variable</a>. Funktionen können dies auch tun, wenn sie z. B. mehr als ein Ergebnis zurückgeben müssen.</p>
+</dl>
+<p>Funktionen und Befehle erwarten normalerweise, dass Parameter in einer bestimmten Reihenfolge geschrieben werden, deshalb ist die Bedeutung der einzelnen Parameterwerte abhängig von ihrer Position in der via Komma getrennten Parameterliste. Einige Parameter können weg bzw. leer gelassen werden - in diesem Fall aber kann das darauffolgende Komma nur weggelassen werden, wenn alle übrigen Parameter ebenfalls weggelassen werden. Die Syntax für <a href="commands/ControlSend.htm">ControlSend</a> lautet zum Beispiel:</p>
+<pre>ControlSend [, Steuerelement, Tasten, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme]
+</pre>
+<p>Die eckigen Klammern signalisieren, dass die darin enthaltenen Parameter optional sind (die Klammern selbst sollten nicht im eigentlichen Code erscheinen). ControlSend ist jedoch nur dann sinnvoll, wenn <em>Tasten</em> und gegebenenfalls das Zielfenster angeben sind. Zum Beispiel:</p>
+<pre>ControlSend, Edit1, ^{Home}, A  <em>; Korrekt. Steuerelement ist angegeben.</em>
+ControlSend, ^{Home}, A         <em>; Falsch: Parameter stimmen nicht überein.</em>
+ControlSend,, ^{Home}, A        <em>; Korrekt. Steuerelement wurde weggelassen.</em>
+</pre>
+
+<h3 id="methods">Methoden</h3>
+<p><em>Methoden</em> sind Funktionen, die sich auf ein bestimmtes <a href="#objects">Objekt</a> auswirken. Während es nur eine Funktion mit einem bestimmten Namen geben kann, ist die Aktion der entsprechenden Methode abhängig vom Zielobjekt. Aus diesem Grund wird das Zielobjekt (das eine Variable oder ein Teilausdruck sein kann) angegeben.
+</p>
+
+<h2 id="control-flow">Ablaufsteuerung</h2>
+<p>Die <em>Ablaufsteuerung</em> ist die Reihenfolge, in der die einzelnen Anweisungen ausgeführt werden. Im Normalfall werden Anweisungen der Reihe nach von oben nach unten ausgeführt, allerdings kann dieses Verhalten mit einer Ablaufsteuerungsanweisung überschrieben werden, indem man Anweisungen z. B. wiederholt ausführen lässt, oder wenn eine bestimmte Bedingung erfüllt ist.</p>
+<dl>
+  <dt id="statement">Anweisung <dd>
+  <p>Eine <em>Anweisung</em> ist einfach gesagt das kleinste eigenständige Element der Sprache, das eine ausführende Aktion ausdrückt. In AutoHotkey sind Anweisungen Befehle, Zuweisungen, Funktionsaufrufe und andere Ausdrücke. Direktiven, Label (einschließlich Hotkeys und Hotstrings) und Deklarationen ohne Zuweisungen sind hingegen keine Anweisungen; sie werden verarbeitet, sobald das Programm startet und bevor das Skript <em>ausgeführt</em> wird.</p>
+  <dt id="execute">Ausführen <dd>
+  <p>Ausführen, Durchführen, Auswerten, Umsetzen und so weiter. <em>Ausführen</em> hat grundsätzlich die gleiche Bedeutung wie im normalen Sprachgebrauch.</p>
+  <dt id="body">Körper <dd>
+  <p>Der <em>Körper</em> einer Ablaufsteuerungsanweisung ist die Anweisung oder Anweisungsgruppe, zu der sie gehört. Zum Beispiel wird der Körper einer <a href="Language.htm#if-statement">if-Anweisung</a> nur ausgeführt, wenn eine bestimmte Bedingung erfüllt ist.</p>
+</dl>
+<p>Schauen Sie sich zum Beispiel die folgenden Instruktionen an:</p>
+<ol>
+  <li>Öffne Notepad</li>
+  <li>Warte, bis Notepad auf dem Bildschirm erscheint</li>
+  <li>Schreibe "Hallo, Welt!"</li>
+</ol>
+<p>Wir machen einen Schritt nach dem anderen, und wenn dieser Schritt beendet ist, gehen wir zum nächsten Schritt über. Auf die gleiche Weise funktioniert üblicherweise die Ablaufsteuerung in einem Programm oder Skript - sie geht die Anweisungen schrittweise durch. Aber was ist, wenn wir etwas in einen vorhandenen Notepad-Fenster schreiben wollen? Schauen Sie sich die folgenden überarbeiteten Instruktionen an:</p>
+<ol>
+  <li>Wenn Notepad nicht läuft:
+<ol>
+  <li>Öffne Notepad</li>
+  <li>Warte, bis Notepad auf dem Bildschirm erscheint</li>
+</ol>
+</li>
+  <li>Ansonsten:
+<ol>
+  <li>Aktiviere Notepad</li>
+</ol>
+</li>
+  <li>Schreibe "Hallo, Welt!"</li>
+</ol>
+<p>Wir öffnen also entweder Notepad oder aktivieren Notepad, je nachdem, ob es bereits läuft. Punkt 1 ist eine <em>bedingte Anweisung</em>, auch bekannt als <em>if-Anweisung</em>; das heißt, dass wir ihren <em>Körper</em> (Punkt 1.1 bis Punkt 1.2) nur ausführen, wenn eine Bedingung erfüllt ist. Punkt 2 ist eine <em>else-Anweisung</em>; wir führen ihren Körper (Punkt 2.1) nur aus, wenn die Bedingung einer vorherigen <em>if-Anweisung</em> nicht erfüllt ist. Je nach Bedingung <em>läuft</em> die Steuerung auf zwei Arten ab: Punkt 1 (if true) → Punkt 1.1 → Punkt 1.2 → Punkt 3; oder Punkt 1 (if false) → Punkt 2 (else) → Punkt 2.1 → Punkt 3.</p>
+<p>Die obigen Instruktionen können in den folgenden Code umgewandelt werden:</p>
+<pre>if (not WinExist("ahk_class Notepad"))
+{
+    Run Notepad
+    WinWait ahk_class Notepad
+}
+else
+    WinActivate ahk_class Notepad
+Send Hallo`, Welt!
+</pre>
+<p>In unseren schriftlichen Instruktionen haben wir Einrückungen und Nummerierungen verwendet, um die Anweisungen zu gruppieren. Skripte funktionieren etwas anders. Obwohl die Einrückung den Code besser lesbar macht, hat sie in AutoHotkey keinen Einfluss auf die Gruppierung von Anweisungen. Stattdessen werden Anweisungen gruppiert, indem man sie, wie oben gezeigt, mit geschweiften Klammern umschließt. Dies wird als <a href="commands/Block.htm"><em>Block</em></a> bezeichnet.</p>
+<p class="note">Details zur Syntax - also wie man Ablaufsteuerungsanweisungen in AutoHotkey schreibt oder erkennt - finden Sie unter <a href="Language.htm#control-flow">Ablaufsteuerung</a>.</p>
+
+<h2 id="details">Details</h2>
+
+<h3 id="string-encoding">Zeichenkettencodierung</h3>
+<p>Jedes Zeichen in der Zeichenkette entspricht einer Zahl, auch <em>Ordinalzahl</em> genannt, oder einem <em>Zeichencode</em>. Der Wert "Abc" würde zum Beispiel wie folgt dargestellt werden:</p>
+<table class="info" style="width: 8em; text-align: center">
+  <tr><td>A</td><td>b</td><td>c
+  
+  </td></tr><tr><td>65</td><td>98</td><td>99
+
+</td></tr></table>
+<p>Die <em>Codierung</em> einer Zeichenkette definiert, welche Zahlen mit welchen Symbolen verknüpft sind. Es gibt viele verschiedene Codierungen, aber da alle Codierungen, die AutoHotkey unterstützt, ASCII als Untermenge enthalten, haben die Zeichencodes 0 bis 127 immer die gleiche Bedeutung. So hat zum Beispiel 'A' immer den Zeichencode 65.</p>
+<p>Obwohl AutoHotkey Möglichkeiten bereitstellt, Texte mit unterschiedlichen Codierungen zu bearbeiten, gehen die internen Befehle und Funktionen -- und bis zu einem gewissen Grad auch die Sprache selbst -- davon aus, dass Zeichenkettenwerte in einer bestimmten Codierung vorliegen. Dies wird als <em>native</em> Codierung bezeichnet. Die native Kodierung hängt von der Version von AutoHotkey ab:</p>
+<ul>
+  <li>
+<p>Unicode-Versionen von AutoHotkey verwenden UTF-16. Das kleinste Element in einer UTF-16-Zeichenkette ist zwei Bytes (16 Bit) groß. Unicode-Zeichen im Bereich von 0 bis 65535 (U+FFFF) werden von einer einzigen 16-Bit-Codeeinheit des gleichen Wertes repräsentiert, während Zeichen im Bereich von 65536 (U+10000) bis 1114111 (U+10FFFF) von einem <em>Ersatzzeichenpaar</em> repräsentiert werden; also exakt zwei 16-Bit-Codeeinheiten zwischen 0xD800 und 0xDFFF. (weitere Details zu Ersatzzeichenpaaren und Methoden zum Codieren oder Decodieren solcher finden Sie im Internet.)</p>
+</li>
+  <li>
+<p>ANSI-Versionen von AutoHotkey verwenden den Standard-ANSI-Zeichensatz des Systems, der vom Gebietsschema des Systems oder von der Systemeinstellung "Sprache für Unicode-inkompatible Programme" abhängig ist. Das kleinste Element einer ANSI-Zeichenkette ist ein Byte groß. Einige Zeichensätze enthalten jedoch Zeichen, die durch Sequenzen von mehreren Bytes repräsentiert werden (das sind immer Nicht-ASCII-Zeichen).</p>
+</li>
+</ul>
+<p>In der Regel verwenden andere Bereiche dieser Dokumentation den Begriff "Zeichen" für die kleinste Einheit einer Zeichenkette; Bytes für ANSI-Zeichenketten und 16-Bit-Codeeinheiten für Unicode-Zeichenketten. Aus praktischen Gründen werden die Länge einer Zeichenkette und die Positionen innerhalb einer Zeichenkette anhand dieser festen Größen gemessen, auch wenn es sich dabei möglicherweise nicht um vollständige Unicode-Zeichen handelt.</p>
+<p><a href="commands/FileRead.htm">FileRead</a>, <a href="commands/FileAppend.htm">FileAppend</a>, <a href="commands/FileOpen.htm">FileOpen</a> und das <a href="objects/File.htm">File-Objekt</a> bieten Möglichkeiten, um den Text von Dateien mit einer bestimmten Codierung zu lesen und zu schreiben.</p>
+<p>Die Funktionen <a href="commands/StrPutGet.htm">StrGet und StrPut</a> können genutzt werden, um Zeichenketten zwischen der nativen Codierung und einer anderen angegebenen Codierung umzuwandeln. Diese Funktionen sind jedoch in der Regel nur in Kombination mit Datenstrukturen und der <a href="commands/DllCall.htm">DllCall</a>-Funktion sinnvoll. Zeichenketten, die direkt an oder von <a href="commands/DllCall.htm">DllCall</a> übergeben werden, können mithilfe der Parametertypen <code>AStr</code> oder <code>WStr</code> in ANSI oder UTF-16 umgewandelt werden.</p>
+<p>Techniken, wie man mit den Unterschieden zwischen ANSI- und Unicode-Versionen von AutoHotkey umgehen kann, finden Sie unter <a href="Compat.htm#Format">Unicode vs ANSI</a>.</p>
+
+<h3 id="pure-numbers">Reine Zahlen</h3>
+<p>Eine <em>reine</em> oder <em>binäre</em> Zahl ist eine im Speicher enthaltene Zahl, mit deren Format die CPU des Computers direkt umgehen kann, um z. B. Berechnungen durchzuführen. In den meisten Fällen wandelt AutoHotkey automatisch zwischen numerischen Zeichenketten und reinen Zahlen um, die nur selten unterschiedlich behandelt werden. AutoHotkey verwendet hauptsächlich zwei Datentypen für reine Zahlen:</p>
+<ul>
+  <li>vorzeichenbehaftete 64-Bit-Integer (<em>int64</em>).</li>
+  <li>binäre 64-Bit-Gleitkommazahlen (das <em>Double</em>- oder <em>Binary64</em>-Format des internationalen Standards IEEE 754).</li>
+</ul>
+<p>Das heißt, dass Skripte von den folgenden Einschränkungen betroffen sind:</p>
+<ul>
+  <li>
+<p>Integer müssen im Bereich von -9223372036854775808 (-0x8000000000000000, oder -2<sup>63</sup>) bis 9223372036854775807 (0x7FFFFFFFFFFFFFFF, oder 2<sup>63</sup>-1) sein. Obwohl größere Werte in einer Zeichenkette enthalten sein können, kann jeder Versuch, die Zeichenkette in eine Zahl umzuwandeln (z. B. in einer mathematischen Operation) zu inkonsistenten Ergebnissen führen.</p>
+</li>
+  <li>
+<p>Gleitkommazahlen unterstützen in der Regel eine Genauigkeit von 15 Stellen nach dem Komma. Die Umwandlung einer Gleitkommazahl in eine Zeichenkette bewirkt jedoch, dass die Zahl anhand des aktuellen <a href="commands/SetFormat.htm#Float">Gleitkommaformats</a> gerundet wird, das standardmäßig auf 6 Dezimalstellen eingestellt ist. Wenn der Slow-Modus von <a href="commands/SetFormat.htm">SetFormat</a> irgendwo im Skript angegeben ist, werden Zahlen <em>immer</em> in Zeichenketten umgewandelt, wenn sie einer <a href="#variables">Variable</a> zugewiesen werden.</p>
+</li>
+</ul>
+<p><strong>Hinweis:</strong> Es gibt einige Nachkommastellen, die das binäre Gleitkommaformat nicht exakt darstellen kann und die Zahl deshalb auf die nächstliegende darstellbare Zahl rundet. Dies kann zu unerwarteten Ergebnissen führen. Zum Beispiel:</p>
+<pre>    SetFormat FloatFast, 0.17  <em>; Zeige "übervolle" Präzision</em>
+    MsgBox % 0.1 + 0           <em>; 0.10000000000000001</em>
+    MsgBox % 0.1 + 0.2         <em>; 0.30000000000000004</em>
+    MsgBox % 0.3 + 0           <em>; 0.29999999999999999</em>
+    MsgBox % 0.1 + 0.2 = 0.3   <em>; 0 (nicht identisch)</em>
+</pre>
+<p>Eine Strategie zur Bewältigung dieses Problems besteht darin, den direkten Vergleich zu vermeiden und stattdessen die Differenz zu vergleichen. Zum Beispiel:</p>
+<pre>    MsgBox % Abs((0.1 + 0.2) - (0.3)) &lt; 0.0000000000000001
+</pre>
+<p>Eine andere Strategie ist es, vor dem Vergleich immer in eine Zeichenkette zu umzuwandeln (und dabei Rundungen vorzunehmen). Es gibt in der Regel zwei Möglichkeiten, dies zu tun, während Sie die Genauigkeit angeben:</p>
+<pre>    MsgBox % Round(0.1 + 0.2, 15) = format("{:.15f}", 0.3)
+</pre>
+
+<h3 id="names">Namen</h3>
+<p>AutoHotkey wendet die gleichen Regeln für die Benennung verschiedener Dinge an, inklusive Variablen, Funktionen, <a href="commands/GroupAdd.htm">Fenstergruppen</a>, <a href="commands/Gui.htm">GUIs</a>, Klassen und Methoden:</p>
+<ul>
+  <li><strong>Groß- und Kleinschreibung:</strong> Für ASCII-Zeichen nicht relevant. Zum Beispiel ist <code>AktuellesDatum</code> das gleiche wie <code>aktuellesdatum</code>. ASCII-fremde Großbuchstaben wie "Ä" sind jedoch <em>nicht</em> identisch zu ihren Kleinbuchstaben, egal welches Gebietsschema der aktuelle Benutzer aktiv hat. Dies hilft dem Skript, sich konsistent in verschiedenen Gebietsschemen zu verhalten.</li>
+  <li><strong>Maximale Länge:</strong> 253 Zeichen.</li>
+  <li><strong>Erlaubte Zeichen:</strong> Buchstaben, Zahlen, ASCII-fremde Zeichen und die folgenden Symbole: _ # @ $</li>
+</ul>
+<p>Aufgrund von Gestaltungsrichtlinien ist es in der Regel am besten, die Variablen nur mit Buchstaben, Zahlen und Unterstriche zu benennen (zum Beispiel: <em>PositionZeiger</em>, <em>Gesamt_Elemente</em> und <em>Eintrag_ist_gültig</em>). Dadurch können Leute, die mit anderen Computersprachen vertraut sind, Ihr Skript besser verstehen.</p>
+<p>Obwohl der Name einer <a href="#variables">Variable</a> vollständig aus Ziffern bestehen kann, sind solche Namen in der Regel nur für <a href="Scripts.htm#cmd_args_old">eingehende Befehlszeilenparameter</a> relevant. Ausdrücke können keine numerischen Namen enthalten, weil sie dort nicht als Variablen, sondern als Zahlen interpretiert werden. Am besten sollte man vermeiden, einen Namen mit einer Ziffer zu beginnen, da solche Namen verwirrend sind und in AutoHotkey v2 als ungültig angesehen werden.</p>
+<p>Da die folgenden Zeichen in AutoHotkey v2 eventuell für andere Zwecke reserviert werden, ist es ratsam, sie nicht zu verwenden: # @ $</p>
+<p>Eigenschaftsnamen in Klassen haben die gleichen Regeln und Einschränkungen wie Variablennamen, mit der Ausnahme, dass die drei oben aufgeführten Zeichen (# @ $) nicht erlaubt sind. Obwohl sie in einer Methodendefinition verwendet werden können, erfordert der Aufruf einer solchen Methode die Verwendung von eckigen Klammern. Zum Beispiel wäre <code>meinObjekt["@home"]()</code> im Gegensatz zu <code>meinObjekt.@home()</code> gültig.</p>
+
+<h3 id="variable-references">Variablenverweise vs. Werte</h3>
+<p>Variablen haben gewisse Ausprägungen, die die Grenze zwischen einer Variable und ihrem Wert verwischen, aber es wichtig sie zu differenzieren. Insbesondere in Bezug auf <a href="#objects">Objekte</a> und ByRef-Parametern.</p>
+<p>Obwohl wir sagen können, dass die Variable <code>meinArray</code> ein Array <em>enthält</em> (was ein Objekttyp ist), ist das, was die Variable enthält, nicht das Array selbst, sondern eher ein <em>Verweis bzw. Pointer</em>, der auf das Array verweist. Es können beliebig viele Variablen einen Verweis zum selben Objekt enthalten. In diesem Fall kann es hilfreich sein, sich eine Variable nur als Namen vorzustellen. Gibt man zum Beispiel einer Person einen Spitznamen, führt das nicht dazu, dass diese Person geklont wird.</p>
+<p>Standardmäßig werden Variablen <em>via Wert</em> an benutzerdefinierte Funktionen übergeben. Das heißt, dass der in der Variable enthaltene Wert in eine Variable kopiert wird, die dem Parameter der Funktion entspricht. Ein <strong>ByRef</strong>-Parameter kann genutzt werden, um eine Variable <em>via Verwei</em>s zu übergeben, oder anders gesagt, um einen Parameter der Funktion zu einem <em>Alias</em> für die Variable zu machen, so dass die Funktion der Variable einen neuen Wert zuweisen kann.</p>
+<p>Da eine Variable immer nur einen <em>Verweis</em> zu einem Objekt und nicht das Objekt selbst enthält, bekommt die Funktion, wenn Sie eine solche Variable an einen ByRef-losen Parameter übergeben, einen Verweis zum selben Objekt. Diese Tatsache erlaubt es, dass die Funktion das Objekt modifizieren kann, aber verhindert auch, dass die Funktion die <em>Variable</em>, die der Funktionsaufrufer übergeben hat, modifizieren kann, weil die Funktion nur einen Verweis zum Objekt und nicht die Variable hat.</p>
+
+<h3 id="references-to-objects">Verweise zu Objekten</h3>
+<p>Skripte interagieren mit einem Objekt nur indirekt, nämlich via <em>Verweis</em> zum Objekt. Wenn Sie ein Objekt erstellen, wird das Objekt an einem Ort erstellt, den Sie nicht kontrollieren können, und einen Verweis an Sie übergeben. Wenn Sie diesen Verweis an eine Funktion übergeben oder in eine Variable oder in einem anderen Objekt speichern, wird ein neuer Verweis zum <em>selben</em> Objekt erzeugt. Um einen Verweis freizugeben, nutzt man einfach eine Zuweisung und ersetzt ihn mit einem anderen Wert. Ein Objekt wird erst gelöscht, wenn alle Verweise freigegeben sind; Sie können ein Objekt nicht explizit löschen und sollten es gar nicht erst versuchen.</p>
+<pre>Verweis1 := Object()  <em>; Erstellt ein Objekt und speichert den ersten Verweis</em>
+Verweis2 := Verweis1  <em>; Erstellt einen neuen Verweis zum selben Objekt</em>
+Verweis1 := ""        <em>; Gibt den ersten Verweis frei</em>
+Verweis2 := ""        <em>; Gibt den zweiten Verweis frei; Objekt wird gelöscht</em>
+</pre>
+<p>Wenn das schwer zu verstehen ist, sollten Sie versuchen, sich ein Objekt als Mietwohnung vorzustellen. Wenn Sie eine Wohnung mieten, erhalten Sie einen Schlüssel, mit dem sie die Wohnung betreten können. Sie können mehr Schlüssel erhalten und sie benutzen, um die Wohnung zu betreten, aber sobald Sie vorhaben, die Wohnung endgültig zu verlassen, müssen Sie alle Schlüssel an den Vermieter zurückgeben. In der Regel wird eine Wohnung nicht <em>gelöscht</em>, aber vielleicht muss die Hausverwaltung jemanden beauftragen, der Ihren zurückgelassenen Müll wegräumt; genauso wie der Fall, dass die Werte, die Sie in ein Objekt gespeichert haben, freigegeben werden, wenn das Objekt gelöscht wird.</p>
+
+</body>
+</html>

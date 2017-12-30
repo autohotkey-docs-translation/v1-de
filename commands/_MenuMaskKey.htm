@@ -24,12 +24,27 @@
 </dl>
 
 <h3>Bemerkungen</h3>
+<p>Die Standard-Maskierungstaste ist STRG. Diese Direktive kann genutzt werden, um eine andere Maskierungstaste mit weniger Nebenwirkungen zu bestimmen.</p>
 <p>Diese Einstellung ist global - das heißt, dass die Direktive nur einmal angegeben werden muss (egal wo), um das Verhalten des ganzen Skripts zu beeinflussen.</p>
-<p>Wenn ein Hotkey via Tastatur- oder Maus-Hook implementiert ist, ist der finale Tastendruck eventuell für das aktive Fenster und das System unsichtbar. Bei Hotkeys, die die WIN- oder ALT-Modifikatortaste verwenden, könnte dies dazu führen, dass das Startmenü oder die Menüleiste des aktiven Fensters aktiviert wird, sobald die Modifikatortaste losgelassen wird. Um das zu verhindern, wird AutoHotkey das KeyUp-Ereignis "maskieren", indem es ein Tastendruck sendet. Dieser Tastendruck war vor Revision 38 immer STRG und war bekannt dafür, bei bestimmten Anwendungen Probleme zu verursachen.</p>
-<p>Ist diese Direktive im Skript nicht angegeben, gilt standardmäßig die STRG-Taste.</p>
+<p>Die Maskierungstaste wird automatisch gesendet, um zu verhindern, dass das Startmenü oder die Menüleiste des aktiven Fensters ungewollt aktiviert wird.</p>
+<p><strong>Hotkeys</strong>: Wenn ein Hotkey via Tastatur- oder Maus-Hook implementiert ist, ist der finale Tastendruck eventuell für das aktive Fenster und das System unsichtbar. Wenn das System <em>nur</em> ein KeyPress- und KeyDown-Ereignis einer WIN- oder ALT-Taste ohne zwischenzeitlichen Tastendruck erkennt, aktiviert es normalerweise ein Menü. Um das zu verhindern, kann der Tastatur- oder Maus-Hook automatisch die Maskierungstaste senden.</p>
+<p><span class="ver">[v1.1.27+]</span>: Das Drücken eines Hook-Hotkeys bewirkt, dass die nächste ALT- oder WIN-Taste maskiert wird, wenn alle folgenden Bedingungen erfüllt sind:</p>
+<ul>
+  <li>Der Hotkey wird unterdrückt (es fehlt der <a href="../Hotkeys.htm#Tilde">Tilde-Modifikator</a>).</li>
+  <li>ALT oder WIN ist logisch nach unten gedrückt, wenn der Hotkey gedrückt wird.</li>
+  <li>Der Modifikator ist physisch nach unten gedrückt oder der Hotkey erfordert zum Aktivieren den Modifikator. Zum Beispiel verursacht <code>$#a::</code> in Kombination mit <code>AppsKey::RWin</code> eine Maskierung, wenn MENÜ+A gedrückt wird, während die MENÜ-Taste selbst weiterhin das Startmenü öffnen kann.</li>
+  <li>ALT wird nicht maskiert, wenn STRG beim Drücken des Hotkeys gedrückt gehalten wurde, da STRG+ALT die Menüleiste nicht aktiviert.</li>
+  <li>WIN wird nicht maskiert, wenn das letzte WIN-KeyDown-Ereignis mit STRG, UMSCHALT oder ALT modifiziert wurde, da das Startmenü in solchen Fällen normalerweise nicht aktiviert wird. Allerdings kommt es auch bei der WIN-Taste zu einer Tastenwiederholung, wenn sie die letzte physisch gedrückte Taste war, daher kann nur schwer vorhergesagt werden, <em>wann</em> das jüngste WIN-KeyDown-Ereignis war.</li>
+  <li>Entweder ist der Tastatur-Hook nicht installiert (z. B. für einen Maus-Hotkey), oder es gab seit dem letzten ALT- oder WIN-KeyDown-Ereignis keine weiteren (nicht unterdrückten) KeyDown- oder KeyUp-Ereignisse. Beachten Sie, dass die Tastenwiederholung auch bei Modifikatortasten und auch nach dem Senden anderer Tasten erfolgt, jedoch nur für die zuletzt physisch gedrückte Taste.</li>
+</ul>
+<p>Maus-Hotkeys werden die Maskierungstaste eventuell sofort senden, wenn der Tastatur-Hook nicht installiert ist.</p>
+<p>Hotkeys mit dem <a href="../Hotkeys.htm#Tilde">Tilde-Modifikator</a> sind nicht dazu gedacht, die ursprüngliche Funktion der Taste zu blockieren, daher bewirken sie in <span class="ver">[v1.1.27+]</span> keine Maskierung. Hotkeys wie <code>~#a::</code> unterdrücken das Menü immer noch, da das System in solchen Fällen erkennt, dass die WIN-Taste in Kombination mit einer anderen Taste verwendet wurde. Maus-Hotkeys und die WIN-Tasten selbst (<code>~LWin::</code> and <code>~RWin::</code>) unterdrücken jedoch nicht das Startmenü.</p>
+<p>Das Startmenü (bzw. die Menüleiste des aktiven Fensters) kann durch Drücken einer beliebigen Taste unterdrückt werden. Das folgende Beispiel deaktiviert die Fähigkeit der linken WIN-Taste, das Startmenü zu aktivieren, aber lässt die Möglichkeit offen, sie weiterhin als Modifikator zu verwenden:</p>
+<pre>~LWin::Send {Blind}{vk07}</pre>
+<p><strong>Send</strong>: <a href="Send.htm">Send</a>, <a href="ControlSend.htm">ControlSend</a> und so weiter haben als Teil ihres normalen Funktionsablaufs den Effekt, Modifikatortasten loszulassen. Zum Beispiel muss der Hotkey <code>&lt;#a::SendRaw %Adresse%</code> in der Regel vor dem Senden des Inhalts von <em>Adresse</em> die linke WIN-Taste loslassen und danach die linke WIN-Taste wieder nach unten drücken (damit andere WIN-Tastenkombinationen auch weiterhin funktionieren). Die Maskierungstaste kann in solchen Fällen gesendet werden, um eine WIN- oder ALT-Taste daran zu hindern, ein Menü zu aktivieren.</p>
 
 <h3>Siehe auch</h3>
-<p>Lesen Sie <a href="http://www.autohotkey.com/forum/topic22378.html">diesen Thread</a>, um mehr zu erfahren.</p>
+<p>Lesen Sie <a href="https://autohotkey.com/board/topic/20619-extraneous-control-key-presses-generated-by-or-hotkeys/">diesen Thread</a>, um mehr zu erfahren.</p>
 
 <h3>Beispiele</h3>
 <pre class="NoIndent">#MenuMaskKey vk07  <em>; vk07 ist unbelegt.</em>

@@ -15,7 +15,7 @@ padding:"inner"+a,content:b,"":"outer"+a},function(c,d){n.fn[d]=function(d,e){va
 
 var cache = {
   firstStartup: true,
-  scriptDir: document.scripts[0].src.substr(0, document.scripts[0].src.lastIndexOf('/')),
+  host: location.host,
   fontSize: 1.0,
   clickTab: 0,
   LastUsedSource: "",
@@ -27,7 +27,7 @@ var cache = {
   index: {data: {}, input: "", clickItem: 0, scrollPos: 0},
   search: {index: {}, files: {}, titles: {}, data: {}, input: "", clickItem: 0, scrollPos: 0},
   load: function() {
-    if (window.name.indexOf(this.scriptDir) != -1)
+    if (window.name.indexOf('"host":"'+this.host+'"') != -1)
       $.extend(this, JSON.parse(window.name));
   },
   save: function() {
@@ -39,7 +39,7 @@ var cache = {
 
 // Set global variables:
 cache.load();
-var scriptDir = cache.scriptDir;
+var scriptDir = document.scripts[document.scripts.length-1].src.substr(0, document.scripts[document.scripts.length-1].src.lastIndexOf('/'));
 var workingDir = getWorkingDir();
 var relPath = location.href.replace(workingDir, '');
 var isInsideCHM = (location.href.search(/::/) > 0) ? 1 : 0;
@@ -47,6 +47,13 @@ var isFrameParent = (location.href.indexOf('iframe.htm') != -1);
 var isInsideFrame = (window.self !== window.top);
 var isSearchBot = navigator.userAgent.match(/googlebot|bingbot|slurp/i);
 var isMobile = (window.outerWidth < 600);
+var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0; // Opera 8.0+
+var isFirefox = typeof InstallTrigger !== 'undefined'; // Firefox 1.0+
+var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0; // At least Safari 3+: "[object HTMLElementConstructor]"
+var isIE = /*@cc_on!@*/false || !!document.documentMode; // Internet Explorer 6-11
+var isEdge = !isIE && !!window.StyleMedia; // Edge 20+
+var isChrome = !!window.chrome && !!window.chrome.webstore; // Chrome 1+
+var isBlink = (isChrome || isOpera) && !!window.CSS; // Blink engine detection
 var structure = new ctor_structure;
 var toc = new ctor_toc;
 var index = new ctor_index;
@@ -172,7 +179,9 @@ function ctor_toc()
     for(var i = 0; i < input.length; i++) {
       var li = input[i][0];
       if (input[i][1] != '')
-        li = '<a href="' + workingDir + input[i][1] + '">' + li + '</a>';
+        li = '<a href="' + workingDir + input[i][1] + '"' + (isIE || isEdge ? '>' + li : ' data-content="' + li + '">') + '</a>';
+      else
+        li = '<span' + (isIE || isEdge ? '>' + li : ' data-content="' + li + '">') + '</span>';
       li = '<span>' + li + '</span>';
       if(input[i][2] != undefined && input[i][2].length > 0) {
         output += '<li class ="closed" title="' + input[i][0] + '">' + li;
@@ -187,19 +196,19 @@ function ctor_toc()
   };
   // --- Modify the elements of the TOC tab ---
   self.modify = function() {
-    toc = $('#left div.toc').html(self.create(cache.toc.data));
-    tocList = $('li > span', toc);
+    $toc = $('#left div.toc').html(self.create(cache.toc.data));
+    $tocList = $('li > span', $toc);
     // --- Fold items with subitems ---
 
-    $("li > ul", toc).hide();
+    $("li > ul", $toc).hide();
 
     // --- Hook up events ---
 
     // Select the item on click:
-    tocList.on("click", function() {
+    $tocList.on("click", function() {
       $this = $(this);
-      cache.toc.clickItem = tocList.index(this);
-      cache.toc.scrollPos = toc.scrollTop();
+      cache.toc.clickItem = $tocList.index(this);
+      cache.toc.scrollPos = $toc.scrollTop();
       // Fold/unfold item with subitems:
       if ($this.parent().has("ul").length) {
         $this.siblings("ul").slideToggle(100);
@@ -207,7 +216,7 @@ function ctor_toc()
       }
       // Higlight item with link:
       if ($this.has("a").length) {
-        $("span.selected", toc).removeClass("selected");
+        $("span.selected", $toc).removeClass("selected");
         $this.addClass("selected");
         setTimeout( function() { $('#right').focus(); }, 0);
         if (isInsideCHM)
@@ -223,27 +232,27 @@ function ctor_toc()
 
     if (!isMobile) // if not mobile browser.
     {
-      toc.css("overflow", "hidden").hover(function() {
+      $toc.css("overflow", "hidden").hover(function() {
         $(this).css("overflow", "auto");
       }, function() {
         $(this).css("overflow", "hidden");
       });
     }
-    self.preSelect(tocList, location, relPath);
+    self.preSelect($tocList, location, relPath);
     $('#iframe').load(function() {
       var url = $(this).contents().get(0).location;
       var relPath = url.href.replace(workingDir, '');
-      self.preSelect(tocList, url, relPath);
+      self.preSelect($tocList, url, relPath);
     });
-    setTimeout( function() { self.preSelect(tocList, location, relPath); }, 0);
+    setTimeout( function() { self.preSelect($tocList, location, relPath); }, 0);
   };
-  self.preSelect = function(tocList, url, relPath) { // Apply stored settings.
-    var clicked = tocList.eq(cache.toc.clickItem);
+  self.preSelect = function($tocList, url, relPath) { // Apply stored settings.
+    var clicked = $tocList.eq(cache.toc.clickItem);
     // Search for items which matches the address:
-    var found = tocList.has('a[href$="/' + relPath + '"]');
+    var found = $tocList.has('a[href$="/' + relPath + '"]');
     // If not found, search for items which matches the address without anchor:
     if (!found.length)
-      found = tocList.has('a[href$="/' + relPath.replace(url.hash,'') + '"]');
+      found = $tocList.has('a[href$="/' + relPath.replace(url.hash,'') + '"]');
     var el = found;
     // If the last clicked item can be found in the matches, use it instead:
     if (clicked.is(found))
@@ -253,10 +262,10 @@ function ctor_toc()
     // If items are found:
     if (el.length) {
       // Restore default state:
-      $("span.selected", toc).removeClass("selected");
-      $("li.opened", toc).toggleClass("closed opened");
-      $(".highlighted", toc).removeClass("highlighted");
-      $("li > ul", toc).hide();
+      $("span.selected", $toc).removeClass("selected");
+      $("li.opened", $toc).toggleClass("closed opened");
+      $(".highlighted", $toc).removeClass("highlighted");
+      $("li > ul", $toc).hide();
       // Select the items:
       el.addClass("selected");
       // Expand their parent items:
@@ -267,10 +276,10 @@ function ctor_toc()
       el.parent().parents('li').addClass('highlighted');
       // Scroll to the last match:
       if (cache.toc.scrollPos !== "" || cache.toc.scrollPos !== 0)
-        toc.scrollTop(cache.toc.scrollPos);
-      if (!isScrolledIntoView(el, toc)) {
+        $toc.scrollTop(cache.toc.scrollPos);
+      if (!isScrolledIntoView(el, $toc)) {
         el[el.length-1].scrollIntoView(false);
-        toc.scrollTop(toc.scrollTop()+100);
+        $toc.scrollTop($toc.scrollTop()+100);
       }
     }
   }
@@ -289,18 +298,18 @@ function ctor_index()
       return textA.localeCompare(textB);
     });
     for (var i = 0, len = input.length; i < len; i++)
-      output += '<a href="' + workingDir + input[i][1] + '" tabindex="-1">' + input[i][0] + '</a>';
+      output += '<a href="' + workingDir + input[i][1] + '" tabindex="-1"' + (isIE || isEdge ? '>' + input[i][0] : ' data-content="' + input[i][0] + '">') + '</a>';
     return output;
   };
   self.modify = function() { // Modify the elements of the index tab.
-    var index = $('#left div.index');
-    var indexInput = $('input', index);
-    var indexList = $('div.list', index).html(self.create(cache.index.data));
+    var $index = $('#left div.index');
+    var $indexInput = $('input', $index);
+    var $indexList = $('div.list', $index).html(self.create(cache.index.data));
 
     // --- Hook up events ---
 
     // Select closest index entry and show color indicator on input:
-    indexInput.on('keyup', function() { // keyup instead of input due IE8.
+    $indexInput.on('keyup', function() { // keyup instead of input due IE8.
       var $this = $(this);
       var input = cache.index.input = $this.val().toLowerCase();
       // if no input, remove color indicator and return:
@@ -309,7 +318,7 @@ function ctor_index()
         return;
       }
       // Otherwise find the first item which matches the input value:
-      var indexListChildren = indexList.children();
+      var indexListChildren = $indexList.children();
       var match = self.findMatch(indexListChildren, input);
       // Select the found item, scroll to it and add color indicator:
       if (match.length) {
@@ -323,15 +332,16 @@ function ctor_index()
       else
         $this.attr('class', 'mismatch'); // 'items not found'
     });
-    self.preSelect(indexList, indexInput);
-    setTimeout( function() { self.preSelect(indexList, indexInput); }, 0);
+    self.preSelect($indexList, $indexInput);
+    setTimeout( function() { self.preSelect($indexList, $indexInput); }, 0);
   };
   self.findMatch = function(indexListChildren, input) {
     var match = {};
     if (!input)
       return match;
     for (var i = 0; i < indexListChildren.length; i++) {
-      var listitem = indexListChildren[i].innerText.substr(0, input.length).toLowerCase();
+      var text = isIE || isEdge ? indexListChildren[i].innerText : indexListChildren[i].getAttribute('data-content');
+      var listitem = text.substr(0, input.length).toLowerCase();
       if (listitem == input) {
         match = indexListChildren.eq(i);
         break;
@@ -339,10 +349,10 @@ function ctor_index()
     }
     return match;
   };
-  self.preSelect = function(indexList, indexInput) { // Apply stored settings.
-    var clicked = indexList.children().eq(cache.index.clickItem);
-    indexInput.val(cache.index.input);
-    indexList.scrollTop(cache.index.scrollPos);
+  self.preSelect = function($indexList, $indexInput) { // Apply stored settings.
+    var clicked = $indexList.children().eq(cache.index.clickItem);
+    $indexInput.val(cache.index.input);
+    $indexList.scrollTop(cache.index.scrollPos);
     clicked.click();
   };
 }
@@ -354,27 +364,27 @@ function ctor_search()
   var self = this;
   self.dataPath = scriptDir + '/source/data_search.js';
   self.modify = function() { // Modify the elements of the search tab.
-    var search = $('#left div.search');
-    var searchList = $('div.list', search);
-    var searchInput = $('input', search);
+    var $search = $('#left div.search');
+    var $searchList = $('div.list', $search);
+    var $searchInput = $('input', $search);
 
     // --- Hook up events ---
 
     // Refresh the search list and show color indicator on input:
-    searchInput.on('keyup', function() { // keyup instead of input due IE8.
+    $searchInput.on('keyup', function() { // keyup instead of input due IE8.
       var $this = $(this);
       var input = cache.search.input = $this.val();
       // if no input, empty the search list, remove color indicator and return:
       if (!input) {
-        searchList.empty();
+        $searchList.empty();
         $this.removeAttr('class');
         return;
       }
       // Otherwise fill the search list:
       cache.search.data = self.create(input);
-      searchList.html(cache.search.data);
+      $searchList.html(cache.search.data);
       // Select the first item and add color indicator:
-      var searchListChildren = searchList.children();
+      var searchListChildren = $searchList.children();
       if (searchListChildren.length) {
         searchListChildren.first().click();
         cache.search.clickItem = 0;
@@ -384,15 +394,15 @@ function ctor_search()
         $this.attr('class', 'mismatch'); // 'items not found'
     });
     if (!isFrameParent) {
-      self.preSelect(searchList, searchInput);
-      setTimeout( function() { self.preSelect(searchList, searchInput); }, 0);
+      self.preSelect($searchList, $searchInput);
+      setTimeout( function() { self.preSelect($searchList, $searchInput); }, 0);
     }
   };
-  self.preSelect = function(searchList, searchInput) { // Apply stored settings.
-    searchInput.val(cache.search.input);
-    searchList.html(cache.search.data);
-    searchList.scrollTop(cache.search.scrollPos);
-    searchList.children().eq(cache.search.clickItem).click();
+  self.preSelect = function($searchList, $searchInput) { // Apply stored settings.
+    $searchInput.val(cache.search.input);
+    $searchList.html(cache.search.data);
+    $searchList.scrollTop(cache.search.scrollPos);
+    $searchList.children().eq(cache.search.clickItem).click();
   };
   self.convertToArray = function(SearchText) { // Convert text to array.
     // Normalize whitespace:
@@ -600,15 +610,15 @@ function ctor_structure()
   self.dataPath = scriptDir + '/source/data_translate.js';
   self.addHeadElements = function() { // Add designated elements into the head.
     var metaViewport = '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">';
-    var linkCSS = '<link href="' + scriptDir + '/content.css" rel="stylesheet" type="text/css" />';
-    document.write(metaViewport + linkCSS);
+    document.write(metaViewport);
   };
   self.build = function() { // Add elements for sidebar.
-    var head = '<div id="head"><div class="h-tabs"><ul><li data-translate>Content</li><li data-translate>Index</li><li data-translate>Search</li></ul></div><div class="dragbar"></div><div class="h-tools"><div class="main"><ul><li class="sidebar" title="Hide/Show sidebar" data-translate>&#926;</li></ul></div><div class="online"><ul><li class="home" title="Home page" data-translate><a href="' + location.protocol + '//' + location.host + '">&#916;</a></li></ul><ul><li class="language" title="Change language" data-translate>en</li></ul><ul class="languages"><li class="arrow">&#9658;</li><li title="English">en</li><li title="Deutsch (German)">de</li><li title="Chinese">zh</li></ul><ul><li class="version" title="Change AHK version" data-translate>v1</li></ul><ul class="versions"><li class="arrow">&#9658;</li><li title="AHK v1.1">v1</li><li title="AHK v2.0">v2</li></ul><ul><li class="edit" title="Edit page on GitHub" data-translate><a>E</a></li></ul></div><div class="chm"><ul><li class="back" title="Go back" data-translate>&#9668;</li><li class="forward" title="Go forward" data-translate>&#9658</li><li class="zoom" title="Change font size" data-translate>Z</li><li class="print" title="Print current document" data-translate>P</li></ul></div></div></div></div>';
-    var main = '<div id="main"><div id="left"><div class="toc"></div><div class="index"><div class="label" data-translate>Type in the keyword to find:</div><div class="input"><input type="text" /></div><div class="list"></div></div><div class="search"><div class="label" data-translate>Type in the word(s) to search for:</div><div class="input"><input type="text" /></div><div class="list"></div></div></div><div class="dragbar"></div><div id="right" tabIndex="-1"><div class="area">';
+    var head = '<div id="head"><div class="h-tabs"><ul><li data-translate data-content="Content"></li><li data-translate data-content="Index"></li><li data-translate data-content="Search"></li></ul></div><div class="dragbar"></div><div class="h-tools"><div class="main"><ul><li class="sidebar" title="Hide/Show sidebar" data-translate>&#926;</li></ul></div><div class="online"><ul><li class="home" title="Home page" data-translate><a href="' + location.protocol + '//' + location.host + '">&#916;</a></li></ul><ul><li class="language" title="Change language" data-translate data-content="en"></li></ul><ul class="languages"><li class="arrow">&#9658;</li><li><a title="English" data-content="en"></a></li><li><a title="Deutsch (German)" data-content="de"></a></li><li><a title="&#x4E2D;&#x6587; (Chinese)" data-content="zh"></a></li></ul><ul><li class="version" title="Change AHK version" data-translate data-content="v1"></li></ul><ul class="versions"><li class="arrow">&#9658;</li><li><a title="AHK v1.1" data-content="v1"></a></li><li><a title="AHK v2.0" data-content="v2"></a></li></ul><ul><li class="edit" title="Edit page on GitHub" data-translate><a data-content="E"></a></li></ul></div><div class="chm"><ul><li class="back" title="Go back" data-translate>&#9668;</li><li class="forward" title="Go forward" data-translate>&#9658;</li><li class="zoom" title="Change font size" data-translate data-content="Z"></li><li class="print" title="Print current document" data-translate data-content="P"></li></ul></div></div></div></div>';
+    var main = '<div id="main"><div id="left"><div class="toc"></div><div class="index"><div class="label" data-translate data-content="Type in the keyword to find:"></div><div class="input"><input type="text" /></div><div class="list"></div></div><div class="search"><div class="label" data-translate data-content="Type in the word(s) to search for:"></div><div class="input"><input type="text" /></div><div class="list"></div></div></div><div class="dragbar"></div><div id="right" tabIndex="-1"><div class="area">';
+    var combined = head + main;
   
     // Write HTML before DOM is loaded to prevent flickering:
-    document.write(head + main);
+    document.write(isIE || isEdge ? combined.replace(/ data-content="(.*?)">/g, '>$1') : combined);
   };
   self.modify = function() { // Modify elements added via build.
 
@@ -635,10 +645,13 @@ function ctor_structure()
       var $this = $(this);
       var text = $this.text();
       var tooltip = $this.attr('title');
+      var dataContent = $this.attr('data-content');
       if (typeof text != '')
         $this.text(T(text));
       if (typeof tooltip !== 'undefined')
         $this.attr('title', T(tooltip));
+      if (typeof dataContent !== 'undefined')
+        $this.attr('data-content', T(dataContent));
     });
 
     // --- Main tools (always visible) ---
@@ -655,7 +668,7 @@ function ctor_structure()
     // language links. Keys are based on ISO 639-1 language name standard:
     var link = { 'v1': { 'en': 'https://autohotkey.com/docs/',
                          'de': 'https://ahkde.github.io/docs/',
-                         'zh': 'http://ahkcn.sourceforge.net/docs/' },
+                         'zh': 'https://wyagd001.github.io/zh-cn/docs/' },
                  'v2': { 'en': 'https://lexikos.github.io/v2/docs/',
                          'de': 'https://ahkde.github.io/v2/docs/' } }
 
@@ -664,24 +677,26 @@ function ctor_structure()
     // Bug - IE/Edge doesn't turn off list-style if element is hidden:
     $langList.add($verList).css("list-style", "none");
     // Hide currently selected language and version in the selection lists:
-    $('li:contains(' + lang + ')', $langList).hide();
-    $('li:contains(' + ver + ')', $verList).hide();
+    $(isIE || isEdge ? 'a:contains(' + lang + ')' : 'a[data-content=' + lang + ']', $langList).parent().hide();
+    $(isIE || isEdge ? 'a:contains(' + ver + ')' : 'a[data-content=' + ver + ']', $verList).parent().hide();
     // Add the language links:
     $('li', $langList).not('li.arrow').each( function() {
-      var thisLink = link[ver][$(this).text()];
+      var a = $('a', this);
+      var thisLink = link[ver][isIE || isEdge ? a.text() : a.attr('data-content')];
       if (thisLink == null)
         $(this).hide(); // Hide language button
       else
-        $(this).wrapInner('<a href="' + thisLink + relPath + '"></a>');
+        a.attr('href', thisLink + relPath);
     });
     // Add the version links:
     $('li', $verList).not('li.arrow').each( function() {
-      var $thisVer = $(this).text();
-      var thisLink = link[$thisVer][lang];
+      var a = $('a', this);
+      var ver = isIE || isEdge ? a.text() : a.attr('data-content');
+      var thisLink = link[ver][lang];
       // Fallback to default docs:
-      thisLink = (thisLink == null) ? link[$thisVer]['en'] : thisLink;
+      thisLink = (thisLink == null) ? link[ver]['en'] : thisLink;
       // Don't use relPath here due file differences between the versions:
-      $(this).wrapInner('<a href="' + thisLink + '"></a>');
+      a.attr('href', thisLink);
     });
     // Show/Hide selection lists on click:
     $('li.language', $online).on('click', function() {
@@ -755,11 +770,6 @@ function ctor_structure()
       $this.addClass('selected').attr('tabindex', 0);
       return false;
     });
-    // Prevent focusing ListBox elements:
-    // ListBox.on('focus', function() {
-    //   $("a.selected", this).focus();
-    //   return false;
-    // });
     // Open the link on double-click or touch (for mobile) and store its index
     // relative to its parent:
     var touchmoved;
@@ -791,7 +801,7 @@ function ctor_structure()
     ListBox.on('mouseenter', '> a', function() {
       var $this = $(this);
       if(this.offsetWidth < this.scrollWidth && !$this.attr('title')) {
-        $this.attr('title', $this.text());
+        $this.attr('title', isIE || isEdge ? $this.text() : $this.attr('data-content'));
       }
     });
     // Provide ListBox functionality and interaction with the Edit on keypress:
@@ -871,6 +881,8 @@ function ctor_structure()
     // --- Save settings before leaving site ---
 
     $(window).on('beforeunload', function() {
+      if (history.replaceState)
+        history.replaceState({scrollTop:$('#right')[0].scrollTop}, null, null);
       cache.RightIsFocused = $(':focus').closest('#right, #left > div.toc').length;
       cache.save();
     });
@@ -887,17 +899,42 @@ function ctor_structure()
     // --- Perform actions on anchor change ---
 
     $(window).on('hashchange', function() {
-      anchor = $(location.hash);
-      if (!anchor.length)
-        return;
-      // Goto anchor again after reloading the page:
-      anchor[0].scrollIntoView();
+      // Scroll to right position:
+      if (history.state)
+        document.getElementById('right').scrollTop = history.state.scrollTop;
       // When using mobile device hide sidebar and goto anchor:
-      if (isMobile)
+      if (isMobile && location.hash) {
+        anchor = document.getElementById(location.hash.substr(1));
         setTimeout( function() {
-          this.displaySidebar(false);
-          anchor[0].scrollIntoView();
+          self.displaySidebar(false);
+          anchor.scrollIntoView();
         }, 200);
+      }
+    });
+
+    // --- Save scroll position of the right pane on scroll ---
+
+    if (history.replaceState)
+    {
+      if (!history.state) // To have scrolling to top by default.
+        history.replaceState({scrollTop:0}, null, null);
+      $('#right').on('scroll', function() {
+        history.replaceState({scrollTop:$(this)[0].scrollTop}, null, null);
+      });
+    }
+
+    // --- Briefly highlight anchor on page load and anchor change ---
+
+    $(window).on('load hashchange', function() {
+      if (location.hash)
+        anchor = document.getElementById(location.hash.substr(1));
+      else
+        return;
+      $(anchor).css("backgroundColor", "#ff9632");
+      setTimeout( function() {
+        $(anchor).css("backgroundColor", "")
+                 .css("transition", "background-color 1s"); // CSS3 only
+      }, 200);
     });
 
     // --- Resize the sidebar's width via mouse ---
@@ -1061,14 +1098,16 @@ function addFeatures()
       title = T("Applies to:\nAutoHotkey_L Revision {0} and later\nAutoHotkey v1.0.90.00 and later").format(m[1]);
       href = 'AHKL_ChangeLog.htm#L' + m[1];
       text = text.replace(m[0], 'v1.0.90+'); // For users who don't know what AHK_L was.
-    } else if (m = /v\d\.\d\.(\d+\.)?\d+/.exec(text)) {
-      title = T("Applies to AutoHotkey {0} and later").format(m[0]);
-      if (!m[1])
-        m[0] = m[0] + '.00';
-      if (m[0] <= 'v1.0.48.05')
-        href = 'ChangeLogHelp.htm#' + m[0];
+    } else if (m = /(v\d\.\d\.(\d+\.)?\d+)(\+)?/.exec(text)) {
+      title = m[3] ? T("Applies to AutoHotkey {0} and later").format(m[1]) : "";
+      if (!m[2])
+        m[1] = m[1] + '.00';
+      if (m[1] < 'v1.0.45.00')
+        href = 'ChangeLogHelp.htm#Older_Changes';
+      else if (m[1] <= 'v1.0.48.05')
+        href = 'ChangeLogHelp.htm#' + m[1];
       else
-        href = 'AHKL_ChangeLog.htm#' + m[0];
+        href = 'AHKL_ChangeLog.htm#' + m[1];
     } else continue;
     // outerHTML/innerHTML not possible here because IE8 doesn't allow nested links:
     $(span).html('<a href="' + workingDir + href + '" title="' + title + '">' + text + '</a>');
@@ -1122,21 +1161,6 @@ function addFeatures()
   
       // http://stackoverflow.com/a/9851769
   
-      // Opera 8.0+
-      var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
-      // Firefox 1.0+
-      var isFirefox = typeof InstallTrigger !== 'undefined';
-      // At least Safari 3+: "[object HTMLElementConstructor]"
-      var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-      // Internet Explorer 6-11
-      var isIE = /*@cc_on!@*/false || !!document.documentMode;
-      // Edge 20+
-      var isEdge = !isIE && !!window.StyleMedia;
-      // Chrome 1+
-      var isChrome = !!window.chrome && !!window.chrome.webstore;
-      // Blink engine detection
-      var isBlink = (isChrome || isOpera) && !!window.CSS;
-  
       if (isIE || isEdge) {
         navigator.msSaveBlob(textFileAsBlob, fileNameToSaveAs);
       }
@@ -1160,14 +1184,10 @@ function addFeatures()
   div.innerHTML = 'Copyright &copy; 2003-' + new Date().getFullYear() + ' ' + location.host + ' - LIC: <a href="' + scriptDir + '/../license.htm">GNU GPLv2</a>';
   content.appendChild(div);
 
-  // --- Ensure navigating to anchor ---
+  // --- Ensure setting right scroll position when traversing history ---
 
-  if (location.hash)
-  {
-    var requested_hash = location.hash.slice(1);
-    location.hash = '';
-    location.hash = requested_hash;
-  }
+  if (history.state)
+    document.getElementById('right').scrollTop = history.state.scrollTop;
 }
 
 // --- Get the working directory of the site ---

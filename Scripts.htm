@@ -11,51 +11,36 @@
 <body>
 
 <h1>Skripte</h1>
+<p>Verwandte Themen:</p>
+<ul>
+  <li><a href="Program.htm">Verwendung des Programms</a>: Wie man AutoHotkey grundsätzlich nutzt.</li>
+  <li><a href="Concepts.htm">Konzepte und Konventionen</a>: Allgemeine Erklärung zu verschiedenen Konzepten, auf die AutoHotkey basiert.</li>
+  <li><a href="Language.htm">Skriptsprache</a>: Spezifische Details zur Syntax (wie man Skripte schreibt).</li>
+</ul>
 
 <h2>Inhaltsverzeichnis</h2>
 <ul>
   <li><a href="#intro">Einführung</a></li>
   <li><a href="#auto">Der obere Bereich des Skripts (automatischer Ausführungsbereich)</a>: Dieser Bereich wird beim Starten des Skripts automatisch ausgeführt.</li>
-  <li><a href="#esc">Escapesequenzen</a>: Wann `% und `, verwendet werden, um ein direkt geschriebenes Prozentzeichen oder Komma zu kennzeichnen.</li>
-  <li><a href="#Comments">Kommentare in einem Skript</a>: Wie das Semikolon und die Symbole /*...*/ verwendet werden, um Bemerkungen zu einem Skript hinzuzufügen.</li>
   <li><a href="#continuation">Eine lange Zeile in mehreren kurzen Zeilen aufteilen</a>: Verbessert die Lesbarkeit und Wartbarkeit eines Skripts.</li>
   <li><a href="#ahk2exe">Ein Skript in eine EXE-Datei umwandeln (ahk2exe)</a>: Ein .ahk-Skript in eine .exe-Datei umwandeln, die auf jedem PC ausgeführt werden kann.</li>
   <li><a href="#cmd">Befehlszeilenparameter an einem Skript übergeben</a>: Die Variablen %1%, %2% usw. enthalten die eingehenden Parameter.</li>
   <li><a href="#cp">Zeichensatz einer Skript-Datei</a>: Nicht-ASCII-Zeichen sicher in Skripten verwenden.</li>
   <li><a href="#debug">Ein Skript debuggen</a>: Wie die Fehler eines Skripts, das sich falsch verhält, gefunden werden können.</li>
-  <li><a href="#port">Portabilität von AutoHotkey.exe</a>: Eine Kopie von AutoHotkey.exe reicht aus, um jede .ahk-Datei ausführen zu können.</li>
-  <li><a href="#install">Installer-Optionen</a>: Wie unbeaufsichtigte/automatische Installationen oder Deinstallationen durchgeführt werden können.</li>
 </ul>
 <h2 id="intro">Einführung</h2>
 <p>Jedes Skript ist eine reine Textdatei mit mehreren Zeilen, die das Programm (AutoHotkey.exe) ausführen soll. Solche Skripte können <a href="Hotkeys.htm">Hotkeys</a> und <a href="Hotstrings.htm">Hotstrings</a> enthalten oder sogar nur aus diesen bestehen. Falls keine Hotkeys und Hotstrings vorhanden sind, wird ein Skript, sobald es gestartet wird, seine Befehle von oben nach unten und der Reihe nach ausführen.</p>
 <p>Das Programm lädt das Skript zeilenweise in den Speicher. Jede Zeile kann bis zu 16.383 Zeichen lang sein. Während des Ladevorgangs wird das Skript <a href="misc/Performance.htm">optimiert</a> und überprüft, ob es gültig ist. Wenn das Programm auf ein Syntaxfehler stößt, wird er angezeigt. Solche Fehler müssen korrigiert werden, bevor das Skript ausgeführt werden kann.</p>
 <h2 id="auto">Der obere Bereich des Skripts (automatischer Ausführungsbereich)</h2>
 <p>Das Skript startet, sofern es erfolgreich geladen wurde, bei der ersten Zeile und endet, wenn es entweder ein <a href="commands/Return.htm">Return</a>, <a href="commands/Exit.htm">Exit</a>, <a href="Hotkeys.htm">Hotkey-/Hotstring-Label</a> oder das physische Ende des Skripts erreicht hat (je nachdem was zuerst kommt). Dieser obere Bereich des Skripts wird auch als <em>automatischer Ausführungsbereich</em> bezeichnet.</p>
+<p class="warning"><strong>Hinweis:</strong> Während das <em>erste</em> Hotkey/Hotstring-Label im Skript die gleiche Wirkung wie <a href="commands/Return.htm">Return</a> hat, haben andere Hotkeys und Label dies nicht.</p>
 <p>Ein Skript, das weder <a href="commands/_Persistent.htm">persistent</a> noch <a href="Hotkeys.htm">Hotkeys</a>, <a href="Hotstrings.htm">Hotstrings</a>, <a href="commands/OnMessage.htm">OnMessage</a> und <a href="commands/Gui.htm">GUI</a> enthält, wird beendet, sobald es den automatischen Ausführungsbereich durchgeführt hat. Ansonsten läuft das Skript im Leerlauf weiter, wo es nur noch auf Ereignisse wie Hotkeys, Hotstrings, <a href="commands/Gui.htm#label">GUI-Ereignisse</a>, <a href="commands/Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="commands/SetTimer.htm">Timer</a> reagieren kann.</p>
 <p>Jeder neue <a href="misc/Threads.htm">Thread</a>, den ein <a href="Hotkeys.htm">Hotkey</a>, <a href="Hotstrings.htm">Hotstring</a>, <a href="commands/Menu.htm">Menüpunkt</a>, <a href="commands/Gui.htm#label">GUI-Ereignis</a> oder <a href="commands/SetTimer.htm">Timer</a> gestartet hat, greift auf die im automatischen Ausführungsbereich definierten Standardwerte der folgenden Attribute zurück. Ungesetzte Attribute benutzen ihre eigenen Standardwerte (welche das jeweils sind, finden Sie in den entsprechenden Dokumentationen): <a href="commands/DetectHiddenWindows.htm">DetectHiddenWindows</a>, <a href="commands/DetectHiddenText.htm">DetectHiddenText</a>, <a href="commands/SetTitleMatchMode.htm">SetTitleMatchMode</a>, <a href="commands/SetBatchLines.htm">SetBatchLines</a>, <a href="commands/SendMode.htm">SendMode</a>, <a href="commands/SetKeyDelay.htm">SetKeyDelay</a>, <a href="commands/SetMouseDelay.htm">SetMouseDelay</a>, <a href="commands/SetWinDelay.htm">SetWinDelay</a>, <a href="commands/SetControlDelay.htm">SetControlDelay</a>, <a href="commands/SetDefaultMouseSpeed.htm">SetDefaultMouseSpeed</a>, <a href="commands/CoordMode.htm">CoordMode</a>, <a href="commands/SetStoreCapslockMode.htm">SetStoreCapslockMode</a>, <a href="commands/AutoTrim.htm">AutoTrim</a>, <a href="commands/SetFormat.htm">SetFormat</a>, <a href="commands/StringCaseSense.htm">StringCaseSense</a>, <a href="commands/Thread.htm">Thread</a>, und <a href="commands/Critical.htm">Critical</a>.</p>
 <p>Falls der automatische Ausführungsbereich zu lange dauert (oder nie das Ende erreicht), werden die Standardwerte der oben genannten Einstellungen automatisch nach 100 Millisekunden wirksam. Wenn der automatische Ausführungsbereich schließlich das Ende erreicht hat (wenn überhaupt), werden die Standardwerte mit den benutzerdefinierten Standardwerten aus dem automatischen Ausführungsbereich überschrieben. In der Regel ist es am besten, die Standardwerte von <a href="Hotkeys.htm">Hotkeys</a>, <a href="Hotstrings.htm">Hotstrings</a>, <a href="commands/SetTimer.htm">Timern</a> oder <a href="commands/Menu.htm">benutzerdefinierten Menüpunkten</a> im oberen Bereich des Skripts zu ändern. Beachten Sie außerdem, dass jedem <a href="misc/Threads.htm">Thread</a> eine eigene Sammlung von den oben genannten Einstellungen zugewiesen ist. Das heißt, dass Einstellungen, die in einem <a href="misc/Threads.htm">Thread</a> geändert werden, die Einstellungen von anderen Threads nicht beeinflussen können.</p>
-<h2 id="esc">Escapesequenzen</h2>
-<p>Das Standard-<a href="commands/_EscapeChar.htm">Escapezeichen</a> von AutoHotkey ist ein Akzent / umgekehrtes Häkchen (`). Auf der englischen Tastatur finden Sie das Zeichen in der linken oberen Ecke. Auf der deutschen Tastatur links neben der RÜCKTASTE. Drücken Sie UMSCHALT+AKUT und danach LEERTASTE, um ein alleinstehendes umgekehrtes Häkchen zu erzeugen. Dieses Zeichen wurde anstelle eines umgekehrten Schrägstrichs auserwählt, weil es verhindert, dass zwei umgekehrte Schrägstriche in Dateipfaden angegeben werden müssen.</p>
-<p>Da Kommas und Prozentzeichen eine besondere Bedeutung in der AutoHotkey-Sprache haben, sollte man <code>`,</code> oder <code>`%</code> angeben, wenn sie als direkt geschriebener Text interpretiert werden sollen. Allerdings gibt es Ausnahmen: Die Kommas einer <a href="commands/MsgBox.htm">MsgBox</a> müssen nicht mit einem Escapezeichen versehen werden. Die Kommas innerhalb des letzten Parameters eines Befehls müssen auch nicht mit einem Escapezeichen versehen werden. Auf der <a href="commands/_EscapeChar.htm">#EscapeChar</a>-Seite finden Sie alle bedeutsamen Escapesequenzen.</p>
-<p>Einige Sonderzeichen können nur in Form einer Escapesequenz erzeugt werden. Häufig benutzte Escapesequenzen sind <code>`t</code> (Tabulator), <code>`n</code> (LF-Zeilenumbruchszeichen) und <code>`r</code> (CR-Zeilenumbruchszeichen).</p>
-<p>Tipp: Das erste Komma nach dem Befehlsnamen kann weggelassen werden (aber nicht, wenn der erste Parameter leer ist oder mit := oder = beginnt, oder wenn der Befehl oberhalb eines <a href="#continuation">Fortsetzungsbereichs</a> alleinsteht). Zum Beispiel:</p>
-<pre>MsgBox Das ist ok.
-MsgBox<strong>,</strong> Das ist auch ok (es hat ein direktes Komma).</pre>
-<h2 id="Comments">Kommentare in einem Skript</h2>
-<p>Um in Skripten etwas zu kommentieren, muss am Anfang einer Zeile ein Semikolon gesetzt werden. Zum Beispiel:</p>
-<pre><em>; Diese ganze Zeile ist ein Kommentar.</em></pre>
-<p>Kommentare können auch am Ende eines Befehls stehen - in diesem Fall muss auf der linken Seite des Semikolons mindestens ein Leer- oder Tabulatorzeichen erfolgen. Zum Beispiel:</p>
-<pre>Run Notepad  <em>; Dieser Kommentar befindet sich auf derselben Zeile wie der Befehl.</em></pre>
-<p>Mithilfe der Symbole /* und */ können ganze Bereiche auskommentiert werden, <em>allerdings müssen die Symbole am Anfang einer Zeile stehen</em>. Zum Beispiel:</p>
-<pre><em>/*
-MsgBox, Diese Zeile wurde auskommentiert (deaktiviert).
-MsgBox, Diese auch. 
-*/</em></pre>
-<p>Kommentare werden beim Starten eines Skripts ignoriert, daher haben sie keinerlei Einfluss auf die Performance oder Speicherauslastung.</p>
-<p>Mithilfe der <a href="commands/_CommentFlag.htm">#CommentFlag</a>-Direktive kann das standardmäßige Kommentarzeichen (Semikolon) mit einem anderen Zeichen oder einer Zeichenkette überschrieben werden.</p>
+
 <h2 id="continuation">Eine lange Zeile in mehreren kurzen Zeilen aufteilen</h2>
 <p>Lange Zeilen können in mehreren kurzen Zeilen aufgeteilt werden, um sie besser lesbar und verwaltbar zu machen. Die Ausführungsgeschwindigkeit des Skripts wird dabei nicht reduziert, weil solche Zeilen bereits beim Starten des Skripts im Speicher zusammengeführt werden.</p>
-<p><strong>Methode #1</strong>: Eine Zeile, die mit "and", "or", ||, &amp;&amp;, einem Komma oder einem <a href="Variables.htm#concat">Punkt</a> beginnt, wird automatisch mit der oberen Zeile zusammengeführt (in v1.0.46+ gilt das auch für alle anderen <a href="Variables.htm#Operators">Ausdrucksoperatoren</a>, außer ++ und --). Im folgenden Beispiel wird die zweite Zeile an die erste Zeile angefügt, weil sie mit einem Komma beginnt:</p>
+<p id="continuation-line"><strong>Methode #1</strong>: Eine Zeile, die mit "and", "or", ||, &amp;&amp;, einem Komma oder einem <a href="Variables.htm#concat">Punkt</a> beginnt, wird automatisch mit der oberen Zeile zusammengeführt (in v1.0.46+ gilt das auch für alle anderen <a href="Variables.htm#Operators">Ausdrucksoperatoren</a>, außer ++ und --). Im folgenden Beispiel wird die zweite Zeile an die erste Zeile angefügt, weil sie mit einem Komma beginnt:</p>
 <pre>FileAppend, Das ist der Text, der angefügt wird.`n   <em>; Kommentar hier möglich.</em>
     <strong>,</strong> %A_ProgramFiles%\BeliebigeAnwendung\Log-Datei.txt  <em>; Kommentar.</em></pre>
 <p>Die Zeilen im nächsten Beispiel werden zu einer einzelnen Zeile zusammengeführt, weil die letzten beiden Zeilen mit "and" oder "or" beginnen:</p>
@@ -66,8 +51,8 @@ MsgBox, Diese auch.
 <pre>ProduktIstVerfügbar := (Farbe = "Rot")
     <strong>?</strong> false  <em>; Rote Produkte sind nicht verfügbar, daher ist der folgende Funktionsaufruf irrelevant.</em>
     <strong>:</strong> ProduktIstInFarbeVerfügbar(Produkt, Farbe)</pre>
-<p>Obwohl die Einrückungen in den oberen Beispielen optional sind, machen sie eventuell deutlich, welche Zeilen zusammengehören. Außerdem müssen keine Leerzeichen bei Zeilen eingefügt werden, die mit den Wörtern "AND" und "OR" beginnen; das Programm macht das automatisch. In den Beispielen oben können leere Zeilen oder <a href="#Comments">Kommentare</a> zwischen oder am Ende jeder Zeile eingefügt werden.</p>
-<p><strong>Methode #2</strong>: Diese Methode sollte verwendet werden, wenn sehr viele Zeilen zusammengeführt werden müssen oder wenn die Zeilen nicht für Methode #1 geeignet sind. Diese Methode kann sowohl bei <a href="Hotstrings.htm">automatisch-ersetzenden Hotstrings</a> als auch bei Befehlen oder <a href="Variables.htm#Expressions">Ausdrücken</a> angewendet werden. Zum Beispiel:</p>
+<p>Obwohl die Einrückungen in den oberen Beispielen optional sind, machen sie eventuell deutlich, welche Zeilen zusammengehören. Außerdem müssen keine Leerzeichen bei Zeilen eingefügt werden, die mit den Wörtern "AND" und "OR" beginnen; das Programm macht das automatisch. In den Beispielen oben können leere Zeilen oder <a href="Language.htm#comments">Kommentare</a> zwischen oder am Ende jeder Zeile eingefügt werden.</p>
+<p id="continuation-section"><strong>Methode #2</strong>: Diese Methode sollte verwendet werden, wenn sehr viele Zeilen zusammengeführt werden müssen oder wenn die Zeilen nicht für Methode #1 geeignet sind. Diese Methode kann sowohl bei <a href="Hotstrings.htm">automatisch-ersetzenden Hotstrings</a> als auch bei Befehlen oder <a href="Variables.htm#Expressions">Ausdrücken</a> angewendet werden. Zum Beispiel:</p>
 <pre><em>; BEISPIEL #1:</em>
 Var =
 (
@@ -89,7 +74,7 @@ Eine Textzeile.
 <p>Bekannte Einschränkung: Eine Join-Zeichenkette, die mit einem Doppelpunkt endet, darf nicht als letzte Option auf dieser Zeile angegeben werden. Dies würde dazu führen, dass <code>(Join:</code> beispielsweise als Label "(Join" behandelt oder dass <code>(LTrim Join:</code> nicht unterstützt wird, während <code>(Join: C</code> vollkommen in Ordnung wäre.</p>
 <p id="LTrim"><strong>LTrim</strong>: Entfernt Leer- und Tabulatorzeichen am Anfang jeder Zeile. Diese Option erlaubt es, den Fortsetzungsbereich eingerückt zu lassen. Geben Sie <code>#LTrim</code> ohne Parameter an, um diese Option für mehrere Fortsetzungsbereiche einzuschalten. <code>#LTrim</code> ist von der Position abhängig; diese Direktive beeinflusst nur Fortsetzungsbereiche, die sich physisch darunter befinden. Die Einstellung kann via <code>#LTrim Off</code> wieder ausgeschaltet werden.</p>
 <p><strong>RTrim0</strong> (RTrim gefolgt von einer 0): Verhindert, dass Leer- und Tabulatorzeichen am Ende jeder Zeile automatisch entfernt werden.</p>
-<p id="CommentOption"><strong>Comments</strong> (oder <strong>Comment</strong> oder <strong>Com</strong> oder <strong>C</strong>) <span class="ver">[v1.0.45.03+]</span>: Ermöglicht <a href="#Comments">Semikolon-Kommentare</a> innerhalb des Fortsetzungsbereichs (aber nicht <code>/*..*/</code>). Solche Kommentare (sowie alle links vorkommenden Leer- und Tabulatorzeichen) werden im Endergebnis entfernt, anstatt als direkt geschriebener Text behandelt zu werden. Jeder Kommentar kann auf der rechten Seite einer Zeile oder auf einer neuen Zeile vorkommen.</p>
+<p id="CommentOption"><strong>Comments</strong> (oder <strong>Comment</strong> oder <strong>Com</strong> oder <strong>C</strong>) <span class="ver">[v1.0.45.03+]</span>: Ermöglicht <a href="Language.htm#comments">Semikolon-Kommentare</a> innerhalb des Fortsetzungsbereichs (aber nicht <code>/*..*/</code>). Solche Kommentare (sowie alle links vorkommenden Leer- und Tabulatorzeichen) werden im Endergebnis entfernt, anstatt als direkt geschriebener Text behandelt zu werden. Jeder Kommentar kann auf der rechten Seite einer Zeile oder auf einer neuen Zeile vorkommen.</p>
 <p><strong>%</strong> (Prozentzeichen): Behandelt Prozentzeichen nicht als Variablenverweise, sondern als direkt geschriebene Zeichen. Dadurch wird verhindert, dass jedes einzelne Prozentzeichen mit einem <a href="commands/_EscapeChar.htm">Escapezeichen</a> versehen werden muss. Diese Option kann weggelassen werden, wenn der Fortsetzungsbereich an Stellen z. B. <a href="Hotstrings.htm">automatisch-ersetzende Hotstrings</a> verwendet wird, wo Prozentzeichen bereits als direkt geschriebener Text behandelt werden.</p>
 <p><strong>,</strong> (Komma): Behandelt Kommas nicht als direkt geschriebener Text, sondern als Trennzeichen. Diese selten verwendete Option ist nur für die Kommas zwischen den Befehlsparametern notwendig, weil in <a href="Functions.htm">Funktionsaufrufen</a> der Typ des Kommas keine Rolle spielt. Zudem transformiert diese Option nur Kommas, die tatsächlich Parameter trennen. Das heißt, sobald der letzte Parameter des Befehls erreicht wird (oder wenn keine Parameter vorhanden sind), werden nachfolgende Kommas unabhängig von dieser Option als direkt geschriebener Text behandelt.</p>
 <p id="accent"><strong>`</strong> (umgekehrtes Häkchen): Behandelt umgekehrte Häkchen nicht als <a href="commands/_EscapeChar.htm">Escapezeichen</a>, sondern als direkt geschriebene Zeichen. Dies hat auch den Effekt, dass Kommas und Prozentzeichen nicht direkt und individuell mit einem Escapezeichen versehen werden können, oder dass explizit angegebene Escapesequenzen wie `r und `t nicht umgewandelt werden.</p>
@@ -207,8 +192,28 @@ Verwendung:
 <p>Der Dateiname <code><i>AutoHotkey</i>.ahk</code> ist abhängig vom Namen der ausführbaren Datei, mit der das Skript gestartet wurde. Wenn Sie beispielsweise AutoHotkey.exe in MeinSkript.exe umbenennen, versucht das Programm <code>MeinSkript.ahk</code> zu finden. Starten Sie AutoHotkeyU32.exe ohne Parameter, sucht das Programm nach AutoHotkeyU32.ahk.</p>
 <p>Hinweis: In den Versionen vor <a href="AHKL_ChangeLog.htm#L51">Revision 51</a> wurde AutoHotkey.ini im Arbeitsverzeichnis oder AutoHotkey.ahk in "Eigene Dokumente" gesucht.</p>
 <p><span class="ver">[v1.1.17+]:</span> Geben Sie als Dateiname ein Sternchen (*) an, um den Skript-Text aus der Standardeingabe (stdin) zu lesen. Ein Beispiel dazu finden Sie unter <a href="commands/Run.htm#ExecScript">ExecScript()</a>.</p>
-<p id="cmd_args"><strong>Skript-Parameter</strong>: Eine oder mehrere durch Leerzeichen getrennte Zeichenketten, die an das Skript übergeben werden sollen. Jeder Parameter, der Leerzeichen enthält, muss in Anführungszeichen gesetzt werden. Um ein direkt geschriebenes Anführungszeichen zu übergeben, muss ein umgekehrter Schrägstrich davor gesetzt werden (\"). Daraus folgt, dass jeder nachfolgende Schrägstrich innerhalb eines in Anführungszeichen gesetzten Parameters (z. B. "C:\Meine Dokumente<span class="red">\"</span>) als direkt geschriebenes Anführungszeichen behandelt wird (das heißt, dass das Skript die Zeichenkette C:\Meine Dokumente<span class="red">"</span> als Parameter erkennt). Mit <code><a href="commands/StringReplace.htm">StringReplace, 1, 1, <span class="red">"</span>,, All</a></code> können solche Anführungszeichen entfernt werden.</p>
-<p>Das Skript kann die eingehenden Parameter mit den <a href="Variables.htm">Variablen</a> %1%, %2% und so weiter abrufen. Darüber hinaus enthält %0% die Anzahl der Parameter, die übergeben worden sind (0, wenn keine). Allerdings können diese Variablen nicht direkt in einem Ausdruck verwiesen werden, weil sie dort als Zahlen statt als Variablen interpretiert werden. Das folgende Beispiel zeigt, wie das Skript beendet werden kann, wenn zu wenig Parameter übergeben wurden:</p>
+<p id="cmd_args"><strong>Skript-Parameter</strong>: Eine oder mehrere durch Leerzeichen getrennte Zeichenketten, die an das Skript übergeben werden sollen. Jeder Parameter, der Leerzeichen enthält, muss in Anführungszeichen gesetzt werden. Um ein direkt geschriebenes Anführungszeichen zu übergeben, muss ein umgekehrter Schrägstrich davor gesetzt werden (\"). Daraus folgt, dass jeder nachfolgende Schrägstrich innerhalb eines in Anführungszeichen gesetzten Parameters (z. B. "C:\Meine Dokumente<span class="red">\"</span>) als direkt geschriebenes Anführungszeichen behandelt wird (das heißt, dass das Skript die Zeichenkette C:\Meine Dokumente<span class="red">"</span> als Parameter erkennt). Mit <code><a href="commands/StringReplace.htm">StringReplace</a>, 1, 1, <span class="red">"</span>,, All</code> können solche Anführungszeichen entfernt werden.</p>
+<p id="cmd_args"><span class="ver">[v1.1.27+]:</span> Eingehende Parameter, sofern vorhanden, werden als Array in die interne Variable <strong>A_Args</strong> gespeichert, und können mithilfe des <a href="Objects.htm#Usage_Simple_Arrays">Array-Syntaxes</a> abgerufen werden. <code>A_Args[1]</code> enthält den ersten Parameter. Das folgende Beispiel zeigt, wie das Skript beendet werden kann, wenn zu wenig Parameter übergeben wurden:</p>
+<pre>if A_Args.Length() &lt; 3
+{
+    MsgBox % "Das Skript benötigt mindestens 3 eingehende Parameter, aber es sind nur " A_Args.Length() " angekommen."
+    ExitApp
+}</pre>
+<p>Wenn die Anzahl der Parameter variiert, die an das Skript übergeben werden sollen (z. B. wenn der Benutzer mit dem Mauszeiger mehrere Dateien auf ein Skript zieht und ablegt), kann das folgende Beispiel verwendet werden, um sie einzeln zu extrahieren:</p>
+<pre>for n, param in A_Args  <em>; Für jeden Parameter:</em>
+{
+    MsgBox Parameter Nr. %n% ist %param%.
+}
+</pre>
+<p>Wenn die Parameter Dateinamen sind, kann das folgende Beispiel verwendet werden, um sie in lange Namen mit korrekter Groß-/Kleinschreibung (wie im Dateisystem gespeichert) und vollständigem/absolutem Pfad umzuwandeln:</p>
+<pre>for n, ÜbergebenerPfad in A_Args  <em>; Für jeden Parameter (oder abgelegte Datei auf das Skript):</em>
+{
+    Loop Files, %ÜbergebenerPfad%, FD  <em>; Dateien und Verzeichnisse einbeziehen.</em>
+        LangerPfad := A_LoopFileFullPath
+    MsgBox Der lange Pfadname mit korrekter Groß-/Kleinschreibung der Datei`n%ÜbergebenerPfad%`nist:`n%LangerPfad%
+}</pre>
+<p><strong>Bekannte Einschränkung:</strong> Das Ziehen und Ablegen von Dateien auf eine .ahk-Datei kann fehlschlagen, wenn 8.3-Namen (Kurznamen) in einem NTFS-Dateisystem deaktiviert worden sind. Eine Möglichkeit zur Umgehung des Problems ist es, das Skript zu <a href="#ahk2exe">kompilieren</a> und die Dateien dann auf die resultierende EXE-Datei zu ziehen.</p>
+<p id="cmd_args_old"><strong>Altmodisch:</strong> Die Befehlszeilenparameter sind auch in den <a href="Variables.htm">Variablen</a> %1%, %2% und so weiter enthalten, wie in den Versionen vor <span class="ver">[v1.1.27]</span>. Darüber hinaus enthält %0% die Anzahl der Parameter, die übergeben worden sind (0, wenn keine). Allerdings können diese Variablen nicht direkt in einem Ausdruck verwiesen werden, weil sie dort als Zahlen statt als Variablen interpretiert werden. Das folgende Beispiel zeigt, wie das Skript beendet werden kann, wenn zu wenig Parameter übergeben wurden:</p>
 <pre>if 0 &lt; 3  <em>; Die linke Seite einer <a href="commands/IfEqual.htm">if-Anweisung ohne Ausdruck</a> ist immer der Name einer Variable.</em>
 {
     MsgBox Das Skript benötigt mindestens 3 eingehende Parameter`, aber es sind nur %0% angekommen.
@@ -230,7 +235,6 @@ Verwendung:
         LangerPfad = %A_LoopFileLongPath%
     MsgBox Der lange Pfadname mit korrekter Groß-/Kleinschreibung der Datei `n%Pfadangabe%`n ist:`n%LangerPfad%
 }</pre>
-<p>Bekannte Einschränkung: das Ziehen und Ablegen von Dateien auf eine .ahk-Datei kann fehlschlagen, wenn 8.3-Namen (Kurznamen) in einem NTFS-Dateisystem deaktiviert worden sind. Eine Möglichkeit zur Umgehung des Problems ist es, das Skript zu <a href="#ahk2exe">kompilieren</a> und die Dateien dann auf die resultierende EXE-Datei abzulegen.</p>
 
 <h2 id="cp">Zeichensatz einer Skript-Datei <span class="ver">[AHK_L 51+]</span></h2>
 <p>Die Zeichen, die eine Skript-Datei enthalten darf, sind vom Zeichensatz (Codepage) vorgegeben, mit der die Datei geladen wurde.</p>
@@ -289,57 +293,6 @@ IfWinExist %Skriptpfad% ahk_class AutoHotkey
     PostMessage DllCall("RegisterWindowMessage", "Str", "AHK_ATTACH_DEBUGGER")
 </pre>
 <p>Sobald eine Verbindung zum Debugger-Client aufgebaut ist, kann sie durch das Senden des DBGp-Befehls "detach" getrennt werden, ohne das Skript zu beenden.</p>
-
-<h2 id="port">Portabilität von AutoHotkey.exe</h2>
-<p>Die Datei AutoHotkey.exe ist alles, was man braucht, um ein beliebiges .ahk-Skript zu starten.</p>
-<p><span class="ver">[AHK_L 51+]:</span> Das Umbenennen von AutoHotkey.exe ändert auch die Tatsache, welches Skript <a href="#defaultfile">standardmäßig</a> ausgeführt wird. Diese Methode kann als Alternative dienen, um ein Skript zu kompilieren, das auf einem Computer ohne installiertem AutoHotkey verwendet werden kann. Zum Beispiel führt <i>MeinSkript</i>.exe automatisch <i>MeinSkript</i>.ahk aus, wenn kein Dateiname angegeben ist.</p>
-<h2 id="install">Installer-Optionen</h2>
-<p>Um AutoHotkey automatisch in das Standardverzeichnis zu installieren (das gleiche Verzeichnis, das im Nicht-Silent-Modus angezeigt wird), startet man den Installer mit dem /S-Parameter. Zum Beispiel:</p>
-<pre>AutoHotkey110800_Install.exe /S</pre>
-<p>Mit dem /D-Parameter kann ein benutzerdefiniertes Standardverzeichnis angegeben werden (lässt man /S weg, würde /D das im Installer angezeigte Standardverzeichnis ändern). Zum Beispiel:</p>
-<pre>AutoHotkey110800_Install.exe /S /D=C:\Programme\AutoHotkey</pre>
-<p><strong>Version</strong>: Falls AutoHotkey bereits installiert wurde, erkennt der Installer automatisch, welche Version von AutoHotkey.exe standardmäßig gesetzt werden soll. Ansonsten gilt standardmäßig Unicode 32-Bit oder Unicode 64-Bit, abhängig davon, ob das Betriebssystem im 64-Bit-Format ist. Um die standardmäßig gesetzte Version von AutoHotkey.exe zu überschreiben, übergibt man einen der folgenden Parameter:</p>
-<ul>
-  <li><code>/A32</code> oder <code>/ANSI</code>: ANSI 32-Bit.</li>
-  <li><code>/U64</code> oder <code>/x64</code>: Unicode 64-Bit (nur auf 64-Bit-Systemen gültig).</li>
-  <li><code>/U32</code>: Unicode 32-Bit.</li>
-</ul>
-<p>Das folgende Beispiel installiert AutoHotkey automatisch und setzt ANSI 32-Bit als Standardversion:</p>
-<pre>AutoHotkey110800_Install.exe /S /A32</pre>
-<p><strong>Deinstallieren</strong>: Um AutoHotkey automatisch zu deinstallieren, startet man Installer.ahk mit dem Parameter <code>/Uninstall</code>. Zum Beispiel:</p>
-<pre>"C:\Programme\AutoHotkey\AutoHotkey.exe" "C:\Programme\AutoHotkey\Installer.ahk" /Uninstall</pre>
-<p>In Versionen älter als 1.1.08.00 muss <code>uninst.exe /S</code> verwendet werden. Zum Beispiel:</p>
-<pre>"C:\Programme\AutoHotkey\uninst.exe" /S</pre>
-<p><strong>Hinweis</strong>: Installer.ahk muss mit Administratorrechten ausgeführt werden, um korrekt zu funktionieren.</p>
-<p><strong>Extrahieren</strong>: Spätere Versionen des Installers enthalten einen Link in der rechten unteren Ecke, um die Setup-Dateien ohne Installation zu extrahieren. Wenn diese Funktion vorhanden ist, kann sie mit der Befehlszeilenoption <code>/E</code> aufgerufen werden. Zum Beispiel:</p>
-<pre>AutoHotkey110903_Install.exe /D=F:\AutoHotkey /E</pre>
-<p><strong>Skripte neustarten</strong> <span class="ver">[v1.1.19.02+]</span>: Im automatischen Install/Uninstall-Modus werden laufende Skripte automatisch geschlossen, wo immer es notwendig ist. Übergeben Sie die <code>/R</code>-Option <strong>ohne</strong> zusätzliche Befehlszeilenparameter, um diese Skripte automatisch neu zu laden, egal mit welcher EXE-Datei sie gerade ausgeführt werden. Das Setup wird versuchen, die Skripte über den Explorer zu starten, damit sie ohne Administratorrechten laufen, wenn UAC aktiv ist.</p>
-
-<p id="Installer_IsHostApp"><strong>Taskleistenschaltflächen</strong> <span class="ver">[v1.1.08+]</span>: Ab Windows 7 werden Taskleistenschaltflächen von mehreren Skripten automatisch gruppiert oder standardmäßig zu einer Schaltfläche zusammengefasst. Die Option <em>Separate taskbar buttons</em> (Separate Taskleistenschaltflächen) deaktiviert dieses Verhalten, indem sie jede ausführbare AutoHotkey-Datei als <a href="https://msdn.microsoft.com/de-de/library/ee872121#APPLICATIONS">Host-App (IsHostApp)</a> registriert.</p>
-<p><span class="ver">[v1.1.24.02+]:</span> Installationen via Befehlszeile können <code>/IsHostApp</code> oder <code>/IsHostApp=1</code> benutzen, um die Option zu aktivieren, und <code>/IsHostApp=0</code>, um sie zu deaktivieren.</p>
-
-<h3 id="Installer_uiAccess">Mit UI-Access ausführen <span class="ver">[v1.1.24.02+]</span></h3>
-<p>Die Installer-GUI verfügt über die Option "Add 'Run with UI Access' to context menus" ('Mit UI-Access ausführen' in das Kontextmenü einfügen). Diese Kontextmenü-Option kann häufig auftretende <a href="FAQ.htm#uac">UAC-bezogene Probleme</a> umgehen, damit das Skript administrative Programme automatisieren kann - ohne dass das Skript mit Administratorrechten laufen muss. Um das zu erreichen, wird der Installer Folgendes tun:</p>
-<ul>
-  <li>AutoHotkeyA32.exe, AutoHotkeyU32.exe und (sofern vorhanden) AutoHotkeyU64.exe in AutoHotkey*_UIA.exe umbenennen.</li>
-  <li><a href="https://msdn.microsoft.com/de-de/library/ee671610">uiAccess-Attribut</a> im integrierten Manifest jeder UIA-Datei setzen.</li>
-  <li>Ein selbst-signiertes digitales Zertifikat namens "AutoHotkey" erstellen und jede UIA-Datei signieren.</li>
-  <li>Die Kontextmenü-Option registrieren, um die entsprechende EXE-Datei ausführen zu können.</li>
-</ul>
-<p>Wenn irgendeine dieser UIA-Dateien vor der Installation vorhanden sein sollte, wird der Installer sie automatisch aktualisieren, selbst wenn die uiAccess-Option inaktiv ist.</p>
-<p>Installationen via Befehlszeile können <code>/uiAccess</code> oder <code>/uiAccess=1</code> benutzen, um die Option zu aktivieren, und <code>/uiAccess=0</code>, um sie zu deaktivieren. Standardmäßig wird der Installer die Option aktivieren, wenn UAC aktiv ist und wenn die UI-Access-Kontextmenü-Option vor der Installation vorhanden war.</p>
-<p>Skripte, die andere Skripte mit UI-Access ausführen müssen, können einfach <a href="commands/Run.htm">Run</a> benutzen, um die entsprechende UIA.EXE-Datei mit den normalen <a href="#cmd">Befehlszeilenparametern</a> auszuführen.</p>
-<p><strong>Bekannte Einschränkungen:</strong>:</p>
-<ul>
-  <li>UIA ist nur wirksam, wenn der Speicherort der Datei vertrauenswürdig ist; zum Beispiel ein Unterverzeichnis im Programme-Ordner.</li>
-  <li>UIA.EXE-Dateien funktionieren nur auf anderen Computern, wenn das digitale Zertifikat, welches zum Erstellen dieser Dateien benutzt wurde, auch auf diesen Computern installiert ist.</li>
-  <li>UIA.EXE-Dateien können aus Sicherheitsgründen nicht via CreateProcess gestartet werden. Stattdessen kann ShellExecute benutzt werden. <a href="commands/Run.htm">Run</a> versucht beides.</li>
-  <li>UIA.EXE-Dateien können nicht modifiziert werden, weil das ansonsten deren digitale Signatur ungültig machen würde.</li>
-  <li>Da die "Integritätsstufe" von UIA-Programmen sich von anderen Programmen unterscheidet, haben sie nur Zugriff auf Objekte, die von anderen UIA-Programmen registriert wurden. Zum Beispiel würde <code><a href="commands/ComObjActive.htm">ComObjActive</a>("Word.Application")</code> fehlschlagen, weil Word nicht für UI-Access markiert wurde.</li>
-  <li>Die eigenen Fenster des Skripts können aus Sicherheitsgründen nur von UIA-Programmen/Skripten automatisiert werden.</li>
-  <li>Das Ausführen eines Nicht-UIA-Skripts, das einen Maus-Hook benutzt (selbst ein einfaches <code>#InstallMouseHook</code>), kann eventuell alle Maus-Hotkeys blockieren, wenn der Mauszeiger auf ein Fenster eines UIA-Skripts zeigt, oder sogar Hotkeys, die vom UIA-Skript selbst implementiert wurden. Eine Möglichkeit zur Umgehung des Problems ist es, UIA-Skripte als Letztes zu laden.</li>
-</ul>
-<p>Schauen Sie sich <a href="https://autohotkey.com/board/topic/70449-enable-interaction-with-administrative-programs/">Enable interaction with administrative programs</a> (Interaktion mit administrativen Programmen ermöglichen) im Archiv-Forum an, um mehr zu erfahren.</p>
 
 <h2>Skript-Beispiele</h2>
 <p>Auf <a href="scripts/">dieser Seite</a> kann man einige nützliche Skripte finden.</p>
