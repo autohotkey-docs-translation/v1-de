@@ -15,6 +15,20 @@
 <p>Ältere Änderungen können in <a href="ChangeLogHelp.htm">Archivierte Änderungen</a> gefunden werden.</p><!--new revisions go here-->
 
 
+<h2 id="v1.1.27.02">1.1.27.02 - 1. Januar 2018</h2>
+<p>Behoben: Das Laden von .bmp-Dateien als Symbole in Originalgröße.</p>
+<p>Behoben: Verbundzuweisungen wie <code>Test.Eigenschaft[1] += 1</code> (fehlerhaft seit v1.1.27.01).</p>
+
+<h2 id="v1.1.27.01">1.1.27.01 - 31. Dezember 2017</h2>
+<p>Behoben: <code>++X</code> oder <code>--X</code> verursachten in Skripten ohne #NoEnv einen Programmabsturz (fehlerhaft seit v1.1.27.00).</p>
+<p>Behoben: #Warn ClassOverwrite gab fälschlicherweise eine Warnung für <code>++MeineKlasse.X</code> aus.</p>
+<p>Behoben: Neubelegung erlaubt nun benutzerdefinierte Tastenkombinationen wie <code>a &amp; b::c</code>.</p>
+<p>Behoben: Send/Hotstrings/Input passen sich nun an das Tastaturlayout des fokussierten Steuerelements an und nicht nur an das aktive Fenster. Dies betrifft insbesondere UWP-Anwendungen wie Microsoft Edge.</p>
+<p>Behoben: Hook-Hotkeys unterdrücken nun die Aktivierung des Startmenüs, die auftritt, wenn ein isoliertes "Ctrl/Shift Up" erfolgt. "Ctrl Up" kann erzeugt werden, wenn eine Umschaltung von einem Tastaturlayout mit AltGr zu einem Tastaturlayout ohne AltGr erfolgt (z. B. von UK zu US) und Ctrl währenddessen nicht gedrückt gehalten wird. Dies behebt Hotkeys wie z. B. <code>$#z::WinActivate x</code>, wenn die entsprechende Änderung solche Bedingungen verursacht.</p>
+<p>Behoben: Input sammelte keine Zeichen, wenn beide UMSCHALT-Tasten unten sind.</p>
+<p>Behoben: Input nutzt nun "sc" und "vk" statt "Sc" and "Vk"für Endungstasten in ErrorLevel (verursacht durch v1.1.20).</p>
+<p>Behoben: <code>GetKeyName/VK/SC("vkXXscYYY")</code>, wobei YYY mit A-F beginnt (fehlerhaft seit v1.1.26).</p>
+
 <h2 id="v1.1.27.00">1.1.27.00 - 25. Dezember 2017</h2>
 <h4>Änderungen:</h4>
 <p>AU3_Spy.exe wurde durch WindowSpy.ahk ersetzt.</p>
@@ -28,8 +42,8 @@
 <p>Geändert: Send nutzt in den ANSI-Versionen nun <a href="http://msdn.microsoft.com/de-de/library/ms646310">SendInput()</a> anstelle von Alt+nnnnn, um <a href="commands/Send.htm#characters">spezielle Zeichen</a> zu senden.</p>
 <p>Geändert: Es gelten nun andere Regeln zum <a href="commands/_MenuMaskKey.htm">Maskieren von ALT/WIN</a> nach dem Drücken eines Hook-Hotkeys:</p>
 <ul>
-  <li>Explizit gesendete ALT/WIN-KeyUp-Ereignisse können maskiert werden. Dies behebt Neubelegungen wie <code>AppsKey::RWin</code>, allerdings ist es möglich, dass Hotkeys, die zum Aktivieren des Startmenüs gedacht sind, neue Übergangslösungen erfordern.</li>
-  <li>Wenn ALT/WIN logisch, aber nicht physisch nach unten gedrückt ist, verursachen nur Hotkeys, die ALT/WIN erfordern (z. B. <code>#a::</code>, nicht <code>*a::</code>), eine Maskierung. Auf diese Weise kann eine Neubelegung oder ein Platzhalter-Hotkey das KeyUp-Ereignis senden, ohne dass es maskiert werden muss.</li>
+  <li>Explizit gesendetes "Alt/Win Up" kann maskiert werden. Dies behebt Neubelegungen wie <code>AppsKey::RWin</code>, allerdings ist es möglich, dass Hotkeys, die zum Aktivieren des Startmenüs gedacht sind, neue Übergangslösungen erfordern.</li>
+  <li>Wenn ALT/WIN logisch, aber nicht physisch unten ist, verursachen nur Hotkeys, die ALT/WIN erfordern (z. B. <code>#a::</code>, nicht <code>*a::</code>), eine Maskierung. Auf diese Weise kann eine Neubelegung oder ein Platzhalter-Hotkey das KeyUp-Ereignis senden, ohne dass es maskiert werden muss.</li>
   <li>Nicht unterdrückte Hotkeys wie z. B. <code>~#a::</code> verursachen keine Maskierung mehr, da das nicht unterdrückte KeyDown/KeyUp-Ereignis ausreicht, um ein Menü zu verhindern. Maus-Hotkeys wie <code>~*MButton::</code> unterdrücken das Startmenü nicht mehr, wenn sie mit der WIN-Taste kombiniert werden. Es kann manuell mit <code>Send {Blind}{vk07}</code> oder ähnlichem unterdrückt werden.</li>
   <li>Der Tastatur-Hook verfolgt nun Ereignisse in Bezug auf ALT/WIN, so dass die Maskierungstaste nicht mehr gesendet werden muss, wenn ALT/WIN bereits durch ein anderes Ereignis (physisch oder gesendet) maskiert wurde.</li>
 </ul>
@@ -60,7 +74,7 @@
 <li>Behoben: Send verwendet nun den korrekten Modifikatorstatus bei Unicode-Zeichen.</li>
 <li>Behoben: <code>ControlSend {u n}</code>, wobei u Unicode ist, das n-mal gesendet werden soll, nicht nur 1-mal.</li>
 <li>Behoben: Kein inkonsistentes Verhalten mehr von ALTGR zwischen verschiedenen Betriebssystemversionen. Bezogen auf <code>RAlt::</code>, das wiedereinmal das System unter Windows 10 dazu veranlasste, die linke STRG-Taste  "loszulassen", wie es vor v1.1.26.01 der Fall war (aber im Gegensatz zu den alten Versionen verhindert es, dass das KeyUp-Ereignis der rechten ALT-Taste das aktive Fenster erreicht). Diese Änderung sollte sich nicht auf Layouts ohne ALTGR auswirken.</li>
-<li>Behoben: <code>Menu Tray, Icon</code> und SB_SetIcon erlauben nun Bitmaps.</li>
+<li>Behoben: <code>Menu Tray, Icon</code>, SB_SetIcon und LoadPicture mit einer Symbol-Option ungleich 0 erlauben nun Bitmaps (aber wandeln um, falls nötig).</li>
 <li>Behoben: Menüpunkte verschwinden nicht mehr, wenn ein Cursor als Menüpunktsymbol gesetzt ist.</li>
 <li>Verbessert: Das Starten von Window Spy und der Hilfedatei:
 <ul>

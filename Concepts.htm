@@ -153,7 +153,7 @@ meinObj.Name[Param2, ..., ParamN] := Wert
 <h3 id="built-in-variables">Interne Variablen</h3>
 <p>Eine Vielzahl von Variablen sind fest in das Programm integriert und normal abrufbar. Solche Variablen, außer <a href="misc/Clipboard.htm">Clipboard</a>, <a href="misc/ErrorLevel.htm">ErrorLevel</a> und <a href="Scripts.htm#cmd">Befehlszeilenparameter</a>, sind schreibgeschützt; das heißt, dass man ihren Inhalt nicht ändern kann. Gemäß der Konvention beginnen die meisten dieser Variablen mit dem Präfix <code>A_</code>, daher ist es am besten, dieses Präfix nicht für eigene Variablen zu verwenden.</p>
 <p>Einige Variablen wie <a href="Variables.htm#KeyDelay">A_KeyDelay</a> und <a href="Variables.htm#TitleMatchMode">A_TitleMatchMode</a> spiegeln Einstellungen wider, die das Verhalten des Skripts steuern, und separate Werte für jeden <a href="misc/Threads.htm">Thread</a> aufbewahren. Dadurch können Subroutinen, die von neuen Threads gestartet werden (z.B. für Hotkeys, Menüs, Timer und so weiter), Einstellungen ändern, ohne andere Threads zu beeinflussen.</p>
-<p>Einige spezielle Variablen werden nicht periodisch aktualisiert, sondern ihr Wert wird abgerufen oder berechnet, wenn das Skript auf die Variable verweist. Eine solche Variable ist zum Beispiel <a href="misc/Clipboard.htm">Clipboard</a>, die den aktuellen Inhalt der Zwischenablage abruft, oder <a href="variables.htm#TimeSinceThisHotkey">A_TimeSinceThisHotkey</a>, die die Anzahl der Millisekunden berechnet, die seit dem Drücken des Hotkeys vergangen sind.</p>
+<p>Einige spezielle Variablen werden nicht periodisch aktualisiert, sondern ihr Wert wird abgerufen oder berechnet, wenn das Skript auf die Variable verweist. Eine solche Variable ist zum Beispiel <a href="misc/Clipboard.htm">Clipboard</a>, die den aktuellen Inhalt der Zwischenablage abruft, oder <a href="Variables.htm#TimeSinceThisHotkey">A_TimeSinceThisHotkey</a>, die die Anzahl der Millisekunden berechnet, die seit dem Drücken des Hotkeys vergangen sind.</p>
 <p>Siehe auch: <a href="Variables.htm#BuiltIn">Liste von internen Variablen</a>.</p>
 
 <h3 id="environment-variables">Umgebungsvariablen</h3>
@@ -205,8 +205,7 @@ ControlSend,, ^{Home}, A        <em>; Korrekt. Steuerelement wurde weggelassen.<
 </pre>
 
 <h3 id="methods">Methoden</h3>
-<p><em>Methoden</em> sind Funktionen, die sich auf ein bestimmtes <a href="#objects">Objekt</a> auswirken. Während es nur eine Funktion mit einem bestimmten Namen geben kann, ist die Aktion der entsprechenden Methode abhängig vom Zielobjekt. Aus diesem Grund wird das Zielobjekt (das eine Variable oder ein Teilausdruck sein kann) angegeben.
-</p>
+<p><em>Methoden</em> sind Funktionen, die sich auf ein bestimmtes <a href="#objects">Objekt</a> auswirken. Während es nur eine Funktion mit dem Namen <code>Send</code> (zum Beispiel) geben kann, kann es genauso viele Methoden mit dem Namen <code>Send</code> geben, wie es Objekte gibt, da jedes Objekt (oder Klasse von Objekten) unterschiedlich reagieren kann. Aus diesem Grund wird das Zielobjekt (das eine Variable oder ein Teilausdruck sein kann) nicht innerhalb der Parameterliste, sondern auf der linken Seite des Methodennamens angegeben. Weitere Informationen finden Sie unter <a href="#object-protocol">Objektorientierte Schnittstelle</a>.</p>
 
 <h2 id="control-flow">Ablaufsteuerung</h2>
 <p>Die <em>Ablaufsteuerung</em> ist die Reihenfolge, in der die einzelnen Anweisungen ausgeführt werden. Im Normalfall werden Anweisungen der Reihe nach von oben nach unten ausgeführt, allerdings kann dieses Verhalten mit einer Ablaufsteuerungsanweisung überschrieben werden, indem man Anweisungen z. B. wiederholt ausführen lässt, oder wenn eine bestimmte Bedingung erfüllt ist.</p>
@@ -294,17 +293,17 @@ Send Hallo`, Welt!
 </li>
 </ul>
 <p><strong>Hinweis:</strong> Es gibt einige Nachkommastellen, die das binäre Gleitkommaformat nicht exakt darstellen kann und die Zahl deshalb auf die nächstliegende darstellbare Zahl rundet. Dies kann zu unerwarteten Ergebnissen führen. Zum Beispiel:</p>
-<pre>    SetFormat FloatFast, 0.17  <em>; Zeige "übervolle" Präzision</em>
-    MsgBox % 0.1 + 0           <em>; 0.10000000000000001</em>
-    MsgBox % 0.1 + 0.2         <em>; 0.30000000000000004</em>
-    MsgBox % 0.3 + 0           <em>; 0.29999999999999999</em>
-    MsgBox % 0.1 + 0.2 = 0.3   <em>; 0 (nicht identisch)</em>
+<pre>SetFormat FloatFast, 0.17  <em>; Zeige "übervolle" Präzision</em>
+MsgBox % 0.1 + 0           <em>; 0.10000000000000001</em>
+MsgBox % 0.1 + 0.2         <em>; 0.30000000000000004</em>
+MsgBox % 0.3 + 0           <em>; 0.29999999999999999</em>
+MsgBox % 0.1 + 0.2 = 0.3   <em>; 0 (nicht identisch)</em>
 </pre>
 <p>Eine Strategie zur Bewältigung dieses Problems besteht darin, den direkten Vergleich zu vermeiden und stattdessen die Differenz zu vergleichen. Zum Beispiel:</p>
-<pre>    MsgBox % Abs((0.1 + 0.2) - (0.3)) &lt; 0.0000000000000001
+<pre>MsgBox % Abs((0.1 + 0.2) - (0.3)) &lt; 0.0000000000000001
 </pre>
 <p>Eine andere Strategie ist es, vor dem Vergleich immer in eine Zeichenkette zu umzuwandeln (und dabei Rundungen vorzunehmen). Es gibt in der Regel zwei Möglichkeiten, dies zu tun, während Sie die Genauigkeit angeben:</p>
-<pre>    MsgBox % Round(0.1 + 0.2, 15) = format("{:.15f}", 0.3)
+<pre>MsgBox % Round(0.1 + 0.2, 15) = Format("{:.15f}", 0.3)
 </pre>
 
 <h3 id="names">Namen</h3>
@@ -326,7 +325,7 @@ Send Hallo`, Welt!
 <p>Da eine Variable immer nur einen <em>Verweis</em> zu einem Objekt und nicht das Objekt selbst enthält, bekommt die Funktion, wenn Sie eine solche Variable an einen ByRef-losen Parameter übergeben, einen Verweis zum selben Objekt. Diese Tatsache erlaubt es, dass die Funktion das Objekt modifizieren kann, aber verhindert auch, dass die Funktion die <em>Variable</em>, die der Funktionsaufrufer übergeben hat, modifizieren kann, weil die Funktion nur einen Verweis zum Objekt und nicht die Variable hat.</p>
 
 <h3 id="references-to-objects">Verweise zu Objekten</h3>
-<p>Skripte interagieren mit einem Objekt nur indirekt, nämlich via <em>Verweis</em> zum Objekt. Wenn Sie ein Objekt erstellen, wird das Objekt an einem Ort erstellt, den Sie nicht kontrollieren können, und einen Verweis an Sie übergeben. Wenn Sie diesen Verweis an eine Funktion übergeben oder in eine Variable oder in einem anderen Objekt speichern, wird ein neuer Verweis zum <em>selben</em> Objekt erzeugt. Um einen Verweis freizugeben, nutzt man einfach eine Zuweisung und ersetzt ihn mit einem anderen Wert. Ein Objekt wird erst gelöscht, wenn alle Verweise freigegeben sind; Sie können ein Objekt nicht explizit löschen und sollten es gar nicht erst versuchen.</p>
+<p>Ein Skript interagiert mit einem Objekt nur indirekt, nämlich via <em>Verweis</em> zum Objekt. Wenn Sie ein Objekt erstellen, wird das Objekt an einem Ort erstellt, den Sie nicht kontrollieren können, und einen Verweis an Sie übergeben. Wenn Sie diesen Verweis an eine Funktion übergeben oder in eine Variable oder in einem anderen Objekt speichern, wird ein neuer Verweis zum <em>selben</em> Objekt erzeugt. Um einen Verweis freizugeben, nutzt man einfach eine Zuweisung und ersetzt ihn mit einem anderen Wert. Ein Objekt wird erst gelöscht, wenn alle Verweise freigegeben sind; Sie können ein Objekt nicht explizit löschen und sollten es gar nicht erst versuchen.</p>
 <pre>Verweis1 := Object()  <em>; Erstellt ein Objekt und speichert den ersten Verweis</em>
 Verweis2 := Verweis1  <em>; Erstellt einen neuen Verweis zum selben Objekt</em>
 Verweis1 := ""        <em>; Gibt den ersten Verweis frei</em>
