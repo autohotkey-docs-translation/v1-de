@@ -11,11 +11,44 @@
 <body>
 
 <h1>RegRead</h1>
-
 <p>Liest einen Wert aus der Registry.</p>
 
-<pre class="Syntax">RegRead, AusgabeVar, Rootkey\Subkey [, Wertname]  <em>; Benötigt <span class="ver">[v1.1.21+]</span></em>
-RegRead, AusgabeVar, Rootkey, Subkey [, Wertname]</pre>
+<h2 id="new">Neue Syntax <span class="ver">[v1.1.21+]</span></h2>
+<pre class="Syntax"><span class="func">RegRead</span>, AusgabeVar, KeyName <span class="optional">, Wertname</span></pre>
+
+<h3>Parameter</h3>
+<dl>
+
+  <dt>AusgabeVar</dt>
+  <dd><p>Name der Variable, in der der abgerufene Wert gespeichert werden soll. Falls der Wert nicht abgerufen werden kann, wird die Variable leer gemacht und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p></dd>
+
+  <dt>KeyName</dt>
+  <dd><p>Der vollständige Name des Registry-Keys.</p>
+      <p>Der Name muss entweder mit HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG beginnen (oder jeweils die Abkürzung, wie z. B. HKLM). Um eine <a href="LoopReg.htm#remote">Remote-Registry</a> anzusteuern, setzt man den Computernamen und einen Doppelpunkt (oder <span class="ver">[in v1.1.21+]</span> einen Schrägstrich) davor. Zum Beispiel: <code>\\workstation01:HKEY_LOCAL_MACHINE</code></p></dd>
+
+  <dt>Wertname</dt>
+  <dd><p>Der Name des Wertes, der abgerufen werden soll. Fehlt dieser Parameter, wird der Standardwert von <em>KeyName</em> abgerufen - das ist der Wert, der in RegEdit als "(Standard)" angezeigt wird. Wenn es keinen Standardwert gibt (also wenn RegEdit "Wert nicht festgelegt" anzeigt), wird <em>AusgabeVar</em> leer gemacht und ErrorLevel auf 1 gesetzt.</p></dd>
+
+</dl>
+
+<h3>Beispiele</h3>
+<pre class="NoIndent"><em>; Beispiel: Ermittelt den Pfad des Programm-Ordners.
+
+; Die nachfolgende Zeile stellt sicher, dass die 64-Bit-Version des Programm-Ordners zurückgegeben wird, wenn das Betriebssystem 64-Bit ist und das Skript nicht.</em>
+<a href="SetRegView.htm">SetRegView</a> 64  <em>; Benötigt <span class="ver">[v1.1.08+]</span></em>
+
+RegRead, AusgabeVar, HKEY_LOCAL_MACHINE<span class="red">\</span> SOFTWARE\Microsoft\Windows\CurrentVersion, ProgramFilesDir
+MsgBox, Programme sind in: %AusgabeVar%
+
+<em>; Ein anderer Weg, um den Pfad des Programm-Ordners zu ermitteln:</em>
+EnvGet AusgabeVar, % <a href="../Variables.htm#Is64bitOS">A_Is64bitOS</a> ? "ProgramW6432" : "ProgramFiles"
+MsgBox, Programme sind in: %AusgabeVar%
+</pre>
+
+<h2 id="old">Alte Syntax</h2>
+<p class="warning"><strong>Veraltet:</strong> Diese Syntax ist nicht für neue Skripte empfohlen. Verwenden Sie stattdessen die <a href="#new">neue Syntax</a>.</p>
+<pre class="Syntax"><span class="func">RegRead</span>, AusgabeVar, Rootkey, Subkey <span class="optional">, Wertname</span></pre>
+
 <h3>Parameter</h3>
 <dl>
 
@@ -23,23 +56,35 @@ RegRead, AusgabeVar, Rootkey, Subkey [, Wertname]</pre>
   <dd><p>Name der Variable, in der der abgerufene Wert gespeichert werden soll. Falls der Wert nicht abgerufen werden kann, wird die Variable leer gemacht und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p></dd>
 
   <dt>Rootkey</dt>
-  <dd><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC). Um eine Remote-Registry anzusteuern, setzt man vor dem Rootkey den Computernamen und einen Doppelpunkt (oder <span class="ver">[in v1.1.21+]</span> einen Schrägstrich). Zum Beispiel: <code>\\workstation01:HKEY_LOCAL_MACHINE</code></p></dd>
+  <dd><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC). Um eine <a href="LoopReg.htm#remote">Remote-Registry</a> anzusteuern, setzt man den Computernamen und einen Doppelpunkt (oder <span class="ver">[in v1.1.21+]</span> einen Schrägstrich) davor. Zum Beispiel: <code>\\workstation01:HKEY_LOCAL_MACHINE</code></p></dd>
 
   <dt>Subkey</dt>
   <dd><p>Der Name des Subkeys (z. B. Software\BeliebigeAnwendung).</p></dd>
   
-  <dt>Rootkey\Subkey <span class="ver">[v1.1.21+]</span></dt>
-  <dd><p>Wenn direkt nach <em>Rootkey</em> ein Schrägstrich (<code>\</code>) erfolgt, werden <em>Rootkey</em> und <em>Subkey</em> zu einem einzelnen Parameter zusammengeführt.</p></dd>
-
   <dt>Wertname</dt>
   <dd><p>Der Name des Wertes, der abgerufen werden soll. Fehlt dieser Parameter, wird der Standardwert von <em>Subkey</em> abgerufen - das ist der Wert, der in RegEdit als "(Standard)" angezeigt wird. Wenn es keinen Standardwert gibt (also wenn RegEdit "Wert nicht festgelegt" anzeigt), wird <em>AusgabeVar</em> leer gemacht und ErrorLevel auf 1 gesetzt.</p></dd>
 
 </dl>
-<h3>ErrorLevel</h3>
+
+<h3>Beispiele</h3>
+<pre class="NoIndent"><em>; Beispiel: Ermittelt den Pfad des Programm-Ordners.
+
+; Die nachfolgende Zeile stellt sicher, dass die 64-Bit-Version des Programm-Ordners zurückgegeben wird, wenn das Betriebssystem 64-Bit ist und das Skript nicht.</em>
+<a href="SetRegView.htm">SetRegView</a> 64  <em>; Benötigt <span class="ver">[v1.1.08+]</span></em>
+
+RegRead, AusgabeVar, HKEY_LOCAL_MACHINE<span class="red">,</span> SOFTWARE\Microsoft\Windows\CurrentVersion, ProgramFilesDir
+MsgBox, Programme sind in: %AusgabeVar%
+
+<em>; Ein anderer Weg, um den Pfad des Programm-Ordners zu ermitteln:</em>
+EnvGet AusgabeVar, % <a href="../Variables.htm#Is64bitOS">A_Is64bitOS</a> ? "ProgramW6432" : "ProgramFiles"
+MsgBox, Programme sind in: %AusgabeVar%</pre>
+
+<h2>ErrorLevel</h2>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 (z. B. nicht-existierender Key oder Wert) oder bei Erfolg auf 0 gesetzt.</p>
 <p><a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
-<h3>Bemerkungen</h3>
+
+<h2>Bemerkungen</h2>
 <p>Zurzeit werden nur die folgenden Werttypen unterstützt: REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ, REG_DWORD und REG_BINARY.</p>
 <p>REG_DWORD-Werte werden immer als positive Dezimalzahlen ausgedrückt.</p>
 <p>Beim Lesen eines REG_BINARY-Keys ist das Ergebnis eine Zeichenkette mit hexadezimalen Zeichen. Zum Beispiel würde ein REG_BINARY-Wert von 01,a9,ff,77 als Zeichenkette 01A9FF77 gelesen werden.</p>
@@ -49,26 +94,10 @@ RegRead, AusgabeVar, Rootkey, Subkey [, Wertname]</pre>
 <p>In den Bemerkungen zur <a href="LoopReg.htm">Registry-Schleife</a> finden Sie Hinweise, wie man auf die Registry eines Remotecomputers zugreifen kann.</p>
 <p>Mit <a href="SetRegView.htm">SetRegView</a> können Einträge von den 64-Bit-Bereichen der Registry in einem 32-Bit-Skript oder umgekehrt gelesen und geschrieben werden.</p>
 
-<h3>Siehe auch</h3>
+<h2>Siehe auch</h2>
 <p><a href="RegDelete.htm">RegDelete</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="LoopReg.htm">Registry-Schleife</a>, <a href="SetRegView.htm">SetRegView</a>, <a href="IniRead.htm">IniRead</a></p>
-<h3>Beispiel</h3>
-<pre class="NoIndent"><em>; Beispiel: Ermittelt den Pfad des Programm-Ordners.
 
-; Die nachfolgende Zeile stellt sicher, dass die 64-Bit-Version des Programm-Ordners zurückgegeben wird, wenn das Betriebssystem 64-Bit ist und das Skript nicht.</em>
-<a href="SetRegView.htm">SetRegView</a> 64  <em>; Benötigt <span class="ver">[v1.1.08+]</span></em>
-
-RegRead, AusgabeVar, HKEY_LOCAL_MACHINE<span class="red">,</span> SOFTWARE\Microsoft\Windows\CurrentVersion, ProgramFilesDir
-MsgBox, Programme sind in: %AusgabeVar%
-
-<em>; Alternative Syntax <span class="ver">[benötigt v1.1.21+]</span>:</em>
-RegRead, AusgabeVar, HKEY_LOCAL_MACHINE<span class="red">\</span>SOFTWARE\Microsoft\Windows\CurrentVersion, ProgramFilesDir
-MsgBox, Programme sind in: %AusgabeVar%
-
-<em>; Ein anderer Weg, um den Pfad des Programm-Ordners zu ermitteln:</em>
-EnvGet AusgabeVar, % <a href="../Variables.htm#Is64bitOS">A_Is64bitOS</a> ? "ProgramW6432" : "ProgramFiles"
-MsgBox, Programme sind in: %AusgabeVar%
-</pre>
-<p>&nbsp;</p>
+<h2>Beispiele</h2>
 <pre class="NoIndent"><em>; Das folgende Beispiel ermittelt den TYP eines Registry-Wertes (z. B. REG_SZ oder REG_DWORD).</em>
 MsgBox % RegKeyTyp("HKCU", "Environment", "TEMP")
 return

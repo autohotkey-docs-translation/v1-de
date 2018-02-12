@@ -12,42 +12,60 @@
 <body>
 
 <h1>RegDelete</h1>
-
 <p>Löscht einen Subkey oder Wert aus der Registry.</p>
 
-<pre class="Syntax">RegDelete, Rootkey\Subkey [, Wertname]  <em>; Benötigt <span class="ver">[v1.1.21+]</span></em>
-RegDelete, Rootkey, Subkey [, Wertname]</pre>
+<h2 id="new">Neue Syntax <span class="ver">[v1.1.21+]</span></h2>
+<pre class="Syntax"><span class="func">RegDelete</span>, KeyName <span class="optional">, Wertname</span></pre>
+
+<h3>Parameter</h3>
+<dl>
+
+  <dt>KeyName</dt>
+  <dd><p>Der vollständige Name des Registry-Keys.</p>
+      <p>Der Name muss entweder mit HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG beginnen (oder jeweils die Abkürzung, wie z. B. HKLM). Um eine <a href="LoopReg.htm#remote">Remote-Registry</a> anzusteuern, setzt man den Computernamen und einen Doppelpunkt (oder <span class="ver">[in v1.1.21+]</span> einen Schrägstrich) davor. Zum Beispiel: <code>\\workstation01:HKEY_LOCAL_MACHINE</code></p></dd>
+
+  <dt>Wertname</dt>
+  <dd><p>Der Name des Wertes, der gelöscht werden soll. <strong>Fehlt dieser Parameter, wird der komplette <em>KeyName</em> gelöscht</strong>. Um den Standardwert von <em>KeyName</em> zu löschen -- das ist der Wert, den RegEdit als "(Standard)" anzeigt -- fügt man das Wort <code>AHK_DEFAULT</code> in diesen Parameter ein.</p></dd>
+
+</dl>
+
+<h3>Beispiele</h3>
+<pre class="NoIndent">RegDelete, HKEY_LOCAL_MACHINE\Software\BeliebigeAnwendung, Testwert</pre>
+
+<h2 id="old">Alte Syntax</h2>
+<p class="warning"><strong>Veraltet:</strong> Diese Syntax ist nicht für neue Skripte empfohlen. Verwenden Sie stattdessen die <a href="#new">neue Syntax</a>.</p>
+<pre class="Syntax"><span class="func">RegDelete</span>, Rootkey, Subkey <span class="optional">, Wertname</span></pre>
+
 <h3>Parameter</h3>
 <dl>
 
   <dt>Rootkey</dt>
-  <dd><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC). Um eine Remote-Registry anzusteuern, setzt man vor dem Rootkey den Computernamen und einen Doppelpunkt (oder <span class="ver">[in v1.1.21+]</span> einen Schrägstrich). Zum Beispiel: <code>\\workstation01:HKEY_LOCAL_MACHINE</code></p></dd>
+  <dd><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC). Um eine <a href="LoopReg.htm#remote">Remote-Registry</a> anzusteuern, setzt man den Computernamen und einen Doppelpunkt (oder <span class="ver">[in v1.1.21+]</span> einen Schrägstrich) davor. Zum Beispiel: <code>\\workstation01:HKEY_LOCAL_MACHINE</code></p></dd>
 
   <dt>Subkey</dt>
   <dd><p>Der Name des Subkeys (z. B. Software\BeliebigeAnwendung).</p></dd>
   
-  <dt>Rootkey\Subkey <span class="ver">[v1.1.21+]</span></dt>
-  <dd><p>Wenn direkt nach <em>Rootkey</em> ein Schrägstrich (<code>\</code>) erfolgt, werden <em>Rootkey</em> und <em>Subkey</em> zu einem einzelnen Parameter zusammengeführt.</p></dd>
-
   <dt>Wertname</dt>
   <dd><p>Der Name des Wertes, der gelöscht werden soll. <strong>Fehlt dieser Parameter, wird der komplette <em>Subkey</em> gelöscht</strong>. Um den Standardwert von <em>Subkey</em> zu löschen -- das ist der Wert, den RegEdit als "(Standard)" anzeigt -- fügt man das Wort <code>AHK_DEFAULT</code> in diesen Parameter ein.</p></dd>
 
 </dl>
-<h3>ErrorLevel</h3>
+
+<h3>Beispiele</h3>
+<pre class="NoIndent">RegDelete, HKEY_LOCAL_MACHINE, Software\BeliebigeAnwendung, Testwert</pre>
+
+<h2>ErrorLevel</h2>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
 <p><a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
-<h3>Bemerkungen</h3>
-<p class="warning"><strong>Warnung</strong>: Das Löschen von Registry-Einträgen kann erhebliche Probleme verursachen - also sei vorsichtig!</p>
+
+<h2>Bemerkungen</h2>
+<p class="warning"><strong>Warnung</strong>: Das Löschen von Registry-Einträgen kann erhebliche Probleme verursachen - also seien Sie vorsichtig!</p>
 <p>Mit der <a href="LoopReg.htm">Registry-Schleife</a> können mehrere Registry-Keys und -Werte abgerufen und bearbeitet werden.</p>
 <p>In den Bemerkungen zur <a href="LoopReg.htm">Registry-Schleife</a> finden Sie Hinweise, wie man auf die Registry eines Remotecomputers zugreifen kann.</p>
 <p>Mit <a href="SetRegView.htm">SetRegView</a> können Einträge aus den 64-Bit-Registry-Bereichen in einem 32-Bit-Skript oder umgekehrt entfernt werden.</p>
 
-<h3>Siehe auch</h3>
+<h2>Siehe auch</h2>
 <p><a href="RegRead.htm">RegRead</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="LoopReg.htm">Registry-Schleife</a>, <a href="SetRegView.htm">SetRegView</a>, <a href="IniDelete.htm">IniDelete</a></p>
-<h3>Beispiel</h3>
-<pre class="NoIndent">RegDelete, HKEY_LOCAL_MACHINE, Software\BeliebigeAnwendung, Testwert
-RegDelete, HKEY_LOCAL_MACHINE\Software\BeliebigeAnwendung, Testwert  <em>; Benötigt <span class="ver">[v1.1.21+]</span></em></pre>
 
 </body>
 </html>

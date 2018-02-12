@@ -33,7 +33,7 @@
 <h2 id="Intro">Einführung und einfaches Beispiel</h2>
 <p>ListView ist eines der umfangreichsten Steuerelemente, das vom Betriebssystem zur Verfügung gestellt wird. In seiner bekanntesten Form zeigt es eine tabellarische Ansicht mit Reihen und Spalten an - das bekannteste Beispiel davon ist die Listenansicht des Explorers (Detailansicht).</p>
 <p>Zwar muss man sich erst einlesen, aber die grundlegenden Features einer ListView sind einfach zu bedienen. Die Syntax zum Erstellen einer ListView ist:</p>
-<pre class="Syntax" id="GuiAdd">Gui, Add, ListView, Optionen, Spaltentitel1|Spaltentitel2|...</pre>
+<pre class="Syntax" id="GuiAdd"><span class="func">Gui</span>, Add, ListView, Optionen, Spaltentitel1|Spaltentitel2|...</pre>
 <p>Das folgende Beispiel zeigt, wie eine ListView erstellt und angezeigt werden kann, die eine Liste mit Dateien aus dem Benutzerordner "Eigene Dokumente" enthält:</p>
 <pre><em>; Erstellt eine ListView mit den zwei Spalten, Name und Größe:</em>
 Gui, Add, ListView, r20 w700 gMeineListView, Name|Größe (KB)
@@ -350,8 +350,8 @@ Loop %Ordner%\*.*
     if not Symbolnummer  <em>; Es gibt noch kein Symbol für diese Endung, also wird es geladen.</em>
     {
         <em>; Ermittelt das kleine Symbol in hoher Qualität, das mit dieser Dateiendung verbunden ist:</em>
-        if not DllCall("Shell32\SHGetFileInfo" . (A_IsUnicode ? "W":"A"), "str", Dateiname
-            , "uint", 0, "str", sfi, "uint", sfi_größe, "uint", 0x101)  <em>; 0x101 ist SHGFI_ICON+SHGFI_SMALLICON</em>
+        if not DllCall("Shell32\SHGetFileInfo" . (A_IsUnicode ? "W":"A"), "Str", Dateiname
+            , "UInt", 0, "Ptr", &amp;sfi, "UInt", sfi_größe, "UInt", 0x101)  <em>; 0x101 ist SHGFI_ICON+SHGFI_SMALLICON</em>
             Symbolnummer = 9999999  <em>; Setzt die Nummer außerhalb des gültigen Bereichs, um ein leeres Symbol anzuzeigen.</em>
         else <em>; Symbol erfolgreich geladen.</em>
         {
@@ -359,10 +359,10 @@ Loop %Ordner%\*.*
             hIcon := NumGet(sfi, 0)
             <em>; Fügt das HICON direkt in die Listen der kleinen und großen Symbolen ein.</em>
             <em>; Unten wird +1 verwendet, um den 0-basierten Index in einen 1-basierten umzuwandeln:</em>
-            Symbolnummer := DllCall("ImageList_ReplaceIcon", "ptr", ImageListID1, "int", -1, "ptr", hIcon) + 1
-            DllCall("ImageList_ReplaceIcon", "ptr", ImageListID2, "int", -1, "ptr", hIcon)
+            Symbolnummer := DllCall("ImageList_ReplaceIcon", "Ptr", ImageListID1, "Int", -1, "Ptr", hIcon) + 1
+            DllCall("ImageList_ReplaceIcon", "Ptr", ImageListID2, "Int", -1, "Ptr", hIcon)
             <em>; Da es nun in die ImageLists kopiert wurde, sollte das Original zerstört werden:</em>
-            DllCall("DestroyIcon", "ptr", hIcon)
+            DllCall("DestroyIcon", "Ptr", hIcon)
             <em>; Cacht das Symbol, um Speicher zu sparen und Lade-Performance zu erhöhen.</em>
             SymbolArray%EndungsID% := Symbolnummer
         }

@@ -11,11 +11,11 @@
 <body>
 
 
-<h1>#If <span class="ver">[AHK_L]</span></h1>
+<h1>#If <span class="ver">[AHK_L 4+]</span></h1>
 
 <p>Erstellt kontextabhängige <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a>. Solche Hotkeys führen je nach Ergebnis des Ausdrucks unterschiedliche (oder gar keine) Aktionen durch.</p>
 
-<pre class="Syntax">#If [, Ausdruck]</pre>
+<pre class="Syntax"><span class="func">#If</span> <span class="optional">Ausdruck </span></pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -33,9 +33,17 @@
 <pre>#If</pre>
 
 <h3>Allgemeine Bemerkungen</h3>
-<p>Sobald die Tastenkombination eines Hotkeys gedrückt wird, wird der #If-Ausdruck ausgewertet, um zu überprüfen, ob der Hotkey aktiviert werden darf. Das Betriebssystem reagiert eventuell nicht auf Tastatur- oder Mauseingaben, bis die Auswertung des Ausdrucks abgeschlossen oder die <a href="_IfTimeout.htm">Zeit abgelaufen</a> ist. Das Senden von Tastatureingaben oder Mausklicks während der Auswertung des Ausdrucks (z. B. mit einer Funktion, die sie selbst aufruft) kann zu Komplikationen führen und sollte vermieden werden.</p>
+<p>Sobald die Tastatur-, Maus- oder Joystick-Tastenkombination eines Hotkeys gedrückt wird, wird der #If-Ausdruck ausgewertet, um zu überprüfen, ob der Hotkey aktiviert werden darf.</p>
+<p class="warning"><strong>Hinweis:</strong> Ein Skript sollte nicht davon ausgehen, dass der Ausdruck nur ausgewertet wird, wenn die Taste gedrückt wird (siehe unten).</p>
 <p>Der Ausdruck wird eventuell auch ausgewertet, wenn das Programm feststellen muss, ob der Hotkey aktiv ist. Der #If-Ausdruck einer benutzerdefinierten Kombination wie <code>a &amp; b::</code> beispielsweise wird eventuell ausgewertet, wenn die Präfixtaste (<code>a</code> in diesem Fall) gedrückt wird, um festzustellen, ob sie als benutzerdefinierte Modifikatortaste fungieren soll.</p>
-<p>Aus diesen Gründen sollte der Ausdruck kurz gehalten werden, damit er schnell und ohne Nebeneffekte ausgewertet wird.</p>
+<p class="warning"><strong>Hinweis:</strong> Das Verwenden von #If in einem Skript, das nicht reagiert, kann Eingabeverzögerungen verursachen oder Hotkeys unbrauchbar machen (siehe unten).</p>
+<p>Der #If-Direktive sind noch einige weitere Einschränkungen auferlegt:</p>
+<ul>
+  <li>Tastatur- oder Mauseingaben werden zwischengespeichert (verzögert), bis die Auswertung des Ausdrucks abgeschlossen ist oder das <a href="_IfTimeout.htm">Zeitlimit überschritten ist</a>.</li>
+  <li>Die Auswertung von Ausdrücken wird nicht vom Tastatur-/Maus-Hook, sondern vom Haupt-Thread des Skripts (auf Betriebssystemebene, nicht vom <a href="../misc/Threads.htm">Pseudo-Thread</a>) durchgeführt. Wenn das Skript beschäftigt oder auf nichts reagiert, z. B. wenn FileCopy gerade eine Datei kopiert, wird die Auswertung des Ausdrucks verzögert oder im schlimmsten Fall verworfen, weil das Zeitlimit überschritten wurde.</li>
+  <li>Wenn das <a href="_IfTimeout.htm#LowLevelHooksTimeout">systemdefinierte Zeitlimit</a> überschritten wurde, kann es vorkommen, dass das System aufhört, dem Skript Tastatur- oder Mauseingaben mitzuteilen (siehe #IfTimeout, um mehr zu erfahren).</li>
+  <li>Das Senden von Tastatureingaben oder Mausklicks während der Auswertung des Ausdrucks (z. B. mit einer Funktion, die sie selbst aufruft) kann zu Komplikationen führen und sollte vermieden werden.</li>
+</ul>
 <p><span class="ver">[AHK_L 53+]:</span> Das Setzen von <a href="../Variables.htm#ThisHotkey">A_ThisHotkey</a> und <a href="../Variables.htm#TimeSinceThisHotkey">A_TimeSinceThisHotkey</a> basiert auf den Hotkey, den der aktuelle #If-Ausdruck ausgewertet hat.</p>
 <p><span class="ver">[v1.0.95.00+]:</span> <a href="../Variables.htm#PriorHotkey">A_PriorHotkey</a> und <a href="../Variables.htm#TimeSincePriorHotkey">A_TimeSincePriorHotkey</a> enthalten vorübergehend die vorherigen Werte der entsprechenden "This"-Variablen.</p>
 

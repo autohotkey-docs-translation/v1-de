@@ -350,7 +350,7 @@ class GMem
 {
     __New(aFlags, aGröße)
     {
-        this.ptr := DllCall("GlobalAlloc", "uint", aFlags, "ptr", aGröße, "ptr")
+        this.ptr := DllCall("GlobalAlloc", "UInt", aFlags, "Ptr", aGröße, "Ptr")
         if !this.ptr
             return ""
         MsgBox % "New GMem mit einer Größe von " aGröße " Bytes auf der Adresse " this.ptr "."
@@ -360,10 +360,11 @@ class GMem
     __Delete()
     {
         MsgBox % "Delete GMem auf der Adresse " this.ptr "."
-        DllCall("GlobalFree", "ptr", this.ptr)
+        DllCall("GlobalFree", "Ptr", this.ptr)
     }
 }</pre>
 <p>__Delete wird nicht bei Objekten aufgerufen, die den Key "__Class" haben. <a href="#Custom_Classes">Klassenobjekte</a> haben standardmäßig diesen Key.</p>
+<p><span class="ver">[v1.1.28+]:</span> Wenn eine Ausnahme oder ein Laufzeitfehler ausgelöst wird, während __Delete ausgeführt wird, und nicht innerhalb von __Delete behandelt wird, verhält es sich so, als wäre __Delete von einem neuen <a href="misc/Threads.htm">Thread</a> aufgerufen wurden. Das heißt, dass eine Fehlermeldung angezeigt und __Delete durchgeführt wird, aber der Thread nicht beendet wird (es sei denn, er wurde bereits beendet). Vor v1.1.28 war es so, dass unbehandelte Ausnahmen ein inkonsistentes Verhalten verursachten.</p>
 
 <h3 id="Meta_Functions">Meta-Funktionen</h3>
 <pre class="Syntax">

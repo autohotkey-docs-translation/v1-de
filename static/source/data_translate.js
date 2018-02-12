@@ -25,6 +25,7 @@ translateData = {
   // Inhalt
   "Select code":"Code auswählen",
   "Download code":"Code herunterladen",
+  "Back to top":"Zum Seitenanfang",
   "Applies to:\nAutoHotkey_L Revision {0} and later\nAutoHotkey v1.0.90.00 and later":"Gilt für:\nAutoHotkey_L Revision {0} und höher\nAutoHotkey v1.0.90.00 und höher",
   "Applies to AutoHotkey {0} and later":"Gilt für AutoHotkey {0} und höher"
 };

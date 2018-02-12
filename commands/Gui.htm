@@ -14,7 +14,7 @@
 
 <p>Erstellt und verwaltet Fenster und Steuerelemente. Solche Fenster können zur Dateneingabe oder als individuelle Benutzerschnittstellen verwendet werden.</p>
 
-<pre class="Syntax">Gui, Unterbefehl [, Param2, Param3, Param4]</pre>
+<pre class="Syntax"><span class="func">Gui</span>, Unterbefehl <span class="optional">, Param2, Param3, Param4</span></pre>
 <h2>Inhaltsverzeichnis</h2>
 <ul>
   <li><a href="#New">New</a>: Erstellt ein neues Fenster.</li>
@@ -243,6 +243,7 @@ Menu, MeineMenüleiste, Add, &amp;?, :Hilfsmenü
 
 <h2 id="Default">Gui, GuiName:Default</h2>
 <p>Ändert den <a href="#MultiWin">GUI-Standardfensternamen</a> des <a href="../misc/Threads.htm">aktuellen Threads</a>. <a href="GuiControl.htm">GuiControl</a>, <a href="GuiControlGet.htm">GuiControlGet</a> und der Gui-Befehl verwenden ihn standardmäßig, wenn bei ihnen ein GUI-Fenstername fehlt. Das folgende Beispiel zeigt, wie man den GUI-Standardname des Fensters zu "MeinGui" ändern kann: <code>Gui MeinGui:Default</code>. Siehe "<a href="#DefaultWin">Standardnummer eines Threads</a>", wenn Sie mehr darüber erfahren wollen.</p>
+<p><span class="ver">[v1.1.03+]:</span> <em>GuiName</em> kann das <a href="#GuiHwndOutputVar">HWND</a> eines der GUI-Fenster des Skripts sein. Wenn das Fenster einen Namen hat, wird er als Standardname festgelegt. Dieser Name bleibt auch nach der Zerstörung des Fensters erhalten. Wenn das Fenster keinen Namen hat, wird der Standardname beim Zerstören des Fensters auf 1 zurückgesetzt.</p>
 <p><span class="ver">[v1.1.23+]:</span> Die interne Variable <a href="../Variables.htm#DefaultGui">A_DefaultGui</a> enthält den Namen oder die Nummer des Standard-GUI.</p>
 
 <h2 id="Position">Positionierung und Layout mittels SmartGUI Creator</h2>
@@ -281,7 +282,7 @@ Gui, Show</pre>
   <p class="note"><strong>Hinweis</strong>: <a href="#Submit">Gui Submit</a> funktioniert nur bei Steuerelementen, mit denen der Benutzer interagieren kann (z. B. Edit und Slider), aber es gibt Ausnahmen (z. B. <a href="ListView.htm">ListView</a> und <a href="TreeView.htm">TreeView</a>).</p>
 <p id="label"><strong>G</strong>: Gosub (g-label). Startet automatisch eine Subroutine oder Funktion, wenn der Benutzer ein Steuerelement anklickt oder ändert. Geben Sie dazu den Buchstaben G an und fügen Sie direkt danach den Namen eines <a href="../misc/Labels.htm">Labels</a> ein, das ausgeführt werden soll. <code>gCancel</code> kann man benutzen, um standardmäßig ein indirektes <a href="#Cancel">Gui Cancel</a> auszulösen (aber nur, wenn man noch nicht selbst ein Label namens "Cancel" definiert hat). Die Subroutine kann auf folgende interne Variablen zurückgreifen: <a href="../Variables.htm#Gui">A_Gui</a>, <a href="../Variables.htm#GuiControl">A_GuiControl</a>, <a href="../Variables.htm#GuiEvent">A_GuiEvent</a> und <a href="../Variables.htm#EventInfo">A_EventInfo</a>.</p>
 <p><span class="ver">[v1.1.20+]:</span> Wenn der Labelname ungültig ist, wird er stattdessen als Funktionsname angesehen. Alternativ kann man via <a href="GuiControl.htm#Functor">GuiControl</a> ein <a href="../objects/Functor.htm">Funktionsobjekt</a> mit einem Steuerelement verbinden. Die Funktion akzeptiert folgende Parameter (wenn man in diesem Fall <code>gCtrlEvent</code> in den Optionen verwendet):</p>
-<pre class="Syntax">CtrlEvent(CtrlHwnd, GuiEvent, EventInfo, ErrorLevel:="")</pre>
+<pre class="Syntax"><span class="func">CtrlEvent</span>(CtrlHwnd, GuiEvent, EventInfo, ErrLevel:="")</pre>
 <p>Die Bedeutung der Parameter ist vom Typ des Steuerelements abhängig. Hinweis: Wenn man den vierten Parameter ohne Standardwert deklariert, kann die Funktion nur von Ereignissen aufgerufen werden, die vier Parameter unterstützen.</p>
 
 <h2 id="OtherOptions">Steuerelemente: Häufig verwendete Styles und Optionen</h2>
@@ -326,7 +327,7 @@ ExitApp</pre>
 <p><span class="ver">[v1.1.20+]:</span> Wenn GuiClose eine Funktion ist, wird das GUI standardmäßig geschlossen. Das folgende Beispiel zeigt, wie die Funktion dies verhindern kann, indem sie einen Integer ungleich 0 zurückgibt:</p>
 <pre>GuiClose(GuiHwnd) {  <em>; Dieser Parameter ist optional.</em>
     MsgBox 4,, Wollen Sie das GUI wirklich schließen?
-    ifMsgBox No
+    IfMsgBox No
         return true  <em>; true = 1</em>
 }</pre>
 
@@ -342,7 +343,7 @@ ExitApp</pre>
 <a href="Sleep.htm">Sleep -1</a></pre>
 <p><span class="ver">[v1.1.22.05+]:</span> Gui Show führt automatisch ein <code>Sleep -1</code> aus, demzufolge könnte man in diesem Fall das Sleep weglassen.</p>
 <p><span class="ver">[v1.1.20+]:</span> Wenn GuiSize eine Funktion ist, wird sie folgende Parameter haben:</p>
-<pre class="Syntax">GuiSize(GuiHwnd, EventInfo, Breite, Höhe)</pre>
+<pre class="Syntax"><span class="func">GuiSize</span>(GuiHwnd, EventInfo, Breite, Höhe)</pre>
 
 <p id="GuiContextMenu"><strong>GuiContextMenu</strong>: Startet immer dann, wenn der Benutzer innerhalb des Fensters (außer Titelleiste und Menüleiste) einen Rechtsklick macht. Es startet auch, wenn der Benutzer die MENÜ-Taste oder UMSCHALT+F10 drückt. GuiContextMenu kann, im Gegensatz zu vielen anderen GUI-Labels, gleichzeitig mehrere <a href="../misc/Threads.htm">Threads</a> von sich selbst aktiv haben. Innerhalb des GuiContextMenu-Labels sind folgende interne Variablen verfügbar:</p>
 <ol>
@@ -355,7 +356,7 @@ ExitApp</pre>
 </ol>
 <p class="note"><strong>Hinweis</strong>: <a href="GuiControls.htm#Edit">Edit</a> und <a href="GuiControls.htm#MonthCal">MonthCal</a> haben ein eigenes Kontextmenü, demzufolge wird ein Rechtsklick in solchen Steuerelementen kein GuiContextMenu auslösen können.</p>
 <p><span class="ver">[v1.1.20+]:</span> Wenn GuiContextMenu eine Funktion ist, wird sie folgende Parameter haben:</p>
-<pre class="Syntax">GuiContextMenu(GuiHwnd, CtrlHwnd, EventInfo, IstRechtsklick, X, Y)</pre>
+<pre class="Syntax"><span class="func">GuiContextMenu</span>(GuiHwnd, CtrlHwnd, EventInfo, IstRechtsklick, X, Y)</pre>
 <p><em>CtrlHwnd</em> ist leer, wenn das Ereignis nicht von einem Steuerelement stammt. <em>IstRechtsklick</em> ist wahr, wenn A_GuiEvent die Zeichenkette RightClick enthält.</p>
 
 <p id="GuiDropFiles"><strong>GuiDropFiles</strong>: Startet immer dann, wenn man Dateien/Ordner mithilfe des Mauszeigers in das Fenster zieht und ablegt (wenn das Label bereits läuft, werden Drop-Ereignisse ignoriert). Innerhalb des GuiDropFiles-Labels sind folgende interne Variablen verfügbar:</p>

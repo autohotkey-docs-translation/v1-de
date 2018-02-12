@@ -11,41 +11,106 @@
 <body>
 
 <h1>OnExit</h1>
+<p>Bestimmt eine <a href="Gosub.htm">Subroutine</a> oder <a href="../Functions.htm">Callback-Funktion</a>, die automatisch ausgeführt werden soll, wenn das Skript beendet wird.</p>
 
-<p>Bestimmt eine <a href="Gosub.htm">Subroutine</a> oder <a href="../Functions.htm">Funktion</a>, die automatisch ausgeführt werden soll, wenn das Skript beendet wird.</p>
+<h2 id="command">OnExit</h2>
+<p class="warning"><strong>Veraltet:</strong> Dieser Befehl ist nicht für neue Skripte empfohlen. Verwenden Sie stattdessen die <a href="#function">OnExit</a>-Funktion.</p>
+<pre class="Syntax"><span class="func">OnExit</span> <span class="optional">, Label</span></pre>
 
-<pre class="Syntax">OnExit [, Label]
-OnExit(Func [, HinzufügenEntfernen])  <em>; Benötigt <span class="ver">[v1.1.20+]</span></em></pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>Label</dt>
   <dd><p>Fehlt dieser Parameter, werden jegliche zuvor registrierten Label deregistriert. Ansonsten kann der Name eines <a href="../misc/Labels.htm">Label</a>s angegeben werden, dessen Inhalt ausgeführt werden soll (als neuer <a href="../misc/Threads.htm">Thread</a>), wenn das Skript auf beliebige Weise beendet wird.</p></dd>
   
+</dl>
+
+<h3>Bemerkungen</h3>
+<p><strong>WICHTIG</strong>: Anstatt das Skript zu beenden, wird die angegebene Subroutine aufgerufen - das heißt, dass der <a href="ExitApp.htm">ExitApp</a>-Befehl in dieser Subroutine verwendet werden muss, wenn man das Skript beenden will.</p>
+<p>Die interne Variable <strong>A_ExitReason</strong> enthält nur einen Wert, wenn die OnExit-Subroutine entweder gerade läuft oder mindestens einmal aufgrund eines vorherigen Exitversuchs aufgerufen wurde. Dieser Wert ist eines der Wörter aus der <a href="#ExitReason">unteren Tabelle</a>.</p>
+
+<h3>Beispiele</h3>
+<pre class="NoIndent"><em>; Klicken Sie mit der rechten Maustaste auf das Tray-Symbol und wählen Sie Exit aus, um die OnExit-Subroutine zu testen.</em>
+<a href="_Persistent.htm">#Persistent</a>  <em>; Verhindert, dass sich das Skript automatisch beendet.</em>
+OnExit, ExitSub
+return
+
+ExitSub:
+if A_ExitReason not in Logoff,Shutdown  <em>; Vermeiden Sie in dieser Zeile Leerzeichen neben dem Komma.</em>
+{
+    MsgBox, 4, , Wollen Sie das Skript wirklich beenden?
+    IfMsgBox, No
+        return
+}
+ExitApp  <em>; Ein Skript mit einer OnExit-Subroutine wird nicht beendet, solange die Subroutine kein ExitApp verwendet.</em></pre>
+
+<h2 id="function">OnExit() <span class="ver">[v1.1.20+]</span></h2>
+<pre class="Syntax"><span class="func">OnExit</span>(Func <span class="optional">, HinzufügenEntfernen</span>)</pre>
+
+<h3>Parameter</h3>
+<dl>
+
   <dt>Func</dt>
   <dd><p>Ein Funktionsname oder <a href="../objects/Functor.htm">Funktionsobjekt</a>, die aufgerufen werden sollen, wenn das Skript beendet wird. Optional kann die Funktion Parameter definieren, wie unten gezeigt. Wenn eine OnExit-Funktion einen Integer ungleich null zurückgibt, wird das Skript nicht beendet. Ansonsten wird das Skript beendet, nachdem alle registrierten Funktionen aufgerufen wurden.</p>
-  <pre class="Syntax">ExitFunk(<a href="#ExitReason">ExitReason</a>, <a href="ExitApp.htm">ExitCode</a>)</pre></dd>
+  <pre class="Syntax"><span class="func">ExitFunk</span>(<a href="#ExitReason">ExitReason</a>, <a href="ExitApp.htm">ExitCode</a>)</pre></dd>
   
   <dt>HinzufügenEntfernen</dt>
   <dd><p>Eines der folgenden Werte:<br>
   <strong>1</strong> (Standard): Rufen Sie die Funktion nach anderen zuvor registrierten Funktionen auf.<br>
   <strong>-1</strong>: Rufen Sie die Funktion vor anderen zuvor registrierten Funktionen auf.<br>
   <strong>0</strong>: Rufen Sie die Funktion nicht auf.</p>
-  <p>Wenn ein Label (Subroutine) registriert wurde, wird das immer zuerst aufgerufen.</p></dd>
+  <p>Wenn ein Label (Subroutine) registriert wurde, wird das immer zuerst aufgerufen.</p>
+  </dd>
 
 </dl>
 
 <h3>Bemerkungen</h3>
-<p><strong>WICHTIG</strong>: Anstatt das Skript zu beenden, wird die angegebene Subroutine aufgerufen - das heißt, dass der <a href="ExitApp.htm">ExitApp</a>-Befehl in dieser Subroutine verwendet werden muss, wenn man das Skript beenden will. <span class="ver">[v1.1.20+]:</span> Neue Skripte sollten eine Funktion anstelle einer Subroutine verwenden, um so das Risiko zu verringern, ein Skript zu erstellen, das nicht beendet werden kann, und um sicherstellen zu können, dass der übergebene Exitcode an Exit oder ExitApp beibehalten wird.</p>
-<p><span class="ver">[v1.1.20+]:</span> Es können beliebig viele OnExit-Funktionen registriert werden. Wenn zusätzlich noch ein Label (Subroutine) registriert wurde, werden die Funktionen aufgerufen, nachdem die Subroutine <a href="ExitApp.htm">ExitApp</a> aufgerufen hat. Eine OnExit-Funktion sollte in der Regel nicht ExitApp aufrufen; wäre dies der Fall, würde das Skript sofort beendet werden.</p>
-<p>Die OnExit-Subroutine wird aufgerufen, wenn das Skript in irgendeiner Form beendet wird (nur nicht, wenn das Beenden von so etwas wie "Task beenden" erzwungen wird). Sie wird auch aufgerufen, wann immer <a href="_SingleInstance.htm">#SingleInstance</a> und <a href="Reload.htm">Reload</a> eine vorherige Instanz zum Beenden auffordert.</p>
-<p>Mit <code><a href="OnMessage.htm#shutdown">OnMessage(0x11, "WM_QUERYENDSESSION")</a></code> kann das Herunterfahren oder Abmelden des Betriebssystems erkannt und optional abgebrochen werden.</p>
-<p>Der OnExit-<a href="../misc/Threads.htm">Thread</a> nimmt keine Rücksicht auf <a href="_MaxThreads.htm">#MaxThreads</a> (er wird bei Bedarf immer gestartet). Darüber hinaus kann dieser Thread, während er läuft, nicht von anderen <a href="../misc/Threads.htm">Threads</a> unterbrochen werden, einschließlich <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="SetTimer.htm">zeitgesteuerte Subroutinen</a>. Allerdings wird er unterbrochen (und das Skript beendet), wenn der Benutzer den Menüpunkt Exit im Tray-Menü oder Hauptmenü auswählt, oder das Skript aufgrund von <a href="Reload.htm">Reload</a> oder <a href="_SingleInstance.htm">#SingleInstance</a> zum Beenden aufgefordert wird. Aus diesem Grund sollte die OnExit-Subroutine so gestaltet werden, dass sie schnell zum Ende kommen kann, sofern der Benutzer das nicht will.</p>
-<p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> auf einen fehlerhaften Zustand wie z. B. Laufzeitfehler stößt, wird das Skript beendet. Dadurch wird verhindert, dass das Skript aufgrund einer fehlerhaften OnExit-Subroutine nicht mehr beendet werden kann.</p>
+<p>Neue Skripte sollten eine Funktion anstelle einer Subroutine verwenden, um so das Risiko zu verringern, ein Skript zu erstellen, das nicht beendet werden kann, und um sicherstellen zu können, dass der übergebene Exitcode an Exit oder ExitApp beibehalten wird.</p>
+<p>Es können beliebig viele OnExit-Funktionen registriert werden. Wenn zusätzlich noch ein Label (Subroutine) registriert wurde, werden die Funktionen aufgerufen, nachdem die Subroutine <a href="ExitApp.htm">ExitApp</a> aufgerufen hat. Eine OnExit-Funktion sollte in der Regel nicht ExitApp aufrufen; wäre dies der Fall, würde das Skript sofort beendet werden.</p>
+
+<h3 id="Examples">Beispiele</h3>
+<pre class="NoIndent"><em>; Klicken Sie mit der rechten Maustaste auf das Tray-Symbol und wählen Sie Exit aus, um die OnExit-Callback-Funktion zu testen.</em>
+<a href="_Persistent.htm">#Persistent</a>  <em>; Verhindert, dass sich das Skript automatisch beendet.</em>
+
+<em>; Registriert eine Funktion, die bei Exit aufgerufen werden soll:</em>
+OnExit("ExitFunk")
+
+<em>; Registriert ein Objekt, das bei Exit aufgerufen werden soll:</em>
+OnExit(<a href="ObjBindMethod.htm">ObjBindMethod</a>(MeinObjekt, "Beenden"))
+
+ExitFunk(ExitReason, ExitCode)
+{
+    if ExitReason not in Logoff,Shutdown
+    {
+        MsgBox, 4, , Wollen Sie das Skript wirklich beenden?
+        IfMsgBox, No
+            return 1  <em>; OnExit-Funktionen müssen ungleich null zurückgeben, um ein Exit zu verhindern.</em>
+    }
+    <em>; Rufen Sie ExitApp nicht auf -- dies würde verhindern, dass andere OnExit-Funktionen aufgerufen werden können.</em>
+}
+
+class MeinObjekt
+{
+    Beenden()
+    {
+        MsgBox, MeinObjekt räumt vor dem Beenden auf...
+        <em>/*
+        this.SageAufWiedersehen()
+        this.SchließeNetzwerkVerbindungen()
+        */</em>
+    }
+}</pre>
+
+<h2>Bemerkungen</h2>
+<p>Die OnExit-Subroutine oder Callback-Funktion wird aufgerufen, wenn das Skript in irgendeiner Form beendet wird (nur nicht, wenn das Beenden von so etwas wie "Task beenden" erzwungen wird). Sie wird auch aufgerufen, wann immer <a href="_SingleInstance.htm">#SingleInstance</a> und <a href="Reload.htm">Reload</a> eine vorherige Instanz zum Beenden auffordert.</p>
+<p>Mit <code><a href="OnMessage.htm#shutdown">OnMessage</a>(0x11, "WM_QUERYENDSESSION")</code> kann das Herunterfahren oder Abmelden des Betriebssystems erkannt und optional abgebrochen werden.</p>
+<p>Der OnExit-<a href="../misc/Threads.htm">Thread</a> nimmt keine Rücksicht auf <a href="_MaxThreads.htm">#MaxThreads</a> (er wird bei Bedarf immer gestartet). Darüber hinaus kann dieser Thread, während er läuft, nicht von anderen <a href="../misc/Threads.htm">Threads</a> unterbrochen werden, einschließlich <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="SetTimer.htm">zeitgesteuerte Subroutinen</a>. Allerdings wird er unterbrochen (und das Skript beendet), wenn der Benutzer den Menüpunkt Exit im Tray-Menü oder Hauptmenü auswählt, oder das Skript aufgrund von <a href="Reload.htm">Reload</a> oder <a href="_SingleInstance.htm">#SingleInstance</a> zum Beenden aufgefordert wird. Aus diesem Grund sollte die OnExit-Subroutine oder Callback-Funktion so gestaltet werden, dass sie schnell zum Ende kommen kann, sofern der Benutzer das nicht will.</p>
+<p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> auf einen fehlerhaften Zustand wie z. B. Laufzeitfehler stößt, wird das Skript beendet. Dadurch wird verhindert, dass das Skript aufgrund einer fehlerhaften OnExit-Subroutine oder Callback-Funktion nicht mehr beendet werden kann.</p>
 <p>In <span class="ver">[v1.1.19]</span> und früher, wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> via <a href="Exit.htm">Exit</a>- oder <a href="ExitApp.htm">ExitApp</a>-Befehl aufgerufen wurde, in dem ein Exitcode angegeben ist, wurde dieser Code ignoriert und verworfen. In <span class="ver">[v1.1.20+]</span> wird der erste Exitcode verwendet, sofern er nicht durch den Aufruf von <a href="ExitApp.htm">ExitApp</a> mit einem neuen Exitcode überschrieben wurde.</p>
 <p>Immer wenn ein Exitversuch unternommen wird, gelten zu Beginn die Standardeinstellungen bei Befehlen wie <a href="SendMode.htm">SendMode</a>. Diese Standardeinstellungen können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
-<p>Die interne Variable <strong>A_ExitReason</strong> enthält nur einen Wert, wenn die OnExit-Subroutine entweder gerade läuft oder mindestens einmal aufgrund eines vorherigen Exitversuchs aufgerufen wurde. In solchen Fällen enthält sie eines der folgenden Wörter:</p>
-<table class="info" id="ExitReason">
+
+<h2 id="ExitReason">Exit-Gründe</h2>
+<table class="info">
   <tr id="logoff">
     <td>Logoff</td>
     <td>Der Benutzer meldet sich ab.</td>
@@ -80,54 +145,8 @@ OnExit(Func [, HinzufügenEntfernen])  <em>; Benötigt <span class="ver">[v1.1.2
   </tr>
 </table>
 
-<h3>Siehe auch</h3>
+<h2>Siehe auch</h2>
 <p><a href="OnMessage.htm">OnMessage()</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="ExitApp.htm">ExitApp</a>, <a href="Shutdown.htm">Shutdown</a>, <a href="_Persistent.htm">#Persistent</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Gosub.htm">Gosub</a>, <a href="Return.htm">Return</a>, <a href="Menu.htm">Menu</a></p>
-
-<h3 id="Examples">Beispiele</h3>
-<p>Die folgenden Beispiele verwenden <a href="_Persistent.htm">#Persistent</a> , um zu verhindern, dass das Skript automatisch beendet wird. Nachdem Sie das Skript gestartet haben, können Sie einen Rechtsklick auf das Tray-Symbol machen und dann <em>Exit</em> auswählen, um die OnExit-Subroutine oder -Funktion zu testen. Klicken Sie danach auf "Ja", um das Skript zu beenden, oder auf "Nein", um es weiter laufen zu lassen.</p>
-<pre class="NoIndent">#Persistent
-OnExit, ExitSub
-return
-
-ExitSub:
-if A_ExitReason not in Logoff,Shutdown  <em>; Vermeiden Sie in dieser Zeile Leerzeichen neben dem Komma.</em>
-{
-    MsgBox, 4, , Wollen Sie das Skript wirklich beenden?
-    IfMsgBox, No
-        return
-}
-ExitApp  <em>; Ein Skript mit einer OnExit-Subroutine wird nicht beendet, solange die Subroutine kein ExitApp verwendet.</em></pre>
-&nbsp;
-<pre class="NoIndent">#Persistent
-
-<em>; Registriert eine Funktion, die bei Exit aufgerufen werden soll:</em>
-OnExit("ExitFunk")
-
-<em>; Registriert ein Objekt, das bei Exit aufgerufen werden soll:</em>
-OnExit(<a href="ObjBindMethod.htm">ObjBindMethod</a>(MeinObjekt, "Beenden"))
-
-ExitFunk(ExitReason, ExitCode)
-{
-    if ExitReason not in Logoff,Shutdown
-    {
-        MsgBox, 4, , Wollen Sie das Skript wirklich beenden?
-        IfMsgBox, No
-            return 1  <em>; OnExit-Funktionen müssen ungleich null zurückgeben, um ein Exit zu verhindern.</em>
-    }
-    <em>; Rufen Sie ExitApp nicht auf -- dies würde verhindern, dass andere OnExit-Funktionen aufgerufen werden können.</em>
-}
-
-class MeinObjekt
-{
-    Beenden()
-    {
-        MsgBox, MeinObjekt räumt vor dem Beenden auf...
-        <em>/*
-        this.SageAufWiedersehen()
-        this.SchließeNetzwerkVerbindungen()
-        */</em>
-    }
-}</pre>
 
 </body>
 </html>

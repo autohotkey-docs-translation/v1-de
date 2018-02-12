@@ -14,7 +14,7 @@
 
 <p>Ruft einen Menüpunkt in der Menüleiste des angegebenen Fensters auf.</p>
 
-<pre class="Syntax">WinMenuSelectItem, Fenstertitel, Fenstertext, Menü [, Untermenü1, Untermenü2, Untermenü3, Untermenü4, Untermenü5, Untermenü6, Titelausnahme, Textausnahme]</pre>
+<pre class="Syntax"><span class="func">WinMenuSelectItem</span>, Fenstertitel, Fenstertext, Menü <span class="optional">, Untermenü1, Untermenü2, Untermenü3, Untermenü4, Untermenü5, Untermenü6, Titelausnahme, Textausnahme</span></pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -25,23 +25,19 @@
   <dd><p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem mitgelieferten Windows Spy Tool aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p></dd>
 
   <dt>Menü</dt>
-  <dd><p>Name des Top-Level-Menüs, z. B. Datei, Bearbeiten, Ansicht. Es kann auch die Position des gewünschten Menüpunkts sein - 1&amp; wäre das erste Menü, 2&amp; das zweite Menü, und so weiter.</p></dd>
+  <dd><p>Name des Top-Level-Menüpunkts, z. B. Datei, Bearbeiten, Ansicht. Es kann auch die Position des gewünschten Menüpunkts sein - <code>1&amp;</code> wäre das erste Menü, <code>2&amp;</code> das zweite Menü, und so weiter.</p>
+  <p><span class="ver">[v1.1.28+]:</span> Geben Sie <code>0&amp;</code> an, um das <a href="#sys">Systemmenü</a> des Fensters zu nutzen.</p></dd>
 
   <dt>Untermenü1</dt>
-  <dd><p>Name oder Position des Menüpunkts, der ausgewählt werden soll (siehe oben).</p></dd>
+  <dd><p>Name oder Position des Menüpunkts, der ausgewählt werden soll (siehe oben).</p>
+  <p>Dieser Parameter kann weggelassen werden, wenn der Top-Level-Menüpunkt kein Menü enthält (selten).</p></dd>
 
   <dt>Untermenü2</dt>
   <dd><p>Enthält <em>Untermenü1</em> selbst ein Menü, könnte man hier den Namen oder Position von einem seiner Menüpunkte angeben.</p></dd>
 
   <dt>Untermenü3</dt>
-  <dd><p>Wie oben.</p></dd>
-
   <dt>Untermenü4</dt>
-  <dd><p>Wie oben.</p></dd>
-
   <dt>Untermenü5</dt>
-  <dd><p>Wie oben.</p></dd>
-
   <dt>Untermenü6</dt>
   <dd><p>Wie oben.</p></dd>
 
@@ -56,12 +52,25 @@
 <h3>ErrorLevel</h3>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
+
 <h3>Bemerkungen</h3>
 <p>Dieser Befehl funktioniert auch, wenn das Zielfenster nicht aktiv ist. Allerdings ist es möglich, dass einige Fenster in einem <a href="WinRestore.htm">nicht-minimierten</a> Zustand sein müssen.</p>
 <p>Dieser Befehl <strong>wird nicht funktionieren</strong>, wenn Programme nicht-standardisierte Menüleisten verwenden. Microsoft Outlook und Outlook Express verwenden beispielsweise versteckte Werkzeugleisten für ihre Menüleisten. In solchen Fällen sind <a href="ControlSend.htm">ControlSend</a> oder <a href="PostMessage.htm">PostMessage</a> gut geeignet, weil sie in der Lage sein sollten, mit einigen dieser nicht-standardisierten Menüleisten interagieren zu können.</p>
 <p>Die Menünamen unterscheiden nicht zwischen Groß- und Kleinschreibung (das heißt, dass Datei-&gt;Speichern das gleiche ist wie datei-&gt;speichern), außerdem kann das Und-Zeichen (&amp;) weggelassen werden, das den unterstrichenen Buchstaben in einem Menüpunkt kennzeichnet (das heißt, dass &amp;Datei das gleiche ist wie Datei).</p>
 <p>In den Menü-Parametern können auch Positionsnummern angegeben werden. Diese Methode existiert, um Menüs zu unterstützen, die keinen Text haben (weil sie beispielsweise Bilder statt Text enthalten). Position 1&amp; ist der erste Menüpunkt (z. B. das Datei-Menü), Position 2&amp; ist der zweite Menüpunkt (z. B. das Bearbeiten-Menü), und so weiter. Menü-Trennlinien zählen auch als Menüpunkte beim Bestimmen der Position.</p>
 <p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
+
+<h3 id="sys">Systemmenü <span class="ver">[v1.1.28+]</span></h3>
+<p><em>Menü</em> kann <code>0&amp;</code> sein, um einen Menüpunkt im Systemmenü des Fensters auszuwählen. Dieses Menü kann in der Regel aufgerufen werden, wenn man ALT+LEERTASTE drückt oder auf das Symbol in der Titelleiste des Fensters klickt. Zum Beispiel:</p>
+<pre><em>; Fügen Sie einen Befehl in cmd.exe ein, ohne das Fenster zu aktivieren.</em>
+Clipboard := "echo Hallo, Welt!`r"
+WinMenuSelectItem ahk_exe cmd.exe,, 0&amp;, Bearbeiten, Einfügen</pre>
+<p class="warning"><strong>Vorsicht:</strong> Wenden Sie diese Methode nur bei Fenstern an, die benutzerdefinierte Menüpunkte in ihrem Systemmenü haben.</p>
+<p>Wenn das Fenster noch kein benutzerdefiniertes Systemmenü hat, wird eine Kopie des Standard-Systemmenüs erstellt und dem Zielfenster als Nebeneffekt zugeordnet. Diese Kopie wird vom System zerstört, wenn das Skript beendet wird, und führt dazu, dass andere Skripte nicht mehr darauf zugreifen können. Vermeiden Sie daher, 0&amp; in Verbindung mit Menüpunkten zu nutzen, die alle Fenster standardmäßig im Systemmenü haben. Versuchen Sie stattdessen, die <a href="https://msdn.microsoft.com/library/ms646360">WM_SYSCOMMAND</a>-Meldung direkt via PostMessage zu senden. Zum Beispiel:</p>
+<pre><em>; Hat denselben Effekt wie "<a href="WinMinimize.htm">WinMinimize</a> A", plus der System-Sound beim Minimieren eines Fensters.</em>
+WM_SYSCOMMAND := 0x112
+SC_MINIMIZE := 0xF020
+PostMessage WM_SYSCOMMAND, SC_MINIMIZE, 0,, A</pre>
 
 <h3>Siehe auch</h3>
 <p><a href="ControlSend.htm">ControlSend</a>, <a href="PostMessage.htm">PostMessage</a></p>

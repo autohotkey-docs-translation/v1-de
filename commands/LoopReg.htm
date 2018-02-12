@@ -11,43 +11,55 @@
 <body>
 
 <h1>Loop (Registry)</h1>
-
 <p>Ruft die Inhalte des angegebenen Registry-Subkeys einzeln ab.</p>
 
-<pre class="Syntax">Loop, Reg, Rootkey[\Key, Modus]  <em>; Benötigt <span class="ver">[v1.1.21+]</span> (empfohlen)</em></pre>
-<pre class="Syntax">Loop, Rootkey [, Key, SubkeysEinbeziehen?, Rekursiv?]</pre>
+<h2 id="new">Neue Syntax <span class="ver">[v1.1.21+]</span></h2>
+<pre class="Syntax"><span class="func">Loop, Reg</span>, KeyName <span class="optional">, Modus</span></pre>
+
 <h3>Parameter</h3>
 <dl>
 
-  <dt>Reg <span class="ver">[v1.1.21+]</span></dt>
-  <dd><p>Das direkt geschriebene Wort <code>Reg</code> (ungenaue Groß- und Kleinschreibung). Dieser Parameter kann weder eine Variable noch ein Ausdruck sein. Wenn dieses Schlüsselwort vorhanden ist, muss zwischen <em>Key</em> und <em>Rootkey</em> ein Schrägstrich statt Komma angegeben werden, außerdem können beide in einer einzelnen Variable vorkommen. Zum Beispiel <code>Loop, Reg, HKLM\Software</code> oder <code>Loop, Reg, %VollständigerPfadvonKey%</code>.</p></dd>
+  <dt>Reg</dt>
+  <dd><p>Das direkt geschriebene Wort <code>Reg</code> (ungenaue Groß- und Kleinschreibung). Dieser Parameter kann weder eine Variable noch ein Ausdruck sein.</p></dd>
+
+  <dt>KeyName</dt>
+  <dd><p>Der vollständige Name des Registry-Keys wie z. B. <code>HKLM\Software</code> oder <code>%KompletterPfadDesKeys%</code>.</p>
+      <p>Der Name muss entweder mit HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG beginnen (oder jeweils die Abkürzung, wie z. B. HKLM). Um eine <a href="#remote">Remote-Registry</a> anzusteuern, setzt man den Computernamen und einen Doppelpunkt davor. Zum Beispiel: \\workstation01:HKEY_LOCAL_MACHINE</p></dd>
+
+  <dt>Modus</dt>
+  <dd><p>Keine oder mehrere der folgenden Buchstaben:</p>
+      <p><code>K</code>: Keys einbeziehen.<br>
+      <code>V</code>: Werte einbeziehen. Werte werden auch einbezogen, wenn K und V fehlen.<br>
+      <code>R</code>: Subkeys werden einbezogen. Wenn R fehlt, werden Keys und Werte innerhalb der Subkeys von <em>KeyName</em> nicht mit einbezogen.</p></dd>
+
+</dl>
+
+<h2 id="old">Alte Syntax</h2>
+<p class="warning"><strong>Veraltet:</strong> Diese Syntax ist nicht für neue Skripte empfohlen. Verwenden Sie stattdessen die <a href="#new">neue Syntax</a>.</p>
+<pre class="Syntax"><span class="func">Loop</span>, Rootkey <span class="optional">, Key, SubkeysEinbeziehen?, Rekursiv?</span></pre>
+
+<h3>Parameter</h3>
+<dl>
 
   <dt>Rootkey</dt>
   <dd><p>Muss entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC) sein.</p>
-      <p>Um eine Remote-Registry anzusteuern, setzt man vor dem Rootkey den Computernamen und einen Doppelpunkt. Zum Beispiel: \\workstation01:HKEY_LOCAL_MACHINE</p></dd>
+      <p>Um eine <a href="#remote">Remote-Registry</a> anzusteuern, setzt man den Computernamen und einen Doppelpunkt davor. Zum Beispiel: \\workstation01:HKEY_LOCAL_MACHINE</p></dd>
 
   <dt>Key</dt>
   <dd><p>Name des Keys (z. B. Software\BeliebigeAnwendung). Fehlt dieser Parameter oder ist er leer, werden die Inhalte von <em>Rootkey</em> abgerufen.</p></dd>
   
-  <dt>Modus <span class="ver">[v1.1.21+]</span></dt>
-  <dd><p>Keine oder mehrere der folgenden Buchstaben:</p>
-    <p><code>K</code>: Keys einbeziehen.<br>
-    <code>V</code>: Werte einbeziehen. Werte werden auch einbezogen, wenn K und V fehlen.<br>
-    <code>R</code>: Subkeys werden einbezogen. Wenn R fehlt, werden Keys und Werte innerhalb der Subkeys von <em>Key</em> nicht mit einbezogen.</p>
-  </dd>
-
   <dt>SubkeysEinbeziehen?</dt>
   <dd><p>0 (Standard) Subkeys innerhalb von <em>Key</em> werden nicht abgerufen (nur die Werte).<br>
-  1 Alle Werte und Subkeys werden abgerufen.<br>
-  2 Nur die Subkeys werden abgerufen (nicht die Werte).</p></dd>
+      1 Alle Werte und Subkeys werden abgerufen.<br>
+      2 Nur die Subkeys werden abgerufen (nicht die Werte).</p></dd>
 
   <dt>Rekursiv?</dt>
   <dd>0 (Standard) Subkeys werden nicht durchsucht.<br>
-1 Subkeys werden durchsucht - die darin enthaltenen Werte und Subkeys werden abgerufen.</dd>
+      1 Subkeys werden durchsucht - die darin enthaltenen Werte und Subkeys werden abgerufen.</dd>
 
 </dl>
 
-<h3>Bemerkungen</h3>
+<h2>Bemerkungen</h2>
 <p>Eine Registry-Schleife ist nützlich, wenn Sie mehrere Werte und Subkeys einzeln abarbeiten wollen. Die Werte und Subkeys werden in umgekehrter Reihenfolge abgerufen (von unten nach oben), so dass <a href="RegDelete.htm">RegDelete</a> innerhalb der Schleife verwendet werden kann, ohne sie unterbrechen zu müssen.</p>
 <p id="vars">Die folgenden Variablen sind nur in einer Registry-Schleife von Bedeutung. Wenn eine innere Registry-Schleife von einer äußeren Registry-Schleife umschlossen ist, wird der Eintrag von der innersten Schleife Vorrang haben:</p>
 <table class="info">
@@ -87,7 +99,7 @@
     <td>Löscht den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Key ist, wird er gelöscht, zusammen mit seinen Subkeys und Werten.</td>
   </tr>
 </table>
-<p>Beim Zugriff auf eine Remote-Registry (über den <em>Rootkey</em>-Parameter, wie oben beschrieben) gelten folgende Hinweise:</p>
+<p id="remote">Beim Zugriff auf eine Remote-Registry (über den <em>Rootkey</em>- oder <em>KeyName</em>-Parameter, wie oben beschrieben) gelten folgende Hinweise:</p>
 <ul>
   <li>Auf dem Zielrechner muss der Dienst "Remote Registry" laufen.</li>
   <li>Der Zugriff auf eine Remote-Registry kann fehlschlagen, wenn der Zielcomputer nicht zur Domäne des Benutzers gehört oder der Benutzername nicht genügend Berechtigungen hat (siehe unten für mögliche Übergangslösungen).</li>
@@ -97,18 +109,18 @@
   <li>Für Windows XP Home Edition weist MSDN darauf hin, dass "diese Funktion immer fehlschlägt". In der Home Edition fehlt für die Registry sowohl der Server als auch der Client, jedoch kann der Client aus einer CAB-Datei des Betriebssystems extrahiert werden.</li>
 </ul>
 <p>Auf der <a href="Loop.htm">Loop</a>-Seite finden Sie Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (sie können in jeder Schleifenvariante verwendet werden).</p>
-<h3>Siehe auch</h3>
+
+<h2>Siehe auch</h2>
 <p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="RegRead.htm">RegRead</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="RegDelete.htm">RegDelete</a>, <a href="SetRegView.htm">SetRegView</a></p>
 
-<h3>Beispiele</h3>
+<h2>Beispiele</h2>
 <pre class="NoIndent"><em>; Beispiel: Löscht den Link-Verlauf des Internet Explorer.</em>
 Loop, HKEY_CURRENT_USER, Software\Microsoft\Internet Explorer\TypedURLs
     RegDelete</pre>
-<p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel: Ein funktionierendes Testskript:</em>
 Loop, Reg, HKEY_CURRENT_USER\Software\Microsoft\Windows, KVR
 {
-    if a_LoopRegType = key
+    if A_LoopRegType = key
         Wert =
     else
     {
@@ -116,10 +128,9 @@ Loop, Reg, HKEY_CURRENT_USER\Software\Microsoft\Windows, KVR
         if ErrorLevel
             Wert = *error*
     }
-    MsgBox, 4, , %a_LoopRegName% = %Wert% (%a_LoopRegType%)`n`nWeiter?
+    MsgBox, 4, , %A_LoopRegType% = %Wert% (%A_LoopRegType%)`n`nWeiter?
     IfMsgBox, NO, break
 }</pre>
-<p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel: Dieses Beispiel sucht in der gesamten Registry
 ; nach einem oder mehreren bestimmten Werten.</em>
 SetBatchLines, -1  <em>; Führt die Operation mit maximaler Geschwindigkeit aus.</em>

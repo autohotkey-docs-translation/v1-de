@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Hotstring</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>Hotstring <span class="ver">[v1.1.28+]</span></h1>
+
+<p>Erstellt, bearbeitet, aktiviert oder deaktiviert ein <a href="../Hotstrings.htm">Hotstring</a>, während das Skript läuft.</p>
+
+<pre class="Syntax">
+<span class="func">Hotstring</span>(Zeichenkette <span class="optional">, Ersatz, OnOffToggle</span>)
+<span class="func">Hotstring</span>(<a href="#NewOptions">NeueOptionen</a>)
+AlterWert := <span class="func">Hotstring</span>("<a href="#EndChars">EndChars</a>" <span class="optional">, NeuerWert</span>)
+AlterWert := <span class="func">Hotstring</span>("<a href="#MouseReset">MouseReset</a>" <span class="optional">, NeuerWert</span>)
+</pre>
+<h3>Parameter</h3>
+<dl>
+
+  <dt>Zeichenkette</dt>
+  <dd>
+    <p>Eine Zeichenkette, mit der der Hotstring ausgelöst werden soll, inklusive der davor befindlichen <a href="../Hotstrings.htm">üblichen Doppelpunkte</a> und <a href="../Hotstrings.htm#Options">Optionszeichen</a>. Zum Beispiel <code>"::bzw"</code> oder <code>":*:]d"</code>.</p>
+    <p><em>Zeichenkette</em> kann einem vorhandenen Hotstring entsprechen, unter Berücksichtigung der <a href="../Hotstrings.htm#C">Groß-/Kleinschreibung-Sensitivität (C)</a>, <a href="../Hotstrings.htm#Question">Wort-Sensitivität (?)</a>, Aktivierungskriterien (die durch <a href="_If.htm">#If</a>, <a href="_IfWinActive.htm">#IfWin</a> oder <a href="Hotkey.htm#IfWin">Hotkey, If</a> gesetzt sind) und der auslösenden Zeichenkette. Sofern der Groß-/Kleinschreibung-Sensitivitätsmodus nicht als Standardoption bestimmt ist, würde <code>"::bzw"</code> beispielsweise mit <code>"::BZW"</code> übereinstimmen, während <code>":C:bzw"</code> nie mit <code>":C:BZW"</code> übereinstimmen würde. Die <code>C</code>- und <code>?</code>-Optionen können in <em>Zeichenkette</em> enthalten sein oder mit der <a href="_Hotstring.htm">#Hotstring</a>-Direktive oder durch einen vorherigen Aufruf <a href="#NewOptions">dieser Funktion</a> als Standardoptionen bestimmt werden.</p>
+    <p>Wenn der Hotstring bereits existiert, werden alle Optionen, die in <em>Zeichenkette</em> angegeben sind, in Kraft gesetzt, während alle anderen Optionen unverändert bleiben. Da Hotstrings mit <code>C</code> oder <code>?</code> von anderen Hotstrings gesondert behandelt werden, ist es nicht möglich, diese Optionen hinzuzufügen oder zu entfernen. Schalten Sie stattdessen den vorhandenen Hotstring aus und erstellen Sie einen neuen Hotstring.</p>
+    <p>Erstellt man ein Hotstring das erste Mal - entweder durch die Hotstring-Funktion oder einen <a href="../Hotstrings.htm">Label mit zwei Doppelpunkten</a> innerhalb des Skripts - erhält dieser Hotstring einen permanenten Namen, der die auslösende Zeichenkette und die Sequenz der Optionszeichen beinhaltet, widergespiegelt durch <a href="../Variables.htm#ThisHotkey">A_ThisHotkey</a>. Dieser Name ändert sich auch dann nicht, wenn die Hotstring-Funktion später mit anderen Optionszeichen auf den Hotstring zugreift.</p>
+    <p>Wenn die <a href="../Hotstrings.htm#X">X-Option (Execute)</a> in <em>Zeichenkette</em> vorhanden ist (nicht nur als Standardoption gesetzt), wird der <em>Ersatz</em>-Parameter als Label- oder Funktionsname statt als Ersatztext interpretiert. Diese Option hat keinen Effekt, wenn <em>Ersatz</em> ein Objekt ist.</p>
+  </dd>
+
+  <dt>Ersatz</dt>
+  <dd>
+    <p>Der Ersatztext, oder ein <a href="../misc/Labels.htm">Label</a>, eine <a href="../Functions.htm">Funktion</a> oder ein <a href="../objects/Functor.htm">Funktionsobjekt</a>, das (als neuer <a href="../misc/Threads.htm">Thread</a>) aufgerufen werden soll, wenn der Hotstring ausgelöst wird.</p>
+    <p>Standardmäßig werden alle Zeichenketten als Ersatztext behandelt. Um den Namen eines Labels oder einer Funktion anzugeben, fügt man die <a href="../Hotstrings.htm#X">X-Option (Execute)</a> in <em>Zeichenkette</em> ein. Es können sowohl normale Labels als auch <a href="../Hotkeys.htm">Hotkey</a>-/<a href="../Hotstrings.htm">Hotstring</a>-Labels verwendet werden, allerdings müssen die nachfolgenden Doppelpunkte weggelassen werden. Wenn eine Funktion und ein Label den gleichen Namen haben, hat das Label Vorrang. Um stattdessen die Funktion zu verwenden, übergibt man einen <a href="../objects/Func.htm">Funktionsverweis</a>.</p>
+    <p>Dieser Parameter kann leer gelassen werden, wenn der Hotstring bereits existiert, dadurch bewirkt man, dass der Ersatz des Hotstrings nicht geändert wird. Diese Vorgehensweise ist sinnvoll, wenn man nur die Optionen des Hotstrings ändern will, oder ihn ein- oder ausschalten will.</p>
+    <p class="note"><strong>Hinweis</strong>: Wenn dieser Parameter angegeben ist, und wurde der Hotstring durch diese Funktion zuvor deaktiviert, bleibt der Hotstring deaktiviert. Um das zu verhindern, fügt man das Wort <code>"On"</code> in <em>OnOffToggle</em> ein.</p>
+  </dd>
+
+  <dt>OnOffToggle</dt>
+  <dd>
+    <p>Eine der folgenden Zeichenketten (die als direkt geschriebener Text in Anführungszeichen gesetzt sein muss):</p>
+    <p><strong>On</strong>: Aktiviert den Hotstring.</p>
+    <p><strong>Off</strong>: Deaktiviert den Hotstring.</p>
+    <p><strong>Toggle</strong>: Schaltet den Hotstring auf den entgegengesetzten Zustand (aktiviert oder deaktiviert).</p>
+  </dd>
+
+</dl>
+
+<h3 id="Errors">Fehler</h3>
+<p>Diese Funktion löst eine Ausnahme aus, wenn die Parameter ungültig sind oder eine Speicherzuweisung fehlschlägt. Sie hat keinen Einfluss auf <a href="../misc/ErrorLevel.htm">ErrorLevel</a>.</p>
+<p>Eine Ausnahme wird auch ausgelöst, wenn <em>Ersatz</em> weggelassen wird und <em>Zeichenkette</em> gültig ist, aber nicht mit einem existierenden Hotstring übereinstimmt. Dieser Sachverhalt kann genutzt werden, um die Existenz eines Hotstrings zu testen. Zum Beispiel:</p>
+<pre>try
+    Hotstring("::bzw")
+catch
+    MsgBox Der Hotstring ist nicht vorhanden oder hat keine Varianten für die aktuellen IfWin-Kriterien.</pre>
+
+<h3>Bemerkungen</h3>
+<p>Die <a href="Hotkey.htm#IfWin">aktuelle Einstellung von IfWin</a> bestimmt die <a href="#variant">Variante</a> eines Hotstrings, auf die sich die Hotstring-Funktion beziehen wird.</p>
+<p>Ein Label oder eine Funktion kann das Ziel von mehreren Hotstrings sein. Wenn Sie wissen, dass ein Label oder eine Funktion durch einen Hotstring aufgerufen wurde, können Sie auf die interne Variable <a href="../Variables.htm#ThisHotkey">A_ThisHotkey</a> zurückgreifen, um zu überprüfen, welcher Hotstring das war.</p>
+<p>Beim Unterbrechen des Skripts via <a href="Suspend.htm">Suspend</a> werden neu hinzugefügte/aktivierte Hotstrings auch unterbrochen, bis die Suspend-Unterbrechung wieder aufgehoben wird (sofern sie nicht davon ausgenommen werden, wie im <a href="Suspend.htm">Suspend</a>-Abschnitt beschrieben).</p>
+<p>Die <a href="_InstallKeybdHook.htm">Tastatur</a>- und/oder <a href="_InstallMouseHook.htm">Maus</a>-Hooks werden bei dieser Funktion je nach Bedarf automatisch installiert oder entfernt.</p>
+<p>Diese Funktion kann Hotstrings von anderen Skripten nicht direkt aktivieren oder deaktivieren.</p>
+<p>Sobald ein Skript mindestens einen Hotstring hat, wird es persistent; das heißt, dass <a href="ExitApp.htm">ExitApp</a> anstelle von Exit verwendet werden muss, um dieses Skript beenden zu können. Hotstring-Skripte sind zudem automatisch <a href="_SingleInstance.htm">#SingleInstance</a> (einzeln vorkommend), sofern nicht <code>#SingleInstance, Off</code> verwendet wurde.</p>
+
+<h3 id="variant">Hotstring-Varianten (-Duplikate)</h3>
+<p>Ein bestimmter Hotstring kann mehr als einmal erstellt werden, wenn für jede Definition ein anderes IfWin-Kriterium, eine andere <a href="../Hotstrings.htm#C">Groß-/Kleinschreibung-Sensitivität</a> (<code>C</code> vs. <code>C0</code>/<code>C1</code>) oder <a href="../Hotstrings.htm#Question">Wort-Sensitivität</a> (<code>?</code>) angegeben wird. Auch bekannt als <em>Hotstring-Varianten</em>. Zum Beispiel:</p>
+<pre><a href="Hotkey.htm#IfWin">Hotkey, IfWinActive</a>, ahk_group CarForums
+Hotstring("::btw", "behind the wheel")
+Hotkey, IfWinActive, Inter-Office Chat
+Hotstring("::btw", "back to work")
+Hotkey, IfWinActive
+Hotstring("::btw", "by the way")</pre>
+<p>Bei mehreren gleichzeitig aktiven Varianten eines Hotstrings wird nur die zuerst erstellte Variante ausgelöst.</p>
+<p>Siehe <a href="_IfWinActive.htm#gen">Bemerkungen zu #IfWin</a>, um mehr über IfWin zu erfahren.</p>
+
+<h3 id="EndChars">EndChars</h3>
+<pre class="Syntax">AlterWert := <span class="func">Hotstring</span>("EndChars" <span class="optional">, NeuerWert</span>)</pre>
+<p>Ermittelt oder modifiziert einen Satz von Zeichen, die vom Hotstring-Erkenner als <a href="../Hotstrings.htm#EndChars">Endungszeichen</a> verwendet werden. Zum Beispiel:</p>
+<pre>vorher_zeichen := Hotstring("EndChars", "-()[]{}':;""/\,.?!`n `t")
+MsgBox Der vorherige Wert war: %vorher_zeichen%</pre>
+<p><a href="Hotstring.htm#EndChars">#Hotstring EndChars</a> wirkt sich auch auf diese Einstellung aus.</p>
+<p>Es ist derzeit nicht möglich, für jeden Hotstring einen anderen Satz von Endungszeichen anzugeben.</p>
+
+<h3 id="MouseReset">MouseReset</h3>
+<pre class="Syntax">AlterWert := <span class="func">Hotstring</span>("MouseReset" <span class="optional">, NeuerWert</span>)</pre>
+<p>Ermittelt oder modifiziert die globale Einstellung, die bestimmt, ob Mausklicks den Hotstring-Erkenner zurücksetzen dürfen, wie <a href="../Hotstrings.htm#NoMouse">hier</a> beschrieben. <em>NeuerWert</em> sollte 1 (True) sein, um die Erkennung von Mausklicks und das Zurücksetzen des Hotstring-Erkenners zu aktivieren, oder 0 (False), um es zu deaktivieren. Der Rückgabewert ist die Einstellung, die vor dem Aufruf der Funktion wirksam war.</p>
+<p>Der <a href="_InstallMouseHook.htm">Maus</a>-Hooks wird bei dieser Funktion je nach Bedarf automatisch installiert oder entfernt.</p>
+<p><a href="_Hotstring.htm">#Hotstring NoMouse</a> wirkt sich auch auf diese Einstellung aus, und ist das gleiche wie, als würde man <code>False</code> für <em>NeuerWert</em> angeben.</p>
+
+<h3 id="NewOptions">Standardoptionen setzen</h3>
+<pre class="Syntax"><span class="func">Hotstring</span>(NeueOptionen)</pre>
+<p>Um neue Standardoptionen für danach erstellte Hotstrings zu bestimmen, übergibt man die Optionen ohne Doppelpunkte an die Hotstring-Funktion. Zum Beispiel: <code>Hotstring("T")</code>.</p>
+<p>Das Einschalten der <a href="../Hotstrings.htm#C">Groß-/Kleinschreibung-Sensitivität (C)</a> oder der <a href="../Hotstrings.htm#Question">Wort-Sensitivität (?)</a> wirkt sich auch darauf aus, welche vorhandenen Hotstrings gefunden werden, wenn man die Hotstring-Funktion aufruft. Zum Beispiel wird <code>Hotstring(":T:btw")</code> standardmäßig <code>::BTW</code> finden, aber nicht, wenn <code>Hotstring("C")</code> oder <code><a href="_Hotstring.htm">#Hotstring</a> C</code> wirksam ist. Um das rückgängig zu machen oder zu überschreiben, übergibt man eine Option, die sich gegenseitig ausschließt; <code>C0</code> und <code>C1</code> beispielsweise würde <code>C</code> überschreiben.</p>
+
+<h3>Siehe auch</h3>
+<p><a href="../Hotstrings.htm">Hotstrings</a>, <a href="_IfWinActive.htm">#IfWinActive/Exist</a>, <a href="_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a>, <a href="Suspend.htm">Suspend</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread</a>, <a href="Critical.htm">Critical</a></p>
+
+<h3>Beispiele</h3>
+<pre class="NoIndent"></pre>
+
+</body>
+</html>

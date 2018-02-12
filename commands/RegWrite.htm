@@ -11,11 +11,38 @@
 <body>
 
 <h1>RegWrite</h1>
-
 <p>Schreibt einen Wert in die Registry.</p>
 
-<pre class="Syntax">RegWrite, Werttyp, Rootkey\Subkey [, Wertname, Wert]  <em>; Benötigt <span class="ver">[v1.1.21+]</span></em>
-RegWrite, Werttyp, Rootkey, Subkey [, Wertname, Wert]</pre>
+<h2 id="new">Neue Syntax <span class="ver">[v1.1.21+]</span></h2>
+<pre class="Syntax"><span class="func">RegWrite</span>, Werttyp, KeyName <span class="optional">, Wertname, Wert</span></pre>
+
+<h3>Parameter</h3>
+<dl>
+
+  <dt>Werttyp</dt>
+  <dd><p>Muss entweder REG_SZ, REG_EXPAND_SZ REG_MULTI_SZ, REG_DWORD oder REG_BINARY sein.</p></dd>
+
+  <dt>KeyName</dt>
+  <dd><p>Der vollständige Name des Registry-Keys.</p>
+      <p>Der Name muss entweder mit HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG beginnen (oder jeweils die Abkürzung, wie z. B. HKLM). Um eine <a href="LoopReg.htm#remote">Remote-Registry</a> anzusteuern, setzt man den Computernamen und einen Doppelpunkt (oder <span class="ver">[in v1.1.21+]</span> einen Schrägstrich) davor. Zum Beispiel: <code>\\workstation01:HKEY_LOCAL_MACHINE</code></p></dd>
+
+  <dt>Wertname</dt>
+  <dd><p>Der Name des Wertes, der geschrieben werden soll. Fehlt dieser Parameter oder ist er leer, wird der Standardwert von <em>KeyName</em> verwendet - das ist der Wert, der in RegEdit als "(Standard)" angezeigt wird.</p></dd>
+
+  <dt>Wert</dt>
+  <dd><p>Der Wert, der geschrieben werden soll. Fehlt dieser Parameter, gilt standardmäßig eine leere Zeichenkette, oder 0, abhängig von <em>Werttyp</em>. Wenn der Text zu lang ist, kann er in mehreren kurzen Zeilen aufgeteilt werden (<a href="../Scripts.htm#continuation">Fortsetzungsbereich</a>), um ihn besser lesbar und verwaltbar zu machen.</p></dd>
+
+</dl>
+
+<h3>Beispiele</h3>
+<pre class="NoIndent">RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SOFTWARE\Testkey, MeinWertname, Testwert
+RegWrite, REG_BINARY, HKEY_CURRENT_USER\Software\TEST_APP, TEST_NAME, 01A9FF77
+RegWrite, REG_MULTI_SZ, HKEY_CURRENT_USER\Software\TEST_APP, TEST_NAME, Zeile1`nZeile2</pre>
+
+<h2 id="old">Alte Syntax</h2>
+<p class="warning"><strong>Veraltet:</strong> Diese Syntax ist nicht für neue Skripte empfohlen. Verwenden Sie stattdessen die <a href="#new">neue Syntax</a>.</p>
+<pre class="Syntax"><span class="func">RegWrite</span>, Werttyp, Rootkey, Subkey <span class="optional">, Wertname, Wert</span></pre>
+
 <h3>Parameter</h3>
 <dl>
 
@@ -23,14 +50,11 @@ RegWrite, Werttyp, Rootkey, Subkey [, Wertname, Wert]</pre>
   <dd><p>Muss entweder REG_SZ, REG_EXPAND_SZ REG_MULTI_SZ, REG_DWORD oder REG_BINARY sein.</p></dd>
 
   <dt>Rootkey</dt>
-  <dd><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC). Um eine Remote-Registry anzusteuern, setzt man vor dem Rootkey den Computernamen und einen Doppelpunkt (oder <span class="ver">[in v1.1.21+]</span> einen Schrägstrich). Zum Beispiel: <code>\\workstation01:HKEY_LOCAL_MACHINE</code></p></dd>
+  <dd><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC). Um eine <a href="LoopReg.htm#remote">Remote-Registry</a> anzusteuern, setzt man den Computernamen und einen Doppelpunkt (oder <span class="ver">[in v1.1.21+]</span> einen Schrägstrich) davor. Zum Beispiel: <code>\\workstation01:HKEY_LOCAL_MACHINE</code></p></dd>
 
   <dt>Subkey</dt>
   <dd><p>Der Name des Subkeys (z. B. Software\BeliebigeAnwendung). Fehlt der <em>Subkey</em>-Parameter, wird er erstellt (einschließlich seine Elternelemente, falls nötig). Lässt man <em>Subkey</em> leer, wird der Wert direkt in <em>Rootkey</em> geschrieben (obwohl einige Betriebssysteme es ablehnen, in der obersten Ebene von HKEY_CURRENT_USER zu schreiben).</p></dd>
   
-  <dt>Rootkey\Subkey <span class="ver">[v1.1.21+]</span></dt>
-  <dd><p>Wenn direkt nach <em>Rootkey</em> ein Schrägstrich (<code>\</code>) erfolgt, werden <em>Rootkey</em> und <em>Subkey</em> zu einem einzelnen Parameter zusammengeführt.</p></dd>
-
   <dt>Wertname</dt>
   <dd><p>Der Name des Wertes, der geschrieben werden soll. Fehlt dieser Parameter oder ist er leer, wird der Standardwert von <em>Subkey</em> verwendet - das ist der Wert, der in RegEdit als "(Standard)" angezeigt wird.</p></dd>
 
@@ -38,11 +62,18 @@ RegWrite, Werttyp, Rootkey, Subkey [, Wertname, Wert]</pre>
   <dd><p>Der Wert, der geschrieben werden soll. Fehlt dieser Parameter, gilt standardmäßig eine leere Zeichenkette, oder 0, abhängig von <em>Werttyp</em>. Wenn der Text zu lang ist, kann er in mehreren kurzen Zeilen aufgeteilt werden (<a href="../Scripts.htm#continuation">Fortsetzungsbereich</a>), um ihn besser lesbar und verwaltbar zu machen.</p></dd>
 
 </dl>
-<h3>ErrorLevel</h3>
+
+<h3>Beispiele</h3>
+<pre class="NoIndent">RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, SOFTWARE\Testkey, MeinWertname, Testwert
+RegWrite, REG_BINARY, HKEY_CURRENT_USER, Software\TEST_APP, TEST_NAME, 01A9FF77
+RegWrite, REG_MULTI_SZ, HKEY_CURRENT_USER, Software\TEST_APP, TEST_NAME, Zeile1`nZeile2</pre>
+
+<h2>ErrorLevel</h2>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
 <p><a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
-<h3>Bemerkungen</h3>
+
+<h2>Bemerkungen</h2>
 <p>Wenn <em>Werttyp</em> auf REG_DWORD gesetzt wurde, sollte <em>Wert</em> zwischen -2147483648 und 4294967295 (0xFFFFFFFF) sein.</p>
 <p>Beim Schreiben eines REG_BINARY-Keys muss eine Zeichenkette mit hexadezimalen Zeichen verwendet werden - z. B. kann ein REG_BINARY-Wert von 01,a9,ff,77 mit der Zeichenkette 01A9FF77 geschrieben werden.</p>
 <p>Beim Schreiben eines REG_MULTI_SZ-Keys müssen Sie jede Komponente mit einem Zeilenumbruchzeichen (`n) trennen. Bei der letzten Komponente können Sie das Zeilenumbruchzeichen weglassen. Leere Komponenten sind nicht erlaubt. Das heißt, dass Sie zwei Zeilenumbruchzeichen nicht nebeneinander angeben dürfen (`n`n), weil das einen Wert in die Registry schreiben würde, der kürzer ist als erwartet.</p>
@@ -51,17 +82,8 @@ RegWrite, Werttyp, Rootkey, Subkey [, Wertname, Wert]</pre>
 <p>In den Bemerkungen zur <a href="LoopReg.htm">Registry-Schleife</a> finden Sie Hinweise, wie man auf die Registry eines Remotecomputers zugreifen kann.</p>
 <p>Mit <a href="SetRegView.htm">SetRegView</a> können Einträge von den 64-Bit-Bereichen der Registry in einem 32-Bit-Skript oder umgekehrt gelesen und geschrieben werden.</p>
 
-<h3>Siehe auch</h3>
+<h2>Siehe auch</h2>
 <p><a href="RegDelete.htm">RegDelete</a>, <a href="RegRead.htm">RegRead</a>, <a href="LoopReg.htm">Registry-Schleife</a>, <a href="SetRegView.htm">SetRegView</a>, <a href="IniWrite.htm">IniWrite</a></p>
-<h3>Beispiele</h3>
-<pre class="NoIndent">RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, SOFTWARE\Testkey, MeinWertname, Testwert
-RegWrite, REG_BINARY, HKEY_CURRENT_USER, Software\TEST_APP, TEST_NAME, 01A9FF77
-RegWrite, REG_MULTI_SZ, HKEY_CURRENT_USER, Software\TEST_APP, TEST_NAME, Zeile1`nZeile2
-
-<em>; Alternative Syntax <span class="ver">[benötigt v1.1.21+]</span>:</em>
-RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SOFTWARE\Testkey, MeinWertname, Testwert
-RegWrite, REG_BINARY, HKEY_CURRENT_USER\Software\TEST_APP, TEST_NAME, 01A9FF77
-RegWrite, REG_MULTI_SZ, HKEY_CURRENT_USER\Software\TEST_APP, TEST_NAME, Zeile1`nZeile2</pre>
 
 </body>
 </html>
