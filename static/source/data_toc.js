@@ -20,7 +20,7 @@ tocData = [
       ["Grundlagen","Objects.htm#Usage"],
       ["Erweiterte Grundlagen","Objects.htm#Extended_Usage"],
       ["Benutzerdefinierte Objekte","Objects.htm#Custom_Objects"],
-      ["Standard-base-Objekt","Objects.htm#Default_Base_Object"],
+      ["Standard-Base-Objekt","Objects.htm#Default_Base_Object"],
       ["Implementierung","Objects.htm#Implementation"]
     ]]
   ]],
@@ -39,7 +39,7 @@ tocData = [
     ["OnClipboardChange","commands/OnClipboardChange.htm"],
     ["SysGet","commands/SysGet.htm"]
   ]],
-  ["Externe Libraries","",
+  ["Externe Bibliotheken","",
   [
     ["DllCall","commands/DllCall.htm"],
     ["NumGet","commands/NumGet.htm"],
@@ -160,8 +160,8 @@ tocData = [
     ["Gui-Steuerelementarten","commands/GuiControls.htm"],
     ["GuiControl","commands/GuiControl.htm"],
     ["GuiControlGet","commands/GuiControlGet.htm"],
-    ["ListView-Steuerelement","commands/ListView.htm"],
-    ["TreeView-Steuerelement","commands/TreeView.htm"],
+    ["ListView","commands/ListView.htm"],
+    ["TreeView","commands/TreeView.htm"],
     ["IfMsgBox","commands/IfMsgBox.htm"],
     ["Bild-Handles","misc/ImageHandles.htm"],
     ["InputBox","commands/InputBox.htm"],
