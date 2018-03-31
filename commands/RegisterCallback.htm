@@ -14,12 +14,12 @@
 
 <p>Erstellt eine Maschinencode-Adresse, die ihren Aufruf zu einer <a href="../Functions.htm">Funktion</a> im Skript weiterleitet.</p>
 
-<pre class="Syntax">Adresse := <span class="func">RegisterCallback</span>("Funktionsname" <span class="optional">, Optionen := "", Parameteranzahl := Formalanzahl, Ereignisinfo := Adresse</span>)</pre>
+<pre class="Syntax">Adresse := <span class="func">RegisterCallback</span>("Funktionsname" <span class="optional">, Optionen := "", ParamAnzahl := Formalanzahl, Ereignisinfo := Adresse</span>)</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>Adresse</dt>
-  <dd><p>Bei Erfolg gibt RegisterCallback() eine numerische Adresse zurück, die mit <a href="DllCall.htm">DllCall()</a> oder Ähnlichem aufgerufen werden kann. Bei Misserfolg gibt sie eine leere Zeichenkette zurück. Fehler treten auf, wenn <em>Funktionsname</em>: 1) nicht existiert; 2) zu viele oder zu wenig Parameter in Bezug auf <em>Parameteranzahl</em> akzeptiert; oder 3) einen beliebigen <a href="../Functions.htm#ByRef">ByRef-Parameter</a> akzeptiert.</p></dd>
+  <dd><p>Bei Erfolg gibt RegisterCallback() eine numerische Adresse zurück, die mit <a href="DllCall.htm">DllCall()</a> oder Ähnlichem aufgerufen werden kann. Bei Misserfolg gibt sie eine leere Zeichenkette zurück. Fehler treten auf, wenn <em>Funktionsname</em>: 1) nicht existiert; 2) zu viele oder zu wenig Parameter in Bezug auf <em>ParamAnzahl</em> akzeptiert; oder 3) einen beliebigen <a href="../Functions.htm#ByRef">ByRef-Parameter</a> akzeptiert.</p></dd>
 
   <dt>Funktionsname</dt>
   <dd>
@@ -32,7 +32,7 @@
     <p id="Fast"><strong>Fast</strong> oder <strong>F</strong>: Verhindert, dass jedesmal ein neuer <a href="../misc/Threads.htm">Thread</a> startet, wenn <em>Funktionsname</em> aufgerufen wird. Zwar ist dies leistungsfähiger, allerdings sollte es nicht verwendet werden, wenn der Thread, in dem <em>Adresse</em> aufgerufen wurde, variiert (z. B. wenn das Callback durch eine eingehende Meldung ausgelöst wurde). Denn <em>Funktionsname</em> kann globale Einstellungen eines Threads wie <a href="../misc/ErrorLevel.htm">ErrorLevel</a>, <a href="../Variables.htm#LastError">A_LastError</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> jederzeit ändern. Weitere Informationen finden Sie bei den <a href="#Threads">Bemerkungen</a>.</p>
     <p><strong>CDecl</strong> oder <strong>C</strong>: Passt die <em>Adresse</em> an die "C"-Aufrufkonvention an. Diese Option lässt man üblicherweise weg, weil die Standard-Aufrufkonvention in der Regel für Callbacks genügt.</p></dd>
 
-  <dt>Parameteranzahl</dt>
+  <dt>ParamAnzahl</dt>
   <dd><p>Die Anzahl der Parameter, die <em>Adresse</em>'s Aufrufer übergeben muss. Fehlt dieser Parameter, gilt standardmäßig die Anzahl der Pflichtparameter, die in der <a href="../Functions.htm#define">Definition</a> von <em>Funktionsname</em> angegeben sind. In beiden Fällen muss sichergestellt werden, dass der Aufrufer genau diese Anzahl von Parametern übergibt.</p></dd>
 
   <dt>EventInfo</dt>
@@ -79,8 +79,8 @@ DieFunktion(params*) {
     else
         MsgBox % <a href="NumGet.htm">NumGet</a>(params+0, "float") ", " NumGet(params+A_PtrSize, "int64")
 }</pre>
-<p>Die meisten Callbacks verwenden die <em>stdcall</em>-Aufrufkonvention, die eine feste Anzahl an Parametern voraussetzt. In solchen Fällen muss <em>Parameteranzahl</em> auf die Größe der Parameterliste gesetzt werden, wo Int64 und Double als zwei 32-Bit-Parameter zählen.</p>
-<p>Bei <em>Cdecl</em> oder 64-Bit-Aufrufkonventionen hat <em>Parameteranzahl</em> nur Einfluss darauf, wievielen Skriptparametern Werte zugewiesen werden können. Wenn dieser Parameter fehlt, werden alle optionalen Parameter ihren Standardwert bekommen und aus den Berechnungen für die Adresse, gespeichert in <em>params</em>, ausgeschlossen.</p>
+<p>Die meisten Callbacks verwenden die <em>stdcall</em>-Aufrufkonvention, die eine feste Anzahl an Parametern voraussetzt. In solchen Fällen muss <em>ParamAnzahl</em> auf die Größe der Parameterliste gesetzt werden, wo Int64 und Double als zwei 32-Bit-Parameter zählen.</p>
+<p>Bei <em>Cdecl</em> oder 64-Bit-Aufrufkonventionen hat <em>ParamAnzahl</em> nur Einfluss darauf, wievielen Skriptparametern Werte zugewiesen werden können. Wenn dieser Parameter fehlt, werden alle optionalen Parameter ihren Standardwert bekommen und aus den Berechnungen für die Adresse, gespeichert in <em>params</em>, ausgeschlossen.</p>
 
 <h3>Was die Funktion per <em>Return</em> zurückgeben sollte</h3>
 <p>Wenn die Funktion ein <a href="Return.htm">Return</a> verwendet, dessen Parameter entweder fehlt oder einen leeren Wert wie "" hat (oder überhaupt kein Return verwendet), wird eine 0 an den Aufrufer des Callbacks zurückgegeben. Ansonsten sollte die Funktion einen Integer zurückgeben, der dann an den Aufrufer zurückgegeben wird. AutoHotkey 32-bit kürzt Rückgabewerte auf 32 Bit, während AutoHotkey 64-bit Rückgabewerte im 64-Bit-Format unterstützt. Zurückgegebene Strukturen größer als diesen Wert werden nicht unterstützt.</p>
@@ -135,7 +135,7 @@ GuiHwnd := WinExist()
 SetWindowLong := A_PtrSize=8 ? "SetWindowLongPtr" : "SetWindowLong"
 
 WindowProcNeu := <strong>RegisterCallback</strong>("WindowProc", ""  <em>; Mit "" wird der Fast-Modus beim Setzen der Unterklasse verhindert.</em>
-    , <strong>4</strong>, MeinTextHwnd)  <em>; Es muss die genaue Parameteranzahl angegeben werden, wenn der EventInfo-Parameter vorhanden ist.</em>
+    , <strong>4</strong>, MeinTextHwnd)  <em>; Es muss die genaue ParamAnzahl angegeben werden, wenn der EventInfo-Parameter vorhanden ist.</em>
 WindowProcAlt := DllCall(SetWindowLong, Ptr, GuiHwnd, Int, -4  <em>; -4 ist GWL_WNDPROC</em>
     , Ptr, WindowProcNeu, Ptr)  <em>; Wert muss auf Ptr oder UPtr anstatt auf Int gesetzt werden.</em>
 
