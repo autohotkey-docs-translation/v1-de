@@ -19,6 +19,7 @@
 <span class="func">Hotstring</span>(<a href="#NewOptions">NeueOptionen</a>)
 AlterWert := <span class="func">Hotstring</span>("<a href="#EndChars">EndChars</a>" <span class="optional">, NeuerWert</span>)
 AlterWert := <span class="func">Hotstring</span>("<a href="#MouseReset">MouseReset</a>" <span class="optional">, NeuerWert</span>)
+<span class="func">Hotstring</span>("Reset")
 </pre>
 <h3>Parameter</h3>
 <dl>
@@ -91,6 +92,10 @@ MsgBox Der vorherige Wert war: %vorher_zeichen%</pre>
 <p>Der <a href="_InstallMouseHook.htm">Maus</a>-Hooks wird bei dieser Funktion je nach Bedarf automatisch installiert oder entfernt.</p>
 <p><a href="_Hotstring.htm">#Hotstring NoMouse</a> wirkt sich auch auf diese Einstellung aus, und ist das gleiche wie, als würde man <code>False</code> für <em>NeuerWert</em> angeben.</p>
 
+<h3 id="Reset">Reset <span class="ver">[v1.1.28.01+]</span></h3>
+<pre class="Syntax"><span class="func">Hotstring</span>("Reset")</pre>
+<p>Setzt sofort den Hotstring-Erkenner zurück. Das heißt, dass das Skript auf einen völlig neuen Hotstring wartet und dass alles, was Sie zuvor eingegeben haben, verworfen wird.</p>
+
 <h3 id="NewOptions">Standardoptionen setzen</h3>
 <pre class="Syntax"><span class="func">Hotstring</span>(NeueOptionen)</pre>
 <p>Um neue Standardoptionen für danach erstellte Hotstrings zu bestimmen, übergibt man die Optionen ohne Doppelpunkte an die Hotstring-Funktion. Zum Beispiel: <code>Hotstring("T")</code>.</p>
@@ -100,7 +105,76 @@ MsgBox Der vorherige Wert war: %vorher_zeichen%</pre>
 <p><a href="../Hotstrings.htm">Hotstrings</a>, <a href="_IfWinActive.htm">#IfWinActive/Exist</a>, <a href="_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a>, <a href="Suspend.htm">Suspend</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread</a>, <a href="Critical.htm">Critical</a></p>
 
 <h3>Beispiele</h3>
-<pre class="NoIndent"></pre>
+
+<h4 id="ex1">Beispiel #1: Hotstring Helper</h4>
+<p>Das folgende Skript könnte nützlich sein, wenn Sie Hotstrings intensiv nutzen. Es basiert auf <a href="../Hotstrings.htm#Helper">das Skript von Andreas Borutta</a>. Drücken Sie WIN+H (oder einen anderen Hotkey Ihrer Wahl), um den aktuell markierten Text in einen Hotstring umzuwandeln. Wenn Sie in einem Textverarbeitungsprogramm zum Beispiel "beziehungsweise" markieren und WIN+H drücken, wird das Skript Sie auffordern, eine Abkürzung für diesen Text zu bestimmen (z. B. bzw), und dann den neuen Hotstring in das Skript einfügen. Der Hotstring wird aktiviert, ohne dass das Skript neu geladen werden muss.</p>
+<pre>#h::  <em>; Hotkey: WIN+H
+; Ermittelt den aktuell markierten Text. Es wird die Zwischenablage statt
+; "ControlGet Selected" benutzt, weil sie bei den meisten Texteditoren
+; (bzw. Textverarbeitungsprogramme) besser funktioniert.  Der aktuelle Inhalt der Zwischenablage wird gespeichert,
+; damit sie später wiederhergestellt werden kann. Allerdings gilt das nur für Klartext:</em>
+ClipboardAlt := Clipboard
+Clipboard := "" <em>; Muss anfangs leer sein, damit die Erkennung funktioniert.</em>
+Send ^c
+ClipWait 1
+if ErrorLevel  <em>; ClipWait hat die Zeit überschritten.</em>
+    return
+<em>; Ersetze CRLF und/oder LF mit `n für einen Hotstring im Raw-Modus:
+; Das gleiche wird für jedes andere Zeichen getan,
+; das ein Problem im Raw-Modus sein könnte:</em>
+ClipInhalt := StrReplace(Clipboard, "``", "````")  <em>; Zuerst diese Ersetzung, um die darunter nicht zu stören.</em>
+ClipInhalt := StrReplace(ClipInhalt, "`r`n", "``r")  <em>; `r funktioniert besser als `n in MS Word usw.</em>
+ClipInhalt := StrReplace(ClipInhalt, "`n", "``r")
+ClipInhalt := StrReplace(ClipInhalt, "`t", "``t")
+ClipInhalt := StrReplace(ClipInhalt, "`;", "```;")
+Clipboard := ClipboardAlt  <em>; Stell den vorherigen Inhalt der Zwischenablage wieder her.</em>
+ZeigeInputBox(":T:`::" ClipInhalt)
+return
+
+ZeigeInputBox(Standardwert)
+{
+    <em>; Verschiebe den Textcursor der InputBox auf eine benutzerfreundliche Position:</em>
+    SetTimer, VerschiebeTextcursor, 10
+    <em>; Zeige die InputBox mit dem vordefinierten Hotstring:</em>
+    InputBox, Benutzereingabe, Neuer Hotstring,
+    (
+    Fügen Sie Ihre Abkürzung an die Position des Textcursors ein. Bei Bedarf können Sie den Ersatztext noch ändern.
+
+    Beispieleintrag: :R:bzw`::beziehungsweise
+    ),,,,,,,, %Standardwert%
+    if ErrorLevel  <em>; Der Benutzer hat Abbrechen gedrückt.</em>
+        return
+
+    if RegExMatch(Benutzereingabe, "O)(?P&lt;Label&gt;:.*?:(?P&lt;Abkuerzung&gt;.*?))::(?P&lt;Ersatztext&gt;.*)", Hotstring)
+    {
+        if !Hotstring.Abkuerzung
+            Mitteilung := "Sie haben keine Abkürzung angegeben"
+        else if !Hotstring.Ersatztext
+            Mitteilung := "Sie haben keinen Ersatztext angegeben"
+        else
+        {
+            Hotstring(Hotstring.Label, Hotstring.Ersatztext)  <em>; Aktiviert jetzt den Hotstring.</em>
+            FileAppend, `n%Benutzereingabe%, %A_ScriptFullPath%  <em>; Speichert den Hotstring für den späteren Gebrauch.</em>
+        }
+    }
+    else
+        Mitteilung := "Der Hotstring scheint falsch strukturiert zu sein"
+
+    if Mitteilung
+    {
+        MsgBox, 4,, %Mitteilung%. Möchten Sie es noch einmal versuchen?
+        IfMsgBox, Yes
+            ZeigeInputBox(Standardwert)
+    }
+    return
+    
+    VerschiebeTextcursor:
+    WinWait, Neuer Hotstring
+    <em>; Verschiebe den Textcursor der InputBox auf eine Position, wo der Benutzer die Abkürzung eintragen kann.</em>
+    Send {Home}{Right 3}
+    SetTimer,, Off
+    return
+}</pre>
 
 </body>
 </html>
