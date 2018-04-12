@@ -152,9 +152,10 @@ Siehe <a href="Scripts.htm#continuation">Fortsetzungsbereich</a>, wie diese Stan
 <p class="note"><strong>Hinweis:</strong> Mit der <a href="commands/Hotstring.htm">Hotstring</a>-Funktion können neue Hotstrings erstellt werden, ohne das Skript erneut laden zu müssen. Werfen Sie einen Blick auf das <a href="commands/Hotstring.htm#ex1">erste Beispiel</a> im Beispielabschnitt der Funktionsseite, um zu sehen, wie das aussehen könnte.</p>
 <pre class="NoIndent">#h::  <em>; Hotkey: WIN+H
 ; Ermittelt den aktuell markierten Text. Es wird die Zwischenablage statt
-; "ControlGet Selected" benutzt, weil sie bei den meisten Texteditoren
-; (bzw. Textverarbeitungsprogramme) besser funktioniert.  Der aktuelle Inhalt der Zwischenablage wird gespeichert,
-; damit sie später wiederhergestellt werden kann. Allerdings gilt das nur für Klartext:</em>
+; "ControlGet Selected" benutzt, um das Skript für mehr Texteditoren
+; funktionsfähig zu machen. Speichert die aktuelle Zwischenablage und
+; stellt sie später wieder her (allerdings funktioniert das nur mit
+; reinem Text):</em>
 AutoTrim Off  <em>; Verhindert, dass Leerraumzeichen am Anfang oder Ende der Zwischenablage entfernt werden.</em>
 ClipboardAlt = %ClipboardAll%
 Clipboard =  <em>; Muss anfangs leer sein, damit die Erkennung funktioniert.</em>
@@ -185,7 +186,7 @@ IfInString, Hotstring, :R`:::
 <em>; Füge ansonsten den Hotstring hinzu und lade das Skript neu:</em>
 FileAppend, `n%Hotstring%, %A_ScriptFullPath%  <em>; Setze ein `n davor, falls die Datei keine leere Zeile am Ende hat.</em>
 Reload
-Sleep 200 <em>; Bei Erfolg wird das Reload diese Instanz während dem Sleep schließen, damit die untere Zeile nie erreicht wird.</em>
+Sleep 200 <em>; Das Reload schließt bei Erfolg diese Instanz während der Sleep-Phase und verhindert, dass nachfolgende Zeilen erreicht werden.</em>
 MsgBox, 4,, Der gerade eingefügte Hotstring scheint fehlerhaft zu sein.  Wollen Sie das Skript öffnen und manuell bearbeiten? Den fehlerhaften Hotstring finden Sie ganz unten im Skript.
 IfMsgBox, Yes, Edit
 return

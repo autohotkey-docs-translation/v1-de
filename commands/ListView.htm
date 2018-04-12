@@ -210,7 +210,7 @@ return</pre>
 ImageListID := <a href="#IL_Create">IL_Create</a>(10)  <em>; Erstellt eine ImageList für 10 kleine Symbole.</em>
 <a href="#LV_SetImageList">LV_SetImageList</a>(ImageListID)  <em>; Verbindet die obige ImageList mit der aktuellen ListView.</em>
 Loop 10  <em>; Fügt mehrere Symbole aus der DLL in die ImageList ein.</em>
-    <a href="#IL_Add">IL_Add</a>(ImageListID, "shell32.dll", A_Index)
+    <a href="#IL_Add">IL_Add</a>(ImageListID, "shell32.dll", A_Index) 
 Loop 10  <em>; Fügt Reihen in die ListView ein (für jedes Symbol eine Reihe).</em>
     LV_Add("Icon" . A_Index, A_Index, "n/a")
 LV_ModifyCol("Hdr")  <em>; Passt die Breiten der Spalten automatisch an.</em>
@@ -266,9 +266,10 @@ LV_Modify(0, "-Check")  <em>; Demarkiert alle <a href="#Checked">Checkboxes</a>.
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; HAUPTBEISPIEL
 ; Das folgende Skript ist aufwendiger als das Beispiel ganz oben.
-; Es zeigt Dateien aus einem Ordner an, den der Benutzer aussuchen kann, und weist jeder Datei je nach Typ ein Symbol zu. Der Benutzer kann eine Datei doppelt anklicken, oder einen Rechtsklick auf eine oder mehrere Dateien machen, um das Kontextmenü anzuzeigen.</em>
+; Es zeigt Dateien aus einem Ordner an, den der Benutzer aussuchen kann, und weist jeder Datei je nach Typ ein Symbol zu.
+; Der Benutzer kann eine Datei doppelt anklicken, oder einen Rechtsklick auf eine oder mehrere Dateien machen, um das Kontextmenü anzuzeigen.</em>
 
-<em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder dessen Größe beliebig anzupassen.</em>
+<em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder dessen Größe beliebig anzupassen:</em>
 Gui +Resize
 
 <em>; Erstellt einige Buttons:</em>
@@ -289,10 +290,10 @@ ImageListID2 := IL_Create(10, 10, true)  <em>; Eine Liste mit großen Symbolen, 
 LV_SetImageList(ImageListID2)
 
 <em>; Erstellt ein aufklappbares Menü, das als Kontextmenü verwendet wird:</em>
-<a href="Menu.htm">Menu</a>, Kontextmenü, Add, Öffnen, KontextDateiÖffnen
-Menu, Kontextmenü, Add, Eigenschaften, KontextEigenschaften
-Menu, Kontextmenü, Add, Von ListView entfernen, KontextReihenLeeren
-Menu, Kontextmenü, Default, Öffnen  <em>; Zeigt "Öffnen" in fetter Schrift an, um zu kennzeichnen, dass ein Doppelklick das gleiche bewirkt.</em>
+<a href="Menu.htm">Menu</a>, MeinKontextmenü, Add, Öffnen, KontextDateiÖffnen
+Menu, MeinKontextmenü, Add, Eigenschaften, KontextEigenschaften
+Menu, MeinKontextmenü, Add, Von ListView entfernen, KontextReihenLeeren
+Menu, MeinKontextmenü, Default, Öffnen  <em>; Zeigt "Öffnen" in fetter Schrift an, um zu kennzeichnen, dass ein Doppelklick das gleiche bewirkt.</em>
 
 <em>; Zeigt das Fenster an und geht in den Leerlauf. Das System wird das Skript benachrichtigen, wann immer der Benutzer
 ; eine gültige Aktion durchführt:</em>
@@ -309,7 +310,7 @@ if not Ordner  <em>; Der Benutzer hat das Dialogfenster abgebrochen.</em>
 <em>; Überprüft, ob das letzte Zeichen im Ordnernamen ein umgekehrter Schrägstrich ist, das bei Root-Verzeichnissen
 ; wie C:\ vorkommt. Ist dies der Fall, muss es entfernt werden, um später einen doppelten Schrägstrich zu verhindern.</em>
 StringRight, LetztesZeichen, Ordner, 1
-If LetztesZeichen = \
+if LetztesZeichen = \
     StringTrimRight, Ordner, Ordner, 1  <em>; Entfernt den Schrägstrich am Ende.</em>
 
 <em>; Berechnet die notwendige Puffergröße für die SHFILEINFO-Struktur.</em>
@@ -363,7 +364,7 @@ Loop %Ordner%\*.*
             DllCall("ImageList_ReplaceIcon", "Ptr", ImageListID2, "Int", -1, "Ptr", hIcon)
             <em>; Da es nun in die ImageLists kopiert wurde, sollte das Original zerstört werden:</em>
             DllCall("DestroyIcon", "Ptr", hIcon)
-            <em>; Cacht das Symbol, um Speicher zu sparen und Lade-Performance zu erhöhen.</em>
+            <em>; Cacht das Symbol, um Speicher zu sparen und Lade-Performance zu erhöhen:</em>
             SymbolArray%EndungsID% := Symbolnummer
         }
     }
@@ -382,11 +383,11 @@ ButtonLeeren:
 return
 
 ButtonAnsichtWechseln:
-if not Symbolansicht
+if not IconView
     GuiControl, +Icon, MeineListView    <em>; Wechselt zur Symbolansicht.</em>
 else
     GuiControl, +Report, MeineListView  <em>; Wechselt wieder zur Detail-Ansicht.</em>
-Symbolansicht := not Symbolansicht            <em>; Kehrt den Wert für die nächste Benutzung um.</em>
+IconView := not IconView             <em>; Kehrt den Wert für die nächste Benutzung um.</em>
 return
 
 MeineListView:
@@ -405,7 +406,7 @@ if A_GuiControl &lt;&gt; MeineListView  <em>; Zeigt das Menü nur an, wenn die K
     return
 <em>; Zeigt das Menü bei den Koordinaten A_GuiX und A_GuiY an.  Diese Koordinaten
 ; sind auch dann korrekt, wenn der Benutzer die MENÜ-Taste drückt:</em>
-Menu, Kontextmenü, Show, %A_GuiX%, %A_GuiY%
+Menu, MeinKontextmenü, Show, %A_GuiX%, %A_GuiY%
 return
 
 KontextDateiÖffnen:  <em>; Der Benutzer hat "Öffnen" im Kontextmenü ausgewählt.</em>
@@ -416,7 +417,7 @@ if not FokussierteReihennummer  <em>; Keine Reihe fokussiert.</em>
     return
 LV_GetText(Dateiname, FokussierteReihennummer, 1) <em>; Ermittelt den Text des ersten Feldes.</em>
 LV_GetText(Dateiverz, FokussierteReihennummer, 2)  <em>; Ermittelt den Text des zweiten Feldes.</em>
-IfInString A_ThisMenuItem, Öffnen <em>; Benutzer hat "Öffnen" im Kontextmenü ausgewählt.</em>
+IfInString A_ThisMenuItem, Öffnen  <em>; Benutzer hat "Öffnen" im Kontextmenü ausgewählt.</em>
     Run %Dateiverz%\%Dateiname%,, UseErrorLevel
 else  <em>; Der Benutzer hat "Eigenschaften" im Kontextmenü ausgewählt.</em>
     Run Properties "%Dateiverz%\%Dateiname%",, UseErrorLevel
@@ -432,7 +433,7 @@ Loop
     <em>; sollten sie um 1 subtrahiert werden, so dass die Suche die gleiche Reihennummer einbezieht,</em>
     <em>; die zuvor gefunden wurde (falls die benachbarten Reihen ausgewählt sind):</em>
     Reihennummer := LV_GetNext(Reihennummer - 1)
-    if not Reihennummer  <em>; Oben wurde eine 0 zurückgegeben, also keine weiteren ausgewählten Reihen.</em>
+    if not Reihennummer  <em>; Oben wurde null zurückgegeben, also gibt es keine weiteren ausgewählten Reihen.</em>
         break
     LV_Delete(Reihennummer)  <em>; Entfernt die Reihe aus der ListView.</em>
 }

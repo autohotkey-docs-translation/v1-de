@@ -34,7 +34,7 @@ I_Editor = pad
 <em>; Wenn der Wunsch besteht, ein anderes Symbol für dieses Skript zu verwenden,
 ; damit es sich von anderen Skripten unterscheidet, gebt unten den Dateinamen an
 ; (leer lassen, wenn nicht gewünscht). Zum Beispiel: E:\stuff\Pics\icons\GeoIcons\Information.ico</em>
-I_Icon =
+I_Icon = 
 
 <em>; ENDE DES KONFIGURATIONSBEREICHS (Hier danach keine Änderungen durchführen,
 ; es sei denn, die allgemeine Funktionalität des Skripts soll geändert werden).</em>
@@ -50,7 +50,7 @@ if I_Icon &lt;&gt;
     IfExist, %I_Icon%
         Menu, Tray, Icon, %I_Icon%
 
-<em>; Standort von AutoHotkey ermitteln:</em>
+<em>; Den Standort von AutoHotkey ermitteln:</em>
 RegRead, ahk_dir, HKEY_LOCAL_MACHINE, SOFTWARE\AutoHotkey, InstallDir
 if ErrorLevel  <em>; Nichts gefunden, so in anderen häufigen Standorten nachschauen.</em>
 {
@@ -74,7 +74,7 @@ Loop, Read, %ahk_dir%\Extras\Editors\Syntax\Commands.txt
 {
     I_FullCmd = %A_LoopReadLine%
 
-    <em>; Anweisungen haben ein erstes Leerzeichen anstelle eines ersten Kommas.</em>
+    <em>; Direktiven haben ein erstes Leerzeichen anstelle eines ersten Kommas.</em>
     <em>; So wird je nachdem verwendet, was zuerst als Endzeichen im Befehlsnamen vorkommt:</em>
     StringGetPos, I_cPos, I_FullCmd, `,
     StringGetPos, I_sPos, I_FullCmd, %A_Space%
@@ -85,14 +85,14 @@ Loop, Read, %ahk_dir%\Extras\Editors\Syntax\Commands.txt
 
     if I_EndPos &lt;&gt; -1
         StringLeft, I_CurrCmd, I_FullCmd, %I_EndPos%
-    else  <em>; Eine Anweisung/ein Befehl ohne Parameter.</em>
+    else  <em>; Eine Direktive/ein Befehl ohne Parameter.</em>
         I_CurrCmd = %A_LoopReadLine%
-
+    
     StringReplace, I_CurrCmd, I_CurrCmd, [,, All
     StringReplace, I_CurrCmd, I_CurrCmd, %A_Space%,, All
     StringReplace, I_FullCmd, I_FullCmd, ``n, `n, All
     StringReplace, I_FullCmd, I_FullCmd, ``t, `t, All
-
+    
     <em>; Arrays mit Befehlsnamen und vollständige Befehlssyntax erstellen:</em>
     I_Cmd%A_Index% = %I_CurrCmd%
     I_FullCmd%A_Index% = %I_FullCmd%
@@ -109,11 +109,11 @@ Loop
         Sleep, 500
         Continue
     }
-
+    
     <em>; Alle Tasten bis zur Endtaste abrufen:</em>
     Input, I_Word, V, {enter}{escape}{space}`,
     I_EndKey = %ErrorLevel%
-
+    
     <em>; ToolTip wird in folgenden Fällen versteckt:</em>
     if I_EndKey in EndKey:Enter,EndKey:Escape
     {
@@ -134,7 +134,7 @@ Loop
     StringReplace, I_Word, I_Word, %A_Tab%,, All
     if I_Word =
         Continue
-
+    
     <em>; Kommentierte Zeile untersuchen:</em>
     StringLeft, I_Check, I_Word, 1
     if (I_Check = ";" or I_Word = "If")  <em>; "If" ist scheinbar ein wenig störend, um dafür den ToolTip anzuzeigen.</em>
@@ -157,11 +157,11 @@ Loop
             break
         }
     }
-
+    
     <em>; Falls keine Übereinstimmung erfolgt, dann Benutzereingabe weiter überwachen:</em>
     if I_Index =
         Continue
-
+    
     <em>; Übereinstimmende Befehle anzeigen, um den Benutzer zu führen:</em>
     I_ThisFullCmd := I_FullCmd%I_Index%
     ToolTip, %I_ThisFullCmd%, A_CaretX, A_CaretY + 20
@@ -176,7 +176,7 @@ IfNotInString, ActiveTitle, %I_Editor%, Return
 ToolTip  <em>; Syntaxhelfer deaktivieren, da er zurzeit nicht benötigt wird.</em>
 
 SetTitleMatchMode, 1  <em>; Falls es 3 ist. Diese Einstellung gilt nur für diesen Thread.</em>
-IfWinNotExist, AutoHotkey Help
+IfWinNotExist, Hilfe für AutoHotkey
 {
     IfNotExist, %ahk_help_file%
     {
@@ -184,7 +184,7 @@ IfWinNotExist, AutoHotkey Help
         return
     }
     Run, %ahk_help_file%
-    WinWait, AutoHotkey Help
+    WinWait, Hilfe für AutoHotkey
 }
 
 if I_ThisCmd =  <em>; Stattdessen wird die aktuellste Benutzereingabe verwendet.</em>

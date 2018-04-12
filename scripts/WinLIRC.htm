@@ -35,9 +35,9 @@
 ; - Winsock-Warnmeldung "10054" beim Herunterfahren/Abmelden des Systems beseitigt.
 ; - Option "DelayBetweenButtonRepeats" hinzugefügt, um die Wiederholungsgeschwindigkeit zu drosseln.</em>
 
-<em>; -------------------------------------------------
-; KONFIGURATIONSBEREICH: Hier die Einstellungen vornehmen.
-; -------------------------------------------------
+<em>; --------------------------------------------------------------
+; KONFIGURATIONSBEREICH: Nehmen Sie hier Ihre Einstellungen vor.
+; --------------------------------------------------------------
 ; Einige Fernbedienungen wiederholen schnell das Signal, während
 ; eine Taste gedrückt gehalten wird. Das macht es schwierig, die Fernbedienung dazu zu bringen,
 ; nur ein Signal zu senden. Die folgende Einstellung löst dieses Problem, indem wiederholende Signale
@@ -56,14 +56,14 @@ WinLIRC_Port = 8765
 Gosub WinLIRC_Init
 return
 
-<em>; --------------------------------------------
-; AKTIONEN FÜR DIE FERNBEDIENUNGSTASTEN ZUWEISEN
-; --------------------------------------------
+<em>; ------------------------------------------
+; WEISEN SIE IHRER FERNBEDIENUNG AKTIONEN ZU
+; ------------------------------------------
 ; Konfiguriert die unten genannten Tasten der Fernbedienung. Verwendet die Tastennamen
 ; von WinLIRC, die in der WinLIRC-Konfigurationsdatei (.cf file) gefunden
 ; werden können -- oder drückt eine beliebige Taste auf der Fernbedienung,
 ; um die Tastennamen in einem kleinen Fenster kurz anzuzeigen.
-;
+; 
 ; Hier dazu einige Beispiele. Sie können je nach Belieben überarbeitet und
 ; gelöscht werden.</em>
 
@@ -106,11 +106,12 @@ Send Hier einige gesendete Tastatureingaben im Editor.{Enter}
 return
 
 <em>; Die oben genannten Beispiele geben einen Eindruck davon, wie häufige Aufgaben durchgeführt werden.
-; Um die Grundlagen von AutoHotkey zu lernen, siehe <a href="http://www.autohotkey.com/docs/Tutorial.htm">Schnellstart-Tutorial</a></em>
+; Um die Grundlagen von AutoHotkey zu erlernen, schauen Sie sich das Schnellstart-Tutorial an:
+; <a href="http://www.autohotkey.com/docs/Tutorial.htm">http://www.autohotkey.com/docs/Tutorial.htm</a></em>
 
-<em>; ----------------------------
+<em>; -------------------------------
 ; ENDE DES KONFIGURATIONSBEREICHS
-; ----------------------------
+; -------------------------------
 ; Hier danach keine Änderungen durchführen, es sei denn,
 ; die allgemeine Funktionalität des Skripts soll geändert werden.</em>
 
@@ -152,7 +153,7 @@ FD_READ = 1     <em>; Wird empfangen, falls lesbare Daten verfügbar sind.</em>
 FD_CLOSE = 32   <em>; Wird empfangen, falls die Verbindung unterbrochen wurde.</em>
 if DllCall("Ws2_32\WSAAsyncSelect", "UInt", socket, "UInt", ScriptMainWindowId, "UInt", NotificationMsg, "Int", FD_READ|FD_CLOSE)
 {
-    MsgBox % "WSAAsyncSelect() indicated Winsock error " . DllCall("Ws2_32\WSAGetLastError")
+    MsgBox % "WSAAsyncSelect() meldet Winsock-Fehler " . DllCall("Ws2_32\WSAGetLastError")
     ExitApp
 }
 return
@@ -174,7 +175,7 @@ ConnectToAddress(IPAddress, Port)
     }
     if result  <em>; Ungleich 0, das heißt Misserfolg (die meisten Winsock-Funktionen geben bei Erfolg eine 0 zurück).</em>
     {
-        MsgBox % "WSAStartup() kennzeichnet Winsock-Fehler " . DllCall("Ws2_32\WSAGetLastError")
+        MsgBox % "WSAStartup() meldet Winsock-Fehler " . DllCall("Ws2_32\WSAGetLastError")
         return -1
     }
 
@@ -184,7 +185,7 @@ ConnectToAddress(IPAddress, Port)
     socket := DllCall("Ws2_32\socket", "Int", AF_INET, "Int", SOCK_STREAM, "Int", IPPROTO_TCP)
     if socket = -1
     {
-        MsgBox % "socket() kennzeichnet Winsock-Fehler " . DllCall("Ws2_32\WSAGetLastError")
+        MsgBox % "socket() meldet Winsock-Fehler " . DllCall("Ws2_32\WSAGetLastError")
         return -1
     }
 
@@ -198,10 +199,10 @@ ConnectToAddress(IPAddress, Port)
     <em>; Verbindungsversuch:</em>
     if DllCall("Ws2_32\connect", "UInt", socket, "UInt", &amp;SocketAddress, "Int", SizeOfSocketAddress)
     {
-        MsgBox % "connect() kennzeichnet Winsock-Fehler " . DllCall("Ws2_32\WSAGetLastError") . ". Wird WinLIRC ausgeführt?"
+        MsgBox % "connect() meldet Winsock-Fehler " . DllCall("Ws2_32\WSAGetLastError") . ". Läuft WinLIRC überhaupt?"
         return -1
     }
-    return socket  <em>; Kennzeichnet Erfolg, indem eine gültige Sockel-ID anstelle von -1 zurückgegeben wird.</em>
+    return socket  <em>; Meldet Erfolg, indem eine gültige Sockel-ID anstelle von -1 zurückgegeben wird.</em>
 }
 
 
@@ -226,13 +227,13 @@ ReceiveData(wParam, lParam)
             return 1
         if WinsockError &lt;&gt; 10054 <em>; WSAECONNRESET, das passieren kann, wenn WinLIRC durch das Herunterfahren/Abmelden des Systems geschlossen wird.</em>
             <em>; Da das ein unerwarteter Fehler ist, muss er gemeldet werden.  Außerdem beenden, um eine Endlosschleife zu verhindern.</em>
-            MsgBox % "recv() kennzeichnet Winsock-Fehler " . WinsockError
+            MsgBox % "recv() meldet Winsock-Fehler " . WinsockError
         ExitApp  <em>; Die OnExit-Subroutine wird für uns WSACleanup() aufrufen.</em>
     }
     <em>; Ansonsten die empfangenen Daten bearbeiten. Tests zeigen, dass es möglich ist, mehr als eine Zeile gleichzeitig zu erhalten</em>
-    <em>; (selbst beim expliziten Senden eines IR-Signals), wodurch die folgende Mehthode richtig behandelt wird.</em>
+    <em>; (selbst beim expliziten Senden eines IR-Signals), wodurch die folgende Methode richtig behandelt wird.</em>
     <em>; Empfangene Daten von WinLIRC sehen z. B. wie folgt aus (siehe Dokumentation zu WinLIRC für Details):</em>
-    <em>; 0000000000eab154 00 Tastenname Fernbedienungsname</em>
+    <em>; 0000000000eab154 00 NameTaste NameFernbedienung</em>
     Loop, parse, ReceivedData, `n, `r
     {
         if A_LoopField in ,BEGIN,SIGHUP,END  <em>; Leere Zeilen und Startmeldungen von WinLIRC ignorieren.</em>

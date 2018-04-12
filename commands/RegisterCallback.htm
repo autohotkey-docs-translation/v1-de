@@ -70,10 +70,10 @@ wParam := wParam &lt;&lt; 32 &gt;&gt; 32</pre>
 
 <p id="Indirect"><strong>Parameter via Adresse empfangen</strong> <span class="ver">[AHK_L 60+]</span>: Wenn die Funktion als <a href="../Functions.htm#Variadic">variadisch</a> deklariert ist, wird der letzte Parameter die <i>Adresse</i> des ersten Callback-Parameters erhalten, der einem Skript-Parameter nicht zugewiesen wurde. Zum Beispiel:</p>
 <pre>
-callback := RegisterCallback("DieFunktion", "F", 3)  <em>; Größe der Parameterliste muss angegeben werden.</em>
-DieFunktion("DieFunktion wurde direkt aufgerufen.")  <em>; Ruft DieFunktion direkt auf.</em>
-DllCall(callback, float, 10.5, int64, 42)        <em>; Ruft DieFunktion via Callback auf.</em>
-DieFunktion(params*) {
+callback := RegisterCallback("DieFunk", "F", 3)  <em>; Größe der Parameterliste muss angegeben werden.</em>
+DieFunk("Funk wurde direkt aufgerufen")          <em>; Ruft DieFunk direkt auf.</em>
+DllCall(callback, float, 10.5, int64, 42)        <em>; Ruft DieFunk via Callback auf.</em>
+DieFunk(params*) {
     if IsObject(params)
         MsgBox % params[1]
     else
@@ -109,7 +109,7 @@ DetectHiddenWindows On  <em>; Aufgrund des Fast-Modus wird diese Einstellung auc
 <em>; Übergibt die Kontrolle an EnumWindows(), das Callback wiederholend aufruft:</em>
 DllCall("EnumWindows", Ptr, EnumAdresse, Ptr, 0)
 MsgBox %Ausgabe%  <em>; Zeigt die gesammelten Informationen von Callback an.</em>
-
+    
 EnumWindowsProc(hwnd, lParam)
 {
     global Ausgabe
@@ -137,7 +137,7 @@ SetWindowLong := A_PtrSize=8 ? "SetWindowLongPtr" : "SetWindowLong"
 WindowProcNeu := <strong>RegisterCallback</strong>("WindowProc", ""  <em>; Mit "" wird der Fast-Modus beim Setzen der Unterklasse verhindert.</em>
     , <strong>4</strong>, MeinTextHwnd)  <em>; Es muss die genaue ParamAnzahl angegeben werden, wenn der EventInfo-Parameter vorhanden ist.</em>
 WindowProcAlt := DllCall(SetWindowLong, Ptr, GuiHwnd, Int, -4  <em>; -4 ist GWL_WNDPROC</em>
-    , Ptr, WindowProcNeu, Ptr)  <em>; Wert muss auf Ptr oder UPtr anstatt auf Int gesetzt werden.</em>
+    , Ptr, WindowProcNeu, Ptr) <em>; Rückgabewert muss auf Ptr oder UPtr anstatt auf Int gesetzt werden.</em>
 
 Gui Show
 return

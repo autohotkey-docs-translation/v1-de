@@ -86,7 +86,7 @@
     <td>A_LoopFileShortPath</td>
     <td><p>Der aktuell abgerufene 8.3-kurze Pfad und Name der Datei oder des Ordners. Zum Beispiel: C:\MEINED~1\ADRESS~1.TXT. Enthält <em>Dateimuster</em> einen relativen anstelle eines absoluten Pfades, wird der Pfad in dieser Variable auch relativ sein.</p>
       <p>Das folgende Beispiel zeigt, was <em>Dateimuster</em> enthalten muss, um den kompletten 8.3-Pfad und -Name einer Datei oder eines Ordners abzurufen:</p>
-<pre>Loop, C:\Meine Dokumente\Adressliste.txt
+<pre>Loop, C:\Meine Dokumente\Adressenliste.txt
     KurzerPfadname = %A_LoopFileShortPath%</pre>
         <p class="note"><strong>Hinweis</strong>: Diese Variable wird <strong>leer</strong> sein, wenn die Datei keinen kurzen Namen hat. Dies könnte beispielsweise passieren, wenn NtfsDisable8dot3NameCreation in der Registry angegeben ist. Sie wird auch leer sein, wenn <em>Dateimuster</em> einen relativen Pfad enthält und der Schleifenkörper <a href="SetWorkingDir.htm">SetWorkingDir</a> verwendet, um von dem eigentlichen Arbeitsverzeichnis der Schleife wegzuschalten.</p></td>
   </tr>
@@ -158,10 +158,10 @@ Loop Files, %A_ProgramFiles%\*.txt, R  <em>; Durchsucht Unterordner.</em>
 <pre class="NoIndent"><em>; Beispiel #2: Berechnet die Größe eines Ordners mitsamt der Dateien in seinen Unterordnern:</em>
 SetBatchLines, -1  <em>; Führt die Operation mit maximaler Geschwindigkeit aus.</em>
 OrdnerGrößeKB = 0
-FileSelectFolder, Ordner  <em>; Fordert den Benutzer auf, einen Ordner auszuwählen.</em>
-Loop, Files, %Ordner%\*.*, R
+FileSelectFolder, WelcherOrdner  <em>; Fordert den Benutzer auf, einen Ordner auszuwählen.</em>
+Loop, Files, %WelcherOrdner%\*.*, R
     OrdnerGrößeKB += %A_LoopFileSizeKB%
-MsgBox Der Ordner %Ordner% hat eine Größe von %OrdnerGrößeKB% KB.</pre>
+MsgBox Der Ordner %WelcherOrdner% hat eine Größe von %OrdnerGrößeKB% KB.</pre>
 <pre class="NoIndent"><em>; Beispiel #3: Ruft Dateinamen ab, sortiert nach Name (siehe nächstes Beispiel, wie nach Datum sortiert werden kann):</em>
 Dateiliste =  <em>; Initialisiert sie als leere Variable.</em>
 Loop, C:\*.*
@@ -177,7 +177,7 @@ Loop, parse, Dateiliste, `n
 }</pre>
 <pre class="NoIndent"><em>; Beispiel #4: Ruft Dateinamen ab, sortiert nach Änderungsdatum:</em>
 Dateiliste =
-Loop, Files, %A_MyDocuments%\Fotos\*.*, FD  <em>; Bezieht Dateien und Ordner mit ein.</em>
+Loop, Files, %A_MyDocuments%\Fotos\*.*, FD  <em>; Bezieht Dateien und Ordner mit ein</em>
     Dateiliste = %Dateiliste%%A_LoopFileTimeModified%`t%A_LoopFileName%`n
 Sort, Dateiliste  <em>; Sortiert nach Datum.</em>
 Loop, Parse, Dateiliste, `n
@@ -189,7 +189,8 @@ Loop, Parse, Dateiliste, `n
     IfMsgBox, No
         break
 }</pre>
-<pre class="NoIndent"><em>; Beispiel #5: Kopiert nur Quelldateien in das Ziel, die neuer sind als ihr Gegenstück:</em>
+<pre class="NoIndent"><em>; Beispiel #5: Kopiert nur Quelldateien, die neuer sind als ihr Gegenstück,
+; in das Ziel:</em>
 KopiereWennNeuer:
 <em>; Der Aufrufer hat die Variablen KopieQuellmuster und KopieZiel für uns gesetzt.</em>
 Loop, Files, %KopieQuellmuster%
@@ -206,7 +207,7 @@ Loop, Files, %KopieQuellmuster%
     }
     if kopiere_es = y
     {
-        FileCopy, %A_LoopFileFullPath%, %KopieZiel%\%A_LoopFileName%, 1   <em>; Kopiert und überschreibt sie bei Bedarf.</em>
+        FileCopy, %A_LoopFileFullPath%, %KopieZiel%\%A_LoopFileName%, 1   <em>; Kopiert und überschreibt sie bei Bedarf</em>
         if ErrorLevel
             MsgBox, "%A_LoopFileFullPath%" konnte nicht nach "%KopieZiel%\%A_LoopFileName%" kopiert werden.
     }
@@ -216,10 +217,10 @@ Return</pre>
 ; mit vollständigem Pfad und korrekter Groß-/Kleinschreibung, wie sie im Dateisystem vorkommen.</em>
 Loop %0%  <em>; Geht alle Dateien durch, die auf das Skript abgelegt wurden (oder als Parameter übergeben wurden).</em>
 {
-    ÜbergebenerPfad := %A_Index%  <em>; Ruft den nächsten Befehlszeilenparameter ab.</em>
-    Loop %ÜbergebenerPfad%, 1
+    EingabePfad := %A_Index%  <em>; Ruft den nächsten Befehlszeilenparameter ab.</em>
+    Loop %EingabePfad%, 1
         LangerPfad = %A_LoopFileLongPath%
-    MsgBox Der Groß-/Kleinschreibung-sensitive lange Pfadname der Datei `n%ÜbergebenerPfad%`n ist:`n%LangerPfad%
+    MsgBox Der lange Pfadname mit korrekter Groß-/Kleinschreibung der Datei`n%EingabePfad%`nist:`n%LangerPfad%
 }</pre>
 
 </body>
