@@ -7,6 +7,7 @@ translateData = {
   "Type in the word(s) to search for:":"Suchbegriff(e) eintragen:",
   // Oberleiste
   "Hide/Show sidebar":"Sidebar verstecken/anzeigen",
+  "Open Settings":"Einstellungen öffnen",
   "Home page":"Homepage",
   "en":"de",
   "Change language":"Sprache wechseln",
