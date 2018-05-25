@@ -12,7 +12,8 @@
 
 <h1>Object</h1>
 
-<p>In AutoHotkey ist der grundlegende Objektdatentyp ein assoziatives Array, dessen Verhalten <a href="../Objects.htm#Custom_Objects">individuell angepasst werden kann</a>. Standardmäßig unterstützen alle Objekte, die mit <code>{}</code>, <code>[]</code>, <code>Object()</code> und <code>Array()</code> erstellt wurden, folgende Methoden:</p>
+<p>In AutoHotkey ist der grundlegende Objektdatentyp ein assoziatives Array, dessen Verhalten <a href="../Objects.htm#Custom_Objects">individuell angepasst werden kann</a>. Standardmäßig unterstützen alle Objekte, die mit <code>{}</code>, <code>[]</code>, <code>Object()</code> und <code>Array()</code> erstellt wurden, folgende Dinge:</p>
+<h4>Methoden:</h4>
 <ul>
   <li><a href="#InsertAt">InsertAt</a> / <a href="#RemoveAt">RemoveAt</a></li>
   <li><a href="#Push">Push</a> / <a href="#Pop">Pop</a></li>
@@ -23,7 +24,17 @@
 	<li><a href="#NewEnum">_NewEnum</a></li>
 	<li><a href="#HasKey">HasKey</a></li>
 	<li><a href="#Clone">Clone</a></li>
-  <li><a href="#RawSet">ObjRawSet</a> (function)</li>
+</ul>
+<h4>Eigenschaften:</h4>
+<ul>
+	<li><a href="#Base">Base</a></li>
+</ul>
+<h4>Funktionen:</h4>
+<ul>
+	<li><a href="#RawGet">ObjRawGet</a></li>
+	<li><a href="#RawSet">ObjRawSet</a></li>
+	<li><a href="#GetBase">ObjGetBase</a></li>
+	<li><a href="#SetBase">ObjSetBase</a></li>
 </ul>
 <p><strong>Veraltet</strong> (sollte nicht mehr verwendet werden):</p>
 <ul>
@@ -33,7 +44,7 @@
 <p>Jede Methode hat außerdem eine äquivalente Funktion, mit der jedes <a href="../Objects.htm#Custom_Objects">benutzerdefinierte Verhalten</a>, das vom Objekt implementiert wurde, umgangen werden kann. Diese Funktionen sollten nur für diesen Zweck verwendet werden. Um so eine Funktion aufzurufen, fügt man vor dem Methodennamen "Obj" an und übergibt das Zielobjekt als ersten Parameter. Zum Beispiel:</p>
 <pre>array := [1, 2, 3]
 MsgBox % ObjMaxIndex(array) " = " array.MaxIndex()</pre>
-<p>Wenn eine Obj-Funktion mit einem Objekt oder Wert falschen Typs aufgerufen wird, gibt sie eine leere Zeichenkette zurück.</p>
+<p>Wenn eine Obj-Methode mit einem Objekt oder Wert falschen Typs aufgerufen wird, gibt sie eine leere Zeichenkette zurück. Eigenständige Funktionen wie ObjRawSet lösen eine Ausnahme aus.</p>
 &nbsp;
 
 <div class="methodShort" id="InsertAt"><h2>InsertAt <span class="ver">[v1.1.21+]</span></h2>
@@ -162,18 +173,33 @@ MsgBox % {-10: 0, 10: 0}.Length()  <em>; 10</em>
 MsgBox % {-10: 0, -1: 0}.Length()  <em>;  0</em>
 </pre></div>
 
+<div class="methodShort" id="Count"><h2>Count <span class="ver">[v1.1.29+]</span></h2>
+<pre class="Syntax">Anzahl := Object.<span class="func">Count</span>()</pre>
+<p>Gibt die Anzahl der im Objekt vorhandenen Key-Value-Paare zurück.</p>
+<pre>
+MsgBox % {A: 1, Z: 26}.Count()    <em>;  2</em>
+MsgBox % ["A", "B", "C"].Count()  <em>;  3</em>
+MsgBox % ["A",    , "C"].Count()  <em>;  2</em>
+</pre>
+</div>
+
 <div class="methodShort" id="SetCapacity"><h2>SetCapacity <span class="ver">[AHK_L 31+]</span></h2>
 <p>Passt die Kapazität eines Objekts oder eines seiner Felder an.</p>
 <pre class="Syntax">
 Object.<span class="func">SetCapacity</span>(MaxElemente)
 Object.<span class="func">SetCapacity</span>(Key, Bytegröße)
 </pre>
-<table class="info">
-  <tr><td style="width:15%">MaxElemente</td><td>Die maximale Anzahl an Key-Value-Paaren, die das Objekt beinhalten soll, bevor es automatisch erweitert werden muss. Ist dieser Parameter kleiner als die aktuelle Anzahl an Key-Value-Paaren, wird stattdessen dieser Wert verwendet und ungenutzter Speicher freigegeben.</td></tr>
-  <tr><td>Key</td><td>Beliebiger gültiger Key.</td></tr>
-  <tr><td>Bytegröße</td><td>Die neue Größe in Bytes für den Zeichenketten-Zwischenspeicher des Feldes, ohne den 0-Terminator. Wenn das Feld nicht vorhanden ist, wird es erstellt. Ist <i>Bytegröße</i> eine 0, wird der Zwischenspeicher freigegeben, aber das leere Feld nicht entfernt. Ist <i>Bytegröße</i> kleiner als die aktuelle Größe, werden überschüssige Daten gekürzt; ansonsten werden alle vorhandenen Daten beibehalten.</td></tr>
-  <tr><td><b>Rückgabe</b></td><td>Bei Erfolg die neue Kapazität, ansonsten eine leere Zeichenkette.</td></tr>
-</table></div>
+<dl>
+	<dt>MaxElemente</dt>
+	<dd><p>Die maximale Anzahl an Key-Value-Paaren, die das Objekt beinhalten soll, bevor es automatisch erweitert werden muss. Ist dieser Parameter kleiner als die aktuelle Anzahl an Key-Value-Paaren, wird stattdessen dieser Wert verwendet und ungenutzter Speicher freigegeben.</p></dd>
+	<dt>Key</dt>
+	<dd><p>Beliebiger gültiger Key.</p></dd>
+	<dt>Bytegröße</dt>
+	<dd><p>Die neue Größe in Bytes für den Zeichenketten-Zwischenspeicher des Feldes, ohne den 0-Terminator. Wenn das Feld nicht vorhanden ist, wird es erstellt. Ist <i>Bytegröße</i> eine 0, wird der Zwischenspeicher freigegeben, aber das leere Feld nicht entfernt. Ist <i>Bytegröße</i> kleiner als die aktuelle Größe, werden überschüssige Daten gekürzt; ansonsten werden alle vorhandenen Daten beibehalten.</p></dd>
+	<dt><strong>Rückgabe</strong></dt>
+	<dd><p>Bei Erfolg die neue Kapazität, ansonsten eine leere Zeichenkette.</p></dd>
+</dl>
+</div>
 
 <div class="methodShort" id="GetCapacity"><h2>GetCapacity <span class="ver">[AHK_L 31+]</span></h2>
 <pre class="Syntax">
@@ -199,11 +225,45 @@ Bytegröße := Object.<span class="func">GetCapacity</span>(Key)
 <pre class="Syntax">Klon := Object.<span class="func">Clone</span>()</pre>
 <p>Gibt eine flache Kopie des Objekts zurück.</p></div>
 
+<div class="methodShort" id="Base"><h2>Base</h2>
+<p>Ermittelt oder setzt das <a href="../Objects.htm#Custom_Objects">Base-Objekt</a> des Objekts.</p>
+<pre class="Syntax">BaseObject := Object.Base</pre>
+<pre class="Syntax">Object.Base := BaseObject</pre>
+<p><em>BaseObject</em> muss ein Objekt oder eine leere Zeichenkette sein.</p>
+<p>Eigenschaften und Methoden, die via Base-Objekt definiert werden, sind nur zugänglich, während dieses Base-Objekt in Gebrauch ist. Ändert man also <em>Object</em>'s base, würde man gleichzeitig auch die Auswahl an verfügbaren Eigenschaften und Methoden ändern.</p>
+<p>Siehe auch: <a href="#GetBase">ObjGetBase</a>, <a href="#SetBase">ObjSetBase</a></p>
+</div>
+
+<div class="methodShort" id="RawGet"><h2>ObjRawGet <span class="ver">[v1.1.29+]</span></h2>
+<p>Ermittelt den Wert, der einem bestimmten Key innerhalb von <em>Object</em> zugeordnet ist.</p>
+<pre class="Syntax">Value := <span class="func">ObjRawGet</span>(Object, Key)</pre>
+<p>Wenn <em>Object</em> den <em>Key</em> nicht enthält, ist der Rückgabewert eine leere Zeichenkette. Es werden keine <a href="../Objects.htm#Meta_Functions">Meta-Funktionen</a> oder <a href="../Objects.htm#Custom_Classes_property">Eigenschaftsfunktionen</a> aufgerufen. Die Inhalte der Base-Objekte von <em>Object</em> werden nicht berücksichtigt. Da <a href="#Base">base</a> selbst <a href="../Objects.htm#base-key">standardmäßig</a> kein Key-Value-Paar sondern eine Eigenschaft ist, wird es normalerweise nicht zurückgegeben.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn <em>Object</em> vom falschen Typ ist.</p>
+</div>
+
 <div class="methodShort" id="RawSet"><h2>ObjRawSet</h2>
 <p>Speichert oder überschreibt einen Key-Value-Paar im Objekt.</p>
 <pre class="Syntax"><span class="func">ObjRawSet</span>(Object, Key, Value)</pre>
-<p>Diese Funktion wurde bereitgestellt, um den Skripten die Möglichkeit zu bieten, die __Set-<a href="../Objects.htm#Meta_Functions">Meta-Funktion</a> zu umgehen. Falls dies nicht notwendig ist, sollte stattdessen eine normale Zuweisung verwendet werden. Zum Beispiel: <code>Object[Key] := Value</code></p>
-<p>Da der Zweck darin besteht, Meta-Funktionen zu umgehen, ist dies nur eine Funktion, keine Methode. Das Aufrufen einer internen Methode ruft generell auch die __Call-Meta-Funktion auf.</p></div>
+<p>Diese Funktion wurde bereitgestellt, um den Skripten die Möglichkeit zu bieten, die __Set-<a href="../Objects.htm#Meta_Functions">Meta-Funktion</a> und <a href="../Objects.htm#Custom_Classes_property">Eigenschaften</a> zu umgehen. Falls dies nicht notwendig ist, sollte stattdessen eine normale Zuweisung verwendet werden. Zum Beispiel: <code>Object[Key] := Value</code></p>
+<p>Da der Zweck darin besteht, Meta-Funktionen zu umgehen, ist dies nur eine Funktion, keine Methode. Das Aufrufen einer internen Methode ruft generell auch die __Call-Meta-Funktion auf.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn <em>Object</em> vom falschen Typ ist.</p>
+</div>
+
+<div class="methodShort" id="GetBase"><h2>ObjGetBase <span class="ver">[v1.1.29+]</span></h2>
+<p>Gibt das <a href="../Objects.htm#Custom_Objects">Base-Objekt</a> des Objekts zurück.</p>
+<pre class="Syntax">BaseObject := <span class="func">ObjGetBase</span>(Object)</pre>
+<p>Es werden keine <a href="../Objects.htm#Meta_Functions">Meta-Funktionen</a> aufgerufen. Das base des Objekts wird auch dann zurückgegeben, wenn der Key "base" in das Objekt gespeichert worden ist (z. B. mit <a href="#RawSet">ObjRawSet</a> oder <a href="#SetCapacity">SetCapacity</a>). Es wird eine leere Zeichenkette zurückgegeben, wenn das Objekt kein base hat.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn <em>Object</em> vom falschen Typ ist.</p>
+<p>Siehe auch: <a href="#Base">Base-Eigenschaft</a></p>
+</div>
+
+<div class="methodShort" id="SetBase"><h2>ObjSetBase <span class="ver">[v1.1.29+]</span></h2>
+<p>Setzt das <a href="../Objects.htm#Custom_Objects">Base-Objekt</a> des Objekts.</p>
+<pre class="Syntax"><span class="func">ObjSetBase</span>(Object, BaseObject)</pre>
+<p>Es werden keine <a href="../Objects.htm#Meta_Functions">Meta-Funktionen</a> aufgerufen. Das base des Objekts wird auch dann gesetzt, wenn der Key "base" in das Objekt gespeichert worden ist (z. B. mit <a href="#RawSet">ObjRawSet</a> oder <a href="#SetCapacity">SetCapacity</a>). Es wird eine leere Zeichenkette zurückgegeben, wenn das Objekt kein base hat.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn <em>Object</em> vom falschen Typ ist oder wenn <em>BaseObject</em> kein Objekt oder eine leere Zeichenkette ist.</p>
+<p>Siehe auch: <a href="#Base">Base-Eigenschaft</a></p>
+</div>
 
 <div class="methodShort" id="Insert"><h2>Insert <span class="ver">[AHK_L 31+]</span></h2>
 <div class="warning"><strong>Veraltet:</strong> Insert ist nicht bei neuen Skripten empfohlen. Verwenden Sie stattdessen <a href="#InsertAt">InsertAt</a>, <a href="#Push">Push</a>, <a href="#RawSet">ObjRawSet</a> oder eine einfache Zuweisung.</div>

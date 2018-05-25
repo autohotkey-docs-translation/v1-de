@@ -5,9 +5,9 @@ translateData = {
   "Type in the keyword to find:":"Zu suchendes Schlüsselwort:",
   "Search":"Suchen",
   "Type in the word(s) to search for:":"Suchbegriff(e) eintragen:",
+  "Highlight the words":"Suchwörter hervorheben",
   // Oberleiste
   "Hide/Show sidebar":"Sidebar verstecken/anzeigen",
-  "Open Settings":"Einstellungen öffnen",
   "Home page":"Homepage",
   "en":"de",
   "Change language":"Sprache wechseln",
@@ -19,6 +19,8 @@ translateData = {
   "Go forward":"Eine Seite vor",
   "Change font size":"Schriftgröße ändern",
   "Print current document":"Aktuelle Seite drucken",
+  "Open Settings":"Einstellungen öffnen",
+  "Change to dark/light theme":"Zum dunklen/hellen Farbschema wechseln",
   // ALT+... Tastenkürzel (muss in Großbuchstaben sein)
   "C":"I",
   "N":true,
