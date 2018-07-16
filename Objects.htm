@@ -42,7 +42,7 @@ ul.list_of_p li { margin: 1em 0; }
 <h2>Inhaltsverzeichnis</h2>
 <ul>
   <li><a href="#Usage">Grundlagen</a> - <a href="#Usage_Simple_Arrays">Einfache Arrays</a>, <a href="#Usage_Associative_Arrays">Assoziative Arrays</a>, <a href="#Usage_Objects">Objekte</a>, <a href="#Usage_Freeing_Objects">Freigeben von Objekten</a>, <a href="#Usage_Remarks">Bemerkungen</a></li>
-  <li><a href="#Extended_Usage">Erweiterte Grundlagen</a> - <a href="#Function_References">Funktionsverweise</a>, <a href="#Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</a>, <a href="#Usage_Arrays_of_Functions">Arrays mit Funktionen</a></li>
+  <li><a href="#Extended_Usage">Erweiterte Grundlagen</a> - <a href="#Function_References">Funktionsreferenzen</a>, <a href="#Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</a>, <a href="#Usage_Arrays_of_Functions">Arrays mit Funktionen</a></li>
   <li><a href="#Custom_Objects">Benutzerdefinierte Objekte</a> - <a href="#Custom_Prototypes">Prototypen</a>, <a href="#Custom_Classes">Klassen</a>, <a href="#Custom_NewDelete">Konstruktion und Destruktion</a>, <a href="#Meta_Functions">Meta-Funktionen</a></li>
   <li><a href="#Default_Base_Object">Standard-Base-Objekt</a> - <a href="#Automatic_Var_Init">Automatische Variableninitialisierung</a>, <a href="#Pseudo_Properties">Pseudo-Eigenschaften</a>, <a href="#Default__Warn">Debugging</a></li>
   <li><a href="#Implementation">Implementierung</a> - <a href="#Reference_Counting">Referenzzählung</a>, <a href="#Implementation_Pointers">Objekt-Pointer</a></li>
@@ -115,14 +115,14 @@ Objekt.Eigenschaft[Parameter] := Wert</pre>
 <ul><li>Zurzeit wird <code><span class="dull">x</span>.y[z]<span class="dull">()</span></code> als <code><span class="dull">x</span>["y", z]<span class="dull">()</span></code> behandelt, aber nicht unterstützt. Als Übergangslösung kann <code><span class="red">(</span><span class="dull">x.y</span><span class="red">)</span>[z]()</code> benutzen werden, um <code>x.y</code> zuerst auswerten zu lassen und dann das Ergebnis als Ziel des Methodenaufrufs zu verwenden. Beachten Sie, dass <code>x.y[z].Call()</code> diese Einschränkung nicht hat, weil es genauso wie <code>(x.y[z]).Call()</code> ausgewertet wird.</li></ul>
 
 <h3 id="Usage_Freeing_Objects">Freigeben von Objekten</h3>
-<p>Skripte geben Objekte nicht explizit frei. Sobald der letzte Verweis auf ein Objekt freigegeben ist, wird das Objekt automatisch freigegeben. Ein Verweis, der in einer Variable gespeichert ist, wird automatisch freigegeben, wenn diese Variable irgendeinen anderen Wert zugewiesen bekommt. Zum Beispiel:</p>
+<p>Skripte geben Objekte nicht explizit frei. Sobald die letzte Referenz zu einem Objekt freigegeben ist, wird das Objekt automatisch freigegeben. Eine Referenz, die in einer Variable gespeichert ist, wird automatisch freigegeben, wenn diese Variable irgendeinen anderen Wert zugewiesen bekommt. Zum Beispiel:</p>
 <pre>obj := {}  <em>; Erstellt ein Objekt.</em>
-obj := ""  <em>; Gibt den letzten Verweis frei, wodurch das Objekt freigegeben wird.</em></pre>
-<p>Außerdem wird ein Verweis, der in einem Feld eines anderen Objekts gespeichert ist, freigegeben, wenn dieses Feld irgendeinen anderen Wert zugewiesen bekommt oder aus dem Objekt entfernt wird. Dies gilt auch für Arrays, weil sie quasi das gleiche wie Objekte sind.</p>
+obj := ""  <em>; Gibt die letzte Referenz frei, wodurch das Objekt freigegeben wird.</em></pre>
+<p>Außerdem wird eine Referenz, die in einem Feld eines anderen Objekts gespeichert ist, freigegeben, wenn dieses Feld irgendeinen anderen Wert zugewiesen bekommt oder aus dem Objekt entfernt wird. Dies gilt auch für Arrays, weil sie quasi das gleiche wie Objekte sind.</p>
 <pre>arr := [{}]  <em>; Erstellt ein Array, das ein Objekt enthält.</em>
 arr[1] := {}  <em>; Erstellt ein zweites Objekt, wodurch das erste Objekt indirekt freigegeben wird.</em>
 arr.RemoveAt(1)  <em>; Entfernt und gibt das zweite Objekt frei.</em></pre>
-<p id="Circular_References">Da alle Verweise auf ein Objekt freigegeben werden müssen, bevor das Objekt freigegeben werden kann, können Objekte mit Zirkelbezügen nicht automatisch freigegeben werden. Wenn beispielsweise <code>x.child</code> auf <code>y</code> verweist und <code>y.parent</code> auf <code>x</code> verweist, würde es nicht genügen, <code>x</code> und <code>y</code> zu leeren, weil das Parent-Objekt noch einen Verweis auf das Child-Objekt enthält, und umgekehrt. Um diese Situation in den Griff zu bekommen, entfernt man den Zirkelbezug.</p>
+<p id="Circular_References">Da alle Referenzen zu einem Objekt freigegeben werden müssen, bevor das Objekt freigegeben werden kann, können Objekte mit Zirkelbezügen nicht automatisch freigegeben werden. Wenn beispielsweise <code>x.child</code> auf <code>y</code> verweist und <code>y.parent</code> auf <code>x</code> verweist, würde es nicht genügen, <code>x</code> und <code>y</code> zu leeren, weil das Parent-Objekt noch eine Referenz zum Child-Objekt enthält, und umgekehrt. Um diese Situation in den Griff zu bekommen, entfernt man den Zirkelbezug.</p>
 <pre>
 x := {}, y := {}             <em>; Erstellt zwei Objekte.</em>
 x.child := y, y.parent := x  <em>; Erstellt ein Zirkelbezug.</em>
@@ -136,11 +136,11 @@ x := "", y := ""             <em>; Wenn die Zeile darüber fehlen würde, könnt
 
 <h4>Syntax</h4>
 <p>Alle Objekttypen unterstützen sowohl die Arraysyntax (eckige Klammern) als auch die Objektsyntax (Punkte).</p>
-<p>Darüber hinaus können Objektverweise selbst auch in Ausdrücken verwendet werden:</p>
+<p>Darüber hinaus können Objektreferenzen selbst auch in Ausdrücken verwendet werden:</p>
 <ul>
-  <li>Ein Objektverweis und irgendein anderer Wert, die via <code>= == != &lt;&gt;</code> verglichen werden, werden nur als gleich angesehen, wenn beide Werte auf dasselbe Objekt verweisen.</li>
+  <li>Eine Objektreferenz und irgendein anderer Wert, die via <code>= == != &lt;&gt;</code> verglichen werden, werden nur als gleich angesehen, wenn beide Werte auf dasselbe Objekt verweisen.</li>
   <li>Bei Anweisungen wie <code>if obj</code>, <code>!obj</code> oder <code>obj ? x : y</code> ist der logische Wert eines Objekts immer <i>True</i>.</li>
-  <li>Eine Objektadresse kann mithilfe des <code>&amp;</code>-Operators abgerufen werden. So eine Adresse identifiziert eindeutig das Objekt - von seiner Erstellung bis zur letzten <a href="#Refs">Freigabe</a> seines Verweises.</li>
+  <li>Eine Objektadresse kann mithilfe des <code>&amp;</code>-Operators abgerufen werden. So eine Adresse identifiziert eindeutig das Objekt - von seiner Erstellung bis zur letzten <a href="#Refs">Freigabe</a> seiner Referenz.</li>
 </ul>
 <p>Ein Objekt wird als leere Zeichenkette behandelt, wenn es in einem Kontext verwendet wird, wo ein Objekt nicht erwartet wird. Zum Beispiel würde <code>MsgBox %objekt%</code> eine leere MsgBox anzeigen und <code>objekt + 1</code> eine leere Zeichenkette zurückgeben. Verlassen Sie sich nicht auf dieses Verhalten, weil es noch geändert werden könnte.</p>
 <p>Wenn unmittelbar nach einem Methodenaufruf ein Zuweisungsoperator erfolgt, werden die runden Klammern als eckige Klammern behandelt, demzufolge wäre dies das gleiche wie, als würde man Parameter für eine Eigenschaft setzen. Zum Beispiel sind die folgenden Zeilen funktionsgemäß identisch:</p>
@@ -161,16 +161,16 @@ obj.item[x] := y</pre>
 </ul>
 
 <h2 id="Extended_Usage">Erweiterte Grundlagen</h2>
-<h3 id="Function_References">Funktionsverweise <span class="ver">[v1.1.00+]</span></h3>
-<p>Wenn die folgende Variable <i>funk</i> den Namen einer Funktion enthält, kann die Funktion wie folgt aufgerufen werden: <code>%funk%()</code> oder <code>funk.()</code>. Allerdings ist dies ineffizient, weil jedes Mal, wenn die Funktion aufgerufen wird, der Funktionsname aufgelöst werden muss. Um die Performance zu verbessern, kann der Verweis dieser Funktion in eine Variable gespeichert und später wiederverwendet werden:</p>
+<h3 id="Function_References">Funktionsreferenzen <span class="ver">[v1.1.00+]</span></h3>
+<p>Wenn die folgende Variable <i>funk</i> den Namen einer Funktion enthält, kann die Funktion wie folgt aufgerufen werden: <code>%funk%()</code> oder <code>funk.()</code>. Allerdings ist dies ineffizient, weil jedes Mal, wenn die Funktion aufgerufen wird, der Funktionsname aufgelöst werden muss. Um die Performance zu verbessern, kann eine Referenz zu der Funktion in eine Variable gespeichert und später wiederverwendet werden:</p>
 <pre>Funk := Func("MeineFunk")</pre>
-<p>Mit der folgenden Syntax kann eine Funktion via Verweis aufgerufen werden:</p>
+<p>Mit der folgenden Syntax kann eine Funktion via Referenz aufgerufen werden:</p>
 <pre>
 RückWert := %Funk%(<i>Parameter</i>)     <em>; Benötigt <span class="ver">[v1.1.07+]</span></em>
 RückWert := Funk.Call(<i>Parameter</i>)  <em>; Benötigt <span class="ver">[v1.1.19+]</span></em>
 RückWert := Funk.(<i>Parameter</i>)      <em>; Nicht empfohlen</em>
 </pre>
-<p>Weitere Eigenschaften von Funktionsverweisen finden Sie unter <a href="objects/Func.htm">Func-Objekt</a>.</p>
+<p>Weitere Eigenschaften von Funktionsreferenzen finden Sie unter <a href="objects/Func.htm">Func-Objekt</a>.</p>
 
 <span id="JaggedArrays"></span><h3 id="Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</h3>
 <p>AutoHotkey unterstützt "mehrdimensionale" Arrays, indem Arrays in andere Arrays gespeichert werden. Zum Beispiel repräsentieren die Reihen einer Tabelle die Felder eines Arrays, während die Felder selbst die Spalten der jeweiligen Reihe in Form eines Arrays enthalten. In diesem Fall kann der Inhalt der Spalte <code>y</code> von der Reihe <code>x</code> mit einer der folgenden Methoden gesetzt werden:</p>
@@ -195,7 +195,7 @@ Tabelle.base.__Set(Tabelle, x, y, Inhalt)     <em>; B</em></pre>
 <p>Dieses Verhalten gilt nur für via Skript erstellte Objekte, nicht für spezielle Objekttypen wie COM-Objekte oder COM-Arrays.</p>
 
 <span id="FuncArrays"></span><h3 id="Usage_Arrays_of_Functions">Arrays mit Funktionen</h3>
-<p>Ein Array mit Funktionen ist im Prinzip ein Array, das Funktionsnamen oder Verweise enthält. Zum Beispiel:</p>
+<p>Ein Array mit Funktionen ist im Prinzip ein Array, das Funktionsnamen oder -referenzen enthält. Zum Beispiel:</p>
 <pre>array := [Func("ErsteFunk"), Func("ZweiteFunk")]
 
 <em>; Rufe jede Funktion auf und übergebe "foo" als Parameter:</em>
@@ -212,7 +212,7 @@ ErsteFunk(Parameter) {
 ZweiteFunk(Parameter) {
     MsgBox % A_ThisFunc ": " (IsObject(Parameter) ? "Objekt" : Parameter)
 }</pre>
-<p>Aus Gründen der Abwärtskompatibilität wird die zweite Form das <i>array</i> nicht als Parameter übergeben, wenn <code>array[A_Index]</code> einen Funktionsnamen anstelle eines Funktionsverweises enthält. Wenn aber <code>array[A_Index]</code> von <code>array.base[A_Index]</code> <a href="#Custom_Objects">geerbt</a> wurde, wird das <i>array</i> als Parameter übergeben.</p>
+<p>Aus Gründen der Abwärtskompatibilität wird die zweite Form das <i>array</i> nicht als Parameter übergeben, wenn <code>array[A_Index]</code> einen Funktionsnamen anstelle einer Funktionsreferenz enthält. Wenn aber <code>array[A_Index]</code> von <code>array.base[A_Index]</code> <a href="#Custom_Objects">geerbt</a> wurde, wird das <i>array</i> als Parameter übergeben.</p>
 
 <h2 id="Custom_Objects">Benutzerdefinierte Objekte</h2>
 <p>Objekte, die das Skript erstellt hat, müssen nicht zwingend eine vordefinierte Struktur haben. Stattdessen kann jedes Objekt Eigenschaften und Methoden von seinem <code>base</code>-Objekt (auch bekannt als "Prototyp" oder "Klasse") erben. Einem Objekt können jederzeit Eigenschaften und Methoden hinzugefügt (oder entfernt) werden; solche Änderungen haben auf alle abgeleiteten Objekte eine Auswirkung. Für komplexere oder speziellere Situationen kann ein Base-Objekt mithilfe von <a href="#Meta_Functions"><i>Meta-Funktionen</i></a> das Standardverhalten von jedem abgeleiteten Objekt überschreiben.</p>
@@ -235,7 +235,7 @@ MsgBox % obj1.foo " " obj2.foo " " obj3.foo</pre>
 obj := {}
 <em>; Speichert einen Wert.</em>
 obj.foo := "bar"
-<em>; Erstellt eine Methode durch Speichern eines Funktionsverweises.</em>
+<em>; Erstellt eine Methode durch Speichern einer Funktionsreferenz.</em>
 obj.test := Func("obj_test")
 <em>; Ruft die Methode auf.</em>
 obj.test()
@@ -243,12 +243,12 @@ obj.test()
 obj_test(this) {
     MsgBox % this.foo
 }</pre>
-<p>Sobald <code>obj.test()</code> aufgerufen wird, wird <i>obj</i> automatisch an den Anfang der Parameterliste gesetzt. Für die Abwärtskompatibilität wird das aber nicht passieren, wenn eine Funktion direkt per Name (statt per Verweis) in das Objekt gespeichert wird (statt von einem Base-Objekt geerbt zu werden). Standardmäßig wird der Name der Funktion aus folgenden Komponenten gebildet: der "Typ" des Objekts und der Name der Methode.</p>
+<p>Sobald <code>obj.test()</code> aufgerufen wird, wird <i>obj</i> automatisch an den Anfang der Parameterliste gesetzt. Für die Abwärtskompatibilität wird das aber nicht passieren, wenn eine Funktion direkt per Name (statt per Referenz) in das Objekt gespeichert wird (statt von einem Base-Objekt geerbt zu werden). Standardmäßig wird der Name der Funktion aus folgenden Komponenten gebildet: der "Typ" des Objekts und der Name der Methode.</p>
 <p>Ein Objekt ist ein <i>Prototyp</i> oder <i>base</i>, wenn es von einem anderen Objekt abgeleitet wird:</p>
 <pre>anderesObj := {}
 anderesObj.base := obj
 anderesObj.test()</pre>
-<p>In diesem Fall erbt <i>anderesObj</i> das <i>foo</i> und <i>test</i> von <i>obj</i>. Diese Vererbung ist dynamisch - das heißt, wenn <code>obj.foo</code> modifiziert wird, wird <code>anderesObj.foo</code> diese Änderung widerspiegeln. Wenn das Skript <code>anderesObj.foo</code> einen Wert zuweist, wird dieser Wert in <i>anderesObj</i> gespeichert; weitere Änderungen an <code>obj.foo</code> hätten keinen Einfluss auf <code>anderesObj.foo</code>. Sobald <code>anderesObj.test()</code> aufgerufen wird, enthält ihr <i>this</i>-Parameter einen Verweis auf <i>anderesObj</i> statt auf <i>obj</i>.
+<p>In diesem Fall erbt <i>anderesObj</i> das <i>foo</i> und <i>test</i> von <i>obj</i>. Diese Vererbung ist dynamisch - das heißt, wenn <code>obj.foo</code> modifiziert wird, wird <code>anderesObj.foo</code> diese Änderung widerspiegeln. Wenn das Skript <code>anderesObj.foo</code> einen Wert zuweist, wird dieser Wert in <i>anderesObj</i> gespeichert; weitere Änderungen an <code>obj.foo</code> hätten keinen Einfluss auf <code>anderesObj.foo</code>. Sobald <code>anderesObj.test()</code> aufgerufen wird, enthält ihr <i>this</i>-Parameter eine Referenz zu <i>anderesObj</i> statt zu <i>obj</i>.
 </p>
 
 <h3 id="Custom_Classes">Klassen <span class="ver">[v1.1.00+]</span></h3>
@@ -287,14 +287,14 @@ anderesObj.test()</pre>
 <h4 id="Custom_Classes_var">Instanzvariablen <span class="ver">[v1.1.01+]</span></h4>
 <p>Eine <em>Instanzvariable</em> ist eine Variable, von der jede Instanz der Klasse (also jedes Objekt, das von der Klasse abgeleitet wurde) eine eigene Kopie hat. Sie werden wie normale Zuweisungen deklariert, ohne dass das Präfix <code>this.</code> angegeben werden muss (dies gilt nur in der Klassendefinition):</p>
 <pre>InstanzVar := Ausdruck</pre>
-<p>Solche Deklarationen werden jedes Mal ausgewertet, wenn eine neue Instanz der Klasse mit dem <a href="#Custom_NewDelete">new</a>-Schlüsselwort erstellt wird. Für diesen Zweck ist der Methodenname <code>__Init</code> reserviert und sollte daher nicht vom Skript verwendet werden. Die <a href="#Custom_NewDelete">__New()</a>-Methode wird aufgerufen, sobald alle Deklarationen dieser Art (auch solche, die in base-Klassen definiert wurden) ausgewertet worden sind. <em>Ausdruck</em> kann mit <code>this</code> auf andere Instanzvariablen und Methoden zugreifen, aber alle anderen Variablenverweise werden als global angesehen.</p>
+<p>Solche Deklarationen werden jedes Mal ausgewertet, wenn eine neue Instanz der Klasse mit dem <a href="#Custom_NewDelete">new</a>-Schlüsselwort erstellt wird. Für diesen Zweck ist der Methodenname <code>__Init</code> reserviert und sollte daher nicht vom Skript verwendet werden. Die <a href="#Custom_NewDelete">__New()</a>-Methode wird aufgerufen, sobald alle Deklarationen dieser Art (auch solche, die in base-Klassen definiert wurden) ausgewertet worden sind. <em>Ausdruck</em> kann mit <code>this</code> auf andere Instanzvariablen und Methoden zugreifen, aber alle anderen Variablenreferenzen werden als global angesehen.</p>
 <p>Um auf eine Instanzvariable zugreifen zu können (sogar innerhalb einer Methode), gibt man immer das Zielobjekt an; zum Beispiel <code><b>this</b>.InstanzVar</code>.</p>
 <p><span class="ver">[v1.1.08+]:</span> Deklarationen wie <code>x.y := z</code> werden auch unterstützt, sofern <code>x</code> zuvor in dieser Klasse deklariert wurde. <code>x := {}, x.y := 42</code> würde beispielsweise <code>x</code>  deklarieren und außerdem <code>this.x.y</code> initialisieren.</p>
 
 <h4 id="Custom_Classes_staticvar">Statische bzw. Klassenvariablen <span class="ver">[v1.1.00.01+]</span></h4>
 <p>Statische bzw. Klassenvariablen gehören nur der Klasse selbst, die aber von abgeleiteten Objekten (einschließlich Unterklassen) geerbt werden können. Solche Variablen müssen mit dem Schlüsselwort "static" deklariert werden:</p>
 <pre>static KlassenVar := Ausdruck</pre>
-<p>Statische Deklarationen werden nur einmal ausgewertet - bevor der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> erfolgt, und in der Reihenfolge, wie sie im Skript vorkommen. Jede Deklaration speichert einen Wert in das Klassenobjekt. Jeder Variablenverweis in <i>Ausdruck</i> wird als global angesehen.</p>
+<p>Statische Deklarationen werden nur einmal ausgewertet - bevor der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> erfolgt, und in der Reihenfolge, wie sie im Skript vorkommen. Jede Deklaration speichert einen Wert in das Klassenobjekt. Alle Variablenreferenzen in <i>Ausdruck</i> werden als global angesehen.</p>
 <p>Um einer Klassenvariable etwas zuweisen zu können, gibt man immer das Klassenobjekt an; zum Beispiel <code><b>Klassenname</b>.KlassenVar := Wert</code>. Wenn ein Objekt <em>x</em> von <em>Klassenname</em> abgeleitet wurde und wenn <em>x</em> selbst nicht den Key "KlassenVar" enthält, kann mit <code>x.KlassenVar</code> zudem der Wert von <code>Klassenname.KlassenVar</code> dynamisch abgerufen werden. Allerdings würde <code>x.KlassenVar := y</code> den Wert nicht in <em>Klassenname</em>, sondern in <em>x</em> speichern.</p>
 <p><span class="ver">[v1.1.08+]:</span> Deklarationen wie <code>static x.y := z</code> werden auch unterstützt, sofern <code>x</code> zuvor in dieser Klasse deklariert wurde. <code>static x := {}, x.y := 42</code> würde beispielsweise <code>x</code> deklarieren und außerdem <code><i>Klassenname</i>.x.y</code> initialisieren.</p>
 
@@ -308,7 +308,7 @@ class VerschachtelteKlasse
 </pre>
 
 <h4 id="Custom_Classes_method">Methoden</h4>
-<p>Methodendefinitionen sehen genauso aus wie Funktionsdefinitionen. Jede Methode hat einen versteckten Parameter namens <code>this</code>, der üblicherweise einen Verweis auf ein von der Klasse abgeleitetes Objekt enthält. Allerdings kann dieser Parameter auch einen Verweis auf die Klasse selbst oder auf eine abgeleitete Klasse enthalten, je nachdem, wie die Methode aufgerufen wurde. Methoden werden <a href="#Function_References">per Verweis</a> in das Klassenobjekt gespeichert.</p>
+<p>Methodendefinitionen sehen genauso aus wie Funktionsdefinitionen. Jede Methode hat einen versteckten Parameter namens <code>this</code>, der üblicherweise eine Referenz zu einem Objekt enthält, das von der Klasse abgeleitet wurde. Allerdings kann dieser Parameter auch eine Referenz zu der Klasse selbst oder zu einer abgeleiteten Klasse enthalten, je nachdem, wie die Methode aufgerufen wurde. Methoden werden <a href="#Function_References">per Referenz</a> in das Klassenobjekt gespeichert.</p>
 <pre>
 Methode()
 {
@@ -597,30 +597,30 @@ Default__Warn(nonobj, p1="", p2="", p3="", p4="")
 <h2 id="Implementation">Implementierung</h2>
 <span id="Refs"></span><h3 id="Reference_Counting">Referenzzählung</h3>
 <p>AutoHotkey verwendet einen einfachen Referenzzählungsmechanismus, um automatisch Ressourcen freizugeben, falls ein Objekt nicht länger in einem Skript benötigt bzw. verwiesen wird. Skript-Autoren sollten diesen Mechanismus nicht explizit aufrufen, es sei denn, sie müssen sich direkt mit unverwalteten <a href="#Implementation_Pointers">Objekt-Pointern</a> befassen.</p>
-<p>In AutoHotkey v1.1 werden temporäre Verweise, die innerhalb eines Ausdrucks erstellt (aber nirgendwo gespeichert) werden, direkt nach ihrer Verwendung freigegeben. Zum Beispiel würde <code>Fn(&amp;{})</code> eine ungültige Adresse an die Funktion übergeben, weil der temporäre Verweis, zurückgegeben von <code>{}</code>, direkt nach dem Auswerten des <a href="Variables.htm#amp">Adresse-von</a>-Operators freigegeben wird.</p>
-<p>Um eine Aktion nach Freigabe des letzten Objektverweises durchzuführen, implementiert man die <a href="#Custom_NewDelete">__Delete</a>-Meta-Funktion.</p>
+<p>In AutoHotkey v1.1 werden temporäre Referenzen, die innerhalb eines Ausdrucks erstellt (aber nirgendwo gespeichert) werden, direkt nach ihrer Verwendung freigegeben. Zum Beispiel würde <code>Fn(&amp;{})</code> eine ungültige Adresse an die Funktion übergeben, weil die temporäre Referenz, zurückgegeben von <code>{}</code>, direkt nach dem Auswerten des <a href="Variables.htm#amp">Adresse-von</a>-Operators freigegeben wird.</p>
+<p>Um eine Aktion nach Freigabe der letzten Referenz zu einem Objekt durchzuführen, implementiert man die <a href="#Custom_NewDelete">__Delete</a>-Meta-Funktion.</p>
 <p><b>Bekannte Einschränkungen:</b></p>
 <ul>
   <li>Zirkelbezüge müssen unterbrochen werden, bevor ein Objekt freigegeben werden kann. Siehe <a href="#Circular_References">Freigeben von Objekten</a>, um anhand eines Beispiels mehr darüber zu erfahren.</li>
-  <li>Im Gegensatz zu Verweisen in statischen und globalen Variablen werden Verweise in nicht-statischen lokalen Variablen oder im Ausdrucksauswertungsstapel nicht automatisch freigegeben, sobald das Programm beendet wird. Solche Verweise werden nur freigegeben, wenn die Funktion oder der Ausdruck regulär beendet werden kann.</li>
+  <li>Im Gegensatz zu Referenzen in statischen und globalen Variablen werden Referenzen in nicht-statischen lokalen Variablen oder im Ausdrucksauswertungsstapel nicht automatisch freigegeben, sobald das Programm beendet wird. Solche Referenzen werden nur freigegeben, wenn die Funktion oder der Ausdruck regulär beendet werden kann.</li>
 </ul>
-<p>Obwohl das Betriebssystem den vom Objekt benutzten Speicher zurückfordert, sobald das Programm beendet wird, kann <a href="#Custom_NewDelete">__Delete</a> erst aufgerufen werden, wenn alle Verweise auf das Objekt freigegeben worden sind. Das kann wichtig sein, wenn andere Ressourcen freigegeben werden, die nicht automatisch vom Betriebssystem zurückgefordert werden, wie zum Beispiel temporäre Dateien.</p>
+<p>Obwohl das Betriebssystem den vom Objekt benutzten Speicher zurückfordert, sobald das Programm beendet wird, kann <a href="#Custom_NewDelete">__Delete</a> erst aufgerufen werden, wenn alle Referenzen zum Objekt freigegeben worden sind. Das kann wichtig sein, wenn andere Ressourcen freigegeben werden, die nicht automatisch vom Betriebssystem zurückgefordert werden, wie zum Beispiel temporäre Dateien.</p>
 
 <span id="AddressCast"></span><h3 id="Implementation_Pointers">Objekt-Pointer</h3>
-<p>In einigen seltenen Fällen ist es eventuell erforderlich, dass ein Objekt via DllCall an einen externen Code übergeben werden muss, oder dass ein Objekt in eine binäre Datenstruktur gespeichert werden muss, damit es später abgerufen werden kann. Die Adresse eines Objekts kann via <code>Adresse := &amp;Objekt</code> abgerufen werden; dies würde allerdings effektiv zwei Verweise auf das Objekt erzeugen, während das Programm selbst nur den einen Verweis in <em>Objekt</em> kennt. Das Objekt wird gelöscht, sobald der letzte <em>bekannte</em> Verweis auf das Objekt freigegeben wird. Demzufolge muss das Skript das Objekt darüber informieren, dass es einen Verweis erhalten hat. Es gibt zwei Wege, um das zu erreichen:</p>
+<p>In einigen seltenen Fällen ist es eventuell erforderlich, dass ein Objekt via DllCall an einen externen Code übergeben werden muss, oder dass ein Objekt in eine binäre Datenstruktur gespeichert werden muss, damit es später abgerufen werden kann. Die Adresse eines Objekts kann via <code>Adresse := &amp;Objekt</code> abgerufen werden; dies würde allerdings effektiv zwei Referenzen zum Objekt erzeugen, während das Programm selbst nur die eine Referenz in <em>Objekt</em> kennt. Das Objekt wird gelöscht, sobald die letzte <em>bekannte</em> Referenz zum Objekt freigegeben wird. Demzufolge muss das Skript das Objekt darüber informieren, dass es eine Referenz erhalten hat. Es gibt zwei Wege, um das zu erreichen:</p>
 <pre><em>; Methode #1: Referenzzählung explizit erhöhen.</em>
 Adresse := &amp;Objekt
 <a href="commands/ObjAddRef.htm">ObjAddRef</a>(Adresse)
 
 <em>; Methode #2: Object() benutzen, das die Referenzzählung erhöht und eine Adresse zurückgibt.</em>
 Adresse := Object(Objekt)</pre>
-<p>Mit dieser Funktion ist es auch möglich, eine Adresse wieder in ein Verweis zurückzuverwandeln:</p>
+<p>Mit dieser Funktion ist es auch möglich, eine Adresse wieder in eine Referenz zurückzuverwandeln:</p>
 <pre>Objekt := Object(Adresse)</pre>
-<p>In jedem Fall muss das Objekt informiert werden, wenn das Skript mit diesem Verweis fertig ist:</p>
+<p>In jedem Fall muss das Objekt informiert werden, wenn das Skript mit dieser Referenz fertig ist:</p>
 <pre><em>; Verringert die Referenzzählung des Objekts, damit es freigegeben werden kann:</em>
 <a href="commands/ObjAddRef.htm">ObjRelease</a>(Adresse)
 </pre>
-<p>Generell sollte jede neue Kopie einer Objektadresse als separater Objektverweis behandelt werden, demzufolge sollte das Skript ObjAddRef aufrufen, wenn es eine Kopie erhält, und sofort ObjRelease aufrufen, bevor es eine verliert. Zum Beispiel sollte immer ObjAddRef aufgerufen werden, wenn eine Adresse mit so etwas wie <code>x := Adresse</code> kopiert wird. Ebenso sollte das Skript ObjRelease aufrufen, wenn es mit <em>x</em> fertig ist (oder dabei ist den Wert von <em>x</em> zu überschreiben).</p>
+<p>Generell sollte jede neue Kopie einer Objektadresse als separate Referenz zum Objekt behandelt werden, demzufolge sollte das Skript ObjAddRef aufrufen, wenn es eine Kopie erhält, und sofort ObjRelease aufrufen, bevor es eine verliert. Zum Beispiel sollte immer ObjAddRef aufgerufen werden, wenn eine Adresse mit so etwas wie <code>x := Adresse</code> kopiert wird. Ebenso sollte das Skript ObjRelease aufrufen, wenn es mit <em>x</em> fertig ist (oder dabei ist den Wert von <em>x</em> zu überschreiben).</p>
 <p>Beachten Sie, dass die Object()-Funktion sogar auf Objekte angewendet werden kann, die sie selbst nicht erstellt hat, wie z. B. <a href="commands/ComObjCreate.htm">COM-Objekt-Wrapper</a> oder <a href="objects/File.htm">File-Objekte</a>.</p>
 
 </body>
