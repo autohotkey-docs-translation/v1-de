@@ -24,17 +24,17 @@
   <dd>
       <p>Die Art der Warnung, die aktiviert oder deaktiviert werden soll. Fehlt dieser Parameter, gilt standardmäßig <i>All</i>.</p>
       <p id="UseUnset"><strong>UseUnsetLocal</strong> oder <strong>UseUnsetGlobal</strong>: Sie werden gewarnt, wenn eine Variable gelesen wird, die vorher weder einen Wert zugewiesen bekommen hat noch via <a href="VarSetCapacity.htm">VarSetCapacity</a> initialisiert wurde. Wenn die Variable absichtlich leer sein soll, weist man ihr eine leere Zeichenkette zu, um diese Warnung zu unterdrücken.</p>
-      <p>Dieser Warnungstyp wurde für lokale und globale Variablen aufgeteilt, weil globale Variablen aufgrund ihrer persistenten und skriptweiten Art in der Regel nicht initialisiert werden. Dies könnte der Grund sein, warum einige Skriptautoren diese Art der Warnung nur für lokale Variablen aktivieren wollen.</p>
+      <p>Dieser Warnungstyp behandelt lokale und globale Variablen getrennt voneinander, da es eher unüblich ist, globale Variablen wegen ihrer persistenten und skriptweiten Art vorab zu initialisieren. Auf diese Weise wird die Möglichkeit bereitgestellt, diesen Warnungstyp für lokalen Variablen zu aktivieren und für globale Variablen zu deaktivieren.</p>
       <pre>#Warn
 <em>;y := ""  ; Dies würde die Warnung unterdrücken.</em>
 x := y    <em>; y hat keinen Wert zugewiesen bekommen.</em></pre>
-      <p id="UseEnv"><strong>UseEnv</strong>: Sie werden gewarnt, wenn das Skript automatisch eine Umgebungsvariable anstelle einer leeren Skriptvariable nutzt. Das kann passieren, wenn der Name einer Umgebungsvariable zufällig mit dem Namen einer Skriptvariable übereinstimmt. Diese Warnung erscheint, sobald das Skript auf die Variable zugreift, aber nicht, wenn <a href="_NoEnv.htm">#NoEnv</a> im Skript angegeben ist (aus mehreren Gründen empfohlen).</p>
+      <p id="UseEnv"><strong>UseEnv</strong>: Sie werden gewarnt, wenn AutoHotkey automatisch entscheidet, eine Umgebungsvariable statt einer leeren Skriptvariable zu verwenden. Dies tritt manchmal auf, wenn der Name einer Umgebungsvariable zufälligerweise mit dem Namen einer Skriptvariable übereinstimmt. Diese Warnung erscheint, sobald man auf die Variable zugreift, sofern man kein <a href="_NoEnv.htm">#NoEnv</a> im Skript angegeben hat (aus mehreren Gründen empfohlen).</p>
       <pre>#Warn
-<em>;#NoEnv             ; Fügen Sie dies hinzu, wenn "temp" nicht als Umgebungsvariable gedacht ist.</em>
-<em>;EnvGet temp, TEMP  ; Dies würde den Wert der Umgebungsvariable in eine Skriptvariable kopieren.</em>
+<em>;#NoEnv             ; Fügen Sie diese Zeile hinzu, wenn "temp" keine Umgebungsvariable sein soll.</em>
+<em>;EnvGet temp, TEMP  ; Diese Zeile würde den Wert der Umgebungsvariable in eine Skriptvariable kopieren.</em>
 temp := ""          <em>; Trotz dieser Zeile scheint temp immer noch einen Wert zu haben.</em>
-MsgBox % temp       <em>; Dies greift auf die Umgebungsvariable "TEMP" zu.</em></pre>
-      <p id="LocalSameAsGlobal"><strong>LocalSameAsGlobal</strong>: Bevor das Skript seine Ausführung beginnt, werden Sie gewarnt, wenn <em>undeklarierte</em> lokale Variablen den gleichen Namen haben wie globale Variablen. Diese Warnung soll Fehler vermeiden, die auftreten können, wenn man vergessen hat, eine globale Variable innerhalb einer Funktion vor dem Zugriffsversuch zu deklarieren. Wenn die globale Variable tatsächlich lokal sein soll, kann die Warnung mit einer Deklaration wie <code>local x</code> oder <code>static y</code> unterdrückt werden. Diese Warnung wird niemals für Variablen innerhalb einer <a href="../Functions.htm#ForceLocal">lokal-erzwingenden</a> Funktion angezeigt.</p>
+MsgBox % temp       <em>; Diese Zeile greift auf die Umgebungsvariable "TEMP" zu.</em></pre>
+      <p id="LocalSameAsGlobal"><strong>LocalSameAsGlobal</strong>: Bevor das Skript seine Ausführung beginnt, werden Sie gewarnt, wenn <em>undeklarierte</em> lokale Variablen den gleichen Namen haben wie globale Variablen. Diese Warnung soll Fehler vermeiden, die auftreten können, wenn man vergessen hat, eine globale Variable innerhalb einer Funktion vor dem Zugriffsversuch zu deklarieren. Wenn die globale Variable tatsächlich lokal sein soll, kann die Warnung mit einer Deklaration wie <code>local x</code> oder <code>static y</code> unterdrückt werden. Diese Warnung wird niemals für Variablen angezeigt, die sich innerhalb einer <a href="../Functions.htm#ForceLocal">Force-Local</a>-Funktion befinden.</p>
       <pre>#Warn
 g := 1
 ShowG() {       <em>; Die Warnung wird sogar angezeigt, wenn die Funktion nicht aufgerufen wird.</em>
@@ -50,7 +50,7 @@ ShowG() {       <em>; Die Warnung wird sogar angezeigt, wenn die Funktion nicht 
       <p>Ein Wert, der angibt, wie Warnungen übermittelt werden sollen. Fehlt dieser Parameter, gilt standardmäßig <em>MsgBox</em>.</p>
       <p><strong>MsgBox</strong>: Zeigt ein Mitteilungsfenster an, das die Warnung beschreibt. Beachten Sie, dass, sobald das Fenster geschlossen wird, das Skript wie gewohnt weiterläuft.</p>
       <p><strong>StdOut</strong> <span class="ver">[v1.1.04+]</span>: Sendet eine Beschreibung der Warnung zur Standardausgabe (<em>stdout</em>), inklusive Dateiname und Zeilennummer. So können umfangreiche Texteditoren wie SciTE die Warnungen abfangen, ohne das Skript zu unterbrechen - der Benutzer kann später den Ausgabebereich des Texteditors nutzen, um auf eine fehlerhafte Zeile zu springen.</p>
-      <p><strong>OutputDebug</strong>: Sendet eine Beschreibung der Warnung zum Debugger, um sie anzuzeigen. Wenn kein Debugger aktiv ist, hat das Senden keine Auswirkung. Weitere Details finden Sie unter <a href="OutputDebug.htm">OutputDebug</a>.</p>
+      <p><strong>OutputDebug</strong>: Sendet eine Beschreibung der Warnung zum Debugger, um sie anzuzeigen. Wenn kein Debugger aktiv ist, hat dieser Modus keine Auswirkung. Weitere Details finden Sie unter <a href="OutputDebug.htm">OutputDebug</a>.</p>
       <p><strong>Off</strong>: Deaktiviert alle Warnungen für den angegebenen <em>Warnungstyp</em>.</p>
     </dd>
 

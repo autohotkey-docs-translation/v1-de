@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>FileSetTime - AutoHotkey</title>
-<meta name="description" content="FileSetTime ändert den Zeitstempel von einer oder mehreren Dateien (auch Ordner). Platzhalter werden unterstützt.">
+<meta name="description" content="FileSetTime ändert den Zeitstempel von ein oder mehreren Dateien oder Ordnern. Platzhalter werden unterstützt.">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,48 +13,48 @@
 
 <h1>FileSetTime</h1>
 
-<p>Ändert den Zeitstempel von einer oder mehreren Dateien (auch Ordner). Platzhalter werden unterstützt.</p>
+<p>Ändert den Zeitstempel von ein oder mehreren Dateien oder Ordnern. Platzhalter werden unterstützt.</p>
 
-<pre class="Syntax"><span class="func">FileSetTime</span> <span class="optional">, YYYYMMDDHH24MISS, Dateimuster, Zeitstempeltyp, OrdnerEinbeziehen?, Rekursiv?</span></pre>
+<pre class="Syntax"><span class="func">FileSetTime</span> <span class="optional">, YYYYMMDDHH24MISS, Dateimuster, WelcheZeit, OrdnerEinbeziehen?, Rekursiv?</span></pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>YYYYMMDDHH24MISS</dt>
-  <dd><p>Fehlt dieser Parameter oder ist er leer, gilt standardmäßig die aktuelle Zeit. Ansonsten kann eine Zeit angegeben werden, die für diese Operation verwendet werden soll (siehe Bemerkungen zum Format). Jahre älter als 1601 werden nicht unterstützt.</p>
-    <p>Dieser Parameter ist ein <a href="../Variables.htm#Expressions">Ausdruck</a>. Das heißt: Wenn mehrere Variablen zu einem Zeitstempel verkettet werden müssen, sollte der <a href="../Variables.htm#concat">Punkt-Operator</a> anstelle des Prozentzeichens verwendet werden. Zum Beispiel: <code>FileSetTime, Jahr <strong>.</strong> Monat <strong>.</strong> Tag, C:\Meine Datei.txt</code>.</p></dd>
+  <dd><p>Fehlt dieser Parameter oder ist er leer, wird standardmäßig der gegenwärtige Zeitpunkt verwendet. Ansonsten kann ein Zeitpunkt angegeben werden, der für diese Operation verwendet werden soll (siehe Bemerkungen zum Format). Jahre älter als 1601 werden nicht unterstützt.</p>
+    <p>Dieser Parameter ist ein <a href="../Variables.htm#Expressions">Ausdruck</a>. Wenn mehrere Variablen demzufolge zu einem Zeitstempel verkettet werden müssen, sollte der <a href="../Variables.htm#concat">Punkt-Operator</a> anstelle von Prozentzeichen verwendet werden. Zum Beispiel: <code>FileSetTime, Jahr <strong>.</strong> Monat <strong>.</strong> Tag, C:\Meine Datei.txt</code>.</p></dd>
 
   <dt>Dateimuster</dt>
   <dd><p>Name einer Datei, eines Ordners oder eines Platzhaltermusters wie C:\Temp\*.tmp. <em>Dateimuster</em> wird im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet, wenn kein absoluter Pfad angegeben ist.</p>
-    <p>Fehlt dieser Parameter, wird die aktuelle Datei von der innersten <a href="LoopFile.htm">Dateimuster-Schleife</a> verwendet.</p></dd>
+    <p>Fehlt dieser Parameter, wird stattdessen die aktuelle Datei von der am nächsten umschlossenen <a href="LoopFile.htm">Dateimuster-Schleife</a> verwendet.</p></dd>
 
-  <dt>Zeitstempeltyp</dt>
+  <dt>WelcheZeit</dt>
   <dd>Welcher Zeitstempel gesetzt werden soll:<br>
-      M = Änderungsdatum (Standard, wenn Parameter nicht vorhanden ist)<br>
-      C = Erstellungsdatum<br>
-      A = Zugriffsdatum</dd>
+      M = Zeitpunkt der letzten Änderung (Standardwert, wenn dieser Parameter fehlt oder leer ist)<br>
+      C = Zeitpunkt der Erstellung<br>
+      A = Zeitpunkt des letzten Zugriffs</dd>
 
   <dt>OrdnerEinbeziehen?</dt>
   <dd><p>0 (Standard) Ordner werden nicht mit einbezogen (nur Dateien). <br>
 1 Alle Dateien und Ordner, die dem Platzhaltermuster entsprechen, werden mit einbezogen.<br>
 2 Nur Ordner werden mit einbezogen (keine Dateien).</p>
-      <p class="note"><strong>Hinweis</strong>: Wenn <em>Dateimuster</em> ein einzelner Ordner statt ein Platzhaltermuster ist, wird er immer mit einbezogen, unabhängig von dieser Einstellung.</p>
+      <p class="note"><strong>Hinweis</strong>: Wenn <em>Dateimuster</em> ein einzelner Ordner anstelle eines Platzhaltermusters ist, wird er immer mit einbezogen, unabhängig von dieser Einstellung.</p>
       <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p></dd>
 
   <dt>Rekursiv?</dt>
-  <dd><p>0 (Standard) Unterordner werden nicht durchsucht.<br>
-  1 Unterordner werden rekursiv behandelt, so dass die darin enthaltenen Dateien und Unterordner mit einbezogen werden, wenn sie mit <em>Dateimuster</em> übereinstimmen. Alle Unterordner werden durchsucht, nicht nur solche, die dem <em>Dateimuster</em> entsprechen. Allerdings werden Dateien und Ordner, deren kompletter Pfadname länger als 259 Zeichen ist, übersprungen, als würde sie nicht existieren. Solche Dateien sind selten, weil sie normalerweise nicht erstellt werden dürfen.</p>
+  <dd><p>0 (Standard) Unterordner werden nicht rekursiv durchsucht.<br>
+  1 Unterordner werden rekursiv durchsucht; das heißt, dass zusätzlich alle tieferen Navigationsebenen des angegebenen Platzhaltermusters durchsucht werden, um Dateien und Ordner zu finden, die dem <em>Dateimuster</em> entsprechen. Es werden alle Unterordner rekursiv durchsucht, nicht nur solche, die dem <em>Dateimuster</em> entsprechen. Dateien und Ordner, deren vollständiger Pfadname länger als 259 Zeichen ist, werden übersprungen, als wären sie nicht vorhanden. Dieses Problem tritt jedoch nur selten auf, weil das Betriebssystem solche Pfadnamen normalerweise nicht erlaubt.</p>
       <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p></dd>
 
 </dl>
 
 <h3>ErrorLevel</h3>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
-<p>Bei <u>Misserfolg</u> wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf die Anzahl der Dateien gesetzt, die nicht geändert werden konnten, ansonsten auf 0. Wenn der angegebene Zeitstempel ungültig ist oder <em>Dateimuster</em> in einen leeren Wert aufgelöst wird, wird ErrorLevel auf 1 gesetzt.</p>
-<p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> auf 0 gesetzt, oder auf das aktuellste Ergebnis der Systemfunktion GetLastError(). Ansonsten enthält A_LastError einen Fehlercode, der kenntlich machen soll, warum keine Dateien gefunden wurden.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei <u>Misserfolg</u> auf die Anzahl der Dateien gesetzt, die nicht geändert werden konnten, und bei Erfolg auf 0. Wenn der angegebene Zeitstempel ungültig ist oder <em>Dateimuster</em> in einen leeren Wert aufgelöst wird, wird ErrorLevel auf 1 gesetzt.</p>
+<p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> entweder auf Null (0) oder unmittelbar nach dem letzten Fehler auf das Ergebnis der Systemfunktion GetLastError() gesetzt. Ansonsten enthält A_LastError einen Fehlercode, der eventuell kenntlich macht, warum keine Dateien gefunden wurden.</p>
 
 <h3>Bemerkungen</h3>
-<p>Das Zugriffsdatum einer Datei ist auf FAT16- &amp; FAT32-Datenträgern ungenauer als auf NTFS-Datenträgern.</p>
-<p id="YYYYMMDD">YYYYMMDDHH24MISS besteht aus folgenden Elementen:</p>
+<p>Die Zugriffszeitpunkte von Dateien auf FAT16- und FAT32-Datenträgern sind eventuell ungenauer als die von Dateien auf NTFS-Datenträgern.</p>
+<p id="YYYYMMDD">Die Elemente von YYYYYMMDDDHH24MISS sind:</p>
 <table class="info">
   <tr>
     <td>YYYY</td>
@@ -81,7 +81,7 @@
     <td>2-stellige Sekunde (00-59)</td>
   </tr>
 </table>
-<p>Falls die YYYYMMDDHH24MISS-Zeichenkette nur teilweise angegeben ist (z. B. 200403), werden die restlichen fehlenden Elemente mit folgenden Standardwerten ersetzt:</p>
+<p>Wenn man nur einen Teilbereich von YYYYMMDDHH24MISS angibt (z. B. 200403), werden alle restlichen Elemente, die weggelassen wurden, mit den folgenden Standardwerten versehen:</p>
 <p>MM: Monat 01<br>
   DD: Tag 01<br>
   HH24: Stunde 00<br>
@@ -89,21 +89,21 @@
   MI: Minute 00<br>
 SS: Sekunde 00</p>
 <p>Die interne Variable <a href="../Variables.htm#Now">A_Now</a> enthält die aktuelle Ortszeit im YYYYMMDDHH24MISS-Format. Ebenso enthält <a href="../Variables.htm#NowUTC">A_NowUTC</a> die aktuelle koordinierte Weltzeit.</p>
-<p class="note"><strong>Hinweis</strong>: Datum-Zeit-Werte können per <a href="EnvAdd.htm">EnvAdd</a> und <a href="EnvSub.htm">EnvSub</a> verglichen, addiert oder subtrahiert werden. Haben die Zeitwerte beim Vergleichen unterschiedliche Zeichenlängen, sollten diese nicht mit "größer als" oder "kleiner als" verglichen werden, weil sie in diesem Fall als Zahlen behandelt werden. Zum Beispiel ist 20040201 aus numerischer Sicht immer kleiner (aber chronologisch größer) als 200401010533. Verwende stattdessen <a href="EnvSub.htm">EnvSub</a>, um herauszufinden, ob die Differenz zwischen denen positiv oder negativ ist.</p>
+<p class="note"><strong>Hinweis:</strong> Datum-Zeit-Werte können via <a href="EnvAdd.htm">EnvAdd</a> und <a href="EnvSub.htm">EnvSub</a> verglichen, addiert oder subtrahiert werden. Desweiteren ist es ratsam, unterschiedlich lange Zeitstempel nicht mit Größer-Als oder Kleiner-Als zu vergleichen. Denn sie werden nicht chronologisch, sondern numerisch verglichen; das heißt zum Beispiel, dass 20040201 immer numerisch kleiner als 200401010533 ist, obwohl die erste Zahl aus chronologischer Sicht größer wäre. Greifen Sie stattdessen auf <a href="EnvSub.htm">EnvSub</a> zurück, um herauszufinden, ob die Zeitspanne zwischen den zwei Zeitstempeln positiv oder negativ ist.</p>
 <h3>Siehe auch</h3>
 <p><a href="FileGetTime.htm">FileGetTime</a>, <a href="FileGetAttrib.htm">FileGetAttrib</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileGetSize.htm">FileGetSize</a>, <a href="FileGetVersion.htm">FileGetVersion</a>, <a href="FormatTime.htm">FormatTime</a>, <a href="LoopFile.htm">Dateimuster-Schleife</a>, <a href="EnvAdd.htm">EnvAdd</a>, <a href="EnvSub.htm">EnvSub</a></p>
 <h3>Beispiel</h3>
-<pre class="NoIndent"><em>; Stellt das Änderungsdatum aller übereinstimmenden Dateien auf das aktuelle Datum um:</em>
+<pre class="NoIndent"><em>; Ersetzt den Änderungszeitpunkt von allen gefundenen Dateien mit dem gegenwärtigen Zeitpunkt:</em>
 FileSetTime, , C:\temp\*.txt
 
-<em>; Stellt das Änderungsdatum um (Zeit wird auf Mitternacht gesetzt):</em>
+<em>; Ersetzt das Änderungsdatum (Uhrzeit ist Mitternacht):</em>
 FileSetTime, 20040122, C:\Meine Dokumente\test.doc
 
-<em>; Ändert das Erstelldatum. Die Zeit wird auf 16:55 Uhr umgestellt:</em>
+<em>; Ersetzt das Erstellungsdatum. Die Uhrzeit wird auf 16:55 Uhr gesetzt:</em>
 FileSetTime, 200401221655, C:\Meine Dokumente\test.doc, C
 
-<em>; Stellt das Änderungsdatum aller übereinstimmenden Dateien um:
-; Jeder übereinstimmende Ordner wird auch durch den letzten Parameter geändert:</em>
+<em>; Ersetzt das Änderungsdatum von allen gefundenen Dateien.
+; Ordner sind wegen dem letzten Parameter auch betroffen:</em>
 FileSetTime, 20040122165500, C:\Temp\*.*, M, 1</pre>
 
 </body>

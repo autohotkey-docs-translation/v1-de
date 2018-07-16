@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>FileSetAttrib - AutoHotkey</title>
-<meta name="description" content="FileSetAttrib ändert die Attribute von einer oder mehreren Dateien (auch Ordner). Platzhalter werden unterstützt.">
+<meta name="description" content="FileSetAttrib ändert die Attribute von ein oder mehreren Dateien oder Ordnern. Platzhalter werden unterstützt.">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,40 +13,40 @@
 
 <h1>FileSetAttrib</h1>
 
-<p>Ändert die Attribute von einer oder mehreren Dateien (auch Ordner). Platzhalter werden unterstützt.</p>
+<p>Ändert die Attribute von ein oder mehreren Dateien oder Ordnern. Platzhalter werden unterstützt.</p>
 
 <pre class="Syntax"><span class="func">FileSetAttrib</span>, Attribute <span class="optional">, Dateimuster, OrdnerEinbeziehen?, Rekursiv?</span></pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>Attribute</dt>
-  <dd><p>Die Attribute, die geändert werden sollen (siehe Bemerkungen).</p></dd>
+  <dd><p>Attribute, die geändert werden sollen (siehe Bemerkungen).</p></dd>
 
   <dt>Dateimuster</dt>
   <dd>Name einer Datei, eines Ordners oder eines Platzhaltermusters wie <code>C:\Temp\*.tmp</code>. <em>Dateimuster</em> wird im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet, wenn kein absoluter Pfad angegeben ist.
-    <p>Fehlt dieser Parameter, wird die aktuelle Datei von der innersten <a href="LoopFile.htm">Dateimuster-Schleife</a> verwendet.</p></dd>
+    <p>Fehlt dieser Parameter, wird stattdessen die aktuelle Datei von der am nächsten umschlossenen <a href="LoopFile.htm">Dateimuster-Schleife</a> verwendet.</p></dd>
 
   <dt>OrdnerEinbeziehen?</dt>
   <dd><p>0 (Standard) Ordner werden nicht mit einbezogen (nur Dateien). <br>
 1 Alle Dateien und Ordner, die dem Platzhaltermuster entsprechen, werden mit einbezogen.<br>
 2 Nur Ordner werden mit einbezogen (keine Dateien).</p>
-      <p class="note"><strong>Hinweis</strong>: Wenn <em>Dateimuster</em> ein einzelner Ordner statt ein Platzhaltermuster ist, wird er immer mit einbezogen, unabhängig von dieser Einstellung.</p>
+      <p class="note"><strong>Hinweis</strong>: Wenn <em>Dateimuster</em> ein einzelner Ordner anstelle eines Platzhaltermusters ist, wird er immer mit einbezogen, unabhängig von dieser Einstellung.</p>
       <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p></dd>
 
   <dt>Rekursiv?</dt>
-  <dd><p>0 (Standard) Unterordner werden nicht durchsucht.<br>
-      1 Unterordner werden rekursiv behandelt, so dass die darin enthaltenen Dateien und Unterordner mit einbezogen werden, wenn sie mit <em>Dateimuster</em> übereinstimmen. Alle Unterordner werden durchsucht, nicht nur solche, die dem <em>Dateimuster</em> entsprechen. Allerdings werden Dateien und Ordner, deren kompletter Pfadname länger als 259 Zeichen ist, übersprungen, als würde sie nicht existieren. Solche Dateien sind selten, weil sie normalerweise nicht erstellt werden dürfen.</p>
+  <dd><p>0 (Standard) Unterordner werden nicht rekursiv durchsucht.<br>
+      1 Unterordner werden rekursiv durchsucht; das heißt, dass zusätzlich alle tieferen Navigationsebenen des angegebenen Platzhaltermusters durchsucht werden, um Dateien und Ordner zu finden, die dem <em>Dateimuster</em> entsprechen. Es werden alle Unterordner rekursiv durchsucht, nicht nur solche, die dem <em>Dateimuster</em> entsprechen. Dateien und Ordner, deren vollständiger Pfadname länger als 259 Zeichen ist, werden übersprungen, als wären sie nicht vorhanden. Dieses Problem tritt jedoch nur selten auf, weil das Betriebssystem solche Pfadnamen normalerweise nicht erlaubt.</p>
       <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p></dd>
 
 </dl>
 
 <h3>ErrorLevel</h3>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
-<p>Bei <u>Misserfolg</u> wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf die Anzahl der Dateien gesetzt, die nicht geändert werden konnten, ansonsten auf 0.</p>
-<p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> auf 0 gesetzt, oder auf das aktuellste Ergebnis der Systemfunktion GetLastError(). Ansonsten enthält A_LastError einen Fehlercode, der kenntlich machen soll, warum keine Dateien gefunden wurden.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei <u>Misserfolg</u> auf die Anzahl der Dateien gesetzt, die nicht geändert werden konnten, und bei Erfolg auf 0.</p>
+<p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> entweder auf Null (0) oder unmittelbar nach dem letzten Fehler auf das Ergebnis der Systemfunktion GetLastError() gesetzt. Ansonsten enthält A_LastError einen Fehlercode, der eventuell kenntlich macht, warum keine Dateien gefunden wurden.</p>
 
 <h3>Bemerkungen</h3>
-<p>Der <em>Attribute</em>-Parameter besteht aus mehreren Operatoren und Attributsbuchstaben.</p>
+<p>Der <em>Attribute</em>-Parameter ist eine Ansammlung von Operatoren und Attributsbuchstaben.</p>
 <p><em>Operatoren</em>:</p>
 <table class="info">
   <tr>
@@ -68,18 +68,18 @@
   A = ARCHIVE (archiviert)<br>
   S = SYSTEM (Systemdatei)<br>
   H = HIDDEN (versteckt)<br>
-  N = NORMAL (nur gültig, wenn er ohne die anderen Attribute verwendet wird)<br>
+  N = NORMAL (nur ohne die anderen Attribute gültig)<br>
   
   O = OFFLINE<br>
 T = TEMPORARY (temporär)</p>
-<p class="note"><strong>Hinweis</strong>: Zurzeit kann der Komprimierungsstatus einer Datei nicht mit diesem Befehl geändert werden.</p>
+<p class="note"><strong>Hinweis</strong>: Zurzeit kann der Komprimierungsstatus von Dateien mit diesem Befehl nicht geändert werden.</p>
 <h3>Siehe auch</h3>
 <p><a href="FileGetAttrib.htm">FileGetAttrib</a>, <a href="FileGetTime.htm">FileGetTime</a>, <a href="FileSetTime.htm">FileSetTime</a>, <a href="FileGetSize.htm">FileGetSize</a>, <a href="FileGetVersion.htm">FileGetVersion</a>, <a href="LoopFile.htm">Dateimuster-Schleife</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent">FileSetAttrib, +RH, C:\MeineDateien\*.*, 1  <em>; +RH ist identisch mit +R+H</em>
 FileSetAttrib, ^H, C:\MeineDateien  <em>; Schaltet das HIDDEN-Attribut des Ordners um.</em>
 FileSetAttrib, -R+A, C:\Neue Textdatei.txt
-FileSetAttrib, +A, C:\*.ini, , 1  <em>; Alle INI-Dateien auf Laufwerk C: werden rekursiv behandelt.</em></pre>
+FileSetAttrib, +A, C:\*.ini, , 1  <em>; Alle INI-Dateien auf Laufwerk C: rekursiv durchgehen.</em></pre>
 
 </body>
 </html>
