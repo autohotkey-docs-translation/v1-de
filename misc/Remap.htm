@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>Neubelegung von Tasten - AutoHotkey</title>
+<title>Neubelegung von Tasten (Tastatur, Maus und Joystick) | AutoHotkey</title>
 <meta name="description" content="Freier Tastatur-Remapper, der auch Maus- und Joystick-Tasten neubelegen kann. Zudem kann er wiederholende Aufgaben durch Senden von Tastatureingaben &amp; Mausklicks automatisieren.">
 <meta name="keywords" content="tastatur,remapper,neubelegen,neubelegung,taste,tastatureingaben,klicks,maus,tasten,joystick,hotkeys,hotkey">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -12,9 +12,19 @@
 </head>
 <body>
 
-<h1>Neubelegung von Tasten</h1>
+<h1>Neubelegung von Tasten <span class="headnote">(Tastatur, Maus und Joystick)</span></h1>
 
-<h2>Einführung</h2>
+<h2 id="toc">Inhaltsverzeichnis</h2>
+<ul>
+  <li><a href="#intro">Einführung</a></li>
+  <li><a href="#Remap">Neubelegung von Tastatur und Maus</a></li>
+  <li><a href="#remarks">Bemerkungen</a></li>
+  <li><a href="#moving-the-mouse-cursor">Bewegung des Mauszeigers per Tastatur</a></li>
+  <li><a href="#registry">Neubelegung via Registry's "Scancode Map"</a></li>
+  <li><a href="#related">Siehe auch</a></li>
+</ul>
+
+<h2 id="intro">Einführung</h2>
 <p><strong>Einschränkung</strong>: Das unten beschriebene Neubelegungs-Feature von AutoHotkey ist in der Regel nicht so eindeutig und effektiv wie das direkte Neubelegen mit der Windows-Registry. Die Vor- und Nachteile der einzelnen Methoden finden Sie unter <a href="#registry">Neubelegung mit der Registry</a>.</p>
 <h2 id="Remap">Neubelegung von Tastatur und Maus</h2>
 <p>Die Syntax zum Neubelegen einer Taste ist <code>Originaltaste::Zieltaste</code>. Enthält ein <a href="../Scripts.htm">Skript</a> beispielsweise nur die folgende Zeile, würde sie die <kbd>A</kbd>-Taste dazu bringen, sich wie die <kbd>B</kbd>-Taste zu verhalten:</p>
@@ -25,57 +35,58 @@ b::a</pre>
 <p>Es reicht vollkommen aus, bei den meisten Neubelegungen Kleinbuchstaben zu verwenden, weil deren Großbuchstaben auch mit neubelegt werden (das heißt: Drückt man die neubelegte Taste bei aktivierter <kbd>Feststell</kbd>-Taste oder beim Drücken der <kbd>Umschalt</kbd>-Taste, würde automatisch ein Großbuchstabe gesendet werden). Ein Großbuchstabe als Zieltaste würde hingegen die Großschreibung erzwingen. Das folgende Beispiel würde ein großgeschriebenes B erzeugen, wenn Sie entweder "a" oder "A" eingeben (sofern die <kbd>Feststell</kbd>-Taste ausgeschaltet ist):</p>
 <pre>a::B</pre>
 <p id="blind-pitfall">Allerdings würde eine Neubelegung, die das Gegenteil zu der oberen Neubelegung ist, nicht so funktionieren, wie man es erwarten würde, da eine Neubelegung niemals die Modifikatortasten "loslässt", mit denen sie ausgelöst wurde. <code>A::b</code> beispielsweise ist in der Regel identisch zu <code>A::B</code>, und <code>^a::b</code> identisch zu <code>^a::^b</code>. Das liegt daran, dass jede Neubelegung <a href="#actually">intern {Blind} verwendet</a>, damit die Taste oder Tastenkombination mit anderen Modifikatoren kombiniert werden kann.</p>
-<p>&nbsp;</p>
-<p id="RemapMouse"><strong>Neubelegung der Maus</strong>: Um die Maus statt Tastatur neu zu belegen, nutzt man den gleichen Ansatz. Zum Beispiel:</p>
+
+<h3 id="RemapMouse">Neubelegung der Maus</h3>
+<p>Um die Maus statt Tastatur neu zu belegen, nutzt man den gleichen Ansatz. Zum Beispiel:</p>
 <table class="info">
   <tr>
-    <td>MButton::Shift</td>
+    <td><code>MButton::Shift</code></td>
     <td>Bringt die mittlere Maustaste dazu, sich wie die <kbd>Umschalt</kbd>-Taste zu verhalten.</td>
   </tr>
   <tr>
-    <td>XButton1::LButton</td>
+    <td><code>XButton1::LButton</code></td>
     <td>Bringt die vierte Maustaste dazu, sich wie die linke Maustaste zu verhalten.</td>
   </tr>
   <tr>
-    <td>RAlt::RButton</td>
+    <td><code>RAlt::RButton</code></td>
     <td>Bringt die rechte <kbd>Alt</kbd>-Taste dazu, sich wie die rechte Maustaste zu verhalten.</td>
   </tr>
 </table>
-<p>&nbsp;</p>
-<p><strong>Weitere nützliche Neubelegungen:</strong></p>
+
+<h3 id="other-useful-remappings">Weitere nützliche Neubelegungen</h3>
 <table class="info">
   <tr>
-    <td>CapsLock::Ctrl</td>
+    <td><code>CapsLock::Ctrl</code></td>
     <td>Bringt die <kbd>Feststell</kbd>-Taste dazu, sich wie die <kbd>Strg</kbd>-Taste zu verhalten. Damit die <kbd>Feststell</kbd>-Taste weiterhin ein- oder ausgeschaltet werden kann, fügt man zuerst die Neubelegung <code>+CapsLock::CapsLock</code> hinzu. Diese Neubelegung schaltet die <kbd>Feststell</kbd>-Taste ein oder aus, wenn Sie die <kbd>Umschalt</kbd>-Taste gedrückt halten und die <kbd>Feststell</kbd>-Taste drücken. Da bei beiden Neubelegungen zusätzliche Modifikatortasten gedrückt gehalten werden können, muss die spezifischere Neubelegung <code>+CapsLock::CapsLock</code> an erster Stelle gesetzt werden, bevor es funktionieren kann.</td>
   </tr>
   <tr>
-    <td>XButton2::^LButton</td>
+    <td><code>XButton2::^LButton</code></td>
     <td>Bringt die fünfte Maustaste (XButton2) dazu, einen via STRG modifizierten Klick zu erzeugen.</td>
   </tr>
   <tr>
-    <td>RAlt::AppsKey</td>
+    <td><code>RAlt::AppsKey</code></td>
     <td>Bringt die rechte <kbd>Alt</kbd>-Taste dazu, sich wie die <kbd>Menü</kbd>-Taste zu verhalten (das ist die Taste zum Öffnen des Kontextmenüs).</td>
   </tr>
   <tr>
-    <td>RCtrl::RWin</td>
+    <td><code>RCtrl::RWin</code></td>
     <td>Bringt die rechte <kbd>Strg</kbd>-Taste dazu, sich wie die rechte <kbd>Win</kbd>-Taste zu verhalten.</td>
   </tr>
   <tr>
-    <td>Ctrl::Alt</td>
+    <td><code>Ctrl::Alt</code></td>
     <td>Bringt beide <kbd>Strg</kbd>-Tasten dazu, sich wie eine <kbd>Alt</kbd>-Taste zu verhalten. Siehe jedoch <a href="#AltTab">Alt-Tab-Probleme</a>.</td>
   </tr>
   <tr>
-    <td>^x::^c</td>
+    <td><code>^x::^c</code></td>
     <td>Bringt <kbd>Strg</kbd>+<kbd>X</kbd> dazu, <kbd>Strg</kbd>+<kbd>C</kbd> zu erzeugen. Sie würde auch <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>X</kbd> dazu bringen, <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>C</kbd> zu erzeugen, usw.</td>
   </tr>
   <tr>
-    <td>RWin::Return</td>
+    <td><code>RWin::Return</code></td>
     <td>Bringt die rechte <kbd>Win</kbd>-Taste dazu, nichts zu tun (siehe <a href="../commands/Return.htm">Return</a>).</td>
   </tr>
 </table>
 <p>Sie können die hier genannten Beispiele ausprobieren, indem Sie sie in eine neue Textdatei (z. B. "Remap.ahk") kopieren und anschließend starten.</p>
 <p>In der <a href="../KeyList.htm">Tastenliste</a> finden Sie alle möglichen Namen der Tastatur- und Maustasten.</p>
-<h2>Bemerkungen</h2>
+<h2 id="remarks">Bemerkungen</h2>
 <p>Mit den Direktiven <a href="../commands/_IfWinActive.htm">#IfWinActive/Exist</a> können Neubelegungen bestimmt werden, die nur für das angegebene Fenster gültig sein sollen. Zum Beispiel:</p>
 <pre>#IfWinActive ahk_class Notepad
 a::b  <em>; Bringt 'a' dazu, sich im Texteditor wie 'b' zu verhalten.</em>
@@ -140,7 +151,7 @@ Hotkey, *a up, Off</pre>
   <li>Ein Prozentzeichen (%) als Zieltaste. Verwenden Sie stattdessen die <a href="../commands/Send.htm#vk">VK/SC-Methode</a>.</li>
   <li>"Return" als Zieltaste. Verwenden Sie stattdessen "Enter".</li>
 </ul>
-<h2>Bewegung des Mauszeigers per Tastatur</h2>
+<h2 id="moving-the-mouse-cursor">Bewegung des Mauszeigers per Tastatur</h2>
 <p>Im vollausgestatteten <a href="../scripts/NumpadMouse.htm">Tastatur-zu-Maus-Skript</a> wird gezeigt, wie der Mauszeiger mit der Tastatur bewegt werden kann. Da dieses Skript eine reibungslose Mausbewegung, -beschleunigung und andere Features bietet, sollten Sie es verwenden, wenn Sie vorhaben, die Mausaktivitäten häufig mit der Tastatur durchzuführen. Das folgende Beispiel ist eine vereinfachte Version davon:</p>
 <pre>*#up::MouseMove, 0, -10, 0, R  <em>; WIN + NACH-OBEN =&gt; Zeiger nach oben bewegen</em>
 *#Down::MouseMove, 0, 10, 0, R  <em>; WIN + NACH-UNTEN =&gt; Zeiger nach unten bewegen</em>
@@ -176,7 +187,7 @@ return</pre>
   <li>Mit einem Programm wie <a href="https://www.bleepingcomputer.com/download/keytweak/">KeyTweak</a> (Freeware) können Sie visuell Tasten neubelegen. Dieses Programm ändert automatisch die Registry für Sie.</li>
   <li>Sie können Tasten manuell neubelegen, indem Sie eine .reg-Datei (Klartext) erstellen und sie in die Registry laden. Siehe dazu <a href="http://www.autohotkey.com/forum/post-56216.html#56216">www.autohotkey.com/forum/post-56216.html#56216</a>.</li>
 </ol>
-<h2>Siehe auch</h2>
+<h2 id="related">Siehe auch</h2>
 <p><a href="../KeyList.htm#Joystick">Liste mit Tasten</a><br>
 <a href="../commands/GetKeyState.htm">GetKeyState</a><br>
 <a href="RemapJoystick.htm">Neubelegung eines Joysticks</a></p>

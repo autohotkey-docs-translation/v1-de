@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>Callouts in Regulären Ausdrücken - AutoHotkey</title>
+<title>Callouts in Regulären Ausdrücken | AutoHotkey</title>
+<meta name="description" content="Callouts bieten die Möglichkeit, inmitten der Mustererkennung die Kontrolle vorübergehend an das Skript zu übergeben." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -16,13 +17,22 @@
 
 <p>Callouts werden zurzeit nur in <a href="../commands/RegExMatch.htm">RegExMatch</a> und <a href="../commands/RegExReplace.htm">RegExReplace</a> unterstützt.</p>
 
-<h3>Syntax</h3>
+<h2 id="toc">Inhaltsverzeichnis</h2>
+<ul>
+    <li><a href="#syntax">Syntax</a></li>
+    <li><a href="#callout-functions">Callout-Funktionen</a></li>
+    <li><a href="#EventInfo">EventInfo</a></li>
+    <li><a href="#auto">Auto-Callout</a></li>
+    <li><a href="#remarks">Bemerkungen</a></li>
+</ul>
+
+<h2 id="syntax">Syntax</h2>
 
 <p>Die Syntax zum Definieren eines Callouts ist <span class="Syntax">(?C<em>Nummer</em>:<em>Funktion</em>)</span>; <em>Nummer</em> und <em>Funktion</em> sind optional. Der Doppelpunkt (:) ist nur erlaubt, wenn <em>Funktion</em> angegeben ist, und optional, wenn <em>Nummer</em> fehlt. Wenn die <em>Funktion</em> angegeben ist, aber nicht der Name einer benutzerdefinierten Funktion ist, dann erscheint ein Kompilierungsfehler und die Mustererkennung startet nicht.</p>
 
 <p>Fehlt <em>Funktion</em>, muss der Funktionsname in eine Variable namens <b>pcre_callout</b> gespeichert werden. Existiert sowohl eine globale als auch lokale Variable mit diesem Namen, gilt vorrangig die lokale Variable. Enthält <em>pcre_callout</em> nicht den Namen einer benutzerdefinierten Funktion, werden Callouts, bei denen <em>Funktion</em> fehlt, ignoriert.</p>
 
-<h3>Callout-Funktionen</h3>
+<h2 id="callout-functions">Callout-Funktionen</h2>
 
 <pre class="Syntax">
 Funktion(Übereinstimmung, Calloutnummer, Fundposition, Heuhaufen, NadelRegEx)
@@ -57,7 +67,7 @@ Funktion(m) {
 }</pre>
 <p>Im oberen Beispiel wird <em>Funktion</em> für jede Teilzeichenkette einmal aufgerufen, die mit dem Teil des Musters vor dem Callout übereinstimmt. Mit <span class="Syntax">\b</span> können unvollständige Wörter in Übereinstimmungen wie <em>The quic</em>, <em>The qui</em>, <em>The qu</em>, etc. ausgeschlossen werden.</p>
 
-<h3 id="EventInfo">EventInfo</h3>
+<h2 id="EventInfo">EventInfo</h2>
 
 <p>Es stehen zusätzliche Informationen zur Verfügung, wenn man per <b>A_EventInfo</b> auf die pcre_callout_block-Struktur zugreift.</p>
 <pre>version           := NumGet(A_EventInfo,  0, "Int")
@@ -78,7 +88,7 @@ if version &gt;= 2
 </pre>
 <p>Weitere Informationen können unter <a href="http://www.pcre.org/pcre.txt">pcre.txt</a>, <a href="../commands/NumGet.htm">NumGet</a> und <a href="../Variables.htm#PtrSize">A_PtrSize</a> gefunden werden.</p>
 
-<h3 id="auto">Auto-Callout</h3>
+<h2 id="auto">Auto-Callout</h2>
 
 <p>Das Einfügen von <span class="Syntax">C</span> in den Optionen des Musters aktiviert den Auto-Callout-Modus. Bei diesem Modus werden Callouts in Form von <span class="Syntax">(?C255)</span> vor jedem Element im Muster eingefügt. Das folgende Beispiel zeigt, wie man mit Callouts reguläre Ausdrücke debuggen kann:</p>
 <pre><em>; Setzt die Standard-Callout-Funktion.</em>
@@ -111,7 +121,7 @@ DebugRegEx(Übereinstimmung, Calloutnummer, Fundposition, Heuhaufen, NadelRegEx)
     Pause
 }</pre>
 
-<h3>Bemerkungen</h3>
+<h2 id="remarks">Bemerkungen</h2>
 
 <p>Callouts werden auf den aktuellen Pseudo-Thread ausgeführt. Der vorherige Wert von A_EventInfo wird aber wiederhergestellt, nachdem die Callout-Funktion einen Wert zurückgegeben hat. ErrorLevel wird nicht gesetzt, bis RegExMatch oder RegExReplace einen Wert zurückgibt.</p>
 <p>PCRE wurde optimiert, um in einigen Fällen früh abbrechen zu können, wenn es feststellt, dass eine Übereinstimmung nicht möglich ist. Damit Callouts in solchen Fällen aufgerufen werden können, müssen diese Optimierungen deaktiviert werden, indem man <code>(*NO_START_OPT)</code> an den Anfang des Musters setzt. Das benötigt <span class="ver">[v1.1.05]</span> oder höher.</p>

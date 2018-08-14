@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>ComObjActive() - AutoHotkey</title>
-<meta name="description" content="ComObjActive() ermittelt ein laufendes Objekt, das mit OLE registriert wurde.">
+<title>ComObjActive() - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Die ComObjActive-Funktion ermittelt ein laufendes Objekt, das mit OLE registriert wurde." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -18,9 +18,8 @@
 
 <p id="param">Erstellt ein Objekt, das in typisierter Form als Parameter oder Rückgabewert übergeben werden kann.</p>
 <pre class="Syntax">ParamObj := <span class="func">ComObject</span>(VarTyp, Wert <span class="optional">, Flags</span>)</pre>
-
-<h4 style="margin-top:2em">VERALTET:</h4>
-<p>Die unten gezeigten Verwendungen sind veraltet und werden in einer zukünftigen Version geändert oder nicht mehr zur Verfügung stehen.</p>
+<hr>
+<p class="warning"><strong>Veraltet:</strong> Die unten gezeigten Verwendungen sind veraltet und werden in einer zukünftigen Version geändert oder nicht mehr zur Verfügung stehen.</p>
 <p id="missing">Erstellt ein Objekt, das stellvertretend für den Standardwert eines optionalen Parameters verwendet werden kann, wenn eine Methode eines COM-Objekts aufgerufen wird. <span class="ver">[v1.1.12+]</span>: Diese Funktion ist veraltet. Schreiben Sie stattdessen zwei aufeinanderfolgende Kommas, wie z. B. in <code>Obj.Methode(1,,3)</code></p>
 <pre class="Syntax">ParamObj := <span class="func">ComObjMissing</span>()</pre>
 
@@ -32,8 +31,9 @@ DispPtr := <span class="func">ComObjUnwrap</span>(ComObject)
 <p>Um den Code zukunftssicherer zu machen, schreibt man Folgendes:</p>
 <pre>ComObject := ComObject(9, DispPtr, 1), ObjAddRef(DispPtr)
 DispPtr := <a href="ComObjValue.htm">ComObjValue</a>(ComObject), ObjAddRef(DispPtr)</pre>
+<hr>
 
-<h3>Parameter</h3>
+<h2>Parameter</h2>
 <dl>
 
   <dt>CLSID</dt>
@@ -56,7 +56,7 @@ DispPtr := <a href="ComObjValue.htm">ComObjValue</a>(ComObject), ObjAddRef(DispP
 
 </dl>
 
-<h3 id="Flags">Flags</h3>
+<h2 id="Flags">Flags</h2>
 <table class="info">
   <tr>
     <td>&nbsp;0&nbsp;</td>
@@ -71,7 +71,7 @@ DispPtr := <a href="ComObjValue.htm">ComObjValue</a>(ComObject), ObjAddRef(DispP
   </tr>
 </table>
 
-<h3 id="ByRef">ByRef <span class="ver">[v1.1.17+]</span></h3>
+<h2 id="ByRef">ByRef <span class="ver">[v1.1.17+]</span></h2>
 <p>Wenn der <a href="ComObjType.htm"><em>VarTyp</em></a> eines Wrapper-Objekts den VT_BYREF-Flag (0x4000) enthält, kann mit leeren eckigen Klammern <code>[]</code> der verwiesene Wert gelesen oder geschrieben werden.</p>
 <p>Beim Erstellen einer Referenz muss <em>Wert</em> die Speicheradresse einer Variable oder Puffer mit ausreichender Kapazität sein, um einen Wert des angegebenen Typs enthalten zu können. Zum Beispiel könnte man wie folgt eine Variable erstellen, in der eine VBScript-Funktion etwas schreiben kann:</p>
 <pre>VarSetCapacity(var, 24, 0)
@@ -81,16 +81,16 @@ vref[] := "Eingabewert"
 sc.Run("Beispiel", vref)  <em>; sc sollte wie im <a href="#ByRefEx">unteren Beispiel</a> initialisiert werden.</em>
 MsgBox % vref[]</pre>
 
-<h3 id="Remarks">Allgemeine Bemerkungen</h3>
+<h2 id="Remarks">Allgemeine Bemerkungen</h2>
 <p>In den aktuellen Versionen wird jeder Funktionsaufruf, der mit "ComObj" beginnt und nicht mit den anderen COM-Funktionen übereinstimmt, eigentlich ComObjActive aufrufen. Zum Beispiel sind <code>ComObjEnwrap(DispPtr)</code> und <code>ComObjActive(DispPtr)</code> das gleiche wie <code>ComObject(DispPtr)</code> (<em>VarType</em> 9 ist inbegriffen). Allerdings wird dieses Verhalten in einer zukünftigen Version nicht mehr zur Verfügung stehen, daher ist es am besten, nur <code>ComObject()</code> und <code>ComObjActive()</code> zu verwenden, wie unten gezeigt.</p>
 <p>Wenn ComObjActive ein aktives Objekt nicht abrufen kann, wird die Funktion je nach aktueller <a href="ComObjError.htm">ComObjError</a>-Einstellung und <a href="ComObjError.htm#factors">anderen Faktoren</a> eventuell eine Ausnahme auslösen, das Skript beenden oder eine leere Zeichenkette zurückgeben.</p>
 <p>Wenn mit dieser Funktion ein IDispatch- oder IUnknown-Interface-Pointer gewrappt oder abgerufen wurde, erhöht sich standardmäßig die Referenzzählung des COM-Objekts. Daher muss der Interface-Pointer <a href="ObjAddRef.htm">manuell freigegeben werden</a>, wenn er nicht länger benötigt wird. Beim Freigeben des Wrapper-Objekts wird auch dessen Referenz automatisch freigegeben.</p>
-<p><b>Bekannte Einschränkung:</b> Jedes Mal, wenn ein COM-Objekt gewrappt wurde, wird ein neues Wrapper-Objekt erstellt. Vergleiche und Zuweisungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> behandeln die zwei Wrapper-Objekte getrennt voneinander, selbst wenn sie das gleiche COM-Objekt enthalten.</p>
+<p><b>Bekannte Einschränkung:</b> Jedes Mal, wenn ein COM-Objekt gewrappt wurde, wird ein neues Wrapper-Objekt erstellt. Vergleiche und Zuweisungen wie <code>if (obj1 == obj2)</code> und <code>array[obj1] := Wert</code> behandeln die zwei Wrapper-Objekte getrennt voneinander, selbst wenn sie das gleiche COM-Objekt enthalten.</p>
 
-<h3 id="Related">Siehe auch</h3>
+<h2 id="Related">Siehe auch</h2>
 <p><a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjConnect.htm">ComObjConnect</a>, <a href="ComObjError.htm">ComObjError</a>, <a href="ComObjFlags.htm">ComObjFlags</a>, <a href="ObjAddRef.htm">ObjAddRef/ObjRelease</a>, <a href="ComObjQuery.htm">ComObjQuery</a>, <a href="https://msdn.microsoft.com/de-de/library/ms221467.aspx">GetActiveObject (MSDN)</a></p>
 
-<h3>Beispiele</h3>
+<h2>Beispiele</h2>
 <p>ComObjUnwrap: Siehe <a href="ComObjConnect.htm#Examples">ComObjConnect</a>.</p>
 <pre class="NoIndent" id="ByRefEx">
 <em>; Einleitung - ScriptControl benötigt eine 32-Bit-Version von AutoHotkey.</em>

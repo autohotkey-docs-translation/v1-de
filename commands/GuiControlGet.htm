@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>GuiControlGet - AutoHotkey</title>
-<meta name="description" content="GuiControlGet ruft verschiedene Arten von Informationen über ein Steuerelement innerhalb eines GUI-Fensters ab.">
+<title>GuiControlGet - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Der GuiControlGet-Befehl ruft verschiedene Arten von Informationen über ein Steuerelement innerhalb eines GUI-Fensters ab." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -14,16 +14,15 @@
 <h1>GuiControlGet</h1>
 
 <p>Ruft verschiedene Arten von Informationen über ein Steuerelement innerhalb eines GUI-Fensters ab.</p>
+<pre class="Syntax"><span class="func">GuiControlGet</span>, AusgabeVar <span class="optional">, <a href="#SubCommands">Unterbefehl</a>, SteuerelementID, Wert</span></pre>
 
-<pre class="Syntax"><span class="func">GuiControlGet</span>, AusgabeVar <span class="optional">, Unterbefehl, SteuerelementID, Param4</span></pre>
-<h3>Parameter</h3>
+<h2>Parameter</h2>
 <dl>
-
   <dt>AusgabeVar</dt>
-  <dd><p>Name der Variable, in der das Ergebnis gespeichert werden soll. Wenn der Befehl nicht durchgeführt werden kann (siehe ErrorLevel unten), wird diese Variable leer gemacht.</p></dd>
-
-  <dt>Unterbefehl</dt>
-  <dd><p>Siehe <a href="#subcommands">untere Liste</a>.</p></dd>
+  <dd>Name der Variable, in der das Ergebnis von <em>Unterbefehl</em> gespeichert werden soll.</dd>
+  
+  <dt>Unterbefehl, Wert</dt>
+  <dd>Diese Parameter sind voneinander abhängig und können wie <a href="#SubCommands">unten gezeigt</a> genutzt werden.</dd>
 
   <dt>SteuerelementID</dt>
   <dd><p>Fehlt dieser Parameter oder ist er leer, verhält er sich so, als wurde der Name der Ausgabevariable angegeben. Zum Beispiel wäre <code>GuiControlGet, MeinEdit</code> das gleiche wie <code>GuiControlGet, MeinEdit,, MeinEdit</code>.</p>
@@ -33,40 +32,77 @@
     <p><span class="ver">[v1.1.04+]:</span> <em>SteuerelementID</em> kann das <a href="Gui.htm#HwndOutputVar">HWND</a> eines Steuerelements sein.</p>
     <p>Befindet sich das Steuerelement nicht auf dem Standard-GUI, <strong>muss der Name des GUI auch angegeben werden</strong> -- außer in <span class="ver">[v1.1.20+]</span>, wenn <em>SteuerelementID</em> ein HWND ist, da jedes HWND einzigartig ist. Siehe <a href="#Remarks">Bemerkungen</a>, um mehr darüber zu erfahren.</p>
   </dd>
-
-  <dt>Param4</dt>
-  <dd><p>Dieser Parameter kann weggelassen werden, solange er nicht von einem Unterbefehl aus der unteren Liste benötigt wird.</p></dd>
-
 </dl>
 
-<h3>ErrorLevel</h3>
-<p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
-<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn das angegebene Fenster/Steuerelement nicht existiert oder ein anderes Problem die Ausführung des Befehls verhindert hat. Ansonsten wird es auf 0 gesetzt.</p>
-<h3 id="subcommands">Unterbefehle</h3>
-<p><strong>(Leer)</strong>: Lassen Sie <em>Unterbefehl</em> leer, um die Inhalte des Steuerelements abzurufen. Alle Steuerelementarten sind selbsterklärend, mit Ausnahme von:</p>
+<h2 id="SubCommands">Unterbefehle</h2>
+<p>Geben Sie für <em>Unterbefehl</em> Folgendes an:</p>
+<ul>
+  <li><a href="#Blank">(Leer)</a>: Ermittelt die Inhalte des Steuerelements.</li>
+  <li><a href="#Pos">Pos</a>: Ermittelt die Position und Größe des Steuerelements.</li>
+  <li><a href="#Focus">Focus</a>: Ruft den Steuerelementidentifikator (ClassNN) des aktuell fokussierten Steuerelements ab.</li>
+  <li><a href="#FocusV">FocusV</a> <span class="ver">[v1.0.43.06+]</span>: Ruft den zugeordneten Variablennamen des fokussierten Steuerelements ab.</li>
+  <li><a href="#Enabled">Enabled</a>: Ruft eine 1 ab, wenn das Steuerelement aktiviert ist, oder eine 0, wenn es deaktiviert ist.</li>
+  <li><a href="#Visible">Visible</a>: Ruft eine 1 ab, wenn das Steuerelement sichtbar ist, oder eine 0, wenn es versteckt ist.</li>
+  <li><a href="#Hwnd">Hwnd</a> <span class="ver">[v1.0.46.16+]</span>: Ruft das Window Handle (HWND) des Steuerelements ab.</li>
+  <li><a href="#Name">Name</a> <span class="ver">[v1.1.03+]</span>: Ruft den zugeordneten Variablennamen des Steuerelements ab.</li>
+</ul>
+
+<h3 id="Blank">(Leer)</h3>
+<p>Ermittelt die Inhalte des Steuerelements.</p>
+<pre class="Syntax"><span class="func">GuiControlGet</span>, AusgabeVar <span class="optional">,, SteuerelementID, Wert</span></pre>
+<p>Lassen Sie <em>Unterbefehl</em> leer, um die Inhalte des Steuerelements abzurufen. Alle Steuerelementarten sind selbsterklärend, mit Ausnahme von:</p>
 <p><a href="GuiControls.htm#Picture">Picture</a>: Ruft den Dateinamen des Bildes ab, das ursprünglich zum Erstellen des Steuerelements benutzt wurde. Dieser Name ändert sich auch dann nicht, wenn ein neuer Bilddateiname angegeben ist.</p>
 <p><a href="GuiControls.htm#Edit">Edit</a>: Ruft die Inhalte ab, aber jeder Zeilenumbruch im Text wird als reines LF-Zeichen (`n) dargestellt, anstatt traditionell als CR+LF (`r`n), das von Nicht-GUI-Befehlen wie <a href="ControlGetText.htm">ControlGetText</a> und <a href="ControlSetText.htm">ControlSetText</a> verwendet wird.</p>
 <p><a href="GuiControls.htm#Hotkey">Hotkey</a>: Ruft einen leeren Wert ab, wenn kein Hotkey im Steuerelement vorkommt. Ansonsten ruft er die Modifikatoren und Tastenname ab. Beispiele: <code>^!C</code>, <code>^Home</code>, <code>+^NumpadHome</code>.</p>
-<p><a href="GuiControls.htm#Checkbox">Checkbox</a>/<a href="GuiControls.htm#Radio">Radio</a>: Ruft eine 1 ab, wenn das Steuerelement markiert ist, eine 0, wenn es demarkiert ist, oder -1, wenn es eine graue Markierung hat. Um stattdessen den Text/die Beschriftung des Steuerelements abzurufen, fügt man das Wort Text in <em>Param4</em> ein. Hinweis: Im Gegensatz zum Befehl <a href="Gui.htm#Submit">Gui Submit</a> werden Radio-Buttons immer einzeln abgerufen, egal ob sie in einer Gruppe sind oder nicht.</p>
+<p><a href="GuiControls.htm#Checkbox">Checkbox</a>/<a href="GuiControls.htm#Radio">Radio</a>: Ruft eine 1 ab, wenn das Steuerelement markiert ist, eine 0, wenn es demarkiert ist, oder -1, wenn es eine graue Markierung hat. Um stattdessen den Text/die Beschriftung des Steuerelements abzurufen, fügt man das Wort Text in <em>Wert</em> ein. Hinweis: Im Gegensatz zum Befehl <a href="Gui.htm#Submit">Gui Submit</a> werden Radio-Buttons immer einzeln abgerufen, egal ob sie in einer Gruppe sind oder nicht.</p>
 <p><a href="GuiControls.htm#UpDown">UpDown</a>/<a href="GuiControls.htm#Slider">Slider</a>/<a href="GuiControls.htm#Progress">Progress</a>: Ruft die aktuelle Position des Steuerelements ab.</p>
 <p><a href="GuiControls.htm#Tab">Tab</a>/<a href="GuiControls.htm#DropDownList">DropDownList</a>/<a href="GuiControls.htm#ComboBox">ComboBox</a>/<a href="GuiControls.htm#ListBox">ListBox</a>: Ruft den Text des aktuell ausgewählten Elements/Tabs ab (oder die Position des Steuerelements, wenn es die <a href="Gui.htm#AltSubmit">AltSubmit</a>-Eigenschaft hat). Bei einer ComboBox wird, wenn kein Element ausgewählt wurde, stattdessen der Text im Eingabefeld des Steuerelements abgerufen. Bei einer <a href="GuiControls.htm#ListBoxMulti">Mehrfachauswahl-ListBox</a> verwendet die Ausgabe das <a href="Gui.htm#Delimiter">aktuelle Trennzeichen</a> des Fensters.</p>
-<p><a href="ListView.htm">ListView</a> und <a href="TreeView.htm">TreeView</a>: Diese Steuerelemente werden bei einem leeren <em>Unterbefehl</em>-Parameter nicht unterstützt. Verwenden Sie stattdessen die internen <a href="ListView.htm#BuiltIn">ListView</a>- und <a href="TreeView.htm#BuiltIn">TreeView</a>-Funktionen.</p>
+<p><a href="ListView.htm">ListView</a> und <a href="TreeView.htm">TreeView</a>: Diese Steuerelemente werden nicht unterstützt, wenn <em>Unterbefehl</em> leer ist. Verwenden Sie stattdessen die internen <a href="ListView.htm#BuiltIn">ListView</a>- und <a href="TreeView.htm#BuiltIn">TreeView</a>-Funktionen.</p>
 <p><a href="GuiControls.htm#StatusBar">StatusBar</a>: Ruft nur den Text des ersten Bereichs ab.</p>
 <p><a href="GuiControls.htm#ActiveX">ActiveX</a>: Ruft ein neues Wrapper-Objekt für die ActiveX-Komponente des Steuerelements ab.</p>
-<p class="note"><strong>Hinweis</strong>: Um anstelle des Inhalts die Beschriftung eines CheckBox-, Radio-, DropDownList- oder ComboBox-Steuerelements abzurufen, fügt man das Wort Text in <em>Param4</em> ein.</p>
-<p>&nbsp;</p>
-<p><strong>GuiControlGet, AusgabeVar, Pos</strong>: Ermittelt die Position und Größe des Steuerelements. Die Position ist relativ zum Client-Bereich des GUI-Fensters, das der Bereich ohne Titelleiste, Menüleiste und Rahmen ist. Die Information wird in vier Variablen aufgeteilt, deren Namen alle mit <em>AusgabeVar</em> beginnen. Zum Beispiel:</p>
+<p class="note"><strong>Hinweis</strong>: Um anstelle des Inhalts die Beschriftung eines CheckBox-, Radio-, DropDownList- oder ComboBox-Steuerelements abzurufen, fügt man das Wort Text in <em>Wert</em> ein.</p>
+
+<h3 id="Pos">Pos</h3>
+<p>Ermittelt die Position und Größe des Steuerelements.</p>
+<pre class="Syntax"><span class="func">GuiControlGet</span>, AusgabeVar, Pos <span class="optional">, SteuerelementID</span></pre>
+<p>Die Position ist relativ zum Client-Bereich des GUI-Fensters, das der Bereich ohne Titelleiste, Menüleiste und Rahmen ist. Die Information wird in vier Variablen aufgeteilt, deren Namen alle mit <em>AusgabeVar</em> beginnen. Zum Beispiel:</p>
 <pre>GuiControlGet, MeinEdit, Pos
 MsgBox Die X-Koordinate ist %MeinEditX%. Die Y-Koordinate ist %MeinEditY%. Die Breite ist %MeinEditW%. Die Höhe ist %MeinEditH%.</pre>
 <p>Um innerhalb einer <a href="../Functions.htm">Funktion</a> eine Reihe von Variablen zu erstellen, die global statt lokal sein sollen, muss <em>AusgabeVar</em> als globale Variable <a href="../Functions.htm#Global">deklariert</a> werden, bevor man diesen Befehl verwendet (das Gegenteil gilt bei <a href="../Functions.htm#AssumeGlobal">Assume-Global</a>-Funktionen). Aufgrund des <a href="../Functions.htm#ArrayConfusion">Häufigen Anlasses zu Verwirrung</a> muss jede Variable dieses Pseudo-Arrays einzeln deklariert werden.</p>
-<p>&nbsp;</p>
-<p><strong>GuiControlGet, AusgabeVar, Focus</strong>: Ruft den Steuerelementidentifikator (ClassNN) des aktuell fokussierten Steuerelements ab. Das angegebene GUI-Fenster muss <a href="WinActivate.htm">aktiv</a> sein, damit eines seiner Steuerelemente den Fokus haben kann. Also wird <em>AusgabeVar</em> leer gemacht, wenn das Fenster nicht aktiv ist. Anwendungsbeispiel: <code>GuiControlGet, fokussiertes_Steuerelement, focus</code>.</p>
-<p><strong>GuiControlGet, AusgabeVar, FocusV</strong> <span class="ver">[v1.0.43.06+]</span>: Das gleiche wie <em>Focus</em> (siehe oben), außer dass dieser Unterbefehl den <a href="Gui.htm#Events">zugeordneten Variablennamen</a> des fokussierten Steuerelements abruft. Fehlt dem Steuerelement eine zugeordnete Variable, enthält A_GuiControl stattdessen die ersten 63 Zeichen des Textes/der Bezeichnung (wenn man verhindern möchte, jedem Button einen Variablennamen zuzuweisen).</p>
-<p><strong>GuiControlGet, AusgabeVar, Enabled</strong>: Ruft eine 1 ab, wenn das Steuerelement aktiviert ist, oder eine 0, wenn es deaktiviert ist.</p>
-<p><strong>GuiControlGet, AusgabeVar, Visible</strong>: Ruft eine 1 ab, wenn das Steuerelement sichtbar ist, oder eine 0, wenn es versteckt ist.</p>
-<p id="Hwnd"><strong>GuiControlGet, AusgabeVar, Hwnd</strong> <span class="ver">[v1.0.46.16+]</span>: Ruft das Window Handle (HWND) des Steuerelements ab. Das HWND eines Steuerelements wird oft in Verbindung mit <a href="PostMessage.htm">PostMessage</a>, <a href="PostMessage.htm">SendMessage</a> und <a href="DllCall.htm">DllCall</a> verwendet. Hinweis: <a href="Gui.htm#HwndOutputVar">HwndAusgabeVar</a> ist in der Regel der kürzere Weg zum Abrufen des HWND.</p>
-<p id="Name"><strong>GuiControlGet, AusgabeVar, Name</strong> <span class="ver">[v1.1.03+]</span>: Ruft den <a href="Gui.htm#Events">zugeordneten Variablennamen</a> des Steuerelements ab, wenn es einen hat, ansonsten wird <em>AusgabeVar</em> leer gemacht.</p>
-<h3 id="Remarks">Bemerkungen</h3>
+
+<h3 id="Focus">Focus</h3>
+<p>Ruft den Steuerelementidentifikator (ClassNN) des aktuell fokussierten Steuerelements ab.</p>
+<pre class="Syntax"><span class="func">GuiControlGet</span>, AusgabeVar, Focus <span class="optional">, SteuerelementID</span></pre>
+<p>Das angegebene GUI-Fenster muss <a href="WinActivate.htm">aktiv</a> sein, damit eines seiner Steuerelemente den Fokus haben kann. Also wird <em>AusgabeVar</em> leer gemacht, wenn das Fenster nicht aktiv ist. Anwendungsbeispiel: <code>GuiControlGet, fokussiertes_Steuerelement, Focus</code>.</p>
+
+<h3 id="FocusV">FocusV <span class="ver">[v1.0.43.06+]</span></h3>
+<p>Ruft den <a href="Gui.htm#Events">zugeordneten Variablennamen</a> des fokussierten Steuerelements ab.</p>
+<pre class="Syntax"><span class="func">GuiControlGet</span>, AusgabeVar, FocusV <span class="optional">, SteuerelementID</span></pre>
+<p>Schauen Sie sich den <a href="#Focus">Focus</a>-Unterbefehl oben an, um mehr zu erfahren. Fehlt dem Steuerelement eine zugeordnete Variable, enthält A_GuiControl stattdessen die ersten 63 Zeichen des Textes/der Bezeichnung (wenn man verhindern möchte, jedem Button einen Variablennamen zuzuweisen).</p>
+
+<h3 id="Enabled">Enabled</h3>
+<p>Ruft eine 1 ab, wenn das Steuerelement aktiviert ist, oder eine 0, wenn es deaktiviert ist.</p>
+<pre class="Syntax"><span class="func">GuiControlGet</span>, AusgabeVar, Enabled <span class="optional">, SteuerelementID</span></pre>
+
+<h3 id="Visible">Visible</h3>
+<p>Ruft eine 1 ab, wenn das Steuerelement sichtbar ist, oder eine 0, wenn es versteckt ist.</p>
+<pre class="Syntax"><span class="func">GuiControlGet</span>, AusgabeVar, Visible <span class="optional">, SteuerelementID</span></pre>
+
+<h3 id="Hwnd">Hwnd <span class="ver">[v1.0.46.16+]</span></h3>
+<p>Ruft das Window Handle (HWND) des Steuerelements ab.</p>
+<pre class="Syntax"><span class="func">GuiControlGet</span>, AusgabeVar, Hwnd <span class="optional">, SteuerelementID</span></pre>
+<p>Das HWND eines Steuerelements wird oft in Verbindung mit <a href="PostMessage.htm">PostMessage</a>, <a href="PostMessage.htm">SendMessage</a> und <a href="DllCall.htm">DllCall</a> verwendet. Hinweis: <a href="Gui.htm#HwndOutputVar">HwndAusgabeVar</a> ist in der Regel der kürzere Weg zum Abrufen des HWND.</p>
+
+<h3 id="Name">Name <span class="ver">[v1.1.03+]</span></h3>
+<p>Ruft den <a href="Gui.htm#Events">zugeordneten Variablennamen</a> des Steuerelements ab.</p>
+<pre class="Syntax"><span class="func">GuiControlGet</span>, AusgabeVar, Name <span class="optional">, SteuerelementID</span></pre>
+<p>Wenn es keinen hat, wird <em>AusgabeVar</em> leer gemacht.</p>
+
+<h2>ErrorLevel</h2>
+<p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn das angegebene Fenster/Steuerelement nicht existiert oder ein anderes Problem die Ausführung des Befehls verhindert hat. Ansonsten wird es auf 0 gesetzt.</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
 <p>Um mit einem anderen Fenster als das Standardfenster zu agieren (siehe unten), fügt man dessen Name oder Nummer, gefolgt von einem Doppelpunkt, vor dem Unterbefehl ein. Zum Beispiel:</p>
 <pre>GuiControlGet, MeinEdit, MeinGui:
 GuiControlGet, MeinEdit, MeinGui:Pos
@@ -75,9 +111,12 @@ GuiControlGet, AusgabeVar, MeinGui:Focus</pre>
 <p>Ein GUI-<a href="../misc/Threads.htm">Thread</a> ist ein Thread, der aufgrund einer GUI-Aktion gestartet wurde. Zu den GUI-Aktionen gehört beispielsweise das Auswählen eines Menüpunkts oder das Ausführen eines <a href="Gui.htm#label">g-Labels</a> (z. B. beim Drücken eines Buttons).</p>
 <p>Der <a href="Gui.htm#DefaultWin">Standardfenstername</a> für einen GUI-Thread ist der Name des Fensters, das diesen Thread gestartet hat. Nicht-GUI-Threads verwenden standardmäßig eine 1.</p>
 
-<h3>Siehe auch</h3>
+<h2>Siehe auch</h2>
 <p><a href="Gui.htm">Gui</a>, <a href="GuiControl.htm">GuiControl</a>, <a href="ControlGet.htm">ControlGet</a></p>
-<h3>Beispiele</h3>
+
+<h2>Beispiele</h2>
+
+<h3 id="ex1">Beispiel #1: Verschiedenes</h3>
 <pre class="NoIndent">GuiControlGet, MeinEdit
 GuiControlGet, Inhalt,, MeinEdit  <em>; Das gleiche wie oben, außer mit einer nicht-standardmäßigen Ausgabevariable.</em>
 GuiControlGet, MeineCheckBox1 <em>; Ruft eine 1 ab, wenn es markiert ist, oder eine 0, wenn es demarkiert ist.</em>

@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>SysGet - AutoHotkey</title>
-<meta name="description" content="SysGet ermittelt die Bildschirmauflösung, Multi-Anzeigegerät-Informationen, Dimensionen von Systemobjekten und andere Systemeigenschaften.">
+<title>SysGet - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Der SysGet-Befehl ermittelt die Bildschirmauflösung, Multi-Anzeigegerät-Informationen, Dimensionen von Systemobjekten und andere Systemeigenschaften." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -14,124 +14,144 @@
 <h1>SysGet</h1>
 
 <p>Ermittelt die Bildschirmauflösung, Multi-Anzeigegerät-Informationen, Dimensionen von Systemobjekten und andere Systemeigenschaften.</p>
+<pre class="Syntax"><span class="func">SysGet</span>, AusgabeVar, <a href="#SubCommands">Unterbefehl</a> <span class="optional">, Wert</span></pre>
+<p>Der <em>AusgabeVar</em>-Parameter ist Name der Variable, in der das Ergebnis gespeichert werden soll. Die Parameter <em>Unterbefehl</em> und <em>Wert</em> sind voneinander abhängig und können wie folgt genutzt werden.</p>
 
-<pre class="Syntax"><span class="func">SysGet</span>, AusgabeVar, Unterbefehl <span class="optional">, Param3</span></pre>
-<h3>Parameter</h3>
-<dl>
+<h2 id="SubCommands">Unterbefehle</h2>
+<p>Geben Sie für <em>Unterbefehl</em> Folgendes an:</p>
+<ul>
+  <li><a href="#MonitorCount">MonitorCount</a>: Ermittelt die Gesamtanzahl der Anzeigegeräte.</li>
+  <li><a href="#MonitorPrimary">MonitorPrimary</a>: Ermittelt die Nummer des primären Anzeigegeräts.</li>
+  <li><a href="#Monitor">Monitor</a>: Ermittelt die Abgrenzungskoordinaten des angegebenen Anzeigegeräts.</li>
+  <li><a href="#MonitorWorkArea">MonitorWorkArea</a>: Ermittelt die Abgrenzungskoordinaten des Arbeitsbereichs des angegebenen Anzeigegeräts.</li>
+  <li><a href="#MonitorName">MonitorName</a>: Ermittelt den Namen des angegebenen Anzeigegeräts.</li>
+  <li><a href="#Numeric">(Numerisch)</a>: Verwenden Sie einen Wert aus den folgenden Tabellen.</li>
+</ul>
 
-  <dt>AusgabeVar</dt>
-  <dd><p>Name der Variable, in der das Ergebnis gespeichert werden soll.</p></dd>
+<h3 id="MonitorCount">MonitorCount</h3>
+<p>Ermittelt die Gesamtanzahl der Anzeigegeräte.</p>
+<pre class="Syntax"><span class="func">SysGet</span>, AusgabeVar, MonitorCount</pre>
+<p>Im Gegensatz zu SM_CMONITORS von der unteren Tabelle erfasst dieser Unterbefehl alle Anzeigegeräte, selbst solche, die nicht zum Desktop gehören.</p>
 
-  <dt>Unterbefehl</dt>
-  <dd>Siehe untere Liste.
-    </dd>
+<h3 id="MonitorPrimary">MonitorPrimary</h3>
+<p>Ermittelt die Nummer des primären Anzeigegeräts.</p>
+<pre class="Syntax"><span class="func">SysGet</span>, AusgabeVar, MonitorPrimary</pre>
+<p>In einem System mit nur einem einzigen Anzeigegerät wird das immer 1 sein.</p>
 
-  <dt>Param3</dt>
-  <dd><p>Dieser Parameter muss nur angegeben werden, wenn er von einem der unten genannten Unterbefehle benötigt wird.</p></dd>
-
-</dl>
-
-<h3>Unterbefehle</h3>
-<p><strong>MonitorCount</strong>: Ermittelt die Gesamtanzahl der Anzeigegeräte. Im Gegensatz zum unten erwähnten SM_CMONITORS erfasst <em>MonitorCount</em> alle Anzeigegeräte, selbst solche, die nicht zum Desktop gehören.</p>
-<p><strong>MonitorPrimary</strong>: Ermittelt die Nummer des primären Anzeigegeräts, die in einem Single-Anzeigegerät-System eine 1 sein wird.</p>
-<p><strong>Monitor [, N]</strong>: Ermittelt die Randkoordinaten des Anzeigegeräts mit der Nummer <strong>N</strong> (wenn <strong>N</strong> fehlt, wird das primäre Anzeigegerät verwendet). Die Informationen werden in vier Variablen gespeichert, deren Namen alle mit <em>AusgabeVar</em> beginnen. Falls <strong>N</strong> zu hoch ist oder die Informationen aufgrund eines Problems nicht abgerufen werden können, werden alle Variablen leer gemacht. Zum Beispiel:</p>
+<h3 id="Monitor">Monitor</h3>
+<p>Ermittelt die Abgrenzungskoordinaten des Anzeigegeräts mit der Nummer <em>N</em>.</p>
+<pre class="Syntax"><span class="func">SysGet</span>, AusgabeVar, Monitor <span class="optional">, N</span></pre>
+<p>Wenn <em>N</em> fehlt, wird das primäre Anzeigegerät verwendet. Die Information wird in vier Variablen aufgeteilt, deren Namen alle mit <em>AusgabeVar</em> beginnen. Falls <em>N</em> zu hoch ist oder die Informationen aufgrund eines Problems nicht abgerufen werden können, werden alle Variablen leer gemacht. Zum Beispiel:</p>
 <pre>SysGet, Mon2, Monitor, 2
 MsgBox, Links: %Mon2Left% -- Oben: %Mon2Top% -- Rechts: %Mon2Right% -- Unten: %Mon2Bottom%.</pre>
-<p>Um innerhalb einer <a href="../Functions.htm">Funktion</a> eine Reihe von Variablen zu erstellen, die global anstatt lokal sind, muss Mon2 innerhalb der Funktion als globale Variable <a href="../Functions.htm#Global">deklariert</a> werden, bevor dieser Befehl verwendet wird (Das Gegenteil davon gilt für <a href="../Functions.htm#AssumeGlobal">Assume-Global</a>-Funktionen). Aufgrund des <a href="../Functions.htm#ArrayConfusion">Häufigen Anlasses zu Verwirrung</a> muss jede Variable dieses Pseudo-Arrays einzeln deklariert werden.</p>
-<p><strong>MonitorWorkArea [, N]</strong>: Das Gleiche wie oben, nur dass der Bereich durch die Taskleiste und andere registrierte Desktop-Toolbars reduziert ist.</p>
-<p><strong>MonitorName [, N]</strong>: Ermittelt den Systemnamen des Anzeigegeräts mit der Nummer <strong>N</strong> (wenn <strong>N</strong> fehlt, wird das primäre Anzeigegerät verwendet).</p>
-<p><strong>(Numerisch)</strong>: Fügen Sie in <em>Unterbefehl</em> eine Nummer aus der unteren Tabelle ein, um den entsprechenden Wert abzurufen. Das folgende Beispiel würde die Anzahl der Maustasten in eine Variable namens "Maustastenanzahl" speichern: <code>SysGet, Maustastenanzahl, 43</code></p>
-<h3>Häufig verwendet</h3>
+<p>Um innerhalb einer <a href="../Functions.htm">Funktion</a> eine Reihe von Variablen zu erstellen, die global anstatt lokal sind, muss <em>Mon2</em> innerhalb der Funktion als globale Variable <a href="../Functions.htm#Global">deklariert</a> werden, bevor dieser Befehl verwendet wird (Das Gegenteil davon gilt für <a href="../Functions.htm#AssumeGlobal">Assume-Global</a>-Funktionen). Aufgrund des <a href="../Functions.htm#ArrayConfusion">Häufigen Anlasses zu Verwirrung</a> muss jede Variable dieses Pseudo-Arrays einzeln deklariert werden.</p>
+
+<h3 id="MonitorWorkArea">MonitorWorkArea</h3>
+<p>Ermittelt die Abgrenzungskoordinaten des Arbeitsbereichs des angegebenen Anzeigegeräts mit der Nummer <em>N</em>.</p>
+<pre class="Syntax"><span class="func">SysGet</span>, AusgabeVar, MonitorWorkArea <span class="optional">, N</span></pre>
+<p>Das Gleiche wie der <a href="#Monitor">Monitor</a>-Unterbefehl oben, außer dass der Bereich ohne die Taskleiste und andere registrierte Desktop-Toolbars gemeint ist.</p>
+
+<h3 id="MonitorName">MonitorName</h3>
+<p>Ermittelt den im Betriebssystem angezeigten Namen des Anzeigegeräts mit der Nummer <em>N</em>.</p>
+<pre class="Syntax"><span class="func">SysGet</span>, AusgabeVar, MonitorName <span class="optional">, N</span></pre>
+<p>Wenn <em>N</em> fehlt, wird das primäre Anzeigegerät verwendet.</p>
+
+<h3 id="Numeric">(Numerisch)</h3>
+<p>Fügen Sie in <em>Unterbefehl</em> eine Nummer aus den unteren Tabellen ein, um den entsprechenden Wert abzurufen.</p>
+<pre class="Syntax"><span class="func">SysGet</span>, AusgabeVar, N</pre>
+<p>Das folgende Beispiel würde die Anzahl der Maustasten in eine Variable namens "Maustastenanzahl" speichern: <code>SysGet, AnzahlMaustasten, 43</code>.</p>
+
+<h4>Häufig verwendet</h4>
 <table class="info">
-<tr>
-  <th>Nummer</th>
-  <th>Beschreibung</th>
-</tr>
-<tr>
-<td>80</td>
-<td>SM_CMONITORS: Anzahl der Anzeigegeräte auf dem Desktop (ohne "nichts anzeigende Pseudo-Anzeigegeräte").</td>
-</tr>
-<tr>
-<td>43</td>
-<td>SM_CMOUSEBUTTONS: Anzahl der Tasten auf der Maus (0, wenn keine Maus angeschlossen ist).</td>
-</tr>
-<tr>
-<td>16, 17</td>
-<td>SM_CXFULLSCREEN, SM_CYFULLSCREEN: Breite und Höhe des Clientbereichs eines Vollbildfensters auf dem primären Anzeigegerät (in Pixel).</td>
-</tr>
-<tr>
-<td>61, 62</td>
-<td>SM_CXMAXIMIZED, SM_CYMAXIMIZED: Breite und Höhe eines maximierten Fensters der obersten Ebene auf dem primären Anzeigegerät (in Pixel).</td>
-</tr>
-<tr>
-<td>59, 60</td>
-<td>SM_CXMAXTRACK, SM_CYMAXTRACK: Maximale Breite und Höhe eines Fensters mit einem Titel und veränderbare Rahmengröße (in Pixel). Diese Maße beziehen sich auf den ganzen Desktop. Der Benutzer kann den Fensterrahmen nicht auf eine Größe ziehen, die diese Abmessungen überschreiten würden.</td>
-</tr>
-<tr>
-<td>28, 29</td>
-<td>SM_CXMIN, SM_CYMIN: Minimale Breite und Höhe des Fensters (in Pixel).</td>
-</tr>
-<tr>
-<td>57, 58</td>
-<td>SM_CXMINIMIZED, SM_CYMINIMIZED: Breite und Höhe eines minimierten Fensters (in Pixel).</td>
-</tr>
-<tr>
-<td>34, 35</td>
-<td>SM_CXMINTRACK, SM_CYMINTRACK: Minimale Breite und Höhe eines Fensters (in Pixel). Der Benutzer kann den Fensterrahmen nicht auf eine Größe ziehen, die diese Abmessungen unterschreiten würden. Durch Verarbeiten der WM_GETMINMAXINFO-Meldung kann ein Fenster diese Werte überschreiben.</td>
-</tr>
-<tr>
-<td>0, 1</td>
-<td>SM_CXSCREEN, SM_CYSCREEN: Bildschirmbreite und -höhe des primären Anzeigegeräts (in Pixel). Diese sind identisch mit den internen Variablen <a href="../Variables.htm#Screen">A_ScreenWidth</a> und <a href="../Variables.htm#Screen">A_ScreenHeight</a>.</td>
-</tr>
-<tr>
-<td>78, 79</td>
-<td>SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN: Breite und Höhe des virtuellen Bildschirms (in Pixel). Der virtuelle Bildschirm ist das umschließende Rechteck für alle Anzeigegeräte. Die Maße SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN sind die Koordinaten der linken oberen Ecke des virtuellen Bildschirms.</td>
-</tr>
-<tr>
-<td>19</td>
-<td>SM_MOUSEPRESENT: Ungleich 0, wenn eine Maus angeschlossen ist, ansonsten 0.</td>
-</tr>
-<tr>
-<td>75</td>
-<td>SM_MOUSEWHEELPRESENT: Ungleich 0, wenn eine Maus mit Mausrad angeschlossen ist, ansonsten 0.</td>
-</tr>
-<tr>
-<td>63</td>
-<td>SM_NETWORK: Ist ein Netzwerk vorhanden, wird das niederwertigste Bit gesetzt, andernfalls wird es gelöscht. Die anderen Bits werden für die zukünftige Verwendung reserviert.</td>
-</tr>
-<tr>
-<td>8193</td>
-<td>
-        SM_REMOTECONTROL: Diese Systemmetrik wird in einer Terminaldienstumgebung verwendet. Ungleich 0, wenn die aktuelle Sitzung remote gesteuert wird, ansonsten 0.</td>
-</tr>
-<tr>
-<td>4096</td>
-<td>
-        SM_REMOTESESSION: Diese Systemmetrik wird in einer Terminaldienstumgebung verwendet. Wenn der aufrufende Prozess einer Terminaldienste-Clientsitzung zugeordnet ist, ist der Rückgabewert ungleich 0. Wenn der aufrufende Prozess einer Terminaldienst-Konsolensitzung zugeordnet ist, ist der Rückgabewert 0. Die Konsolensitzung ist nicht unbedingt die physische Konsole.</td>
-</tr>
-<tr>
-<td>70</td>
-<td>
-        SM_SHOWSOUNDS: Ungleich 0, wenn die Anwendung Informationen für den Benutzer visuell anzeigen soll, die sonst nur als Audiodaten ausgegeben werden, ansonsten 0.
+  <tr>
+    <th>Nummer</th>
+    <th>Beschreibung</th>
+  </tr>
+  <tr>
+    <td>80</td>
+    <td>SM_CMONITORS: Anzahl der Anzeigegeräte auf dem Desktop (ohne "nichts anzeigende Pseudo-Anzeigegeräte").</td>
+  </tr>
+  <tr>
+    <td>43</td>
+    <td>SM_CMOUSEBUTTONS: Anzahl der Tasten auf der Maus (0, wenn keine Maus angeschlossen ist).</td>
+  </tr>
+  <tr>
+    <td>16, 17</td>
+    <td>SM_CXFULLSCREEN, SM_CYFULLSCREEN: Breite und Höhe des Clientbereichs eines Vollbildfensters auf dem primären Anzeigegerät (in Pixel).</td>
+  </tr>
+  <tr>
+    <td>61, 62</td>
+    <td>SM_CXMAXIMIZED, SM_CYMAXIMIZED: Breite und Höhe eines maximierten Fensters der obersten Ebene auf dem primären Anzeigegerät (in Pixel).</td>
+  </tr>
+  <tr>
+    <td>59, 60</td>
+    <td>SM_CXMAXTRACK, SM_CYMAXTRACK: Maximale Breite und Höhe eines Fensters mit einem Titel und veränderbare Rahmengröße (in Pixel). Diese Maße beziehen sich auf den ganzen Desktop. Der Benutzer kann den Fensterrahmen nicht auf eine Größe ziehen, die diese Abmessungen überschreiten würden.</td>
+  </tr>
+  <tr>
+    <td>28, 29</td>
+    <td>SM_CXMIN, SM_CYMIN: Minimale Breite und Höhe des Fensters (in Pixel).</td>
+  </tr>
+  <tr>
+    <td>57, 58</td>
+    <td>SM_CXMINIMIZED, SM_CYMINIMIZED: Breite und Höhe eines minimierten Fensters (in Pixel).</td>
+  </tr>
+  <tr>
+    <td>34, 35</td>
+    <td>SM_CXMINTRACK, SM_CYMINTRACK: Minimale Breite und Höhe eines Fensters (in Pixel). Der Benutzer kann den Fensterrahmen nicht auf eine Größe ziehen, die diese Abmessungen unterschreiten würden. Durch Verarbeiten der WM_GETMINMAXINFO-Meldung kann ein Fenster diese Werte überschreiben.</td>
+  </tr>
+  <tr>
+    <td>0, 1</td>
+    <td>SM_CXSCREEN, SM_CYSCREEN: Bildschirmbreite und -höhe des primären Anzeigegeräts (in Pixel). Diese sind identisch mit den internen Variablen <a href="../Variables.htm#Screen">A_ScreenWidth</a> und <a href="../Variables.htm#Screen">A_ScreenHeight</a>.</td>
+  </tr>
+  <tr>
+    <td>78, 79</td>
+    <td>SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN: Breite und Höhe des virtuellen Bildschirms (in Pixel). Der virtuelle Bildschirm ist das umschließende Rechteck für alle Anzeigegeräte. Die Maße SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN sind die Koordinaten der linken oberen Ecke des virtuellen Bildschirms.</td>
+  </tr>
+  <tr>
+    <td>19</td>
+    <td>SM_MOUSEPRESENT: Ungleich 0, wenn eine Maus angeschlossen ist, ansonsten 0.</td>
+  </tr>
+  <tr>
+    <td>75</td>
+    <td>SM_MOUSEWHEELPRESENT: Ungleich 0, wenn eine Maus mit Mausrad angeschlossen ist, ansonsten 0.</td>
+  </tr>
+  <tr>
+    <td>63</td>
+    <td>SM_NETWORK: Ist ein Netzwerk vorhanden, wird das niederwertigste Bit gesetzt, andernfalls wird es gelöscht. Die anderen Bits werden für die zukünftige Verwendung reserviert.</td>
+  </tr>
+  <tr>
+    <td>8193</td>
+    <td>
+      SM_REMOTECONTROL: Diese Systemmetrik wird in einer Terminaldienstumgebung verwendet. Ungleich 0, wenn die aktuelle Sitzung remote gesteuert wird, ansonsten 0.</td>
+  </tr>
+  <tr>
+    <td>4096</td>
+    <td>
+      SM_REMOTESESSION: Diese Systemmetrik wird in einer Terminaldienstumgebung verwendet. Wenn der aufrufende Prozess einer Terminaldienste-Clientsitzung zugeordnet ist, ist der Rückgabewert ungleich 0. Wenn der aufrufende Prozess einer Terminaldienst-Konsolensitzung zugeordnet ist, ist der Rückgabewert 0. Die Konsolensitzung ist nicht unbedingt die physische Konsole.</td>
+  </tr>
+  <tr>
+    <td>70</td>
+    <td>
+      SM_SHOWSOUNDS: Ungleich 0, wenn die Anwendung Informationen für den Benutzer visuell anzeigen soll, die sonst nur als Audiodaten ausgegeben werden, ansonsten 0.
     </td>
-</tr>
-<tr>
-<td>8192</td>
-<td>
-    SM_SHUTTINGDOWN: Ungleich 0, wenn die aktuelle Sitzung heruntergefahren wird, ansonsten 0. <b>Windows 2000:</b> Der abgerufene Wert ist immer 0.</td>
-</tr>
-<tr>
-<td>23</td>
-<td>SM_SWAPBUTTON: Ungleich 0, wenn die Funktionen der linken und rechten Maustaste getauscht wurden, ansonsten 0.</td>
-</tr>
-<tr>
-<td>76, 77</td>
-<td>
-        SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN: Koordinaten für die linke und obere Seite des virtuellen Bildschirms. Der virtuelle Bildschirm ist das umschließende Rechteck für alle Anzeigegeräte. Im Gegensatz dazu sind die Maße SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN (weiter oben) die Breite und Höhe des virtuellen Bildschirms.</td>
-</tr>
+  </tr>
+  <tr>
+    <td>8192</td>
+    <td>
+      SM_SHUTTINGDOWN: Ungleich 0, wenn die aktuelle Sitzung heruntergefahren wird, ansonsten 0. <b>Windows 2000:</b> Der abgerufene Wert ist immer 0.</td>
+  </tr>
+  <tr>
+    <td>23</td>
+    <td>SM_SWAPBUTTON: Ungleich 0, wenn die Funktionen der linken und rechten Maustaste getauscht wurden, ansonsten 0.</td>
+  </tr>
+  <tr>
+    <td>76, 77</td>
+    <td>
+      SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN: Koordinaten für die linke und obere Seite des virtuellen Bildschirms. Der virtuelle Bildschirm ist das umschließende Rechteck für alle Anzeigegeräte. Im Gegensatz dazu sind die Maße SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN (weiter oben) die Breite und Höhe des virtuellen Bildschirms.</td>
+  </tr>
 </table>
-<br>
-<h3>Selten verwendet</h3>
+
+<h4>Selten verwendet</h4>
 <table class="info">
   <tr>
     <th>Nummer</th>
@@ -143,10 +163,10 @@ MsgBox, Links: %Mon2Left% -- Oben: %Mon2Top% -- Rechts: %Mon2Right% -- Unten: %M
   </tr>
   <tr>
     <td>67</td>
-    <td>SM_CLEANBOOT: Gibt an, wie das System gestartet wurde:<br>
-      0 Normaler Start<br>
-      1 Abgesicherter Start<br>
-      2 Abgesicherter Start mit Netzwerk</td>
+    <td>SM_CLEANBOOT: Gibt an, wie das System gestartet wurde:
+      <br> 0 Normaler Start
+      <br> 1 Abgesicherter Start
+      <br> 2 Abgesicherter Start mit Netzwerk</td>
   </tr>
   <tr>
     <td>5, 6</td>
@@ -255,7 +275,8 @@ MsgBox, Links: %Mon2Left% -- Oben: %Mon2Top% -- Rechts: %Mon2Right% -- Unten: %M
   <tr>
     <td>82</td>
     <td>SM_IMMENABLED: Ungleich 0, wenn Features vom Input Method Manager/Input Method Editor aktiviert sind, ansonsten 0.
-        <p>SM_IMMENABLED gibt an, ob das System bereit ist, einen unicode-basierten IME auf eine Unicode-Anwendung anzuwenden. Damit ein sprachabhängiger IME ordnungsgemäß funktioniert, sollte man zuvor SM_DBCSENABLED und den ANSI-Zeichensatz des Systems überprüfen. Andernfalls könnte es sein, dass die ANSI-zu-Unicode-Konvertierung nicht richtig durchgeführt wird, oder dass einige Komponenten wie Schriftarten oder Registry-Einstellungen nicht vorhanden sind.</p></td>
+      <p>SM_IMMENABLED gibt an, ob das System bereit ist, einen unicode-basierten IME auf eine Unicode-Anwendung anzuwenden. Damit ein sprachabhängiger IME ordnungsgemäß funktioniert, sollte man zuvor SM_DBCSENABLED und den ANSI-Zeichensatz des Systems überprüfen. Andernfalls könnte es sein, dass die ANSI-zu-Unicode-Konvertierung nicht richtig durchgeführt wird, oder dass einige Komponenten wie Schriftarten oder Registry-Einstellungen nicht vorhanden sind.</p>
+    </td>
   </tr>
   <tr>
     <td>87</td>
@@ -286,18 +307,23 @@ MsgBox, Links: %Mon2Left% -- Oben: %Mon2Top% -- Rechts: %Mon2Right% -- Unten: %M
     <td>SM_TABLETPC: Ungleich 0, wenn das aktuelle Betriebssystem Windows XP Tablet PC Edition ist, ansonsten 0.</td>
   </tr>
 </table>
-<h3>Bemerkungen</h3>
-<p>Die internen Variablen <a href="../Variables.htm#Screen">A_ScreenWidth</a> und <a href="../Variables.htm#Screen">A_ScreenHeight</a> enthalten die Breite und Höhe des primären Anzeigegeräts (in Pixel).</p>
-<h3>Siehe auch</h3>
-<p><a href="DllCall.htm">DllCall</a>, <a href="WinGet.htm">WinGet</a></p>
-<h3>Beispiele</h3>
-<pre class="NoIndent"><em>; Beispiel #1:</em>
-SysGet, Maustastenanzahl, 43
-SysGet, VirtuelleBildschirmbreite, 78
-SysGet, VirtuelleBildschirmhöhe, 79
 
-<em>; Beispiel #2: Ein funktionierendes Skript, das Informationen über jedes Anzeigegerät anzeigt:</em>
-SysGet, AnzeigegerätAnzahl, MonitorCount
+<h2>Bemerkungen</h2>
+<p>Die internen Variablen <a href="../Variables.htm#Screen">A_ScreenWidth</a> und <a href="../Variables.htm#Screen">A_ScreenHeight</a> enthalten die Breite und Höhe des primären Anzeigegeräts (in Pixel).</p>
+
+<h2>Siehe auch</h2>
+<p><a href="DllCall.htm">DllCall</a>, <a href="WinGet.htm">WinGet</a></p>
+
+<h2>Beispiele</h2>
+
+<h3 id="ex1">Beispiel #1: Verschiedenes</h3>
+<pre class="NoIndent">SysGet, Maustastenanzahl, 43
+SysGet, VirtuelleBildschirmbreite, 78
+SysGet, VirtuelleBildschirmhöhe, 79</pre>
+
+<h3 id="ex2">Beispiel #2</h3>
+<p>Zeigt Informationen über jedes Anzeigegerät an:</p>
+<pre class="NoIndent">SysGet, AnzeigegerätAnzahl, MonitorCount
 SysGet, PrimäresAnzeigegerät, MonitorPrimary
 MsgBox, Gezählte Anzeigegeräte:`t%AnzeigegerätAnzahl%`nPrimäres Anzeigegerät:`t%PrimäresAnzeigegerät%
 Loop, %AnzeigegerätAnzahl%

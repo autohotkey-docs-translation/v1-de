@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>RegisterCallback - AutoHotkey</title>
-<meta name="description" content="RegisterCallback erstellt eine Maschinencode-Adresse, die ihren Aufruf zu einer Funktion im Skript weiterleitet.">
+<title>RegisterCallback() - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Die RegisterCallback-Funktion erstellt eine Maschinencode-Adresse, die ihren Aufruf an eine Funktion im Skript weiterleitet." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,10 +13,10 @@
 
 <h1>RegisterCallback() <span class="ver">[v1.0.47+]</span></h1>
 
-<p>Erstellt eine Maschinencode-Adresse, die ihren Aufruf zu einer <a href="../Functions.htm">Funktion</a> im Skript weiterleitet.</p>
+<p>Erstellt eine Maschinencode-Adresse, die ihren Aufruf an eine <a href="../Functions.htm">Funktion</a> im Skript weiterleitet.</p>
 
 <pre class="Syntax">Adresse := <span class="func">RegisterCallback</span>("Funktionsname" <span class="optional">, Optionen := "", ParamAnzahl := Formalanzahl, Ereignisinfo := Adresse</span>)</pre>
-<h3>Parameter</h3>
+<h2>Parameter</h2>
 <dl>
 
   <dt>Adresse</dt>
@@ -43,7 +43,7 @@
 
 </dl>
 
-<h3>Die Parameter der Callback-Funktion</h3>
+<h2>Die Parameter der Callback-Funktion</h2>
 <p>Eine <a href="../Functions.htm">Funktion</a>, die einer Callback-Adresse zugewiesen ist, kann bis zu 31 Parameter akzeptieren. <a href="../Functions.htm#optional">Optionale Parameter</a> sind erlaubt, so dass die Funktion von mehr als einem Aufrufer aufgerufen werden kann.</p>
 <p>Das richtige Interpretieren von Parametern erfordert ein gutes Verständnis darüber, wie die x86-Aufrufkonvention funktioniert. Da Autohotkey keine typisierten Parameter besitzt, besteht Callback's Parameterliste voraussichtlich aus Integern, von denen einige neuinterpretiert werden müssen.</p>
 
@@ -83,22 +83,22 @@ DieFunk(params*) {
 <p>Die meisten Callbacks verwenden die <em>stdcall</em>-Aufrufkonvention, die eine feste Anzahl an Parametern voraussetzt. In solchen Fällen muss <em>ParamAnzahl</em> auf die Größe der Parameterliste gesetzt werden, wo Int64 und Double als zwei 32-Bit-Parameter zählen.</p>
 <p>Bei <em>Cdecl</em> oder 64-Bit-Aufrufkonventionen hat <em>ParamAnzahl</em> nur Einfluss darauf, wie vielen Skriptparametern Werte zugewiesen werden können. Wenn dieser Parameter fehlt, werden alle optionalen Parameter ihren Standardwert bekommen und aus den Berechnungen für die Adresse, gespeichert in <em>params</em>, ausgeschlossen.</p>
 
-<h3>Was die Funktion per <em>Return</em> zurückgeben sollte</h3>
+<h2>Was die Funktion per <em>Return</em> zurückgeben sollte</h2>
 <p>Wenn die Funktion ein <a href="Return.htm">Return</a> verwendet, dessen Parameter entweder fehlt oder einen leeren Wert wie "" hat (oder überhaupt kein Return verwendet), wird eine 0 an den Aufrufer des Callbacks zurückgegeben. Ansonsten sollte die Funktion einen Integer zurückgeben, der dann an den Aufrufer zurückgegeben wird. AutoHotkey 32-bit kürzt Rückgabewerte auf 32 Bit, während AutoHotkey 64-bit Rückgabewerte im 64-Bit-Format unterstützt. Zurückgegebene Strukturen größer als diesen Wert werden nicht unterstützt.</p>
 
-<h3 id="Threads">Fast vs. Slow</h3>
+<h2 id="Threads">Fast vs. Slow</h2>
 <p>Der Standard/Slow-Modus bewirkt, dass Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> innerhalb der Funktion mit ihren Standardwerten beginnen. Diese Standardwerte können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
 <p>Der <a href="#Fast">Fast-Modus</a> erbt hingegen die globalen Einstellungen von einem <a href="../misc/Threads.htm">Thread</a>, der zum Zeitpunkt des Funktionsaufrufs aktiv war. Desweiteren werden jegliche Änderungen, die die Funktion bei globalen Einstellungen gemacht hat (einschließlich <a href="../misc/ErrorLevel.htm">ErrorLevel</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>), auch für den <a href="../misc/Threads.htm">aktuellen Thread</a> wirksam. Demzufolge sollte der Fast-Modus nur verwendet werden, wenn bekannt ist, in welchen Threads die Funktion aufgerufen wird.</p>
 <p>Um zu verhindern, dass ein Callback sich selbst unterbricht (oder von einem anderen Thread unterbrochen wird), fügt man <a href="Critical.htm">Critical</a> in die erste Zeile ein. Allerdings ist dies nicht effektiv, wenn die Funktion indirekt via eingehende Meldung kleiner als 0x312 aufgerufen wird (das Erhöhen von Critical's <a href="Critical.htm#Interval">Intervall</a> könnte helfen). Desweiteren kann <a href="Critical.htm">Critical</a> die Funktion nicht daran zu hindern, etwas zu tun, das zum indirekten Selbstaufruf führen könnte, wie z. B. durch <a href="PostMessage.htm">SendMessage</a> oder <a href="DllCall.htm">DllCall</a>.</p>
 
-<h3>Speicher</h3>
+<h2>Speicher</h2>
 <p>Jede Verwendung von RegisterCallback() bekommt eine kleine Speichermenge zugewiesen (32 Bytes plus System-Overhead). Da das Betriebssystem diesen Speicher automatisch beim Beenden des Skripts freigibt, muss jedes Skript, das eine kleine <em>feste</em> Anzahl an Callbacks zugewiesen bekommt, den Speicher nicht explizit freigegeben. Dagegen sollte ein Skript, das RegisterCallback() unendlich oft aufruft, folgende Funktion bei jedem unbenutzten Callback aufrufen:</p>
 <pre>DllCall("GlobalFree", "Ptr", Adresse, "Ptr")</pre>
 
-<h3>Siehe auch</h3>
+<h2>Siehe auch</h2>
 <p><a href="DllCall.htm">DllCall()</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="Sort.htm#callback">Sort's Callback</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a></p>
 
-<h3>Beispiele</h3>
+<h2>Beispiele</h2>
 <pre class="NoIndent"><em>; Beispiel: Das folgende Skript zeigt eine Zusammenfassung aller Fenster auf höchster Ebene an.</em>
 
 <em>; Aus Performance- und Speichergründen wird RegisterCallback() nur einmal für einen bestimmten Callback aufgerufen:</em>
@@ -120,7 +120,6 @@ EnumWindowsProc(hwnd, lParam)
         Ausgabe .= "HWND: " . hwnd . "`tTitel: " . Titel . "`tKlasse: " . Klasse . "`n"
     return true  <em>; Setzt EnumWindows() fort, bis alle Fenster abgearbeitet wurden.</em>
 }</pre>
-<p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel: Das folgende Skript zeigt, wie ein GUI-Fenster zu einer Unterklasse gemacht werden kann,
 ; wenn man sein WindowProc an einen neuen WindowProc weiterleitet. In diesem Fall wird die Hintergrundfarbe
 ; des Text-Steuerelements auf eine benutzerdefinierte Farbe gesetzt.</em>

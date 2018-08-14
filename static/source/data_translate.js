@@ -2,9 +2,15 @@ translateData = {
   // Sidebar
   "Content":"Inhalt",
   "Index":"Index",
-  "Type in the keyword to find:":"Zu suchendes Schlüsselwort:",
+  "Filter":true,
+  "Directives":"Direktiven",
+  "Built-in Variables":"Interne Variablen",
+  "Built-in Functions":"Interne Funktionen",
+  "Control Flow Statements":"Ablaufsteuerungsanweisungen",
+  "Declarations":"Deklarationen",
+  "Operators":"Operatoren",
+  "Commands":"Befehle",
   "Search":"Suchen",
-  "Type in the word(s) to search for:":"Suchbegriff(e) eintragen:",
   "Highlight the words":"Suchwörter hervorheben",
   // Oberleiste
   "Hide/Show sidebar":"Sidebar verstecken/anzeigen",

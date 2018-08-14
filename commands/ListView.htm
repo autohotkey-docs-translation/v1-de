@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>ListView (GUI) - AutoHotkey</title>
-<meta name="description" content="Erstellen Sie auf einfache Weise ListView-Steuerelemente mit dieser kostenlosen Skriptsprache. Umfasst Kontextmenüs, Reihen-/Spaltensymbole und klickbare Spaltenüberschriften zum Sortieren.">
+<title>ListView (GUI) - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="In seiner bekanntesten Form zeigt das ListView-Steuerelement eine tabellarische Ansicht mit Reihen und Spalten an. Diese Seite enthält die Funktionen, um es zu modifizieren." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -20,16 +20,18 @@
   <li><a href="#View">Anzeigemethoden</a>: Report (Standard), Icon, Tile, Small-Icon und List.</li>
   <li><a href="#BuiltIn">Interne Funktionen</a>:
     <ul>
-      <li><a href="#bifRow">Reihen-Funktionen (Hinzufügen, Ändern und Löschen von Reihen)</a></li>
+      <li><a href="#bifRow">Reihen-Funktionen</a></li>
       <li><a href="#bifCol">Spalten-Funktionen</a></li>
       <li><a href="#bifGet">Daten aus einer ListView bekommen</a></li>
+      <li><a href="#bifIcon">Symbole setzen</a></li>
     </ul>
   </li>
   <li><a href="#notify">G-Label-Benachrichtigungen</a></li>
-  <li><a href="#IL">ImageLists</a> (Symbole in die ListView einfügen)</li>
+  <li><a href="#IL">ImageList</a> (die Mittel, mit denen Symbole hinzugefügt werden)</li>
   <li><a href="#Remarks">ListView-Bemerkungen</a></li>
   <li><a href="#Examples">Beispiele</a></li>
 </ul>
+
 <h2 id="Intro">Einführung und einfaches Beispiel</h2>
 <p>ListView ist eines der umfangreichsten Steuerelemente, das vom Betriebssystem zur Verfügung gestellt wird. In seiner bekanntesten Form zeigt es eine tabellarische Ansicht mit Reihen und Spalten an - das bekannteste Beispiel davon ist die Listenansicht des Explorers (Detailansicht).</p>
 <p>Zwar muss man sich erst einlesen, aber die grundlegenden Features einer ListView sind einfach zu bedienen. Die Syntax zum Erstellen einer ListView ist:</p>
@@ -50,7 +52,7 @@ Gui, Show
 return
 
 MeineListView:
-if A_GuiEvent = DoubleClick
+if (A_GuiEvent = "DoubleClick")
 {
     <a href="#LV_GetText">LV_GetText</a>(Reihentext, A_EventInfo)  <em>; Ermittelt den Text aus dem ersten Feld der Reihe.</em>
     ToolTip Sie haben die Reihe %A_EventInfo% doppelt angeklickt. Text: "%Reihentext%"
@@ -59,6 +61,7 @@ return
 
 GuiClose:  <em>; Kennzeichnet, dass das Skript automatisch beim Schließen des Fensters beendet werden sollte.</em>
 ExitApp</pre>
+
 <h2 id="Options">Optionen und Styles für "<em>Gui, Add, ListView, <u>Optionen</u></em>"</h2>
 <p id="AltSubmit"><strong>AltSubmit</strong>: Meldet dem Skript mehr ListView-Ereignisse als normal. Das heißt, dass das g-Label öfters gestartet wird. Siehe <a href="#notify">ListView-Benachrichtigungen</a> für Details.</p>
 <p><strong>Background</strong>: Geben Sie das Wort Background an und fügen Sie direkt danach einen Farbnamen (siehe <a href="Progress.htm#colors">Farbtabelle</a>) oder einen RGB-Wert (das 0x-Präfix ist optional) ein. Beispiele: <code>BackgroundSilver</code>, <code>BackgroundFFDD99</code>. Fehlt diese Option, verwendet ListView zu Beginn die Hintergrundfarbe, die im letzten Parameter von <a href="Gui.htm#Color">Gui Color</a> gesetzt wurde (ist dies nicht der Fall, dann die Standard-Hintergrundfarbe vom Betriebssystem). Mit <code>BackgroundDefault</code> kann die Standard-Hintergrundfarbe des Betriebssystems erzwungen werden (in der Regel weiß). Zum Beispiel könnte man die Standardfarbe von ListView via <code>GuiControl, +BackgroundDefault, MeineListView</code> wiederherstellen.</p>
@@ -79,6 +82,7 @@ ExitApp</pre>
 <p id="SortDesc"><strong>SortDesc:</strong> Das gleiche wie oben, nur in absteigender Reihenfolge.</p>
 <p id="WantF2"><strong>WantF2</strong> <span class="ver">[v1.0.44+]:</span> Geben Sie <code>-WantF2</code> (minus WantF2) an, um die Möglichkeit zu entfernen, die aktuell fokussierte Reihe via <kbd>F2</kbd>-Taste zu <a href="#ReadOnly">editieren</a>. Diese Einstellung wird ignoriert, wenn <code>-<a href="#ReadOnly">ReadOnly</a></code> auch angegeben ist. Abgesehen von dieser Einstellung erhält das g-Label weiterhin <kbd>F2</kbd>-<a href="#NotifyK">Benachrichtigungen</a>.</p>
 <p><strong>(Unbenannte numerische Styles)</strong>: Da die restlichen Styles nur selten verwendet werden, haben sie keine Namen. In der <a href="../misc/Styles.htm#ListView">ListView-Style-Tabelle</a> finden Sie eine Liste mit Styles.</p>
+
 <h2 id="View">Anzeigemethoden</h2>
 <p>Eine ListView hat fünf Anzeigemethoden, von denen die Report-Ansicht am häufigsten verwendet wird (Standardeinstellung). Um eine der anderen Ansichten zu nutzen, fügt man ihr Name in den Optionen ein. Die Ansicht kann auch geändert werden, nachdem das Steuerelement erstellt wurde. Zum Beispiel: <code>GuiControl, +IconSmall, MeineListView</code>.</p>
 <p><strong>Icon:</strong> Zeigt eine Ansicht für große Symbole. In dieser und allen anderen Ansichten - außer <em>Report</em> - sind nur die Texte der ersten Spalte sichtbar. Um Symbole in diesem Modus darzustellen, muss der ListView eine <a href="#IL">ImageList</a> mit großen Symbolen zugewiesen werden.</p>
@@ -86,14 +90,45 @@ ExitApp</pre>
 <p><strong>IconSmall</strong>: Zeigt eine Ansicht für kleine Symbole.</p>
 <p><strong>List:</strong> Zeigt eine Ansicht für kleine Symbole im Listenformat, in der die Symbole in Spalten dargestellt werden. Die Anzahl der Spalten hängt von der Breite des Steuerelements und der Breite des längsten Texteintrags ab.</p>
 <p><strong>Report:</strong> Wechselt wieder zur Report-Ansicht, die zu Beginn die Standardeinstellung ist. Zum Beispiel: <code>GuiControl, +Report, MeineListView</code>.</p>
+
 <h2 id="BuiltIn">Interne Funktionen für ListView</h2>
 <p>Alle ListView-Funktionen gelten für das <a href="Gui.htm#DefaultWin">Standard-GUI-Fenster</a> des aktuellen Threads (das mit <code><a href="Gui.htm#Default">Gui, 2:Default</a></code> geändert werden kann). Wenn das Standardfenster weder vorhanden ist noch ListView-Steuerelemente hat, geben alle Funktionen null zurück, um das Problem zu kennzeichnen.</p>
 <p id="GuiLV">Wenn das Fenster mehrere ListView-Steuerelemente hat, beziehen sich die Funktionen standardmäßig auf das zuletzt hinzugefügte Steuerelement. Um das zu ändern, nutzt man <code>Gui, ListView, ListViewName</code> - <em>ListViewName</em> kann ListView's <a href="Gui.htm#var">zugeordnete Variable</a>, ClassNN (wie von Windows Spy gezeigt) oder <span class="ver">[in v1.1.04+]</span> HWND sein. Einmal geändert, werden alle vorhandenen und zukünftigen <a href="../misc/Threads.htm">Threads</a> die angegebene ListView verwenden. <span class="ver">[v1.1.23+]:</span> <a href="../Variables.htm#DefaultListView">A_DefaultListView</a> enthält die aktuelle Einstellung.</p>
 <p id="RowNumber">Der auf dieser Seite verwendete Begriff "Reihennummer" bezieht sich auf die aktuelle Position einer Reihe innerhalb des ListViews. Die oberste Reihe ist 1, die zweite Reihe ist 2 und so weiter. Nachdem eine Reihe hinzugefügt wurde, neigen sie dazu, aufgrund von Sortieren, Löschen und Einfügen von anderen Reihen geändert zu werden. Um daher eine oder mehrere Reihen basierend auf ihre Inhalte zu lokalisieren, ist es am besten, <a href="#LV_GetText">LV_GetText()</a> in einer Schleife zu verwenden.</p>
-<h2 id="bifRow">Reihen-Funktionen</h2>
-<h3 id="LV_Add">LV_Add([Optionen, Feld1, Feld2, ...])</h3>
-<p>Fügt eine neue Reihe an das untere Ende der Liste ein. Die Parameter <em>Feld1</em> und so weiter sind die Spalten der neuen Reihe, die Text oder numerisch sein können (einschließlich numerische Ergebnisse von <a href="../Variables.htm#Expressions">Ausdrücken</a>). Um ein beliebiges Feld leer zu machen, fügt man "" oder Gleichwertiges ein. Falls zu wenig Felder zum Füllen der Spalten vorhanden sind, bleiben die Spalten am Ende leer. Zuviel angegebene Felder werden einfach ignoriert.</p>
+
+<p id="bifRow"><strong>Hinzufügen, Modifizieren und Entfernen von Reihen</strong></p>
+<ul>
+    <li><a href="#LV_Add">LV_Add</a>: Fügt eine neue Reihe an das untere Ende der Liste ein.</li>
+    <li><a href="#LV_Insert">LV_Insert</a>: Fügt eine neue Reihe vor der angegebenen Reihe ein.</li>
+    <li><a href="#LV_Modify">LV_Modify</a>: Modifiziert die Attribute und/oder die Texte einer Reihe.</li>
+    <li><a href="#LV_Delete">LV_Delete</a>: Entfernt die angegebene Reihe oder alle Reihen.</li>
+</ul>
+
+<p id="bifCol"><strong>Spalten-Funktionen</strong></p>
+<ul>
+    <li><a href="#LV_ModifyCol">LV_ModifyCol</a>: Ändert die Attribute und/oder den Text der angegebenen Spalte und ihrer Spaltenüberschrift.</li>
+    <li><a href="#LV_InsertCol">LV_InsertCol</a>: Fügt eine neue Spalte vor der angegebenen Spalte ein.</li>
+    <li><a href="#LV_DeleteCol">LV_DeleteCol</a>: Entfernt die angegebene Spalte und all die Inhalte darunter.</li>
+</ul>
+
+<p id="bifGet"><strong>Daten aus einer ListView bekommen</strong></p>
+<ul>
+    <li><a href="#LV_GetCount">LV_GetCount</a>: Gibt entweder die Gesamtanzahl von Reihen oder Spalten oder nur die Anzahl von ausgewählten Reihen zurück.</li>
+    <li><a href="#LV_GetNext">LV_GetNext</a>: Gibt die Reihennummer der nächsten ausgewählten, markierten oder fokussierten Reihe zurück.</li>
+    <li><a href="#LV_GetText">LV_GetText</a>: Ermittelt den Text auf der angegebenen Reihe und Spalte zurück.</li>
+</ul>
+
+<p id="bifIcon"><strong>Symbole setzen</strong></p>
+<ul>
+    <li><a href="#LV_SetImageList">LV_SetImageList</a>: Setzt eine zuvor erstellte ImageList, die zum Anzeigen von Symbolen verwendet wird.</li>
+</ul>
+
+<h3 id="LV_Add">LV_Add</h3>
+<p>Fügt eine neue Reihe an das untere Ende der Liste ein.</p>
+<pre class="Syntax"><span class="func">LV_Add</span>(<span class="optional">Optionen, Feld1, Feld2, ...</span>)</pre>
+<p>Die Parameter <em>Feld1</em> und so weiter sind die Spalten der neuen Reihe, die Text oder numerisch sein können (einschließlich numerische Ergebnisse von <a href="../Variables.htm#Expressions">Ausdrücken</a>). Um ein beliebiges Feld leer zu machen, fügt man "" oder Gleichwertiges ein. Falls zu wenig Felder zum Füllen der Spalten vorhanden sind, bleiben die Spalten am Ende leer. Zuviel angegebene Felder werden einfach ignoriert.</p>
 <p>Bei Misserfolg gibt LV_Add() eine 0 zurück. Bei Erfolg gibt sie die neue <a href="#RowNumber">Reihennummer</a> zurück, die aber nicht unbedingt die letzte Reihe repräsentiert, wenn ListView den <a href="#Sort">Sort</a>- oder <a href="#SortDesc">SortDesc</a>-Style hat.</p>
+
 <h4 id="RowOptions">Reihen-Optionen</h4>
 <p>Der <em>Optionen</em>-Parameter kann eine Zeichenkette mit null oder mehreren Wörtern aus der unteren Liste sein (Groß-/Kleinschreibung ist egal). Trennen Sie alle Wörter jeweils mit einem Leer- oder Tabulatorzeichen. Um eine Option zu entfernen, muss ein Minuszeichen davor gesetzt werden. Um eine Option hinzuzufügen, lässt man das Vorzeichen weg oder setzt ein Pluszeichen davor.</p>
 <p><strong>Check</strong>: Markiert die <a href="#Checked">Checkbox</a> einer Reihe (sofern die ListView welche hat). Mit <code>LV_Modify(Reihennummer, "-Check")</code> kann sie später demarkiert werden.</p>
@@ -101,32 +136,48 @@ ExitApp</pre>
 <p id="Focus"><strong>Focus</strong>: Setzt den Tastaturfokus auf die Reihe (wird oft in Verbindung mit Select verwendet). Mit <code>LV_Modify(Reihennummer, "-Focus")</code> kann der Fokus später entfernt werden.</p>
 <p><strong>Icon</strong>: Geben Sie das Wort Icon und direkt danach eine Symbolnummer an, um ein Symbol auf der linken Seite der ersten Spalte dieser Reihe anzuzeigen. Fehlt diese Option, wird das erste Symbol aus der <a href="#IL">ImageList</a> verwendet. Um ein leeres Symbol darzustellen, fügt man eine Nummer ein, die größer ist als die Anzahl der Symbole in der ImageList. Fehlt dem Steuerelement eine ImageList mit kleinen Symbolen, wird weder ein Symbol angezeigt noch dafür Platz in der <a href="#View">Report-Ansicht</a> reserviert.</p>
 <p><strong>Select</strong>: Wählt die Reihe aus. Mit <code>LV_Modify(Reihennummer, "-Select")</code> kann die Auswahl später aufgehoben werden. Beim Auswählen der Reihen sollte man am besten sicherstellen, dass immer mindestens eine Reihe die <a href="#Focus">Fokus-Eigenschaft</a> hat, damit die MENÜ-Taste ihr <a href="Gui.htm#GuiContextMenu">Kontextmenü</a> (falls vorhanden) in der Nähe der fokussierten Reihe anzeigen kann. Direkt nach dem Wort <em>Select</em> kann optional eine 0 oder 1 erfolgen, um den Startzustand zu bestimmen. In diesem Fall wäre <code>"Select"</code> das gleiche wie <code>"Select" <strong>.</strong> VarEnthältEins</code> (der hier verwendete Punkt ist ein <a href="../Variables.htm#concat">Verkettungsoperator</a>). Diese Vorgehensweise funktioniert auch bei <em>Focus</em> und <em>Check</em>.</p>
-<p id="Vis"><strong>Vis</strong> <span class="ver">[v1.0.44+]</span>: Sorgt dafür, dass die angegebene Reihe durch Scrollen der ListView komplett sichtbar ist, falls notwendig. Diese Option funktioniert nur bei LV_Modify(); zum Beispiel: <code>LV_Modify(Reihennummer, "Vis")</code>.</p>
-<h3 id="LV_Insert">LV_Insert(Reihennummer [, Optionen, Spalte1, Spalte2, ...])</h3>
-<p>Verhält sich genauso wie LV_Add(), mit Ausnahme des ersten Parameters, der die Reihennummer für die neu eingefügte Reihe ist. Alle Reihen, die auf oder unterhalb der <em>Reihennummer</em> sind, werden nach unten verschoben, um Platz für die neue Reihe zu schaffen. Wenn <em>Reihennummer</em> größer als die Anzahl der Reihen in der Liste ist (sogar so hoch wie 2147483647), wird die neue Reihe an das untere Ende der Liste gesetzt. Als <em>Optionen</em> können die <a href="#RowOptions">Reihen-Optionen</a> verwendet werden.</p>
-<h3 id="LV_Modify">LV_Modify(Reihennummer [, Optionen, NeueSpalte1, NeueSpalte2, ...])</h3>
-<p>Ändert die Attribute und/oder den Text einer Reihe, und gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zurück. Wenn <em>Reihennummer</em> eine 0 ist, werden <u>alle</u> Reihen im Steuerelement geändert (in diesem Fall gibt die Funktion bei Erfolg eine 1 zurück, und eine 0, wenn ein Teil der Operation fehlgeschlagen ist). Wenn nur die ersten beiden Parameter vorhanden sind, werden nur die Attribute der Reihe geändert, aber nicht ihr Text. Wenn zu wenig Parameter zum Füllen der Spalten vorhanden sind, bleiben die Spalten am Ende unverändert. Mit der <a href="#ColN">ColN-Option</a> können bestimmte Spalten aktualisiert werden, ohne dabei andere zu beeinflussen. Als Optionen können die <a href="#RowOptions">Reihen-Optionen</a> verwendet werden.</p>
-<h3 id="LV_Delete">LV_Delete([Reihennummer])</h3>
+<p id="Vis"><strong>Vis</strong> <span class="ver">[v1.0.44+]</span>: Sorgt dafür, dass die angegebene Reihe durch Scrollen der ListView komplett sichtbar ist, falls notwendig. Diese Option funktioniert nur mit <a href="#LV_Modify">LV_Modify()</a>; zum Beispiel: <code>LV_Modify(Reihennummer, "Vis")</code>.</p>
+
+<h3 id="LV_Insert">LV_Insert</h3>
+<p>Fügt eine neue Reihe vor der angegebenen Reihe ein.</p>
+<pre class="Syntax"><span class="func">LV_Insert</span>(Reihennummer <span class="optional">, Optionen, Spalte1, Spalte2, ...</span>)</pre>
+<p>Verhält sich genauso wie <a href="#LV_Add">LV_Add()</a>, mit Ausnahme des ersten Parameters, der die Reihennummer für die neu eingefügte Reihe ist. Alle Reihen, die auf oder unterhalb der <em>Reihennummer</em> sind, werden nach unten verschoben, um Platz für die neue Reihe zu schaffen. Wenn <em>Reihennummer</em> größer als die Anzahl der Reihen in der Liste ist (sogar so hoch wie 2147483647), wird die neue Reihe an das untere Ende der Liste gesetzt. Als <em>Optionen</em> können die <a href="#RowOptions">Reihen-Optionen</a> verwendet werden.</p>
+
+<h3 id="LV_Modify">LV_Modify</h3>
+<p>Modifiziert die Attribute und/oder die Texte einer Reihe.</p>
+<pre class="Syntax"><span class="func">LV_Modify</span>(Reihennummer <span class="optional">, Optionen, NeueSpalte1, NeueSpalte2, ...</span>)</pre>
+<p>Sie gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zurück. Wenn <em>Reihennummer</em> eine 0 ist, werden <u>alle</u> Reihen im Steuerelement geändert (in diesem Fall gibt die Funktion bei Erfolg eine 1 zurück, und eine 0, wenn ein Teil der Operation fehlgeschlagen ist). Wenn nur die ersten beiden Parameter vorhanden sind, werden nur die Attribute der Reihe geändert, aber nicht ihr Text. Wenn zu wenig Parameter zum Füllen der Spalten vorhanden sind, bleiben die Spalten am Ende unverändert. Mit der <a href="#ColN">ColN-Option</a> können bestimmte Spalten aktualisiert werden, ohne dabei andere zu beeinflussen. Als Optionen können die <a href="#RowOptions">Reihen-Optionen</a> verwendet werden.</p>
+
+<h3 id="LV_Delete">LV_Delete</h3>
+<p>Entfernt die angegebene Reihe oder alle Reihen.</p>
+<pre class="Syntax"><span class="func">LV_Delete</span>(<span class="optional">Reihennummer</span>)</pre>
 <p>Fehlt der Parameter, werden <strong>alle</strong> Reihen in der ListView gelöscht. Ansonsten wird nur die angegebene <em>Reihennummer</em> gelöscht. Sie gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zurück.</p>
-<h2 id="bifCol">Spalten-Funktionen</h2>
-<h3 id="LV_ModifyCol">LV_ModifyCol([Spaltennummer, Optionen, Spaltentitel])</h3>
-<p>Ändert die Attribute und/oder den Text der angegebenen Spalte und ihrer Spaltenüberschrift. Die erste Spalte beginnt bei 1 (nicht 0). Fehlen alle Parameter, wird die Breite jeder Spalte an den Inhalt der Reihen angepasst. Wenn nur der erste Parameter vorhanden ist, wird nur die Größe der angegebenen Spalte automatisch angepasst. Die automatische Größenanpassung funktioniert nur in der Report- bzw. Detail-Ansicht. Diese Funktion gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zurück.</p>
+
+<h3 id="LV_ModifyCol">LV_ModifyCol</h3>
+<p>Ändert die Attribute und/oder den Text der angegebenen Spalte und ihrer Spaltenüberschrift.</p>
+<pre class="Syntax"><span class="func">LV_ModifyCol</span>(<span class="optional">Spaltennummer, Optionen, Spaltentitel</span>)</pre>
+<p>Die erste Spalte beginnt bei 1 (nicht 0). Fehlen alle Parameter, wird die Breite jeder Spalte an den Inhalt der Reihen angepasst. Wenn nur der erste Parameter vorhanden ist, wird nur die Größe der angegebenen Spalte automatisch angepasst. Die automatische Größenanpassung funktioniert nur in der Report- bzw. Detail-Ansicht. Diese Funktion gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zurück.</p>
+
 <h4 id="ColOptions">Spalten-Optionen</h4>
 <p>Der <em>Optionen</em>-Parameter kann eine Zeichenkette mit null oder mehreren Wörtern aus der unteren Liste sein (Groß-/Kleinschreibung ist egal). Trennen Sie alle Wörter jeweils mit einem Leer- oder Tabulatorzeichen. Um eine Option zu entfernen, muss ein Minuszeichen davor gesetzt werden. Um eine Option hinzuzufügen, lässt man das Vorzeichen weg oder setzt ein Pluszeichen davor.</p>
+
 <h4>Spalten-Optionen: Allgemein</h4>
 <p><strong>N</strong>: Geben Sie für N die neue Breite der Spalte an (in Pixel). Diese Nummer muss nicht in Anführungszeichen gesetzt werden, wenn sie die einzige Option ist. Zum Beispiel wären die folgenden Zeilen beide gültig: <code>LV_ModifyCol(1, 50)</code>, <code>LV_ModifyCol(1, "50 Integer")</code>.</p>
 <p><strong>Auto</strong>: Passt die Breite der Spalte an ihren Inhalten an. Diese Option funktioniert nur in der Report- bzw. Detail-Ansicht.</p>
 <p><strong>AutoHdr</strong>: Passt die Breite der Spalte an ihren Inhalten und ihrer Spaltenüberschrift an - je nachdem, was breiter ist. Wendet man diese Option bei der letzten Spalte an, wird ihre Breite mindestens so groß sein wie der restliche Platz der ListView. Diese Option sollte am besten nur angewendet werden, nachdem die Reihen eingefügt wurden, weil dadurch jeder Scrollbalken, der neu erschienen ist, beim Ändern der Größe der letzten Spalte einbezogen wird. Diese Option funktioniert nur in der Report- bzw. Detail-Ansicht.</p>
 <p><strong>Icon</strong>: Geben Sie das Wort Icon und direkt danach eine Symbolnummer aus der <a href="#IL">ImageList</a> an, um ein Symbol neben der Spaltenüberschrift anzuzeigen. Geben Sie <code>-Icon</code> (minus Icon) an, um alle vorhandenen Symbole zu entfernen.</p>
 <p><strong>IconRight</strong>: Zeigt das Symbol nicht auf der linken, sondern auf der rechten Seite der Spalte an.</p>
+
 <h4>Spalten-Optionen: Datentyp</h4>
 <p><strong>Float</strong>: Beim Sortieren werden die Felder der Spalte als Gleitkommazahlen angesehen (hexadezimales Format wird nicht unterstützt). Die Sortierungs-Performance ist bei Float- und Text-Spalten bis zu 25-mal langsamer als die bei Integer-Spalten.</p>
 <p id="Integer"><strong>Integer</strong>: Beim Sortieren werden die Felder der Spalte als Integer angesehen. Um richtig sortiert zu werden, muss jeder Integer im 32-Bit-Format sein; also innerhalb des Bereiches von -2147483648 bis 2147483647. Wenn einige der Werte keine Integer sind, werden sie beim Sortieren als null angesehen (es sei denn, sie beginnen mit einer Zahl, in diesem Fall wird diese Zahl verwendet). Die Zahlen können entweder dezimal oder hexadezimal (z. B. <code>0xF9E0</code>) sein.</p>
 <p id="Text"><strong>Text</strong>: Beim Sortieren werden die Felder der Spalte als Text angesehen - dies gilt standardmäßig für jede Spalte. Nur die ersten 8.190 Zeichen des Textes werden beim Sortieren berücksichtigt (bei der <a href="#Logical"><em>Logical</em>-Option</a> gilt ein Limit von 4094).</p>
+
 <h4>Spalten-Optionen: Ausrichtung</h4>
 <p><strong>Center</strong>: Zentriert den Text in der Spalte. Um eine Integer- oder Float-Spalte zu zentrieren, fügt man das Wort Center nach dem Wort Integer oder Float ein.</p>
 <p><strong>Left</strong>: Richtet den Text der Spalte linksbündig aus - dies gilt standardmäßig für jede Spalte. Auf älteren Betriebssystemen könnte die erste Spalte eine erzwungene Links-Ausrichtung haben.</p>
 <p><strong>Right</strong>: Richtet den Text der Spalte rechtsbündig aus. Bei Integer- und Float-Spalten muss dieses Attribut nicht angegeben werden, weil sie standardmäßig rechtsbündig ausgerichtet sind. Dieser Standard kann durch so etwas wie <code>"Integer Left"</code> oder <code>"Float Center"</code> überschrieben werden.</p>
+
 <h4>Spalten-Optionen: Sortierung</h4>
 <p id="Case"><strong>Case</strong>: Die Sortierung der Spalte ist abhängig von der Groß- und Kleinschreibung (betrifft nur <a href="#Text">Text</a>-Spalten). Fehlen die Optionen <em>Case</em>, <em>CaseLocale</em> und <em>Logical</em>, werden die Großbuchstaben von A bis Z und die entsprechenden Kleinbuchstaben beim Sortieren als gleichwertig angesehen.</p>
 <p><strong>CaseLocale</strong> <span class="ver">[v1.0.43.03+]:</span> Die Sortierung der Spalte unterscheidet nicht zwischen Groß- und Kleinschreibung und basiert auf das aktuelle Gebietsschema des Benutzers (betrifft nur <a href="#Text">Text</a>-Spalten). Zum Beispiel würden die meisten englischen und westeuropäischen Gebietsschemen die Großbuchstaben von A bis Z, einschließlich ANSI-Zeichen wie Ä und Ü, und die entsprechenden Kleinbuchstaben als gleichwertig ansehen. Diese Methode verwendet zudem eine "Wortsortierung" - Bindestriche und Apostrophe werden so behandelt, dass Wörter wie "coop" und "co-op" zusammen bleiben.</p>
@@ -136,12 +187,20 @@ ExitApp</pre>
 <p><strong>Sort</strong>: Sortiert die Spalte sofort in aufsteigender Reihenfolge (selbst wenn sie die <a href="#Desc">Desc</a>-Option hat).</p>
 <p><strong>SortDesc</strong>: Sortiert die Spalte sofort in absteigender Reihenfolge.</p>
 <p><strong>Uni</strong>: Unidirektionale Sortierung. Verhindert, dass ein zweiter Klick auf der gleichen Spalte die Sortierungsrichtung umkehrt.</p>
-<h3 id="LV_InsertCol">LV_InsertCol(Spaltennummer [, Optionen, Spaltentitel])</h3>
+
+<h3 id="LV_InsertCol">LV_InsertCol</h3>
+<p>Fügt eine neue Spalte vor der angegebenen Spalte ein.</p>
+<pre class="Syntax"><span class="func">LV_InsertCol</span>(Spaltennummer <span class="optional">, Optionen, Spaltentitel</span>)</pre>
 <p>Erstellt eine neue Spalte und fügt sie als die angegebene <em>Spaltennummer</em> ein (verschiebt alle anderen Spalten nach rechts, um Platz zu schaffen). Die erste Spalte ist 1 (nicht 0). Wenn <em>Spaltennummer</em> größer ist als die Anzahl der vorhandenen Spalten im Steuerelement, wird die neue Spalte rechts neben der letzten Spalte gesetzt. Die neu eingefügte Spalte ist zu Beginn leer. Wenn sie aber die erste Spalte ist, bekommt sie den Inhalt der alten ersten Spalte, die wiederum den Inhalt der neuen ersten Spalte bekommt (das heißt, dass deren Inhalte getauscht werden). Die Attribute der neuen Spalte - egal ob sie z. B. <a href="#Integer">Integer-Sortierung</a> verwendet oder nicht - haben zu Beginn immer ihre Standardwerte, sofern sie nicht via <em><a href="#ColOptions">Optionen</a></em> geändert wurden. Diese Funktion gibt die Positionsnummer der neuen Spalte zurück (oder 0 bei Misserfolg). Die maximale Anzahl von Spalten in einer ListView ist 200.</p>
-<h3 id="LV_DeleteCol">LV_DeleteCol(Spaltennummer)</h3>
-<p>Entfernt die angegebene Spalte und all die Inhalte darunter. Sie gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zurück. Wurde eine Spalte einmal entfernt, werden die Nummern der Spalten, die rechts daneben liegen, um 1 reduziert. Demzufolge würde das zweimalige Aufrufen von <code>LV_DeleteCol(2)</code> die zweite und dritte Spalte entfernen. Auf Betriebssystemen älter als Windows XP könnte der Versuch, die originale erste Spalte zu entfernen, fehlschlagen und 0 zurückgeben.</p>
-<h2 id="bifGet">Daten aus einer ListView bekommen</h2>
-<h3 id="LV_GetCount">LV_GetCount(["Selected | Column"])</h3>
+
+<h3 id="LV_DeleteCol">LV_DeleteCol</h3>
+<p>Entfernt die angegebene Spalte und all die Inhalte darunter.</p>
+<pre class="Syntax"><span class="func">LV_DeleteCol</span>(Spaltennummer)</pre>
+<p>Sie gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zurück. Wurde eine Spalte einmal entfernt, werden die Nummern der Spalten, die rechts daneben liegen, um 1 reduziert. Demzufolge würde das zweimalige Aufrufen von <code>LV_DeleteCol(2)</code> die zweite und dritte Spalte entfernen. Auf Betriebssystemen älter als Windows XP könnte der Versuch, die originale erste Spalte zu entfernen, fehlschlagen und 0 zurückgeben.</p>
+
+<h3 id="LV_GetCount">LV_GetCount</h3>
+<p>Gibt entweder die Gesamtanzahl von Reihen oder Spalten oder nur die Anzahl von ausgewählten Reihen zurück.</p>
+<pre class="Syntax"><span class="func">LV_GetCount</span>(<span class="optional">Modus</span>)</pre>
 <p>Fehlt der Parameter, wird die Funktion die Anzahl der Reihen im Steuerelement zurückgeben. Wenn der Parameter "S" oder "Select" ist, wird die Zählung nur die ausgewählten/hervorgehobenen Reihen einbeziehen. Wenn der Parameter "Col" oder "Column" ist, wird die Funktion die Anzahl der Spalten im Steuerelement zurückgeben. Das Ausführen der Funktion erfolgt sofort, weil das Steuerelement solche Zählungen protokolliert.</p>
 <p>Diese Funktion wird häufig in der obersten Zeile einer Schleife verwendet - in diesem Fall würde die Funktion nur einmal aufgerufen werden (vor dem ersten Durchlauf). Zum Beispiel:</p>
 <pre>Loop % LV_GetCount()
@@ -157,8 +216,11 @@ Loop % LV_GetCount("Column")
     SendMessage, 4125, A_Index - 1, 0, SysListView321  <em>; 4125 ist LVM_GETCOLUMNWIDTH.</em>
     MsgBox Die Spalte %A_Index% hat eine Breite von %ErrorLevel%.
 }</pre>
-<h3 id="LV_GetNext">LV_GetNext([Startreihennummer, "Checked | Focused"])</h3>
-<p>Gibt die Reihennummer der nächsten ausgewählten, markierten oder fokussierten Reihe zurück. Kann keine Reihe gefunden werden, wird null zurückgegeben. Fehlt der <em>Startreihennummer</em>-Parameter oder ist er kleiner als 1, beginnt die Suche am Anfang der Liste. Ansonsten beginnt die Suche bei der Reihe nach <em>Startreihennummer</em>. Fehlt der zweite Parameter, wird die Funktion die nächste ausgewählte/hervorgehobene Reihe suchen. Verwenden Sie ansonsten "C" oder "Checked", um die nächste markierte Reihe zu finden; oder "F" oder "Focused", um die fokussierte Reihe zu finden (es gibt nie mehr als eine fokussierte Reihe in der gesamten Liste, und manchmal gibt es überhaupt keine). Das folgende Beispiel meldet alle ausgewählten Reihen in der ListView:</p>
+
+<h3 id="LV_GetNext">LV_GetNext</h3>
+<p>Gibt die Reihennummer der nächsten ausgewählten, markierten oder fokussierten Reihe zurück.</p>
+<pre class="Syntax"><span class="func">LV_GetNext</span>(<span class="optional">Startreihennummer, Reihentyp</span>)</pre>
+<p>Kann keine Reihe gefunden werden, wird null zurückgegeben. Fehlt der <em>Startreihennummer</em>-Parameter oder ist er kleiner als 1, beginnt die Suche am Anfang der Liste. Ansonsten beginnt die Suche bei der Reihe nach <em>Startreihennummer</em>. Fehlt der <em>Reihentyp</em>-Parameter, wird die Funktion die nächste ausgewählte/hervorgehobene Reihe suchen. Verwenden Sie ansonsten "C" oder "Checked", um die nächste markierte Reihe zu finden; oder "F" oder "Focused", um die fokussierte Reihe zu finden (es gibt nie mehr als eine fokussierte Reihe in der gesamten Liste, und manchmal gibt es überhaupt keine). Das folgende Beispiel meldet alle ausgewählten Reihen in der ListView:</p>
 <pre>Reihennummer = 0  <em>; Veranlasst den ersten Schleifendurchlauf, die Suche am Anfang der Liste zu beginnen.</em>
 Loop
 {
@@ -170,11 +232,23 @@ Loop
 }</pre>
 <p>Das nächste Beispiel ist eine alternative Methode, mit der man herausfinden kann, ob eine bestimmte Reihennummer markiert ist:</p>
 <pre>Gui +LastFound
-SendMessage, 4140, <i>Reihennummer</i> - 1, 0xF000, SysListView321  <em>; 4140 ist LVM_GETITEMSTATE.  0xF000 ist LVIS_STATEIMAGEMASK.</em>
+SendMessage, 4140, <i>Reihennummer</i> - 1, 0xF000, SysListView321  <em>; 4140 ist LVM_GETITEMSTATE. 0xF000 ist LVIS_STATEIMAGEMASK.</em>
 IstMarkiert := (ErrorLevel &gt;&gt; 12) - 1  <em>; Setzt IstMarkiert auf True, wenn <i>Reihennummer</i> markiert ist, ansonsten auf False.</em></pre>
-<h3 id="LV_GetText">LV_GetText(AusgabeVar, Reihennummer [, Spaltennummer])</h3>
-<p>Ermittelt den Text bei der angegebenen <em>Reihennummer</em> und <em>Spaltennummer</em> und speichert ihn in <em>AusgabeVar</em>. Fehlt der <em>Spaltennummer</em>-Parameter, verwendet er standardmäßig eine 1 (der Text in der ersten Spalte). Wenn <em>Reihennummer</em> eine 0 ist, wird die Spaltenüberschrift abgerufen. Wenn der Text länger als 8191 ist, werden nur die ersten 8191 Zeichen abgerufen. Diese Funktion gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zurück. Bei Misserfolg wird <em>AusgabeVar</em> zudem leer gemacht.</p>
+
+<h3 id="LV_GetText">LV_GetText</h3>
+<p>Ermittelt den Text bei der angegebenen <em>Reihennummer</em> und <em>Spaltennummer</em> und speichert ihn in <em>AusgabeVar</em>.</p>
+<pre class="Syntax"><span class="func">LV_GetText</span>(AusgabeVar, Reihennummer <span class="optional">, Spaltennummer</span>)</pre>
+<p>Fehlt der <em>Spaltennummer</em>-Parameter, verwendet er standardmäßig eine 1 (der Text in der ersten Spalte). Wenn <em>Reihennummer</em> eine 0 ist, wird die Spaltenüberschrift abgerufen. Wenn der Text länger als 8191 ist, werden nur die ersten 8191 Zeichen abgerufen. Diese Funktion gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zurück. Bei Misserfolg wird <em>AusgabeVar</em> zudem leer gemacht.</p>
 <p>Die vom Skript gesehenen Spaltennummern bleiben erhalten, selbst wenn der Benutzer die Spalten verschieben würde. Zum Beispiel wäre die originale erste Spalte weiterhin die Nummer 1, selbst wenn der Benutzer sie nach rechts verschieben würde.</p>
+
+<h3 id="LV_SetImageList">LV_SetImageList</h3>
+<p>Setzt oder ersetzt die <a href="#IL">ImageList</a> der ListView.</p>
+<pre class="Syntax"><span class="func">LV_SetImageList</span>(ImageListID <span class="optional">, Symboltyp</span>)</pre>
+<p>Diese Funktion wird normalerweise aufgerufen, bevor man Reihen in die ListView einfügt. Sie wendet die <a href="#IL">ImageList</a> auf die ListView an, so dass Symbole in ihren Reihen (oder Spalten) dargestellt werden können. Verwenden Sie als <em>ImageListID</em> die zurückgegebene Nummer von <a href="#IL_Create">IL_Create()</a>. Fehlt der <em>Symboltyp</em>-Parameter, werden die Symbole in der ImageList automatisch als große oder kleine Symbole erkannt. Verwenden Sie ansonsten eine 0 für große Symbole, eine 1 für kleine Symbole und eine 2 für Statussymbole (Statussymbole werden nur via <a href="PostMessage.htm">SendMessage</a> unterstützt).</p>
+<p>Eine ListView kann bis zu zwei ImageLists haben: für kleine Symbole und/oder große Symbole. Damit könnte ein Skript den Benutzer zwischen den Symbolansichten wechseln zu lassen. Um mehr als eine ImageList in die ListView einzufügen, ruft man LV_SetImageList() ein zweites Mal auf und übergibt die <em>ImageListID</em> der zweiten Liste. Eine ListView mit einer ImageList für große und kleine Symbole sollte sicherstellen, dass beide Listen die Symbole in gleicher Reihenfolge enthalten. Das liegt daran, dass mit der gleichen ID-Nummer sowohl auf die großen als auch auf die kleinen Versionen eines bestimmten Symbols verwiesen wird.</p>
+<p>Üblicherweise zeigen alle <a href="#View">Anzeigemethoden</a> (außer Icon und Tile) kleine Symbole an. Diese Standardeinstellung kann man überschreiben, wenn man eine Liste für große Symbole an LV_SetImageList übergibt und eine 1 (kleine Symbole) im zweiten Parameter angibt. Dabei wird auch jede Reihe in der ListView höher gemacht, um Platz für große Symbole zu schaffen.</p>
+<p>Bei Erfolg gibt LV_SetImageList() die <em>ImageListID</em> zurück, die zuvor mit der ListView verbunden wurde (oder eine 0, wenn dies nicht der Fall ist). Jede nicht mehr benötigte ImageList kann mit <a href="#IL_Destroy">IL_Destroy(ImageListID)</a> zerstört werden.</p>
+
 <h2 id="notify">g-Label-Benachrichtigungen (Primär)</h2>
 <p>Ein <a href="Gui.htm#label">g-Label</a> wie <code><strong>g</strong>MeineSubroutine</code> kann in den Optionen des Steuerelements eingefügt werden. Diese Option lässt das Label <em>MeineSubroutine</em> automatisch starten, wann immer der Benutzer eine Aktion im Steuerelement durchführt. Diese Subroutine kann auf die internen Variablen <a href="../Variables.htm#Gui">A_Gui</a> und <a href="../Variables.htm#GuiControl">A_GuiControl</a> zurückgreifen, um herauszufinden, welches Fenster oder ListView das Ereignis erzeugt hat. Noch wichtiger ist, dass sie auf <strong>A_GuiEvent</strong> zurückgreifen kann, die eine der folgenden Zeichenketten oder Buchstaben enthalten kann (für die Kompatibilität mit zukünftigen Versionen sollte ein Skript nicht davon ausgehen, dass das die einzigen möglichen Werte sind):</p>
 <p><strong>DoubleClick</strong>: Der Benutzer hat im Steuerelement einen Doppelklick gemacht. Die Variable A_EventInfo enthält die fokussierte Reihennummer. Mit <a href="#LV_GetNext">LV_GetNext()</a> kann stattdessen die erste <em>ausgewählte</em> Reihennummer abgerufen werden, die 0 ist, wenn der Benutzer eine leere Fläche doppelt anklickt.</p>
@@ -183,14 +257,15 @@ IstMarkiert := (ErrorLevel &gt;&gt; 12) - 1  <em>; Setzt IstMarkiert auf True, w
 <p id="Drag"><strong>D</strong>: Der Benutzer hat den Versuch gestartet, eine Reihe oder ein Symbol zu verschieben (zurzeit gibt es keine interne Unterstützung zum Verschieben von Reihen oder Symbolen). Die Variable A_EventInfo enthält die fokussierte Reihennummer. <span class="ver">[v1.0.44+]</span>: Diese Benachrichtigung tritt auch ohne <a href="#AltSubmit">AltSubmit</a> auf.</p>
 <p><strong>d</strong> (kleingeschriebenes D): Das gleiche wie oben, außer dass das Verschieben mit Rechtsklick begonnen wurde, statt mit Linksklick.</p>
 <p><strong>e</strong> (kleingeschriebenes E): Der Benutzer hat das erste Feld einer Reihe fertig editiert (er kann dieses Feld nur editieren, wenn <code><a href="#ReadOnly"><strong>-</strong>ReadOnly</a></code> in den Optionen vorhanden ist). Die Variable A_EventInfo enthält die Reihennummer.</p>
+
 <h2>g-Label-Benachrichtigungen (Sekundär)</h2>
 <p>Hat die ListView das Wort AltSubmit in ihren <a href="#Options">Optionen</a>, wird ihr g-Label öfters gestartet und <strong>A_GuiEvent</strong> weitere folgende Werte enthalten:</p>
 <p><strong>Normal</strong>: Der Benutzer hat eine Reihe mit der linken Maustaste angeklickt. Die Variable A_EventInfo enthält die fokussierte Reihennummer.</p>
 <p><strong>RightClick</strong>: Der Benutzer hat eine Reihe mit der rechten Maustaste angeklickt. Die Variable A_EventInfo enthält die fokussierte Reihennummer. In den meisten Fällen sollte man verhindern, ein Menü im Zusammenhang mit dieser Meldung anzeigen zu lassen. Ein <a href="Gui.htm#GuiContextMenu">GuiContextMenu-Label</a> ist dafür besser geeignet, weil es auch die MENÜ-Taste erkennt. Zum Beispiel:</p>
 <pre>GuiContextMenu:  <em>; Startet, wenn man einen Rechtsklick macht oder die MENÜ-Taste drückt.</em>
-if A_GuiControl &lt;&gt; MeineListView  <em>; Diese Überprüfung ist optional. Sie zeigt das Menü nur an, wenn Klicks innerhalb der ListView gemacht werden.</em>
+if (A_GuiControl &lt;&gt; "MeineListView")  <em>; Diese Überprüfung ist optional. Sie zeigt das Menü nur an, wenn Klicks innerhalb der ListView gemacht werden.</em>
     return
-<em>; Zeigt das Menü bei den Koordinaten A_GuiX und A_GuiY an.  Diese Koordinaten
+<em>; Zeigt das Menü bei den Koordinaten A_GuiX und A_GuiY an. Diese Koordinaten
 ; sind auch dann korrekt, wenn der Benutzer die MENÜ-Taste drückt:</em>
 Menu, MeinKontextmenü, Show, %A_GuiX%, %A_GuiY%
 return</pre>
@@ -204,8 +279,9 @@ return</pre>
 <p><strong>M</strong>: Auswahlrechteck. Der Benutzer hat damit begonnen, ein Auswahlrechteck über mehrere Reihen oder Symbolen zu ziehen.</p>
 <p><strong>S</strong>: Der Benutzer hat damit begonnen, in der ListView zu scrollen.</p>
 <p><strong>s</strong> (kleingeschriebenes S): Der Benutzer ist damit fertig, in der ListView zu scrollen.</p>
+
 <h2 id="IL">ImageList <span class="headnote">(Symbole in die ListView einfügen)</span></h2>
-<p>Eine ImageList (übersetzt Bildliste) ist eine Gruppe von gleich großen Symbolen, die im Speicher abgelegt sind. Zu Beginn ist jede ImageList leer. Das Skript ruft IL_Add() wiederholt auf, um die Liste mit Symbolen zu füllen, die jeweils eine fortlaufende Nummer zugewiesen bekommen, beginnend bei 1. Auf so eine Nummer bezieht sich das Skript, wenn es ein bestimmtes Symbol auf einer Reihe oder Spaltenüberschrift anzeigen soll. Das folgende Beispiel zeigt, wie Symbole in den Reihen einer ListView eingefügt werden können:</p>
+<p>Eine ImageList (übersetzt Bildliste) ist eine Gruppe von gleich großen Symbolen, die im Speicher abgelegt sind. Zu Beginn ist jede ImageList leer. Das Skript ruft <a href="#IL_Add">IL_Add()</a> wiederholt auf, um die Liste mit Symbolen zu füllen, die jeweils eine fortlaufende Nummer zugewiesen bekommen, beginnend bei 1. Auf so eine Nummer bezieht sich das Skript, wenn es ein bestimmtes Symbol auf einer Reihe oder Spaltenüberschrift anzeigen soll. Das folgende Beispiel zeigt, wie Symbole in den Reihen einer ListView eingefügt werden können:</p>
 <pre>Gui, Add, ListView, h200 w180, Symbol &amp; Nummer|Beschreibung  <em>; Erstellt eine ListView.</em>
 ImageListID := <a href="#IL_Create">IL_Create</a>(10)  <em>; Erstellt eine ImageList für 10 kleine Symbole.</em>
 <a href="#LV_SetImageList">LV_SetImageList</a>(ImageListID)  <em>; Weist die obige ImageList der aktuellen ListView zu.</em>
@@ -219,20 +295,25 @@ return
 
 GuiClose:  <em>; Beendet das Skript, wenn der Benutzer das GUI-Fenster der Listview schließt.</em>
 ExitApp</pre>
-<h3 id="IL_Create">IL_Create([AnfänglicheAnzahl, WachsendeAnzahl, GroßeSymbole?])</h3>
-<p>Erstellt eine neue zunächst leere ImageList, und gibt die eindeutige ID der ImageList zurück (oder eine 0 bei Misserfolg). <em>AnfänglicheAnzahl</em> ist die Anzahl der Symbole, die Sie vermutlich sofort in die Liste einfügen werden (fehlt dieser Parameter, gilt standardmäßig 2). <em>WachsendeAnzahl</em> ist die Anzahl der Symbole, mit der die Liste erweitert werden soll, wenn ihre Kapazität jedes Mal überschritten wird (fehlt dieser Parameter, gilt standardmäßig 5). <em>GroßeSymbole</em> sollte ein numerischer Wert sein: Wenn Wert ungleich null ist, wird die ImageList große Symbole enthalten. Wenn der Wert eine null ist, wird die ImageList kleine Symbole enthalten (Standardeinstellung, wenn der Parameter fehlt). Symbole, die man in die Liste einfügt, werden automatisch skaliert, damit sie mit den System-Abmessungen für kleine und große Symbole übereinstimmen.</p>
-<h3 id="LV_SetImageList">LV_SetImageList(ImageListID [, 0|1|2])</h3>
-<p>Diese Funktion wird normalerweise aufgerufen, bevor man Reihen in die ListView einfügt. Sie wendet die <a href="#IL">ImageList</a> auf die ListView an, so dass Symbole in ihren Reihen (oder Spalten) dargestellt werden können. Verwenden Sie als <em>ImageListID</em> die zurückgegebene Nummer von <a href="#IL_Create">IL_Create()</a>. Fehlt der zweite Parameter, werden die Symbole in der ImageList automatisch als große oder kleine Symbole erkannt. Verwenden Sie ansonsten eine 0 für große Symbole, eine 1 für kleine Symbole und eine 2 für Statussymbole (Statussymbole werden nur via <a href="PostMessage.htm">SendMessage</a> unterstützt).</p>
-<p>Eine ListView kann bis zu zwei ImageLists haben: für kleine Symbole und/oder große Symbole. Damit könnte ein Skript den Benutzer zwischen den Symbolansichten wechseln zu lassen. Um mehr als eine ImageList in die ListView einzufügen, ruft man LV_SetImageList() ein zweites Mal auf und übergibt die <em>ImageListID</em> der zweiten Liste. Eine ListView mit einer ImageList für große und kleine Symbole sollte sicherstellen, dass beide Listen die Symbole in gleicher Reihenfolge enthalten. Das liegt daran, dass mit der gleichen ID-Nummer sowohl auf die großen als auch auf die kleinen Versionen eines bestimmten Symbols verwiesen wird.</p>
-<p>Üblicherweise zeigen alle <a href="#View">Anzeigemethoden</a> (außer Icon und Tile) kleine Symbole an. Diese Standardeinstellung kann man überschreiben, wenn man eine Liste für große Symbole an LV_SetImageList übergibt und eine 1 (kleine Symbole) im zweiten Parameter angibt. Dabei wird auch jede Reihe in der ListView höher gemacht, um Platz für große Symbole zu schaffen.</p>
-<p>Bei Erfolg gibt LV_SetImageList() die <em>ImageListID</em> zurück, die zuvor mit der ListView verbunden wurde (oder eine 0, wenn dies nicht der Fall ist). Jede nicht mehr benötigte ImageList kann mit <a href="#IL_Destroy">IL_Destroy(ImageListID)</a> zerstört werden.</p>
-<h3 id="IL_Add">IL_Add(ImageListID, Dateiname [, Symbolnummer, BildSkalieren?])</h3>
-<p>Fügt ein Symbol oder Bild in die <em>ImageListID</em> ein und gibt die neue Indexnummer des Symbols zurück (1 ist das erste Symbol, 2 das zweite Symbol und so weiter). <em>Dateiname</em> ist der Name einer Datei mit Symbolen (.ICO), mit Cursorn (.CUR) oder mit animierten Cursorn (.ANI) (zurzeit werden animierte Cursor innerhalb einer ListView nicht animiert). Andere Symbolquellen können sein: EXE, DLL, CPL, SCR und andere Typen, die Symbolressourcen enthalten. Um anstelle der ersten Symbolgruppe eine andere aus der Datei zu verwenden, fügt man in <em>Symbolnummer</em> ihre Nummer ein. Wenn der <em>Symbolnummer</em>-Parameter negativ ist, wird sein absoluter Wert als Ressourcen-ID eines Symbols innerhalb einer ausführbaren Datei angesehen. Das folgende Beispiel zeigt, wie das Standardsymbol aus der zweiten Symbolgruppe verwendet werden kann: <code>IL_Add(ImageListID, "C:\Meine Anwendung.exe", 2)</code>.</p>
+
+<h3 id="IL_Create">IL_Create</h3>
+<p>Erstellt eine neue zunächst leere ImageList, und gibt die eindeutige ID der ImageList zurück (oder eine 0 bei Misserfolg).</p>
+<pre class="Syntax"><span class="func">IL_Create</span>(<span class="optional">AnfänglicheAnzahl, WachsendeAnzahl, GroßeSymbole</span>)</pre>
+<p><em>AnfänglicheAnzahl</em> ist die Anzahl der Symbole, die Sie vermutlich sofort in die Liste einfügen werden (fehlt dieser Parameter, gilt standardmäßig 2). <em>WachsendeAnzahl</em> ist die Anzahl der Symbole, mit der die Liste erweitert werden soll, wenn ihre Kapazität jedes Mal überschritten wird (fehlt dieser Parameter, gilt standardmäßig 5). <em>GroßeSymbole</em> sollte ein numerischer Wert sein: Wenn Wert ungleich null ist, wird die ImageList große Symbole enthalten. Wenn der Wert eine null ist, wird die ImageList kleine Symbole enthalten (Standardeinstellung, wenn der Parameter fehlt). Symbole, die man in die Liste einfügt, werden automatisch skaliert, damit sie mit den System-Abmessungen für kleine und große Symbole übereinstimmen.</p>
+
+<h3 id="IL_Add">IL_Add</h3>
+<p>Fügt ein Symbol oder Bild in die <em>ImageListID</em> ein und gibt die neue Indexnummer des Symbols zurück (1 ist das erste Symbol, 2 das zweite Symbol und so weiter).</p>
+<pre class="Syntax"><span class="func">IL_Add</span>(ImageListID, Dateiname <span class="optional">, Symbolnummer, BildSkalieren</span>)</pre>
+<p><em>Dateiname</em> ist der Name einer Datei mit Symbolen (.ICO), mit Cursorn (.CUR) oder mit animierten Cursorn (.ANI) (zurzeit werden animierte Cursor innerhalb einer ListView nicht animiert). Andere Symbolquellen können sein: EXE, DLL, CPL, SCR und andere Typen, die Symbolressourcen enthalten. Um anstelle der ersten Symbolgruppe eine andere aus der Datei zu verwenden, fügt man in <em>Symbolnummer</em> ihre Nummer ein. Wenn der <em>Symbolnummer</em>-Parameter negativ ist, wird sein absoluter Wert als Ressourcen-ID eines Symbols innerhalb einer ausführbaren Datei angesehen. Das folgende Beispiel zeigt, wie das Standardsymbol aus der zweiten Symbolgruppe verwendet werden kann: <code>IL_Add(ImageListID, "C:\Meine Anwendung.exe", 2)</code>.</p>
 <p>Bilder, die keine Symbole sind, wie BMP, GIF und JPG können ebenfalls geladen werden. In diesem Fall sollten die letzten beiden Parameter vorhanden sein, um korrektes Verhalten zu gewährleisten: <em>Symbolnummer</em> sollte die Nummer der Farbmaske/Transparenzfarbe sein (für die meisten Bilder am besten 0xFFFFFF, also weiß); und <em>BildSkalieren</em> sollte ungleich 0 sein, um das Bild auf ein einzelnes Symbol zu skalieren; oder 0, um das Bild über mehrere Symbole aufzuteilen.</p>
 <p>Alle Betriebssysteme unterstützen GIF, JPG, BMP, ICO, CUR und ANI. In Windows XP (oder höher) werden zusätzliche Bildformate wie PNG, TIF, Exif, WMF und EMF unterstützt. Betriebssysteme älter als XP können solche Formate auch unterstützen, wenn man die freie GDIPlus.dll von Microsoft in den Ordner von AutoHotkey.exe kopiert (im Falle eines <a href="../Scripts.htm#ahk2exe">kompilierten Skripts</a> muss die DLL-Datei in den Ordner des Skripts kopiert werden). Um die DLL herunterzuladen, sucht man auf <a href="http://www.microsoft.com">www.microsoft.com</a> nach folgenden Begriffen: gdi redistributable</p>
 <p><span class="ver">[v1.1.23+]:</span> Man kann ein <a href="../misc/ImageHandles.htm">Bitmap- oder Symbol-Handle</a> anstelle eines Dateinamens verwenden. Zum Beispiel <code>HBITMAP:%handle%</code>.</p>
-<h3 id="IL_Destroy">IL_Destroy(ImageListID)</h3>
-<p>Löscht die angegebene ImageList und gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zurück. Normalerweise ist es nicht notwendig, ImageLists zu zerstören, denn wenn sie einmal mit einer ListView verbunden sind, werden sie automatisch zerstört, wenn die ListView oder ihr übergeordnetes Fenster zerstört wird. Wenn eine ImageList bei mehreren ListViews verwendet wird (wenn <code>0x40</code> in deren Optionen ist), sollte das Skript die ImageList explizit zerstören, nachdem alle ListViews zerstört wurden. Ersetzt das Skript eine der alten ImageLists mit einer neuen, sollte es explizit die alte ImageList zerstören.</p>
+
+<h3 id="IL_Destroy">IL_Destroy</h3>
+<p>Löscht die angegebene ImageList und gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zurück.</p>
+<pre class="Syntax"><span class="func">IL_Destroy</span>(ImageListID)</pre>
+<p>Normalerweise ist es nicht notwendig, ImageLists zu zerstören, denn wenn sie einmal mit einer ListView verbunden sind, werden sie automatisch zerstört, wenn die ListView oder ihr übergeordnetes Fenster zerstört wird. Wenn eine ImageList bei mehreren ListViews verwendet wird (wenn <code>0x40</code> in deren Optionen ist), sollte das Skript die ImageList explizit zerstören, nachdem alle ListViews zerstört wurden. Ersetzt das Skript eine der alten ImageLists mit einer neuen, sollte es explizit die alte ImageList zerstören.</p>
+
 <h2 id="Remarks">ListView-Bemerkungen</h2>
 <p>Der Befehl <a href="Gui.htm#Submit">Gui Submit</a> hat keine Auswirkung auf ein ListView-Steuerelement. Demzufolge kann das Skript die <a href="Gui.htm#var">zugeordnete Variable</a> der ListView zum Speichern von weiteren Daten verwenden (falls vorhanden), um andere Daten zu speichern, ohne befürchten zu müssen, dass sie jemals überschrieben wird.</p>
 <p>Nachdem eine Spalte sortiert wurde - z. B. durch Anklicken der Spaltenüberschrift oder Aufrufen von <code><a href="#LV_ModifyCol">LV_ModifyCol</a>(1, "Sort")</code> - werden alle danach eingefügten Reihen am unteren Ende der Liste erscheinen, anstatt die aktuelle Sortierungsreihenfolge zu berücksichtigen. Die Ausnahme davon sind die Styles <a href="#Sort">Sort</a> und <a href="#SortDesc">SortDesc</a>, weil sie neu hinzugefügte Reihen an die korrekte Position verschieben.</p>
@@ -241,7 +322,7 @@ ExitApp</pre>
 ...
 ButtonOK:
 GuiControlGet, FokussiertesSteuerelement, FocusV
-if FokussiertesSteuerelement &lt;&gt; MeineListView
+if (FokussiertesSteuerelement &lt;&gt; "MeineListView")
     return
 MsgBox % "Sie haben ENTER gedrückt. Die fokussierte Reihennummer ist " . LV_GetNext(0, "Focused")
 return</pre>
@@ -253,9 +334,13 @@ return</pre>
 <p>Spalten sollten am besten nicht direkt mit <a href="PostMessage.htm">SendMessage</a> eingefügt oder entfernt werden. Dies liegt daran, dass das Programm mehrere <a href="#Integer">Sortier-Einstellungen</a> für jede Spalte verwaltet, die dann nicht mehr synchron wären. Verwenden Sie stattdessen die <a href="#bifCol">internen Spalten-Funktionen</a>.</p>
 <p><a href="GuiControl.htm">GuiControl</a> kann z. B. genutzt werden, um eine ListView größer/kleiner zu machen, zu verstecken, oder um die Schriftart einer ListView zu ändern.</p>
 <p>Mit <a href="ControlGet.htm#List">ControlGet List</a> können Texte aus externen ListViews (das sind solche, die nicht zum Skript gehören) extrahiert werden.</p>
+
 <h2>Siehe auch</h2>
 <p><a href="TreeView.htm">TreeView</a>, <a href="GuiControls.htm">Andere Steuerelementarten</a>, <a href="Gui.htm">Gui</a>, <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a>, <a href="GuiControl.htm">GuiControl</a>, <a href="GuiControlGet.htm">GuiControlGet</a>, <a href="../misc/Styles.htm#ListView">Style-Tabelle von ListView</a></p>
+
 <h2 id="Examples">Beispiele</h2>
+
+<h3 id="ex1">Beispiel #1: Verschiedenes</h3>
 <pre class="NoIndent"><em>; Das folgende Beispiel zeigt, wie mit einer 0 als Reihennummer alle Reihen aus- oder abgewählt werden können:</em>
 <a href="#LV_Modify">LV_Modify</a>(0, "Select")   <em>; Wählt alle aus.</em>
 LV_Modify(0, "-Select")  <em>; Wählt alle ab.</em>
@@ -263,13 +348,10 @@ LV_Modify(0, "-Check")  <em>; Demarkiert alle <a href="#Checked">Checkboxes</a>.
 
 <em>; Passt die Breite der Spalten an den Inhalt der Reihen an:</em>
 <a href="#LV_ModifyCol">LV_ModifyCol</a>()  <em>; Es gibt keine Parameter in diesem Modus.</em></pre>
-<p>&nbsp;</p>
-<pre class="NoIndent"><em>; HAUPTBEISPIEL
-; Das folgende Skript ist aufwendiger als das Beispiel ganz oben.
-; Es zeigt Dateien aus einem Ordner an, den der Benutzer aussuchen kann, und weist jeder Datei je nach Typ ein Symbol zu.
-; Der Benutzer kann eine Datei doppelt anklicken, oder einen Rechtsklick auf eine oder mehrere Dateien machen, um das Kontextmenü anzuzeigen.</em>
 
-<em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder dessen Größe beliebig anzupassen:</em>
+<h3 id="ex2">Beispiel #2</h3>
+<p>Das folgende Skript ist aufwendiger als das Beispiel ganz oben. Es zeigt Dateien aus einem Ordner an, den der Benutzer aussuchen kann, und weist jeder Datei je nach Typ ein Symbol zu. Der Benutzer kann eine Datei doppelt anklicken, oder einen Rechtsklick auf eine oder mehrere Dateien machen, um das Kontextmenü anzuzeigen:</p>
+<pre class="NoIndent"><em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder dessen Größe beliebig anzupassen:</em>
 Gui +Resize
 
 <em>; Erstellt einige Buttons:</em>
@@ -310,7 +392,7 @@ if not Ordner  <em>; Der Benutzer hat das Dialogfenster abgebrochen.</em>
 <em>; Überprüft, ob das letzte Zeichen im Ordnernamen ein umgekehrter Schrägstrich ist, das bei Root-Verzeichnissen
 ; wie C:\ vorkommt. Ist dies der Fall, muss es entfernt werden, um später einen doppelten Schrägstrich zu verhindern.</em>
 StringRight, LetztesZeichen, Ordner, 1
-if LetztesZeichen = \
+if (LetztesZeichen = "\")
     StringTrimRight, Ordner, Ordner, 1  <em>; Entfernt den Schrägstrich am Ende.</em>
 
 <em>; Berechnet die notwendige Puffergröße für die SHFILEINFO-Struktur.</em>
@@ -324,17 +406,17 @@ Loop %Ordner%\*.*
     Dateiname := A_LoopFileFullPath  <em>; Muss in eine schreibbare Variable gespeichert werden, damit sie unten verwendet werden kann.</em>
 
     <em>; Erstellt eine eindeutige Endungs-ID, um Zeichen in einem Variablennamen zu vermeiden, die illegal sind,</em>
-    <em>; wie z. B. Bindestriche.  Zudem ist diese Methode leistungsfähiger, weil das Finden eines Elements</em>
+    <em>; wie z. B. Bindestriche. Zudem ist diese Methode leistungsfähiger, weil das Finden eines Elements</em>
     <em>; in einem Array keine Such-Schleife erfordert.</em>
     SplitPath, Dateiname,,, Dateiendung  <em>; Ermittelt die Dateiendung.</em>
     if Dateiendung in EXE,ICO,ANI,CUR
     {
         EndungsID := Dateiendung  <em>; Spezial-ID als Platzhalter.</em>
-        Symbolnummer = 0  <em>; Markiert es als "nicht gefunden", damit jeder Typ ein einzigartiges Symbol haben kann.</em>
+        Symbolnummer := 0  <em>; Markiert es als "nicht gefunden", damit jeder Typ ein einzigartiges Symbol haben kann.</em>
     }
     else  <em>; Sonstige Endung/Dateityp, also ihre eindeutige ID berechnen.</em>
     {
-        EndungsID = 0  <em>; Initialisieren, um Endungen zu behandeln, die kürzer sind als andere.</em>
+        EndungsID := 0  <em>; Initialisieren, um Endungen zu behandeln, die kürzer sind als andere.</em>
         Loop 7     <em>; Limitiert die Endung auf 7 Zeichen, so dass sie in einem 64-Bit-Wert passt.</em>
         {
             StringMid, Endungszeichen, Dateiendung, A_Index, 1
@@ -353,7 +435,7 @@ Loop %Ordner%\*.*
         <em>; Ermittelt das kleine Symbol in hoher Qualität, das mit dieser Dateiendung verbunden ist:</em>
         if not DllCall("Shell32\SHGetFileInfo" . (A_IsUnicode ? "W":"A"), "Str", Dateiname
             , "UInt", 0, "Ptr", &amp;sfi, "UInt", sfi_größe, "UInt", 0x101)  <em>; 0x101 ist SHGFI_ICON+SHGFI_SMALLICON</em>
-            Symbolnummer = 9999999  <em>; Setzt die Nummer außerhalb des gültigen Bereichs, um ein leeres Symbol anzuzeigen.</em>
+            Symbolnummer := 9999999  <em>; Setzt die Nummer außerhalb des gültigen Bereichs, um ein leeres Symbol anzuzeigen.</em>
         else <em>; Symbol erfolgreich geladen.</em>
         {
             <em>; Extrahiert das hIcon-Element aus der Struktur:</em>
@@ -391,7 +473,7 @@ IconView := not IconView             <em>; Kehrt den Wert für die nächste Benu
 return
 
 MeineListView:
-if A_GuiEvent = DoubleClick  <em>; Es gibt noch viele andere Werte, die das Skript überprüfen kann.</em>
+if (A_GuiEvent = "DoubleClick")  <em>; Es gibt noch viele andere Werte, die das Skript überprüfen kann.</em>
 {
     <a href="#LV_GetText">LV_GetText</a>(Dateiname, A_EventInfo, 1) <em>; Ermittelt den Text des ersten Feldes.</em>
     LV_GetText(Dateiverz, A_EventInfo, 2)  <em>; Ermittelt den Text des zweiten Feldes.</em>
@@ -402,9 +484,9 @@ if A_GuiEvent = DoubleClick  <em>; Es gibt noch viele andere Werte, die das Skri
 return
 
 <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a>:  <em>; Startet, wenn man einen Rechtsklick macht oder die MENÜ-Taste drückt.</em>
-if A_GuiControl &lt;&gt; MeineListView  <em>; Zeigt das Menü nur an, wenn die Klicks innerhalb der ListView gemacht werden.</em>
+if (A_GuiControl &lt;&gt; "MeineListView")  <em>; Zeigt das Menü nur an, wenn die Klicks innerhalb der ListView gemacht werden.</em>
     return
-<em>; Zeigt das Menü bei den Koordinaten A_GuiX und A_GuiY an.  Diese Koordinaten
+<em>; Zeigt das Menü bei den Koordinaten A_GuiX und A_GuiY an. Diese Koordinaten
 ; sind auch dann korrekt, wenn der Benutzer die MENÜ-Taste drückt:</em>
 Menu, MeinKontextmenü, Show, %A_GuiX%, %A_GuiY%
 return
@@ -426,7 +508,7 @@ if ErrorLevel
 return
 
 KontextReihenLeeren:  <em>; Der Benutzer hat "Leeren" im Kontextmenü ausgewählt.</em>
-Reihennummer = 0  <em>; Veranlasst den ersten Schleifendurchlauf, die Suche am Anfang zu beginnen.</em>
+Reihennummer := 0  <em>; Veranlasst den ersten Schleifendurchlauf, die Suche am Anfang zu beginnen.</em>
 Loop
 {
     <em>; Da das Löschen einer Reihe die Reihennummer aller anderen Reihen darüber reduziert,</em>
@@ -440,7 +522,7 @@ Loop
 return
 
 GuiSize:  <em>; Vergrößert oder verkleinert die ListView, wenn der Benutzer die Fenstergröße ändert.</em>
-if A_EventInfo = 1  <em>; Das Fenster wurde minimiert.  Keine Aktion notwendig.</em>
+if (A_EventInfo = 1)  <em>; Das Fenster wurde minimiert. Keine Aktion notwendig.</em>
     return
 <em>; Ansonsten wurde die Fenstergröße geändert oder maximiert. Passt die Größe der ListView an den neuen Werten an.</em>
 GuiControl, Move, MeineListView, % "W" . (A_GuiWidth - 20) . " H" . (A_GuiHeight - 40)
