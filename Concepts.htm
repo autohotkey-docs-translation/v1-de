@@ -55,7 +55,7 @@ Exception handling
 <p>AutoHotkey unterstützt folgende Typen von Werten:</p>
 <ul>
   <li><a href="#strings">Zeichenketten</a> (Strings)</li>
-  <li><a href="#numbers">Zahlen</a> (Integer und Gleitkommazahlen)</li>
+  <li><a href="#numbers">Zahlen</a> (Integer und Floating-Point-Zahlen)</li>
   <li><a href="#objects">Objekte</a></li>
 </ul>
 <p>Einige andere verwandte Konzepte:</p>
@@ -75,12 +75,12 @@ Exception handling
 <ul>
   <li>Dezimale Integer (ganze Zahlen), wie z. B. <code>123</code>, <code>00123</code> oder <code>-1</code>.</li>
   <li>Hexadezimale Integer, wie z. B. <code>0x7B</code>, <code>0x007B</code> oder <code>-0x1</code>.</li>
-  <li>Dezimale Gleitkommazahlen (floating-point numbers), wie z. B. <code>3.14159</code>.</li>
+  <li>Dezimale Floating-Point-Zahlen (Gleitkommazahlen), wie z. B. <code>3.14159</code>.</li>
 </ul>
 <p>Hexadezimale Zahlen müssen das <code>0x</code>- oder <code>0X</code>-Präfix verwenden, wenn nicht anders in der Dokumentation vermerkt. Dieses Präfix muss nach einem Vorzeichen wie <code>+</code> oder <code>-</code>, falls vorhanden, und vor führenden Nullen erfolgen. Zum Beispiel wäre <code>0x001</code> gültig, aber nicht <code>000x1</code>.</p>
-<p>Zahlen, die mit einem Dezimalpunkt geschrieben werden, gelten immer als Gleitkommazahlen, auch wenn die Nachkommastelle eine Null ist. <code>42</code> und <code>42.0</code> beispielsweise sind in der Regel das gleiche, aber dies trifft nicht immer zu. Die wissenschaftliche Schreibweise wird ebenfalls erkannt, allerdings nur, wenn ein Dezimalpunkt vorhanden ist (z. B. <code>1.0e4</code> und <code>-2.1E-4</code>).</p>
+<p>Zahlen, die mit einem Dezimalpunkt geschrieben werden, gelten immer als Floating-Point-Zahlen, auch wenn die Nachkommastelle eine Null ist. <code>42</code> und <code>42.0</code> beispielsweise sind in der Regel das gleiche, aber dies trifft nicht immer zu. Die wissenschaftliche Schreibweise wird ebenfalls erkannt, allerdings nur, wenn ein Dezimalpunkt vorhanden ist (z. B. <code>1.0e4</code> und <code>-2.1E-4</code>).</p>
 <p>Das Dezimaltrennzeichen ist immer ein Punkt, auch wenn in den Ländereinstellungen des Benutzers ein Komma angegeben ist.</p>
-<p>Wenn eine Zahl in eine Zeichenkette umgewandelt wird, wird sie je nach aktuellem <a href="commands/SetFormat.htm#remarks">Integer- oder Gleitkomma-Format</a> formatiert. Obwohl der <a href="commands/SetFormat.htm">SetFormat</a>-Befehl genutzt werden kann, um das aktuelle Format zu ändern, ist es in der Regel besser, die <a href="commands/Format.htm">Format</a>-Funktion zu nutzen, um eine Zeichenkette zu formatieren. Gleitkommazahlen können auch mit der <a href="commands/Math.htm#Round">Round</a>-Funktion formatiert werden.</p>
+<p>Wenn eine Zahl in eine Zeichenkette umgewandelt wird, wird sie je nach aktuellem <a href="commands/SetFormat.htm#remarks">Integer- oder Float-Format</a> formatiert. Obwohl der <a href="commands/SetFormat.htm">SetFormat</a>-Befehl genutzt werden kann, um das aktuelle Format zu ändern, ist es in der Regel besser, die <a href="commands/Format.htm">Format</a>-Funktion zu nutzen, um eine Zeichenkette zu formatieren. Floating-Point-Zahlen können auch mit der <a href="commands/Math.htm#Round">Round</a>-Funktion formatiert werden.</p>
 <p>Details über den Bereich und die Genauigkeit von numerischen Werten finden Sie unter <a href="#pure-numbers">Reine Zahlen</a>.</p>
 
 <h3 id="boolean">Logische (boolesche) Werte</h3>
@@ -168,9 +168,9 @@ meinObj.Name[Param2, ..., ParamN] := Wert
 <p>Tatsächlich kann eine Variable zur selben Zeit sowohl eine Zeichenkette als auch eine Zahl enthalten. Normalerweise verbessert das die Performance des Skripts ohne Nachteile, aber wenn eine Variable sowohl eine Zahl als auch eine Zeichenkette enthält, ist es nun eine Zahl oder ist es eine Zeichenkette?  Diese Mehrdeutigkeit führt in mindestens zwei Fällen zu unerwartetem Verhalten:</p>
 <ol>
   <li>COM-Objekte. Um Parameter an ein COM-Objekt zu übergeben, muss das Programm den Inhalt der Variable in eine Zahl <em>oder</em> Zeichenkette umwandeln. Einige COM-Objekte lösen eine Ausnahme aus, wenn der falsche Wertetyp übergeben wird. Wenn eine Variable beide Wertetypen hat, wird die Zahl verwendet. Normalerweise erhält man damit das richtige Ergebnis, manchmal aber auch nicht.</li>
-  <li>Objekte haben nicht die Möglichkeit, sowohl eine Zahl als auch eine Zeichenkette als Key oder Wert zu speichern. Da Zahlen speichereffizienter sind, wird, wenn eine Variable beide Wertetypen hat, die Zahl verwendet (außer bei Gleitkommazahlen, die als Keys verwendet werden).</li>
+  <li>Objekte haben nicht die Möglichkeit, sowohl eine Zahl als auch eine Zeichenkette als Key oder Wert zu speichern. Da Zahlen speichereffizienter sind, wird, wenn eine Variable beide Wertetypen hat, die Zahl verwendet (außer bei Floating-Point-Zahlen, die als Keys verwendet werden).</li>
 </ol>
-<p>Der Slow-Modus von <a href="commands/SetFormat.htm">SetFormat</a> bewirkt, dass beim Zuweisen einer reinen Zahl diese Zahl in eine Zeichenkette umgewandelt wird. Bei Integern wird die Zahl ebenfalls gespeichert, daher hat dies keine nachteiligen Auswirkungen außer auf die Performance. Bei Gleitkommazahlen wird die Zahl nicht gespeichert, da SetFormat die Genauigkeit des Wertes beeinflusst und eventuell sogar alle Nachkommastellen wegkürzt. Das heißt im Endeffekt, dass der Slow-Mode von SetFormat verhindert, dass reine Gleitkommazahlen in Variablen gespeichert werden.</p>
+<p>Der Slow-Modus von <a href="commands/SetFormat.htm">SetFormat</a> bewirkt, dass beim Zuweisen einer reinen Zahl diese Zahl in eine Zeichenkette umgewandelt wird. Bei Integern wird die Zahl ebenfalls gespeichert, daher hat dies keine nachteiligen Auswirkungen außer auf die Performance. Bei Floating-Point-Zahlen wird die Zahl nicht gespeichert, da SetFormat die Genauigkeit des Wertes beeinflusst und eventuell sogar alle Nachkommastellen wegkürzt. Das heißt im Endeffekt, dass der Slow-Mode von SetFormat verhindert, dass reine Floating-Point-Zahlen in Variablen gespeichert werden.</p>
 <p>Wenn man die Adresse einer Variable nimmt, wird der Wert der Variable direkt in eine Zeichenkette umgewandelt und das Caching deaktiviert, bis sich die Adresse der Variable ändert (dies geschieht, wenn sich ihre Kapazität ändert). Das liegt zum einen an der Abwärtskompatibilität und zum anderen daran, dass das Skript den Wert über seine Adresse jederzeit indirekt ändern kann, was den Cache ungenau macht.</p>
 
 <h3>Siehe auch</h3>
@@ -278,7 +278,7 @@ Send Hallo`, Welt!
 <p>Eine <em>reine</em> oder <em>binäre</em> Zahl ist eine im Speicher enthaltene Zahl, mit deren Format die CPU des Computers direkt umgehen kann, um z. B. Berechnungen durchzuführen. In den meisten Fällen wandelt AutoHotkey automatisch zwischen numerischen Zeichenketten und reinen Zahlen um, die nur selten unterschiedlich behandelt werden. AutoHotkey verwendet hauptsächlich zwei Datentypen für reine Zahlen:</p>
 <ul>
   <li>vorzeichenfähige 64-Bit-Integer (<em>int64</em>).</li>
-  <li>binäre 64-Bit-Gleitkommazahlen (das <em>Double</em>- oder <em>Binary64</em>-Format des internationalen Standards IEEE 754).</li>
+  <li>binäre 64-Bit-Floating-Point-Zahlen (das <em>Double</em>- oder <em>Binary64</em>-Format des internationalen Standards IEEE 754).</li>
 </ul>
 <p>Das heißt, dass Skripte von den folgenden Einschränkungen betroffen sind:</p>
 <ul>
@@ -286,10 +286,10 @@ Send Hallo`, Welt!
 <p>Integer müssen im Bereich von -9223372036854775808 (-0x8000000000000000, oder -2<sup>63</sup>) bis 9223372036854775807 (0x7FFFFFFFFFFFFFFF, oder 2<sup>63</sup>-1) sein. Obwohl größere Werte in einer Zeichenkette enthalten sein können, kann jeder Versuch, die Zeichenkette in eine Zahl umzuwandeln (z. B. in einer mathematischen Operation) zu inkonsistenten Ergebnissen führen.</p>
 </li>
   <li>
-<p>Gleitkommazahlen unterstützen in der Regel eine Genauigkeit von 15 Stellen nach dem Komma. Die Umwandlung einer Gleitkommazahl in eine Zeichenkette bewirkt jedoch, dass die Zahl anhand des aktuellen <a href="commands/SetFormat.htm#Float">Gleitkommaformats</a> gerundet wird, das standardmäßig auf 6 Dezimalstellen eingestellt ist. Wenn der Slow-Modus von <a href="commands/SetFormat.htm">SetFormat</a> irgendwo im Skript angegeben ist, werden Zahlen <em>immer</em> in Zeichenketten umgewandelt, wenn sie einer <a href="#variables">Variable</a> zugewiesen werden.</p>
+<p>Floating-Point-Zahlen unterstützen in der Regel eine Genauigkeit von 15 Nachkommastellen. Die Umwandlung einer Floating-Point-Zahl in eine Zeichenkette bewirkt jedoch, dass die Zahl anhand des aktuellen <a href="commands/SetFormat.htm#Float">Float-Formats</a> gerundet wird, das standardmäßig auf 6 Dezimalstellen eingestellt ist. Wenn der Slow-Modus von <a href="commands/SetFormat.htm">SetFormat</a> irgendwo im Skript angegeben ist, werden Zahlen <em>immer</em> in Zeichenketten umgewandelt, wenn sie einer <a href="#variables">Variable</a> zugewiesen werden.</p>
 </li>
 </ul>
-<p><strong>Hinweis:</strong> Es gibt einige Nachkommastellen, die das binäre Gleitkommaformat nicht exakt darstellen kann und die Zahl deshalb auf die nächstliegende darstellbare Zahl rundet. Dies kann zu unerwarteten Ergebnissen führen. Zum Beispiel:</p>
+<p><strong>Hinweis:</strong> Es gibt einige Nachkommastellen, die das binäre Floating-Point-Format nicht exakt darstellen kann und die Zahl deshalb auf die nächstliegende darstellbare Zahl rundet. Dies kann zu unerwarteten Ergebnissen führen. Zum Beispiel:</p>
 <pre>SetFormat FloatFast, 0.17  <em>; Zeige "übervolle" Präzision</em>
 MsgBox % 0.1 + 0           <em>; 0.10000000000000001</em>
 MsgBox % 0.1 + 0.2         <em>; 0.30000000000000004</em>
