@@ -23,6 +23,7 @@
 <p><strong><a href="#general-troubleshooting">Allgemeine Problembehandlung</a></strong></p>
 <ul>
   <li><a href="#install">Was kann ich tun, wenn AutoHotkey nicht installiert wird?</a></li>
+  <li><a href="#rightclick">Wie stelle ich die Kontextmenüoptionen für .ahk-Dateien wieder her?</a></li>
   <li><a href="#autoexec">Warum werden einige Zeilen in meinem Skript nie ausgeführt?</a></li>
   <li><a href="#vista">Warum funktioniert mein Skript nicht in Windows <em>xxx</em>, obwohl es in einer vorherigen Version lief?</a></li>
   <li><a href="#uac">Wie umgehe ich Probleme, die von der Benutzerkontensteuerung (UAC) erzeugt werden?</a></li>
@@ -79,6 +80,11 @@
 4) Überall in <a href="Variables.htm#Expressions">Ausdrücken</a>. Zum Beispiel:</p>
 <pre>If (<strong>Var1</strong> &lt;&gt; <strong>Var2</strong>)
     <strong>Var1 <a href="commands/SetExpression.htm">:=</a> Var2</strong> + 100</pre>
+<p>Weitere Informationen zur Verwendung von Prozentzeichen finden Sie unter <a href="Language.htm#legacy-syntax">Altmodische Syntax</a> und <a href="Language.htm#dynamic-variables">Dynamische Variablen</a>. Prozentzeichen können auch andere Bedeutungen haben:</p>
+<ul>
+  <li>Das <a href="Language.htm#-expression">Prozent-Leerzeichen-Präfix</a> bewirkt, dass ein Befehlsparameter als Ausdruck interpretiert wird.</li>
+  <li>Mit <a href="commands/_EscapeChar.htm#Remarks">Escapezeichen</a> versehene Prozentzeichen (<code>`%</code>) und Prozentzeichen innerhalb von <a href="Language.htm#strings">in Anführungszeichen gesetzten, direkt geschriebenen Zeichenketten</a> haben keine besondere Bedeutung (sie werden als direkt geschriebene Prozentzeichen interpretiert).</li>
+</ul>
 <h3 id="esc">Wann sollten Prozentzeichen und Kommas mit einem <a href="commands/_EscapeChar.htm">Escapezeichen</a> versehen werden?</h3>
 <p>Direkt geschriebene Prozentzeichen müssen mit einem <a href="commands/_EscapeChar.htm">Escapezeichen</a> versehen werden, indem man ein Akzent / umgekehrtes Häkchen davorsetzt. Zum Beispiel: <code>MsgBox Der aktuelle Prozentwert liegt bei 25`%</code>. Direkt geschriebene Kommas müssen auch mit einem Escapezeichen versehen werden (<code>`,</code>), es sei denn, sie werden in einer <a href="commands/MsgBox.htm">MsgBox</a> oder im letzten Parameter eines Befehls verwendet (in diesem Fall ist das umgekehrte Häkchen zulässig, aber nicht notwendig).</p>
 <p> Sind Kommas oder Prozentzeichen innerhalb eines <a href="Variables.htm#Expressions">Ausdrucks</a> in Anführungszeichen gesetzt, ist das umgekehrte Häkchen zulässig, aber nicht notwendig. Zum Beispiel: <code>Var := "15%"</code>.</p>
@@ -92,6 +98,20 @@
 <li>Installieren Sie AutoHotkey mithilfe der <a href="Program.htm#install">Kommandozeilenoptionen</a>. Sobald Sie die Setup-Dateien manuell aus der Installer-EXE extrahiert haben, können Sie entweder <code>setup.exe /S</code> oder <code>AutoHotkeyU32.exe Installer.ahk /S</code> verwenden.</li>
 </ul>
 <p><strong>Sonstiges:</strong> Die obigen Vorschläge decken die häufigsten Probleme. Weitere Unterstützung finden Sie im Forum.</p>
+
+<h3 id="rightclick">Wie stelle ich die Kontextmenüoptionen für .ahk-Dateien wieder her?</h3>
+<p>Normalerweise, wenn AutoHotkey installiert ist, sollte ein Rechtsklick auf eine AutoHotkey-Skriptdatei (.ahk) die folgenden Optionen bieten:</p>
+<ul>
+  <li>Run Script</li>
+  <li>Compile Script (abhängig von der Installationsoption <em>Install script compiler</em>)</li>
+  <li>Edit Script</li>
+  <li>Run as administrator (wenn UAC bei der Installation von AutoHotkey aktiviert war)</li>
+  <li>Run with UI Access (wenn <a href="Program.htm#Installer_uiAccess">die Option</a> während der Installation aktiviert wurde)</li>
+</ul>
+<p>Manchmal werden diese Optionen durch Einstellungen im Profil des aktuellen Benutzers überschrieben, z. B. wenn <em>Öffnen mit</em> verwendet wurde, um das Standardprogramm zum Öffnen von .ahk-Dateien zu ändern. Um das zu beheben, können Sie den folgenden Registry-Key löschen:</p>
+<pre class="no-highlight">HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.ahk\UserChoice</pre>
+<p>Oder <a href="misc/remove-userchoice.reg" download="remove-userchoice.reg">diesen Registry-Patch</a> ausführen.</p>
+<p>Es ist eventuell auch notwendig, die Standardwerte in der Registry zu reparieren, indem Sie entweder AutoHotkey neu installieren oder das AutoHotkey-Setup (aus dem Startmenü) ausführen und <em>apply</em> oben im Fenster auswählen.</p>
 
 <h3 id="autoexec">Warum werden einige Zeilen in meinem Skript nie ausgeführt?</h3>
 <p>Jede Zeile, die unmittelbar beim Starten des Skripts ausgeführt werden soll, muss ganz oben im Skript vorkommen und vor dem ersten <a href="Hotkeys.htm">Hotkey</a>, <a href="Hotstrings.htm">Hotstring</a> oder <a href="commands/Return.htm">Return</a> stehen. Siehe <a href="Scripts.htm#auto">automatischer Ausführungsbereich</a> für weitere Details.</p>
