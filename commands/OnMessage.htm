@@ -116,8 +116,8 @@ MeldÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des 
 <p>Kommt eine überwachte Meldung kleiner als 0x312 an, während das Skript aufgrund von <a href="Thread.htm">Thread Interrupt</a> oder <a href="Critical.htm">Critical</a> unterbrechungsfrei ist, wird der aktuelle Thread unterbrochen, so dass die Funktion aufgerufen werden kann. Im Gegensatz dazu wird eine überwachte Meldung größer gleich 0x312 zwischengespeichert, bis der Thread endet oder wieder unterbrochen werden kann.</p>
 <p>Die <a href="../misc/Threads.htm">Priorität</a> von OnMessage-Threads ist immer 0. Demzufolge werden keine Meldungen überwacht oder zwischengespeichert, wenn der aktuelle Thread eine Priorität höher als 0 hat.</p>
 <p>Seien Sie vorsichtig, wenn Sie Systemmeldungen (solche unter 0x400) überwachen. Kommt eine überwachende Funktion beispielsweise nicht schnell genug zum Ende, kann die Antwort auf die Meldung länger dauern als vom System erwartet, was zu Nebeneffekten führen könnte. Unerwünschtes Verhalten kann auch auftreten, wenn eine überwachende Funktion die Meldung durch Zurückgeben eines Integers nicht weiter fortsetzen lässt, während das System etwas anderes erwartet.</p>
-<p>Zeigt das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> an, werden Meldungen, die via PostMessage zu einem Steuerelement gesendet werden, nicht überwacht. Zeigt das Skript beispielsweise eine MsgBox an und klickt der Benutzer innerhalb eines GUI-Fensters auf einen Button, wird die WM_LBUTTONDOWN-Meldung direkt zum Button gesendet, ohne dass die überwachende Funktion aufgerufen wird.</p>
-<p>Zwar kann ein externes Programm direkt via PostThreadMessage() oder anderen API-Funktionen Meldungen zu einem Skript-Thread senden, allerdings könnten dabei Meldungen verloren gehen, wenn das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt. Stattdessen ist es besser, Meldungen zum Hauptfenster des Skripts oder zu einem seiner GUI-Fenster zu senden.</p>
+<p>Zeigt das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> an, werden Meldungen, die via PostMessage an ein Steuerelement gesendet werden, nicht überwacht. Wenn beispielsweise das Skript eine MsgBox anzeigt und der Benutzer innerhalb eines GUI-Fensters auf eine Schaltfläche klickt, wird die WM_LBUTTONDOWN-Meldung direkt an die Schaltfläche gesendet, ohne dass die überwachende Funktion aufgerufen wird.</p>
+<p>Ein externes Programm kann Meldungen mithilfe von PostThreadMessage() oder einer anderen API-Funktion direkt an ein Thread des Skripts senden, allerdings wird dies nicht empfohlen, weil solche Meldungen verloren gehen würden, wenn das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt. Stattdessen ist es besser, Meldungen an das Hauptfenster des Skripts oder an eines seiner GUI-Fenster zu senden.</p>
 <h2>Siehe auch</h2>
 <p><a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Critical.htm">Critical</a>, <a href="DllCall.htm">DllCall()</a></p>
 <h2>Beispiele</h2>
@@ -208,7 +208,7 @@ ZielSkriptTitel = Empfänger.ahk ahk_class AutoHotkey
 
 #space::  <em>; Hotkey: WIN+LEERTASTE. Drücken Sie ihn, um eine InputBox zur Eingabe einer Zeichenkette anzuzeigen.</em>
 InputBox, ZuSendendeZeichenkette, Text via WM_COPYDATA senden, Tragen Sie den zu sendenden Text ein:
-if ErrorLevel  <em>; Benutzer hat den Abbrechen-Button gedrückt.</em>
+if ErrorLevel  <em>; Benutzer hat die Abbrechen-Schaltfläche gedrückt.</em>
     return
 Ergebnis := Sende_WM_COPYDATA(ZuSendendeZeichenkette, ZielSkriptTitel)
 if Ergebnis = FAIL
