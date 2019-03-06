@@ -158,7 +158,7 @@ tocData = [
     ["FileSelectFile","commands/FileSelectFile.htm"],
     ["FileSelectFolder","commands/FileSelectFolder.htm"],
     ["Gui","commands/Gui.htm"],
-    ["Gui-Steuerelementarten","commands/GuiControls.htm"],
+    ["Gui-Steuerelemente","commands/GuiControls.htm"],
     ["GuiControl","commands/GuiControl.htm"],
     ["GuiControlGet","commands/GuiControlGet.htm"],
     ["ListView","commands/ListView.htm"],
@@ -175,7 +175,7 @@ tocData = [
     ["Progress","commands/Progress.htm"],
     ["SplashImage","commands/Progress.htm"],
     ["SplashTextOn/SplashTextOff","commands/SplashTextOn.htm"],
-    ["Standard-Windows-Schriftarten","misc/FontsStandard.htm"],
+    ["Standard-Windows-Schriften","misc/FontsStandard.htm"],
     ["Styles für Fenster/Steuerelement","misc/Styles.htm"],
     ["ToolTip","commands/ToolTip.htm"],
     ["TrayTip","commands/TrayTip.htm"]

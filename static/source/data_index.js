@@ -506,7 +506,7 @@ indexData = [
   ["GroupClose","commands/GroupClose.htm",6,"SS"],
   ["GroupDeactivate","commands/GroupDeactivate.htm",6,"SS"],
   ["Gui","commands/Gui.htm",6,"SSSS"],
-  ["Gui-Steuerelementarten","commands/GuiControls.htm"],
+  ["Gui-Steuerelemente","commands/GuiControls.htm"],
   ["Gui-Style-Liste","misc/Styles.htm"],
   ["GuiClose (label)","commands/Gui.htm#GuiClose"],
   ["GuiContextMenu (label)","commands/Gui.htm#GuiContextMenu"],
