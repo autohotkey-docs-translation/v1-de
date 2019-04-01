@@ -256,7 +256,7 @@ Gui, MeineGui:+Owner  <em>; Definiert <i>MeineGui</i> als Unterfenster vom <a hr
 <p id="Theme"><strong>Theme</strong>: Geben Sie <code>-Theme</code> an, um alle nachfolgende Steuerelemente im klassischen Design darzustellen (nur ab Windows XP). Mit <code>+Theme</code> kann das neue Design wieder für nachfolgende Steuerelemente eingeschaltet werden.</p>
 <p class="note"><strong>Hinweis</strong>: Die Theme-Option funktioniert nicht, wenn das Betriebssystem älter als Windows XP ist oder wenn Windows XP selbst das klassische Design aktiv hat.</p>
 <p>Um diese Option nur für ein bestimmtes Steuerelement zu ändern, fügt man <code>+Theme</code> oder <code>-Theme</code> in den Optionen-Parameter ein, während es erstellt wird.</p>
-<p><strong>ToolWindow</strong>: Stattet das Fenster mit einer kleineren Titelleiste aus und versteckt dessen Taskleistenschaltfläche.</p>
+<p><strong>ToolWindow</strong>: Stattet das Fenster mit einer kleineren Titelleiste aus und versteckt dessen Taskleistenschaltfläche. Dies versteckt immer die Schaltflächen zum Maximieren und Minimieren des Fensters, egal ob die Styles <a href="../misc/Styles.htm#WS_MAXIMIZEBOX">WS_MAXIMIZEBOX</a> und <a href="../misc/Styles.htm#WS_MINIMIZEBOX">WS_MINIMIZEBOX</a> vorhanden sind.</p>
 <p><strong>(Namenloser Style)</strong>: Geben Sie ein Plus- oder Minuszeichen und direkt danach eine dezimale oder hexadezimale Nummer an, um einen <a href="../misc/Styles.htm">Style</a> hinzuzufügen oder zu entfernen.</p>
 <p><strong>(Namenloser erweiterter Style)</strong>: Geben Sie ein Plus- oder Minuszeichen und direkt danach ein E und eine dezimale oder hexadezimale Nummer an, um einen erweiterten Style hinzuzufügen oder zu entfernen. <code>+E0x40000</code> beispielsweise würde den WS_EX_APPWINDOW-Style hinzufügen, um eine Taskleistenschaltfläche für ein Fenster bereitzustellen, das aktuell keine hat. Alle anderen erweiterten Styles, die nur selten verwendet werden und aufgrund dessen hier nicht aufgelistet sind, finden Sie unter <a href="http://www.microsoft.com">www.microsoft.com</a> mit Suchbegriffen wie WS_EX_APPWINDOW.</p>
 
@@ -375,7 +375,8 @@ Gui, Show</pre>
 <p><span class="ver">[v1.1.20+]:</span> Wenn ein Label für ein bestimmtes Ereignis nicht existiert, kann stattdessen eine Funktion über diesen Namen aufgerufen werden. Die Funktion kann optional den <a href="#GuiHwndOutputVar">Fenster-Handle (HWND)</a> der GUI als ersten Parameter akzeptieren. Einige Ereignisse stellen noch mehr Parameter bereit.</p>
 <p>Um auf die Ereignisse eines anderen Fensters <a href="#MultiWin">anstelle des Fensters mit der Nummer 1</a> zuzugreifen, muss der Name oder die Nummer des Fensters (falls vorhanden) als Präfix für die oben genannten speziellen Label verwendet werden; zum Beispiel sind 2GuiEscape und 2GuiClose die Standardlabel für das Fenster Nummer 2, und <em>MeineGui</em>GuiEscape und <em>MeineGui</em>GuiClose die Standardlabel für das Fenster <em>MeineGui</em>. Mit <a href="#PlusLabel">Gui +Label</a> kann ein benutzerdefiniertes Präfix definiert werden.</p>
 
-<p id="GuiClose"><strong>GuiClose</strong>: Wird gestartet, wenn das Fenster mit eine der folgenden Methoden geschlossen wird: Drücken der X-Schaltfläche in der Titelleiste, Auswählen des Systemmenüpunkts "Schließen" oder Schließen via <a href="WinClose.htm">WinClose</a>. Wenn dieses Label fehlt, wird das Fenster beim Schließen nur versteckt, was den gleichen Effekt hat wie <a href="#Cancel">Gui Cancel</a>. Die am häufigsten durchgeführte Aktion für GuiClose ist <a href="ExitApp.htm">ExitApp</a>; zum Beispiel:</p>
+<h3 id="GuiClose">GuiClose</h3>
+<p>Wird gestartet, wenn das Fenster mit eine der folgenden Methoden geschlossen wird: Drücken der X-Schaltfläche in der Titelleiste, Auswählen des Systemmenüpunkts "Schließen" oder Schließen via <a href="WinClose.htm">WinClose</a>. Wenn dieses Label fehlt, wird das Fenster beim Schließen nur versteckt, was den gleichen Effekt hat wie <a href="#Cancel">Gui Cancel</a>. Die am häufigsten durchgeführte Aktion für GuiClose ist <a href="ExitApp.htm">ExitApp</a>; zum Beispiel:</p>
 <pre>GuiClose:
 ExitApp</pre>
 <p><span class="ver">[v1.1.20+]:</span> Wenn GuiClose eine Funktion ist, wird die GUI standardmäßig versteckt. Um das zu verhindern, muss die Funktion via Return einen Integer ungleich 0 zurückgeben; zum Beispiel:</p>
@@ -385,9 +386,11 @@ ExitApp</pre>
         return true  <em>; true = 1</em>
 }</pre>
 
-<p id="GuiEscape"><strong>GuiEscape</strong>: Wird gestartet, wenn der Benutzer <kbd>Esc</kbd> drückt, während das GUI-Fenster aktiv ist. Wenn dieses Label fehlt, hat das Drücken von <kbd>Esc</kbd> keine Auswirkung. Bekannte Einschränkung: Wenn die Interaktion mit dem ersten Steuerelement im Fenster deaktiviert ist (möglicherweise abhängig vom Typ des Steuerelements), wird das GuiEscape-Label nicht gestartet. Es gibt eventuell noch andere Faktoren, die diesen Effekt hervorrufen.</p>
+<h3 id="GuiEscape">GuiEscape</h3>
+<p>Wird gestartet, wenn der Benutzer <kbd>Esc</kbd> drückt, während das GUI-Fenster aktiv ist. Wenn dieses Label fehlt, hat das Drücken von <kbd>Esc</kbd> keine Auswirkung. Bekannte Einschränkung: Wenn die Interaktion mit dem ersten Steuerelement im Fenster deaktiviert ist (möglicherweise abhängig vom Typ des Steuerelements), wird das GuiEscape-Label nicht gestartet. Es gibt eventuell noch andere Faktoren, die diesen Effekt hervorrufen.</p>
 
-<p id="GuiSize"><strong>GuiSize</strong>: Wird gestartet, wenn das Fenster kleiner/größer gemacht, minimiert, maximiert oder wiederhergestellt wird. Die internen Variablen <a href="../Variables.htm#GuiWidth">A_GuiWidth</a> und <a href="../Variables.htm#GuiWidth">A_GuiHeight</a> enthalten die neue Breite und Höhe des Clientbereichs des Fensters (das ist der Bereich ohne Rahmen, Titelleiste und Menüleiste). Zusätzlich enthält sowohl <a href="../Variables.htm#EventInfo">A_EventInfo</a> als auch <a href="../misc/ErrorLevel.htm">ErrorLevel</a> eine der folgenden Zahlen:</p>
+<h3 id="GuiSize">GuiSize</h3>
+<p>Wird gestartet, wenn das Fenster kleiner/größer gemacht, minimiert, maximiert oder wiederhergestellt wird. Die internen Variablen <a href="../Variables.htm#GuiWidth">A_GuiWidth</a> und <a href="../Variables.htm#GuiWidth">A_GuiHeight</a> enthalten die neue Breite und Höhe des Clientbereichs des Fensters (das ist der Bereich ohne Rahmen, Titelleiste und Menüleiste). Zusätzlich enthält sowohl <a href="../Variables.htm#EventInfo">A_EventInfo</a> als auch <a href="../misc/ErrorLevel.htm">ErrorLevel</a> eine der folgenden Zahlen:</p>
 <p>0: Das Fenster wurde wiederhergestellt oder auf normale Weise größer/kleiner gemacht, z. B. durch Ziehen des Rahmens.<br>
   1: Das Fenster wurde minimiert.<br>
   2: Das Fenster wurde maximiert.</p>
@@ -399,7 +402,8 @@ ExitApp</pre>
 <p><span class="ver">[v1.1.20+]:</span> Wenn GuiSize eine Funktion ist, akzeptiert sie folgende Parameter:</p>
 <pre class="Syntax"><span class="func">GuiSize</span>(GuiHwnd, EreignisInfo, Breite, Höhe)</pre>
 
-<p id="GuiContextMenu"><strong>GuiContextMenu</strong>: Wird gestartet, wenn der Benutzer mit der rechten Maustaste auf eine beliebige Stelle im Fenster klickt (außer Titelleiste und Menüleiste). Das Ereignis wird auch gestartet, wenn der Benutzer die <kbd>Menü</kbd>-Taste oder <kbd>Umschalt</kbd>+<kbd>F10</kbd> drückt. Im Gegensatz zu vielen anderen GUI-Labels können mehrere GuiContextMenu-<a href="../misc/Threads.htm">Threads</a> zur selben Zeit aktiv sein. GuiContextMenu kann auf folgende interne Variablen zugreifen:</p>
+<h3 id="GuiContextMenu">GuiContextMenu</h3>
+<p>Wird gestartet, wenn der Benutzer mit der rechten Maustaste auf eine beliebige Stelle im Fenster klickt (außer Titelleiste und Menüleiste). Das Ereignis wird auch gestartet, wenn der Benutzer die <kbd>Menü</kbd>-Taste oder <kbd>Umschalt</kbd>+<kbd>F10</kbd> drückt. Im Gegensatz zu vielen anderen GUI-Labels können mehrere GuiContextMenu-<a href="../misc/Threads.htm">Threads</a> zur selben Zeit aktiv sein. GuiContextMenu kann auf folgende interne Variablen zugreifen:</p>
 <ol>
   <li><a href="../Variables.htm#GuiControl">A_GuiControl</a> enthält den <a href="../Variables.htm#GuiControl">Text oder Variablennamen</a> des Steuerelements, auf dem sich das Ereignis bezieht (leer, wenn nicht).</li>
   <li><a href="../Variables.htm#EventInfo">A_EventInfo</a>: Bei einer ListBox, ListView oder TreeView gibt A_EventInfo an, auf welcher Reihe bzw. Element der Versuch unternommen wurde, das Kontextmenü zu öffnen:<br>
@@ -413,7 +417,8 @@ ExitApp</pre>
 <pre class="Syntax"><span class="func">GuiContextMenu</span>(GuiHwnd, ElementHwnd, EreignisInfo, IstRechtsklick, X, Y)</pre>
 <p><em>ElementHwnd</em> ist leer, wenn das Ereignis nicht von einem Steuerelement stammt. <em>IstRechtsklick</em> ist wahr, wenn A_GuiEvent das Wort RightClick enthält.</p>
 
-<p id="GuiDropFiles"><strong>GuiDropFiles</strong>: Wird gestartet, wenn Dateien/Ordner während eines Drag-and-Drop-Vorgangs auf das Fenster abgelegt werden (aber wenn das Label bereits läuft, werden Drop-Ereignisse ignoriert). GuiDropFiles kann auf folgende interne Variablen zugreifen:</p>
+<h3 id="GuiDropFiles">GuiDropFiles</h3>
+<p>Wird gestartet, wenn Dateien/Ordner während eines Drag-and-Drop-Vorgangs auf das Fenster abgelegt werden (aber wenn das Label bereits läuft, werden Drop-Ereignisse ignoriert). GuiDropFiles kann auf folgende interne Variablen zugreifen:</p>
 <ol>
   <li><a href="../Variables.htm#GuiControl">A_GuiControl</a> enthält den <a href="../Variables.htm#GuiControl">Text oder Variablennamen</a> des Steuerelements, auf dem die Dateien abgelegt wurden (leer, wenn nicht).</li>
   <li><a href="../Variables.htm#EventInfo">A_EventInfo</a> und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> enthalten die Anzahl der abgelegten Dateien.</li>
@@ -449,7 +454,8 @@ Loop, Parse, Dateiliste, `n
 }
 </pre>
 
-<p><strong>Erkennen von und reagieren auf andere Ereignisse</strong>: Andere Arten von GUI-Ereignissen können via <a href="OnMessage.htm">OnMessage()</a> erkannt und verarbeitet werden. Ein Skript kann beispielsweise via ToolTip eine kontextabhängige Hilfe anzeigen, wenn der Benutzer den Mauszeiger über bestimmte Steuerelemente im Fenster bewegt. Siehe dazu das <a href="#ExToolTip">GUI-ToolTip-Beispiel</a>.</p>
+<h3 id="OtherEvents">Andere Ereignisse</h3>
+<p>Andere Arten von GUI-Ereignissen können via <a href="OnMessage.htm">OnMessage()</a> erkannt und verarbeitet werden. Ein Skript kann beispielsweise via ToolTip eine kontextabhängige Hilfe anzeigen, wenn der Benutzer den Mauszeiger über bestimmte Steuerelemente im Fenster bewegt. Siehe dazu das <a href="#ExToolTip">GUI-ToolTip-Beispiel</a>.</p>
 
 <h2 id="MultiWin">Mehrere GUI-Fenster erstellen</h2>
 <p>Um anstelle des <a href="#DefaultWin">Standardfensters</a> mit einem anderen Fenster zu agieren, fügt man dessen Namen oder Nummer (oder <span class="ver">[in v1.1.03+]</span> dessen <a href="#GuiHwndOutputVar">HWND</a>), gefolgt von einem Doppelpunkt, vor dem Unterbefehl ein. Zum Beispiel:</p>

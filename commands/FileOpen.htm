@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>FileOpen() - Syntax &amp; Verwendung | AutoHotkey</title>
-<meta name="description" content="Die FileOpen-Funktion öffnet eine Datei." />
+<meta name="description" content="Die FileOpen-Funktion öffnet eine Datei, um bestimmte Inhalte aus ihr zu lesen und/oder in diese zu schreiben." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -14,7 +14,7 @@
 
 <h1>FileOpen <span class="ver">[AHK_L 42+]</span></h1>
 
-<p>Öffnet eine Datei.</p>
+<p>Öffnet eine Datei, um bestimmte Inhalte aus ihr zu lesen und/oder in diese zu schreiben.</p>
 <pre class="Syntax">File := <span class="func">FileOpen</span>(Dateiname, Flags <span class="optional">, Codierung</span>)</pre>
 
 <h2>Parameter</h2>
@@ -37,30 +37,109 @@ FileOpen("**", "w")  <em>; für stderr</em></pre>
   <dd><p>Der Zeichensatz, der zur Textverarbeitung verwendet werden soll, falls die Datei keine UTF-8- oder UTF-16-<a href="http://de.wikipedia.org/wiki/Byte_Order_Mark">Byte-Order-Markierung</a> enthält, oder wenn das <code>h</code> (Handle) benutzt wird. Fehlt dieser Parameter, wird der aktuelle Wert von <a href="../Variables.htm#FileEncoding">A_FileEncoding</a> verwendet.</p></dd>
 
 </dl>
+
 <h2>Flags</h2>
-  <h3>Zugriffsmodi (schließen sich gegenseitig aus)</h3>
+
+<h3>Zugriffsmodi (schließen sich gegenseitig aus)</h3>
 <table class="info">
-  <tr><th style="width:4em">Flag</th><th style="width:4em">Nummer</th><th style="text-align:left">Beschreibung</th></tr>
-  <tr><td class="fopt">r</td><td class="fnum">0</td><td><i>Read</i> (Lesen): Schlägt fehl, wenn die Datei nicht existiert.</td></tr>
-  <tr><td class="fopt">w</td><td class="fnum">1</td><td><i>Write</i> (Schreiben): Erstellt eine neue Datei, wenn sie nicht existiert, <b style="color:red">ansonsten wird die Datei überschrieben</b>.</td></tr>
-  <tr><td class="fopt">a</td><td class="fnum">2</td><td><i>Append</i> (Anfügen): Erstellt eine neue Datei, wenn sie nicht existiert, ansonsten wird der Dateizeiger an das Ende der Datei verschoben.</td></tr>
-  <tr><td class="fopt">rw</td><td class="fnum">3</td><td><i>Read/Write</i> (Lesen/Schreiben): Erstellt eine neue Datei, wenn sie nicht existiert.</td></tr>
-  <tr><td class="fopt">h</td><td>&nbsp;</td><td>Kennzeichnet, dass <i>Dateiname</i> ein Datei-Handle ist, das in ein Objekt gewrappt werden soll. Ignoriert Freigabemodus-Flags und verhindert, dass in der Datei oder im Stream des Handle eine Byte-Order-Markierung (BOM) gesucht wird. Das Datei-Handle wird <b>nicht</b> automatisch geschlossen, wenn das File-Objekt zerstört wird. Der Aufruf von <a href="../objects/File.htm#Close">Close</a> hat keinen Effekt. Beachten Sie, dass <a href="../objects/File.htm#Seek">Seek</a>, <a href="../objects/File.htm#Tell">Tell</a> und <a href="../objects/File.htm#Length">Length</a> nicht verwendet werden sollten, wenn <i>Dateiname</i> ein Handle ist, das auf ein nicht-suchendes Device (z. B. ein Pipe oder ein Kommunikations-Device) verweist.</td></tr>
+  <tr>
+    <th>Flag</th>
+    <th>Dez</th>
+    <th>Hex</th>
+    <th style="text-align:left">Beschreibung</th>
+  </tr>
+  <tr>
+    <td class="fopt">r</td>
+    <td class="fnum">0</td>
+    <td class="fnum">0x0</td>
+    <td><i>Read</i> (Lesen): Schlägt fehl, wenn die Datei nicht existiert.</td>
+  </tr>
+  <tr>
+    <td class="fopt">w</td>
+    <td class="fnum">1</td>
+    <td class="fnum">0x1</td>
+    <td><i>Write</i> (Schreiben): Erstellt eine neue Datei, wenn sie nicht existiert, <b style="color:red">ansonsten wird die Datei überschrieben</b>.</td>
+  </tr>
+  <tr>
+    <td class="fopt">a</td>
+    <td class="fnum">2</td>
+    <td class="fnum">0x2</td>
+    <td><i>Append</i> (Anfügen): Erstellt eine neue Datei, wenn sie nicht existiert, ansonsten wird der Dateizeiger an das Ende der Datei verschoben.</td>
+  </tr>
+  <tr>
+    <td class="fopt">rw</td>
+    <td class="fnum">3</td>
+    <td class="fnum">0x3</td>
+    <td><i>Read/Write</i> (Lesen/Schreiben): Erstellt eine neue Datei, wenn sie nicht existiert.</td>
+  </tr>
+  <tr>
+    <td class="fopt">h</td>
+    <td>&nbsp;</td>
+    <td class="fnum">&nbsp;</td>
+    <td>Kennzeichnet, dass <i>Dateiname</i> ein Datei-Handle ist, das in ein Objekt gewrappt werden soll. Ignoriert Freigabemodus-Flags und verhindert, dass in der Datei oder im Stream des Handle eine Byte-Order-Markierung (BOM) gesucht wird. Das Datei-Handle wird <b>nicht</b> automatisch geschlossen, wenn das File-Objekt zerstört wird. Der Aufruf von <a href="../objects/File.htm#Close">Close</a> hat keinen Effekt. Beachten Sie, dass <a href="../objects/File.htm#Seek">Seek</a>, <a href="../objects/File.htm#Tell">Tell</a> und <a href="../objects/File.htm#Length">Length</a> nicht verwendet werden sollten, wenn <i>Dateiname</i> ein Handle ist, das auf ein nicht-suchendes Device (z. B. ein Pipe oder ein Kommunikations-Device) verweist.</td>
+  </tr>
 </table>
-  <h3>Freigabemodi</h3>
+
+<h3>Freigabemodi</h3>
 <table class="info">
-  <tr><th>Flag</th><th>Nummer</th><th style="text-align:left">Beschreibung</th></tr>
-  <tr><td class="fopt" style="white-space:nowrap">-rwd</td><td>&nbsp;</td><td>Sperrt die Datei für Lese-, Schreib- und/oder Löschzugriffe. Es sind beliebige Kombinationen von <code>r</code>, <code>w</code> und <code>d</code> möglich. Die Angabe von <code>-</code> ist das gleiche wie, als würde man <code>-rwd</code> angeben. Wenn alles weggelassen wird, werden standardmäßig alle Zugriffe freigegeben.</td></tr>
-  <tr><td>&nbsp;</td><td class="fnum">0</td><td>Wenn <i>Flags</i> numerisch ist und keine Freigabemodus-Flags angegeben sind, wird die Datei gesperrt.</td></tr>
-  <tr><td>&nbsp;</td><td class="fnum">0x100</td><td>Gibt <i>Lesezugriff</i> frei.</td></tr>
-  <tr><td>&nbsp;</td><td class="fnum">0x200</td><td>Gibt <i>Schreibzugriff</i> frei.</td></tr>
-  <tr><td>&nbsp;</td><td class="fnum">0x400</td><td>Gibt <i>Löschzugriff</i> frei.</td></tr>
+  <tr>
+    <th>Flag</th>
+    <th>Dez</th>
+    <th>Hex</th>
+    <th style="text-align:left">Beschreibung</th>
+  </tr>
+  <tr>
+    <td class="fopt" style="white-space:nowrap">-rwd</td>
+    <td>&nbsp;</td>
+    <td class="fnum">&nbsp;</td>
+    <td>Sperrt die Datei für Lese-, Schreib- und/oder Löschzugriffe. Es sind beliebige Kombinationen von <code>r</code>, <code>w</code> und <code>d</code> möglich. Die Angabe von <code>-</code> ist das gleiche wie, als würde man <code>-rwd</code> angeben. Wenn alles weggelassen wird, werden standardmäßig alle Zugriffe freigegeben.</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td class="fnum">0</td>
+    <td class="fnum">0x0</td>
+    <td>Wenn <i>Flags</i> numerisch ist und keine Freigabemodus-Flags angegeben sind, wird die Datei gesperrt.</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td class="fnum">256</td>
+    <td class="fnum">0x100</td>
+    <td>Gibt <i>Lesezugriff</i> frei.</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td class="fnum">512</td>
+    <td class="fnum">0x200</td>
+    <td>Gibt <i>Schreibzugriff</i> frei.</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td class="fnum">1024</td>
+    <td class="fnum">0x400</td>
+    <td>Gibt <i>Löschzugriff</i> frei.</td>
+  </tr>
 </table>
-  <h3>End-of-Line-Optionen (EOL)</h3>
+
+<h3>End-of-Line-Optionen (EOL)</h3>
 <table class="info">
-  <tr><th>Flag</th><th>Nummer</th><th style="text-align:left">Beschreibung</th></tr>
-  <tr><td class="fopt"><code>`n</code></td><td class="fnum">4</td><td>Ersetzt beim Schreiben <code>`r`n</code> mit <code>`n</code> und beim Lesen <code>`n</code> mit <code>`r`n</code>.</td></tr>
-  <tr><td class="fopt"><code>`r</code></td><td class="fnum">8</td><td>Ersetzt beim Schreiben das alleinstehende <code>`r</code> mit <code>`n</code>.</td></tr>
+  <tr>
+    <th>Flag</th>
+    <th>Dez</th>
+    <th>Hex</th>
+    <th style="text-align:left">Beschreibung</th>
+  </tr>
+  <tr>
+    <td class="fopt">`n</td>
+    <td class="fnum">4</td>
+    <td class="fnum">0x4</td>
+    <td>Ersetzt beim Schreiben <code>`r`n</code> mit <code>`n</code> und beim Lesen <code>`n</code> mit <code>`r`n</code>.</td>
+  </tr>
+  <tr>
+    <td class="fopt">`r</td>
+    <td class="fnum">8</td>
+    <td class="fnum">0x8</td>
+    <td>Ersetzt beim Schreiben das alleinstehende <code>`r</code> mit <code>`n</code>.</td>
+  </tr>
 </table>
 
 <h2>Rückgabewert</h2>
@@ -76,10 +155,10 @@ FileOpen("**", "w")  <em>; für stderr</em></pre>
 <p><a href="FileEncoding.htm">FileEncoding</a>, <a href="../objects/File.htm">File-Objekt</a>, <a href="FileRead.htm">FileRead</a></p>
 
 <h2>Beispiele</h2>
-<pre class="NoIndent" id="writeread"><em>; Beispiel: Dieses Skript schreibt etwas Text in eine Datei und liest ihn zurück in den Speicher.
-; Es stellt die gleiche Funktionalität wie <a href="DllCall.htm#file">dieses DllCall-Beispiel</a> bereit.</em>
 
-FileSelectFile, Dateiname, S16,, Neue Datei erstellen:
+<h3 id="ex1">Beispiel #1</h3>
+<p>Dieses Skript schreibt etwas Text in eine Datei und liest ihn wieder in den Speicher (es stellt die gleiche Funktionalität wie <a href="DllCall.htm#file">dieses DllCall-Beispiel</a> bereit):</p>
+<pre class="NoIndent" id="writeread">FileSelectFile, Dateiname, S16,, Neue Datei erstellen:
 if (Dateiname = "")
     return
 File := FileOpen(Dateiname, "w")
@@ -104,11 +183,14 @@ TestZeichenkette := File.Read(ZuLesendeZeichen)
 File.Close()
 MsgBox Die folgende Zeichenkette wurde aus der Datei gelesen: %TestZeichenkette%</pre>
 
-<pre class="NoIndent"><em>; Öffnet das Skript im Schreibschutzmodus und liest die erste Zeile:</em>
-File := FileOpen(A_ScriptFullPath, "r")
-MsgBox % File.ReadLine()
+<h3 id="ex2">Beispiel #2</h3>
+<p>Öffnet das Skript im Schreibschutzmodus und liest die erste Zeile:</p>
+<pre class="NoIndent">File := FileOpen(A_ScriptFullPath, "r")
+MsgBox % File.ReadLine()</pre>
 
-<em>; Öffnet ein Konsolenfenster für diese Demonstration:</em>
+<h3 id="ex3">Beispiel #3</h3>
+<p>Veranschaulicht die Verwendung der Standard-Eingabe/Ausgabe-Datenströme:</p>
+<pre class="NoIndent"><em>; Öffnet ein Konsolenfenster für diese Demonstration:</em>
 DllCall("AllocConsole")
 <em>; Öffnet die stdin/stdout-Ströme der Anwendung mit der Option "`n".</em>
 stdin  := FileOpen("*", "r `n")  <em>; Benötigt <span class="ver">[v1.1.17+]</span></em>

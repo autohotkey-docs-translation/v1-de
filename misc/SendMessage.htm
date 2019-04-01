@@ -54,7 +54,26 @@ Anforderungen: <span class="ver">[AutoHotkey v1.0.09+]</span> und Winspector Spy
 <pre><em>; Sperrt die Hotkeys eines laufenden AHK-Skripts</em>
 DetectHiddenWindows, On
 SetTitleMatchMode, 2
-<a href="../commands/PostMessage.htm">PostMessage</a>, 0x111, 65305,,, MeinSkript.ahk - AutoHotkey <em>; Verwenden Sie 65306 für Pause anstelle von Suspend.</em></pre>
+<em>; Verwenden Sie 65306 für Pause oder 65303 für Reload anstelle von Suspend. (siehe <a href="../FAQ.htm#close">FAQ</a>).</em>
+<a href="../commands/PostMessage.htm">PostMessage</a>, 0x111, 65305,,, MeinSkript.ahk - AutoHotkey
+</pre>
+<pre><em>; Drücken Sie FESTSTELL+NUMPAD2, um alle AutoHotkey-Skripte neu zu laden</em>
+CapsLock &amp; Numpad2::
+AlleAhkSkripteNeuladen() {
+    DetectHiddenWindows, On
+    SetTitleMatchMode, 2
+    WinGet, allAhkExe, List, ahk_class AutoHotkey
+    Loop, % allAhkExe {
+        hwnd := allAhkExe%A_Index%
+        if (hwnd = A_ScriptHwnd)  ; Verhindert das Neuladen des aktuellen Fensters
+        {
+            continue
+        }
+        PostMessage, 0x111, 65303,,, % "ahk_id" . hwnd
+    }
+    Reload
+}
+</pre>
 <p>Das oben war für PostMessage. <a href="../commands/PostMessage.htm">SendMessage</a> funktioniert genauso und wartet zusätzlich auf einen Rückgabewert, mit dem beispielsweise der aktuelle Track von Winamp abgerufen werden kann (siehe <a href="Winamp.htm">Winamp automatisieren</a> als Beispiel).</p>
 <p>Hier ein paar weitere Hinweise:</p>
 <ul>
