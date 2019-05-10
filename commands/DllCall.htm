@@ -340,13 +340,13 @@ hBrush := <strong>DllCall</strong>("CreateSolidBrush", "UInt", 0x0000FF, "Ptr") 
 <strong>DllCall</strong>("ReleaseDC", "Ptr", 0, "Ptr", hDC)  <em>; Gibt Speicher frei.</em>
 <strong>DllCall</strong>("DeleteObject", "Ptr", hBrush)  <em>; Gibt Speicher frei.</em></pre>
 
-<pre class="NoIndent"><em>; Struktur-Beispiel: Setzen Sie die Systemuhr auf den angegebenen Datums- und Zeitwert. Seien Sie vorsichtig,
-; wenn Sie ein zukünftiges Datum setzen, denn dies kann dazu führen, dass geplante Tasks vorzeitig ausgeführt werden!</em>
+<pre class="NoIndent"><em>; Struktur-Beispiel: Stellt die Systemuhr auf ein bestimmtes Datum und eine bestimmte Uhrzeit um. Seien Sie vorsichtig,
+; wenn Sie ein zukünftiges Datum setzen, denn dadurch können geplante Tasks vorzeitig ausgeführt werden!</em>
 
-SetzeSystemzeit("20051008142211")  <em>; Übergeben Sie einen <a href="FileSetTime.htm#YYYYMMDD">Zeitstempel</a> (lokal, nicht UTC).</em>
+SetzeSystemuhr("20051008142211")  <em>; Übergeben Sie einen <a href="FileSetTime.htm#YYYYMMDD">Zeitstempel</a> (lokal, nicht UTC).</em>
 
-SetzeSystemzeit(YYYYMMDDHHMISS)
-<em>; Setzt die Systemzeit den angegebenen Datums- und Zeitwert.
+SetzeSystemuhr(YYYYMMDDHHMISS)
+<em>; Stellt die Systemuhr auf ein bestimmtes Datum und eine bestimmte Uhrzeit um.
 ; Der Aufrufer muss sicherstellen, dass der eingehende Parameter ein gültiger Zeitstempel ist
 ; (lokale Zeit, nicht UTC). Übergibt bei Erfolg ungleich 0 zurück.</em>
 {
@@ -355,22 +355,22 @@ SetzeSystemzeit(YYYYMMDDHHMISS)
     UTC_Delta := Round(-UTC_Delta/60)  <em>; Rundet auf die nächste Minute, um Genauigkeit zu gewährleisten.</em>
     YYYYMMDDHHMISS += UTC_Delta, Minutes  <em>; Wendet den Offset für die Konvertierung zu UTC an.</em>
 
-    VarSetCapacity(Systemzeit, 16, 0)  <em>; Diese Struktur besteht aus 8 UShort-Werten (also 8*2=16).</em>
+    VarSetCapacity(Systemuhr, 16, 0)  <em>; Diese Struktur besteht aus 8 UShort-Werten (also 8*2=16).</em>
 
     StringLeft, Int, YYYYMMDDHHMISS, 4    <em>; YYYY (Jahr)</em>
-    <a href="NumPut.htm">NumPut</a>(Int, Systemzeit, 0, "UShort")
+    <a href="NumPut.htm">NumPut</a>(Int, Systemuhr, 0, "UShort")
     StringMid, Int, YYYYMMDDHHMISS, 5, 2  <em>; MM (Monat des Jahres, 1-12)</em>
-    NumPut(Int, Systemzeit, 2, "UShort")
+    NumPut(Int, Systemuhr, 2, "UShort")
     StringMid, Int, YYYYMMDDHHMISS, 7, 2  <em>; DD (Tag des Monats)</em>
-    NumPut(Int, Systemzeit, 6, "UShort")
+    NumPut(Int, Systemuhr, 6, "UShort")
     StringMid, Int, YYYYMMDDHHMISS, 9, 2  <em>; HH (Stunden im 24-Stunden-Format)</em>
-    NumPut(Int, Systemzeit, 8, "UShort")
+    NumPut(Int, Systemuhr, 8, "UShort")
     StringMid, Int, YYYYMMDDHHMISS, 11, 2 <em>; MI (Minuten)</em>
-    NumPut(Int, Systemzeit, 10, "UShort")
+    NumPut(Int, Systemuhr, 10, "UShort")
     StringMid, Int, YYYYMMDDHHMISS, 13, 2 <em>; SS (Sekunden)</em>
-    NumPut(Int, Systemzeit, 12, "UShort")
+    NumPut(Int, Systemuhr, 12, "UShort")
 
-    return <strong>DllCall</strong>("SetSystemTime", Ptr, &amp;Systemzeit)
+    return <strong>DllCall</strong>("SetSystemTime", Ptr, &amp;Systemuhr)
 }</pre>
 
 <pre class="NoIndent"><em>/* <strong>Weitere Struktur-Beispiele:</strong>
