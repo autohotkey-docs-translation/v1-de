@@ -3,6 +3,7 @@
 <head>
 <title>RegisterCallback() - Syntax &amp; Verwendung | AutoHotkey</title>
 <meta name="description" content="Die RegisterCallback-Funktion erstellt eine Maschinencode-Adresse, die ihren Aufruf an eine Funktion im Skript weiterleitet." />
+<meta name="ahk:equiv-v2" content="commands/CallbackCreate.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -73,7 +74,7 @@ wParam := wParam &lt;&lt; 32 &gt;&gt; 32</pre>
 <pre>
 callback := RegisterCallback("DieFunk", "F", 3)  <em>; Größe der Parameterliste muss angegeben werden.</em>
 DieFunk("Funk wurde direkt aufgerufen")          <em>; Ruft DieFunk direkt auf.</em>
-DllCall(callback, float, 10.5, int64, 42)        <em>; Ruft DieFunk via Callback auf.</em>
+DllCall(callback, "float", 10.5, "int64", 42)        <em>; Ruft DieFunk via Callback auf.</em>
 DieFunk(params*) {
     if IsObject(params)
         MsgBox % params[1]
@@ -108,7 +109,7 @@ if not EnumAdresse  <em>; Fast-Modus ist okay, weil er nur von diesem Thread auf
 DetectHiddenWindows On  <em>; Aufgrund des Fast-Modus wird diese Einstellung auch für Callback wirksam.</em>
 
 <em>; Übergibt die Kontrolle an EnumWindows(), das Callback wiederholend aufruft:</em>
-DllCall("EnumWindows", Ptr, EnumAdresse, Ptr, 0)
+DllCall("EnumWindows", "Ptr", EnumAdresse, "Ptr", 0)
 MsgBox %Ausgabe%  <em>; Zeigt die gesammelten Informationen von Callback an.</em>
     
 EnumWindowsProc(hwnd, lParam)
@@ -125,7 +126,7 @@ EnumWindowsProc(hwnd, lParam)
 ; des Text-Steuerelements auf eine benutzerdefinierte Farbe gesetzt.</em>
 
 Texthintergrundfarbe := 0xFFBBBB  <em>; Eine benutzerdefinierte Farbe im BGR-Format.</em>
-Pinsel := DllCall("CreateSolidBrush", UInt, Texthintergrundfarbe)
+Pinsel := DllCall("CreateSolidBrush", "UInt", Texthintergrundfarbe)
 
 Gui, Add, Text, HwndMeinTextHwnd, Hier ein Text mit einer`nbenutzerdefinierter Hintergrundfarbe.
 Gui +LastFound
@@ -136,8 +137,8 @@ SetWindowLong := A_PtrSize=8 ? "SetWindowLongPtr" : "SetWindowLong"
 
 WindowProcNeu := <strong>RegisterCallback</strong>("WindowProc", ""  <em>; Mit "" wird der Fast-Modus beim Setzen der Unterklasse verhindert.</em>
     , <strong>4</strong>, MeinTextHwnd)  <em>; Es muss die genaue ParamAnzahl angegeben werden, wenn der EventInfo-Parameter vorhanden ist.</em>
-WindowProcAlt := DllCall(SetWindowLong, Ptr, GuiHwnd, Int, -4  <em>; -4 ist GWL_WNDPROC</em>
-    , Ptr, WindowProcNeu, Ptr) <em>; Rückgabewert muss auf Ptr oder UPtr statt auf Int gesetzt werden.</em>
+WindowProcAlt := DllCall(SetWindowLong, "Ptr", GuiHwnd, "Int", -4  <em>; -4 ist GWL_WNDPROC</em>
+    , "Ptr", WindowProcNeu, "Ptr") <em>; Rückgabewert muss auf Ptr oder UPtr statt auf Int gesetzt werden.</em>
 
 Gui Show
 return
@@ -148,11 +149,11 @@ WindowProc(hwnd, uMsg, wParam, lParam)
     global Texthintergrundfarbe, Pinsel, WindowProcAlt
     if (uMsg = 0x138 &amp;&amp; lParam = A_EventInfo)  <em>; 0x138 ist WM_CTLCOLORSTATIC.</em>
     {
-        DllCall("SetBkColor", UInt, wParam, Ptr, Texthintergrundfarbe)
+        DllCall("SetBkColor", "Ptr", wParam, "UInt", Texthintergrundfarbe)
         return Pinsel  <em>; Gibt HBRUSH zurück, um dem OS mitzuteilen, dass wir HDC geändert haben.</em>
     }
     <em>; Ansonsten (da oben nichts zurückgegeben wurde) werden alle unbehandelten Ereignisse an das originale WindowProc übergeben.</em>
-    return DllCall("CallWindowProc", Ptr, WindowProcAlt, Ptr, hwnd, UInt, uMsg, Ptr, wParam, Ptr, lParam)
+    return DllCall("CallWindowProc", "Ptr", WindowProcAlt, "Ptr", hwnd, "UInt", uMsg, "Ptr", wParam, "Ptr", lParam)
 }
 
 GuiClose:

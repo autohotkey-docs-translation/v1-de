@@ -33,9 +33,9 @@
       <p><strong>I</strong>: Ignoriert Eingaben, die vom AutoHotkey-Skript erzeugt werden, wie z. B. durch den <a href="Send.htm#SendEvent">SendEvent</a>-Befehl. Allerdings werden <a href="Send.htm#SendInput">SendInput</a> und <a href="Send.htm#SendPlay">SendPlay</a> immer ignoriert, egal ob diese Einstellung aktiv ist oder nicht.</p>      
       <p><strong>L</strong>: Längenbegrenzung (z. B. <code>L5</code>). Die maximal erlaubte Länge der Eingabe. Erreicht der Text diese Länge, wird der Input beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Max gesetzt. Wenn der Text stattdessen mit einem Element aus der <em>Vergleichsliste</em> übereinstimmt, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Match gesetzt. Fehlt die Zahl, wird die Länge auf 16383 Zeichen begrenzt (der höchste zulässige Wert).</p>
       <p><strong>M</strong>: Tastenkombinationen wie <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> werden erkannt und in echte ASCII-Zeichen umgewandelt, falls möglich. Das folgende Beispiel zeigt, wie <kbd>Strg</kbd>+<kbd>C</kbd> erkannt werden kann:</p>
-      <pre>Transform, StrgC, Chr, 3 <em>; Speichert das Zeichen für STRG+C in die Variable StrgC.</em>
+      <pre>StrgC := Chr(3) <em>; Speichert das Zeichen für STRG+C in die Variable StrgC.</em>
 Input, AusgabeVar, L1 M
-if AusgabeVar = %StrgC%
+if (AusgabeVar = StrgC)
     MsgBox, Sie haben STRG+C gedrückt.
 ExitApp</pre>
       <p class="note"><strong>Hinweis</strong>: <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> sind die Zeichen von <a href="Chr.htm">Chr(1)</a> bis <a href="Chr.htm">Chr(26)</a>. Außerdem ist es möglich, dass die <strong>M</strong>-Option einige Tastenkürzel wie <kbd>Strg</kbd>+<kbd>←</kbd> dazu bringen kann, sich während eines Inputs falsch zu verhalten.</p>
@@ -94,9 +94,11 @@ ExitApp</pre>
     </td>
   </tr>
 </table>
-<h2>Bemerkungen</h2>
+
+<h2 id="Remarks">Bemerkungen</h2>
 <p>Verwendet man diesen Befehl, während ein Input in einem anderen <a href="../misc/Threads.htm">Thread</a> bereits am Laufen ist, wird dieser Input beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort NewInput gesetzt. Danach wird ein neuer Input eingeleitet (sofern Parameter angegeben sind).</p>
-<p>Während ein Input am Laufen ist, können neue <a href="../misc/Threads.htm">Threads</a> wie <a href="Menu.htm">benutzerdefinierte Menüelemente</a> oder <a href="SetTimer.htm">zeitgesteuerte Subroutinen</a> erstellt werden. Zudem sind Tastatur-<a href="../Hotkeys.htm">Hotkeys</a> auch dann noch aktiv, wenn der Input <a href="#vis">sichtbar</a> ist. Wenn der Input nicht sichtbar ist, können nur <a href="_UseHook.htm">Hook-Hotkeys</a> ausgelöst werden.</p>
+<p>Während ein Input am Laufen ist, können neue <a href="../misc/Threads.htm">Threads</a> wie <a href="Menu.htm">benutzerdefinierte Menüelemente</a> oder <a href="SetTimer.htm">zeitgesteuerte Subroutinen</a> erstellt werden. Tastatur-<a href="../Hotkeys.htm">Hotkeys</a> sind weiterhin aktiv. Allerdings können Hotkeys nicht von Tasten ausgelöst werden, die vom Input unterdrückt werden.</p>
+<p>Wenn der Input nicht <a href="#vis">sichtbar</a> ist, werden alle Tasten unterdrückt, außer <a href="../KeyList.htm#modifier">normale Modifikatortasten</a>, CapsLock, NumLock und ScrollLock. Sogar <em>Endtasten</em> und Tastatureingaben, die <em>AusgabeVar</em> nicht verändern, werden unterdrückt. Zum Beispiel hat <kbd>Pos1</kbd> keinen Effekt, während <kbd>LWin</kbd>+<kbd>D</kbd> das Startmenü öffnet (weil <kbd>D</kbd> unterdrückt wird und <kbd>LWin</kbd> nicht)</p>
 <p>Wenn ein Skript diesen Befehl zum ersten Mal verwendet, wird der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> installiert (falls noch nicht geschehen). Darüber hinaus wird das Skript <a href="_Persistent.htm">persistent</a>; das heißt, dass das Skript nur noch mit <a href="ExitApp.htm">ExitApp</a> beendet werden kann. Jedes Mal, wenn das Skript einen <a href="Suspend.htm">Suspend</a>- oder <a href="Hotkey.htm">Hotkey</a>-Befehl erreicht, wird überprüft, ob der Tastatur-Hook noch von Hotkeys oder Hotstrings beansprucht wird. Ist dies nicht der Fall, wird der Hook wieder deinstalliert.</p>
 <p>Wenn Sie mehrere Sprachen oder Tastaturbelegungen verwenden, greift der Input auf die Tastaturbelegung des aktiven Fensters statt auf die des Skripts zurück (egal ob die Eingabe <a href="#vis">sichtbar</a> ist oder nicht). In den Versionen vor 1.0.44.03 wurde die Belegung des Skripts verwendet.</p>
 <p>Zwar sind <a href="../Hotstrings.htm">Hotstrings</a> nicht so flexibel wie ein Input-Befehl, allerdings sind sie leichter zu handhaben.</p>
