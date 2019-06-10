@@ -35,11 +35,11 @@
     <p><strong>CDecl</strong> oder <strong>C</strong>: Passt die <em>Adresse</em> an die "C"-Aufrufkonvention an. Diese Option lässt man üblicherweise weg, weil die Standard-Aufrufkonvention in der Regel für Callbacks genügt.</p></dd>
 
   <dt>ParamAnzahl</dt>
-  <dd><p>Die Anzahl der Parameter, die <em>Adresse</em>'s Aufrufer übergeben muss. Fehlt dieser Parameter, gilt standardmäßig die Anzahl der Pflichtparameter, die in der <a href="../Functions.htm#define">Definition</a> von <em>Funktionsname</em> angegeben sind. In beiden Fällen muss sichergestellt werden, dass der Aufrufer genau diese Anzahl von Parametern übergibt.</p></dd>
+  <dd><p>Die Anzahl der Parameter, die <em>Adresse</em>'s Aufrufer übergeben muss. Lässt man diesen Parameter weg, wird standardmäßig die Anzahl der Pflichtparameter verwendet, die in der <a href="../Functions.htm#define">Definition</a> von <em>Funktionsname</em> angegeben sind. In beiden Fällen muss sichergestellt werden, dass der Aufrufer genau diese Anzahl von Parametern übergibt.</p></dd>
 
   <dt>EventInfo</dt>
   <dd>
-      <p>Ein Integer, den <em>Funktionsname</em> in <a href="../Variables.htm#EventInfo">A_EventInfo</a> sieht, wenn es über diese <em>Adresse</em> aufgerufen wird. Diese Option ist nützlich, wenn <em>Funktionsname</em> von mehr als einer <em>Adresse</em> aufgerufen wird. Fehlt dieser Parameter, gilt standardmäßig die <em>Adresse</em>. Hinweis: Im Gegensatz zu anderen globalen Einstellungen wird das A_EventInfo des <a href="../misc/Threads.htm">aktuellen Threads</a> nicht vom <a href="#Fast">Fast-Modus</a> beeinflusst.</p>
+      <p>Ein Integer, den <em>Funktionsname</em> in <a href="../Variables.htm#EventInfo">A_EventInfo</a> sieht, wenn es über diese <em>Adresse</em> aufgerufen wird. Diese Option ist nützlich, wenn <em>Funktionsname</em> von mehr als einer <em>Adresse</em> aufgerufen wird. Lässt man diesen Parameter weg, wird standardmäßig <em>Adresse</em> verwendet. Hinweis: Im Gegensatz zu anderen globalen Einstellungen wird das A_EventInfo des <a href="../misc/Threads.htm">aktuellen Threads</a> nicht vom <a href="#Fast">Fast-Modus</a> beeinflusst.</p>
       <p>Wenn die skript-ausführende EXE-Datei im 32-Bit-Format ist, muss dieser Parameter ein Wert zwischen 0 und 4294967295 sein. Wenn die EXE-Datei im 64-Bit-Format ist, kann dieser Parameter ein 64-Bit-Integer sein. Zwar gibt <a href="../Variables.htm#EventInfo">A_EventInfo</a> üblicherweise einen vorzeichenlosen Integer zurück, allerdings bietet AutoHotkey keine volle Unterstützung für vorzeichenlose 64-Bit-Integer, demzufolge könnten einige Operationen bewirken, dass der Wert in den vorzeichenfähigen Bereich rutscht.</p></dd>
 
 </dl>
@@ -82,10 +82,10 @@ DieFunk(params*) {
         MsgBox % <a href="NumGet.htm">NumGet</a>(params+0, "float") ", " NumGet(params+A_PtrSize, "int64")
 }</pre>
 <p>Die meisten Callbacks verwenden die <em>stdcall</em>-Aufrufkonvention, die eine feste Anzahl an Parametern voraussetzt. In solchen Fällen muss <em>ParamAnzahl</em> auf die Größe der Parameterliste gesetzt werden, wo Int64 und Double als zwei 32-Bit-Parameter zählen.</p>
-<p>Bei <em>Cdecl</em> oder 64-Bit-Aufrufkonventionen hat <em>ParamAnzahl</em> nur Einfluss darauf, wie vielen Skriptparametern Werte zugewiesen werden können. Wenn dieser Parameter fehlt, werden alle optionalen Parameter ihren Standardwert bekommen und aus den Berechnungen für die Adresse, gespeichert in <em>params</em>, ausgeschlossen.</p>
+<p>Bei <em>Cdecl</em> oder 64-Bit-Aufrufkonventionen hat <em>ParamAnzahl</em> nur Einfluss darauf, wie vielen Skriptparametern Werte zugewiesen werden können. Lässt man diesen Parameter weg, werden alle optionalen Parameter ihren Standardwert bekommen und aus den Berechnungen für die Adresse, gespeichert in <em>params</em>, ausgeschlossen.</p>
 
 <h2>Was die Funktion per <em>Return</em> zurückgeben sollte</h2>
-<p>Wenn die Funktion ein <a href="Return.htm">Return</a> verwendet, dessen Parameter entweder fehlt oder einen leeren Wert wie "" hat (oder überhaupt kein Return verwendet), wird eine 0 an den Aufrufer des Callbacks zurückgegeben. Ansonsten sollte die Funktion einen Integer zurückgeben, der dann an den Aufrufer zurückgegeben wird. AutoHotkey 32-bit kürzt Rückgabewerte auf 32 Bit, während AutoHotkey 64-bit Rückgabewerte im 64-Bit-Format unterstützt. Zurückgegebene Strukturen größer als diesen Wert werden nicht unterstützt.</p>
+<p>Wenn die Funktion ein <a href="Return.htm">Return</a> ohne Parameter verwendet oder einen leeren Wert wie "" zurückgibt (oder überhaupt kein Return verwendet), wird eine 0 an den Aufrufer des Callbacks zurückgegeben. Ansonsten sollte die Funktion einen Integer zurückgeben, der dann an den Aufrufer zurückgegeben wird. AutoHotkey 32-bit kürzt Rückgabewerte auf 32 Bit, während AutoHotkey 64-bit Rückgabewerte im 64-Bit-Format unterstützt. Zurückgegebene Strukturen größer als diesen Wert werden nicht unterstützt.</p>
 
 <h2 id="Threads">Fast vs. Slow</h2>
 <p>Der Standard/Slow-Modus bewirkt, dass Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> innerhalb der Funktion mit ihren Standardwerten beginnen. Diese Standardwerte können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
