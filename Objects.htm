@@ -98,7 +98,7 @@ Array := Object("KeyA", ValueA, "KeyB", ValueB, ..., "KeyZ", ValueZ)</pre>
 <p id="same_thing">In AutoHotkey v1.x sind einfache Arrays und assoziative Arrays funktionsgemäß identisch. Solange man aber <code>[]</code> als einfaches lineares Array behandelt, wird sichergestellt, dass dessen Rolle eindeutig bleibt, und die Chance erhöht, dass Ihr Skript auch mit einer zukünftigen Version von AutoHotkey noch funktionieren wird, wo der Unterschied zwischen einfachem und assoziativem Array eventuell erkennbar sein muss.</p>
 
 <h3 id="Usage_Objects">Objekte <span class="ver">[AHK_L 31+]</span></h3>
-<p>Bei allen Objekttypen kann die Schreibweise <code>Objekt.DirektGeschriebenerKey</code> benutzt werden, um auf eine Eigenschaft, ein Array oder eine Methode zuzugreifen. Hierbei ist <em>DirektGeschriebenerKey</em> ein Identifikator oder Integer und <em>Objekt</em> ein beliebiger Ausdruck. Identifikatoren sind Zeichenketten ohne Anführungszeichen, die aus alphanumerischen Zeichen, Unterstrich und seit <span class="ver">[v1.1.09]</span> aus ASCII-fremden Zeichen bestehen können. Zum Beispiel wäre <code>match.Pos</code> das gleiche wie <code>match["Pos"]</code>, oder <code>arr.1</code> das gleiche wie <code>arr[1]</code>. Es darf kein Leerzeichen nach dem Punkt erfolgen.</p>
+<p>Bei allen Objekttypen kann die Schreibweise <code>Objekt.DirektGeschriebenerKey</code> benutzt werden, um auf eine Eigenschaft, ein Array oder eine Methode zuzugreifen. Hierbei ist <em>DirektGeschriebenerKey</em> ein Identifikator oder Integer und <em>Objekt</em> ein beliebiger Ausdruck. Identifikatoren sind anführungszeichenlose Zeichenketten, die aus alphanumerischen Zeichen, Unterstrich und seit <span class="ver">[v1.1.09]</span> aus ASCII-fremden Zeichen bestehen können. Zum Beispiel wäre <code>match.Pos</code> das gleiche wie <code>match["Pos"]</code>, oder <code>arr.1</code> das gleiche wie <code>arr[1]</code>. Es darf kein Leerzeichen nach dem Punkt erfolgen.</p>
 <p><strong>Beispiele:</strong></p>
 <p>Abrufen einer Eigenschaft:</p>
 <pre>Wert := Objekt.Eigenschaft</pre>
@@ -610,16 +610,16 @@ Default__Warn(nonobj, p1="", p2="", p3="", p4="")
 
 <span id="AddressCast"></span><h3 id="Implementation_Pointers">Objekt-Pointer</h3>
 <p>In einigen seltenen Fällen ist es eventuell erforderlich, dass ein Objekt via DllCall an einen externen Code übergeben werden muss, oder dass ein Objekt in eine binäre Datenstruktur gespeichert werden muss, damit es später abgerufen werden kann. Die Adresse eines Objekts kann via <code>Adresse := &amp;Objekt</code> abgerufen werden; dies würde allerdings effektiv zwei Referenzen zum Objekt erzeugen, während das Programm selbst nur die eine Referenz in <em>Objekt</em> kennt. Das Objekt wird gelöscht, sobald die letzte <em>bekannte</em> Referenz zum Objekt freigegeben wird. Demzufolge muss das Skript das Objekt darüber informieren, dass es eine Referenz erhalten hat. Es gibt zwei Wege, um das zu erreichen:</p>
-<pre><em>; Methode #1: Referenzzählung explizit erhöhen.</em>
+<pre><em>; Methode #1: Referenzanzahl explizit um 1 erhöhen.</em>
 Adresse := &amp;Objekt
 <a href="commands/ObjAddRef.htm">ObjAddRef</a>(Adresse)
 
-<em>; Methode #2: Object() benutzen, das die Referenzzählung erhöht und eine Adresse zurückgibt.</em>
+<em>; Methode #2: Object() nutzen, das die Referenzanzahl um 1 erhöht und eine Adresse zurückgibt.</em>
 Adresse := Object(Objekt)</pre>
 <p>Mit dieser Funktion ist es auch möglich, eine Adresse wieder in eine Referenz zurückzuverwandeln:</p>
 <pre>Objekt := Object(Adresse)</pre>
 <p>In jedem Fall muss das Objekt informiert werden, wenn das Skript mit dieser Referenz fertig ist:</p>
-<pre><em>; Verringert die Referenzzählung des Objekts, damit es freigegeben werden kann:</em>
+<pre><em>; Verringert die Referenzanzahl des Objekts um 1, damit es freigegeben werden kann:</em>
 <a href="commands/ObjAddRef.htm">ObjRelease</a>(Adresse)
 </pre>
 <p>Generell sollte jede neue Kopie einer Objektadresse als separate Referenz zum Objekt behandelt werden, demzufolge sollte das Skript ObjAddRef aufrufen, wenn es eine Kopie erhält, und sofort ObjRelease aufrufen, bevor es eine verliert. Zum Beispiel sollte immer ObjAddRef aufgerufen werden, wenn eine Adresse mit so etwas wie <code>x := Adresse</code> kopiert wird. Ebenso sollte das Skript ObjRelease aufrufen, wenn es mit <em>x</em> fertig ist (oder dabei ist den Wert von <em>x</em> zu überschreiben).</p>

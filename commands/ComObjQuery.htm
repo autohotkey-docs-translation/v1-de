@@ -19,7 +19,7 @@
 <dl>
 
   <dt>ComObject</dt>
-  <dd><p>Ein COM-Wrapper-Objekt oder unbearbeiteter Interface-Pointer.</p></dd>
+  <dd><p>Ein COM-Wrapper-Objekt oder roher Interface-Pointer.</p></dd>
 
   <dt>IID</dt>
   <dd><p>Ein Interface-Identifikator (GUID) im Format "{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}".</p></dd>
@@ -30,14 +30,14 @@
 </dl>
 
 <h2>Allgemeine Bemerkungen</h2>
-<p>Wenn diese Funktion mit zwei Parametern verwendet wird, ist sie das Äquivalent zu <a href="https://msdn.microsoft.com/de-de/library/ms682521.aspx">IUnknown::QueryInterface</a>. Sind sowohl SID als auch IID angegeben, wird diese Funktion das <a href="https://msdn.microsoft.com/de-de/library/cc678965.aspx">IServiceProvider</a>-Interface anfordern und danach <a href="https://msdn.microsoft.com/de-de/library/cc678966.aspx">IServiceProvider::QueryService</a> aufrufen. In jedem Fall ist der Rückgabewert entweder eine 0 oder ein Pointer, der auf das angeforderte Interface verweist. In der Regel muss dieser Pointer <a href="ObjAddRef.htm">freigegeben</a> werden, wenn er vom Skript nicht länger benötigt wird.</p>
+<p>Im Zwei-Parameter-Modus ist diese Funktion äquivalent zu <a href="https://msdn.microsoft.com/de-de/library/ms682521.aspx">IUnknown::QueryInterface</a>. Sind sowohl SID als auch IID angegeben, wird intern das <a href="https://msdn.microsoft.com/de-de/library/cc678965.aspx">IServiceProvider</a>-Interface angefordert und danach <a href="https://msdn.microsoft.com/de-de/library/cc678966.aspx">IServiceProvider::QueryService</a> aufgerufen. In beiden Fällen ist der Rückgabewert entweder 0 oder ein Pointer, der auf das angeforderte Interface verweist. Grundsätzlich muss dieser Pointer <a href="ObjAddRef.htm">freigegeben</a> werden, wenn er vom Skript nicht länger benötigt wird.</p>
 
 <h2>Siehe auch</h2>
 <a href="ObjAddRef.htm">ObjRelease</a>, <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjActive.htm">ComObjActive</a>, <a href="ComObjError.htm">ComObjError</a>
 
 <h2>Beispiele</h2>
 
-<pre id="ExClassName" class="NoIndent"><em>; Beispiel: Ermittelt den Klassennamen eines Objekts.</em>
+<pre id="ExClassName" class="NoIndent"><em>; Beispiel: Klassennamen eines Objekts ermitteln.</em>
 
 obj := ComObjCreate("Scripting.Dictionary")
 
@@ -45,27 +45,27 @@ MsgBox % "Interface-Name: " ComObjType(obj, "name")
 
 IID_IProvideClassInfo := "{B196B283-BAB4-101A-B69C-00AA00341D07}"
 
-<em>; Fordert einen Pointer an, der auf das IProvideClassInfo-Interface des Objekts verweist.</em>
+<em>; Einen Pointer anfordern, der auf das IProvideClassInfo-Interface des Objekts verweist.</em>
 if !(pci := ComObjQuery(obj, IID_IProvideClassInfo))
 {
     MsgBox IProvideClassInfo-Interface wird nicht unterstützt.
     return
 }
 
-<em>; Ruft GetClassInfo auf, um einen Pointer zu ermitteln, der auf das ITypeInfo-Interface verweist.</em>
+<em>; GetClassInfo aufrufen, um einen Pointer zu erhalten, der auf das ITypeInfo-Interface verweist.</em>
 DllCall(vtable(pci, 3), "ptr", pci, "ptr*", ti)
 
-<em>; Ruft GetDocumentation auf, um den vollständigen Typennamen des Objekts zu ermitteln.</em>
+<em>; GetDocumentation aufrufen, um den vollständigen Typennamen des Objekts zu erhalten.</em>
 DllCall(vtable(ti, 12), "ptr", ti, "int", -1, "ptr*", name, "ptr", 0, "ptr", 0, "ptr", 0)
 
-<em>; Wandelt den BSTR-Pointer in eine brauchbare Zeichenkette um.</em>
+<em>; Den BSTR-Pointer in eine brauchbare Zeichenkette umwandeln.</em>
 name := StrGet(name, "UTF-16")
 
-<em>; Gibt unbearbeitete Interface-Pointer frei.</em>
+<em>; Rohe Interface-Pointer freigeben.</em>
 ObjRelease(ti)
 ObjRelease(pci)
 
-<em>; Zeigt den Typennamen an!</em>
+<em>; Den Typennamen anzeigen!</em>
 MsgBox % "Klassenname: " name
 
 vtable(ptr, n) {
@@ -76,7 +76,7 @@ vtable(ptr, n) {
 }
 </pre>
 
-<pre id="ExIE" class="NoIndent"><em>; Beispiel: Automatisiert ein vorhandenes Internet-Explorer-Fenster.</em>
+<pre id="ExIE" class="NoIndent"><em>; Beispiel: Ein vorhandenes Internet-Explorer-Fenster automatisieren.</em>
 
 sURL := "https://autohotkey.com/boards/"
 if WebBrowser := GetWebBrowser()
@@ -85,7 +85,7 @@ return
 
 GetWebBrowser()
 {
-    <em>; Ermittelt einen unbearbeiteten Pointer, der auf das Document-Objekt des obersten IE-Fensters verweist.</em>
+    <em>; Einen rohen Pointer abrufen, der auf das Document-Objekt des obersten IE-Fensters verweist.</em>
     static msg := DllCall("RegisterWindowMessage", "Str", "WM_HTML_GETOBJECT")
     SendMessage msg, 0, 0, Internet Explorer_Server1, ahk_class IEFrame
     if ErrorLevel = FAIL
@@ -95,21 +95,21 @@ GetWebBrowser()
         , "Ptr", GUID(IID_IHTMLDocument2,"{332C4425-26CB-11D0-B483-00C04FD90119}")
         , "Ptr", 0, "Ptr*", pdoc)
     
-    <em>; Fordert den WebBrowserApp-Service an. In diesem bestimmten Fall sind
-    ; SID und IID das gleiche, das aber nicht immer so ist.</em>
+    <em>; WebBrowserApp-Service anfordern. In diesem bestimmten Fall sind
+    ; SID und IID identisch, was nicht immer so ist.</em>
     static IID_IWebBrowserApp := "{0002DF05-0000-0000-C000-000000000046}"
     static SID_SWebBrowserApp := IID_IWebBrowserApp
     pweb := ComObjQuery(pdoc, SID_SWebBrowserApp, IID_IWebBrowserApp)
     
-    <em>; Gibt den Document-Objekt-Pointer frei.</em>
+    <em>; Document-Objekt-Pointer freigeben.</em>
     ObjRelease(pdoc)
     
-    <em>; Gibt das WebBrowser-Objekt in verwendbarer Form zurück:</em>
+    <em>; WebBrowser-Objekt in verwendbarer Form zurückgeben:</em>
     static VT_DISPATCH := 9, F_OWNVALUE := 1
     return ComObject(VT_DISPATCH, pweb, F_OWNVALUE)
 }
 
-GUID(ByRef GUID, sGUID) <em>; Wandelt eine Zeichenkette in eine binäre GUID um und gibt deren Adresse zurück.</em>
+GUID(ByRef GUID, sGUID) <em>; Wandelt eine Zeichenkette in eine binäre GUID um und gibt ihre Adresse zurück.</em>
 {
     VarSetCapacity(GUID, 16, 0)
     return DllCall("ole32\CLSIDFromString", "WStr", sGUID, "Ptr", &amp;GUID) &gt;= 0 ? &amp;GUID : ""
