@@ -81,11 +81,11 @@
     ... Funktionsbereich ...
 }</pre>
 <p>Obwohl die Namen, die Sie den Parametern geben, keine Rolle spielen, werden ihnen die folgenden Informationen nacheinander zugewiesen:</p>
-<p>Parameter #1: WPARAM-Wert der Meldung.<br>
-Parameter #2: LPARAM-Wert der Meldung.<br>
-Parameter #3: Meldungsnummer, die dort gebraucht wird, wo eine Funktion mehr als eine Meldung überwacht.<br>
-Parameter #4: HWND (eindeutige ID) des Fensters oder Steuerelements, zu dem die Meldung gesendet wurde. Das HWND kann in Verbindung mit <a href="../misc/WinTitle.htm#ahk_id">ahk_id</a> verwendet werden.</p>
-<p>WPARAM und LPARAM sind vorzeichenlose 32-Bit-Integer (von 0 bis 2<sup>32</sup>-1) oder vorzeichenfähige 64-Bit-Integer (von -2<sup>63</sup> bis 2<sup>63</sup>-1), abhängig davon, ob die skript-ausführende EXE-Datei 32- oder 64-Bit ist. Wenn bei einem 32-Bit-Skript ein eingehender Parameter als vorzeichenfähiger Integer vorgesehen ist, können negative Zahlen zum Beispiel wie folgt offenbart werden:</p>
+<p>Parameter #1: Der WPARAM-Wert der Meldung.<br>
+Parameter #2: Der LPARAM-Wert der Meldung.<br>
+Parameter #3: Die Meldungsnummer (dieser Parameter ist nützlich, wenn eine Funktion mehr als eine Meldung überwacht).<br>
+Parameter #4: Die HWND-Nummer (eindeutige ID) des Fensters oder Steuerelements, das die Meldung erhalten hat. Diese Nummer kann in Verbindung mit <a href="../misc/WinTitle.htm#ahk_id">ahk_id</a> genutzt werden.</p>
+<p>WPARAM und LPARAM sind vorzeichenlose 32-Bit-Integer (von 0 bis 2<sup>32</sup>-1) oder vorzeichenfähige 64-Bit-Integer (von -2<sup>63</sup> bis 2<sup>63</sup>-1), abhängig davon, ob die zum Ausführen verwendete EXE-Datei 32- oder 64-Bit ist. Wenn bei einem 32-Bit-Skript ein eingehender Parameter als vorzeichenfähiger Integer vorgesehen ist, können negative Zahlen zum Beispiel wie folgt offenbart werden:</p>
 <pre>if (A_PtrSize = 4 &amp;&amp; wParam &gt; 0x7FFFFFFF)  <em>; Das Überprüfen von <a href="../Variables.htm#PtrSize">A_PtrSize</a> stellt sicher, dass das Skript 32-Bit ist.</em>
     wParam := -(~wParam) - 1</pre>
 <p>Sie können eine oder mehrere Parameter vom Ende der Liste weglassen, wenn Sie die entsprechende Information nicht benötigen. Zum Beispiel würde eine Funktion, definiert als <code>MeineMeldeüberwachung(wParam, lParam)</code>, nur die ersten zwei Parameter empfangen, und eine, definiert als <code>MeineMeldeüberwachung()</code>, gar keine von  ihnen.</p>
@@ -100,7 +100,7 @@ Parameter #4: HWND (eindeutige ID) des Fensters oder Steuerelements, zu dem die 
 </ul>
 <p>Das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> einer überwachenden Funktion ist zu Beginn das übergeordnete Fenster, zu dem die Meldung gesendet wurde (selbst wenn sie zu einem Steuerelement gesendet wurde). Ist das Fenster versteckt, aber kein GUI-Fenster (z. B. das Hauptfenster des Skripts), muss zuvor <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> aktiviert werden. Zum Beispiel:</p>
 <pre>DetectHiddenWindows On
-MeldÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des Fensters, zu dem die Meldung gesendet wurde.</em></pre>
+MeldÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des Fensters, das die Meldung erhalten hat.</em></pre>
 
 <h2>Was die Funktion per <em>Return</em> zurückgeben sollte</h2>
 <p>Verwendet eine überwachende Funktion <a href="Return.htm">Return</a> ohne Parameter oder mit einem leeren Wert wie "" (oder verwendet sie überhaupt kein Return), wird die eingehende Meldung beim Erreichen des Funktionsendes normal fortgesetzt. Das gleiche passiert, wenn man das Ende der Funktion via <a href="Exit.htm">Exit</a> erzwingt oder einen Laufzeitfehler verursacht (der beispielsweise durch <a href="Run.htm">Ausführen</a> einer nicht-existierenden Datei ausgelöst werden kann). Verwendet man als Rückgabewert hingegen einen Integer, wird dieser Wert sofort als Antwort gesendet; das heißt, dass das Programm die Meldung nicht weiter fortsetzen wird. Zum Beispiel könnte eine Funktion, die WM_LBUTTONDOWN (0x201) überwacht, einen Integer zurückgeben, um das Zielfenster daran zu hindern, benachrichtigt zu werden, dass ein Mausklick erfolgt ist. In vielen Fällen (z. B. als eine Meldung, empfangen via <a href="PostMessage.htm">PostMessage</a>) ist es egal, welcher Integer zurückgegeben wird; aber im Zweifelsfall ist eine 0 am sichersten.</p>
