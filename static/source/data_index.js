@@ -671,7 +671,7 @@ indexData = [
   ["message list (WM_*)","misc/SendMessageList.htm"],["Meldungsliste (WM_*)","misc/SendMessageList.htm"],
   ["messages, receiving","commands/OnMessage.htm"],["Meldungen empfangen","commands/OnMessage.htm"],
   ["messages, sending","commands/PostMessage.htm"],["Meldungen senden","commands/PostMessage.htm"],
-  ["Meta-Funktionen (Objekte)","Objects.htm#Meta_Functions"],
+  ["Metafunktionen (Objekte)","Objects.htm#Meta_Functions"],
   ["Min()","commands/Math.htm#Min",2],
   ["MinIndex-Methode (Object)","objects/Object.htm#MinMaxIndex"],
   ["Mod()","commands/Math.htm#Mod",2],
