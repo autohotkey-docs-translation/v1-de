@@ -16,10 +16,19 @@
 <p>Verhindert, dass der <a href="../misc/Threads.htm">aktuelle Thread</a> von anderen Threads unterbrochen werden kann, oder macht ihn unterbrechbar.</p>
 
 <pre class="Syntax">
-<span class="func">Critical</span> <span class="optional">, Off</span>
-<span class="func">Critical</span> 50 <em>; Siehe <a href="#Interval">Bemerkungen</a>.</em>
+<span class="func">Critical</span> <span class="optional">, OnOffNumerisch</span>
 </pre>
-<p>Wenn der erste Parameter weggelassen wird (oder das Wort On ist), wird der <a href="../misc/Threads.htm">aktuelle Thread</a> als kritisch eingestuft; das heißt, dass dieser Thread nicht von anderen Threads unterbrochen werden kann. Wenn der erste Parameter das Wort Off oder <span class="ver">[in v1.0.48+]</span> 0 ist, wird der aktuelle Thread sofort unterbrechbar gemacht, unabhängig von den Einstellungen von <a href="Thread.htm">Thread Interrupt</a>.</p>
+
+<h2 id="Parameters">Parameter</h2>
+<dl>
+  <dt>OnOffNumerisch</dt>
+  <dd>
+    <p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig On verwendet. Ansonsten kann eines der folgenden Dinge angegeben werden:</p>
+    <p><strong>On</strong>: Der <a href="../misc/Threads.htm">aktuelle Thread</a> wird als kritisch eingestuft; das heißt, dass dieser Thread nicht von anderen Threads unterbrochen werden kann.</p>
+    <p><strong>Off</strong>: Der aktuelle Thread wird sofort unterbrechbar gemacht, unabhängig von den Einstellungen von <a href="Thread.htm">Thread Interrupt</a>. Weitere Informationen finden Sie unter <a href="#Off">Critical Off</a>.</p>
+    <p><strong>(Numerisch)</strong> <span class="ver">[v1.0.47+]</span>: Geben Sie eine positive Zahl an, um Critical einzuschalten und die Anzahl der zu wartenden Millisekunden zwischen den Überprüfungen der internen Meldungswarteschlange zu ändern. Weitere Informationen finden Sie unter <a href="#Interval">Meldungsüberprüfungsintervall</a>. <span class="ver">[v1.0.48+]</span>: Die Angabe einer 0 schaltet Critical aus.</p>
+  </dd>
+</dl>
 
 <h2 id="Behave">Verhalten von kritischen Threads</h2>
 <p>Im Gegensatz zu Threads mit <a href="../misc/Threads.htm">hoher Priorität</a> werden Ereignisse, die während eines kritischen Threads auftreten, nicht verworfen. Drückt der Benutzer beispielsweise einen <a href="../Hotkeys.htm">Hotkey</a>, während der aktuelle Thread kritisch ist, wird dieser Hotkey auf unbestimmte Zeit zwischengespeichert. Sobald der aktuelle Thread endet oder unkritisch gemacht wird, wird der Hotkey als neuer Thread gestartet.</p>
@@ -43,13 +52,16 @@
 <h2>Siehe auch</h2>
 <p><a href="Thread.htm">Thread (Befehl)</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a>, <a href="_MaxThreadsBuffer.htm">#MaxThreadsBuffer</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="Hotkey.htm">Hotkey</a>, <a href="Menu.htm">Menu</a>, <a href="SetTimer.htm">SetTimer</a></p>
 
-<h2>Beispiel</h2>
-<pre class="NoIndent">#space::  <em>; Hotkey: WIN+LEERTASTE.</em>
+<h2>Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a></p>
+<pre>#space::  <em>; Hotkey: WIN+LEERTASTE.</em>
 Critical
 ToolTip Neue Threads werden erst gestartet`, wenn dieses ToolTip verschwindet.
 Sleep 3000
 ToolTip  <em>; Schaltet das ToolTip aus.</em>
 return  <em>; Die Rückkehr aus einer Hotkey-Subroutine beendet den Thread. Jeder darunterliegende Thread, der fortgesetzt werden soll, ist per Definition unkritisch.</em></pre>
+</div>
 
 </body>
 </html>

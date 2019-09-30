@@ -23,9 +23,12 @@
   <dd><p>Name einer Datei oder eines Ordners, oder ein Platzhaltermuster wie C:\Temp\*.tmp. Wenn kein absoluter Pfad angegeben ist, wird <em>Quellmuster</em> im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p></dd>
 
   <dt>Zielmuster</dt>
-  <dd>Name oder Muster des Ziels. Wenn kein absoluter Pfad angegeben ist, wird das Ziel im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Das Zielverzeichnis muss bereits vorhanden sein. Die folgenden funktional identischen Beispiele zeigen, wie man eine einfache Kopie durchführen kann (unter Beibehaltung der vorhandenen Dateinamen), indem man nur den Ordnernamen angibt:<br>
+  <dd><p>Name oder Muster des Ziels. Wenn kein absoluter Pfad angegeben ist, wird das Ziel im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
+      <p>Wenn vorhanden, wird das erste Sternchen (<code>*</code>) im Dateinamen mit dem Quelldateinamen ohne Dateiendung ersetzt, während das erste Sternchen nach dem letzten Punkt (<code>.</code>) mit der Dateiendung der Quelldatei ersetzt wird. Wenn ein Sternchen vorhanden ist, aber die Dateiendung weggelassen wird, wird die Dateiendung der Quelldatei verwendet.</p>
+      <p>Die folgenden nahezu identischen Beispiele zeigen, wie man eine einfache Kopie durchführen kann (unter Beibehaltung der vorhandenen Dateinamen), indem man nur den Ordnernamen angibt:</p>
       <pre>FileCopy, C:\*.txt, C:\Mein Ordner</pre>
       <pre>FileCopy, C:\*.txt, C:\Mein Ordner\*.*</pre>
+      <p>Das Zielverzeichnis muss bereits vorhanden sein. Wenn <em>Mein Ordner</em> nicht existiert, verwendet das erste Beispiel oben "Mein Ordner" als Zieldateinamen, während das zweite Beispiel keine Dateien kopiert.</p>
     </dd>
 
   <dt>Überschreiben</dt>
@@ -36,10 +39,10 @@
 
 </dl>
 
-<h2>ErrorLevel</h2>
+<h2>Fehlerbehandlung</h2>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf die Anzahl der Dateien gesetzt, die nicht kopiert werden konnten, und bei Erfolg auf 0.</p>
-<p>In jedem Fall wird ErrorLevel auf 0 gesetzt, falls die Quelldatei eine einzelne Datei ist (ohne Platzhalter) und nicht existiert. Um diesen Zustand zu erkennen, wendet man <a href="IfExist.htm">IfExist</a> oder <a href="FileExist.htm">FileExist()</a> auf die Quelldatei an, bevor man sie kopiert.</p>
+<p>In jedem Fall wird ErrorLevel auf 0 gesetzt, falls die Quelldatei eine einzelne Datei ist (ohne Platzhalter) und nicht existiert. Um diesen Zustand zu erkennen, wendet man <a href="FileExist.htm">FileExist()</a> oder <a href="IfExist.htm">IfExist</a> auf die Quelldatei an, bevor man sie kopiert.</p>
 <p>Im Gegensatz zu <a href="FileMove.htm">FileMove</a> wird das Kopieren einer Datei auf sich selbst immer als Fehler gewertet, auch dann, wenn der Überschreibmodus aktiv ist.</p>
 <p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> entweder auf Null (0) oder unmittelbar nach dem letzten Fehler auf das Ergebnis der Systemfunktion GetLastError() gesetzt. Ansonsten enthält A_LastError einen Fehlercode, der eventuell kenntlich macht, warum keine Dateien gefunden wurden.</p>
 
@@ -49,12 +52,17 @@
 <h2>Siehe auch</h2>
 <p><a href="FileMove.htm">FileMove</a>, <a href="FileCopyDir.htm">FileCopyDir</a>, <a href="FileMoveDir.htm">FileMoveDir</a>, <a href="FileDelete.htm">FileDelete</a></p>
 <h2>Beispiele</h2>
-<pre class="NoIndent">FileCopy, C:\Meine Dokumente\Liste1.txt, D:\Backup\  <em>; Macht eine Kopie, aber behält den originalen Namen.</em>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a></p>
+<pre>FileCopy, C:\Meine Dokumente\Liste1.txt, D:\Backup\  <em>; Macht eine Kopie, aber behält den originalen Namen.</em>
 FileCopy, C:\Meine Datei.txt, C:\Meine neue Datei.txt  <em>; Kopiert eine Datei mit neuem Namen in den gleichen Ordner.</em>
 FileCopy, C:\Ordner1\*.txt, D:\Neuer Ordner\*.bkp  <em>; Kopiert eine Datei mit neuer Dateiendung in einen anderen Ordner.</em></pre>
-<pre class="NoIndent"><em>; Das folgende Beispiel kopiert alle Dateien und Unterordner in einen anderen Ordner:</em>
-Fehleranzahl := KopiereDateienUndOrdner("C:\Mein Ordner\*.*", "D:\Zielordner für Dateien &amp; Ordner")
-if Fehleranzahl &lt;&gt; 0
+</div>
+
+<div class="ex" id="ExCopyAll">
+<p><a href="#ExCopyAll">#2</a>: Das folgende Beispiel kopiert alle Dateien und Unterordner in einen anderen Ordner:</p>
+<pre>Fehleranzahl := KopiereDateienUndOrdner("C:\Mein Ordner\*.*", "D:\Zielordner für Dateien &amp; Ordner")
+if (Fehleranzahl != 0)
     MsgBox %Fehleranzahl% Dateien/Ordner konnten nicht kopiert werden.
 
 KopiereDateienUndOrdner(Quellmuster, Zielordner, Überschreiben = false)
@@ -74,6 +82,7 @@ KopiereDateienUndOrdner(Quellmuster, Zielordner, Überschreiben = false)
     }
     return Fehleranzahl
 }</pre>
+</div>
 
 </body>
 </html>

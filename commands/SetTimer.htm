@@ -54,7 +54,7 @@
 <p>Timer erzeugen nur die Illusion, dass das Skript mehrere Aufgaben gleichzeitig durchführen kann. In Wirklichkeit werden zeitgesteuerte Subroutinen genauso wie andere Threads behandelt: sie können unterbrechen oder von anderen Threads, wie z. B. eine <a href="../Hotkeys.htm">Hotkey-Subroutine</a>, unterbrochen werden. Siehe <a href="../misc/Threads.htm">Threads</a> für weitere Details.</p>
 <p>Die Subroutine eines erstellten, reaktivierten oder mit einer neuen <em>Periode</em> versehenen Timers wird nicht sofort ausgeführt; zuerst muss seine angegebene <em>Periode</em> verstreichen. Wenn der Timer sofort beginnen soll, müssen Sie <a href="Gosub.htm">Gosub</a> zum Ausführen der Timer-Subroutine verwenden (allerdings wird das keinen neuen Thread starten, wie es der Timer selbst machen würde; demzufolge werden Einstellungen wie <a href="SendMode.htm">SendMode</a> nicht mit ihren Standardwerten beginnen).</p>
 <p id="reset"><strong>Zurücksetzen</strong>: Wenn SetTimer auf einen bereits vorhandenen Timer angewendet wird und der 2. Parameter eine Nummer oder das Wort ON ist (oder weggelassen wird), wird der Timer zurückgesetzt; das heißt, dass seine Periode einmal komplett ablaufen muss, bevor seine Subroutine erneut starten kann.</p>
-<p id="Precision"><strong>Genauigkeit des Timers</strong>: Durch die Granularität (Ungenauigkeit) der Zeiterfassung im Betriebssystem wird <em>Periode</em> möglicherweise auf das nächstmögliche Vielfache von 10 oder 15.6 Millisekunden aufgerundet (abhängig vom Typ der installierten Hardware und Treiber). In Windows 2000/XP ist eine <em>Periode</em> zwischen 1 und 10 gleichbedeutend mit 10 oder 15.6. Eine kürzere Verzögerung kann mittels Loop+Sleep erreicht werden, wie bei <a href="Sleep.htm#ShorterSleep">DllCall+<span class="NoIndent">timeBeginPeriod</span>+Sleep</a> gezeigt.</p>
+<p id="Precision"><strong>Genauigkeit des Timers</strong>: Durch die Granularität (Ungenauigkeit) der Zeiterfassung im Betriebssystem wird <em>Periode</em> möglicherweise auf das nächstmögliche Vielfache von 10 oder 15.6 Millisekunden aufgerundet (abhängig vom Typ der installierten Hardware und Treiber). In Windows 2000/XP ist eine <em>Periode</em> zwischen 1 und 10 gleichbedeutend mit 10 oder 15.6. Eine kürzere Verzögerung kann mittels Loop+Sleep erreicht werden, wie bei <a href="Sleep.htm#ShorterSleep">DllCall+timeBeginPeriod+Sleep</a> gezeigt.</p>
 <p id="Reliability"><strong>Zuverlässigkeit</strong>: Es kann sein, dass ein Timer nicht zum erwarteten Zeitpunkt ausgeführt wird, wenn folgende Bedingungen auftreten:</p>
 <ol>
   <li>Andere Anwendungen belasten die CPU ziemlich stark.</li>
@@ -74,8 +74,9 @@
 <h2>Siehe auch</h2>
 <p><a href="Gosub.htm">Gosub</a>, <a href="Return.htm">Return</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread (Befehl)</a>, <a href="Critical.htm">Critical</a>, <a href="IsLabel.htm">IsLabel()</a>, <a href="Menu.htm">Menu</a>, <a href="_Persistent.htm">#Persistent</a></p>
 <h2>Beispiele</h2>
-<pre class="NoIndent" id="ExampleClose"><em>; Beispiel #1: Schließt unerwünschte Fenster, sobald sie auftauchen:</em>
-#Persistent
+<div class="ex" id="ExampleClose">
+<p><a href="#ExampleClose">#1</a>: Schließt unerwünschte Fenster, sobald sie auftauchen:</p>
+<pre>#Persistent
 SetTimer, MailWarnungenSchließen, 250
 return
 
@@ -83,8 +84,11 @@ MailWarnungenSchließen:
 WinClose, Microsoft Outlook, Während der Kommunikation mit dem Server wurde das Zeitlimit überschritten
 WinClose, Microsoft Outlook, Es konnte keine Verbindung aufgebaut werden
 return</pre>
-<pre class="NoIndent" id="ExampleWait"><em>; Beispiel #2: Wartet auf ein bestimmtes Fenster und alarmiert danach den Benutzer:</em>
-#Persistent
+</div>
+
+<div class="ex" id="ExampleWait">
+<p><a href="#ExampleWait">#2</a>: Wartet auf ein bestimmtes Fenster und alarmiert danach den Benutzer:</p>
+<pre>#Persistent
 SetTimer, Alarm1, 500
 return
 
@@ -97,41 +101,44 @@ SplashTextOn, , , Die Video-Konvertierung wurde abgeschlossen.
 Sleep, 3000
 SplashTextOff
 return</pre>
-<pre class="NoIndent" id="ExampleCount"><em>; Beispiel #3: Erkennt, ob ein Hotkey einmal, zweimal oder dreimal gedrückt wurde. Dadurch
-; kann ein Hotkey eine unterschiedliche Operation durchführen,
-; je nachdem, wie oft er gedrückt wurde:</em>
-#c::
-if winc_eingaben &gt; 0 <em>; Da SetTimer bereits gestartet wurde, wird stattdessen der Tastendruck protokolliert.</em>
+</div>
+
+<div class="ex" id="ExampleCount">
+<p><a href="#ExampleCount">#3</a>: Erkennt, ob ein Hotkey einmal, zweimal oder dreimal gedrückt wurde. Dadurch kann ein Hotkey eine unterschiedliche Operation durchführen, je nachdem, wie oft er gedrückt wurde:</p>
+<pre>#c::
+if (winc_eingaben &gt; 0) <em>; Da SetTimer bereits gestartet wurde, wird stattdessen der Tastendruck protokolliert.</em>
 {
     winc_eingaben += 1
     return
 }
 <em>; Ansonsten ist das der erste Tastendruck einer neuen Serie. Zählung wird
 ; auf 1 gesetzt und der Timer gestartet:</em>
-winc_eingaben = 1
+winc_eingaben := 1
 SetTimer, TasteWinC, -400 <em>; Wartet auf weitere Eingaben innerhalb eines 400-Millisekunden-Zeitfensters.</em>
 return
 
 TasteWinC:
-if winc_eingaben = 1 <em>; Die Taste wurde einmal gedrückt.</em>
+if (winc_eingaben = 1) <em>; Die Taste wurde einmal gedrückt.</em>
 {
     Run, m:\  <em>; Öffnet einen Ordner.</em>
 }
-else if winc_eingaben = 2 <em>; Die Taste wurde zweimal gedrückt.</em>
+else if (winc_eingaben = 2) <em>; Die Taste wurde zweimal gedrückt.</em>
 {
     Run, m:\multimedia  <em>; Öffnet einen anderen Ordner.</em>
 }
-else if winc_eingaben &gt; 2
+else if (winc_eingaben &gt; 2)
 {
     MsgBox, Drei oder mehr Klicks erkannt.
 }
 <em>; Unabhängig von der zuvor ausgelösten Aktion wird die Zählung zurückgesetzt,
 ; um die nächste Serie von Tastendrücken vorzubereiten:</em>
-winc_eingaben = 0
+winc_eingaben := 0
 return</pre>
-<pre class="NoIndent" id="ExampleClass"><em>; Beispiel #4: Eine <a href="../Objects.htm#Custom_Classes_method">Methode</a> als Timer-Subroutine verwenden.</em>
+</div>
 
-counter := new SecondCounter
+<div class="ex" id="ExampleClass">
+<p><a href="#ExampleClass">#4</a>: Eine <a href="../Objects.htm#Custom_Classes_method">Methode</a> als Timer-Subroutine verwenden.</p>
+<pre>counter := new SecondCounter
 counter.Start()
 Sleep 5000
 counter.Stop()
@@ -166,10 +173,11 @@ class SecondCounter {
 }</pre>
 <p>Tipps bezüglich des oberen Beispiels:</p>
 <ul>
-  <li>Wir können auch <code>this.timer := this.Tick.<a href="../objects/Func.htm#Bind">Bind</a>(this)</code> verwenden. Wenn <code>this.timer</code> aufgerufen wird, wird es tatsächlich <code>this.Tick.<a href="../objects/Func.htm#Call">Call</a>(this)</code> aufrufen (außer dass <code>this.Tick</code> nicht neu berechnet wird). <a href="ObjBindMethod.htm">ObjBindMethod</a> hingegen erzeugt ein Objekt, das <code>this.Tick()</code> aufruft.</li>
-  <li>Wenn wir <em>Tick</em> in <em>Call</em> umbenennen, können wir <code>this</code> direkt verwenden, anstelle von <code>this.timer</code>. Dadurch kann man temporäre Variablen vermeiden. Allerdings kann ObjBindMethod auch nützlich sein, wenn das Objekt mehrere Methoden hat, die von verschiedenen Ereignisquellen wie Hotkeys, Menüpunkte, GUI-Steuerelemente aufgerufen werden sollen.</li>
+  <li>Wir können auch <code>this.timer := this.Tick.<a href="../objects/Func.htm#Bind">Bind</a>(this)</code> verwenden. Wenn <code>this.timer</code> aufgerufen wird, wird es tatsächlich <code>this.Tick.<a href="../objects/Func.htm#Call">Call</a>(this)</code> aufrufen (außer dass <code>this.Tick</code> nicht neu berechnet wird). <a href="ObjBindMethod.htm">ObjBindMethod()</a> hingegen erzeugt ein Objekt, das <code>this.Tick()</code> aufruft.</li>
+  <li>Wenn wir <em>Tick</em> in <em>Call</em> umbenennen, können wir <code>this</code> direkt verwenden, anstelle von <code>this.timer</code>. Dadurch kann man temporäre Variablen vermeiden. Allerdings kann ObjBindMethod() auch nützlich sein, wenn das Objekt mehrere Methoden hat, die von verschiedenen Ereignisquellen wie Hotkeys, Menüpunkte, GUI-Steuerelemente aufgerufen werden sollen.</li>
   <li>Beim Modifizieren des Timers, oder Löschen des Timers innerhalb einer Funktion/Methode, die von dem Timer aufgerufen wurde, kann man den <a href="#OmitLabel"><em>Label</em>-Parameter einfach weglassen</a>. Dadurch entfällt in einigen Fällen die Notwendigkeit, das ursprüngliche Objekt, welches an SetTimer übergeben wurde, zu behalten - man spart sich quasi eine temporäre Variable (z. B. <code>timer</code> im obigen Beispiel).</li>
 </ul>
+</div>
 
 </body>
 </html>

@@ -36,7 +36,7 @@
   <dd><p>Eine Nummer zwischen 1 und Gesamtanzahl an unterstützten Geräten. Lässt man diesen Parameter weg, wird standardmäßig 1 verwendet (das erste Audiogerät), oder in Windows Vista oder höher das standardmäßig verwendete Wiedergabegerät des Systems. Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein. Das <a href="#Ex">Soundkartenanalyse-Skript</a> könnte dabei helfen, welche Nummer verwendet werden soll.</p></dd>
 
 </dl>
-<h2>ErrorLevel</h2>
+<h2>Fehlerbehandlung</h2>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn der Befehl erfolgreich war. Ansonsten wird es auf einen der folgenden Sätze gesetzt:</p>
 <ul>
@@ -50,7 +50,7 @@
 </ul>
 <h2>Bemerkungen</h2>
 <p><span class="ver">[v1.1.10+]</span>: Dieser Befehl unterstützt Windows Vista und höher.</p>
-<p>Für mehr Funktionalität und feinere Audio-Steuerung ist die <a href="http://www.autohotkey.com/board/topic/21984-vista-audio-control-functions/">VA-Bibliothek</a> besser geeignet.</p>
+<p>Für mehr Funktionalität und feinere Audio-Steuerung ist die <a href="https://www.autohotkey.com/board/topic/21984-vista-audio-control-functions/">VA-Bibliothek</a> besser geeignet.</p>
 <p>Alternativ kann man sein Skript dazu bringen, lautstärke-spezifische Tastatureingaben zu senden, um die Gesamtlautstärke des Systems zu ändern. Zum Beispiel:</p>
 <pre>Send {Volume_Up}  <em>; Erhöht die Gesamtlautstärke um 1 Stufe (normalerweise 5%).</em>
 Send {Volume_Down 3}  <em>; Verringert die Gesamtlautstärke um 3 Stufen.</em>
@@ -62,8 +62,9 @@ Send {Volume_Mute}  <em>; Gesamtlautstärke stumm schalten bzw. Stummschaltung a
 <h2>Siehe auch</h2>
 <p><a href="SoundGet.htm">SoundGet</a>, <a href="SoundGetWaveVolume.htm">SoundGetWaveVolume</a>, <a href="SoundSetWaveVolume.htm">SoundSetWaveVolume</a>, <a href="SoundPlay.htm">SoundPlay</a></p>
 <h2>Beispiele</h2>
-<pre class="NoIndent"><em>; EINFACHE BEISPIELE:</em>
-SoundSet, 50  <em>; Setzt die Gesamtlautstärke auf 50%</em>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a>: Einfache Beispiele</p>
+<pre>SoundSet, 50  <em>; Setzt die Gesamtlautstärke auf 50%</em>
 SoundSet +10  <em>; Erhöht die Gesamtlautstärke um 10%</em>
 SoundSet -10  <em>; Verringert die Gesamtlautstärke um 10%</em>
 SoundSet, 1, Microphone, mute  <em>; Schaltet das Mikrofon auf stumm</em>
@@ -71,18 +72,20 @@ SoundSet, +1, , mute  <em>; Schaltet die Stummschaltung um (jeweils auf den entg
 SoundSet, +20, Master, bass  <em>; Erhöht die Bassstärke um 20%.</em>
 if ErrorLevel
     MsgBox, Die BASS-Einstellung wird nicht für MASTER unterstützt.</pre>
-<h3 id="Ex">Soundkartenanalyse</h3>
-<p>Das folgende Skript kann verwendet werden, um die Fähigkeiten Ihrer Soundkarte zu ermitteln (Komponententypen und Kontrolltypen). Es zeigt die Ergebnisse in einer einfachen ListView an. Alternativ kann man ein Skript für Windows Vista oder höher, das mehr Details bereitstellt (z. B. die Anzeigenamen der Geräte), im folgenden Forumsbeitrag herunterladen: <a href="http://www.autohotkey.com/board/topic/90877-/">http://www.autohotkey.com/board/topic/90877-/</a></p>
-<pre class="NoIndent">SetBatchLines -1
+</div>
+
+<div class="ex" id="Soundcard">
+<p><a href="#Soundcard">#2</a>: Soundkartenanalyse. Das folgende Skript kann verwendet werden, um die Fähigkeiten Ihrer Soundkarte zu ermitteln (Komponententypen und Kontrolltypen). Es zeigt die Ergebnisse in einer einfachen ListView an. Alternativ kann man ein Skript für Windows Vista oder höher, das mehr Details bereitstellt (z. B. die Anzeigenamen der Geräte), im folgenden Forumsbeitrag herunterladen: <a href="https://www.autohotkey.com/board/topic/90877-/">https://www.autohotkey.com/board/topic/90877-/</a></p>
+<pre id="Ex">SetBatchLines -1
 SplashTextOn,,, Informationen der Soundkarte ermitteln ...
 
 <em>; Die meisten unten genannten reinen Zahlen gibt es wahrscheinlich nicht in jedem Mixer, allerdings werden sie der Vollständigkeit halber abgefragt.
 ; Die Zahlen beziehen sich auf folgende Elemente (in Reihenfolge): CUSTOM, BOOLEANMETER, SIGNEDMETER, PEAKMETER,
 ; UNSIGNEDMETER, BOOLEAN, BUTTON, DECIBELS, SIGNED, UNSIGNED, PERCENT, SLIDER, FADER, SINGLESELECT, MUX,
 ; MULTIPLESELECT, MIXER, MICROTIME, MILLITIME</em>
-Kontrolltypen = VOLUME,ONOFF,MUTE,MONO,LOUDNESS,STEREOENH,BASSBOOST,PAN,QSOUNDPAN,BASS,TREBLE,EQUALIZER,0x00000000, 0x10010000,0x10020000,0x10020001,0x10030000,0x20010000,0x21010000,0x30040000,0x30020000,0x30030000,0x30050000,0x40020000,0x50030000,0x70010000,0x70010001,0x71010000,0x71010001,0x60030000,0x61030000
+Kontrolltypen := "VOLUME,ONOFF,MUTE,MONO,LOUDNESS,STEREOENH,BASSBOOST,PAN,QSOUNDPAN,BASS,TREBLE,EQUALIZER,0x00000000, 0x10010000,0x10020000,0x10020001,0x10030000,0x20010000,0x21010000,0x30040000,0x30020000,0x30030000,0x30050000,0x40020000,0x50030000,0x70010000,0x70010001,0x71010000,0x71010001,0x60030000,0x61030000"
 
-Komponententypen = MASTER,HEADPHONES,DIGITAL,LINE,MICROPHONE,SYNTH,CD,TELEPHONE,PCSPEAKER,WAVE,AUX,ANALOG,N/A
+Komponententypen := "MASTER,HEADPHONES,DIGITAL,LINE,MICROPHONE,SYNTH,CD,TELEPHONE,PCSPEAKER,WAVE,AUX,ANALOG,N/A"
 
 <em>; Erstellt eine ListView und bereitet diese auf die Hauptschleife vor:</em>
 Gui, Add, ListView, w400 h400 vMeineListView, Komponententyp|Kontrolltyp|Einstellung|Mixer
@@ -93,7 +96,7 @@ Loop  <em>; Ruft von jedem Mixer, der im System vorkommt, dessen Fähigkeiten ab
 {
     Mixer := A_Index
     SoundGet, Einstellung,,, %Mixer%
-    if ErrorLevel = Can't Open Specified Mixer  <em>; Jeder anderer Fehler kennzeichnet, dass der Mixer vorhanden ist.</em>
+    if (ErrorLevel = "Can't Open Specified Mixer")  <em>; Jeder anderer Fehler kennzeichnet, dass der Mixer vorhanden ist.</em>
         break
 
     <em>; Ruft von jedem Komponententyp, der in diesem Mixer vorkommt, dessen Instanzen und Kontrolltypen ab:</em>
@@ -102,7 +105,7 @@ Loop  <em>; Ruft von jedem Mixer, der im System vorkommt, dessen Fähigkeiten ab
         Komponente := A_LoopField
         <em>; Zuerst überprüfen, ob dieser Komponententyp auch im Mixer vorkommt:</em>
         SoundGet, Einstellung, %Komponente%,, %Mixer%
-        if ErrorLevel = Mixer Doesn't Support This Component Type
+        if (ErrorLevel = "Mixer Doesn't Support This Component Type")
             continue  <em>; Startet für den nächsten Komponententyp eine neue Iteration.</em>
         Loop  <em>; Ruft von jeder Instanz dieses Komponententyps dessen Kontrolltypen ab.</em>
         {
@@ -123,8 +126,8 @@ Loop  <em>; Ruft von jedem Mixer, der im System vorkommt, dessen Fähigkeiten ab
                 if ErrorLevel  <em>; Irgendein unerwarteter Fehler, der demzufolge in den Ergebnissen angezeigt wird.</em>
                     Einstellung := ErrorLevel
                 KomponentenZeichenkette := Komponente
-                if Instanz &gt; 1
-                    KomponentenZeichenkette = %KomponentenZeichenkette%:%Instanz%
+                if (Instanz &gt; 1)
+                    KomponentenZeichenkette := KomponentenZeichenkette ":" Instanz
                 LV_Add("", KomponentenZeichenkette, Kontrolle, Einstellung, Mixer)
             }  <em>; Für jeden Kontrolltyp.</em>
         }  <em>; Für jede Komponenteninstanz.</em>
@@ -140,6 +143,7 @@ return
 
 GuiClose:
 ExitApp</pre>
+</div>
 
 </body>
 </html>

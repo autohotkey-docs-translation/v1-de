@@ -1,7 +1,9 @@
 translateData = {
   // Sidebar
-  "Content":"Inhalt",
-  "Index":"Index",
+  "C̲ontent":"I̲nhalt",
+  "Shortcut: ALT+C":"Tastenkürzel: ALT+I",
+  "In̲dex":true,
+  "Shortcut: ALT+N":"Tastenkürzel: ALT+N",
   "Filter":true,
   "Directives":"Direktiven",
   "Built-in Variables":"Interne Variablen",
@@ -10,8 +12,11 @@ translateData = {
   "Declarations":"Deklarationen",
   "Operators":"Operatoren",
   "Commands":"Befehle",
+  "S̲earch":"S̲uchen",
+  "Shortcut: ALT+S":"Tastenkürzel: ALT+S",
   "Search":"Suchen",
-  "Highlight the words":"Suchwörter hervorheben",
+  "Highlight keywords":"Suchwörter hervorheben",
+  "Go to previous/next occurrence":"Gehe zum vorherigen/nächsten Vorkommen",
   // Oberleiste
   "Hide/Show sidebar":"Sidebar verstecken/anzeigen",
   "Home page":"Homepage",
@@ -25,7 +30,7 @@ translateData = {
   "Go forward":"Eine Seite vor",
   "Change font size":"Schriftgröße ändern",
   "Print current document":"Aktuelle Seite drucken",
-  "Open Settings":"Einstellungen öffnen",
+  "Open settings":"Einstellungen öffnen",
   "Change to dark/light theme":"Zum dunklen/hellen Farbschema wechseln",
   // ALT+... Tastenkürzel (muss in Großbuchstaben sein)
   "C":"I",

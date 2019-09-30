@@ -89,7 +89,7 @@
     <td><p>Der aktuell abgerufene 8.3-kurze Pfad und Name der Datei oder des Ordners. Zum Beispiel: C:\MEINED~1\ADRESS~1.TXT. Enthält <em>Dateimuster</em> einen relativen anstelle eines absoluten Pfades, wird der Pfad in dieser Variable auch relativ sein.</p>
       <p>Das folgende Beispiel zeigt, was <em>Dateimuster</em> enthalten muss, um den kompletten 8.3-Pfad und -Name einer Datei oder eines Ordners abzurufen:</p>
 <pre>Loop, C:\Meine Dokumente\Adressenliste.txt
-    KurzerPfadname = %A_LoopFileShortPath%</pre>
+    KurzerPfadname := A_LoopFileShortPath</pre>
         <p class="note"><strong>Hinweis</strong>: Diese Variable wird <strong>leer</strong> sein, wenn die Datei keinen kurzen Namen hat. Dies könnte beispielsweise passieren, wenn NtfsDisable8dot3NameCreation in der Registry angegeben ist. Sie wird auch leer sein, wenn <em>Dateimuster</em> einen relativen Pfad enthält und der Schleifenkörper <a href="SetWorkingDir.htm">SetWorkingDir</a> verwendet, um von dem eigentlichen Arbeitsverzeichnis der Schleife wegzuschalten.</p></td>
   </tr>
   <tr id="LoopFileShortName">
@@ -137,9 +137,9 @@
     continue  <em>; Überspringt diese Datei und geht zur nächsten über.</em></pre>
 <p>Um bei einer rekursiven Suche relative statt absolute Pfade von Dateien abzurufen, ist es erforderlich, <a href="SetWorkingDir.htm">SetWorkingDir</a> zu verwenden, um den Basisordner für die nachfolgende Schleife zu bestimmen, und dann die Schleife ohne Pfad anzugeben (z. B. <code>Loop, *.*, 0, 1</code>). Dies hat zur Folge, dass <a href="#LoopFileFullPath">A_LoopFileFullPath</a> einen Dateipfad enthalten wird, der relativ zum Basisordner ist.</p>
 <p>Eine Dateimuster-Schleife kann sich selbst unterbrechen, wenn sie Dateien oder Ordner innerhalb ihres eigenen Bereichs erstellt oder umbenennt. Wenn sie Dateien beispielsweise via <a href="FileMove.htm">FileMove</a> oder auf eine andere Art umbenennen würde, könnten solche Dateien zweimal gefunden werden: einmal mit ihrem alten Namen und nochmals mit ihrem neuen Namen. Um das umgehen, ist es ratsam, zuerst eine Liste zu erstellen, bevor man die Dateien umbenennt. Zum Beispiel:</p>
-<pre>Dateiliste =
+<pre>Dateiliste := ""
 Loop, Files, *.jpg
-    Dateiliste = %Dateiliste%%A_LoopFileName%`n
+    Dateiliste .= A_LoopFileName "`n"
 Loop, Parse, Dateiliste, `n
     FileMove, %A_LoopField%, umbenannt_%A_LoopField%</pre>
 <p>Dateien in einem NTFS-Dateisystem werden wahrscheinlich immer in alphabetischer Reihenfolge abgerufen. Die Reihenfolge bei anderen Dateisystemen ist unbestimmt. Im Beispiel-Abschnitt unten wird gezeigt, wie der <a href="Sort.htm">Sort</a>-Befehl genutzt werden kann, um eine konsistente Reihenfolge zu gewährleisten.</p>
@@ -150,64 +150,76 @@ Loop, Parse, Dateiliste, `n
 <p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="SplitPath.htm">SplitPath</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
 
 <h2>Beispiele</h2>
-<pre class="NoIndent"><em>; Beispiel #1:</em>
-Loop Files, %A_ProgramFiles%\*.txt, R  <em>; Durchsucht Unterordner.</em>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a></p>
+<pre>Loop Files, %A_ProgramFiles%\*.txt, R  <em>; Durchsucht Unterordner.</em>
 {
     MsgBox, 4, , Dateiname = %A_LoopFileFullPath%`n`nWeiter?
     IfMsgBox, No
         break
 }</pre>
-<pre class="NoIndent"><em>; Beispiel #2: Berechnet die Größe eines Ordners mitsamt der Dateien in seinen Unterordnern:</em>
-SetBatchLines, -1  <em>; Führt die Operation mit maximaler Geschwindigkeit aus.</em>
-OrdnerGrößeKB = 0
+</div>
+
+<div class="ex" id="ExSize">
+<p><a href="#ExSize">#2</a>: Berechnet die Größe eines Ordners mitsamt der Dateien in seinen Unterordnern:</p>
+<pre>SetBatchLines, -1  <em>; Führt die Operation mit maximaler Geschwindigkeit aus.</em>
+OrdnerGrößeKB := 0
 FileSelectFolder, WelcherOrdner  <em>; Fordert den Benutzer auf, einen Ordner auszuwählen.</em>
 Loop, Files, %WelcherOrdner%\*.*, R
-    OrdnerGrößeKB += %A_LoopFileSizeKB%
+    OrdnerGrößeKB += A_LoopFileSizeKB
 MsgBox Der Ordner %WelcherOrdner% hat eine Größe von %OrdnerGrößeKB% KB.</pre>
-<pre class="NoIndent"><em>; Beispiel #3: Ruft Dateinamen ab, sortiert nach Name (siehe nächstes Beispiel, wie nach Datum sortiert werden kann):</em>
-Dateiliste =  <em>; Initialisiert sie als leere Variable.</em>
+</div>
+
+<div class="ex" id="ExSortName">
+<p><a href="#ExSortName">#3</a>: Ruft Dateinamen ab, sortiert nach Name (siehe nächstes Beispiel, wie nach Datum sortiert werden kann):</p>
+<pre>Dateiliste := ""  <em>; Initialisiert sie als leere Variable.</em>
 Loop, C:\*.*
-    Dateiliste = %Dateiliste%%A_LoopFileName%`n
+    Dateiliste .= A_LoopFileName "`n"
 Sort, Dateiliste, R  <em>; Die R-Option sortiert in umgekehrter Richtung. Siehe <a href="Sort.htm">Sort</a> für weitere Optionen.</em>
 Loop, parse, Dateiliste, `n
 {
-    if A_LoopField =  <em>; Ignoriert das leere Element am Ende der Liste.</em>
+    if (A_LoopField = "")  <em>; Ignoriert das leere Element am Ende der Liste.</em>
         continue
     MsgBox, 4,, Dateinummer %A_Index% ist %A_LoopField%.  Weiter?
     IfMsgBox, No
         break
 }</pre>
-<pre class="NoIndent"><em>; Beispiel #4: Ruft Dateinamen ab, sortiert nach Änderungsdatum:</em>
-Dateiliste =
+</div>
+
+<div class="ex" id="ExSortDate">
+<p><a href="#ExSortDate">#4</a>: Ruft Dateinamen ab, sortiert nach Änderungsdatum:</p>
+<pre>Dateiliste := ""
 Loop, Files, %A_MyDocuments%\Fotos\*.*, FD  <em>; Bezieht Dateien und Ordner mit ein</em>
-    Dateiliste = %Dateiliste%%A_LoopFileTimeModified%`t%A_LoopFileName%`n
+    Dateiliste .= A_LoopFileTimeModified "`t" A_LoopFileName "`n"
 Sort, Dateiliste  <em>; Sortiert nach Datum.</em>
 Loop, Parse, Dateiliste, `n
 {
-    if A_LoopField =  <em>; Ignoriert das letzte LF-Zeichen (leere Element) am Ende der Liste.</em>
+    if (A_LoopField = "")  <em>; Ignoriert das letzte LF-Zeichen (leere Element) am Ende der Liste.</em>
         continue
     StringSplit, Dateielement, A_LoopField, %A_Tab%  <em>; Teilt es bei einem Tab-Zeichen in zwei Teile auf.</em>
     MsgBox, 4,, Die nächste Datei ist (modifiziert am %Dateielement1%):`n%Dateielement2%`n`nWeiter?
     IfMsgBox, No
         break
 }</pre>
-<pre class="NoIndent"><em>; Beispiel #5: Kopiert nur Quelldateien, die neuer sind als ihr Gegenstück,
-; in das Ziel:</em>
-KopiereWennNeuer:
+</div>
+
+<div class="ex" id="ExFileCopy">
+<p><a href="#ExFileCopy">#5</a>: Kopiert nur Quelldateien, die neuer sind als ihr Gegenstück, in das Ziel:</p>
+<pre>KopiereWennNeuer:
 <em>; Der Aufrufer hat die Variablen KopieQuellmuster und KopieZiel für uns gesetzt.</em>
 Loop, Files, %KopieQuellmuster%
 {
-    kopiere_es = n
-    IfNotExist, %KopieZiel%\%A_LoopFileName%  <em>; Kopiert immer die Zieldatei, wenn sie noch nicht existiert.</em>
-        kopiere_es = y
+    kopiere_es := false
+    if not FileExist(KopieZiel "\" A_LoopFileName)  <em>; Kopiert immer die Zieldatei, wenn sie noch nicht existiert.</em>
+        kopiere_es := true
     else
     {
         FileGetTime, Zeitstempel, %KopieZiel%\%A_LoopFileName%
         EnvSub, Zeitstempel, %A_LoopFileTimeModified%, seconds  <em>; Subtrahiert die Zeit der Quelldatei mit der Zeit der Zieldatei.</em>
-        if Zeitstempel &lt; 0  <em>; Quelldatei ist neuer als Zieldatei.</em>
-            kopiere_es = y
+        if (Zeitstempel &lt; 0)  <em>; Quelldatei ist neuer als Zieldatei.</em>
+            kopiere_es := true
     }
-    if kopiere_es = y
+    if kopiere_es
     {
         FileCopy, %A_LoopFileFullPath%, %KopieZiel%\%A_LoopFileName%, 1   <em>; Kopiert und überschreibt sie bei Bedarf</em>
         if ErrorLevel
@@ -215,15 +227,18 @@ Loop, Files, %KopieQuellmuster%
     }
 }
 Return</pre>
-<pre class="NoIndent"><em>; Beispiel #6: Wandelt Dateinamen, die via Kommandozeilenparameter übergeben wurden, in lange Namen um,
-; mit vollständigem Pfad und korrekter Groß-/Kleinschreibung, wie sie im Dateisystem vorkommen.</em>
-Loop %0%  <em>; Geht alle Dateien durch, die auf das Skript abgelegt wurden (oder als Parameter übergeben wurden).</em>
+</div>
+
+<div class="ex" id="ExLongPath">
+<p><a href="#ExLongPath">#6</a>: Wandelt Dateinamen, die via Kommandozeilenparameter übergeben wurden, in lange Namen um, mit vollständigem Pfad und korrekter Groß-/Kleinschreibung, wie sie im Dateisystem vorkommen.</p>
+<pre>Loop %0%  <em>; Geht alle Dateien durch, die auf das Skript abgelegt wurden (oder als Parameter übergeben wurden).</em>
 {
     EingabePfad := %A_Index%  <em>; Ruft den nächsten Befehlszeilenparameter ab.</em>
     Loop %EingabePfad%, 1
-        LangerPfad = %A_LoopFileLongPath%
+        LangerPfad := A_LoopFileLongPath
     MsgBox Der lange Pfadname mit korrekter Groß-/Kleinschreibung der Datei`n%EingabePfad%`nist:`n%LangerPfad%
 }</pre>
+</div>
 
 </body>
 </html>

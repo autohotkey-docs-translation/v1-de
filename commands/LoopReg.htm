@@ -115,48 +115,54 @@
 <p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="RegRead.htm">RegRead</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="RegDelete.htm">RegDelete</a>, <a href="SetRegView.htm">SetRegView</a></p>
 
 <h2>Beispiele</h2>
-<pre class="NoIndent"><em>; Beispiel: Löscht den Link-Verlauf des Internet Explorer.</em>
-Loop, HKEY_CURRENT_USER, Software\Microsoft\Internet Explorer\TypedURLs
+<div class="ex" id="ExRegDelete">
+<p><a href="#ExRegDelete">#1</a>: Löscht den Link-Verlauf des Internet Explorer:</p>
+<pre>Loop, HKEY_CURRENT_USER, Software\Microsoft\Internet Explorer\TypedURLs
     RegDelete</pre>
-<pre class="NoIndent"><em>; Beispiel: Ein funktionierendes Testskript:</em>
-Loop, Reg, HKEY_CURRENT_USER\Software\Microsoft\Windows, KVR
+</div>
+
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#2</a>: Ein funktionierendes Testskript:</p>
+<pre>Loop, Reg, HKEY_CURRENT_USER\Software\Microsoft\Windows, KVR
 {
-    if A_LoopRegType = key
-        Wert =
+    if (A_LoopRegType = "key")
+        Wert := ""
     else
     {
         RegRead, Wert
         if ErrorLevel
-            Wert = *error*
+            Wert := "*error*"
     }
     MsgBox, 4, , %A_LoopRegType% = %Wert% (%A_LoopRegType%)`n`nWeiter?
     IfMsgBox, NO, break
 }</pre>
-<pre class="NoIndent"><em>; Beispiel: Dieses Beispiel sucht in der gesamten Registry
-; nach einem oder mehreren bestimmten Werten.</em>
-SetBatchLines -1  <em>; Führt die Operation mit maximaler Geschwindigkeit aus.</em>
-RegSuchziel = Notepad  <em>; Teilt der Subroutine mit, was gesucht werden soll.</em>
+</div>
+
+<div class="ex" id="ExRegSearch">
+<p><a href="#ExRegSearch">#3</a>: Dieses Beispiel sucht in der gesamten Registry nach einem oder mehreren bestimmten Werten.</p>
+<pre>SetBatchLines -1  <em>; Führt die Operation mit maximaler Geschwindigkeit aus.</em>
+RegSuchziel := "Notepad"  <em>; Teilt der Subroutine mit, was gesucht werden soll.</em>
 Gosub, RegSuche
 return
 
 RegSuche:
-RegSucheFortfahren = y
+RegSucheFortfahren := true
 Loop, Reg, HKEY_LOCAL_MACHINE, KVR
 {
     Gosub, RegEintragUntersuchen
-    if RegSucheFortfahren = n <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
+    if not RegSucheFortfahren <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
         return
 }
 Loop, Reg, HKEY_USERS, KVR
 {
     Gosub, RegEintragUntersuchen
-    if RegSucheFortfahren = n <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
+    if not RegSucheFortfahren <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
         return
 }
 Loop, Reg, HKEY_CURRENT_CONFIG, KVR
 {
     Gosub, RegEintragUntersuchen
-    if RegSucheFortfahren = n <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
+    if not RegSucheFortfahren <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
         return
 }
 <em>; Hinweis: Ich glaube, dass HKEY_CURRENT_USER nicht durchsucht werden muss,
@@ -165,18 +171,19 @@ Loop, Reg, HKEY_CURRENT_CONFIG, KVR
 return
 
 RegEintragUntersuchen:
-if A_LoopRegType = KEY  <em>; Entfernen Sie diese zwei Zeilen, wenn Sie die Key-Namen auch überprüfen lassen wollen.</em>
+if (A_LoopRegType = "KEY")  <em>; Entfernen Sie diese zwei Zeilen, wenn Sie die Key-Namen auch überprüfen lassen wollen.</em>
     return
 RegRead, RegWert
 if ErrorLevel
     return
-IfInString, RegWert, %RegSuchziel%
+if InStr(RegWert, RegSuchziel)
 {
     MsgBox, 4, , Der folgende Treffer wurde gefunden:`n%A_LoopRegKey%\%A_LoopRegSubKey%\%A_LoopRegName%`nWert = %RegWert%`n`nWeiter?
     IfMsgBox, No
-        RegSucheFortfahren = n  <em>; Teilt unserem Aufrufer mit, die Suche zu stoppen.</em>
+        RegSucheFortfahren := false  <em>; Teilt unserem Aufrufer mit, die Suche zu stoppen.</em>
 }
 return</pre>
+</div>
 
 </body>
 </html>

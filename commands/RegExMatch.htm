@@ -43,7 +43,7 @@
 <h2>Rückgabewert</h2>
 <p>Diese Funktion gibt die Position von <em>NadelRegEx</em> zurück, das ganz links in der <em>Heuhaufen</em>-Zeichenkette vorkommt. Position 1 ist das erste Zeichen. Eine 0 wird zurückgegeben, wenn der Ausdruck nicht gefunden wird. Falls ein Fehler auftritt (z. B. ein Syntaxfehler innerhalb von <em>NadelRegEx</em>), wird eine leere Zeichenkette zurückgegeben und ErrorLevel auf einen der <a href="#ErrorLevel">unteren Werte</a> statt auf 0 gesetzt.</p>
 
-<h2 id="ErrorLevel">ErrorLevel</h2>
+<h2 id="ErrorLevel">Fehlerbehandlung</h2>
 <p><span class="ver">[v1.1.04+]</span>: Diese Funktion ist in der Lage, bei Misserfolg eine Ausnahme auszulösen (nicht zu verwechseln mit "keine Übereinstimmung gefunden"). Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> kann folgendes enthalten:</p>
 <ul>
@@ -83,19 +83,25 @@
 <p>AutoHotkey's reguläre Ausdrücke wurden mittels Perl-kompatiblen regulären Ausdrücken (PCRE) von <a href="http://www.pcre.org/">www.pcre.org</a> implementiert.</p>
 <p><span class="ver">[AHK_L 31+]:</span> Innerhalb eines <a href="../Variables.htm#Expressions">Ausdrucks</a> kann <code>a <a href="../Variables.htm#regex">~=</a> b</code> als Ersatz für <code>RegExMatch(a, b)</code> genutzt werden.</p>
 <h2>Siehe auch</h2>
-<p><a href="RegExReplace.htm">RegExReplace()</a>, <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>, <a href="../misc/RegExCallout.htm">Callouts in regulären Ausdrücken</a>, <a href="InStr.htm">InStr()</a>, <a href="IfInString.htm">IfInString</a>, <a href="StringGetPos.htm">StringGetPos</a>, <a href="SubStr.htm">SubStr()</a>, <a href="SetTitleMatchMode.htm#RegEx">SetTitleMatchMode RegEx</a>, <a href="http://www.autohotkey.com/forum/topic16164.html">Global matching and Grep (Forum-Link)</a></p>
+<p><a href="RegExReplace.htm">RegExReplace()</a>, <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>, <a href="../misc/RegExCallout.htm">Callouts in regulären Ausdrücken</a>, <a href="InStr.htm">InStr()</a>, <a href="IfInString.htm">IfInString</a>, <a href="StringGetPos.htm">StringGetPos</a>, <a href="SubStr.htm">SubStr()</a>, <a href="SetTitleMatchMode.htm#RegEx">SetTitleMatchMode RegEx</a>, <a href="https://www.autohotkey.com/forum/topic16164.html">Global matching and Grep (Forum-Link)</a></p>
 <p>Häufige Quellen von Textdaten: <a href="FileRead.htm">FileRead</a>, <a href="URLDownloadToFile.htm">UrlDownloadToFile</a>, <a href="../misc/Clipboard.htm">Clipboard</a>, <a href="GuiControls.htm#Edit">GUI-Eingabefelder</a></p>
 <h2>Beispiele</h2>
-<pre class="NoIndent">Fundposition := RegExMatch("xxxabc123xyz", "abc.*xyz")  <em>; Gibt 4 zurück, weil das die Position ist, auf der die Übereinstimmung gefunden wurde.</em>
-Fundposition := RegExMatch("abc123123", "123$")  <em>; Gibt 7 zurück, weil durch $ die Übereinstimmung am Ende vorkommen muss.</em>
-Fundposition := RegExMatch("abc123", "i)^ABC")  <em>; Gibt 1 zurück, weil eine Übereinstimmung aufgrund der nicht-Groß-/Kleinschreibung-sensitiven Option möglich gemacht wurde.</em>
-Fundposition := RegExMatch("abcXYZ123", "abc(.*)123", Teilmuster)  <em>; Gibt 1 zurück und speichert "XYZ" in Teilmuster1.</em>
-Fundposition := RegExMatch("abc123abc456", "abc\d+", "", 2)  <em>; Gibt 7 statt 1 zurück, wegen einer 2 als Startposition.</em>
+<p>Allgemeine RegEx-Beispiele finden Sie unter <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>.</p>
 
-<em>; Allgemeine RegEx-Beispiele können in der <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a> gefunden werden.</em>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a></p>
+<pre>MsgBox % RegExMatch("xxxabc123xyz", "abc.*xyz")  <em>; Zeigt 4 an, weil das die Position ist, auf der die Übereinstimmung gefunden wurde.</em>
+MsgBox % RegExMatch("abc123123", "123$")  <em>; Zeigt 7 an, weil durch $ die Übereinstimmung am Ende vorkommen muss.</em>
+MsgBox % RegExMatch("abc123", "i)^ABC")  <em>; Zeigt 1 an, weil eine Übereinstimmung aufgrund der nicht-Groß-/Kleinschreibung-sensitiven Option möglich gemacht wurde.</em>
+MsgBox % RegExMatch("abcXYZ123", "abc(.*)123", SubPat)  <em>; Zeigt 1 an und speichert "XYZ" in Teilmuster1.</em>
+MsgBox % RegExMatch("abc123abc456", "abc\d+", "", 2)  <em>; Zeigt 7 statt 1 an, wegen einer 2 als Startposition.</em></pre>
+</div>
 
-Fundposition := RegExMatch("Musterstraße 1", "O)(.*) (?&lt;nr&gt;\d+)", Teilmuster)  <em>; Das "O)" am Anfang macht Teilmuster zu einem Objekt.</em>
+<div class="ex" id="ExObject">
+<p><a href="#ExObject">#2</a>: Match-Objekt</p>
+<pre>Fundposition := RegExMatch("Musterstraße 1", "O)(.*) (?&lt;nr&gt;\d+)", Teilmuster)  <em>; Das "O)" am Anfang macht Teilmuster zu einem Objekt.</em>
 Msgbox % Teilmuster.Count() ": " Teilmuster.Value(1) " " Teilmuster.Name(2) "=" Teilmuster["nr"]  <em>; Zeigt "2: Musterstraße nr=1"</em></pre>
+</div>
 
 </body>
 </html>

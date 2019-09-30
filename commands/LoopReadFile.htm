@@ -49,45 +49,51 @@
     }
 }</pre>
 <p>Um eine komplette Datei in eine Variable zu laden, verwendet man <a href="FileRead.htm">FileRead</a>, weil es deutlich performanter als eine Schleife ist (besonders bei großen Dateien).</p>
-<p>Um mehrere Dateien simultan zu lesen oder zu schreiben, nutzt man <a href="FileOpen.htm">FileOpen</a>.</p>
+<p>Um mehrere Dateien simultan zu lesen oder zu schreiben, nutzt man <a href="FileOpen.htm">FileOpen()</a>.</p>
 <p>Auf der <a href="Loop.htm">Loop</a>-Seite finden Sie Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (sie können in jeder Schleifenvariante verwendet werden).</p>
 <p>Mit <a href="FileEncoding.htm">FileEncoding</a> können Sie kontrollieren, wie eine Datei ohne Byte-Order-Markierung entschlüsselt werden soll.</p>
 
 <h2>Siehe auch</h2>
-<p><a href="FileEncoding.htm">FileEncoding</a>, <a href="FileOpen.htm">FileOpen</a>/<a href="../objects/File.htm">File-Objekt</a>, <a href="FileRead.htm">FileRead</a>, <a href="FileReadLine.htm">FileReadLine</a>, <a href="FileAppend.htm">FileAppend</a>, <a href="Sort.htm">Sort</a>, <a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
+<p><a href="FileEncoding.htm">FileEncoding</a>, <a href="FileOpen.htm">FileOpen()</a>/<a href="../objects/File.htm">File-Objekt</a>, <a href="FileRead.htm">FileRead</a>, <a href="FileReadLine.htm">FileReadLine</a>, <a href="FileAppend.htm">FileAppend</a>, <a href="Sort.htm">Sort</a>, <a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
 
 <h2>Beispiele</h2>
-<pre class="NoIndent"><em>; Beispiel #1: Zeilen, die in der ersten Datei das Wort FAMILIE enthalten, werden in die zweite Datei geschrieben.
-; Heben Sie die Kommentierung der ersten Zeile auf, um die vorhandene Datei zu überschreiben statt Text anzufügen.
-;FileDelete, C:\Dokumente\Familie-Adressen.txt</em>
+<div class="ex" id="ExFileAppend">
+<p><a href="#ExFileAppend">#1</a>: Zeilen, die in der ersten Datei das Wort FAMILIE enthalten, werden in die zweite Datei geschrieben. Heben Sie die Kommentierung der ersten Zeile auf, um die vorhandene Datei zu überschreiben statt Text anzufügen.</p>
+<pre><em>;FileDelete, C:\Dokumente\Familie-Adressen.txt</em>
 
 Loop, read, C:\Dokumente\Adressenliste.txt, C:\Dokumente\Familie-Adressen.txt
 {
-    IfInString, A_LoopReadLine, Familie, FileAppend, %A_LoopReadLine%`n
+    if InStr(A_LoopReadLine, "Familie")
+        FileAppend, %A_LoopReadLine%`n
 }</pre>
-<pre class="NoIndent"><em>; Beispiel #2: Ruft die letzte Zeile einer Textdatei ab.</em>
-Loop, read, C:\Logdatei.txt
+</div>
+
+<div class="ex" id="ExLastLine">
+<p><a href="#ExLastLine">#2</a>: Ruft die letzte Zeile einer Textdatei ab.</p>
+<pre>Loop, read, C:\Logdatei.txt
     letzteZeile := A_LoopReadLine  <em>; Sobald die Schleife endet, wird diese Variable die letzte Zeile beinhalten.</em></pre>
-<pre class="NoIndent"><em>; Beispiel #3: Das folgende Beispiel zeigt, wie alle FTP- und HTTP-URLs
-; aus einer Text- oder HTML-Datei extrahiert werden können:</em>
-FileSelectFile, Quelldatei, 3,, Wählen Sie eine Text- oder HTML-Datei zum Analysieren aus:
-if Quelldatei =
+</div>
+
+<div class="ex" id="ExURL">
+<p><a href="#ExURL">#3</a>: Das folgende Beispiel zeigt, wie alle FTP- und HTTP-URLs aus einer Text- oder HTML-Datei extrahiert werden können:</p>
+<pre>FileSelectFile, Quelldatei, 3,, Wählen Sie eine Text- oder HTML-Datei zum Analysieren aus:
+if (Quelldatei = "")
     return  <em>; In diesem Fall beenden.</em>
 
 SplitPath, Quelldatei,, Quelldateipfad,, QuelldateiOhneEndung
-Zieldatei = %Quelldateipfad%\%QuelldateiOhneEndung% Extrahierte Links.txt
+Zieldatei := Quelldateipfad "\" QuelldateiOhneEndung " Extrahierte Links.txt"
 
-IfExist, %Zieldatei%
+if FileExist(Zieldatei)
 {
     MsgBox, 4,, Vorhandene Datei überschreiben? Drücken Sie Nein, um die Links nur anzufügen.`n`nDATEI: %Zieldatei%
     IfMsgBox, Yes
         FileDelete, %Zieldatei%
 }
 
-Linkanzahl = 0
+Linkanzahl := 0
 Loop, read, %Quelldatei%, %Zieldatei%
 {
-    URLSuchZeichenkette = %A_LoopReadLine%
+    URLSuchZeichenkette := A_LoopReadLine
     Gosub, URLSuche
 }
 MsgBox %Linkanzahl% Links wurden gefunden und in "%Zieldatei%" geschrieben.
@@ -96,39 +102,39 @@ return
 
 URLSuche:
 <em>; Das wird auf diese Weise gemacht, weil einige URLs andere URLs eingebettet haben:</em>
-StringGetPos, URLStart1, URLSuchZeichenkette, http://
-StringGetPos, URLStart2, URLSuchZeichenkette, ftp://
-StringGetPos, URLStart3, URLSuchZeichenkette, www.
+URLStart1 := InStr(URLSuchZeichenkette, "http://")
+URLStart2 := InStr(URLSuchZeichenkette, "ftp://")
+URLStart3 := InStr(URLSuchZeichenkette, "www.")
 
 <em>; Findet die Startposition ganz links:</em>
-URLStart = %URLStart1%  <em>; Setzt den Standardwert.</em>
+URLStart := URLStart1  <em>; Setzt den Standardwert.</em>
 Loop
 {
     <em>; Es hilft der Performance (zumindest in einem Skript mit vielen Variablen), wenn</em>
     <em>; "URLStart%A_Index%" nur einmal aufgelöst wird:</em>
     ArrayElement := URLStart%A_Index%
-    if ArrayElement =  <em>; Ende des <a href="../misc/Arrays.htm#pseudo">Pseudo-Arrays</a> erreicht.</em>
+    if (ArrayElement = "")  <em>; Ende des <a href="../misc/Arrays.htm#pseudo">Pseudo-Arrays</a> erreicht.</em>
         break
-    if ArrayElement = -1  <em>; Dieses Element ist disqualifiziert.</em>
+    if (ArrayElement = 0)  <em>; Dieses Element ist disqualifiziert.</em>
         continue
-    if URLStart = -1
-        URLStart = %ArrayElement%
+    if (URLStart = 0)
+        URLStart := ArrayElement
     else <em>; URLStart beinhaltet eine gültige Position, also mit ArrayElement vergleichen.</em>
     {
-        if ArrayElement &lt;&gt; -1
-            if ArrayElement &lt; %URLStart%
-                URLStart = %ArrayElement%
+        if (ArrayElement != 0)
+            if (ArrayElement &lt; URLStart)
+                URLStart := ArrayElement
     }
 }
 
-if URLStart = -1  <em>; Keine URLs in der URLSuchZeichenkette.</em>
+if (URLStart = 0)  <em>; Keine URLs in der URLSuchZeichenkette.</em>
     return
 
 <em>; Extrahiert ansonsten diese URL:</em>
-StringTrimLeft, URL, URLSuchZeichenkette, %URLStart%  <em>; Entfernt den beginnenden/irrelevanten Teil.</em>
+URL := SubStr(URLSuchZeichenkette, URLStart)  <em>; Entfernt den beginnenden/irrelevanten Teil.</em>
 Loop, parse, URL, %A_Tab%%A_Space%&lt;&gt;  <em>; Findet das erste Leer-, Tab- oder Winkelzeichen (falls vorhanden).</em>
 {
-    URL = %A_LoopField%
+    URL := A_LoopField
     break  <em>; Führt nur eine Schleifeniteration durch, um das erste "Feld" zu holen.</em>
 }
 <em>; Wenn die obige Schleife aufgrund eines nicht-vorhandenen Endungszeichen keine Iteration hat,
@@ -142,11 +148,12 @@ FileAppend, %SaubereURL%`n
 Linkanzahl += 1
 
 <em>; Schaut nach, ob noch andere URLs in dieser Zeile vorkommen:</em>
-StringLen, ZuEntfernendeZeichen, URL
-ZuEntfernendeZeichen += %URLStart%
-StringTrimLeft, URLSuchZeichenkette, URLSuchZeichenkette, %ZuEntfernendeZeichen%
+ZuEntfernendeZeichen := StrLen(URL)
+ZuEntfernendeZeichen += URLStart
+URLSuchZeichenkette := SubStr(URLSuchZeichenkette, ZuEntfernendeZeichen)
 Gosub, URLSuche  <em>; Ruft sich nochmals selbst auf.</em>
 return</pre>
+</div>
 
 </body>
 </html>

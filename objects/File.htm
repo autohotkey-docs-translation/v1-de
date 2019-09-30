@@ -13,16 +13,16 @@
 
 <h1>File-Objekt <span class="ver">[AHK_L 42+]</span></h1>
 
-<p>Ermöglicht eine Schnittstelle für die Dateibearbeitung. <a href="../commands/FileOpen.htm">FileOpen</a> gibt ein Objekt dieses Typs zurück.</p>
+<p>Ermöglicht eine Schnittstelle für die Dateibearbeitung. <a href="../commands/FileOpen.htm">FileOpen()</a> gibt ein Objekt dieses Typs zurück.</p>
 
 <h2 id="Members">Objektelemente</h2>
 <p>Eigenschaften:</p>
 <ul>
-  <li><a href="#Seek">Pos</a>: Ermittelt oder setzt die Position des Dateizeigers. Äquivalent zu <code>Pos := File.Tell()</code> oder <code>File.Seek(Distanz)</code>.</li>
+  <li><a href="#Seek">Position / Pos</a>: Ermittelt oder setzt die Position des Dateizeigers. Äquivalent zu <code>Pos := File.Tell()</code> oder <code>File.Seek(Distanz)</code>.</li>
   <li><a href="#Length">Length</a>: Ermittelt oder bestimmt die Größe der Datei.</li>
   <li><a href="#AtEOF">AtEOF</a>: Ermittelt einen Wert ungleich 0, wenn der Dateizeiger das Ende der Datei erreicht hat.</li>
   <li><a href="#Encoding">Encoding</a>: Ermittelt oder setzt die Textcodierung für das File-Objekt.</li>
-  <li><a href="#Handle">__Handle</a>: Ermittelt ein System-Datei-Handle, das für DllCall verwendet werden kann.</li>
+  <li><a href="#Handle">__Handle</a>: Ermittelt ein System-Datei-Handle, das für DllCall() verwendet werden kann.</li>
 </ul>
 <p>Methoden:</p>
 <ul>
@@ -32,8 +32,8 @@
   <li><a href="#WriteLine">WriteLine</a>: Schreibt eine Zeichenfolge gefolgt von <code>`n</code> oder <code>`r`n</code>, abhängig von den EOL-Flags, die zum Öffnen der Datei verwendet wurden. Der Dateizeiger wird dabei vorgerückt.</li>
   <li><a href="#ReadNum">Read<em>Zahlentyp</em></a>: Liest eine Zahl aus der Datei und rückt dabei den Dateizeiger vor.</li>
   <li><a href="#WriteNum">Write<em>Zahlentyp</em></a>: Schreibt eine Zahl in die Datei und rückt dabei den Dateizeiger vor.</li>
-  <li><a href="#RawRead">RawRead</a>: Liest unbearbeitete Binärdaten aus der Datei in den Speicher. Falls eine Variable angegeben ist, dann wird sie je nach Bedarf automatisch erweitert.</li>
-  <li><a href="#RawWrite">RawWrite</a>: Schreibt unbearbeitete Binärdaten in die Datei.</li>
+  <li><a href="#RawRead">RawRead</a>: Liest rohe Binärdaten aus der Datei in den Speicher und rückt dabei den Dateizeiger vor.</li>
+  <li><a href="#RawWrite">RawWrite</a>: Schreibt rohe Binärdaten in die Datei und rückt dabei den Dateizeiger vor.</li>
   <li><a href="#Seek">Seek</a>: Verschiebt den Dateizeiger. Lässt man den zweiten Parameter weg, ist es das gleiche wie <code>File.Pos := Distanz</code>.</li>
   <li><a href="#Tell">Tell</a>: Gibt die Position des Dateizeigers zurück. Äquivalent zu <code>Pos := File.Pos</code>.</li>
   <li><a href="#Close">Close</a>: Schließt die Datei, löscht alle Daten im Zwischenspeicher auf der Festplatte und hebt die Sperrungen auf.</li>
@@ -78,7 +78,7 @@
 <div class="methodShort" id="ReadNum"><h2>Read<i>Zahlentyp</i></h2>
 <p>Liest eine Zahl aus der Datei und rückt dabei den Dateizeiger vor.</p>
 <pre class="Syntax">Zahl := File.Read<i>Zahlentyp</i>()</pre>
-<p><em>Zahlentyp</em> ist entweder UInt, Int, Int64, Short, UShort, Char, UChar, Double oder Float. Diese Typennamen haben die gleiche Bedeutung wie die von <a href="../commands/DllCall.htm#types">DllCall</a>.</p>
+<p><em>Zahlentyp</em> ist entweder UInt, Int, Int64, Short, UShort, Char, UChar, Double oder Float. Diese Typennamen haben die gleiche Bedeutung wie die von <a href="../commands/DllCall.htm#types">DllCall()</a>.</p>
 <p><strong>Rückgabewert</strong> ist bei Erfolg eine Zahl und bei Misserfolg eine leere Zeichenkette.</p>
 <p>Wenn eine Try-Anweisung aktiv ist und keine Bytes gelesen wurden, wird eine Ausnahme ausgelöst. Es wird keine Ausnahme ausgelöst, wenn mindestens ein Byte gelesen wurde, selbst wenn die Größe des angegebenen <i>Zahlentyp</i>s größer ist als die Anzahl der gelesenen Bytes. Stattdessen werden die fehlenden Bytes als Null angesehen.</p></div>
 
@@ -89,16 +89,16 @@
   <dt>Zahl</dt>
   <dd>Eine Zahl, die geschrieben werden soll.</dd>
 </dl>
-<p><em>Zahlentyp</em> ist entweder UInt, Int, Int64, Short, UShort, Char, UChar, Double oder Float. Diese Typennamen haben die gleiche Bedeutung wie die von <a href="../commands/DllCall.htm#types">DllCall</a>.</p>
+<p><em>Zahlentyp</em> ist entweder UInt, Int, Int64, Short, UShort, Char, UChar, Double oder Float. Diese Typennamen haben die gleiche Bedeutung wie die von <a href="../commands/DllCall.htm#types">DllCall()</a>.</p>
 <p><strong>Rückgabewert</strong> ist die Anzahl der Bytes, die geschrieben wurden. Zum Beispiel wird WriteUInt bei Erfolg eine 4 zurückgeben.</p>
 </div>
 
 <div class="methodShort" id="RawRead"><h2>RawRead</h2>
-<p>Liest unbearbeitete Binärdaten aus der Datei in den Speicher. Falls eine Variable angegeben ist, dann wird sie je nach Bedarf automatisch erweitert.</p>
+<p>Liest rohe Binärdaten aus der Datei in den Speicher und rückt dabei den Dateizeiger vor.</p>
 <pre class="Syntax">File.<span class="func">RawRead</span>(VarOderAdresse, Bytes)</pre>
 <dl>
   <dt>VarOderAdresse</dt>
-  <dd>Eine Variable oder Speicheradresse, in der die Daten kopiert werden. Die Verwendung hat Ähnlichkeit mit <a href="../commands/NumGet.htm">NumGet</a>.</dd>
+  <dd>Eine Variable oder Speicheradresse, in der die Daten kopiert werden. Die Verwendung hat Ähnlichkeit mit <a href="../commands/NumGet.htm">NumGet()</a>. Falls eine Variable angegeben ist, dann wird sie je nach Bedarf automatisch erweitert.</dd>
   <dt>Bytes</dt>
   <dd>Die maximale Anzahl der zu lesenden Bytes.</dd>
 </dl>
@@ -106,11 +106,11 @@
 <p>Wenn eine Try-Anweisung aktiv ist und <em>Bytes</em> ungleich Null ist, aber keine Bytes gelesen wurden, wird eine Ausnahme ausgelöst. Mit <a href="#AtEOF">AtEOF</a> kann man das verhindern, wenn nötig.</p></div>
 
 <div class="methodShort" id="RawWrite"><h2>RawWrite</h2>
-<p>Schreibt unbearbeitete Binärdaten in die Datei.</p>
+<p>Schreibt rohe Binärdaten in die Datei und rückt dabei den Dateizeiger vor.</p>
 <pre class="Syntax">File.<span class="func">RawWrite</span>(VarOderAdresse, Bytes)</pre>
 <dl>
   <dt>VarOderAdresse</dt>
-  <dd>Eine Variable, die die Daten oder die Adresse der Daten im Speicher enthält. Die Verwendung hat Ähnlichkeit mit <a href="../commands/NumPut.htm">NumPut</a>.</dd>
+  <dd>Eine Variable, die die Daten oder die Adresse der Daten im Speicher enthält. Die Verwendung hat Ähnlichkeit mit <a href="../commands/NumPut.htm">NumPut()</a>.</dd>
   <dt>Bytes</dt>
   <dd>Die maximale Anzahl der zu schreibenden Bytes.</dd>
 </dl>
@@ -180,7 +180,7 @@ Pos := File.Pos
 </div>
 
 <div class="methodShort" id="Handle"><h2>__Handle</h2>
-  <p>Gibt ein System-Datei-Handle zurück, das für DllCall verwendet werden kann. Siehe <a href="http://msdn.microsoft.com/de-de/library/aa363858.aspx">CreateFile</a>.</p>
+  <p>Gibt ein System-Datei-Handle zurück, das für DllCall() verwendet werden kann. Siehe <a href="http://msdn.microsoft.com/de-de/library/aa363858.aspx">CreateFile</a>.</p>
 <pre class="Syntax">File.__Handle</pre>
 <p>File-Objekte zwischenspeichern gelesene und geschriebene Daten. Daten im internen Zwischenspeicher des Objekts werden erst auf das Laufwerk übertragen, wenn das Handle zurückgegeben wird. Enthält der Zwischenspeicher gelesene Daten von der Datei, werden diese Daten verworfen und der aktuelle Dateizeiger auf die logische Position (gekennzeichnet durch <code>File.Pos</code>) zurückgesetzt.</p></div>
 

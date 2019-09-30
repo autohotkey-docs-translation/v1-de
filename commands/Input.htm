@@ -30,8 +30,8 @@
   <dd><p><u>Eine Zeichenkette mit null oder mehreren der folgenden Buchstaben (in beliebiger Reihenfolge, optional mit Leerzeichen getrennt):</u></p>
       <p><strong>B</strong>: <kbd>Backspace</kbd> wird ignoriert. Normalerweise wird, wenn man während einer Eingabeerfassung <kbd>Backspace</kbd> drückt, das zuletzt gedrückte Zeichen am Ende der Zeichenkette entfernt. Hinweis: Ist der Eingabetext sichtbar (wie z. B. in einem Texteditor) und werden die Pfeiltasten oder andere Mittel zum Navigieren innerhalb des Textes verwendet, wird <kbd>Backspace</kbd> weiterhin das letzte Zeichen entfernen, anstelle des Zeichens nach der Einfügemarke.</p>
       <p><strong>C</strong>: Groß-/Kleinschreibung-sensitiv. Normalerweise ist <em>Vergleichsliste</em> nicht Groß-/Kleinschreibung-sensitiv (in den Versionen vor 1.0.43.03 wurden nur die Groß- und Kleinbuchstaben von A bis Z erkannt, aber nicht Buchstaben wie ü/Ü).</p>
-      <p><strong>I</strong>: Ignoriert Eingaben, die vom AutoHotkey-Skript erzeugt werden, wie z. B. durch den <a href="Send.htm#SendEvent">SendEvent</a>-Befehl. Allerdings werden <a href="Send.htm#SendInput">SendInput</a> und <a href="Send.htm#SendPlay">SendPlay</a> immer ignoriert, egal ob diese Einstellung aktiv ist oder nicht.</p>      
-      <p><strong>L</strong>: Längenbegrenzung (z. B. <code>L5</code>). Die maximal erlaubte Länge der Eingabe. Wenn der Text diese Länge erreicht, wird die Eingabeerfassung beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Max gesetzt, es sei denn, der Text stimmt mit einem der Elemente in <em>Vergleichsliste</em> überein, dann wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Match gesetzt. Wenn diese Option nicht verwendet wird, ist die Länge auf 16383 Zeichen begrenzt, was auch der höchste zulässige Wert ist.</p>
+      <p><strong>I</strong>: Ignoriert Eingaben, die von <a href="Send.htm#SendEvent">SendEvent</a> erzeugt werden, bei einer <a href="SendLevel.htm">Sendestufe</a> von 0. Allerdings werden <a href="Send.htm#SendInput">SendInput</a> und <a href="Send.htm#SendPlay">SendPlay</a> immer ignoriert, egal ob diese Einstellung aktiv ist oder nicht. <span class="ver">[v1.1.31+]:</span> Nach dem Optionsbuchstaben kann eine Zahl erfolgen, um die minimale Sendestufe zu bestimmen. <code>I</code> und <code>I1</code> sind äquivalent. <code>I0</code> ist das gleiche wie, als würde die Option fehlen.</p>
+      <p><strong>L</strong>: Längenbegrenzung (z. B. <code>L5</code>). Die maximal erlaubte Länge der Eingabe. Wenn der Text diese Länge erreicht, wird die Eingabeerfassung beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Max gesetzt, es sei denn, der Text stimmt mit einem der Elemente in <em>Vergleichsliste</em> überein, dann wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Match gesetzt. Wenn diese Option nicht verwendet wird, ist die Länge auf 16383 Zeichen begrenzt, was auch der höchste zulässige Wert in Versionen vor <span class="ver">[v1.1.31]</span> ist.</p>
       <p><strong>M</strong>: Tastenkombinationen wie <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> werden erkannt und in echte ASCII-Zeichen umgewandelt, falls möglich. Das folgende Beispiel zeigt, wie <kbd>Strg</kbd>+<kbd>C</kbd> erkannt werden kann:</p>
       <pre>StrgC := Chr(3) <em>; Speichert das Zeichen für STRG+C in die Variable StrgC.</em>
 Input, AusgabeVar, L1 M
@@ -61,7 +61,7 @@ ExitApp</pre>
 
 </dl>
 
-<h2>ErrorLevel</h2>
+<h2>Fehlerbehandlung</h2>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, eine Ausnahme auszulösen, wenn er ohne Parameter aufgerufen wird oder wenn keine Eingabeerfassung im Gange ist. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <table class="info">
   <tr>
@@ -102,20 +102,19 @@ ExitApp</pre>
 <p>Wenn ein Skript diesen Befehl zum ersten Mal verwendet, wird der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> installiert (falls noch nicht geschehen). Darüber hinaus wird das Skript <a href="_Persistent.htm">persistent</a>; das heißt, dass das Skript nur noch mit <a href="ExitApp.htm">ExitApp</a> beendet werden kann. Jedes Mal, wenn das Skript einen <a href="Suspend.htm">Suspend</a>- oder <a href="Hotkey.htm">Hotkey</a>-Befehl erreicht, wird überprüft, ob der Tastatur-Hook noch von Hotkeys oder Hotstrings beansprucht wird. Ist dies nicht der Fall, wird der Hook wieder deinstalliert.</p>
 <p>Wenn Sie mehrere Sprachen oder Tastaturlayouts verwenden, greift die Eingabeerfassung auf das Tastaturlayout des aktiven Fensters statt auf die des Skripts zurück (egal ob die Eingabeerfassung <a href="#vis">sichtbar</a> ist oder nicht). In den Versionen vor 1.0.44.03 wurde die Belegung des Skripts verwendet.</p>
 <p>Trotz ihrer geringeren Flexibilität sind <a href="../Hotstrings.htm">Hotstrings</a> in der Regel einfach zu bedienen als der Input-Befehl.</p>
+<p><a href="InputHook.htm">InputHook()</a> ist flexibler als der Input-Befehl.</p>
+
 <h2>Siehe auch</h2>
 <p><a href="KeyWait.htm">KeyWait</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="InputBox.htm">InputBox</a>, <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="IfIn.htm">if Var in/contains Vergleichsliste</a></p>
 <h2>Beispiele</h2>
-<pre class="NoIndent"><em>; Wartet darauf, dass der Benutzer eine Taste drückt.  Tasten, die keine sichtbaren Zeichen erzeugen (z. B.
-; Modifikatortasten, Funktionstasten, Pfeiltasten), sind als Endtasten aufgelistet, so dass auch
-; sie erkannt werden können.</em>
-Input, Einzeltaste, L1, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}</pre>
-<pre class="NoIndent"><em>; Dies ist ein funktionierendes Hotkey-Beispiel.  Da der Hotkey den Tilde-Präfix (~) hat,
-; wird seine Tastatureingabe selbst an das aktive Fenster übergeben.
-; Schreibt man daher [btw (oder einen anderen
-; Begriff) in ein Texteditor, wird das Skript automatisch eine Aktion
-; Ihrer Wahl durchführen (z. B. den Eingabetext ersetzen):</em>
+<div class="ex" id="ExAnyKey">
+<p><a href="#ExAnyKey">#1</a>: Wartet darauf, dass der Benutzer eine Taste drückt. Tasten, die keine sichtbaren Zeichen erzeugen (z. B. Modifikatortasten, Funktionstasten, Pfeiltasten), sind als Endtasten aufgelistet, so dass auch diese erkannt werden.</p>
+<pre>Input, Einzeltaste, L1, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}</pre>
+</div>
 
-~[::
+<div class="ex" id="ExHotkey">
+<p><a href="#ExHotkey">#2</a>: Dies ist ein funktionierendes Hotkey-Beispiel. Da der Hotkey den Tilde-Präfix (~) hat, wird seine Tastatureingabe selbst an das aktive Fenster übergeben. Schreibt man daher <code>[btw</code> (oder einen der anderen Begriffe) in einem Texteditor, wird das Skript automatisch eine Aktion Ihrer Wahl durchführen (z. B. den Eingabetext ersetzen):</p>
+<pre>~[::
 Input, Benutzereingabe, V T5 L4 C, {enter}.{esc}{tab}, btw,otoh,fl,ahk,ca
 if (ErrorLevel = "Max")
 {
@@ -144,8 +143,11 @@ else if (Benutzereingabe = "fl")
 else if (Benutzereingabe = "ca")
     Send, {backspace 3}California
 else if (Benutzereingabe = "ahk")
-    Run, https://autohotkey.com
-return</pre>
+    Run, https://www.autohotkey.com
+return
+</pre>
+<p>Eine alternative Version dieses Beispiels finden Sie unter <a href="Switch.htm#ExInput">Switch</a>.</p>
+</div>
 
 </body>
 </html>

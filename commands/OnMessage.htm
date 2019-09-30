@@ -121,10 +121,9 @@ MeldÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des 
 <h2>Siehe auch</h2>
 <p><a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Critical.htm">Critical</a>, <a href="DllCall.htm">DllCall()</a></p>
 <h2>Beispiele</h2>
-<pre class="NoIndent"><em>; Beispiel: Das folgende Skript zeigt, wie Mausklicks innerhalb eines GUI-Fensters überwacht werden können.
-; Verwandtes Thema: <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a></em>
-
-Gui, Add, Text,, Klicken Sie irgendwo auf das Fenster.
+<div class="ex" id="ExLButtonDown">
+<p><a href="#ExLButtonDown">#1</a>: Das folgende Skript zeigt, wie Mausklicks innerhalb eines GUI-Fensters überwacht werden können. Verwandtes Thema: <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a></p>
+<pre>Gui, Add, Text,, Klicken Sie irgendwo auf das Fenster.
 Gui, Add, Edit, w200 vMeinEdit
 Gui, Show
 OnMessage(0x201, "WM_LBUTTONDOWN")
@@ -141,34 +140,33 @@ WM_LBUTTONDOWN(wParam, lParam)
 
 GuiClose:
 ExitApp</pre>
+</div>
 
-<pre class="NoIndent" id="shutdown"><em>; Beispiel: Das folgende Skript zeigt, wie man das Abmelden/Herunterfahren des Systems erkennen
-; und unterbrechen kann (es wurde gemeldet, dass dies NICHT in Windows Vista und höher funktioniert).
-; Verwandtes Thema: <a href="OnExit.htm">OnExit</a></em>
-
-<em>; Das folgende DllCall ist optional: es teilt dem OS mit, dass dieses Skript <i>zuerst</i> beendet werden soll (bevor alle anderen Anwendungen beendet werden).</em>
+<div class="ex" id="shutdown">
+<p><a href="#shutdown">#2</a>: Das folgende Skript zeigt, wie man das Abmelden/Herunterfahren des Systems erkennen und unterbrechen kann (es wurde gemeldet, dass dies NICHT in Windows Vista und höher funktioniert). Verwandtes Thema: <a href="OnExit.htm">OnExit</a></p>
+<pre><em>; Das folgende DllCall ist optional: es teilt dem OS mit, dass dieses Skript <i>zuerst</i> beendet werden soll (bevor alle anderen Anwendungen beendet werden).</em>
 DllCall("kernel32.dll\SetProcessShutdownParameters", "UInt", 0x4FF, "UInt", 0)
 OnMessage(0x11, "WM_QUERYENDSESSION")
 return
 
 WM_QUERYENDSESSION(wParam, lParam)
 {
-    ENDSESSION_LOGOFF = 0x80000000
+    ENDSESSION_LOGOFF := 0x80000000
     if (lParam &amp; ENDSESSION_LOGOFF)  <em>; Benutzer meldet sich ab.</em>
-        Ereignis = Abmelden
+        Ereignis := "Abmelden"
     else  <em>; System wird entweder heruntergefahren oder neu gestartet.</em>
-        Ereignis = Herunterfahren
+        Ereignis := "Herunterfahren"
     MsgBox, 4,, %Ereignis% im Gange.  Erlauben?
     IfMsgBox Yes
         return true  <em>; Erlaubt dem OS das Herunterfahren/Abmelden.</em>
     else
         return false  <em>; Verbietet dem OS das Herunterfahren/Abmelden.</em>
 }</pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: Zeigt, wie ein Skript eine benutzerdefinierte Meldung und bis zu zwei Zahlen von einem anderen Skript oder Programm empfängt
-; (Schauen Sie sich das Beispiel danach an, wie man Zeichenketten sendet).</em>
-
-OnMessage(0x5555, "Meldeüberwachung")
+<div class="ex" id="ExCustom">
+<p><a href="#ExCustom">#3</a>: Zeigt, wie ein Skript eine benutzerdefinierte Meldung und bis zu zwei Zahlen von einem anderen Skript oder Programm empfängt (schauen Sie sich das Beispiel danach an, wie man Zeichenketten sendet).</p>
+<pre>OnMessage(0x5555, "Meldeüberwachung")
 OnMessage(0x5556, "Meldeüberwachung")
 
 Meldeüberwachung(wParam, lParam, msg)
@@ -184,13 +182,12 @@ DetectHiddenWindows On
 if WinExist("Empfänger.ahk ahk_class AutoHotkey")
     PostMessage, 0x5555, 11, 22  <em>; Aufgrund von WinExist() wird die Meldung zum "<a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundenen Fenster</a>" gesendet.</em>
 DetectHiddenWindows Off  <em>; Kann nach PostMessage wieder deaktiviert werden.</em></pre>
+</div>
 
-<pre class="NoIndent" id="SendString"><em>; Beispiel: Sendet eine Zeichenkette mit beliebiger Länge an ein anderes Skript.  Um dieses Beispiel
-; zu nutzen, speichert und startet man beide folgenden Skripte und drückt WIN+LEERTASTE,
-; um eine InputBox anzuzeigen, die den Benutzer zur Eingabe einer Zeichenkette auffordert.</em>
-
-<em>; Speichern Sie das folgende Skript als "<strong>Empfänger.ahk</strong>" und starten Sie es:</em>
-#SingleInstance
+<div class="ex" id="SendString">
+<p><a href="#SendString">#4</a>: Sendet eine Zeichenkette mit beliebiger Länge an ein anderes Skript. Dies ist ein funktionierendes Beispiel. Um es zu nutzen, speichert und startet man beide folgenden Skripte und drückt <kbd>Win</kbd>+<kbd>Leer</kbd>, um eine InputBox anzuzeigen, die den Benutzer zur Eingabe einer Zeichenkette auffordert.</p>
+<p>Speichern Sie das folgende Skript als "<strong>Receiver.ahk</strong>" und starten Sie es:</p>
+<pre filename="Receiver.ahk">#SingleInstance
 OnMessage(0x4a, "Empfange_WM_COPYDATA")  <em>; 0x4a ist WM_COPYDATA</em>
 return
 
@@ -201,19 +198,18 @@ Empfange_WM_COPYDATA(wParam, lParam)
     <em>; Zeige die Zeichenkette via ToolTip statt MsgBox an, so dass wir rechtzeitig fertig werden:</em>
     ToolTip %A_ScriptName%`nhat die folgende Zeichenkette empfangen:`n%Datenkopie%
     return true  <em>; Die Rückgabe einer 1 (wahr) ist der übliche Weg, um diese Meldung zu bestätigen.</em>
-}
-
-<em>; Speichern Sie das folgende Skript als "<strong>Sender.ahk</strong>" und starten Sie es.  Drücken Sie danach den Hotkey WIN+LEERTASTE.</em>
-ZielSkriptTitel = Empfänger.ahk ahk_class AutoHotkey
+}</pre>
+<p>Speichern Sie das folgende Skript als "<strong>Sender.ahk</strong>" und starten Sie es. Drücken Sie danach den Hotkey <kbd>Win</kbd>+<kbd>Leer</kbd>.</p>
+<pre filename="Sender.ahk">ZielSkriptTitel := "Receiver.ahk ahk_class AutoHotkey"
 
 #space::  <em>; Hotkey: WIN+LEERTASTE. Drücken Sie ihn, um eine InputBox zur Eingabe einer Zeichenkette anzuzeigen.</em>
 InputBox, ZuSendendeZeichenkette, Text via WM_COPYDATA senden, Tragen Sie den zu sendenden Text ein:
 if ErrorLevel  <em>; Benutzer hat die Abbrechen-Schaltfläche gedrückt.</em>
     return
 Ergebnis := Sende_WM_COPYDATA(ZuSendendeZeichenkette, ZielSkriptTitel)
-if Ergebnis = FAIL
+if (Ergebnis = "FAIL")
     MsgBox SendMessage fehlgeschlagen. Gibt es den folgenden Fenstertitel?:`n%ZielSkriptTitel%
-else if Ergebnis = 0
+else if (Ergebnis = 0)
     MsgBox Meldung wurde gesendet, aber das Zielfenster hat mit 0 geantwortet, was bedeuten könnte, dass sie ignoriert wurde.
 return
 
@@ -230,16 +226,16 @@ Sende_WM_COPYDATA(ByRef ZuSendendeZeichenkette, ByRef ZielSkriptTitel)  <em>; By
     Vorher_TitleMatchMode := A_TitleMatchMode
     DetectHiddenWindows On
     SetTitleMatchMode 2
-    TimeoutWert = 4000  <em>; Optional. Zeit in Millisekunden, die Empfänger.ahk zum Antworten hat. Standard ist 5000</em>
+    TimeoutWert := 4000  <em>; Optional. Zeit in Millisekunden, die Empfänger.ahk zum Antworten hat. Standard ist 5000</em>
     <em>; Muss Send verwenden, nicht Post.</em>
     SendMessage, 0x4a, 0, &amp;KopieDatenStrukt,, %ZielSkriptTitel%,,,, %TimeoutWert% <em>; 0x4a ist WM_COPYDATA.</em>
     DetectHiddenWindows %Vorher_DetectHiddenWindows%  <em>; Stellt die ursprüngliche Einstellung wieder her.</em>
     SetTitleMatchMode %Vorher_TitleMatchMode%         <em>; Hier auch.</em>
     return ErrorLevel  <em>; Gibt SendMessage's Antwort zum Aufrufer zurück.</em>
 }</pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: Siehe <a href="../scripts/WinLIRC.htm">WinLIRC-Client-Skript</a>, wie OnMessage() zum Empfangen von Meldungen verwendet
-; werden kann, die über die Netzwerkverbindung gesendet wurden.</em></pre>
+<p>Im <a href="../scripts/WinLIRC.htm">WinLIRC-Client-Skript</a> wird gezeigt, wie man OnMessage() nutzen kann, um bei Eintreffen von Daten über die Netzwerkverbindung eine Benachrichtigung zu erhalten.</p>
 
 </body>
 </html>

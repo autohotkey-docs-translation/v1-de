@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>VarSetCapacity() - Syntax &amp; Verwendung | AutoHotkey</title>
-<meta name="description" content="Die VarSetCapacity-Funktion vergrößert die Aufnahmekapazität einer Variable oder gibt deren Speicher frei. Normalerweise ist das nur bei ungewöhnlichen Fällen wie DllCall notwendig." />
+<meta name="description" content="Die VarSetCapacity-Funktion vergrößert die Aufnahmekapazität einer Variable oder gibt deren Speicher frei. Normalerweise ist das nur bei ungewöhnlichen Fällen wie DllCall() notwendig." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,7 +13,7 @@
 
 <h1>VarSetCapacity()</h1>
 
-<p>Vergrößert die Aufnahmekapazität einer Variable oder gibt deren Speicher frei. Normalerweise ist das nur bei ungewöhnlichen Fällen wie <a href="DllCall.htm">DllCall</a> notwendig.</p>
+<p>Vergrößert die Aufnahmekapazität einer Variable oder gibt deren Speicher frei. Normalerweise ist das nur bei ungewöhnlichen Fällen wie <a href="DllCall.htm">DllCall()</a> notwendig.</p>
 
 <pre class="Syntax">Kapazitätserstattung := <span class="func">VarSetCapacity</span>(ZielVar <span class="optional">, Kapazitätsbedarf, Füllbyte</span>)</pre>
 <h2>Parameter</h2>
@@ -40,21 +40,25 @@
 <p>Diese Funktion gibt die Anzahl an Bytes zurück, die die Variable nun enthalten kann und größer gleich <em>Kapazitätserstattung</em> sein wird. Falls <em>VarName</em> keine gültige Variable ist (z. B. direkt geschriebene Zeichenkette oder Zahl), wird eine 0 zurückgegeben. Wenn das System nicht genügend Speicher hat, um die Veränderung vorzunehmen (sehr selten), wird ein Fehlerdialogfenster angezeigt und die aktuelle Kapazität zurückgegeben - dieses Verhalten wird wahrscheinlich in einer zukünftigen Version geändert.</p>
 
 <h2>Bemerkungen</h2>
-<p>Diese Funktion ist nicht nur für <a href="DllCall.htm#str">DllCall</a> nützlich, sondern kann auch die Performance erhöhen, wenn man eine Zeichenkette via stufenweise Verkettung zusammensetzt. Diese Methode verhindert mehrere automatische Größenanpassungen, sofern Ihnen die finale Länge der Zeichenkette bekannt ist. In so einem Fall muss <em>Kapazitätsbedarf</em> nicht genau sein: Der Performance-Gewinn gilt auch dann noch, wenn die Kapazität zu niedrig ist, außerdem beginnt die Variable sich automatisch zu erweitern, wenn die Kapazität erschöpft ist. Bei einer zu hohen Kapazität ist ein Teil des Speichers verschwendet, aber nur vorübergehend, da der gesamte Speicher nach der Operation mithilfe von <code>VarSetCapacity(Var, 0)</code> oder <code>Var := ""</code> wieder freigegeben werden kann.</p>
-<p><a href="_MaxMem.htm">#MaxMem</a> limitiert nur die automatische Erweiterung, die eine Variable selbst durchführt. Sie hat keinen Einfluss auf <a href="VarSetCapacity.htm">VarSetCapacity</a>.</p>
+<p>Diese Funktion ist nicht nur für <a href="DllCall.htm#str">DllCall()</a> nützlich, sondern kann auch die Performance erhöhen, wenn man eine Zeichenkette via stufenweiser Verkettung zusammensetzt. Diese Methode verhindert mehrere automatische Größenanpassungen, sofern Ihnen die finale Länge der Zeichenkette bekannt ist. In so einem Fall muss <em>Kapazitätsbedarf</em> nicht genau sein: Der Performance-Gewinn gilt auch dann noch, wenn die Kapazität zu niedrig ist, außerdem beginnt die Variable sich automatisch zu erweitern, wenn die Kapazität erschöpft ist. Bei einer zu hohen Kapazität ist ein Teil des Speichers verschwendet, aber nur vorübergehend, da der gesamte Speicher nach der Operation mithilfe von <code>VarSetCapacity(Var, 0)</code> oder <code>Var := ""</code> wieder freigegeben werden kann.</p>
+<p><a href="_MaxMem.htm">#MaxMem</a> limitiert nur die automatische Erweiterung, die eine Variable selbst durchführt. Sie hat keinen Einfluss auf VarSetCapacity.</p>
 <h2>Siehe auch</h2>
-<p><a href="DllCall.htm">DllCall</a>, <a href="_MaxMem.htm">#MaxMem</a>, <a href="NumPut.htm">NumPut</a>, <a href="NumGet.htm">NumGet</a></p>
-<h2>Beispiel</h2>
-<pre class="NoIndent"><em>; Stellt sicher, dass MeineVar genügend Spielraum hat.</em>
-VarSetCapacity(MeineVar, 10240000)  <em>; ~10 MB</em>
+<p><a href="DllCall.htm">DllCall()</a>, <a href="_MaxMem.htm">#MaxMem</a>, <a href="NumPut.htm">NumPut()</a>, <a href="NumGet.htm">NumGet()</a></p>
+<h2>Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a>: Stellt sicher, dass <em>MeineVar</em> genügend Spielraum hat.</p>
+<pre>VarSetCapacity(MeineVar, 10240000)  <em>; ~10 MB</em>
 Loop
 {
-    ...
-    MeineVar = %MeineVar%%ZuVerkettendeZeichenkette%
-    ...
+    <em>; ...</em>
+    MeineVar .= ZuVerkettendeZeichenkette
+    <em>; ...</em>
 }</pre>
+</div>
 
-<pre class="NoIndent"><em>; Berechnet den erforderlichen Zwischenspeicher für eine Zeichenkette.</em>
+<div class="ex" id="ExString">
+<p><a href="#ExString">#2</a></p>
+<pre><em>; Berechnet den erforderlichen Zwischenspeicher für eine Zeichenkette.</em>
 bytes_per_char := A_IsUnicode ? 2 : 1
 max_chars := 500
 max_bytes := max_chars * bytes_per_char
@@ -64,7 +68,7 @@ Loop 2
     <em>; Reserviert Speicher für DllCall.</em>
     VarSetCapacity(buf, max_bytes)
 
-    if A_Index = 1
+    if (A_Index = 1)
         <em>; Ändert die Variable indirekt via DllCall.</em>
         DllCall("wsprintf", <span class="red">"Ptr", &amp;buf</span>, "Str", "0x%08x", "UInt", 4919)
     else
@@ -93,6 +97,7 @@ Loop 2
     )
 }
 </pre>
+</div>
 
 </body>
 </html>

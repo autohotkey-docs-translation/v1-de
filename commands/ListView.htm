@@ -223,7 +223,7 @@ Loop % LV_GetCount("Column")
 <p>Gibt die Reihennummer der nächsten ausgewählten, abgehakten oder fokussierten Reihe zurück.</p>
 <pre class="Syntax"><span class="func">LV_GetNext</span>(<span class="optional">Startreihennummer, Reihentyp</span>)</pre>
 <p>Kann keine Reihe gefunden werden, wird null zurückgegeben. Wenn <em>Startreihennummer</em> weggelassen wird oder kleiner als 1 ist, beginnt die Suche am Anfang der Liste. Ansonsten beginnt die Suche bei der Reihe nach <em>Startreihennummer</em>. Lässt man <em>Reihentyp</em> weg, wird die Funktion die nächste ausgewählte/hervorgehobene Reihe suchen. Verwenden Sie ansonsten "C" oder "Checked", um die nächste abgehakte Reihe zu finden; oder "F" oder "Focused", um die fokussierte Reihe zu finden (es gibt nie mehr als eine fokussierte Reihe in der gesamten Liste, und manchmal gibt es überhaupt keine). Das folgende Beispiel meldet alle ausgewählten Reihen in der ListView:</p>
-<pre>Reihennummer = 0  <em>; Veranlasst den ersten Schleifendurchlauf, die Suche am Anfang der Liste zu beginnen.</em>
+<pre>Reihennummer := 0  <em>; Veranlasst den ersten Schleifendurchlauf, die Suche am Anfang der Liste zu beginnen.</em>
 Loop
 {
     Reihennummer := LV_GetNext(Reihennummer)  <em>; Setzt die Suche bei der nächsten Reihe fort.</em>
@@ -248,7 +248,7 @@ IstAbgehakt := (ErrorLevel &gt;&gt; 12) - 1  <em>; Setzt IstAbgehakt auf 1 (true
 <pre class="Syntax"><span class="func">LV_SetImageList</span>(ImageListID <span class="optional">, Symboltyp</span>)</pre>
 <p>Diese Funktion wird normalerweise aufgerufen, bevor man Reihen in die ListView einfügt. Sie wendet die <a href="#IL">ImageList</a> auf die ListView an, so dass Symbole in ihren Reihen (oder Spalten) dargestellt werden können. Verwenden Sie als <em>ImageListID</em> die zurückgegebene Nummer von <a href="#IL_Create">IL_Create()</a>. Lässt man <em>Symboltyp</em> weg, wird der Typ von großen oder kleinen Symbolen in der ImageList automatisch festgelegt. Verwenden Sie ansonsten eine 0 für große Symbole, eine 1 für kleine Symbole und eine 2 für Statussymbole (Statussymbole werden nur via <a href="PostMessage.htm">SendMessage</a> unterstützt).</p>
 <p>Eine ListView kann bis zu zwei ImageLists haben: für kleine Symbole und/oder große Symbole. Damit könnte ein Skript den Benutzer zwischen den Symbolansichten wechseln zu lassen. Um mehr als eine ImageList in die ListView einzufügen, ruft man LV_SetImageList() ein zweites Mal auf und übergibt die <em>ImageListID</em> der zweiten Liste. Eine ListView mit einer ImageList für große und kleine Symbole sollte sicherstellen, dass beide Listen die Symbole in gleicher Reihenfolge enthalten. Das liegt daran, dass mit der gleichen ID-Nummer sowohl auf die großen als auch auf die kleinen Versionen eines bestimmten Symbols verwiesen wird.</p>
-<p>Üblicherweise zeigen alle <a href="#View">Anzeigemethoden</a> (außer Icon und Tile) kleine Symbole an. Diese Standardeinstellung kann man überschreiben, wenn man eine Liste für große Symbole an LV_SetImageList übergibt und eine 1 (kleine Symbole) im zweiten Parameter angibt. Dabei wird auch jede Reihe in der ListView höher gemacht, um Platz für große Symbole zu schaffen.</p>
+<p>Üblicherweise zeigen alle <a href="#View">Anzeigemethoden</a> (außer Icon und Tile) kleine Symbole an. Diese Standardeinstellung kann man überschreiben, wenn man eine Liste für große Symbole an LV_SetImageList() übergibt und eine 1 (kleine Symbole) im zweiten Parameter angibt. Dabei wird auch jede Reihe in der ListView höher gemacht, um Platz für große Symbole zu schaffen.</p>
 <p>Bei Erfolg gibt LV_SetImageList() die <em>ImageListID</em> zurück, die zuvor mit der ListView verbunden wurde (oder eine 0, wenn dies nicht der Fall ist). Jede nicht mehr benötigte ImageList kann mit <a href="#IL_Destroy">IL_Destroy(ImageListID)</a> zerstört werden.</p>
 
 <h2 id="notify">g-Label-Benachrichtigungen (Primär)</h2>
@@ -265,7 +265,7 @@ IstAbgehakt := (ErrorLevel &gt;&gt; 12) - 1  <em>; Setzt IstAbgehakt auf 1 (true
 <p><strong>Normal</strong>: Der Benutzer hat eine Reihe mit der linken Maustaste angeklickt. Die Variable A_EventInfo enthält die fokussierte Reihennummer.</p>
 <p><strong>RightClick</strong>: Der Benutzer hat eine Reihe mit der rechten Maustaste angeklickt. Die Variable A_EventInfo enthält die fokussierte Reihennummer. In den meisten Fällen sollte man verhindern, ein Menü im Zusammenhang mit dieser Meldung anzeigen zu lassen. Ein <a href="Gui.htm#GuiContextMenu">GuiContextMenu-Label</a> ist dafür besser geeignet, weil es auch die MENÜ-Taste erkennt. Zum Beispiel:</p>
 <pre>GuiContextMenu:  <em>; Startet, wenn man einen Rechtsklick macht oder die MENÜ-Taste drückt.</em>
-if (A_GuiControl &lt;&gt; "MeineListView")  <em>; Diese Überprüfung ist optional. Sie zeigt das Menü nur an, wenn Klicks innerhalb der ListView gemacht werden.</em>
+if (A_GuiControl != "MeineListView")  <em>; Diese Überprüfung ist optional. Sie zeigt das Menü nur an, wenn Klicks innerhalb der ListView gemacht werden.</em>
     return
 <em>; Zeigt das Menü bei den Koordinaten A_GuiX und A_GuiY an. Diese Koordinaten
 ; sind auch dann korrekt, wenn der Benutzer die MENÜ-Taste drückt:</em>
@@ -277,7 +277,7 @@ return</pre>
 <p><strong>F</strong>: Die ListView hat den Tastaturfokus erhalten.</p>
 <p><strong>f</strong>: Die ListView hat den Tastaturfokus verloren.</p>
 <p id="ItemChanged"><strong>I</strong>: Element geändert. Eine Reihe wurde durch Auswählen/Abwählen, Häkchen setzen/entfernen und so weiter geändert. Wählt der Benutzer eine neue Reihe aus, werden mindestens zwei solcher Benachrichtigungen ankommen: eine Meldung durch Abwählen der vorherigen Reihe und eine Meldung durch Auswählen der neuen Reihe. <span class="ver">[v1.0.44+]</span>: Die Variable A_EventInfo enthält die Reihennummer. <span class="ver">[v1.0.46.10+]</span>: ErrorLevel enthält null oder mehrere der folgenden Buchstaben, die kennzeichnen, wie das Element geändert wurde: S (ausgewählt) oder s (abgewählt), und/oder F (fokussiert) oder f (defokussiert), und/oder C (Häkchen gesetzt) oder c (Häkchen entfernt). Zum Beispiel würde SF bedeuten, dass die Reihe ausgewählt und fokussiert wurde. Um zu überprüfen, ob ein bestimmter Buchstabe vorhanden ist, nutzt man entweder eine <a href="LoopParse.htm">Parsende Schleife</a> oder die GroßKleinSensitiv-Option von <a href="InStr.htm">InStr()</a>; zum Beispiel: <code>InStr(ErrorLevel, "S", true)</code>. Hinweis: Für die Kompatibilität mit zukünftigen Versionen sollte ein Skript nicht davon ausgehen, das "SsFfCc" die einzigen möglichen Werte sind. Außerdem würde ein <a href="Critical.htm">Critical</a> in der ersten Zeile von <a href="Gui.htm#label">g-Label</a> sicherstellen, dass alle "I"-Benachrichtigungen ankommen (sonst könnten einige verloren gehen, wenn das Skript nicht mit ihnen mithalten kann).</p>
-<p id="NotifyK"><strong>K</strong>: Der Benutzer hat eine Taste gedrückt, während die ListView den Fokus hat. A_EventInfo enthält den virtuellen Tastencode der Taste - eine Zahl zwischen 1 und 255. Dieser Code kann via <a href="GetKey.htm">GetKeyName</a> in einen Tastennamen oder Zeichen umgewandelt werden. Zum Beispiel <code>Taste := GetKeyName(<a href="Format.htm">Format</a>("vk{:x}", A_EventInfo))</code>. Auf den meisten Tastaturlayouts können die Tasten von A bis Z via <code><a href="Chr.htm">Chr</a>(A_EventInfo)</code> in das entsprechende Zeichen umgewandelt werden. <kbd>F2</kbd>-Eingaben werden erfasst, unabhängig von <a href="#WantF2">WantF2</a>. <kbd>Enter</kbd>-Eingaben werden hingegen nicht erfasst; um sie dennoch zu erfassen, nutzt man eine Standardschaltfläche, wie <a href="#Enter">unten</a> beschrieben.</p>
+<p id="NotifyK"><strong>K</strong>: Der Benutzer hat eine Taste gedrückt, während die ListView den Fokus hat. A_EventInfo enthält den virtuellen Tastencode der Taste - eine Zahl zwischen 1 und 255. Dieser Code kann via <a href="GetKey.htm">GetKeyName()</a> in einen Tastennamen oder Zeichen umgewandelt werden. Zum Beispiel <code>Taste := GetKeyName(<a href="Format.htm">Format</a>("vk{:x}", A_EventInfo))</code>. Auf den meisten Tastaturlayouts können die Tasten von A bis Z via <code><a href="Chr.htm">Chr</a>(A_EventInfo)</code> in das entsprechende Zeichen umgewandelt werden. <kbd>F2</kbd>-Eingaben werden erfasst, unabhängig von <a href="#WantF2">WantF2</a>. <kbd>Enter</kbd>-Eingaben werden hingegen nicht erfasst; um sie dennoch zu erfassen, nutzt man eine Standardschaltfläche, wie <a href="#Enter">unten</a> beschrieben.</p>
 <p><strong>M</strong>: Auswahlrechteck. Der Benutzer hat damit begonnen, ein Auswahlrechteck über mehrere Reihen oder Symbolen zu ziehen.</p>
 <p><strong>S</strong>: Der Benutzer hat damit begonnen, in der ListView zu scrollen.</p>
 <p><strong>s</strong> (kleingeschriebenes S): Der Benutzer ist damit fertig, in der ListView zu scrollen.</p>
@@ -324,7 +324,7 @@ ExitApp</pre>
 ...
 ButtonOK:
 GuiControlGet, FokussiertesSteuerelement, FocusV
-if (FokussiertesSteuerelement &lt;&gt; "MeineListView")
+if (FokussiertesSteuerelement != "MeineListView")
     return
 MsgBox % "Sie haben ENTER gedrückt. Die fokussierte Reihennummer ist " . LV_GetNext(0, "Focused")
 return</pre>
@@ -342,18 +342,20 @@ return</pre>
 
 <h2 id="Examples">Beispiele</h2>
 
-<h3 id="ex1">Beispiel #1: Verschiedenes</h3>
-<pre class="NoIndent"><em>; Das folgende Beispiel zeigt, wie mit einer 0 als Reihennummer alle Reihen aus- oder abgewählt werden können:</em>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a></p>
+<pre><em>; Das folgende Beispiel zeigt, wie mit einer 0 als Reihennummer alle Reihen aus- oder abgewählt werden können:</em>
 <a href="#LV_Modify">LV_Modify</a>(0, "Select")   <em>; Wählt alle aus.</em>
 LV_Modify(0, "-Select")  <em>; Wählt alle ab.</em>
 LV_Modify(0, "-Check")  <em>; Entfernt die Häkchen von allen <a href="#Checked">Checkboxen</a>.</em>
 
 <em>; Passt die Breite der Spalten an den Inhalt der Reihen an:</em>
 <a href="#LV_ModifyCol">LV_ModifyCol</a>()  <em>; Es gibt keine Parameter in diesem Modus.</em></pre>
+</div>
 
-<h3 id="ex2">Beispiel #2</h3>
-<p>Das folgende Skript ist aufwendiger als das Beispiel ganz oben. Es zeigt Dateien aus einem Ordner an, den der Benutzer aussuchen kann, und weist jeder Datei je nach Typ ein Symbol zu. Der Benutzer kann eine Datei doppelt anklicken, oder einen Rechtsklick auf eine oder mehrere Dateien machen, um das Kontextmenü anzuzeigen:</p>
-<pre class="NoIndent"><em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder dessen Größe beliebig anzupassen:</em>
+<div class="ex" id="ExAdvanced">
+<p><a href="#ExAdvanced">#2</a>: Das folgende Skript ist aufwendiger als das Beispiel ganz oben. Es zeigt Dateien aus einem Ordner an, den der Benutzer aussuchen kann, und weist jeder Datei je nach Typ ein Symbol zu. Der Benutzer kann eine Datei doppelt anklicken, oder einen Rechtsklick auf eine oder mehrere Dateien machen, um das Kontextmenü anzuzeigen:</p>
+<pre><em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder dessen Größe beliebig anzupassen:</em>
 Gui +Resize
 
 <em>; Erstellt einige Schaltflächen:</em>
@@ -393,9 +395,9 @@ if not Ordner  <em>; Der Benutzer hat das Dialogfenster abgebrochen.</em>
 
 <em>; Überprüft, ob das letzte Zeichen im Ordnernamen ein umgekehrter Schrägstrich ist, das bei Root-Verzeichnissen
 ; wie C:\ vorkommt. Ist dies der Fall, muss es entfernt werden, um später einen doppelten Schrägstrich zu verhindern.</em>
-StringRight, LetztesZeichen, Ordner, 1
+LetztesZeichen := SubStr(Ordner, 0)
 if (LetztesZeichen = "\")
-    StringTrimRight, Ordner, Ordner, 1  <em>; Entfernt den Schrägstrich am Ende.</em>
+    Ordner := SubStr(Ordner, 1, -1)  <em>; Entfernt den Schrägstrich am Ende.</em>
 
 <em>; Berechnet die notwendige Puffergröße für die SHFILEINFO-Struktur.</em>
 sfi_größe := A_PtrSize + 8 + (A_IsUnicode ? 680 : 340)
@@ -421,7 +423,7 @@ Loop %Ordner%\*.*
         EndungsID := 0  <em>; Initialisieren, um Endungen zu behandeln, die kürzer sind als andere.</em>
         Loop 7     <em>; Limitiert die Endung auf 7 Zeichen, so dass sie in einem 64-Bit-Wert passt.</em>
         {
-            StringMid, Endungszeichen, Dateiendung, A_Index, 1
+            Endungszeichen := SubStr(Dateiendung, A_Index, 1)
             if not Endungszeichen  <em>; Keine weiteren Zeichen.</em>
                 break
             <em>; Erlangt eine eindeutige ID durch Zuweisen von unterschiedlichen Bit-Positionen für jedes Zeichen:</em>
@@ -486,7 +488,7 @@ if (A_GuiEvent = "DoubleClick")  <em>; Es gibt noch viele andere Werte, die das 
 return
 
 <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a>:  <em>; Startet, wenn man einen Rechtsklick macht oder die MENÜ-Taste drückt.</em>
-if (A_GuiControl &lt;&gt; "MeineListView")  <em>; Zeigt das Menü nur an, wenn die Klicks innerhalb der ListView gemacht werden.</em>
+if (A_GuiControl != "MeineListView")  <em>; Zeigt das Menü nur an, wenn die Klicks innerhalb der ListView gemacht werden.</em>
     return
 <em>; Zeigt das Menü bei den Koordinaten A_GuiX und A_GuiY an. Diese Koordinaten
 ; sind auch dann korrekt, wenn der Benutzer die MENÜ-Taste drückt:</em>
@@ -501,7 +503,7 @@ if not FokussierteReihennummer  <em>; Keine Reihe fokussiert.</em>
     return
 LV_GetText(Dateiname, FokussierteReihennummer, 1) <em>; Ermittelt den Text des ersten Feldes.</em>
 LV_GetText(Dateiverz, FokussierteReihennummer, 2)  <em>; Ermittelt den Text des zweiten Feldes.</em>
-IfInString A_ThisMenuItem, Öffnen  <em>; Benutzer hat "Öffnen" im Kontextmenü ausgewählt.</em>
+if InStr(A_ThisMenuItem, "Öffnen")  <em>; Benutzer hat "Öffnen" im Kontextmenü ausgewählt.</em>
     Run %Dateiverz%\%Dateiname%,, UseErrorLevel
 else  <em>; Der Benutzer hat "Eigenschaften" im Kontextmenü ausgewählt.</em>
     Run Properties "%Dateiverz%\%Dateiname%",, UseErrorLevel
@@ -532,6 +534,7 @@ return
 
 GuiClose:  <em>; Beendet das Skript automatisch, wenn das Fenster geschlossen wird:</em>
 ExitApp</pre>
+</div>
 
 </body>
 </html>

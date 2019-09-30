@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>Lange Pfade | AutoHotkey</title>
+<meta name="description" content="Arrays sind entweder Datenstrukturen, die aus einer Sammlung von Werten bestehen, die jeweils durch einen Key identifiziert werden, oder eine Sammlung von sequentiell nummerierten Variablen." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+
+<body>
+<h1>Lange Pfade <span class="ver">[v1.1.31+]</span></h1>
+
+<p>Grundsätzlich sind Programme von zwei Arten von Pfadlängenlimitierungen betroffen:</p>
+<ol>
+  <li>Die vom Betriebssystem bereitgestellten Funktionen beschränken die Pfade in der Regel auf 259 Zeichen, mit einigen Ausnahmen.</li>
+  <li>Code für den Umgang mit Pfaden innerhalb des Programms kann sich auf die erste Limitierung verlassen, um den Code zu vereinfachen, was zu einer weiteren 259-Zeichen-Limitierung führt.</li>
+</ol>
+<p>Diese Limitierungen werden oft als "MAX_PATH-Limitierungen" bezeichnet; dies bezieht sich auf die Konstante <code>MAX_PATH</code>, die den Wert 260 enthält. Dies ermöglicht für den Laufwerksbuchstaben, gefolgt von einem Doppelpunkt und einem Schrägstrich (<code>C:\</code>), eine einzelne Datei oder einen Verzeichnisnamen mit maximaler Länge (255 Zeichen), und einen Null-Terminator.</p>
+<p>AutoHotkey <span class="ver">[v1.1.31+]</span> (außer ANSI-Versionen) beseitigt in den meisten Fällen die zweite Art von Limitierung, damit das Skript die erste Art von Limitierung umgehen kann. Es gibt zwei Wege, um das zu erreichen:</p>
+<ul>
+  <li>Lange Pfade können für AutoHotkey und alle anderen Programme, die mit langen Pfaden umgehen können, in Windows 10 aktiviert werden. Weitere Informationen finden Sie in der <a href="https://docs.microsoft.com/de-de/windows/win32/fileio/naming-a-file#enable-long-paths-in-windows-10-version-1607-and-later">Microsoft-Dokumentation</a>. Kurz gesagt, dadurch können die meisten Befehle und Funktionen nachvollziehbar mit langen Pfaden agieren, allerdings nur in Windows 10 Version 1607 oder höher.</li>
+  <li>In vielen Fällen kann das übliche Limit überschritten werden, wenn der Pfad mit <code>\\?\</code> beginnt. Allerdings gibt es einige Systemfunktionen, die dieses Präfix (oder generell lange Pfade) nicht unterstützen. Weitere Informationen finden Sie unter <a href="#limitations">Bekannte Einschränkungen</a>.</li>
+</ul>
+
+<h2 id="prefix">Langer-Pfad-Präfix</h2>
+<p>Sofern von der internen Systemfunktion unterstützt, erhöht das Präfix <code>\\?\</code> -- zum Beispiel in <code>\\?\C:\Mein Ordner</code> -- das Limit auf 32767 Zeichen. Allerdings wird dabei die <a href="https://blogs.msdn.microsoft.com/jeremykuhne/2016/04/21/path-normalization/">Pfadnormalisierung</a> übersprungen. Einige Elemente des Pfades, die normalerweise durch eine Normalisierung entfernt oder geändert würden, werden stattdessen Teil des eigentlichen Pfades der Datei. Dabei ist Vorsicht geboten, denn dies kann Erstellung von Pfaden ermöglichen, auf die "normale" Programme nicht zugreifen können.</p>
+<p>Genauer gesagt macht die Normalisierung Folgendes:</p>
+<ul>
+  <li>Sie löst relative Pfade wie <code>verz\datei.erw</code>, <code>\datei.erw</code> und <code>C:datei.erw</code> (man beachte den fehlenden Schrägstrich) auf.</li>
+  <li>Sie löst relative Komponenten wie <code>\..</code> und <code>\.</code> auf.</li>
+  <li>Sie kanonisiert (standardisiert) Komponenten-/Verzeichnistrennzeichen, also ersetzt <code>/</code> mit <code>\</code> und eliminiert redundante Trennzeichen.</li>
+  <li>Entfernt bestimmte Zeichen am Anfang und Ende, z. B. ein einzelner Punkt am Ende einer Komponente (<code>verz.\datei</code>) oder nachfolgende Leerzeichen und Punkte (<code>verz\dateiname . .</code>).</li>
+</ul>
+<p>Um ein Pfad explizit zu normalisieren, können Sie ihn an <a href="https://docs.microsoft.com/de-de/windows/win32/api/fileapi/nf-fileapi-getfullpathnamew">GetFullPathName</a> über die unten definierte Funktion übergeben, bevor das Präfix angewendet wird. Zum Beispiel:</p>
+<pre>MsgBox % "\\?\" PfadNormalisieren("..\datei.erw")</pre>
+<pre filename="foo.ahk">PfadNormalisieren(Pfad) {
+    cc := DllCall("GetFullPathName", "str", Pfad, "uint", 0, "ptr", 0, "ptr", 0, "uint")
+    VarSetCapacity(buf, cc*2)
+    DllCall("GetFullPathName", "str", Pfad, "uint", cc, "str", buf, "ptr", 0)
+    return buf
+}</pre>
+<p>Ein Pfad mit dem Präfix <code>\\?\</code> kann auch mit dieser Funktion normalisiert werden. In diesem Fall wird jedoch das Arbeitsverzeichnis nie verwendet, und das Stammverzeichnis ist <code>\\?\</code> (zum Beispiel wird <code>\\?\C:\..</code> in <code>\\?\</code> aufgelöst, während <code>C:\..</code> in <code>C:\</code> aufgelöst wird).</p>
+
+<h2 id="limitations">Bekannte Einschränkungen</h2>
+<p>ANSI-Versionen von AutoHotkey unterstützen keine langen Pfade.</p>
+<p>Auch wenn der Pfad selbst nicht auf 259 Zeichen limitiert ist, kann jede Komponente (Datei- oder Verzeichnisname) das vom Dateisystem vorgegebene harte Limit (normalerweise 255 Zeichen) nicht überschreiten.</p>
+<p>Folgende AutoHotkey-Elemente unterstützen aufgrund der verwendeten Systemfunktion(en) keine langen Pfade:</p>
+<ul>
+  <li>DllCall (für <em>DllDatei</em> und <em>Funktion</em>)</li>
+  <li>FileCopyDir</li>
+  <li>FileCreateShortcut</li>
+  <li>FileGetShortcut</li>
+  <li>FileMoveDir, es sei denn, die R-Option wird verwendet</li>
+  <li>FileRecycle</li>
+  <li>FileRemoveDir, es sei denn, <em>Recurse</em> ist False</li>
+  <li>SoundPlay (hierbei liegt das Limit bei 127 Zeichen)</li>
+  <li>Drive Label und DriveGet (außer Type)</li>
+  <li>Interne Variablen, die spezielle Ordnerpfade zurückgeben (für die lange Pfade ohnehin nicht möglich sind): A_AppData, A_Desktop, A_MyDocuments, ProgramFiles, A_ProgramFiles, A_Programs, A_StartMenu, A_Startup und Common-Varianten, A_Temp und A_WinDir</li>
+</ul>
+<p>SetWorkingDir und A_WorkingDir unterstützen nur lange Pfade, wenn die entsprechende Einstellung in Windows 10 aktiviert ist, da das Präfix <code>\\?\</code> nicht verwendet werden kann. Wenn das Arbeitsverzeichnis MAX_PATH überschreitet, können Programme mit Run nicht mehr gestartet werden. Diese Limitierungen sind vom Betriebssystem vorgegeben.</p>
+<p>Es ist scheinbar nicht möglich, eine EXE-Datei auszuführen, deren vollständiger Pfad MAX_PATH überschreitet. In diesem Fall ist es nicht möglich, Änderungen vollständig zu testen, die auf die Unterstützung längerer Pfade von EXE-Dateien abzielen. Daher wurden das MAX_PATH-Limit für folgende Dinge beibehalten:</p>
+<ul>
+  <li>ahk_exe</li>
+  <li>Der Pfad des Standardskripts, der auf dem Pfad der aktuellen EXE-Datei basiert.</li>
+  <li>Der Abruf des AutoHotkey-Installationsverzeichnisses, das von A_AhkPath in kompilierten Skripten verwendet wird und zum Starten von Window Spy oder der Hilfedatei verwendet werden kann.</li>
+  <li>WinGet ProcessPath.</li>
+  <li>WinGet ProcessName (was theoretisch kein Problem ist, da es nur auf den Namensteil angewendet wird, und NTFS nur Namen mit bis zu 255 Zeichen unterstützt).</li>
+</ul>
+<p>Lange #Include-Pfade, die in Fehlermeldungen angezeigt werden, können willkürlich gekürzt werden.</p>
+
+</body>
+</html>

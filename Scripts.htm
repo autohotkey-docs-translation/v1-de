@@ -35,7 +35,7 @@
 <h2 id="auto">Der oberste Bereich des Skripts (automatischer Ausführungsbereich)</h2>
 <p>Das Skript startet, sofern es erfolgreich geladen wurde, bei der ersten Zeile und endet, wenn es entweder ein <a href="commands/Return.htm">Return</a>, <a href="commands/Exit.htm">Exit</a>, <a href="Hotkeys.htm">Hotkey-/Hotstring-Label</a> oder das physische Ende des Skripts erreicht hat (je nachdem was zuerst kommt). Dieser oberste Bereich des Skripts wird auch als <em>automatischer Ausführungsbereich</em> bezeichnet.</p>
 <p class="warning"><strong>Hinweis:</strong> Während das <em>erste</em> Hotkey/Hotstring-Label im Skript die gleiche Wirkung wie <a href="commands/Return.htm">Return</a> hat, haben andere Hotkeys und Label dies nicht.</p>
-<p>Ein Skript, das weder <a href="commands/_Persistent.htm">persistent</a> noch <a href="Hotkeys.htm">Hotkeys</a>, <a href="Hotstrings.htm">Hotstrings</a>, <a href="commands/OnMessage.htm">OnMessage</a> und <a href="commands/Gui.htm">GUI</a> enthält, wird beendet, sobald es den automatischen Ausführungsbereich durchgeführt hat. Ansonsten läuft das Skript im Leerlauf weiter, wo es nur noch auf Ereignisse wie Hotkeys, Hotstrings, <a href="commands/Gui.htm#label">GUI-Ereignisse</a>, <a href="commands/Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="commands/SetTimer.htm">Timer</a> reagieren kann.</p>
+<p>Ein Skript, das weder <a href="commands/_Persistent.htm">persistent</a> noch <a href="Hotkeys.htm">Hotkeys</a>, <a href="Hotstrings.htm">Hotstrings</a>, <a href="commands/OnMessage.htm">OnMessage()</a> und <a href="commands/Gui.htm">GUI</a> enthält, wird beendet, sobald es den automatischen Ausführungsbereich durchgeführt hat. Ansonsten läuft das Skript im Leerlauf weiter, wo es nur noch auf Ereignisse wie Hotkeys, Hotstrings, <a href="commands/Gui.htm#label">GUI-Ereignisse</a>, <a href="commands/Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="commands/SetTimer.htm">Timer</a> reagieren kann.</p>
 <p>Jeder neu gestartete <a href="misc/Threads.htm">Thread</a> via <a href="Hotkeys.htm">Hotkey</a>, <a href="Hotstrings.htm">Hotstring</a>, <a href="commands/Menu.htm">Menüpunkt</a>, <a href="commands/Gui.htm#label">GUI-Ereignis</a> oder <a href="commands/SetTimer.htm">Timer</a> verwendet zu Beginn die Standardwerte von folgenden Einstellungen, die im automatischen Ausführungsbereich festgelegt werden können. Wenn diese nicht festgelegt sind, werden die vordefinierten Standardwerte verwendet (welche das sind, finden Sie auf den folgenden Seiten): <a href="commands/DetectHiddenWindows.htm">DetectHiddenWindows</a>, <a href="commands/DetectHiddenText.htm">DetectHiddenText</a>, <a href="commands/SetTitleMatchMode.htm">SetTitleMatchMode</a>, <a href="commands/SetBatchLines.htm">SetBatchLines</a>, <a href="commands/SendMode.htm">SendMode</a>, <a href="commands/SetKeyDelay.htm">SetKeyDelay</a>, <a href="commands/SetMouseDelay.htm">SetMouseDelay</a>, <a href="commands/SetWinDelay.htm">SetWinDelay</a>, <a href="commands/SetControlDelay.htm">SetControlDelay</a>, <a href="commands/SetDefaultMouseSpeed.htm">SetDefaultMouseSpeed</a>, <a href="commands/CoordMode.htm">CoordMode</a>, <a href="commands/SetStoreCapslockMode.htm">SetStoreCapsLockMode</a>, <a href="commands/AutoTrim.htm">AutoTrim</a>, <a href="commands/SetFormat.htm">SetFormat</a>, <a href="commands/StringCaseSense.htm">StringCaseSense</a>, <a href="commands/Thread.htm">Thread</a>, und <a href="commands/Critical.htm">Critical</a>.</p>
 <p>Falls der automatische Ausführungsbereich zu lange dauert (oder nie das Ende erreicht), werden die Standardwerte der oben genannten Einstellungen automatisch nach 100 Millisekunden wirksam. Wenn der automatische Ausführungsbereich schließlich das Ende erreicht hat (wenn überhaupt), werden die Standardwerte mit den benutzerdefinierten Standardwerten aus dem automatischen Ausführungsbereich überschrieben. In der Regel ist es am besten, die Standardwerte von <a href="Hotkeys.htm">Hotkeys</a>, <a href="Hotstrings.htm">Hotstrings</a>, <a href="commands/SetTimer.htm">Timern</a> oder <a href="commands/Menu.htm">benutzerdefinierten Menüpunkten</a> im oberen Bereich des Skripts zu ändern. Beachten Sie außerdem, dass jedem <a href="misc/Threads.htm">Thread</a> eine eigene Sammlung von den oben genannten Einstellungen zugewiesen ist. Das heißt, dass Einstellungen, die in einem <a href="misc/Threads.htm">Thread</a> geändert werden, die Einstellungen von anderen Threads nicht beeinflussen können.</p>
 
@@ -43,7 +43,7 @@
 <p>Lange Zeilen können in mehreren kurzen Zeilen aufgeteilt werden, um sie besser lesbar und verwaltbar zu machen. Die Ausführungsgeschwindigkeit des Skripts wird dabei nicht reduziert, weil solche Zeilen bereits beim Starten des Skripts im Speicher zusammengeführt werden.</p>
 <p id="continuation-line"><strong>Methode #1</strong>: Eine Zeile, die mit "and", "or", ||, &amp;&amp;, einem Komma oder einem <a href="Variables.htm#concat">Punkt</a> beginnt, wird automatisch mit der oberen Zeile zusammengeführt (in v1.0.46+ gilt das auch für alle anderen <a href="Variables.htm#Operators">Ausdrucksoperatoren</a>, außer ++ und --). Im folgenden Beispiel wird die zweite Zeile an die erste Zeile angefügt, weil sie mit einem Komma beginnt:</p>
 <pre>FileAppend, Das ist der Text, der angefügt wird.`n   <em>; Kommentar hier möglich.</em>
-    <strong>,</strong> %A_ProgramFiles%\BeliebigeAnwendung\Log-Datei.txt  <em>; Kommentar.</em></pre>
+    , %A_ProgramFiles%\BeliebigeAnwendung\Log-Datei.txt  <em>; Kommentar.</em></pre>
 <p>Die Zeilen im nächsten Beispiel werden zu einer einzelnen Zeile zusammengeführt, weil die letzten beiden Zeilen mit "and" oder "or" beginnen:</p>
 <pre>if (Farbe = "Rot" or Farbe = "Grün" or Farbe = "Blau"   <em>; Kommentar.</em>
     <strong>or</strong> Farbe = "Schwarz" or Farbe = "Grau" or Farbe = "Weiß")   <em>; Kommentar.</em>
@@ -136,7 +136,7 @@ Verwendung:
 <h3 id="mpress">Komprimieren von kompilierten Skripten</h3>
 <p>Ahk2Exe kann optional MPRESS (ein Freeware-Programm von MATCODE Software) verwenden, um kompilierte Skripte zu komprimieren. MPRESS wird automatisch benutzt, wenn <strong>mpress.exe</strong> im AutoHotkey-Unterordner "Compiler" vorhanden ist. Diese Automatik kann mit <code>/mpress 0</code> oder GUI-Einstellung deaktiviert werden. </p>
 <p>Offizielle Website (war im März 2016 offline): <a href="http://www.matcode.com/mpress.htm">http://www.matcode.com/mpress.htm</a></p>
-<p>Mirror (Downloads und Information): <a href="https://autohotkey.com/mpress/">https://autohotkey.com/mpress/</a></p>
+<p>Mirror (Downloads und Information): <a href="https://www.autohotkey.com/mpress/">https://www.autohotkey.com/mpress/</a></p>
 <p><strong>Hinweis:</strong> Eine auf diese Weise komprimierte EXE-Datei unterbindet eine einfache Einsicht in den Quellcode des Skripts mithilfe eines Texteditors wie z. B. Notepad oder PE-Resource-Editor. Allerdings kann es nicht verhindern, dass der Quellcode mit Tools extrahiert werden kann, die speziell dafür entwickelt worden sind.</p>
 
 <h2 id="cmd">Befehlszeilenparameter an einem Skript übergeben</h2>
@@ -233,7 +233,7 @@ Verwendung:
 {
     EingabePfad := %A_Index%  <em>; Ruft den Inhalt der Variable ab, deren Name in A_Index enthalten ist.</em>
     Loop %EingabePfad%, 1
-        LangerPfad = %A_LoopFileLongPath%
+        LangerPfad := A_LoopFileLongPath
     MsgBox Der lange Pfadname mit korrekter Groß-/Kleinschreibung der Datei`n%EingabePfad%`nist:`n%LangerPfad%
 }</pre>
 
@@ -249,10 +249,10 @@ Verwendung:
 <p><a href="commands/RegWrite.htm">RegWrite</a> kann verwendet werden, um die Standardcodierung für Skripte festzulegen, die vom Explorer aus gestartet werden (z. B. per Doppelklick einer Datei):</p>
 <pre><em>; Heben Sie die Kommentierung der entsprechenden Zeile auf oder lassen Sie sie alle kommentiert,
 ;   um den Standard des aktuellen Builds wiederherzustellen.  Je nach Bedarf anpassen:
-; Zeichensatz = 0        ; Standard-ANSI-Zeichensatz des Systems
-; Zeichensatz = 65001    ; UTF-8
-; Zeichensatz = 1200     ; UTF-16
-; Zeichensatz = 1252     ; ANSI-Latin-1; Westeuropäisch (Windows)</em>
+; Zeichensatz := 0     ; Standard-ANSI-Zeichensatz des Systems
+; Zeichensatz := 65001 ; UTF-8
+; Zeichensatz := 1200  ; UTF-16
+; Zeichensatz := 1252  ; ANSI-Latin-1; Westeuropäisch (Windows)</em>
 if (Zeichensatz != "")
     Zeichensatz := " /CP" . Zeichensatz
 Befehl="%A_AhkPath%"%Zeichensatz% "`%1" `%*
@@ -286,9 +286,9 @@ Pause</pre>
 <pre class="no-highlight">AutoHotkey /Debug "MeinSkript.ahk"
 AutoHotkey /Debug=localhost:9000 "MeinSkript.ahk"</pre>
 <p id="debug_attach"><span class="ver">[AHK_L 59+]:</span> Um den Debugger nachträglich mit einem Skript zu verbinden, sendet man ihm wie folgt eine Meldung:</p>
-<pre>Skriptpfad = <em>; SETZEN SIE HIER DEN VOLLSTÄNDIGEN PFAD DES SKRIPTS EIN</em>
+<pre>Skriptpfad := "" <em>; SETZEN SIE HIER DEN VOLLSTÄNDIGEN PFAD DES SKRIPTS EIN</em>
 DetectHiddenWindows On
-IfWinExist %Skriptpfad% ahk_class AutoHotkey
+if WinExist(Skriptpfad " ahk_class AutoHotkey")
     <em>; Optionale Parameter:
     ;   wParam  = IPv4-Adresse des Debugger-Clients als 32-Bit-Integer.
     ;   lParam  = Port, der vom Debugger-Client abgehört werden soll.</em>

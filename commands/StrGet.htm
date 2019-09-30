@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>StrGet() - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Die StrGet-Funktion kopiert eine Zeichenkette aus einem Speicherbereich unter Beachtung eines bestimmten Zeichensatzes." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>StrGet() <span class="ver">[AHK_L 46+]</span></h1>
+
+<p>Kopiert eine Zeichenkette aus einem Speicherbereich unter Beachtung eines bestimmten Zeichensatzes.</p>
+
+<pre class="Syntax">Zeichenkette := <span class="func">StrGet</span>(Quelle <span class="optional">, Länge</span> <span class="optional">, Codierung := <i>Keine</i></span>)</pre>
+<h2>Parameter</h2>
+<dl>
+
+  <dt>Quelle</dt>
+  <dd>
+    <p>Die Speicheradresse der Zeichenkette.</p>
+    <p>Die Zeichenkette muss nicht <a href="../Concepts.htm#null-termination">null-terminiert</a> sein, wenn der <em>Länge</em>-Parameter angegeben ist.</p>
+  </dd>
+
+  <dt>Länge</dt>
+  <dd>
+    <p>Die Länge der Zeichenkette, in <a href="../Concepts.htm#character">Zeichen</a>. Dies kann weggelassen werden, wenn die Zeichenkette <a href="../Concepts.htm#null-termination">null-terminiert</a> ist.</p>
+    <p class="warning"><strong>Hinweis:</strong> Das Weglassen von <em>Länge</em> bei einer nicht-null-terminierten Zeichenkette kann eine Zugriffsverletzung verursachen, woraufhin das Programm beendet wird, oder andere unerwünschte Nebenwirkungen haben. Die Angabe einer falschen Länge kann zu unerwartetem Verhalten führen.</p>
+    <p class="warning"><strong>Hinweis:</strong> Eingebettete Nullzeichen werden nicht unterstützt und führen in der Regel zu einer Verkürzung der Zeichenkette.</p>
+  </dd>
+
+  <dt>Codierung</dt>
+  <dd>
+    <p>Die Quellcodierung; zum Beispiel: <code>"UTF-8"</code>, <code>"UTF-16"</code> oder <code>"CP936"</code>. Bei numerischen Identifikatoren kann das Präfix "CP" nur weggelassen werden, wenn <em>Länge</em> angegeben ist. Geben Sie eine leere Zeichenkette oder <code>"CP0"</code> an, um den Standard-ANSI-Zeichensatz des Systems zu nutzen.</p>
+  </dd>
+
+</dl>
+
+<h2>Rückgabewert</h2>
+<p>Diese Funktion gibt die kopierte oder konvertierte Zeichenkette zurück. Wenn die Quellcodierung korrekt angegeben wurde, verwendet der Rückgabewert immer die <a href="../Concepts.htm#string-encoding">native Codierung</a>. Die Zeichenkette ist immer <a href="../Concepts.htm#null-termination">null-terminiert</a>, aber der Null-Terminator wird nicht zur <a href="StringLen.htm">Länge</a> des Rückgabewertes hinzugezählt.</p>
+
+<h2>Fehlerbehandlung</h2>
+<p>Es wird eine leere Zeichenkette zurückgegeben, wenn ungültige Parameter erkannt werden oder die Konvertierung nicht durchgeführt werden kann.</p>
+
+<h2>Bemerkungen</h2>
+<p>Beachten Sie, dass der Rückgabewert immer in der <a href="../Concepts.htm#string-encoding">nativen Codierung</a> von der aktuell verwendeten Version von AutoHotkey ist, wohingegen <i>Codierung</i> angibt, wie die gelesene Zeichenkette aus der angegebenen <i>Quelle</i> interpretiert werden soll. Wenn keine <em>Codierung</em> angegeben ist, wird die Zeichenkette einfach kopiert, ohne dass eine Konvertierung stattfindet.</p>
+<p class="note">StrGet wird im Prinzip verwendet, um Text aus einem Speicherbereich abzurufen, oder ihn in ein Format zu konvertieren, das das Skript verstehen kann.</p>
+<p>Wenn eine Konvertierung zwischen den Zeichensätzen notwendig ist, muss die Möglichkeit in Betracht gezogen werden, dass die Länge des Rückgabewertes von der Länge der Quellzeichenkette abweicht.</p>
+
+<h2>Siehe auch</h2>
+<p><a href="../Concepts.htm#string-encoding">Zeichenkettencodierung</a>, <a href="StrPut.htm">StrPut()</a>, <a href="../Compat.htm">Skript-Kompatibilität</a>, <a href="FileEncoding.htm">FileEncoding</a>, <a href="DllCall.htm">DllCall()</a>, <a href="VarSetCapacity.htm">VarSetCapacity()</a></p>
+
+<h2>Beispiele</h2>
+<div class="ex" id="ExNumEnc">
+<p><a href="#ExNumEnc">#1</a>: Es ist möglich, <em>Länge</em> oder <em>Codierung</em> direkt nach <em>Adresse</em> anzugeben, aber in diesem Fall darf <em>Codierung</em> nicht numerisch sein:</p>
+<pre>
+Zkette := StrGet(Adresse, "cp0")  <em>; Zeichensatz 0, unbestimmte Länge</em>
+Zkette := StrGet(Adresse, n, 0)   <em>; Maximal n Zeichen, Zeichensatz 0</em>
+Zkette := StrGet(Adresse, 0)      <em>; Maximal 0 Zeichen (immer leer)</em>
+</pre>
+</div>
+
+</body>
+</html>

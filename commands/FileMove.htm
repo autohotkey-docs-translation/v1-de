@@ -23,9 +23,12 @@
   <dd><p>Name einer Datei oder ein Platzhaltermuster wie C:\Temp\*.tmp. Wenn kein absoluter Pfad angegeben ist, wird <em>Quellmuster</em> im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p></dd>
 
   <dt>Zielmuster</dt>
-  <dd><p>Name oder Muster des Ziels. Wenn kein absoluter Pfad angegeben ist, wird das Ziel im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Das Zielverzeichnis muss bereits vorhanden sein. Die folgenden funktional identischen Beispiele zeigen, wie man eine einfache Verschiebung durchführen kann (unter Beibehaltung der vorhandenen Dateinamen), indem man nur den Ordnernamen angibt:</p>
+  <dd><p>Name oder Muster des Ziels. Wenn kein absoluter Pfad angegeben ist, wird das Ziel im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
+      <p>Wenn vorhanden, wird das erste Sternchen (<code>*</code>) im Dateinamen mit dem Quelldateinamen ohne Dateiendung ersetzt, während das erste Sternchen nach dem letzten Punkt (<code>.</code>) mit der Dateiendung der Quelldatei ersetzt wird. Wenn ein Sternchen vorhanden ist, aber die Dateiendung weggelassen wird, wird die Dateiendung der Quelldatei verwendet.</p>
+      <p>Die folgenden nahezu identischen Beispiele zeigen, wie man eine einfache Verschiebung durchführen kann (unter Beibehaltung der vorhandenen Dateinamen), indem man nur den Ordnernamen angibt:</p>
 <pre>FileMove, C:\*.txt, C:\Mein Ordner</pre>
 <pre>FileMove, C:\*.txt, C:\Mein Ordner\*.*</pre>
+      <p>Das Zielverzeichnis muss bereits vorhanden sein. Wenn <em>Mein Ordner</em> nicht existiert, verwendet das erste Beispiel oben "Mein Ordner" als Zieldateinamen, während das zweite Beispiel keine Dateien verschiebt.</p>
     </dd>
 
   <dt>Überschreiben</dt>
@@ -36,9 +39,9 @@
 
 </dl>
 
-<h2>ErrorLevel</h2>
+<h2>Fehlerbehandlung</h2>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
-<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf die Anzahl der Dateien gesetzt, die nicht verschoben werden konnten, und bei Erfolg auf 0. Wenn die Quelldatei eine einzelne nicht vorhandene Datei (ohne Platzhalter) ist, wird ErrorLevel auch auf 0 gesetzt. Um diesen Zustand zu erkennen, wendet man <a href="IfExist.htm">IfExist</a> oder <a href="FileExist.htm">FileExist()</a> auf die Quelldatei an, bevor man sie verschiebt.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf die Anzahl der Dateien gesetzt, die nicht verschoben werden konnten, und bei Erfolg auf 0. Wenn die Quelldatei eine einzelne nicht vorhandene Datei (ohne Platzhalter) ist, wird ErrorLevel auch auf 0 gesetzt. Um diesen Zustand zu erkennen, wendet man <a href="FileExist.htm">FileExist()</a> oder <a href="IfExist.htm">IfExist</a> auf die Quelldatei an, bevor man sie verschiebt.</p>
 <p>Im Gegensatz zu <a href="FileCopy.htm">FileCopy</a> wird das Verschieben einer Datei auf sich selbst immer als Erfolg angesehen, selbst wenn der Überschreibmodus nicht aktiv ist.</p>
 <p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> entweder auf Null (0) oder unmittelbar nach dem letzten Fehler auf das Ergebnis der Systemfunktion GetLastError() gesetzt. Ansonsten enthält A_LastError einen Fehlercode, der eventuell kenntlich macht, warum keine Dateien gefunden wurden.</p>
 
@@ -49,12 +52,17 @@
 <h2>Siehe auch</h2>
 <p><a href="FileCopy.htm">FileCopy</a>, <a href="FileCopyDir.htm">FileCopyDir</a>, <a href="FileMoveDir.htm">FileMoveDir</a>, <a href="FileDelete.htm">FileDelete</a></p>
 <h2>Beispiele</h2>
-<pre class="NoIndent">FileMove, C:\Meine Dokumente\Liste1.txt, D:\Backup\  <em>; Verschiebt die Datei, ohne sie umzubenennen.</em>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a></p>
+<pre>FileMove, C:\Meine Dokumente\Liste1.txt, D:\Backup\  <em>; Verschiebt die Datei, ohne sie umzubenennen.</em>
 FileMove, C:\Datei vorher.txt, C:\Datei nachher.txt  <em>; Benennt eine Datei um.</em>
 FileMove, C:\Ordner1\*.txt, D:\Neuer Ordner\*.bkp  <em>; Verschiebt und ändert die Dateiendungen.</em></pre>
-<pre class="NoIndent"><em>; Das folgende Beispiel verschiebt alle Dateien und Unterordner in einen anderen Ordner:</em>
-Fehleranzahl := VerschiebeDateienUndOrdner("C:\Mein Ordner\*.*", "D:\Zielordner für Dateien &amp; Ordner")
-if Fehleranzahl &lt;&gt; 0
+</div>
+
+<div class="ex" id="ExMoveAll">
+<p><a href="#ExMoveAll">#2</a>: Das folgende Beispiel verschiebt alle Dateien und Unterordner in einen anderen Ordner:</p>
+<pre>Fehleranzahl := VerschiebeDateienUndOrdner("C:\Mein Ordner\*.*", "D:\Zielordner für Dateien &amp; Ordner")
+if (Fehleranzahl != 0)
     MsgBox %Fehleranzahl% Dateien/Ordner konnten nicht verschoben werden.
 
 VerschiebeDateienUndOrdner(Quellmuster, Zielordner, Überschreiben = false)
@@ -62,8 +70,8 @@ VerschiebeDateienUndOrdner(Quellmuster, Zielordner, Überschreiben = false)
 ; gibt die Anzahl an Dateien/Ordnern zurück, die nicht verschoben werden konnten. Diese Funktion benötigt <span class="ver">[v1.0.38+]</span>,
 ; weil sie Modus 2 von FileMoveDir verwendet.</em>
 {
-    if Überschreiben = 1
-        Überschreiben = 2  <em>; Siehe <a href="FileMoveDir.htm">FileMoveDir</a> zum Thema Modus 1 vs 2.</em>
+    if (Überschreiben = 1)
+        Überschreiben := 2  <em>; Siehe <a href="FileMoveDir.htm">FileMoveDir</a> zum Thema Modus 1 vs 2.</em>
     <em>; Zuerst alle Dateien verschieben (aber nicht die Ordner):</em>
     FileMove, %Quellmuster%, %Zielordner%, %Überschreiben%
     Fehleranzahl := ErrorLevel
@@ -77,6 +85,7 @@ VerschiebeDateienUndOrdner(Quellmuster, Zielordner, Überschreiben = false)
     }
     return Fehleranzahl
 }</pre>
+</div>
 
 </body>
 </html>

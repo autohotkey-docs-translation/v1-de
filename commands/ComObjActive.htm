@@ -61,7 +61,7 @@ DispPtr := <a href="ComObjValue.htm">ComObjValue</a>(ComObject), ObjAddRef(DispP
   <tr>
     <td>&nbsp;0&nbsp;</td>
     <td>
-      <p>Standardverhalten. <a href="https://msdn.microsoft.com/de-de/library/ms691379.aspx">AddRef</a> wird für IUnknown- und IDispatch-Pointer automatisch aufgerufen, daher sollte der Aufrufer <a href="ObjAddRef.htm">ObjRelease</a> verwenden, um ihre Kopie des Pointers gegebenenfalls freizugeben.</p>
+      <p>Standardverhalten. <a href="https://msdn.microsoft.com/de-de/library/ms691379.aspx">AddRef()</a> wird für IUnknown- und IDispatch-Pointer automatisch aufgerufen, daher sollte der Aufrufer <a href="ObjAddRef.htm">ObjRelease()</a> verwenden, um ihre Kopie des Pointers gegebenenfalls freizugeben.</p>
       <p>Da das Standardverhalten in einer zukünftigen Version eventuell geändert wird, ist es ratsam, <em>Flags</em> immer auf <code>1</code> zu setzen, wenn ein Interface-Pointer gewrappt wird, und <a href="ObjAddRef.htm">ObjAddRef()</a> aufzurufen, falls nötig.</p>
     </td>
   </tr>
@@ -83,16 +83,18 @@ MsgBox % vref[]</pre>
 
 <h2 id="Remarks">Allgemeine Bemerkungen</h2>
 <p>In den aktuellen Versionen wird jeder Funktionsaufruf, der mit "ComObj" beginnt, aber keine der internen COM-Funktionen ist, automatisch ComObjActive aufrufen. Zum Beispiel sind <code>ComObjEnwrap(DispPtr)</code> und <code>ComObjActive(DispPtr)</code> beide äquivalent zu <code>ComObject(DispPtr)</code> (standardmäßig mit <em>VarTyp</em> 9). Allerdings wird dieses Verhalten in einer zukünftigen Version nicht mehr verfügbar sein, so dass es am besten ist, nur <code>ComObject()</code> und <code>ComObjActive()</code> zu verwenden, wie auf dieser Seite gezeigt.</p>
-<p>Wenn ComObjActive ein aktives Objekt nicht abrufen kann, wird die Funktion je nach aktueller <a href="ComObjError.htm">ComObjError</a>-Einstellung und <a href="ComObjError.htm#factors">anderen Faktoren</a> eventuell eine Ausnahme auslösen, das Skript beenden oder eine leere Zeichenkette zurückgeben.</p>
+<p>Wenn ComObjActive ein aktives Objekt nicht abrufen kann, wird die Funktion je nach aktueller <a href="ComObjError.htm">ComObjError()</a>-Einstellung und <a href="ComObjError.htm#factors">anderen Faktoren</a> eventuell eine Ausnahme auslösen, das Skript beenden oder eine leere Zeichenkette zurückgeben.</p>
 <p>Wenn diese Funktion genutzt wird, um einen IDispatch- oder IUnknown-Interface-Pointer zu wrappen oder abzurufen, wird standardmäßig die Referenzanzahl des COM-Objekts um 1 erhöht. Daher muss der Interface-Pointer, wenn er nicht länger benötigt wird, <a href="ObjAddRef.htm">manuell freigegeben werden</a>. Wenn das Wrapper-Objekt frei wird, wird die darin enthaltene Referenz automatisch freigegeben.</p>
 <p><b>Bekannte Einschränkung:</b> Jedes Mal, wenn ein COM-Objekt gewrappt wird, wird ein neues Wrapper-Objekt erstellt. Bei Vergleichen und Zuweisungen wie <code>if (obj1 == obj2)</code> und <code>array[obj1] := Wert</code> werden beide Wrapper-Objekte nicht als identisch angesehen, obwohl sie das gleiche COM-Objekt enthalten.</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjConnect.htm">ComObjConnect</a>, <a href="ComObjError.htm">ComObjError</a>, <a href="ComObjFlags.htm">ComObjFlags</a>, <a href="ObjAddRef.htm">ObjAddRef/ObjRelease</a>, <a href="ComObjQuery.htm">ComObjQuery</a>, <a href="https://msdn.microsoft.com/de-de/library/ms221467.aspx">GetActiveObject (MSDN)</a></p>
+<p><a href="ComObjCreate.htm">ComObjCreate()</a>, <a href="ComObjGet.htm">ComObjGet()</a>, <a href="ComObjConnect.htm">ComObjConnect()</a>, <a href="ComObjError.htm">ComObjError()</a>, <a href="ComObjFlags.htm">ComObjFlags()</a>, <a href="ObjAddRef.htm">ObjAddRef() / ObjRelease()</a>, <a href="ComObjQuery.htm">ComObjQuery()</a>, <a href="https://msdn.microsoft.com/de-de/library/ms221467.aspx">GetActiveObject (MSDN)</a></p>
 
 <h2>Beispiele</h2>
-<p>ComObjUnwrap: Siehe <a href="ComObjConnect.htm#Examples">ComObjConnect</a>.</p>
-<pre class="NoIndent" id="ByRefEx">
+<p>ComObjUnwrap: Siehe <a href="ComObjConnect.htm#Examples">ComObjConnect()</a>.</p>
+<div class="ex" id="ByRefEx">
+<p><a href="#ByRefEx">#1</a></p>
+<pre>
 <em>; Einleitung - ScriptControl benötigt eine 32-Bit-Version von AutoHotkey.</em>
 code =
 (
@@ -142,6 +144,7 @@ ComVarDel(cv) { <em>; Wird aufgerufen, wenn das Objekt freigegeben wird.
     DllCall("oleaut32\SafeArrayUnaccessData", "ptr", ComObjValue(cv._))
 }
 </pre>
+</div>
 
 </body>
 </html>

@@ -51,7 +51,7 @@
 <p><strong>AutoHotkey 32-bit:</strong> Alle eingehenden Parameter sind vorzeichenlose 32-Bit-Integer. Kleinere Typen werden auf 32 Bit erweitert, während größere Typen in mehreren 32-Bit-Parametern aufgeteilt werden.</p>
 <p>Wenn ein eingehender Parameter als vorzeichenfähiger Integer vorgesehen ist, können negative Zahlen mit einem der folgenden Beispiele offenbart werden:</p>
 <pre><em>; Methode #1</em>
-if wParam &gt; 0x7FFFFFFF
+if (wParam &gt; 0x7FFFFFFF)
     wParam := -(~wParam) - 1
 
 <em>; Methode #2: Beruht auf der Tatsache, dass AutoHotkey von sich aus vorzeichenfähige 64-Bit-Integer verwendet.</em>
@@ -66,7 +66,7 @@ wParam := wParam &lt;&lt; 32 &gt;&gt; 32</pre>
     UIntParam &amp;= 0xFFFFFFFF
     <em>;...</em>
 }</pre>
-<p>Wenn ein eingehender Parameter als Zeichenkette vorgesehen ist, dann ist das, was aktuell empfangen wird, die aktuelle Adresse der Zeichenkette. Mit <a href="StrPutGet.htm">StrGet</a> kann die Zeichenkette selbst abgerufen werden:</p>
+<p>Wenn ein eingehender Parameter als Zeichenkette vorgesehen ist, dann ist das, was aktuell empfangen wird, die aktuelle Adresse der Zeichenkette. Mit <a href="StrGet.htm">StrGet()</a> kann die Zeichenkette selbst abgerufen werden:</p>
 <pre>MeineZeichenkette := StrGet(MeinParameter)  <em>; Benötigt <span class="ver">[AHK_L 46+]</span></em></pre>
 <p>Wenn ein eingehender Parameter die Adresse einer Struktur ist, kann man die einzelnen Elemente durch Befolgen der Schritte in "<a href="DllCall.htm#struct">DllCall-Strukturen</a>" extrahieren.</p>
 
@@ -90,7 +90,7 @@ DieFunk(params*) {
 <h2 id="Threads">Fast vs. Slow</h2>
 <p>Der Standard/Slow-Modus bewirkt, dass die Funktion zu Beginn die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> verwendet. Diese Standardwerte können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
 <p>Der <a href="#Fast">Fast-Modus</a> erbt hingegen die globalen Einstellungen von einem <a href="../misc/Threads.htm">Thread</a>, der zum Zeitpunkt des Funktionsaufrufs aktiv war. Desweiteren werden jegliche Änderungen, die die Funktion bei globalen Einstellungen gemacht hat (einschließlich <a href="../misc/ErrorLevel.htm">ErrorLevel</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>), auch für den <a href="../misc/Threads.htm">aktuellen Thread</a> wirksam. Demzufolge sollte der Fast-Modus nur verwendet werden, wenn bekannt ist, in welchen Threads die Funktion aufgerufen wird.</p>
-<p>Um zu verhindern, dass ein Callback sich selbst unterbricht (oder von einem anderen Thread unterbrochen wird), fügt man <a href="Critical.htm">Critical</a> in die erste Zeile ein. Allerdings ist dies nicht effektiv, wenn die Funktion indirekt via eingehende Meldung kleiner als 0x312 aufgerufen wird (das Erhöhen von Critical's <a href="Critical.htm#Interval">Intervall</a> könnte helfen). Desweiteren kann <a href="Critical.htm">Critical</a> die Funktion nicht daran zu hindern, etwas zu tun, das zum indirekten Selbstaufruf führen könnte, wie z. B. durch <a href="PostMessage.htm">SendMessage</a> oder <a href="DllCall.htm">DllCall</a>.</p>
+<p>Um zu verhindern, dass ein Callback sich selbst unterbricht (oder von einem anderen Thread unterbrochen wird), fügt man <a href="Critical.htm">Critical</a> in die erste Zeile ein. Allerdings ist dies nicht effektiv, wenn die Funktion indirekt via eingehende Meldung kleiner als 0x312 aufgerufen wird (das Erhöhen von Critical's <a href="Critical.htm#Interval">Intervall</a> könnte helfen). Desweiteren kann <a href="Critical.htm">Critical</a> die Funktion nicht daran zu hindern, etwas zu tun, das zum indirekten Selbstaufruf führen könnte, wie z. B. durch <a href="PostMessage.htm">SendMessage</a> oder <a href="DllCall.htm">DllCall()</a>.</p>
 
 <h2>Speicher</h2>
 <p>Jede Verwendung von RegisterCallback() bekommt eine kleine Speichermenge zugewiesen (32 Bytes plus System-Overhead). Da das Betriebssystem diesen Speicher automatisch beim Beenden des Skripts freigibt, muss jedes Skript, das eine kleine <em>feste</em> Anzahl an Callbacks zugewiesen bekommt, den Speicher nicht explizit freigegeben. Dagegen sollte ein Skript, das RegisterCallback() unendlich oft aufruft, folgende Funktion bei jedem unbenutzten Callback aufrufen:</p>
@@ -100,9 +100,9 @@ DieFunk(params*) {
 <p><a href="DllCall.htm">DllCall()</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="Sort.htm#callback">Sort's Callback</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a></p>
 
 <h2>Beispiele</h2>
-<pre class="NoIndent"><em>; Beispiel: Das folgende Skript zeigt eine Zusammenfassung aller nicht-untergeordneten Fenster an.</em>
-
-<em>; Aus Performance- und Speichergründen wird RegisterCallback() nur einmal für einen bestimmten Callback aufgerufen:</em>
+<div class="ex" id="ExWinList">
+<p><a href="#ExWinList">#1</a>: Das folgende Skript zeigt eine Zusammenfassung aller nicht-untergeordneten Fenster an.</p>
+<pre><em>; Aus Performance- und Speichergründen wird RegisterCallback() nur einmal für einen bestimmten Callback aufgerufen:</em>
 if not EnumAdresse  <em>; Fast-Modus ist okay, weil er nur von diesem Thread aufgerufen wird:</em>
     EnumAdresse := <strong>RegisterCallback</strong>("EnumWindowsProc", "Fast")
 
@@ -121,11 +121,11 @@ EnumWindowsProc(hwnd, lParam)
         Ausgabe .= "HWND: " . hwnd . "`tTitel: " . Titel . "`tKlasse: " . Klasse . "`n"
     return true  <em>; Setzt EnumWindows() fort, bis alle Fenster abgearbeitet wurden.</em>
 }</pre>
-<pre class="NoIndent"><em>; Beispiel: Das folgende Skript zeigt, wie ein GUI-Fenster zu einer Unterklasse gemacht werden kann,
-; wenn man sein WindowProc an einen neuen WindowProc weiterleitet. In diesem Fall wird die Hintergrundfarbe
-; des Text-Steuerelements auf eine benutzerdefinierte Farbe gesetzt.</em>
+</div>
 
-Texthintergrundfarbe := 0xFFBBBB  <em>; Eine benutzerdefinierte Farbe im BGR-Format.</em>
+<div class="ex" id="ExSubclassGUI">
+<p><a href="#ExSubclassGUI">#2</a>: Das folgende Skript zeigt, wie ein GUI-Fenster zu einer Unterklasse gemacht werden kann, wenn man dessen WindowProc an einen neuen WindowProc weiterleitet. In diesem Fall wird die Hintergrundfarbe des Text-Steuerelements auf eine benutzerdefinierte Farbe gesetzt.</p>
+<pre>Texthintergrundfarbe := 0xFFBBBB  <em>; Eine benutzerdefinierte Farbe im BGR-Format.</em>
 Pinsel := DllCall("CreateSolidBrush", "UInt", Texthintergrundfarbe)
 
 Gui, Add, Text, HwndMeinTextHwnd, Hier ein Text mit einer`nbenutzerdefinierter Hintergrundfarbe.
@@ -158,6 +158,7 @@ WindowProc(hwnd, uMsg, wParam, lParam)
 
 GuiClose:
 ExitApp</pre>
+</div>
 
 </body>
 </html>

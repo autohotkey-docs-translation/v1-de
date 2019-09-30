@@ -15,7 +15,7 @@
 
 <p>Wartet, bis die Statusleiste eines Fensters eine bestimmte Zeichenkette enthält.</p>
 
-<pre class="Syntax"><span class="func">StatusBarWait</span> <span class="optional">, Leistentext, Sekunden, Bereichsnummer, Fenstertitel, Fenstertext, Intervall, Titelausnahme, Textausnahme</span></pre>
+<pre class="Syntax"><span class="func">StatusBarWait</span> <span class="optional">, Leistentext, Zeitlimit, Bereichsnummer, Fenstertitel, Fenstertext, Intervall, Titelausnahme, Textausnahme</span></pre>
 <h2>Parameter</h2>
 <dl>
 
@@ -23,8 +23,8 @@
   <dd><p>Der Text oder Teiltext, auf den der Befehl warten soll. Wenn dieser Parameter leer ist, wartet StatusBarWait, bis die Statusleiste leer ist. Der Text ist Groß-/Kleinschreibung-sensitiv. Das Übereinstimmungsverhalten wird per <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> bestimmt, ähnlich wie bei <em>Fenstertitel</em> unten.</p>
     <p>Um stattdessen zu warten, bis sich der Text des Balkens <em>ändert</em>, nutzt man entweder <a href="StatusBarGetText.htm">StatusBarGetText</a> in einer Schleife oder das RegEx-Beispiel weiter unten.</p></dd>
 
-  <dt>Sekunden</dt>
-  <dd><p>Die Dauer in Sekunden (kann ein Dezimalpunkt enthalten oder ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein), wie lange StatusBarWait warten soll. Wenn die Zeit abgelaufen ist, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt. Wenn dieser Parameter weggelassen wird oder leer ist, wird StatusBarWait unendlich lang warten. Die Angabe von 0 ist das gleiche wie, als würde man 0.5 angeben.</p></dd>
+  <dt>Zeitlimit</dt>
+  <dd><p>Die Dauer in Sekunden (kann ein Dezimalpunkt enthalten oder ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein), wie lange StatusBarWait warten soll. Wenn die Zeit abgelaufen ist, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt. Wenn dieser Parameter weggelassen wird oder leer ist, wird der Befehl unendlich lang warten. Die Angabe von 0 ist das gleiche wie, als würde man 0.5 angeben.</p></dd>
 
   <dt>Bereichsnummer</dt>
   <dd><p>Die Nummer des Leistenbereichs, dessen Text abgerufen werden soll (kann auch ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein). Wenn dieser Parameter leer ist, wird standardmäßig 1 verwendet (der erste Bereich enthält üblicherweise den interessanten Text).</p></dd>
@@ -46,7 +46,7 @@
 
 </dl>
 
-<h2>ErrorLevel</h2>
+<h2>Fehlerbehandlung</h2>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, eine Ausnahme auszulösen, wenn er nicht auf die Statusleiste zugreifen konnte. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn der Befehl das Zeitlimit überschritten hat, bevor eine Übereinstimmung in der Statusleiste gefunden werden konnte. Es wird auf 2 gesetzt, wenn StatusBarWait nicht auf die Statusleiste zugreifen kann. Es wird auf 0 gesetzt, wenn eine Übereinstimmung gefunden wird.</p>
 <h2>Bemerkungen</h2>
@@ -58,9 +58,10 @@
 
 <h2>Siehe auch</h2>
 <p><a href="StatusBarGetText.htm">StatusBarGetText</a>, <a href="WinGetTitle.htm">WinGetTitle</a>, <a href="WinGetText.htm">WinGetText</a>, <a href="ControlGetText.htm">ControlGetText</a></p>
-<h2>Beispiel</h2>
-<pre class="NoIndent"><em>; Das folgende Beispiel schreibt ein neues Suchmuster in ein vorhandenes Explorer-/Suchfenster.</em>
-IfWinExist, Suchergebnisse <em>; Bestimmt das zuletzt gefundene Fenster, um das untere zu vereinfachen.</em>
+<h2>Beispiele</h2>
+<div class="ex" id="ExSearch">
+<p><a href="#ExSearch">#1</a>: Das folgende Beispiel schreibt ein neues Suchmuster in ein vorhandenes Explorer-/Suchfenster.</p>
+<pre>if WinExist("Suchergebnisse") <em>; Bestimmt das zuletzt gefundene Fenster, um das untere zu vereinfachen.</em>
 {
     WinActivate
     Send, {tab 2}!o*.txt{enter}  <em>; Schreibt das Muster in das Suchfenster.</em>
@@ -71,13 +72,17 @@ IfWinExist, Suchergebnisse <em>; Bestimmt das zuletzt gefundene Fenster, um das 
     else
         MsgBox, Die Suche wurde erfolgreich durchgeführt.
 }</pre>
-<pre class="NoIndent"><em>; Das folgende Beispiel wartet auf eine <strong>Änderung</strong> der Statusleiste im aktiven Fenster. Dieses Beispiel benötigt <span class="ver">[v1.0.46.06+]</span>.</em>
-SetTitleMatchMode RegEx  <em>; Akzeptiert <a href="SetTitleMatchMode.htm#RegEx">Reguläre Ausdrücke</a> für den nachfolgenden Gebrauch.</em>
-IfWinExist A  <em>; Setzt das zuletzt gefundene Fenster auf das aktive Fenster.</em>
+</div>
+
+<div class="ex" id="ExChange">
+<p><a href="#ExChange">#2</a>: Das folgende Beispiel wartet auf eine <strong>Änderung</strong> der Statusleiste im aktiven Fenster. Dieses Beispiel benötigt <span class="ver">[v1.0.46.06+]</span>.</p>
+<pre>SetTitleMatchMode RegEx  <em>; Akzeptiert <a href="SetTitleMatchMode.htm#RegEx">Reguläre Ausdrücke</a> für den nachfolgenden Gebrauch.</em>
+if WinExist("A")  <em>; Setzt das zuletzt gefundene Fenster auf das aktive Fenster.</em>
 {
     StatusBarGetText, <span class="red">Originaltext</span>
     StatusBarWait, ^(?!^\Q<span class="red">%Originaltext%</span>\E$)  <em>; Dieser reguläre Ausdruck wartet auf eine Änderung des Textes.</em>
 }</pre>
+</div>
 
 </body>
 </html>

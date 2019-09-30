@@ -33,7 +33,7 @@
 
   <dt>Steuerelement</dt>
   <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, wird die Meldung direkt an das Zielfenster gesendet, anstatt an eines der darin enthaltenen Steuerelemente. Ansonsten kann dieser Parameter entweder die ClassNN-Bezeichnung (Klassenname und Instanznummer des Steuerelements) oder der Text des Steuerelements sein, die beide mit dem internen Tool Window Spy ermittelt werden können. Verwendet man Text, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>.</p>
-    <p>Um ein Steuerelement via HWND-Nummer (eindeutige ID) anzusteuern, muss der <em>Steuerelement</em>-Parameter leer gelassen und <code>ahk_id %SteuerelementHwnd%</code> als <em>Fenstertitel</em>-Parameter übergeben werden (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist). Die HWND-Nummer eines Steuerelements kann üblicherweise via <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen werden.</p>
+    <p>Um ein Steuerelement via HWND-Nummer (eindeutige ID) anzusteuern, muss der <em>Steuerelement</em>-Parameter leer gelassen und <code>ahk_id %SteuerelementHwnd%</code> als <em>Fenstertitel</em>-Parameter übergeben werden (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist). Die HWND-Nummer eines Steuerelements kann üblicherweise via <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall()</a> abgerufen werden.</p>
     </dd>
 
   <dt>Fenstertitel</dt>
@@ -80,45 +80,59 @@ SendMessage, 0xC, 0, <strong>"Neuer Editor-Titel"</strong>  <em>; 0XC ist WM_SET
 <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
 
 <h2>Siehe auch</h2>
-<p><a href="../misc/SendMessageList.htm">Meldungsliste</a>, <a href="../misc/SendMessage.htm">Tutorial zum Senden von Meldungen</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="../misc/Winamp.htm">Winamp automatisieren</a>, <a href="DllCall.htm">DllCall</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="WinMenuSelectItem.htm">WinMenuSelectItem</a></p>
+<p><a href="../misc/SendMessageList.htm">Meldungsliste</a>, <a href="../misc/SendMessage.htm">Tutorial zum Senden von Meldungen</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="../misc/Winamp.htm">Winamp automatisieren</a>, <a href="DllCall.htm">DllCall()</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="WinMenuSelectItem.htm">WinMenuSelectItem</a></p>
 <h2 id="Examples">Beispiele</h2>
-<pre class="NoIndent">#o::  <em>; WIN+O-Hotkey zum Ausschalten des Bildschirms.</em>
+<div class="ex" id="ExMonitorPower">
+<p><a href="#ExMonitorPower">#1</a>: Drücken Sie <kbd>Win</kbd>+<kbd>O</kbd>, um den Bildschirm auszuschalten.</p>
+<pre>#o::
 Sleep 1000  <em>; Gibt dem Benutzer die Chance, die Tasten loszulassen (falls das Loslassen der Tasten den Bildschirm wieder aufwecken sollte).
 ; Schaltet den Bildschirm aus:</em>
 SendMessage, 0x112, 0xF170, 2,, Program Manager  <em>; 0x112 ist WM_SYSCOMMAND, 0xF170 ist SC_MONITORPOWER.
 ; Die 2 oben kann mit -1 ersetzt werden, um den Bildschirm einzuschalten,
 ; oder mit 1, um den Energiesparmodus des Bildschirms zu aktivieren.</em>
-return
+return</pre>
+</div>
 
-<em>; Startet den vom Benutzer festgelegten Bildschirmschoner:</em>
-SendMessage, 0x112, 0xF140, 0,, Program Manager  <em>; 0x112 ist WM_SYSCOMMAND und 0xF140 ist SC_SCREENSAVE.</em>
+<div class="ex" id="ExScreenSave">
+<p><a href="#ExScreenSave">#2</a>: Startet den vom Benutzer festgelegten Bildschirmschoner:</p>
+<pre>SendMessage, 0x112, 0xF140, 0,, Program Manager  <em>; 0x112 ist WM_SYSCOMMAND und 0xF140 ist SC_SCREENSAVE.</em></pre>
+</div>
 
-<em>; Eine Zeile nach oben scrollen (bei einem Steuerelement mit vertikalem Scrollbalken):</em>
-ControlGetFocus, Steuerelement, A
-SendMessage, 0x115, 0, 0, %Steuerelement%, A
+<div class="ex" id="ExVScrollUp">
+<p><a href="#ExVScrollUp">#3</a>: Eine Zeile nach oben scrollen (bei einem Steuerelement mit vertikalem Scrollbalken):</p>
+<pre>ControlGetFocus, Steuerelement, A
+SendMessage, 0x115, 0, 0, %Steuerelement%, A</pre>
+</div>
 
-<em>; Eine Zeile nach unten scrollen:</em>
-ControlGetFocus, Steuerelement, A
-SendMessage, 0x115, 1, 0, %Steuerelement%, A
+<div class="ex" id="ExVScrollDown">
+<p><a href="#ExVScrollDown">#4</a>: Eine Zeile nach unten scrollen:</p>
+<pre>ControlGetFocus, Steuerelement, A
+SendMessage, 0x115, 1, 0, %Steuerelement%, A</pre>
+</div>
 
-<em>; Schaltet die Tastaturbelegung/Sprache des aktiven Fensters auf Englisch:</em>
-PostMessage, 0x50, 0, 0x4090409,, A  <em>; 0x50 ist WM_INPUTLANGCHANGEREQUEST.</em>
+<div class="ex" id="ExSwitchKeybLang">
+<p><a href="#ExSwitchKeybLang">#5</a>: Schaltet die Tastaturbelegung/Sprache des aktiven Fensters auf Englisch:</p>
+<pre>PostMessage, 0x50, 0, 0x4090409,, A  <em>; 0x50 ist WM_INPUTLANGCHANGEREQUEST.</em></pre>
+</div>
 
-<em>; Dieses Beispiel fragt Winamp, welche Track-Nummer zurzeit aktiv ist:</em>
-SetTitleMatchMode, 2
+<div class="ex" id="ExWinamp">
+<p><a href="#ExWinamp">#6</a>: Dieses Beispiel fragt Winamp, welche Track-Nummer zurzeit aktiv ist (weitere Informationen finden Sie unter <a href="../misc/Winamp.htm">Winamp automatisieren</a>):</p>
+<pre>SetTitleMatchMode, 2
 SendMessage, 1024, 0, 120,, - Winamp
-if ErrorLevel &lt;&gt; FAIL
+if (ErrorLevel != "FAIL")
 {
     ErrorLevel++  <em>; Die Zählung von Winamp beginnt bei "0", also um 1 erhöhen.</em>
     MsgBox, Track #%ErrorLevel% ist aktiv oder wird abgespielt.
-}
-<em>; Siehe <a href="../misc/Winamp.htm">Winamp automatisieren</a> für mehr Informationen.</em>
+}</pre>
+</div>
 
-<em>; Um die Prozess-ID eines AHK-Skripts zu finden (eine Alternative zu "<a href="WinGet.htm">WinGet PID</a>"):</em>
-SetTitleMatchMode, 2
+<div class="ex" id="ExPID">
+<p><a href="#ExPID">#7</a>: Um die Prozess-ID eines AHK-Skripts zu finden (eine Alternative zu <a href="WinGet.htm">WinGet PID</a>):</p>
+<pre>SetTitleMatchMode, 2
 DetectHiddenWindows, On
 SendMessage, 0x44, 0x405, 0, , BeliebigesSkript.ahk - AutoHotkey v
 MsgBox %ErrorLevel% ist die Prozess-ID.</pre>
+</div>
 
 </body>
 </html>

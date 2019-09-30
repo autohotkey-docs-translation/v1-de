@@ -40,7 +40,7 @@
       <p><strong>RootVerz</strong>: Das Root- bzw. Startverzeichnis. Wenn kein absoluter Pfad angegeben ist, wird das Verzeichnis als Unterordner des <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnisses vermutet. Wenn das Startverzeichnis weggelassen wird oder leer ist, entscheidet standardmäßig das Betriebssystem, welches Startverzeichnis angezeigt werden soll (es ist wahrscheinlich das Verzeichnis, das der Benutzer zuletzt via FileSelectFile ausgewählt hat). <span class="ver">[v1.0.43.10+]</span>: In Windows XP/2003 und höher kann auch ein <a href="../misc/CLSID-List.htm">CLSID</a>-Wert wie <code>::{20d04fe0-3aea-1069-a2d8-08002b30309d}</code> (Arbeitsplatz/Computer) angegeben werden - in diesem Fall sollte jedes Unterverzeichnis nach dem CLSID-Wert mit einem umgekehrten Schrägstrich enden (ansonsten wird der Text nach dem letzten umgekehrten Schrägstrich als Dateiname interpretiert).</p>
       <p><strong>Dateiname</strong>: Ein Dateiname, der standardmäßig im Eingabefeld des Dialogfensters angezeigt werden soll. Es wird nur der Dateiname angezeigt (ohne Pfad). Für die korrekte Darstellung des Dialogfensters muss sichergestellt werden, dass keine illegalen Zeichen vorhanden sind (wie /&lt;|:").</p>
       <p>Beispiele:</p>
-      <pre>C:\Meine Bilder\Standard-Bildname.gif  <em>; Sowohl <i>RootVerz</i> als auch <i>Dateiname</i> vorhanden.</em>
+      <pre class="no-highlight">C:\Meine Bilder\Standard-Bildname.gif  <em>; Sowohl <i>RootVerz</i> als auch <i>Dateiname</i> vorhanden.</em>
 C:\Meine Bilder  <em>; Nur <i>RootVerz</i> vorhanden.</em>
 Meine Bilder  <em>; Nur <i>RootVerz</i> vorhanden, und es ist relativ zum aktuellen Arbeitsverzeichnis.</em>
 Meine Datei  <em>; Nur <i>Dateiname</i> vorhanden (aber wenn "Meine Datei" als Ordner existiert, wird es als <i>RootVerz</i> vermutet).</em></pre></dd>
@@ -57,7 +57,7 @@ Meine Datei  <em>; Nur <i>Dateiname</i> vorhanden (aber wenn "Meine Datei" als O
 
 </dl>
 
-<h2>ErrorLevel</h2>
+<h2>Fehlerbehandlung</h2>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn der Benutzer das Dialogfenster geschlossen hat, ohne eine Datei ausgewählt zu haben (z. B. durch Drücken der Schaltfläche "Abbrechen"), oder wenn das Betriebssystem sich weigert, das Dialogfenster anzuzeigen (selten). Ansonsten wird es auf 0 gesetzt.</p>
 <h2>Bemerkungen</h2>
@@ -66,7 +66,7 @@ Meine Datei  <em>; Nur <i>Dateiname</i> vorhanden (aber wenn "Meine Datei" als O
 <p>Wenn der Benutzer nichts ausgewählt hat (zum Beispiel weil er auf ABBRECHEN gedrückt hat), wird <em>AusgabeVar</em> leer gemacht.</p>
 <p>Wenn die Mehrfachauswahl nicht aktiv ist, wird <em>AusgabeVar</em> auf einen Wert gesetzt, der den vollständigen Pfad und Namen der vom Benutzer ausgewählten Datei repräsentiert.</p>
 <p>Wenn die M-Option (Mehrfachauswahl) aktiv ist, wird <em>AusgabeVar</em> auf eine Liste von Elementen gesetzt, die alle, außer das letzte, mit einem Zeilenumbruchszeichen (`n) enden. Das erste Element in der Liste ist der Pfad, den alle ausgewählten Dateien enthalten (dieser Pfad wird nur mit einem umgekehrten Schrägstrich enden, wenn es sich um ein Hauptverzeichnis wie C:\ handelt). Die anderen Elemente sind die ausgewählten Dateien (ohne Pfad). Zum Beispiel:</p>
-<pre>C:\Meine Dokumente\Neuer Ordner [dieser Pfad gilt für alle folgenden Dateien]
+<pre class="no-highlight">C:\Meine Dokumente\Neuer Ordner [dieser Pfad gilt für alle folgenden Dateien]
 test1.txt [das sind die reinen Dateinamen: keine Pfadangabe]
 test2.txt
 ... etc.</pre>
@@ -82,26 +82,31 @@ Thread, NoTimers, false</pre>
 <p><a href="FileSelectFolder.htm">FileSelectFolder</a>, <a href="MsgBox.htm">MsgBox</a>, <a href="InputBox.htm">InputBox</a>, <a href="ToolTip.htm">ToolTip</a>, <a href="Gui.htm">GUI</a>, <a href="../misc/CLSID-List.htm">CLSID-Liste</a>, <a href="LoopParse.htm">Parsende Schleife</a>, <a href="SplitPath.htm">SplitPath</a></p>
 <p>Das Betriebssystem bietet zudem Standard-Dialogfenster an, die der Benutzer zum Auswählen einer Farbe, einer Schriftart oder eines Symbols verwenden kann. Solche Dialogfenster können via <a href="DllCall.htm">DllCall()</a> angezeigt werden, wie auf <a href="https://github.com/majkinetor/mm-autohotkey/tree/master/Dlg">GitHub</a> gezeigt.</p>
 <h2>Beispiele</h2>
-<pre class="NoIndent">FileSelectFile, AusgewählteDatei, 3, , Datei öffnen, Text-Dokumente (*.txt; *.doc)
-if AusgewählteDatei =
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a></p>
+<pre>FileSelectFile, AusgewählteDatei, 3, , Datei öffnen, Text-Dokumente (*.txt; *.doc)
+if (AusgewählteDatei = "")
     MsgBox, Der Benutzer hat nichts ausgewählt.
 else
-    MsgBox, Der Benutzer hat folgendes ausgewählt:`n%AusgewählteDatei%
+    MsgBox, Der Benutzer hat folgendes ausgewählt:`n%AusgewählteDatei%</pre>
+</div>
 
+<div class="ex" id="ExCLSID">
+<p><a href="#ExCLSID">#2</a>: <a href="../misc/CLSID-List.htm">CLSID</a>-Beispiel (benötigt XP/2003 oder höher).</p>
+<pre>FileSelectFile, AusgabeVar,, ::{645ff040-5081-101b-9f08-00aa002f954e}  <em>; Papierkorb.</em></pre>
+</div>
 
-<em>; <a href="../misc/CLSID-List.htm">CLSID</a>-Beispiel (benötigt XP/2003 oder höher):</em>
-FileSelectFile, AusgabeVar,, ::{645ff040-5081-101b-9f08-00aa002f954e}  <em>; Papierkorb.</em>
-
-<em>; Mehrfachauswahl-Beispiel:</em>
-FileSelectFile, Dateien, M3  <em>; M3 = Mehrfachauswahl vorhandener Dateien.</em>
-if Dateien =
+<div class="ex" id="ExMulti">
+<p><a href="#ExMulti">#3</a>: Mehrfachauswahl-Beispiel.</p>
+<pre>FileSelectFile, Dateien, M3  <em>; M3 = Mehrfachauswahl vorhandener Dateien.</em>
+if (Dateien = "")
 {
     MsgBox, Der Benutzer hat Abbrechen gedrückt.
     return
 }
 Loop, parse, Dateien, `n
 {
-    if A_Index = 1
+    if (A_Index = 1)
         MsgBox, Die ausgewählten Dateien befinden sich alle in %A_LoopField%.
     else
     {
@@ -110,6 +115,7 @@ Loop, parse, Dateien, `n
     }
 }
 return</pre>
+</div>
 
 </body>
 </html>

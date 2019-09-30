@@ -17,6 +17,37 @@
 <p>Ältere Änderungen können in <a href="ChangeLogHelp.htm">Archivierte Änderungen</a> gefunden werden.</p><!--new revisions go here-->
 
 
+<h2 id="v1.1.31.00">1.1.31.00 - 28. September 2019</h2>
+<p>Hinzugefügt: <a href="commands/Switch.htm">Switch</a>.</p>
+<p>Hinzugefügt: <a href="commands/InputHook.htm">InputHook</a>.</p>
+<p>Hinzugefügt: <code>Locale</code>-Option für InputBox, um die Namen der Schaltflächen in der Sprache des aktuellen Benutzers darzustellen. [PR #143 von Ragnar-F]</p>
+<p>Geändert: Unterstützung für <a href="misc/LongPaths.htm">lange Pfade</a> verbessert.</p>
+<p>Allgemeine Hotkey-Verbesserungen:</p>
+<ul>
+  <li>Unterstützung für überlappende Hotkeys verbessert, wie z. B. <code>&lt;^a</code> und <code>^a</code> mit <code>#If</code>. Wenn alle Varianten eines Hotkeys via #If deaktiviert sind, kann ein allgemeinerer Hotkey ausgelöst werden. Mit anderen Worten verhält sich die Deaktivierung von Hotkeys via #If nun eher wie, als würde man diese ausschalten oder aus dem Skript entfernen.</li>
+  <li>Erkennung von falschen Modifikatortastenzuständen via Hook verbessert.</li>
+  <li>Die Platzhalter-Hotkey-Selektion ignoriert nun via Send durchgeführte Modifikatoränderungen.</li>
+</ul>
+<p>AltGr-Fehlerbehebungen:</p>
+<ul>
+  <li>Hotkeys wurden fälschlicherweise nach <code>Send <i>xy</i></code>, wenn <i>x</i> AltGr benötigt, ausgelöst.</li>
+  <li>Ein LCtrl wurde unnötigerweise nach <code>Send <i>x</i></code>, wenn <i>x</i> AltGr benötigt, gesendet.</li>
+  <li>AltGr-Erkennung in Unicode-32-Bit-Versionen bei einem 64-Bit-Betriebssystem behoben.</li>
+  <li>Das Senden von AltGr-Kombinationen, während RCtrl unten ist, behoben.</li>
+</ul>
+<p>Umschalt-Ziffernblock-Fehlerbehebungen:</p>
+<ul>
+  <li>Interaktion zwischen Send und Umschalt-Ziffernblock behoben, was dazu führte, dass Umschalt hängen blieb. Dies behebt sporadisch auftretende Probleme mit Hotkeys wie <code>Numpad1::Send +1</code>.</li>
+  <li>Erkennung von gefälschten Umschalt-Ereignissen, die vom systeminternen Ziffernblock-Handling erzeugt werden, optimiert.</li>
+  <li>Ein gefälschtes RShift wurde als physisch angesehen, was inkonsistent mit LShift ist.</li>
+</ul>
+<p>Behoben: Die Slider-Option <code>+TickInterval</code> funktioniert nun auch, wenn <code>Range</code> nicht gesetzt ist.</p>
+<p>Behoben: Die Slider-Option <code>+TickInterval0</code> setzt das Intervall nun auf 0 zum Deaktivieren der Teilstriche.</p>
+<p>Behoben: Menü- und GUI-Ereignisse haben in einigen Fällen Schleifen verursacht, die die CPU voll ausgelastet haben. Insbesondere wenn eine modale Meldungsschleife läuft und das Skript unterbrechungsfrei ist, wurden Menü- und GUI-Ereignismeldungen wiederholt neu gesendet. Diese werden nun verworfen, da sie nicht behandelt oder in der Warteschlange gehalten werden können. Dies ist konsistent mit Hotkeys, etc.</p>
+<p>Behoben: Kritische DllCall-Fehler werden nun immer beendet und das OnExit-Ergebnis ignoriert.</p>
+<p>Behoben: <code>ExitApp 2</code> hat Objektfreigaben in globalen/statischen Variablen umgangen.</p>
+<p>Geändert: ComObjCreate verwendet nun CLSIDFromProgID für GUID-fremde Zeichenketten. Dies behebt <code>ComObjCreate("Microsoft.Windows.ActCtx")</code> und möglicherweise auch andere, die nicht in der Registry zu finden sind, aber mit VBScript und JScript funktionieren.</p>
+
 <h2 id="v1.1.30.03">1.1.30.03 - 4. April 2019</h2>
 <p>Behoben: Debugger context_get kann #Warn UseUnset nicht mehr auslösen.</p>
 <p>Behoben: Direkte Modifikator-Hotkeys wie Shift:: funktionieren wieder (fehlerhaft seit v1.1.30.02).</p>
@@ -722,7 +753,7 @@
 <p>Behoben: GUI-Menü-Accelerator-Keys funktionierten nicht, wenn die GUI selbst (nicht ein Steuerelement) den Fokus hatte.</p>
 
 <h2 id="v1.1.09.03">1.1.09.03 - 9. Februar 2013</h2>
-<p>Behoben: <a href="http://www.autohotkey.com/board/index.php?showtopic=89624">Zwei Bugs</a>, die sich auf Zuweisungen auswirkten, deren Zielvariable eine nicht geflushte Binärzahl enthält, aber eine Kapazität von 0 hat.</p>
+<p>Behoben: <a href="https://www.autohotkey.com/board/index.php?showtopic=89624">Zwei Bugs</a>, die sich auf Zuweisungen auswirkten, deren Zielvariable eine nicht geflushte Binärzahl enthält, aber eine Kapazität von 0 hat.</p>
 <p>Behoben: GuiControl und GuiControlGet haben mit dem falschen Steuerelement agiert, wenn eine HWND-Nummer angegeben wurde, die nicht zur aktuellen GUI gehört. Stattdessen wird der Zustand als Fehler behandelt.</p>
 <p>Behoben: OnMessage-Funktionen setzen A_Gui und A_GuiControl nun korrekt, wenn die Ziel-GUI ein untergeordnetes Fenster ist.</p>
 
@@ -940,7 +971,7 @@
   <li>RegRead, RegWrite und RegDelete setzen A_LastError nun auf das Ergebnis der Systemfunktion GetLastError().</li>
   <li><a href="commands/Gui.htm#LastFoundExist">+LastFoundExist</a> wird nun als Fehler behandelt, wenn es mit anderen Optionen kombiniert wird (in diesem Fall sollte <a href="commands/Gui.htm#LastFound">+LastFound</a> verwendet werden).</li>
 </ul>
-<p>Behoben: Es wurde ein <a href="http://www.autohotkey.com/forum/topic76133.html">Bug</a> im Zusammenhang mit rekursiven variadischen Funktionen behoben.</p>
+<p>Behoben: Es wurde ein <a href="https://www.autohotkey.com/forum/topic76133.html">Bug</a> im Zusammenhang mit rekursiven variadischen Funktionen behoben.</p>
 
 <h2 id="v1.1.03.00">1.1.03.00 - 28. August 2011</h2>
 <p>Hinzugefügt: Unterstützung für GUI-Namen.</p>
@@ -1239,9 +1270,9 @@
   <li><code>File.Read()</code> liest und gibt den Rest der Datei zurück, wenn keine Parameter verwendet werden.</li>
   <li>File-Objekte geben nun "" bei unbekannten Methoden und ungültiger Syntax zurück, anstatt die numerische <i>Adresse</i> von "".</li>
 </ul>
-<p>Geändert: Der Label-Parameter von GroupAdd gilt nun für die gesamte Gruppe. <a href="http://www.autohotkey.com/forum/topic61362.html">[Diskussion]</a></p>
+<p>Geändert: Der Label-Parameter von GroupAdd gilt nun für die gesamte Gruppe. <a href="https://www.autohotkey.com/forum/topic61362.html">[Diskussion]</a></p>
 <p>Geändert: GroupActivate setzt ErrorLevel bei Erfolg/Misserfolg. (Der gleiche Thread wie oben)</p>
-<p>Geändert: <code>*/</code> am Anfang einer Zeile wird ignoriert, wenn kein <code>/*</code> vorhanden ist. <a href="http://www.autohotkey.com/forum/topic61109.html">[Diskussion]</a></p>
+<p>Geändert: <code>*/</code> am Anfang einer Zeile wird ignoriert, wenn kein <code>/*</code> vorhanden ist. <a href="https://www.autohotkey.com/forum/topic61109.html">[Diskussion]</a></p>
 <p>Entfernt: Die Unterbefehle ToCodePage und FromCodePage von Transform.</p>
 
 <h2 id="L53">Revision 53 - 8. August 2010</h2>
@@ -1290,7 +1321,7 @@
 <p>Behoben: Der Key-Parameter von ObjRemove ist nun optional, wie es bereits bei <a href="objects/Object.htm#Remove">Object._Remove</a> der Fall ist.</p>
 <p>Behoben: Dateien wurden im Gegensatz zu älteren Versionen während des Lesens nicht ordnungsgemäß gesperrt.</p>
 <p>Behoben: Die Großschreibung von hexadezimalen Formaten führte dazu, dass negative Integer vorzeichenlos wurden.</p>
-<p>Behoben: RegExMatch machte Ausgabe-Array-Elemente unbrauchbar, wenn bestimmte Bedingungen erfüllt waren. Siehe <a href="http://www.autohotkey.com/forum/topic59120.html">Bug Report</a>.</p>
+<p>Behoben: RegExMatch machte Ausgabe-Array-Elemente unbrauchbar, wenn bestimmte Bedingungen erfüllt waren. Siehe <a href="https://www.autohotkey.com/forum/topic59120.html">Bug Report</a>.</p>
 
 <h2 id="L51">Revision 51 - 11. April 2010</h2>
 <p>Geändert: &lt;EXENAME&gt;.ahk anstelle von AutoHotkey.ini oder AutoHotkey.ahk verwenden.</p>
@@ -1331,7 +1362,7 @@
 
 <h2 id="L46">Revision 46 - 11. Februar 2010</h2>
 <p>Hinzugefügt: A_FileEncoding zum Abrufen der aktuellen Standardcodierung einer Datei.</p>
-<p>Hinzugefügt: <a href="commands/StrPutGet.htm">StrPut</a> (zusätzlich wurde <a href="commands/StrPutGet.htm">StrGet</a> um einige Features erweitert).</p>
+<p>Hinzugefügt: <a href="commands/StrPut.htm">StrPut</a> (zusätzlich wurde <a href="commands/StrGet.htm">StrGet</a> um einige Features erweitert).</p>
 
 <h2 id="L45">Revision 45 - 8. Februar 2010</h2>
 <p>Hinzugefügt: _GetAddress; _SetCapacity/_GetCapacity kann nun auf ein bestimmtes Objektelement angewendet werden. <a href="objects/Object.htm">[mehr Infos]</a></p>
@@ -1367,7 +1398,7 @@
 <p>Behoben (Debugger): Fehler in der von property_set verwendeten Base64-Decodierung.</p>
 
 <h2 id="L38">Revision 38 - 17. November 2009</h2>
-<p>Hinzugefügt: <a href="commands/_MenuMaskKey.htm">#MenuMaskKey</a>-Direktive zum Ändern der Taste, mit der KeyUp-Ereignisse von WIN oder ALT maskiert werden. Weitere Hintergrundinformationen finden Sie in <a href="http://www.autohotkey.com/forum/topic22378.html">diesem Thread</a>.</p>
+<p>Hinzugefügt: <a href="commands/_MenuMaskKey.htm">#MenuMaskKey</a>-Direktive zum Ändern der Taste, mit der KeyUp-Ereignisse von WIN oder ALT maskiert werden. Weitere Hintergrundinformationen finden Sie in <a href="https://www.autohotkey.com/forum/topic22378.html">diesem Thread</a>.</p>
 <p>Geändert: Wenn <code>x[1,2]:=3</code> ein Objekt für <code>x[1]</code> erstellt, wird dessen base nicht länger automatisch auf <code>x.base</code> gesetzt. In <a href="Objects.htm#Subclassing_aoa">der Dokumentation</a> finden Sie eine Methode, wie dieses Verhalten kontrolliert werden kann.</p>  
 
 <h2 id="L37">Revision 37 - 7. November 2009</h2>

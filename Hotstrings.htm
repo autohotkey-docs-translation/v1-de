@@ -106,7 +106,7 @@ Standardmäßig bleibt das CR-Zeilenumbruchszeichen (Enter) zwischen der vorheri
 ::bzw::Dieser Ersatztext erscheint nur in einem Fenster, das nicht der Texteditor ist.</pre>
 <h2 id="AutoCorrect">AutoCorrect</h2>
 <p>Das folgende Skript zeigt, wie Hotstrings zum Korrigieren von ca. 4700 häufig vorkommenden englischen Rechtschreibfehlern benutzt werden können. Mit dem Hotkey <kbd>Win</kbd>+<kbd>H</kbd> können weitere Rechtschreibfehler hinzugefügt werden:</p>
-<p>Download: <a href="http://www.autohotkey.com/download/AutoCorrect.ahk">AutoCorrect.ahk</a> (127 KB)</p>
+<p>Download: <a href="https://www.autohotkey.com/download/AutoCorrect.ahk">AutoCorrect.ahk</a> (127 KB)</p>
 <p>Autor: <a href="http://www.biancolo.com/blog/autocorrect/">Jim Biancolo</a> und <a href="http://en.wikipedia.org/wiki/Wikipedia:Lists_of_common_misspellings">Wikipedia's Lists of Common Misspellings</a></p>
 
 <h2 id="remarks">Bemerkungen</h2>
@@ -159,7 +159,7 @@ Standardmäßig bleibt das CR-Zeilenumbruchszeichen (Enter) zwischen der vorheri
 
 <h2 id="Helper">Hotstring Helper</h2>
 <p>Andreas Borutta hat das folgende Skript für Benutzer erstellt, die Hotstrings intensiv nutzen wollen. Drücken Sie <kbd>Win</kbd>+<kbd>H</kbd> (oder einen anderen Hotkey Ihrer Wahl), um den aktuell markierten Text in einen Hotstring umzuwandeln. Wenn Sie in einem Textverarbeitungsprogramm zum Beispiel "beziehungsweise" markieren und <kbd>Win</kbd>+<kbd>H</kbd> drücken, wird das Skript Sie auffordern, eine Abkürzung für diesen Text zu bestimmen (z. B. bzw), und dann den neuen Hotstring in das Skript einfügen. Danach wird das Skript neu geladen, um den Hotstring zu aktivieren.</p>
-<p class="note"><strong>Hinweis:</strong> Mit der <a href="commands/Hotstring.htm">Hotstring</a>-Funktion können neue Hotstrings erstellt werden, ohne das Skript erneut laden zu müssen. Werfen Sie einen Blick auf das <a href="commands/Hotstring.htm#ex1">erste Beispiel</a> im Beispielabschnitt der Funktionsseite, um zu sehen, wie das aussehen könnte.</p>
+<p class="note"><strong>Hinweis:</strong> Mit der <a href="commands/Hotstring.htm">Hotstring</a>-Funktion können neue Hotstrings erstellt werden, ohne das Skript erneut laden zu müssen. Werfen Sie einen Blick auf das <a href="commands/Hotstring.htm#ExHelper">erste Beispiel</a> im Beispielabschnitt der Funktionsseite, um zu sehen, wie das aussehen könnte.</p>
 <pre class="NoIndent">#h::  <em>; Hotkey: WIN+H
 ; Ermittelt den aktuell markierten Text. Es wird die Zwischenablage statt
 ; "ControlGet Selected" benutzt, um das Skript für mehr Texteditoren
@@ -167,8 +167,8 @@ Standardmäßig bleibt das CR-Zeilenumbruchszeichen (Enter) zwischen der vorheri
 ; stellt sie später wieder her (allerdings funktioniert das nur mit
 ; reinem Text):</em>
 AutoTrim Off  <em>; Verhindert, dass Leerraumzeichen am Anfang oder Ende der Zwischenablage entfernt werden.</em>
-ClipboardAlt = %ClipboardAll%
-Clipboard =  <em>; Muss anfangs leer sein, damit die Erkennung funktioniert.</em>
+ClipboardAlt := ClipboardAll
+Clipboard := ""  <em>; Muss anfangs leer sein, damit die Erkennung funktioniert.</em>
 Send ^c
 ClipWait 1
 if ErrorLevel  <em>; ClipWait hat die Zeit überschritten.</em>
@@ -181,14 +181,14 @@ StringReplace, Hotstring, Hotstring, `r`n, ``r, All  <em>; `r funktioniert besse
 StringReplace, Hotstring, Hotstring, `n, ``r, All
 StringReplace, Hotstring, Hotstring, %A_Tab%, ``t, All
 StringReplace, Hotstring, Hotstring, `;, ```;, All
-Clipboard = %ClipboardAlt%  <em>; Stell den vorherigen Inhalt der Zwischenablage wieder her.
+Clipboard := ClipboardAlt  <em>; Stell den vorherigen Inhalt der Zwischenablage wieder her.
 ; Verschiebe den Textcursor der InputBox auf eine benutzerfreundliche Position:</em>
 SetTimer, VerschiebeTextcursor, 10
 <em>; Zeige die InputBox mit dem vordefinierten Hotstring:</em>
 InputBox, Hotstring, Neuer Hotstring, Fügen Sie Ihre Abkürzung an die Position des Textcursors ein. Bei Bedarf können Sie den Ersatztext noch ändern.`n`nBeispieleintrag: :R:bzw`::beziehungsweise,,,,,,,, :R:`::%Hotstring%
 if ErrorLevel  <em>; Der Benutzer hat Abbrechen gedrückt.</em>
     return
-IfInString, Hotstring, :R`:::
+if InStr(Hotstring, ":R`:::")
 {
     MsgBox Sie haben keine Abkürzung angegeben. Der Hotstring wurde nicht hinzugefügt.
     return

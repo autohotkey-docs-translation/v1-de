@@ -96,7 +96,7 @@ DllCall("DeleteFile", Ptr, &amp;Dateiname) <em>; Anführungszeichen bei Ptr wegl
   <td><p>Fügen Sie ein Sternchen (optional mit einem Leerzeichen davor) an einen der oben genannten Typen an, um nicht den Wert, sondern die Adresse des Arguments zu übergeben (die aufgerufene Funktion muss damit umgehen können). Der Wert von so einem Argument kann von der Funktion geändert werden; das heißt, dass, wenn eine reine Variable als Argument übergeben wurde, der Inhalt dieser Variable aktualisiert wird. Der folgende Aufruf beispielsweise übergibt den Inhalt von MeineVar an MeineFunktion via Adresse, aber aktualisiert auch den Inhalt von MeineVar, um alle Änderungen, die MeineFunktion an MeineVar durchgeführt hat, widerzuspiegeln: <code>DllCall("MeineDLL\MeineFunktion", "Int*", MeineVar)</code>.</p>
     <p>In der Regel nutzt man ein Sternchen, wenn ein Argument- oder Rückgabetyp mit "LP" beginnt. Das bekannteste Beispiel dafür ist LPDWORD (ein Pointer, der auf ein DWORD verweist). DWORD ist ein vorzeichenloser 32-Bit-Integer, demzufolge muss für LPDWORD "UInt*" oder "UIntP" verwendet werden. Zeichenkettentypen wie LPTSTR, auf Strukturen verweisende Pointer wie LPRECT, oder Arrays sollten nicht mit einem Sternchen versehen werden; für solche Typen ist <a href="#str">"Str"</a> oder "Ptr" besser geeignet, je nachdem, ob eine Variable oder Adresse übergeben wird.</p>
     <p class="note"><strong>Hinweis</strong>: "Char*" ist nicht das gleiche wie <a href="#str">"Str"</a>, weil "Char*" die Adresse einer 8-Bit-Zahl übergibt, während <a href="#str">"Str"</a> die Adresse einer Zeichenkette übergibt, die je nach AutoHotkey-Version 8-Bit (ANSI) oder 16-Bit (Unicode) groß ist. So ähnlich verhält es sich mit "UInt*": Da dieser Typ die Adresse einer 32-Bit-Zahl übergibt, ist er nicht für Funktionen geeignet, die ein Array mit Werten oder eine Struktur größer als 32 Bits erwarten.</p>
-    <p>Da Variablen in AutoHotkey keinen festen Typ haben, bezieht sich eine an die Funktion übergebene Adresse auf einen temporären Speicher, nicht auf die Variable selbst. Es ist nicht notwendig, <a href="VarSetCapacity.htm">VarSetCapacity</a> für die Variable aufzurufen, weil DllCall diese Variable nach dem Funktionsaufruf korrekt aktualisieren wird.</p>
+    <p>Da Variablen in AutoHotkey keinen festen Typ haben, bezieht sich eine an die Funktion übergebene Adresse auf einen temporären Speicher, nicht auf die Variable selbst. Es ist nicht notwendig, <a href="VarSetCapacity.htm">VarSetCapacity()</a> für die Variable aufzurufen, weil DllCall diese Variable nach dem Funktionsaufruf korrekt aktualisieren wird.</p>
     </td>
 </tr>
 <tr id="unsigned">
@@ -109,7 +109,7 @@ DllCall("DeleteFile", Ptr, &amp;Dateiname) <em>; Anführungszeichen bei Ptr wegl
 </table>
 <p class="warning"><strong>Veraltet</strong>: Die Anführungszeichen können bei den Argument- oder Rückgabetypen weggelassen werden, sofern keine Leerzeichen oder Sternchen enthalten sind. Zum Beispiel kann <code>Str</code> anstelle von <code>"Str"</code> und <code>CDecl</code> anstelle von <code>"CDecl"</code> verwendet werden. Diese Vorgehensweise ist nicht für neue Skripte empfohlen.</p>
 
-<h2 id="error">ErrorLevel</h2>
+<h2 id="error">Fehlerbehandlung</h2>
 <p><span class="ver">[v1.1.04+]</span>: Diese Funktion ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf einen der folgenden Werte gesetzt, um den Erfolg oder Misserfolg des Aufrufs zu kennzeichnen.</p>
 <p><strong>0</strong>: Erfolgreich.</p>
@@ -149,79 +149,82 @@ Loop 500
 <p>Strukturbeispiele finden Sie im <a href="#ExStruct">Beispielabschnitt</a> weiter unten.</p>
 <h2 id="limits">Bekannte Einschränkungen</h2>
 <p>Wenn eine Variable <a href="../Variables.htm#amp">via Adresse</a> (z. B. <code>&amp;MeineVar</code>) an eine Funktion übergeben und ihre Länge von dieser Funktion geändert wird, kann es passieren, dass diese Variable bei späterem Gebrauch ein fehlerhaftes Verhalten aufweist. Um dies zu verhindern, gibt es folgende Lösungsmöglichkeiten: 1) Übergeben Sie <em>MeineVar</em> nicht als Ptr/Adresse, sondern als <a href="#str">"Str"</a>-Argument; 2) <span class="ver">[v1.0.44.03+]</span>: Rufen Sie <code><a href="VarSetCapacity.htm#neg1">VarSetCapacity</a>(MeineVar, -1)</code> auf, um die intern gespeicherte Länge der Variable nach dem Aufruf von DllCall zu aktualisieren.</p>
-<p>Eine binäre Null innerhalb einer Variable führt dazu, dass alle rechts befindlichen Daten versteckt werden; das heißt, dass solche Daten von den meisten Befehlen und Funktionen weder abgerufen noch geändert werden können. Solche Daten können aber mit dem <a href="../Variables.htm#amp">Adressoperator</a>, mit den Funktionen <a href="NumPut.htm">NumPut</a> und <a href="NumGet.htm">NumGet</a> oder mit DllCall selbst manipuliert werden.</p>
+<p>Eine binäre Null innerhalb einer Variable führt dazu, dass alle rechts befindlichen Daten versteckt werden; das heißt, dass solche Daten von den meisten Befehlen und Funktionen weder abgerufen noch geändert werden können. Solche Daten können aber mit dem <a href="../Variables.htm#amp">Adressoperator</a> und <a href="NumPut.htm">NumPut()</a>/<a href="NumGet.htm">NumGet()</a> oder mit DllCall selbst manipuliert werden.</p>
 <p>Es ist möglich, dass eine Funktion, die die Adresse einer zuvor erhaltenen Zeichenkette zurückgibt, dieselbe Zeichenkette ungewollt auf einer anderen Speicheradresse zurückgibt. <code>CharLower(CharUpper(MeineVar))</code> beispielsweise würde bei einer Programmiersprache wie C++ bewirken, dass der Inhalt von <em>MeineVar</em> in Kleinbuchstaben umgewandelt wird. Nutzt man stattdessen DllCall() wie unten gezeigt, bleibt der Inhalt von <em>MeineVar</em> groß geschrieben, weil CharLower eine andere/temporäre Zeichenkette verarbeitet hat, die identisch zum Inhalt von <em>MeineVar</em> ist:</p>
-<pre>MeineVar = ABC
-Ergebnis := DllCall("CharLower", "<strong><u>str</u></strong>", DllCall("CharUpper", "Str", MeineVar, "<strong><u>Str</u></strong>"), "Str")</pre>
+<pre>MeineVar := "ABC"
+Ergebnis := DllCall("CharLower", "<strong><u>Str</u></strong>", DllCall("CharUpper", "Str", MeineVar, "<strong><u>Str</u></strong>"), "Str")</pre>
 <p>Um das zu umgehen, ersetzen Sie die zwei unterstrichenen "Str"-Werte mit Ptr. Dadurch wird gewährleistet, dass der Rückgabewert von CharUpper als reine Adresse interpretiert wird, die dann als Integer an CharLower übergeben wird.</p>
 <p>Beim Umgang mit Zeichenketten können bestimmte Einschränkungen auftreten. Weitere Informationen finden Sie unter <a href="../Compat.htm#DllCall">Skript-Kompatibilität</a>.</p>
 <h2 id="COM">Component Object Model (COM)</h2>
-<p>COM-Objekte, die für VBScript und ähnliche Sprachen zugänglich sind, können in der Regel via <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a> oder <a href="ComObjActive.htm">ComObjActive</a> in Kombination mit der internen <a href="../Objects.htm#Usage_Objects">Objektsyntax</a> angesteuert werden.</p>
+<p>COM-Objekte, die für VBScript und ähnliche Sprachen zugänglich sind, können in der Regel via <a href="ComObjCreate.htm">ComObjCreate()</a>, <a href="ComObjGet.htm">ComObjGet()</a> oder <a href="ComObjActive.htm">ComObjActive()</a> in Kombination mit der internen <a href="../Objects.htm#Usage_Objects">Objektsyntax</a> angesteuert werden.</p>
 <p>COM-Objekte, die kein <a href="https://msdn.microsoft.com/de-de/library/ms221608.aspx">IDispatch</a> unterstützen, können in Verbindung mit DllCall genutzt werden, indem die Adresse einer Funktion aus der virtuellen Funktionstabelle des Objekt-Interfaces ermittelt wird. Weitere Informationen finden Sie <a href="#ExTaskbar">im Beispiel</a> weiter unten.</p>
-<p>Der Großteil des .NET-Frameworks kann auch via COM und DllCall angesteuert werden. Weitere Informationen finden Sie unter <a href="http://www.autohotkey.com/forum/topic26191.html">.NET Framework Interop</a> (englisch).
+<p>Der Großteil des .NET-Frameworks kann auch via COM und DllCall angesteuert werden. Weitere Informationen finden Sie unter <a href="https://www.autohotkey.com/forum/topic26191.html">.NET Framework Interop</a> (englisch).
 </p>
 
 <h2>Siehe auch</h2>
-<p><a href="../Compat.htm#DllCall">Skript-Kompatibilität</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="Run.htm">Run</a>, <a href="VarSetCapacity.htm">VarSetCapacity</a>, <a href="../Functions.htm">Funktionen</a>, <a href="SysGet.htm">SysGet</a>, <a href="https://msdn.microsoft.com/de-de/library/">MSDN-Bibliothek</a></p>
+<p><a href="../Compat.htm#DllCall">Skript-Kompatibilität</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="Run.htm">Run</a>, <a href="VarSetCapacity.htm">VarSetCapacity()</a>, <a href="../Functions.htm">Funktionen</a>, <a href="SysGet.htm">SysGet</a>, <a href="https://msdn.microsoft.com/de-de/library/">MSDN-Bibliothek</a></p>
 <h2>Beispiele</h2>
-<pre class="NoIndent"><em>; Beispiel: Ruft die Windows-API-Funktion "MessageBox" auf und meldet, welche Schaltfläche der Benutzer drückt.</em>
-
-WelcheSchaltfl := DllCall("MessageBox", "Int", "0", "Str", "Ja oder Nein drücken", "Str", "Titel der Box", "Int", 4)
+<div class="ex" id="ExMessageBox">
+<p><a href="#ExMessageBox">#1</a>: Ruft die Windows-API-Funktion "MessageBox" auf und meldet, welche Schaltfläche der Benutzer drückt.</p>
+<pre>WelcheSchaltfl := DllCall("MessageBox", "Int", "0", "Str", "Ja oder Nein drücken", "Str", "Titel der Box", "Int", 4)
 MsgBox Sie haben die Schaltfläche #%WelcheSchaltfl% gedrückt.</pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: Ersetzt das Desktop-Hintergrundbild mit der angegebenen Bitmap-Datei (.bmp).</em>
+<div class="ex" id="ExWallpaper">
+<p><a href="#ExWallpaper">#2</a>: Ersetzt das Desktop-Hintergrundbild mit der angegebenen Bitmap-Datei (.bmp).</p>
+<pre>DllCall("SystemParametersInfo", "UInt", 0x14, "UInt", 0, "Str", A_WinDir <strong>.</strong> "\winnt.bmp", "UInt", 2)</pre>
+</div>
 
-DllCall("SystemParametersInfo", "UInt", 0x14, "UInt", 0, "Str", A_WinDir <strong>.</strong> "\winnt.bmp", "UInt", 2)</pre>
-
-<pre class="NoIndent"><em>; Beispiel: Ruft die API-Funktion "IsWindowVisible" auf, um herauszufinden, ob ein Fenster des Texteditors sichtbar ist.</em>
-
-DetectHiddenWindows On
+<div class="ex" id="ExIsWindowVisible">
+<p><a href="#ExIsWindowVisible">#3</a>: Ruft die API-Funktion "IsWindowVisible" auf, um herauszufinden, ob ein Fenster des Texteditors sichtbar ist.</p>
+<pre>DetectHiddenWindows On
 if not DllCall("IsWindowVisible", "Ptr", WinExist("Unbenannt - Editor"))  <em>; WinExist() gibt eine HWND-Nummer zurück.</em>
     MsgBox Das Fenster ist nicht sichtbar.</pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: Ruft die API-Funktion wsprintf() auf, um die Zahl 432 mit führenden Nullen aufzufüllen, bis sie eine Breite von 10 Zeichen hat (0000000432).</em>
-
-VarSetCapacity(AufgefüllteZahl, 20)  <em>; Stellt sicher, dass die Variable groß genug für die neue Zeichenkette ist.</em>
+<div class="ex" id="ExWsprintf">
+<p><a href="#ExWsprintf">#4</a>: Ruft die API-Funktion wsprintf() auf, um die Zahl 432 mit führenden Nullen aufzufüllen, bis sie eine Breite von 10 Zeichen hat (0000000432).</p>
+<pre>VarSetCapacity(AufgefüllteZahl, 20)  <em>; Stellt sicher, dass die Variable groß genug für die neue Zeichenkette ist.</em>
 DllCall("wsprintf", "Str", AufgefüllteZahl, "Str", "%010d", "Int", 432, "Cdecl")  <em>; Benötigt die Cdecl-Aufrufkonvention.</em>
 MsgBox %AufgefüllteZahl%
 
 <em>; <span class="ver">[v1.1.17+]</span>: Das gleiche kann via <a href="Format.htm">Format</a>-Funktion in Verbindung mit dem Null-Flag erreicht werden:</em>
 MsgBox % Format("{:010}", 432)
 </pre>
+</div>
 
-<pre class="NoIndent" id="QPC"><em>; Beispiel: Zeigt, wie man mit QueryPerformanceCounter() eine höhere Präzision als die 10 ms von <a href="../Variables.htm#TickCount">A_TickCount</a> erreichen kann.</em>
-
-DllCall("QueryPerformanceFrequency", "Int64*", freq)
+<div class="ex" id="QPC">
+<p><a href="#QPC">#5</a>: Zeigt, wie man mit QueryPerformanceCounter() eine höhere Präzision als die 10 ms von <a href="../Variables.htm#TickCount">A_TickCount</a> erreichen kann.</p>
+<pre>DllCall("QueryPerformanceFrequency", "Int64*", freq)
 DllCall("QueryPerformanceCounter", "Int64*", CounterDavor)
 Sleep 1000
 DllCall("QueryPerformanceCounter", "Int64*", CounterDanach)
 MsgBox % "Die Differenz zwischen den Zeiten beträgt " . (CounterDanach - CounterDavor) / freq * 1000 " ms"</pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: Ein Hotkey, der vorübergehend die Geschwindigkeit des Mauszeigers verringert, um eine genauere Positionierung zu ermöglichen.
-; Halten Sie die F1-Taste gedrückt, um den Mauszeiger zu verlangsamen. Lassen Sie sie los, um die originale Geschwindigkeit wiederherzustellen.</em>
-
-F1::
-SPI_GETMOUSESPEED = 0x70
-SPI_SETMOUSESPEED = 0x71
+<div class="ex" id="ExMouseSpeed">
+<p><a href="#ExMouseSpeed">#6</a>: Ein Hotkey, der vorübergehend die Geschwindigkeit des Mauszeigers verringert, um eine genauere Positionierung zu ermöglichen. Halten Sie <kbd>F1</kbd> gedrückt, um den Mauszeiger zu verlangsamen. Lassen Sie diese Taste wieder los, um die originale Geschwindigkeit wiederherzustellen.</p>
+<pre>F1::
+SPI_GETMOUSESPEED := 0x70
+SPI_SETMOUSESPEED := 0x71
 <em>; Ermittelt die aktuelle Geschwindigkeit, um sie später wiederherzustellen:</em>
-<strong>DllCall</strong>("SystemParametersInfo", "UInt", SPI_GETMOUSESPEED, "UInt", 0, "UIntP", OrigMausGeschw, "UInt", 0)
+DllCall("SystemParametersInfo", "UInt", SPI_GETMOUSESPEED, "UInt", 0, "UIntP", OrigMausGeschw, "UInt", 0)
 <em>; Verringert nun die Geschwindigkeit des Mauszeigers im vorletzten Parameter (im Bereich von 1 bis 20, 10 ist Standard):</em>
-<strong>DllCall</strong>("SystemParametersInfo", "UInt", SPI_SETMOUSESPEED, "UInt", 0, "Ptr", <strong>3</strong>, "UInt", 0)
+DllCall("SystemParametersInfo", "UInt", SPI_SETMOUSESPEED, "UInt", 0, "Ptr", <strong>3</strong>, "UInt", 0)
 KeyWait F1  <em>; Verhindert, dass das Auto-Wiederholungs-Feature der Tastatur DllCall wiederholt aufruft.</em>
 return
 
-F1 up::<strong>DllCall</strong>("SystemParametersInfo", "UInt", 0x71, "UInt", 0, "Ptr", OrigMausGeschw, "UInt", 0)  <em>; Stellt die ursprüngliche Geschwindigkeit wieder her.</em></pre>
+F1 up::DllCall("SystemParametersInfo", "UInt", 0x71, "UInt", 0, "Ptr", OrigMausGeschw, "UInt", 0)  <em>; Stellt die ursprüngliche Geschwindigkeit wieder her.</em></pre>
+</div>
 
-<pre class="NoIndent" id="GetChildHWND"><em>; Beispiel: Wenn Sie die eindeutige ID des Fensters und den Text oder die ClassNN-Bezeichnung eines der darin enthaltenen Steuerelemente übergeben,
-; gibt die folgende Funktion die HWND-Nummer (eindeutige ID) dieses Steuerelements zurück.
-; <span class="ver">[v1.0.43.06+]</span>: Diese Funktion wurde von <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a> abgelöst, das wesentlich präziser ist.</em>
+<div class="ex" id="GetChildHWND">
+<p><a href="#GetChildHWND">#7</a>: Wenn Sie die eindeutige ID des Fensters und den Text oder die ClassNN-Bezeichnung eines der darin enthaltenen Steuerelemente übergeben, gibt die folgende Funktion die HWND-Nummer (eindeutige ID) dieses Steuerelements zurück. <span class="ver">[v1.0.43.06+]</span>: Diese Funktion wurde von <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a> abgelöst, das wesentlich präziser ist.</p>
+<pre>ControlGet, AusgabeVar, Hwnd,, ClassNN, Fenstertitel</pre>
+</div>
 
-ControlGet, AusgabeVar, Hwnd,, ClassNN, Fenstertitel</pre>
-
-<pre class="NoIndent"><em>; Beispiel: Überwacht das aktive Fenster und zeigt die Position der vertikalen Scrollleiste
-; in seinem fokussierten Steuerelement an (in Echzeit). Erfordert <span class="ver">[v1.0.43.06+]</span>, weil es <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a> verwendet.</em>
-
-#Persistent
+<div class="ex" id="ExWatchScrollBar">
+<p><a href="#ExWatchScrollBar">#8</a>: Überwacht das aktive Fenster und zeigt die Position der vertikalen Scrollleiste seines fokussierten Steuerelements an (in Echzeit). Dieses Beispiel benötigt <span class="ver">[v1.0.43.06+]</span>, weil es <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a> verwendet.</p>
+<pre>#Persistent
 SetTimer, BeobachteScrollleiste, 100
 return
 
@@ -234,34 +237,33 @@ if not FokussiertesSteuerelement  <em>; Kein fokussiertes Steuerelement.</em>
     return
 <em>; Zeigt die vertikale oder horizontale Position der Scrollleiste in einem ToolTip an:</em>
 ControlGet, UnterelementHWND, Hwnd,, %FokussiertesSteuerelement%, ahk_id %AktivesFenster%
-ToolTip % <strong>DllCall</strong>("GetScrollPos", "Ptr", UnterelementHWND, "Int", 1)  <em>;  Letzter Parameter kann 1 für SB_VERT und 0 für SB_HORZ sein.</em>
+ToolTip % DllCall("GetScrollPos", "Ptr", UnterelementHWND, "Int", 1)  <em>;  Letzter Parameter kann 1 für SB_VERT und 0 für SB_HORZ sein.</em>
 return</pre>
+</div>
 
-<pre class="NoIndent" id="file"><em>; Beispiel: Dieses Skript schreibt etwas Text in eine Datei und liest ihn wieder in den Speicher (benötigt v1.0.34+).
-; Diese Methode kann genutzt werden, um die Performance beim gleichzeitigen Lesen oder Schreiben mehrerer Dateien zu verbessern.
-; <span class="ver">[AHK_L 42+]</span>:Das gleiche kann mit <a href="FileOpen.htm">FileOpen</a> erreicht werden. Siehe dazu das <a href="FileOpen.htm#writeread">Beispiel</a>.</em>
-
-FileSelectFile, Dateiname, S16,, Neue Datei erstellen:
-if Dateiname =
+<div class="ex" id="file">
+<p><a href="#file">#9</a>: Dieses Skript schreibt etwas Text in eine Datei und liest ihn zurück in den Speicher (benötigt <span class="ver">[v1.0.34+]</span>). Diese Methode kann genutzt werden, um die Performance beim gleichzeitigen Lesen oder Schreiben mehrerer Dateien zu verbessern. <span class="ver">[AHK_L 42+]</span>: Das gleiche kann mit <a href="FileOpen.htm">FileOpen()</a> erreicht werden. Siehe dazu das <a href="FileOpen.htm#writeread">Beispiel</a>.</p>
+<pre>FileSelectFile, Dateiname, S16,, Neue Datei erstellen:
+if (Dateiname = "")
     return
-GENERIC_WRITE = 0x40000000  <em>; Öffnet eine Datei zum Schreiben.</em>
-CREATE_ALWAYS = 2  <em>; Erstellt eine neue Datei (überschreibt eine vorhandene Datei).</em>
-hFile := <strong>DllCall</strong>("CreateFile", "Str", Dateiname, "UInt", GENERIC_WRITE, "UInt", 0, "Ptr", 0, "UInt", CREATE_ALWAYS, "UInt", 0, "Ptr", 0, "Ptr")
+GENERIC_WRITE := 0x40000000  <em>; Öffnet eine Datei zum Schreiben.</em>
+CREATE_ALWAYS := 2  <em>; Erstellt eine neue Datei (überschreibt eine vorhandene Datei).</em>
+hFile := DllCall("CreateFile", "Str", Dateiname, "UInt", GENERIC_WRITE, "UInt", 0, "Ptr", 0, "UInt", CREATE_ALWAYS, "UInt", 0, "Ptr", 0, "Ptr")
 if not hFile
 {
     MsgBox Kann "%Dateiname%" nicht zum Schreiben öffnen.
     return
 }
-TestZeichenkette = Das ist eine Zeichenkette.`r`n  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
-<strong>DllCall</strong>("WriteFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", StrLen(TestZeichenkette), "UIntP", AktuellGeschriebeneBytes, "Ptr", 0)
-<strong>DllCall</strong>("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
+TestZeichenkette := "Das ist eine Zeichenkette.`r`n"  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
+DllCall("WriteFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", StrLen(TestZeichenkette), "UIntP", AktuellGeschriebeneBytes, "Ptr", 0)
+DllCall("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
 
 <em>; Liest den Inhalt der Datei, nachdem sie geschrieben wurde, zurück in den Speicher.</em>
-GENERIC_READ = 0x80000000  <em>; Öffnet die Datei zum Lesen.</em>
-OPEN_EXISTING = 3  <em>; Dieser Modus bewirkt, dass die zu öffnende Datei bereits existieren muss.</em>
-FILE_SHARE_READ = 0x1 <em>; Dieser und der nächste Modus bestimmen, ob andere Prozesse die bereits geöffnete Datei öffnen können.</em>
-FILE_SHARE_WRITE = 0x2
-hFile := <strong>DllCall</strong>("CreateFile", "Str", Dateiname, "UInt", GENERIC_READ, "UInt", FILE_SHARE_READ|FILE_SHARE_WRITE, "Ptr", 0, "UInt", OPEN_EXISTING, "UInt", 0, "Ptr", 0)
+GENERIC_READ := 0x80000000  <em>; Öffnet die Datei zum Lesen.</em>
+OPEN_EXISTING := 3  <em>; Dieser Modus bewirkt, dass die zu öffnende Datei bereits existieren muss.</em>
+FILE_SHARE_READ := 0x1 <em>; Dieser und der nächste Modus bestimmen, ob andere Prozesse die bereits geöffnete Datei öffnen können.</em>
+FILE_SHARE_WRITE := 0x2
+hFile := DllCall("CreateFile", "Str", Dateiname, "UInt", GENERIC_READ, "UInt", FILE_SHARE_READ|FILE_SHARE_WRITE, "Ptr", 0, "UInt", OPEN_EXISTING, "UInt", 0, "Ptr", 0)
 if not hFile
 {
     MsgBox Kann "%Dateiname%" nicht zum Lesen öffnen.
@@ -269,14 +271,14 @@ if not hFile
 }
 <em>; Macht die Variable aus Testgründen leer, aber stellt sicher, das sie genügend Kapazität zur Verfügung hat:</em>
 ZuLesendeBytes := VarSetCapacity(TestZeichenkette, StrLen(TestZeichenkette))
-<strong>DllCall</strong>("ReadFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", ZuLesendeBytes, "UIntP", AktuellGeleseneBytes, "Ptr", 0)
-<strong>DllCall</strong>("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
+DllCall("ReadFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", ZuLesendeBytes, "UIntP", AktuellGeleseneBytes, "Ptr", 0)
+DllCall("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
 MsgBox Die folgende Zeichenkette wurde aus der Datei gelesen: %TestZeichenkette%</pre>
+</div>
 
-<pre class="NoIndent" id="HideCursor"><em>; Beispiel: Versteckt den Mauszeiger, wenn man WIN+C drückt. Um den Mauszeiger wieder sichtbar zu machen, drückt man nochmals WIN+C.
-; Dieses Skript stammt von <a href="http://www.autohotkey.com/forum/topic6107.html">www.autohotkey.com/forum/topic6107.html</a></em>
-
-OnExit, ZeigeCursor  <em>; Stellt sicher, dass der Mauszeiger beim Beenden des Skripts wieder sichtbar gemacht wird.</em>
+<div class="ex" id="HideCursor">
+<p><a href="#HideCursor">#10</a>: Versteckt den Mauszeiger, wenn man <kbd>WIN</kbd>+<kbd>C</kbd> drückt. Um den Mauszeiger wieder sichtbar zu machen, drückt man nochmals diese Kombination. Dieses Skript stammt von <a href="https://www.autohotkey.com/forum/topic6107.html">www.autohotkey.com/forum/topic6107.html</a></p>
+<pre>OnExit, ZeigeCursor  <em>; Stellt sicher, dass der Mauszeiger beim Beenden des Skripts wieder sichtbar gemacht wird.</em>
 return
 
 ZeigeCursor:
@@ -293,11 +295,11 @@ SystemCursor(OnOff=1)   <em>; INIT = "I","Init"; OFF = 0,"Off"; TOGGLE = -1,"T",
         , h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12,h13   <em>; Handles von Standardzeigern</em>
     if (OnOff = "Init" or OnOff = "I" or $ = "")       <em>; Initialisierung bei Bedarf oder beim ersten Aufruf</em>
     {
-        $ = h                                          <em>; Aktive Standardzeiger</em>
+        $ := "h"                                       <em>; Aktive Standardzeiger</em>
         VarSetCapacity( h_cursor,4444, 1 )
         VarSetCapacity( AndMask, 32*4, 0xFF )
         VarSetCapacity( XorMask, 32*4, 0 )
-        system_cursors = 32512,32513,32514,32515,32516,32642,32643,32644,32645,32646,32648,32649,32650
+        system_cursors := "32512,32513,32514,32515,32516,32642,32643,32644,32645,32646,32648,32649,32650"
         StringSplit c, system_cursors, `,
         Loop %c0%
         {
@@ -308,9 +310,9 @@ SystemCursor(OnOff=1)   <em>; INIT = "I","Init"; OFF = 0,"Off"; TOGGLE = -1,"T",
         }
     }
     if (OnOff = 0 or OnOff = "Off" or $ = "h" and (OnOff &lt; 0 or OnOff = "Toggle" or OnOff = "T"))
-        $ = b  <em>; Leere Mauszeiger benutzen</em>
+        $ := "b"  <em>; Leere Mauszeiger benutzen</em>
     else
-        $ = h  <em>; Gespeicherte Mauszeiger benutzen</em>
+        $ := "h"  <em>; Gespeicherte Mauszeiger benutzen</em>
 
     Loop %c0%
     {
@@ -318,33 +320,33 @@ SystemCursor(OnOff=1)   <em>; INIT = "I","Init"; OFF = 0,"Off"; TOGGLE = -1,"T",
         DllCall( "SetSystemCursor", "Ptr",h_cursor, "UInt",c%A_Index% )
     }
 }</pre>
+</div>
 
-<pre class="NoIndent" id="ExStruct"><em>; Struktur-Beispiel: Übergibt die Adresse einer RECT-Struktur an die GetWindowRect-Funktion, die die
-; Strukturelemente auf die Positionen der linken, oberen, rechten und unteren Seite des Fensters setzt (relativ zum Bildschirm).</em>
-
-Run Notepad
+<div class="ex" id="ExStruct">
+<p><a href="#ExStruct">#11</a>: Struktur-Beispiel. Übergibt die Adresse einer RECT-Struktur an die GetWindowRect-Funktion, die die Strukturelemente auf die Positionen der linken, oberen, rechten und unteren Seite des Fensters setzt (relativ zum Bildschirm).</p>
+<pre>Run Notepad
 WinWait Unbenannt - Editor  <em>; Setzt auch das "<a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>" für das untere WinExist().</em>
 VarSetCapacity(Rect, 16)  <em>; RECT ist eine Struktur, die aus vier 32-Bit-Integern besteht (also 4*4=16).</em>
-<strong>DllCall</strong>("GetWindowRect", "Ptr", WinExist(), "Ptr", &amp;Rect)  <em>; WinExist() gibt eine HWND-Nummer zurück.</em>
+DllCall("GetWindowRect", "Ptr", WinExist(), "Ptr", &amp;Rect)  <em>; WinExist() gibt eine HWND-Nummer zurück.</em>
 MsgBox % "Links " . <a href="NumGet.htm">NumGet</a>(Rect, 0, "Int") . " Oben " . NumGet(Rect, 4, "Int")
     . " Rechts " . NumGet(Rect, 8, "Int") . " Unten " . NumGet(Rect, 12, "Int")</pre>
+</div>
 
-<pre class="NoIndent"><em>; Struktur-Beispiel: Übergibt an FillRect() die Adresse einer RECT-Struktur, die einen Bereich des
-; Bildschirms kennzeichnet, der kurzzeitig rot gefärbt werden soll.</em>
-
-VarSetCapacity(Rect, 16, 0)  <em>; Setzt die Kapazität zum Speichern von vier 4-Byte-Integern und initialisiert sie alle mit Null.</em>
+<div class="ex" id="ExStructRect">
+<p><a href="#ExStructRect">#12</a>: Struktur-Beispiel. Übergibt an FillRect() die Adresse einer RECT-Struktur, die einen Bereich des Bildschirms kennzeichnet, der kurzzeitig rot gefärbt werden soll.</p>
+<pre>VarSetCapacity(Rect, 16, 0)  <em>; Setzt die Kapazität zum Speichern von vier 4-Byte-Integern und initialisiert sie alle mit Null.</em>
 <a href="NumPut.htm">NumPut</a>(A_ScreenWidth//2, Rect, 8, "Int")  <em>; Der dritte Integer in der Struktur ist "rect.right".</em>
 NumPut(A_ScreenHeight//2, Rect, 12, "Int") <em>; Der vierte Integer in der Struktur ist "rect.bottom".</em>
-hDC := <strong>DllCall</strong>("GetDC", "Ptr", 0, "Ptr")  <em>; Übergibt Null, um den Gerätekontext des Desktops abzurufen.</em>
-hBrush := <strong>DllCall</strong>("CreateSolidBrush", "UInt", 0x0000FF, "Ptr")  <em>; Erstellt einen roten Pinsel (0x0000FF ist im BGR-Format).</em>
-<strong>DllCall</strong>("FillRect", "Ptr", hDC, "Ptr", &amp;Rect, "Ptr", hBrush)  <em>; Füllt das angegebene Rechteck mit dem Pinsel von oben.</em>
-<strong>DllCall</strong>("ReleaseDC", "Ptr", 0, "Ptr", hDC)  <em>; Gibt Speicher frei.</em>
-<strong>DllCall</strong>("DeleteObject", "Ptr", hBrush)  <em>; Gibt Speicher frei.</em></pre>
+hDC := DllCall("GetDC", "Ptr", 0, "Ptr")  <em>; Übergibt Null, um den Gerätekontext des Desktops abzurufen.</em>
+hBrush := DllCall("CreateSolidBrush", "UInt", 0x0000FF, "Ptr")  <em>; Erstellt einen roten Pinsel (0x0000FF ist im BGR-Format).</em>
+DllCall("FillRect", "Ptr", hDC, "Ptr", &amp;Rect, "Ptr", hBrush)  <em>; Füllt das angegebene Rechteck mit dem Pinsel von oben.</em>
+DllCall("ReleaseDC", "Ptr", 0, "Ptr", hDC)  <em>; Gibt Speicher frei.</em>
+DllCall("DeleteObject", "Ptr", hBrush)  <em>; Gibt Speicher frei.</em></pre>
+</div>
 
-<pre class="NoIndent"><em>; Struktur-Beispiel: Stellt die Systemuhr auf ein bestimmtes Datum und eine bestimmte Uhrzeit um. Seien Sie vorsichtig,
-; wenn Sie ein zukünftiges Datum setzen, da dies dazu führen kann, dass geplante Tasks vorzeitig ausgeführt werden!</em>
-
-SetzeSystemuhr("20051008142211")  <em>; Übergeben Sie einen <a href="FileSetTime.htm#YYYYMMDD">Zeitstempel</a> (lokal, nicht UTC).</em>
+<div class="ex" id="ExSystemTime">
+<p><a href="#ExSystemTime">#13</a>: Struktur-Beispiel. Stellt die Systemuhr auf ein bestimmtes Datum und eine bestimmte Uhrzeit um. Seien Sie vorsichtig, wenn Sie ein zukünftiges Datum setzen, da dies dazu führen kann, dass geplante Tasks vorzeitig ausgeführt werden!</p>
+<pre>SetzeSystemuhr("20051008142211")  <em>; Übergeben Sie einen <a href="FileSetTime.htm#YYYYMMDD">Zeitstempel</a> (lokal, nicht UTC).</em>
 
 SetzeSystemuhr(YYYYMMDDHHMISS)
 <em>; Stellt die Systemuhr auf ein bestimmtes Datum und eine bestimmte Uhrzeit um.
@@ -358,40 +360,36 @@ SetzeSystemuhr(YYYYMMDDHHMISS)
 
     VarSetCapacity(Systemuhr, 16, 0)  <em>; Diese Struktur besteht aus 8 UShort-Werten (also 8*2=16).</em>
 
-    StringLeft, Int, YYYYMMDDHHMISS, 4    <em>; YYYY (Jahr)</em>
+    Int := SubStr(YYYYMMDDHHMISS, 1, 4)  <em>; YYYY (Jahr)</em>
     <a href="NumPut.htm">NumPut</a>(Int, Systemuhr, 0, "UShort")
-    StringMid, Int, YYYYMMDDHHMISS, 5, 2  <em>; MM (Monat des Jahres, 1-12)</em>
+    Int := SubStr(YYYYMMDDHHMISS, 5, 2)  <em>; MM (Monat des Jahres, 1-12)</em>
     NumPut(Int, Systemuhr, 2, "UShort")
-    StringMid, Int, YYYYMMDDHHMISS, 7, 2  <em>; DD (Tag des Monats)</em>
+    Int := SubStr(YYYYMMDDHHMISS, 7, 2)  <em>; DD (Tag des Monats)</em>
     NumPut(Int, Systemuhr, 6, "UShort")
-    StringMid, Int, YYYYMMDDHHMISS, 9, 2  <em>; HH (Stunden im 24-Stunden-Format)</em>
+    Int := SubStr(YYYYMMDDHHMISS, 9, 2)  <em>; HH (Stunden im 24-Stunden-Format)</em>
     NumPut(Int, Systemuhr, 8, "UShort")
-    StringMid, Int, YYYYMMDDHHMISS, 11, 2 <em>; MI (Minuten)</em>
+    Int := SubStr(YYYYMMDDHHMISS, 11, 2) <em>; MI (Minuten)</em>
     NumPut(Int, Systemuhr, 10, "UShort")
-    StringMid, Int, YYYYMMDDHHMISS, 13, 2 <em>; SS (Sekunden)</em>
+    Int := SubStr(YYYYMMDDHHMISS, 13, 2) <em>; SS (Sekunden)</em>
     NumPut(Int, Systemuhr, 12, "UShort")
 
-    return <strong>DllCall</strong>("SetSystemTime", "Ptr", &amp;Systemuhr)
+    return DllCall("SetSystemTime", "Ptr", &amp;Systemuhr)
 }</pre>
+<p>Weitere Struktur-Beispiele:</p>
+<ul>
+  <li>Im <a href="../scripts/WinLIRC.htm">WinLIRC-Client-Skript</a> wird gezeigt, wie man mit DllCall() eine Netzwerkverbindung zu einem TCP/IP-Server aufbauen und Daten von ihm empfangen kann.</li>
+  <li>Das Betriebssystem bietet vorgefertigte Dialogfenster an, die der Benutzer zum Auswählen einer Farbe, einer Schrift oder eines Symbols verwenden kann. Solche Dialogfenster nutzen Strukturen und werden auf <a href="https://github.com/majkinetor/mm-autohotkey/tree/master/Dlg">GitHub</a> vorgestellt.</li>
+</ul>
+</div>
 
-<pre class="NoIndent"><em>/* <strong>Weitere Struktur-Beispiele:</strong>
-
-1) Im <a href="../scripts/WinLIRC.htm">WinLIRC-Client-Skript</a> wird gezeigt, wie man mit DllCall() eine Netzwerkverbindung zu einem TCP/IP-Server aufbauen
-und Daten von ihm empfangen kann.
-
-2) Das Betriebssystem bietet vorgefertigte Dialogfenster an, die der Benutzer zum Auswählen einer Farbe, einer Schrift oder eines Symbols verwenden kann.
-Solche Dialogfenster nutzen Strukturen und werden auf <a href="https://github.com/majkinetor/mm-autohotkey/tree/master/Dlg">GitHub</a> vorgestellt.
-
-*/</em></pre>
-
-<pre id="ExTaskbar" class="NoIndent"><em>/*
-  Beispiel: Entfernt mithilfe von COM vorübergehend das aktive Fenster aus der Taskleiste.
-
+<div class="ex" id="ExTaskbar">
+<p><a href="#ExTaskbar">#14</a>: Entfernt mithilfe von COM vorübergehend das aktive Fenster aus der Taskleiste.</p>
+<pre><em>/*
   Methoden in der <a href="https://msdn.microsoft.com/de-de/library/bb774652.aspx">ITaskbarList</a>-VTable:
     IUnknown:
-      0 QueryInterface  -- nutze stattdessen <a href="ComObjQuery.htm">ComObjQuery</a>
-      1 AddRef          -- nutze stattdessen <a href="ObjAddRef.htm">ObjAddRef</a>
-      2 Release         -- nutze stattdessen <a href="ObjAddRef.htm">ObjRelease</a>
+      0 QueryInterface  -- nutze stattdessen <a href="ComObjQuery.htm">ComObjQuery()</a>
+      1 AddRef          -- nutze stattdessen <a href="ObjAddRef.htm">ObjAddRef()</a>
+      2 Release         -- nutze stattdessen <a href="ObjAddRef.htm">ObjRelease()</a>
     ITaskbarList:
       3 HrInit
       4 AddTab
@@ -422,6 +420,7 @@ vtable(ptr, n) {
     return NumGet(NumGet(ptr+0), n*A_PtrSize)
 }
 </pre>
+</div>
 
 </body>
 </html>
