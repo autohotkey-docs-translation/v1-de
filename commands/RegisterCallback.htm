@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>RegisterCallback() - Syntax &amp; Verwendung | AutoHotkey</title>
-<meta name="description" content="Die RegisterCallback-Funktion erstellt eine Maschinencode-Adresse, die ihren Aufruf an eine Funktion im Skript weiterleitet." />
+<meta name="description" content="Die RegisterCallback-Funktion erstellt eine Maschinencode-Adresse, die, wenn aufgerufen, den Aufruf an eine Funktion im Skript weiterleitet." />
 <meta name="ahk:equiv-v2" content="commands/CallbackCreate.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,9 +14,9 @@
 
 <h1>RegisterCallback() <span class="ver">[v1.0.47+]</span></h1>
 
-<p>Erstellt eine Maschinencode-Adresse, die ihren Aufruf an eine <a href="../Functions.htm">Funktion</a> im Skript weiterleitet.</p>
+<p>Erstellt eine Maschinencode-Adresse, die, wenn aufgerufen, den Aufruf an eine <a href="../Functions.htm">Funktion</a> im Skript weiterleitet.</p>
 
-<pre class="Syntax">Adresse := <span class="func">RegisterCallback</span>("Funktionsname" <span class="optional">, Optionen := "", ParamAnzahl := Formalanzahl, Ereignisinfo := Adresse</span>)</pre>
+<pre class="Syntax">Adresse := <span class="func">RegisterCallback</span>("Funktionsname" <span class="optional">, Optionen := "", ParamAnzahl := FormaleAnzahl, EventInfo := Adresse</span>)</pre>
 <h2>Parameter</h2>
 <dl>
 
@@ -25,28 +25,28 @@
 
   <dt>Funktionsname</dt>
   <dd>
-      <p>Ein <a href="../Functions.htm">Funktion</a>sname, der in Anführungszeichen gesetzt werden muss, wenn er eine direkt geschriebene Zeichenkette ist. Diese Funktion wird automatisch aufgerufen, wann immer die <em>Adresse</em> aufgerufen wird. Die Funktion empfängt auch die Parameter, die an die <em>Adresse</em> übergeben wurden.</p>
+      <p>Der Name einer <a href="../Functions.htm">Funktion</a>, der in Anführungszeichen gesetzt werden muss, wenn er eine direkt geschriebene Zeichenkette ist. Diese Funktion wird jedes Mal automatisch aufgerufen, wenn <em>Adresse</em> aufgerufen wird. Die Funktion erhält auch die Parameter, die an <em>Adresse</em> übergeben wurden.</p>
       <p><span class="ver">[v1.1.06+]:</span> Anstelle eines Funktionsnamens kann eine <a href="../objects/Func.htm">Funktionsreferenz</a> übergeben werden.</p>
     </dd>
 
   <dt>Optionen</dt>
-  <dd><p>Geben Sie null oder mehrere der folgenden Wörter an. Trennen Sie diese Optionen jeweils mit einem Leerzeichen (z.B. <code>C Fast</code>).</p>
-    <p id="Fast"><strong>Fast</strong> oder <strong>F</strong>: Verhindert, dass jedes Mal ein neuer <a href="../misc/Threads.htm">Thread</a> startet, wenn <em>Funktionsname</em> aufgerufen wird. Zwar ist dies leistungsfähiger, allerdings sollte es nicht verwendet werden, wenn der Thread, in dem <em>Adresse</em> aufgerufen wurde, variiert (z. B. wenn das Callback durch eine eingehende Meldung ausgelöst wurde). Denn <em>Funktionsname</em> kann globale Einstellungen eines Threads wie <a href="../misc/ErrorLevel.htm">ErrorLevel</a>, <a href="../Variables.htm#LastError">A_LastError</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> jederzeit ändern. Weitere Informationen finden Sie bei den <a href="#Threads">Bemerkungen</a>.</p>
-    <p><strong>CDecl</strong> oder <strong>C</strong>: Passt die <em>Adresse</em> an die "C"-Aufrufkonvention an. Diese Option lässt man üblicherweise weg, weil die Standard-Aufrufkonvention in der Regel für Callbacks genügt.</p></dd>
+  <dd><p>Geben Sie keine oder mehr der folgenden Wörter an. Trennen Sie diese Optionen jeweils mit einem Leerzeichen (z.B. <code>C Fast</code>).</p>
+    <p id="Fast"><strong>Fast</strong> oder <strong>F</strong>: Verhindert, dass bei jedem Aufruf von <em>Funktionsname</em> ein neuer <a href="../misc/Threads.htm">Thread</a> gestartet wird. Trotz der daraus resultierenden höheren Performance sollte diese Option nicht verwendet werden, wenn der Thread, in dem <em>Adresse</em> aufgerufen wird, variiert (z. B. wenn das Callback durch eine eingehende Meldung ausgelöst wurde). Der Grund dafür ist, dass <em>Funktionsname</em> in der Lage sein wird, globale Einstellungen wie <a href="../misc/ErrorLevel.htm">ErrorLevel</a>, <a href="../Variables.htm#LastError">A_LastError</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> eines Threads zu ändern, der zum Zeitpunkt des Aufrufs aktiv war. Weitere Informationen finden Sie unter <a href="#Threads">Bemerkungen</a>.</p>
+    <p><strong>CDecl</strong> oder <strong>C</strong>: Macht <em>Adresse</em> konform mit der "C"-Aufrufkonvention. Diese Option lässt man üblicherweise weg, weil die meisten Callbacks die Standardaufrufkonvention verwenden.</p></dd>
 
   <dt>ParamAnzahl</dt>
-  <dd><p>Die Anzahl der Parameter, die <em>Adresse</em>'s Aufrufer übergeben muss. Lässt man diesen Parameter weg, wird standardmäßig die Anzahl der Pflichtparameter verwendet, die in der <a href="../Functions.htm#define">Definition</a> von <em>Funktionsname</em> angegeben sind. In beiden Fällen muss sichergestellt werden, dass der Aufrufer genau diese Anzahl von Parametern übergibt.</p></dd>
+  <dd><p>Die Anzahl der Parameter, die der Aufrufer von <em>Adresse</em> übergeben muss. Lässt man diesen Parameter weg, wird standardmäßig die Anzahl der Pflichtparameter verwendet, die in der <a href="../Functions.htm#define">Definition</a> von <em>Funktionsname</em> angegeben sind. In beiden Fällen muss sichergestellt werden, dass der Aufrufer genau diese Anzahl von Parametern übergibt.</p></dd>
 
   <dt>EventInfo</dt>
   <dd>
-      <p>Ein Integer, den <em>Funktionsname</em> in <a href="../Variables.htm#EventInfo">A_EventInfo</a> sieht, wenn es über diese <em>Adresse</em> aufgerufen wird. Diese Option ist nützlich, wenn <em>Funktionsname</em> von mehr als einer <em>Adresse</em> aufgerufen wird. Lässt man diesen Parameter weg, wird standardmäßig <em>Adresse</em> verwendet. Hinweis: Im Gegensatz zu anderen globalen Einstellungen wird das A_EventInfo des <a href="../misc/Threads.htm">aktuellen Threads</a> nicht vom <a href="#Fast">Fast-Modus</a> beeinflusst.</p>
-      <p>Wenn die skript-ausführende EXE-Datei im 32-Bit-Format ist, muss dieser Parameter ein Wert zwischen 0 und 4294967295 sein. Wenn die EXE-Datei im 64-Bit-Format ist, kann dieser Parameter ein 64-Bit-Integer sein. Zwar gibt <a href="../Variables.htm#EventInfo">A_EventInfo</a> üblicherweise einen vorzeichenlosen Integer zurück, allerdings bietet AutoHotkey keine volle Unterstützung für vorzeichenlose 64-Bit-Integer, demzufolge könnten einige Operationen bewirken, dass der Wert in den vorzeichenfähigen Bereich rutscht.</p></dd>
+      <p>Ein Integer, den <em>Funktionsname</em> in <a href="../Variables.htm#EventInfo">A_EventInfo</a> sehen wird, wenn die Funktion über diese <em>Adresse</em> aufgerufen wird. Diese Option ist nützlich, wenn <em>Funktionsname</em> von mehr als einer <em>Adresse</em> aufgerufen wird. Lässt man diesen Parameter weg, wird standardmäßig <em>Adresse</em> verwendet. Hinweis: Im Gegensatz zu anderen globalen Einstellungen wird A_EventInfo des <a href="../misc/Threads.htm">aktuellen Threads</a> nicht vom <a href="#Fast">Fast-Modus</a> beeinflusst.</p>
+      <p>Wenn zum Ausführen des Skripts die 32-Bit-Version von AutoHotkey verwendet wird, muss dieser Parameter ein Integer im Bereich von 0 und 4294967295 sein. Wenn die 64-Bit-Version von AutoHotkey verwendet wird, kann dieser Parameter ein 64-Bit-Integer sein. Obwohl <a href="../Variables.htm#EventInfo">A_EventInfo</a> üblicherweise einen vorzeichenlosen Integer zurückgibt, unterstützt AutoHotkey nur bedingt vorzeichenlose 64-Bit-Integer, demzufolge könnten einige Operationen bewirken, dass der Wert in den vorzeichenfähigen Bereich rutscht.</p></dd>
 
 </dl>
 
 <h2>Die Parameter der Callback-Funktion</h2>
-<p>Eine <a href="../Functions.htm">Funktion</a>, die einer Callback-Adresse zugewiesen ist, kann bis zu 31 Parameter akzeptieren. <a href="../Functions.htm#optional">Optionale Parameter</a> sind erlaubt, so dass die Funktion von mehr als einem Aufrufer aufgerufen werden kann.</p>
-<p>Das richtige Interpretieren von Parametern erfordert ein gutes Verständnis darüber, wie die x86-Aufrufkonvention funktioniert. Da Autohotkey keine typisierten Parameter besitzt, besteht Callback's Parameterliste voraussichtlich aus Integern, von denen einige neuinterpretiert werden müssen.</p>
+<p>Eine <a href="../Functions.htm">Funktion</a>, die einer Callback-Adresse zugewiesen wurde, kann bis zu 31 Parameter akzeptieren. <a href="../Functions.htm#optional">Optionale Parameter</a> sind erlaubt; dies ist nützlich, wenn die Funktion von mehr als einem Aufrufer aufgerufen wird.</p>
+<p>Die korrekte Interpretation der Parameter erfordert ein gewisses Verständnis dafür, wie die x86-Aufrufkonventionen funktionieren. Da Autohotkey keine typisierten Parameter besitzt, wird davon ausgegangen, dass die Parameterliste des Callbacks aus Integern besteht und dass einige Neuinterpretationen gemacht werden müssen.</p>
 
 <p><strong>AutoHotkey 32-bit:</strong> Alle eingehenden Parameter sind vorzeichenlose 32-Bit-Integer. Kleinere Typen werden auf 32 Bit erweitert, während größere Typen in mehreren 32-Bit-Parametern aufgeteilt werden.</p>
 <p>Wenn ein eingehender Parameter als vorzeichenfähiger Integer vorgesehen ist, können negative Zahlen mit einem der folgenden Beispiele offenbart werden:</p>
@@ -54,19 +54,19 @@
 if (wParam &gt; 0x7FFFFFFF)
     wParam := -(~wParam) - 1
 
-<em>; Methode #2: Beruht auf der Tatsache, dass AutoHotkey von sich aus vorzeichenfähige 64-Bit-Integer verwendet.</em>
+<em>; Methode #2: Verlässt sich auf die Tatsache, dass AutoHotkey von sich aus vorzeichenfähige 64-Bit-Integer verwendet.</em>
 wParam := wParam &lt;&lt; 32 &gt;&gt; 32</pre>
 
 <p><strong>AutoHotkey 64-bit:</strong> Alle eingehenden Parameter sind vorzeichenfähige 64-Bit-Integer. AutoHotkey unterstützt von sich aus keine vorzeichenlose 64-Bit-Integers. Kleinere Typen werden auf 64 Bit erweitert, während größere Typen immer via Adresse übergeben werden.</p>
 
-<p><strong>AutoHotkey 32-bit/64-bit:</strong> Wenn ein eingehender Parameter als 8-Bit- oder 16-Bit-Wert (oder 32-Bit in x64) vorgesehen ist, kann es passieren, dass die höheren Bits des Wertes "Müll" enthalten - so etwas könnte man mithilfe des bitweisen UNDs herausfiltern:</p>
+<p><strong>AutoHotkey 32-bit/64-bit:</strong> Wenn ein eingehender Parameter als 8-Bit- oder 16-Bit-Wert (oder 32-Bit in x64) vorgesehen ist, sind die höheren Bits des Wertes willkürlich gesetzt - um diese herauszufiltern, können Sie wie folgt das bitweise UND nutzen:</p>
 <pre>Callback(UCharParam, UShortParam, UIntParam) {
     UCharParam &amp;= 0xFF
     UShortParam &amp;= 0xFFFF
     UIntParam &amp;= 0xFFFFFFFF
     <em>;...</em>
 }</pre>
-<p>Wenn ein eingehender Parameter als Zeichenkette vorgesehen ist, dann ist das, was aktuell empfangen wird, die aktuelle Adresse der Zeichenkette. Mit <a href="StrGet.htm">StrGet()</a> kann die Zeichenkette selbst abgerufen werden:</p>
+<p>Wenn ein eingehender Parameter von seinem Aufrufer als Zeichenkette vorgesehen ist, dann ist das, was tatsächlich ankommt, die Adresse der Zeichenkette. Mit <a href="StrGet.htm">StrGet()</a> kann die Zeichenkette selbst abgerufen werden:</p>
 <pre>MeineZeichenkette := StrGet(MeinParameter)  <em>; Benötigt <span class="ver">[AHK_L 46+]</span></em></pre>
 <p>Wenn ein eingehender Parameter die Adresse einer Struktur ist, kann man die einzelnen Elemente durch Befolgen der Schritte in "<a href="DllCall.htm#struct">DllCall-Strukturen</a>" extrahieren.</p>
 
