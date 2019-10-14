@@ -365,6 +365,7 @@ class GMem
     }
 }</pre>
 <p>__Delete wird nicht bei Objekten aufgerufen, die den Key "__Class" haben. <a href="#Custom_Classes">Klassenobjekte</a> haben standardmäßig diesen Key.</p>
+<p>Wenn die Klasse eine Superklasse hat, die diese Methoden definiert, sollte <code>base.__New()</code> (mit entsprechenden Parametern) und <code>base.__Delete()</code> üblicherweise aufgerufen werden. Ansonsten wird nur die am weitesten abgeleitete Definition der Methode aufgerufen, außer Definitionen innerhalb des Zielobjekts selbst.</p>
 <p><span class="ver">[v1.1.28+]:</span> Wenn eine Ausnahme oder ein Laufzeitfehler ausgelöst wird, während __Delete ausgeführt wird, und nicht innerhalb von __Delete behandelt wird, verhält es sich so, als wäre __Delete von einem neuen <a href="misc/Threads.htm">Thread</a> aufgerufen wurden. Das heißt, dass ein Fehlerdialogfenster angezeigt und __Delete durchgeführt wird, aber der Thread nicht beendet wird (es sei denn, er wurde bereits beendet). Vor v1.1.28 war es so, dass unbehandelte Ausnahmen ein inkonsistentes Verhalten verursachten.</p>
 
 <h3 id="Meta_Functions">Metafunktionen</h3>
@@ -384,6 +385,8 @@ class <i>Klassenname</i> {
 <i>Klassenname</i> := { __Get: Func("<i>MeinGet</i>"), __Set: Func("<i>MeinSet</i>"), __Call: Func("<i>MeinCall</i>") }
 </pre>
 <p>Metafunktionen definieren, was passieren soll, wenn ein Key angefordert, aber nicht im Zielobjekt gefunden wird. Wenn einem <code>obj.key</code> beispielsweise keinen Wert zugewiesen wurde, wird die <i>__Get</i>-Metafunktion aufgerufen. <code>obj.key := value</code> veranlasst hingegen den Aufruf von <i>__Set</i> und <code>obj.key()</code> den Aufruf von <i>__Call</i>. Diese Metafunktionen (oder Methoden) sollten in <code>obj.base</code>, <code>obj.base.base</code> oder so ähnlich definiert sein.</p>
+<p>Metafunktionen werden in der Regel wie Methoden definiert, folgen aber nicht den gleichen Regeln (außer wenn sie explizit vom Skript aufgerufen werden). Sie müssen in einem Base-Objekt definiert sein; jede Definition im Zielobjekt selbst wird ignoriert. Jede auf das Zielobjekt anwendbare Definition von __Get, __Set und __Call wird automatisch gemäß den folgenden Regeln aufgerufen und sollte nicht <code>base.__Get(key)</code> oder ähnlich aufrufen. <a href="#Custom_NewDelete">__New</a> und <a href="#Custom_NewDelete">__Delete</a> müssen in einem Base-Objekt definiert sein, verhalten sich aber ansonsten wie Methoden.</p>
+<p class="note"><strong>Hinweis:</strong> AutoHotkey v2 ersetzt Metafunktionen mit Methoden, die konventioneller sind.</p>
 <p>Wenn das Skript einen nicht vorhandenen Key im Zielobjekt abruft (get), setzt (set) oder aufruft (call), wird das Base-Objekt wie folgt aufgerufen:</p>
 <ul class="list_of_p">
   <li>Wenn dieses Base-Objekt die entsprechende Metafunktion definiert hat, rufe es auf. Wenn die Metafunktion etwas explizit via <code>return</code> zurückgibt, verwende den Rückgabewert als Ergebnis der Operation (was auch immer den Aufruf der Metafunktion verursacht hat) und übergebe die Kontrolle wieder an das Skript. Ansonsten mache weiter wie unten beschrieben.

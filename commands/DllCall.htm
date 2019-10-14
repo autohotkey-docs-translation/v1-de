@@ -166,7 +166,7 @@ Ergebnis := DllCall("CharLower", "<strong><u>Str</u></strong>", DllCall("CharUpp
 <h2>Beispiele</h2>
 <div class="ex" id="ExMessageBox">
 <p><a href="#ExMessageBox">#1</a>: Ruft die Windows-API-Funktion "MessageBox" auf und meldet, welche Schaltfläche der Benutzer drückt.</p>
-<pre>WelcheSchaltfl := DllCall("MessageBox", "Int", "0", "Str", "Ja oder Nein drücken", "Str", "Titel der Box", "Int", 4)
+<pre>WelcheSchaltfl := DllCall("MessageBox", "Int", 0, "Str", "Ja oder Nein drücken", "Str", "Titel der Box", "Int", 4)
 MsgBox Sie haben die Schaltfläche #%WelcheSchaltfl% gedrückt.</pre>
 </div>
 
@@ -255,7 +255,8 @@ if not hFile
     return
 }
 TestZeichenkette := "Das ist eine Zeichenkette.`r`n"  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
-DllCall("WriteFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", StrLen(TestZeichenkette), "UIntP", RealGeschriebeneBytes, "Ptr", 0)
+ZketteLänge := StrLen(TestZeichenkette) * (A_IsUnicode ? 2 : 1)
+DllCall("WriteFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", ZketteLänge, "UIntP", RealGeschriebeneBytes, "Ptr", 0)
 DllCall("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
 
 <em>; Liest den Inhalt der Datei, nachdem sie geschrieben wurde, zurück in den Speicher.</em>
@@ -270,7 +271,7 @@ if not hFile
     return
 }
 <em>; Macht die Variable aus Testgründen leer, aber stellt sicher, das sie genügend Kapazität zur Verfügung hat:</em>
-ZuLesendeBytes := VarSetCapacity(TestZeichenkette, StrLen(TestZeichenkette))
+ZuLesendeBytes := VarSetCapacity(TestZeichenkette, ZketteLänge)
 DllCall("ReadFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", ZuLesendeBytes, "UIntP", RealGeleseneBytes, "Ptr", 0)
 DllCall("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
 MsgBox Die folgende Zeichenkette wurde aus der Datei gelesen: %TestZeichenkette%</pre>
