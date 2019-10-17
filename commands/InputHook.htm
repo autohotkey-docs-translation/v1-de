@@ -27,7 +27,7 @@
     <p id="option-i"><strong>I</strong>: Setzt <a href="#MinSendLevel">MinSendLevel</a> auf 1 oder den angegebenen Wert, um Eingaben zu ignorieren, deren <a href="SendLevel.htm">Sendestufe</a> kleiner als dieser Wert ist. <code>I2</code> beispielsweise würde Eingaben mit einer Stufe von 0 (Standardwert) oder 1 ignorieren, aber Eingaben der Stufe 2 erfassen.</p>
     <p id="option-l"><strong>L</strong>: Längenbegrenzung (z. B. <code>L5</code>). Die maximal erlaubte Länge der Eingabe. Wenn der Text diese Länge erreicht, wird die Eingabeerfassung beendet und EndReason auf das Wort Max gesetzt (es sei denn, der Text stimmt mit einem der Elemente in der <em>Vergleichsliste</em> überein, dann wird EndReason auf das Wort Match gesetzt). Wenn diese Option nicht verwendet wird, ist die Länge auf 1023 Zeichen begrenzt.</p>
     <p>Die Angabe von <code>L0</code> deaktiviert die Texterfassung und Längenlimitierung, hat aber keinen Einfluss darauf, welche Tasten tatsächlich Text erzeugen (siehe <a href="#VisibleText">VisibleText</a>). Dies kann in Zusammenhang mit <a href="#OnChar">OnChar</a>, <a href="#OnKeyDown">OnKeyDown</a>, <a href="#KeyOpt">KeyOpt</a> oder <em><a href="#EndKeys">EndKeys</a></em> nützlich sein.</p>
-    <p id="option-m"><strong>M</strong>: Tastenkombinationen wie <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> werden erkannt und in echte ASCII-Zeichen umgewandelt, falls möglich. Das folgende Beispiel zeigt, wie <kbd>Strg</kbd>+<kbd>C</kbd> erkannt werden kann:</p>
+    <p id="option-m"><strong>M</strong>: Modifizierte Tastendrücke wie <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> werden erkannt und in echte ASCII-Zeichen umgewandelt, falls möglich. Das folgende Beispiel zeigt, wie <kbd>Strg</kbd>+<kbd>C</kbd> erkannt werden kann:</p>
     <pre>StrgC := Chr(3) <em>; Speichert das Zeichen für STRG+C in die Variable StrgC.</em>
 ih := InputHook("L1 M")
 ih.Start()
@@ -36,14 +36,14 @@ if (ih.Input = StrgC)
     MsgBox, Sie haben STRG+C gedrückt.</pre>
     <p class="note"><strong>Hinweis</strong>: <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> sind die Zeichen von <a href="Chr.htm">Chr(1)</a> bis <a href="Chr.htm">Chr(26)</a>. Außerdem ist es möglich, dass die <strong>M</strong>-Option einige Tastenkürzel wie <kbd>Strg</kbd>+<kbd>←</kbd> dazu bringen kann, sich während einer Eingabeerfassung falsch zu verhalten.</p>
     <p id="option-t"><strong>T</strong>: Setzt <a href="#Timeout">Timeout</a> (z. B. <code>T3</code> oder <code>T2.5</code>).</p>
-    <p id="vis"><strong>V</strong>: Setzt <a href="#VisibleText">VisibleText</a> und <a href="#VisibleNonText">VisibleNonText</a> auf True. Normalerweise wird die Eingabe des Benutzers blockiert (unsichtbar für das Betriebssystem). Verwenden Sie diese Option, um die Tastatureingaben des Benutzers direkt an das aktive Fenster senden zu lassen.</p>
+    <p id="vis"><strong>V</strong>: Setzt <a href="#VisibleText">VisibleText</a> und <a href="#VisibleNonText">VisibleNonText</a> auf True. Normalerweise wird die Eingabe des Benutzers blockiert (unsichtbar für das Betriebssystem gemacht). Nutzen Sie diese Option, damit die Tastendrücke des Benutzers direkt an das aktive Fenster gesendet werden.</p>
     <p id="asterisk"><strong>*</strong>: Platzhalter. Setzt <a href="#FindAnywhere">FindAnywhere</a> auf True, damit überall Übereinstimmungen innerhalb dessen, was der Benutzer eingibt, gefunden werden können.</p>
     <p id="E"><strong>E</strong>: Behandelt Einzelzeichen-Endungstasten als Zeichencode anstatt als Tastencode. Diese Änderung ermöglicht konsistentere Ergebnisse, wenn das Tastaturlayout des aktiven Fensters sich vom Tastaturlayout des Skripts unterscheidet. Es verhindert auch Tastenkombinationen, die die angegebenen Endungszeichen bei der Eingabe eigentlich nicht erzeugen können; wenn <code>@</code> beispielsweise eine Endungstaste wäre, würde sie auf einem US-Layout via <kbd>Umschalt</kbd>+<kbd>2</kbd> ausgelöst werden, aber nicht via <kbd>Strg</kbd>+<kbd>Umschalt</kbd>+<kbd>2</kbd> (wenn die E-Option verwendet wird). Wenn zusätzlich noch die <strong>C</strong>-Option angegeben ist, ist das Endungszeichen Groß-/Kleinschreibung-sensitiv.</p>
   </dd>
 
   <dt id="EndKeys">Endtasten</dt>
   <dd>
-    <p>Eine optionale Liste mit einer oder mehr Tasten, die, wenn gedrückt, die Eingabeerfassung beenden können (die Endtaste selbst wird nicht in den Input-Puffer geschrieben). Wenn eine Eingabeerfassung auf diese Weise beendet wird, wird EndReason auf das Wort EndKey und die <a href="#EndKey">EndKey</a>-Eigenschaft auf den Namen der Taste gesetzt.</p>
+    <p>Eine optionale Liste mit ein oder mehr Tasten, die, wenn gedrückt, die Eingabeerfassung beenden können (die Endtaste selbst wird nicht in den Eingabepuffer geschrieben). Wenn eine Eingabeerfassung auf diese Weise beendet wird, wird EndReason auf das Wort EndKey und die <a href="#EndKey">EndKey</a>-Eigenschaft auf den Namen der Taste gesetzt.</p>
     <p>Die <em>Endtasten</em>-Liste verwendet ein Format, das Ähnlichkeit zum verwendeten Format des <a href="Send.htm">Send</a>-Befehls hat. Zum Beispiel würde <code>{Enter}.{Esc}</code> bewirken, dass <kbd>Enter</kbd>, <kbd>.</kbd> oder <kbd>Esc</kbd> die Eingabeerfassung beenden können. Damit die geschweiften Klammern selbst Endtasten sein können, gibt man <code>{{}</code> und/oder <code>{}}</code> an.</p>
     <p>Um <kbd>Strg</kbd>, <kbd>Alt</kbd> oder <kbd>Umschalt</kbd> als Endtasten zu verwenden, gibt man die linke und/oder rechte Version der Taste an, nicht die neutrale Version. Zum Beispiel müsste <code>{LControl}{RControl}</code> anstelle von <code>{Control}</code> angegeben werden.</p>
     <p>Obwohl modifizierte Tasten wie <kbd>Alt</kbd>+<kbd>C</kbd> (!c) nicht unterstützt werden, setzen nicht-alphanumerische Zeichen wie <code>?!:@&amp;{}</code> standardmäßig voraus, dass UMSCHALT gedrückt oder nicht gedrückt sein muss, je nachdem, wie das Zeichen normalerweise eingegeben wird. Wenn die <strong>E</strong>-Option vorhanden ist, werden die Namen von Einzelzeichentasten stattdessen als Zeichen interpretiert - in solchen Fällen müssen die Modifikatortasten im richtigen Zustand sein, um dieses Zeichen zu erzeugen.  Wenn sowohl die <strong>E</strong>- als auch <strong>M</strong>-Option vorhanden sind, werden Tastenkombinationen von <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> unterstützt, indem man die entsprechenden ASCII-Steuerzeichen in <em>Endtasten</em> einfügt.</p>
@@ -84,12 +84,12 @@ if (ih.Input = StrgC)
   <li><a href="#Input">Input</a>: Gibt den erfassten Text seit dem letzten Start der Eingabeerfassung zurück.</li>
   <li><a href="#Match">Match</a>: Gibt das Element der <em>Vergleichsliste</em> zurück, mit der die Eingabeerfassung beendet wurde.</li>
   <li><a href="#OnEnd">OnEnd</a>: Ermittelt oder setzt das <a href="../objects/Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn die Eingabeerfassung beendet wird.</li>
-  <li><a href="#OnChar">OnChar</a>: Ermittelt oder setzt das <a href="../objects/Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, nachdem ein Zeichen zum Input-Puffer hinzugefügt wurde.</li>
+  <li><a href="#OnChar">OnChar</a>: Ermittelt oder setzt das <a href="../objects/Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, nachdem ein Zeichen zum Eingabepuffer hinzugefügt wurde.</li>
   <li><a href="#OnKeyDown">OnKeyDown</a>: Ermittelt oder setzt das <a href="../objects/Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn eine benachrichtigungsfähige Taste gedrückt wird.</li>
 </ul>
 <p>Optionseigenschaften:</p>
 <ul>
-  <li><a href="#BackspaceIsUndo">BackspaceIsUndo</a>: Legt fest, ob <kbd>Backspace</kbd> das zuletzt gedrückte Zeichen am Ende des Input-Puffers entfernen soll.</li>
+  <li><a href="#BackspaceIsUndo">BackspaceIsUndo</a>: Legt fest, ob <kbd>Backspace</kbd> das zuletzt gedrückte Zeichen am Ende des Eingabepuffers entfernen soll.</li>
   <li><a href="#CaseSensitive">CaseSensitive</a>: Legt fest, ob <em>Vergleichsliste</em> Groß-/Kleinschreibung-sensitiv sein soll.</li>
   <li><a href="#FindAnywhere">FindAnywhere</a>: Legt fest, ob alle Übereinstimmungen ein Teil des Eingabetexts sein sollen.</li>
   <li><a href="#MinSendLevel">MinSendLevel</a>: Ermittelt oder setzt die minimale <a href="SendLevel.htm">Sendestufe</a> der zu erfassenden Eingabe.</li>
@@ -199,7 +199,7 @@ if (ih.Input = StrgC)
 </div>
 
 <div class="methodShort" id="OnChar"><h2>OnChar</h2>
-<p>Ermittelt oder setzt das <a href="../objects/Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, nachdem ein Zeichen zum Input-Puffer hinzugefügt wurde.</p>
+<p>Ermittelt oder setzt das <a href="../objects/Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, nachdem ein Zeichen zum Eingabepuffer hinzugefügt wurde.</p>
 <pre class="Syntax">MeineFunk := InputHook.OnChar</pre>
 <pre class="Syntax">InputHook.OnChar := MeineFunk</pre>
 <p>Typ: <a href="../objects/Functor.htm">Funktionsobjekt</a> oder <a href="../Concepts.htm#nothing">leere Zeichenkette</a>. Standard: leere Zeichenkette.</p>
@@ -220,7 +220,7 @@ if (ih.Input = StrgC)
 </div>
 
 <div class="methodShort" id="BackspaceIsUndo"><h2>BackspaceIsUndo</h2>
-<p>Legt fest, ob <kbd>Backspace</kbd> das zuletzt gedrückte Zeichen am Ende des Input-Puffers entfernen soll.</p>
+<p>Legt fest, ob <kbd>Backspace</kbd> das zuletzt gedrückte Zeichen am Ende des Eingabepuffers entfernen soll.</p>
 <pre class="Syntax">BoolescherWert := InputHook.BackspaceIsUndo</pre>
 <pre class="Syntax">InputHook.BackspaceIsUndo := BoolescherWert</pre>
 <p>Typ: <a href="../Concepts.htm#boolean">Integer (boolescher Wert)</a>. Standard: True. Die <strong>B</strong>-Option setzt den Wert auf False.</p>
@@ -285,7 +285,7 @@ if (ih.Input = StrgC)
 <pre class="Syntax">InputHook.VisibleText := BoolescherWert</pre>
 <p>Typ: <a href="../Concepts.htm#boolean">Integer (boolescher Wert)</a>. Standard: False. Die <strong>V</strong>-Option setzt den Wert auf True.</p>
 <p>Wenn diese Eigenschaft auf True gesetzt wird, können Tasten und Tastenkombinationen, die Text erzeugen, Hotkeys auslösen oder an das aktive Fenster weitergeleitet werden. Wenn diese Eigenschaft auf False gesetzt wird, werden diese blockiert.</p>
-<p>Alle Tastendrücke, die dazu führen, dass Text an den Input-Puffer angehängt wird, werden als Texterzeuger eingestuft, auch wenn sie dies in anderen Anwendungen normalerweise nicht tun. <kbd>Strg</kbd>+<kbd>A</kbd> beispielsweise erzeugt Text, wenn die <a href="#option-m"><strong>M</strong>-Option</a> vorhanden ist, und <kbd>Escape</kbd> erzeugt das Steuerzeichen <code>Chr(27)</code>.</p>
+<p>Alle Tastendrücke, die dazu führen, dass Text an den Eingabepuffer angehängt wird, werden als Texterzeuger eingestuft, auch wenn sie dies in anderen Anwendungen normalerweise nicht tun. <kbd>Strg</kbd>+<kbd>A</kbd> beispielsweise erzeugt Text, wenn die <a href="#option-m"><strong>M</strong>-Option</a> vorhanden ist, und <kbd>Escape</kbd> erzeugt das Steuerzeichen <code>Chr(27)</code>.</p>
 <p>Tote Tasten werden als Texterzeuger eingestuft, obwohl sie in der Regel keinen unmittelbaren Effekt haben. Das Drücken einer toten Taste kann auch dazu führen, dass die folgende Taste Text erzeugt (wenn auch nur das Zeichen der toten Taste).</p>
 <p><kbd>Backspace</kbd> wird nur als Texterzeuger eingestuft, wenn es <a href="#BackspaceIsUndo">als "rückgängig machen"</a> fungiert.</p>
 <p>Die <a href="../KeyList.htm#modifier">Standardmodifikatortasten</a> und CapsLock, NumLock und ScrollLock sind immer sichtbar (nicht blockiert).</p>

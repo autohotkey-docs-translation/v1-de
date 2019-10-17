@@ -287,8 +287,8 @@
 <p>Behoben: WinSet AlwaysOnTop/Trans/TransColor funktioniert nun bei Fenstern mit einem erweiterten Style von 0.</p>
 
 <h2 id="v1.1.24.04">1.1.24.04 - 17. Dezember 2016</h2>
-<p>Behoben: <code>File.Read<i>Num</i>()</code> hat wiederholt alte Daten gelesen, wenn ein vorheriges <code>File.Read()</code> am Ende des Puffers aufgehört hat zu lesen.</p>
-<p>Geändert: Bessere Puffernutzung, wenn <code>File.Read()</code> das Ende der gepufferten Daten erreicht hat.</p>
+<p>Behoben: <code>File.Read<i>Num</i>()</code> hat wiederholt alte Daten gelesen, wenn ein vorheriges <code>File.Read()</code> am Ende des Pufferspeichers aufgehört hat zu lesen.</p>
+<p>Geändert: Bessere Pufferspeichernutzung, wenn <code>File.Read()</code> das Ende der gepufferten Daten erreicht hat.</p>
 <p>Behoben: <code>GuiControl +Password</code> verwendet in Windows XP und höher nun standardmäßig den schwarzen Punkt als Maskierungszeichen.</p>
 <p>Behoben: <code>GuiControl +/-Password</code> wird das Steuerelement nun sofort neu zeichnen.</p>
 
@@ -662,7 +662,7 @@
 <p>Behoben: Einige ClipboardAll-Probleme inklusive Verhaltensänderungen:</p>
 <ul>
   <li><a href="commands/_ClipboardTimeout.htm">#ClipboardTimeout</a> wird für GetClipboardData() ignoriert, da es nie wirklich funktionierte und Probleme verursachte. Dadurch werden Zeitüberschreitungen und Datenverluste behoben, wenn sich eine Datei in der Zwischenablage befindet (eine Datei in Windows 8, oder eine Datei in einer ZIP-Datei oder ähnliches).</li>
-  <li>Zwischenablage-Elemente mit einer Länge von Null bekommen 1 Byte zugewiesen, wenn sie in die Zwischenablage wiederhergestellt werden, weil das Setzen eines Elements mit einer Länge von Null scheinbar immer fehlschlägt.</li>
+  <li>Für Zwischenablageelemente mit einer Länge von Null, die in die Zwischenablage wiederhergestellt werden, wird Speicher in Höhe von 1 Byte reserviert, weil das Setzen eines Elements mit einer Länge von Null scheinbar immer fehlschlägt.</li>
   <li>MSDEVColumnSelect/MSDEVLineSelect bleibt nun erhalten, wenn es von Scintilla gesetzt wird, während alle von VS gesetzten Daten verworfen werden.</li>
   <li>Beim direkten Schreiben von ClipboardAll in eine Datei wird nun Unicode bevorzugt (andere Verwendungen von ClipboardAll haben dieses Verhalten bereits seit v1.1.08).</li>
   <li>ClipboardAll und FileRead *c in Unicode-Versionen werden ungerade Längen nun aufrunden. Dies erhöht die gemeldete StrLen um 1, wodurch eine mögliche Kürzung des letzten Bytes vermieden wird.</li>
@@ -1011,7 +1011,7 @@
 
 <h2 id="v1.1.02.00">1.1.02.00 - 6. August 2011</h2>
 <p>Hinzugefügt: TV_SetImageList().</p>
-<p>Geändert: Zeichen, die die exotischen Umschaltzustände 16 und 32 erfordern, verwenden nun eine Fallback-Methode, anstatt die falschen Tastatureingaben zu erzeugen.</p>
+<p>Geändert: Zeichen, die die exotischen Umschaltzustände 16 und 32 erfordern, verwenden nun eine Fallback-Methode, anstatt die falschen Tastendrücke zu erzeugen.</p>
 <p>Geändert: Die Handhabung von toten Tasten wurde überarbeitet, um Probleme zu lösen, die auftreten, wenn mehrere Skripte mit Hotstrings aktiv sind.</p>
 
 <h2 id="v1.1.01.00">1.1.01.00 - 30. Juli 2011</h2>
@@ -1041,7 +1041,7 @@
 <p>Geändert: <code>base.Methode()</code> löst nun nicht mehr eine Standard-Metafunktion oder eine Warnung aus.</p>
 <p>Geändert: <code>Gui +(Ex)Style</code> versteckt/zeigt nicht länger das GUI-Fenster.</p>
 <p>Geändert: Der Debugger meldet nun type="undefined" für nicht-initialisierte Variablen.</p>
-<p>Hinzugefügt: Ab sofort erfolgt eine Überprüfung, um zu verhindern, dass für Zeichen, die die Hankaku-Taste benötigen, die falschen Tastatureingaben gesendet werden.</p>
+<p>Hinzugefügt: Ab sofort erfolgt eine Überprüfung, um zu verhindern, dass für Zeichen, die die Hankaku-Taste benötigen, die falschen Tastendrücke gesendet werden.</p>
 <p>Hinzugefügt: Ab sofort werden Integer als Klassenvariablennamen unterstützt.</p>
 <p>Hinzugefügt: Ab sofort können Klassenvariablen mit dem Schlüsselwort "static" deklariert werden.</p>
 
@@ -1145,7 +1145,7 @@
 <h2 id="v1.0.91.02">1.0.91.02 - 26. Dezember 2010</h2>
 <p>COM: Schutz gegen NULL-IDispatch/IUnknown-Pointer hinzugefügt.</p>
 <p>COM: QueryInterface für IDispatch wird übersprungen, wenn VT_DISPATCH explizit übergeben wird.</p>
-<p>Kleine Fehlerbehebung zur Erhöhung der Wartbarkeit: <code>obj.field := var</code> liefert nun korrekt SYM_STRING, nicht SYM_OPERAND.</p>
+<p>Kleine Fehlerbehebung bezüglich der Wartbarkeit: <code>obj.field := var</code> liefert nun korrekt SYM_STRING, nicht SYM_OPERAND.</p>
 
 <h2 id="v1.0.91.01">1.0.91.01 - 24. Dezember 2010</h2>
 <p>Behoben: Unerwartete Ergebnisse mit <code>File.Write(Str)</code> nach Einlesen des Textes.</p>
@@ -1205,7 +1205,7 @@
 <p>Behoben: For-Schleife behandelte Nichtausdruck "0" als wahr für geskriptete Enumeratoren.</p>
 <p>Behoben: ComEvent (ComObjConnect) funktionierte nicht in der ANSI-Version.</p>
 <p>Behoben: ComEvent (ComObjConnect) konnte lokale Variablen nicht korrekt zwischenspeichern/wiederherstellen, wenn eine bereits laufende Funktion erneut aufgerufen wurde.</p>
-<p>Behoben: Ein Pufferüberlauf in A_EndChar, der auftrat, wenn kein Endungszeichen vorhanden ist.</p>
+<p>Behoben: Ein Pufferspeicherüberlauf in A_EndChar, der auftrat, wenn kein Endungszeichen vorhanden ist.</p>
 <p>Behoben: Func-&gt;mNextFunc wurde nicht mit NULL initialisiert (wird nur von LowLevel-Skripten verwendet).</p>
 <p>Debugger: Es wurde die Möglichkeit hinzugefügt, den Inhalt des Objekts abzurufen (mit einem Debugger-Client, der dies unterstützt).</p>
 <p>Debugger: Es wurden einige Fehler behoben.</p>
@@ -1241,7 +1241,7 @@
 <h2 id="L56">Revision 56 - 29. August 2010</h2>
 <p>Hinzugefügt: Ab sofort werden x64-kompilierte Skripte unterstützt. Benötigt Ahk2Exe_L und x64 AutoHotkeySC.bin.</p>
 <p>Behoben: Der Deref-Operator (<code>*addr</code>) hat Adressen außerhalb des 32-Bit-Bereichs abgelehnt.</p>
-<p>Behoben: Ein Speicherzuweisungsfehler bei <code>#If <i>Ausdruck</i></code> in x64.</p>
+<p>Behoben: Ein Speicherreservierungsfehler bei <code>#If <i>Ausdruck</i></code> in x64.</p>
 <p>Behoben: Benutzerdefinierte Hotstring-Endungszeichen mit Codepunkten größer als U+00FF.</p>
 <p>Behoben: SendInput/Play hat Sonderzeichen in falscher Reihenfolge gesendet.</p>
 <p>Behoben: <code>*/</code> wurde in Fortsetzungsbereichen verworfen (siehe L54).</p>
@@ -1437,7 +1437,7 @@
 <p>Behoben: Objekte und Zeichenkette werden nicht länger vorzeitig freigegeben, wenn die letzte Operation in einem Ausdruck eine Zeichenkette aus einem temporären Objekt abruft.</p>
 <p>Behoben: Numerische Zeichenketten mit spezieller Formatierung wurden nicht beibehalten, wenn sie von einer Funktion via Variable zurückgegeben oder an einer rekursiven Funktion weitergegeben wurden.</p>
 <p>Behoben: Wenn das Endergebnis eines Ausdrucks (außer bei Return) ein Objekt ist, wird nun korrekt eine leere Zeichenkette zurückgegeben, anstatt den Thread stillschweigend abzubrechen.</p>
-<p>Behoben: __Delete-Metafunktionen überschrieben manchmal temporäre Werte im Deref-Puffer.</p>
+<p>Behoben: __Delete-Metafunktionen überschrieben manchmal temporäre Werte im Deref-Pufferspeicher.</p>
 <p>Hinzugefügt: Eine via &amp;object abgerufene Adresse kann mithilfe von Object(Adresse) in eine Objektreferenz zurückverwandelt werden.</p>  
 
 <h2 id="L32">Revision 32 - 26. September 2009</h2>
