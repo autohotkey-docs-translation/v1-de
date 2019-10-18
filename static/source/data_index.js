@@ -496,7 +496,7 @@ indexData = [
   ["Func-Objekt","objects/Func.htm"],
   ["Func()","commands/Func.htm",2],
   ["g-Label (Reagieren auf GUI-Ereignisse)","commands/Gui.htm#label"],
-  ["game automation","commands/PixelSearch.htm"],["Spiel-Automatisierung","commands/PixelSearch.htm"],
+  ["game automation","commands/PixelSearch.htm"],["Videospielautomatisierung","commands/PixelSearch.htm"],
   ["GetAddress-Methode (Objekt)","objects/Object.htm#GetAddress"],
   ["GetCapacity-Methode (Objekt)","objects/Object.htm#GetCapacity"],
   ["GetKeyName()","commands/GetKey.htm",2],
