@@ -86,6 +86,7 @@ if (ih.Input = StrgC)
   <li><a href="#OnEnd">OnEnd</a>: Ermittelt oder setzt das <a href="../objects/Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn die Eingabeerfassung beendet wird.</li>
   <li><a href="#OnChar">OnChar</a>: Ermittelt oder setzt das <a href="../objects/Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, nachdem ein Zeichen zum Eingabepuffer hinzugefügt wurde.</li>
   <li><a href="#OnKeyDown">OnKeyDown</a>: Ermittelt oder setzt das <a href="../objects/Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn eine benachrichtigungsfähige Taste gedrückt wird.</li>
+  <li><a href="#OnKeyUp">OnKeyUp</a>: Ermittelt oder setzt das <a href="../objects/Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn eine benachrichtigungsfähige Taste losgelassen wird.</li>
 </ul>
 <p>Optionseigenschaften:</p>
 <ul>
@@ -93,7 +94,7 @@ if (ih.Input = StrgC)
   <li><a href="#CaseSensitive">CaseSensitive</a>: Legt fest, ob <em>Vergleichsliste</em> Groß-/Kleinschreibung-sensitiv sein soll.</li>
   <li><a href="#FindAnywhere">FindAnywhere</a>: Legt fest, ob alle Übereinstimmungen ein Teil des Eingabetexts sein sollen.</li>
   <li><a href="#MinSendLevel">MinSendLevel</a>: Ermittelt oder setzt die minimale <a href="SendLevel.htm">Sendestufe</a> der zu erfassenden Eingabe.</li>
-  <li><a href="#NotifyNonText">NotifyNonText</a>: Legt fest, ob der <a href="#OnKeyDown">OnKeyDown</a>-Callback jedes Mal aufgerufen werden soll, wenn eine Nicht-Text-Taste gedrückt wird.</li>
+  <li><a href="#NotifyNonText">NotifyNonText</a>: Legt fest, ob die Callbacks <a href="#OnKeyDown">OnKeyDown</a> und <a href="#OnKeyUp">OnKeyUp</a> jedes Mal aufgerufen werden sollen, wenn eine Nicht-Text-Taste gedrückt wird.</li>
   <li><a href="#Timeout">Timeout</a>: Ermittelt oder setzt den Timeout-Wert in Sekunden.</li>
   <li><a href="#VisibleNonText">VisibleNonText</a>: Legt fest, ob Tasten oder Tastenkombinationen, die keinen Text erzeugen, sichtbar sein (blockiert werden) sollen.</li>
   <li><a href="#VisibleText">VisibleText</a>: Legt fest, ob Tasten oder Tastenkombinationen, die Text erzeugen, sichtbar sein (blockiert werden) sollen.</li>
@@ -112,7 +113,7 @@ if (ih.Input = StrgC)
   <p id="KeyOpt-plus"><strong>+</strong> (plus): Bricht alle vorherigen <code>-</code> ab, ansonsten kein Effekt.</p>
   <p id="KeyOpt-e"><strong>E</strong>: Endtaste. Wenn diese Option aktiv ist, wird beim Drücken der Taste die Eingabeerfassung beendet, <a href="#EndReason">EndReason</a> auf das Wort EndKey gesetzt und die <a href="#EndKey">EndKey</a>-Eigenschaft auf den normalisierten Namen der Taste gesetzt. Im Gegensatz zum <em>EndKeys</em>-Parameter wird der Zustand von UMSCHALT ignoriert. Zum Beispiel sind <code>@</code> und <code>2</code> im US-amerikanischen Tastaturlayout äquivalent zu <code>{vk32}</code>.</p>
   <p id="KeyOpt-i"><strong>I</strong>: Text ignorieren. Jeglicher Text, den diese Taste normalerweise erzeugt, wird ignoriert, außerdem wird die Taste als Nicht-Text-Taste behandelt (siehe <a href="#VisibleNonText">VisibleNonText</a>). Hat keine Wirkung, wenn die Taste von sich aus keinen Text erzeugt.</p>
-  <p id="KeyOpt-n"><strong>N</strong>: Benachrichtigen. Bewirkt, dass jedes Mal der <a href="#OnKeyDown">OnKeyDown</a>-Callback aufgerufen wird, wenn die Taste gedrückt wird.</p>
+  <p id="KeyOpt-n"><strong>N</strong>: Benachrichtigen. Bewirkt, dass jedes Mal die Callbacks <a href="#OnKeyDown">OnKeyDown</a> und <a href="#OnKeyUp">OnKeyUp</a> aufgerufen werden, wenn die Taste gedrückt wird.</p>
   <p id="KeyOpt-s"><strong>S</strong>: Unterdrückt (blockiert) die Taste, nachdem sie verarbeitet wurde. Dies überschreibt  <a href="#VisibleText">VisibleText</a> oder <a href="#VisibleNonText">VisibleNonText</a>, bis <code>-S</code> verwendet wird. <code>+S</code> beinhaltet <code>-V</code>.</p>
   <p id="KeyOpt-v"><strong>V</strong>: Sichtbar. Verhindert, dass die Taste unterdrückt (blockiert) werden kann. Dies überschreibt <a href="#VisibleText">VisibleText</a> oder <a href="#VisibleNonText">VisibleNonText</a>, bis <code>-V</code> verwendet wird. <code>+V</code> beinhaltet <code>-S</code>.</p>
   </dd>
@@ -219,6 +220,16 @@ if (ih.Input = StrgC)
 <p>Die Funktion wird nie aufgerufen, wenn eine Endtaste gedrückt wird.</p>
 </div>
 
+<div class="methodShort" id="OnKeyUp"><h2>OnKeyUp <span class="ver">[v1.1.32+]</span></h2>
+<p>Ermittelt oder setzt das <a href="../objects/Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn eine benachrichtigungsfähige Taste losgelassen wird.</p>
+<pre class="Syntax">MeineFunk := InputHook.OnKeyUp</pre>
+<pre class="Syntax">InputHook.OnKeyUp := MeineFunk</pre>
+<p>Typ: <a href="../objects/Functor.htm">Funktionsobjekt</a> oder <a href="../Concepts.htm#nothing">leere Zeichenkette</a>. Standard: leere Zeichenkette.</p>
+<p>Taste-Oben-Benachrichtigungen müssen zuerst via <a href="#KeyOpt">KeyOpt</a> oder <a href="#NotifyNonText">NotifyNonText</a> aktiviert werden. Inwieweit eine Taste als Text oder Nicht-Text gilt, wird beim Drücken der Taste ermittelt. Wenn ein InputHook ein Taste-Oben-Ereignis erkennt, ohne vorher Taste-Unten erkannt zu haben, wird die Taste als Nicht-Text gewertet.</p>
+<p>Die Funktion akzeptiert folgende Parameter: <code>InputHook, VK, SC</code>. <em>VK</em> und <em>SC</em> sind Integer. Zum Abrufen des Tastennamens (sofern vorhanden) können Sie <code>GetKeyName(Format("vk{:x}sc{:x}", VK, SC))</code> nutzen.</p>
+<p>Die Funktion wird als neuer <a href="../misc/Threads.htm">Thread</a> aufgerufen, demzufolge verwendet sie zu Beginn die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>.</p>
+</div>
+
 <div class="methodShort" id="BackspaceIsUndo"><h2>BackspaceIsUndo</h2>
 <p>Legt fest, ob <kbd>Backspace</kbd> das zuletzt gedrückte Zeichen am Ende des Eingabepuffers entfernen soll.</p>
 <pre class="Syntax">BoolescherWert := InputHook.BackspaceIsUndo</pre>
@@ -254,11 +265,12 @@ if (ih.Input = StrgC)
 </div>
 
 <div class="methodShort" id="NotifyNonText"><h2>NotifyNonText</h2>
-<p>Legt fest, ob der <a href="#OnKeyDown">OnKeyDown</a>-Callback jedes Mal aufgerufen werden soll, wenn eine Nicht-Text-Taste gedrückt wird.</p>
+<p>Legt fest, ob die Callbacks <a href="#OnKeyDown">OnKeyDown</a> und <a href="#OnKeyUp">OnKeyUp</a> jedes Mal aufgerufen werden sollen, wenn eine Nicht-Text-Taste gedrückt wird.</p>
 <pre class="Syntax">BoolescherWert := InputHook.NotifyNonText</pre>
 <pre class="Syntax">InputHook.NotifyNonText := BoolescherWert</pre>
 <p>Typ: <a href="../Concepts.htm#boolean">Integer (boolescher Wert)</a>. Standard: False.</p>
 <p>Wenn diese Eigenschaft auf True gesetzt wird, werden Benachrichtigungen für alle Tastendrücke aktiviert, die keinen Text erzeugen, wie z. B. <kbd>←</kbd> oder <kbd>Alt</kbd>+<kbd>F</kbd>. Das Setzen dieser Eigenschaft hat keinen Einfluss auf die <a href="#KeyOpt">Optionen</a> einer Taste, da die Texterzeugung vom Tastaturlayout des aktiven Fensters zum Zeitpunkt des Tastendrucks abhängt. </p>
+<p>Beim Anwenden von NotifyNonText auf Taste-Oben-Ereignisse wird geprüft, ob ein vorheriges Taste-Unten-Ereignis mit einem passenden VK-Code als Text oder Nicht-Text klassifiziert wurde. Wenn NotifyNonText zum Beispiel True ist, wird beim Drücken von <kbd>Strg</kbd>+<kbd>A</kbd> ein <a href="#OnKeyDown">OnKeyDown</a> und <a href="#OnKeyUp">OnKeyUp</a> jeweils für <kbd>Strg</kbd> und <kbd>A</kbd> aufgerufen, während beim Drücken von nur <kbd>A</kbd> kein OnKeyDown oder OnKeyUp aufgerufen wird, es sei denn, es wurde <a href="#KeyOpt">KeyOpt</a> genutzt, um Benachrichtigungen für diese Taste zu aktivieren.</p>
 <p>Informationen darüber, welche Tasten als Texterzeuger eingestuft werden, finden Sie unter <a href="#VisibleText">VisibleText</a>.</p>
 </div>
 

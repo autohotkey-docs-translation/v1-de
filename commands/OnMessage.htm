@@ -143,8 +143,8 @@ ExitApp</pre>
 </div>
 
 <div class="ex" id="shutdown">
-<p><a href="#shutdown">#2</a>: Das folgende Skript zeigt, wie man das Abmelden/Herunterfahren des Systems erkennen und unterbrechen kann (es wurde gemeldet, dass dies NICHT in Windows Vista und höher funktioniert). Verwandtes Thema: <a href="OnExit.htm">OnExit</a></p>
-<pre><em>; Das folgende DllCall ist optional: es teilt dem OS mit, dass dieses Skript <i>zuerst</i> beendet werden soll (bevor alle anderen Anwendungen beendet werden).</em>
+<p><a href="#shutdown">#2</a>: Das folgende Skript zeigt, wie man das Herunterfahren/Abmelden des Systems erkennen und unterbrechen kann. In Windows Vista und höher erscheint eine Benutzeroberfläche, die anzeigt, welches Programm das Herunterfahren/Abmelden blockiert, und dem Benutzer ermöglicht, das Herunterfahren/Abmelden zu erzwingen. In älteren Betriebssystemen zeigt das Skript eine Sicherheitsabfrage an. Verwandtes Thema: <a href="OnExit.htm">OnExit</a></p>
+<pre><em>; Das folgende DllCall ist optional: es teilt dem OS mit, dass dieses Skript zuerst beendet werden soll (bevor alle anderen Anwendungen beendet werden).</em>
 DllCall("kernel32.dll\SetProcessShutdownParameters", "UInt", 0x4FF, "UInt", 0)
 OnMessage(0x11, "WM_QUERYENDSESSION")
 return
@@ -156,11 +156,41 @@ WM_QUERYENDSESSION(wParam, lParam)
         Ereignis := "Abmelden"
     else  <em>; System wird entweder heruntergefahren oder neu gestartet.</em>
         Ereignis := "Herunterfahren"
-    MsgBox, 4,, %Ereignis% im Gange.  Erlauben?
-    IfMsgBox Yes
-        return true  <em>; Erlaubt dem OS das Herunterfahren/Abmelden.</em>
-    else
-        return false  <em>; Verbietet dem OS das Herunterfahren/Abmelden.</em>
+    try
+    {
+        <em>; Bestimmt einen Anzeigetext für die OS-Herunterfahren-UI. Wir
+        ; zeigen keine eigene Sicherheitsabfrage an, da wir nur 5 Sekunden
+        ; haben, bevor das OS von sich aus die Herunterfahren-UI anzeigt.  
+        ; Außerdem kann ein Programm ohne sichtbares Fenster das
+        ; Herunterfahren nur blockieren, wenn ein Grund angegeben ist.</em>
+        BlockiereHerunterfahren("Es wird versucht, " Ereignis " zu verhindern.")
+        return false
+    }
+    catch
+    {
+        <em>; ShutdownBlockReasonCreate ist nicht verfügbar, demzufolge läuft
+        ; vermutlich Windows XP, 2003 oder 2000, wo wir tatsächlich
+        ; das Herunterfahren verhindern können.</em>
+        MsgBox, 4,, %Ereignis% im Gange.  Erlauben?
+        IfMsgBox Yes
+            return true  <em>; Erlaubt dem OS das Herunterfahren/Abmelden.</em>
+        else
+            return false  <em>; Verbietet dem OS das Herunterfahren/Abmelden.</em>
+    }
+}
+
+BlockiereHerunterfahren(Grund)
+{
+    <em>; Wenn Ihr Skript eine sichtbare GUI hat, nutzen Sie diese anstelle
+    ; von A_ScriptHwnd.</em>
+    DllCall("ShutdownBlockReasonCreate", "ptr", A_ScriptHwnd, "wstr", Grund)
+    OnExit("StoppeBlockenHerunterfahren")
+}
+
+StoppeBlockenHerunterfahren()
+{
+    OnExit(A_ThisFunc, 0)
+    DllCall("ShutdownBlockReasonDestroy", "ptr", A_ScriptHwnd)
 }</pre>
 </div>
 

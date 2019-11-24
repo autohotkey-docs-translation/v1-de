@@ -24,10 +24,10 @@
     <p>Einer oder beide Parameter können leer gelassen werden - in diesem Fall kann mit ErrorLevel (siehe unten) festgestellt werden, ob eine Übereinstimmung gefunden wurde.</p></dd>
 
   <dt>X1, Y1</dt>
-  <dd><p>Die X/Y-Koordinaten der oberen linken Ecke des zu durchsuchenden Rechtecks, die <a href="../Variables.htm#Expressions">Ausdrücke</a> sein können. <strong>Koordinaten sind relativ zum aktiven Fenster, sofern das nicht mit <a href="CoordMode.htm">CoordMode</a> geändert wurde.</strong></p></dd>
+  <dd><p>Die X/Y-Koordinaten der Ecke, in der das zu suchende Rechteck beginnt; die Koordinaten können <a href="../Variables.htm#Expressions">Ausdrücke</a> sein. <strong>Koordinaten sind relativ zum aktiven Fenster, sofern das nicht mit <a href="CoordMode.htm">CoordMode</a> geändert wurde.</strong></p></dd>
 
   <dt>X2, Y2</dt>
-  <dd><p>Die X/Y-Koordinaten der unteren rechten Ecke des zu durchsuchenden Rechtecks, die <a href="../Variables.htm#Expressions">Ausdrücke</a> sein können. Koordinaten sind relativ zum aktiven Fenster, sofern das nicht mit <a href="CoordMode.htm">CoordMode</a> geändert wurde.</p></dd>
+  <dd><p>Die X/Y-Koordinaten der Ecke, in der das zu suchende Rechteck endet; die Koordinaten können <a href="../Variables.htm#Expressions">Ausdrücke</a> sein. Koordinaten sind relativ zum aktiven Fenster, sofern das nicht mit <a href="CoordMode.htm">CoordMode</a> geändert wurde.</p></dd>
 
   <dt>Farbkennung</dt>
   <dd><p>Die dezimale oder hexadezimale der zu suchenden Farbkennung im BGR-Format, die ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein kann. Farbkennungen können mithilfe von Window Spy (über das Tray-Menü erreichbar) oder via <a href="PixelGetColor.htm">PixelGetColor</a> ermittelt werden. Zum Beispiel: <code>0x9d6346</code>.</p></dd>
@@ -45,9 +45,14 @@
 <h2>Fehlerbehandlung</h2>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, eine Ausnahme auszulösen, wenn beim Suchen ein Problem auftrat. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn die Farbe im angegeben Bereich gefunden wurde, auf 1, wenn sie nicht gefunden wurde, oder auf 2, falls der Befehl daran gehindert wurde, die Suche durchzuführen.</p>
+
 <h2>Bemerkungen</h2>
 <p>Der Suchbereich muss sichtbar sein; das heißt, dass es nicht möglich ist, einen Bereich in einem Fenster zu suchen, das hinter einem anderen Fenster liegt. Pixel, die unterhalb des Mauszeigers sind, werden in der Regel erkannt. Videospielmauszeiger hingegen behindern die Sicht auf darunterliegende Pixel in den meisten Fällen.</p>
-<p>Gilt nur für den Slow-Modus: Standardmäßig beginnt die Suche im oberen linken Pixel des Bereichs und geht dann vertikal nach unten, um eine Überstimmung zu finden. Findet die Suche dort keine Übereinstimmung, geht sie weiter nach rechts, Spalte für Spalte, bis sie einen passenden Pixel findet. Die übliche Links-nach-Rechts-Suche kann man durch Vertauschen der <em>X1</em>- und <em>X2</em>-Parameter umkehren. Also wenn <em>X1</em> größer als <em>X2</em> ist, wird die Suche von rechts nach links durchgeführt, beginnend bei Spalte <em>X1</em>. Und wenn <em>Y1</em> größer als <em>Y2</em> ist, wird die Suche bei jeder Pixelspalte unten statt oben beginnen. Eine Suche in einem großen Bereich und mit hoher Frequenz kann zu einem hohen CPU-Verbrauch führen. Um diesen Verbrauch zu verringern, hält man die Größe des Bereichs so klein wie möglich.</p>
+<p>Die Suchrichtung ist von der Anordnung der Parameter abhängig. Das heißt: Wenn <em>X1</em> größer als <em>X2</em> ist, wird die Suche von rechts nach links durchgeführt, beginnend bei Spalte <em>X1</em>. Wenn <em>Y1</em> größer als <em>Y2</em> ist, wird die Suche von unten nach oben durchgeführt. Früher vor <span class="ver">[v1.1.32]</span> war es allerdings so, dass im Fast-Modus <em>X1</em> und <em>Y1</em> die obere linke Ecke sein musste.</p>
+<p>Fast-Modus: Die Suche beginnt bei den via <em>X1</em> und <em>Y1</em> angegebenen Koordinaten und überprüft alle Pixel reihenweise von <em>X1</em> bis <em>X2</em>, um eine Übereinstimmung zu finden. Wird dort keine Übereinstimmung gefunden, wird die Suche in Richtung <em>Y2</em> fortgesetzt, Reihe für Reihe, bis sie ein passendes Pixel findet.</p>
+<p>Slow-Modus: Die Suche beginnt bei den via <em>X1</em> und <em>Y1</em> angegebenen Koordinaten und überprüft alle Pixel spaltenweise von <em>Y1</em> bis <em>Y2</em>, um eine Übereinstimmung zu finden. Wird dort keine Übereinstimmung gefunden, wird die Suche in Richtung <em>X2</em> fortgesetzt, Spalte für Spalte, bis sie ein passendes Pixel findet.</p>
+<p>Eine Suche in einem großen Bereich und mit hoher Frequenz kann zu einem hohen CPU-Verbrauch führen. Um diesen Verbrauch zu verringern, hält man die Größe des Bereichs so klein wie möglich.</p>
+
 <h2>Siehe auch</h2>
 <p><a href="PixelGetColor.htm">PixelGetColor</a>, <a href="ImageSearch.htm">ImageSearch</a>, <a href="CoordMode.htm">CoordMode</a>, <a href="MouseGetPos.htm">MouseGetPos</a></p>
 <h2>Beispiele</h2>
