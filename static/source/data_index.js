@@ -755,7 +755,7 @@ indexData = [
   ["Parsen einer Zeichenkette (Loop)","commands/LoopParse.htm"],
   ["Parsen einer Zeichenkette (StringSplit)","commands/StringSplit.htm"],
   ["Pause","commands/Pause.htm",6,"SS"],
-  ["Performance von scripts","misc/Performance.htm"],
+  ["Performance of scripts","misc/Performance.htm"],["Leistung von Skripten","misc/Performance.htm"],
   ["Picture-Steuerelemente (GUI)","commands/GuiControls.htm#Picture"],
   ["PID (Prozess-ID)","commands/Process.htm"],
   ["PixelGetColor","commands/PixelGetColor.htm",6,"OEES"],
