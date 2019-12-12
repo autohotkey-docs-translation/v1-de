@@ -15,21 +15,21 @@
 
 <p>Ändert diverse Einstellungen eines Audiogeräts (Master-Stummschaltung, Master-Lautstärke und so weiter).</p>
 
-<pre class="Syntax"><span class="func">SoundSet</span>, Einstellung <span class="optional">, Komponententyp, Kontrolltyp, Gerätenummer</span></pre>
+<pre class="Syntax"><span class="func">SoundSet</span>, Einstellung <span class="optional">, Komponente, Regler, Gerätenummer</span></pre>
 <h2>Parameter</h2>
 <dl>
 
   <dt>Einstellung</dt>
   <dd><p>Eine Prozentzahl zwischen -100 und 100 (kann eine Floating-Point-Zahl oder ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein). Wenn die Zahl mit einem Plus- oder Minuszeichen beginnt, wird die <strong>aktuelle Einstellung</strong> mit der angegebenen Menge nach oben oder nach unten reguliert. Andernfalls wird die <em>Einstellung</em> explizit gesetzt.</p>
-      <p>Bei <em>Kontrolltypen</em> mit nur zwei möglichen Einstellungen (ONOFF, MUTE, MONO, LOUDNESS, STEREOENH und BASSBOOST) bewirkt eine positive Zahl, dass die Einstellung aktiviert wird, und eine 0, dass sie deaktiviert wird. Wenn die Zahl allerdings mit einem Plus- oder Minuszeichen beginnt, wird die Einstellung umgeschaltet (jeweils auf dem entgegengesetzten Zustand).</p></dd>
+      <p>Bei <em>Regler</em> mit nur zwei möglichen Einstellungen (ONOFF, MUTE, MONO, LOUDNESS, STEREOENH und BASSBOOST) bewirkt eine positive Zahl, dass die Einstellung aktiviert wird, und eine 0, dass sie deaktiviert wird. Wenn die Zahl allerdings mit einem Plus- oder Minuszeichen beginnt, wird die Einstellung umgeschaltet (jeweils auf dem entgegengesetzten Zustand).</p></dd>
 
-  <dt>Komponententyp</dt>
-  <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig das Wort MASTER verwendet. Ansonsten kann eines der folgenden Wörter angegeben werden: MASTER (gleichbedeutend mit SPEAKERS), DIGITAL, LINE, MICROPHONE, SYNTH, CD, TELEPHONE, PCSPEAKER, WAVE, AUX, ANALOG, HEADPHONES oder N/A. Wenn das Audiogerät den angegebenen <em>Komponententyp</em> nicht hat, wird ErrorLevel das Problem kennzeichnen.</p>
+  <dt>Komponente</dt>
+  <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig das Wort MASTER verwendet. Ansonsten kann eines der folgenden Wörter angegeben werden: MASTER (gleichbedeutend mit SPEAKERS), DIGITAL, LINE, MICROPHONE, SYNTH, CD, TELEPHONE, PCSPEAKER, WAVE, AUX, ANALOG, HEADPHONES oder N/A. Wenn das Audiogerät die angegebene <em>Komponente</em> nicht hat, wird ErrorLevel das Problem kennzeichnen.</p>
       <p>Die Komponente mit der Bezeichnung Auxiliary muss bei einigen Mixern eventuell via ANALOG statt AUX angesteuert werden.</p>
-    <p>Wenn ein Gerät mehr als eine Instanz vom <em>Komponententyp</em> hat (zum Beispiel zwei vom Typ LINE), enthält der erste Typ für gewöhnlich die Wiedergabeeinstellungen und der zweite Typ die Aufnahmeeinstellungen. Um anstelle der ersten Instanz auf eine andere zuzugreifen, müssen Sie nach diesem Parameter ein Doppelpunkt und eine Nummer anfügen. Zum Beispiel: <code>Analog:2</code> ist die zweite Instanz der analogen Komponente.</p></dd>
+    <p>Wenn ein Gerät mehr als eine Instanz der <em>Komponente</em> hat (zum Beispiel zwei vom Typ LINE), enthält die erste Instanz für gewöhnlich die Wiedergabeeinstellungen und die zweite die Aufnahmeeinstellungen. Um anstelle der ersten Instanz auf eine andere zuzugreifen, müssen Sie nach diesem Parameter ein Doppelpunkt und eine Nummer anfügen. Zum Beispiel: <code>Analog:2</code> ist die zweite Instanz der analogen Komponente.</p></dd>
 
-  <dt>Kontrolltyp</dt>
-  <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig das Wort VOLUME verwendet. Ansonsten kann eines der folgenden Wörter angegeben werden: VOLUME (oder VOL), ONOFF, MUTE, MONO, LOUDNESS, STEREOENH, BASSBOOST, PAN, QSOUNDPAN, BASS, TREBLE, EQUALIZER oder die Nummer eines gültigen Kontrolltyps (siehe <a href="#Ex">Soundkartenanalyse-Skript</a>). Wenn der <em>Komponententyp</em> den angegebenen <em>Kontrolltyp</em> nicht hat, wird ErrorLevel das Problem kennzeichnen.</p>
+  <dt>Regler</dt>
+  <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig das Wort VOLUME verwendet. Ansonsten kann eines der folgenden Wörter angegeben werden: VOLUME (oder VOL), ONOFF, MUTE, MONO, LOUDNESS, STEREOENH, BASSBOOST, PAN, QSOUNDPAN, BASS, TREBLE, EQUALIZER oder die Nummer eines gültigen Reglers (siehe <a href="#Ex">Soundkartenanalyse-Skript</a>). Wenn die angegebene <em>Komponente</em> den angegebenen <em>Regler</em> nicht hat, wird ErrorLevel das Problem kennzeichnen.</p>
     <p class="note"><strong>Hinweis</strong>: Soundgeräte unterstützen üblicherweise nur VOLUME (oder VOL) und MUTE, auch wenn andere je nach Windows-Version und dem Soundgerät verfügbar sein könnten.</p></dd>
 
   <dt>Gerätenummer</dt>
@@ -40,11 +40,11 @@
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn der Befehl erfolgreich war. Ansonsten wird es auf einen der folgenden Sätze gesetzt:</p>
 <ul>
-    <li>Invalid Control Type or Component Type (ungültiger Kontrolltyp oder Komponententyp)</li>
+    <li>Invalid Control Type or Component Type (ungültiger Regler oder Komponente)</li>
     <li>Can't Open Specified Mixer (der angegebene Mixer konnte nicht geöffnet werden)</li>
-    <li>Mixer Doesn't Support This Component Type (der Mixer unterstützt nicht diesen Komponententyp)</li>
-    <li>Mixer Doesn't Have That Many of That Component Type (der Mixer hat nicht so viele Komponententypen)</li>
-    <li>Component Doesn't Support This Control Type (die Komponente unterstützt nicht diesen Kontrolltyp)</li>
+    <li>Mixer Doesn't Support This Component Type (Mixer unterstützt diese Komponente nicht)</li>
+    <li>Mixer Doesn't Have That Many of That Component Type (Mixer hat nicht so viele von dieser Komponente)</li>
+    <li>Component Doesn't Support This Control Type (Komponente unterstützt diesen Regler nicht)</li>
     <li>Can't Get Current Setting (aktuelle Einstellung konnte nicht ermittelt werden)</li>
     <li>Can't Change Setting (aktuelle Einstellung konnte nicht geändert werden)</li>
 </ul>
@@ -55,7 +55,7 @@
 <pre>Send {Volume_Up}  <em>; Erhöht die Master-Lautstärke um 1 Stufe (normalerweise 5%).</em>
 Send {Volume_Down 3}  <em>; Verringert die Master-Lautstärke um 3 Stufen.</em>
 Send {Volume_Mute}  <em>; Master-Lautstärke stummschalten bzw. Stummschaltung aufheben.</em></pre>
-<p>Um den Leistungsumfang der installierten Audiogeräte (Mixer) zu ermitteln -- z. B. verfügbare Komponenten- und Kontrolltypen -- führt man das <a href="#Ex">Soundkartenanalyse-Skript</a> aus.</p>
+<p>Um den Leistungsumfang der installierten Audiogeräte (Mixer) zu ermitteln -- z. B. verfügbare Komponenten und Regler -- führen Sie das <a href="#Ex">Soundkartenanalyse-Skript</a> aus.</p>
 <p>Windows 2000/XP/2003: Wenn SoundSet die Lautstärke einer Komponente ändert, werden alle Kanäle dieser Komponente (zum Beispiel der linke und rechte Kanal) auf die gleiche Stufe gesetzt. Das heißt, dass jede zuvor eingestellte außermittige "Balance" verloren geht. Bei der WAVE-Komponente kann das verhindert werden, wenn man stattdessen den Befehl <a href="SoundSetWaveVolume.htm">SoundSetWaveVolume</a> verwendet, der versuchen wird, die vorhandene Balance beizubehalten, sobald sich die Lautstärke ändert.</p>
 <p><span class="ver">[v1.1.10+]</span>: In Windows Vista und höher versucht SoundSet, die vorhandene Balance beizubehalten, sobald sich die Lautstärke ändert.</p>
 <p>Mit <a href="SoundGet.htm">SoundGet</a> kann der aktuelle Wert einer Einstellung abgerufen werden.</p>
@@ -75,7 +75,7 @@ if ErrorLevel
 </div>
 
 <div class="ex" id="Soundcard">
-<p><a href="#Soundcard">#2</a>: Soundkartenanalyse. Das folgende Skript kann verwendet werden, um die Fähigkeiten Ihrer Soundkarte zu ermitteln (Komponententypen und Kontrolltypen). Es zeigt die Ergebnisse in einer einfachen ListView an. Alternativ kann man ein Skript für Windows Vista oder höher, das mehr Details bereitstellt (z. B. die Anzeigenamen der Geräte), im folgenden Forumsbeitrag herunterladen: <a href="https://www.autohotkey.com/board/topic/90877-/">https://www.autohotkey.com/board/topic/90877-/</a></p>
+<p><a href="#Soundcard">#2</a>: Soundkartenanalyse. Das folgende Skript kann verwendet werden, um die Fähigkeiten Ihrer Soundkarte zu ermitteln (Komponenten und Regler). Es zeigt die Ergebnisse in einer einfachen ListView an. Alternativ kann man ein Skript für Windows Vista oder höher, das mehr Details bereitstellt (z. B. die Anzeigenamen der Geräte), im folgenden Forumsbeitrag herunterladen: <a href="https://www.autohotkey.com/board/topic/90877-/">https://www.autohotkey.com/board/topic/90877-/</a></p>
 <pre id="Ex">SetBatchLines -1
 SplashTextOn,,, Informationen der Soundkarte ermitteln ...
 
@@ -83,55 +83,55 @@ SplashTextOn,,, Informationen der Soundkarte ermitteln ...
 ; Die Zahlen beziehen sich auf folgende Elemente (in Reihenfolge): CUSTOM, BOOLEANMETER, SIGNEDMETER, PEAKMETER,
 ; UNSIGNEDMETER, BOOLEAN, BUTTON, DECIBELS, SIGNED, UNSIGNED, PERCENT, SLIDER, FADER, SINGLESELECT, MUX,
 ; MULTIPLESELECT, MIXER, MICROTIME, MILLITIME</em>
-Kontrolltypen := "VOLUME,ONOFF,MUTE,MONO,LOUDNESS,STEREOENH,BASSBOOST,PAN,QSOUNDPAN,BASS,TREBLE,EQUALIZER,0x00000000, 0x10010000,0x10020000,0x10020001,0x10030000,0x20010000,0x21010000,0x30040000,0x30020000,0x30030000,0x30050000,0x40020000,0x50030000,0x70010000,0x70010001,0x71010000,0x71010001,0x60030000,0x61030000"
+Regler := "VOLUME,ONOFF,MUTE,MONO,LOUDNESS,STEREOENH,BASSBOOST,PAN,QSOUNDPAN,BASS,TREBLE,EQUALIZER,0x00000000, 0x10010000,0x10020000,0x10020001,0x10030000,0x20010000,0x21010000,0x30040000,0x30020000,0x30030000,0x30050000,0x40020000,0x50030000,0x70010000,0x70010001,0x71010000,0x71010001,0x60030000,0x61030000"
 
-Komponententypen := "MASTER,HEADPHONES,DIGITAL,LINE,MICROPHONE,SYNTH,CD,TELEPHONE,PCSPEAKER,WAVE,AUX,ANALOG,N/A"
+Komponenten := "MASTER,HEADPHONES,DIGITAL,LINE,MICROPHONE,SYNTH,CD,TELEPHONE,PCSPEAKER,WAVE,AUX,ANALOG,N/A"
 
 <em>; Erstellt eine ListView und bereitet diese auf die Hauptschleife vor:</em>
-Gui, Add, ListView, w400 h400 vMeineListView, Komponententyp|Kontrolltyp|Einstellung|Mixer
+Gui, Add, ListView, w400 h400 vMeineListView, Komponente|Regler|Einstellung|Mixer
 LV_ModifyCol(4, "Integer")
 SetFormat, Float, 0.2  <em>; Begrenzt die maximale Dezimalstellenanzahl eines Prozentwertes auf 2.</em>
 
 Loop  <em>; Ruft von jedem Mixer, der im System vorkommt, dessen Fähigkeiten ab.</em>
 {
-    Mixer := A_Index
-    SoundGet, Einstellung,,, %Mixer%
+    AktMixer := A_Index
+    SoundGet, Einstellung,,, %AktMixer%
     if (ErrorLevel = "Can't Open Specified Mixer")  <em>; Jeder anderer Fehler kennzeichnet, dass der Mixer vorhanden ist.</em>
         break
 
-    <em>; Ruft von jedem Komponententyp, der in diesem Mixer vorkommt, dessen Instanzen und Kontrolltypen ab:</em>
-    Loop, parse, Komponententypen, `,
+    <em>; Ruft von jeder Komponente, die in diesem Mixer existiert, ihre Instanzen und Regler ab:</em>
+    Loop, parse, Komponenten, `,
     {
-        Komponente := A_LoopField
-        <em>; Zuerst überprüfen, ob dieser Komponententyp auch im Mixer vorkommt:</em>
-        SoundGet, Einstellung, %Komponente%,, %Mixer%
+        AktKomponente := A_LoopField
+        <em>; Zuerst überprüfen, ob diese Komponente überhaupt im Mixer existiert:</em>
+        SoundGet, Einstellung, %AktKomponente%,, %AktMixer%
         if (ErrorLevel = "Mixer Doesn't Support This Component Type")
-            continue  <em>; Startet für den nächsten Komponententyp eine neue Iteration.</em>
-        Loop  <em>; Ruft von jeder Instanz dieses Komponententyps dessen Kontrolltypen ab.</em>
+            continue  <em>; Startet für die nächste Komponente eine neue Iteration.</em>
+        Loop  <em>; Ruft von jeder Instanz dieser Komponente ihre Regler ab.</em>
         {
-            Instanz := A_Index
+            AktInstanz := A_Index
             <em>; Zuerst überprüfen, ob diese Instanz dieser Instanz auch im Mixer vorkommt:</em>
-            SoundGet, Einstellung, %Komponente%:%Instanz%,, %Mixer%
+            SoundGet, Einstellung, %AktKomponente%:%AktInstanz%,, %AktMixer%
             <em>; Das Überprüfen beider folgenden Fehler erlaubt diesem Skript, auf ältere Betriebssysteme zu laufen:</em>
             if ErrorLevel in Mixer Doesn't Have That Many of That Component Type,Invalid Control Type or Component Type
-                break  <em>; Keine weiteren Instanzen von diesem Komponententyp.</em>
-            <em>; Ermittelt die aktuelle Einstellung von jedem Kontrolltyp, der in dieser Instanz von dieser Komponente vorkommt:</em>
-            Loop, parse, Kontrolltypen, `,
+                break  <em>; Keine weiteren Instanzen von dieser Komponente.</em>
+            <em>; Ermittelt die aktuelle Einstellung von jedem Regler, der in dieser Instanz dieser Komponente existiert:</em>
+            Loop, parse, Regler, `,
             {
-                Kontrolle := A_LoopField
-                SoundGet, Einstellung, %Komponente%:%Instanz%, %Kontrolle%, %Mixer%
+                AktRegler := A_LoopField
+                SoundGet, Einstellung, %AktKomponente%:%AktInstanz%, %AktRegler%, %AktMixer%
                 <em>; Das Überprüfen beider folgenden Fehler erlaubt diesem Skript, auf ältere Betriebssysteme zu laufen:</em>
                 if ErrorLevel in Component Doesn't Support This Control Type,Invalid Control Type or Component Type
                     continue
                 if ErrorLevel  <em>; Irgendein unerwarteter Fehler, der demzufolge in den Ergebnissen angezeigt wird.</em>
                     Einstellung := ErrorLevel
-                KomponentenZeichenkette := Komponente
-                if (Instanz &gt; 1)
-                    KomponentenZeichenkette := KomponentenZeichenkette ":" Instanz
-                LV_Add("", KomponentenZeichenkette, Kontrolle, Einstellung, Mixer)
-            }  <em>; Für jeden Kontrolltyp.</em>
-        }  <em>; Für jede Komponenteninstanz.</em>
-    }  <em>; Für jeden Komponententyp.</em>
+                KomponenteZkette := AktKomponente
+                if (AktInstanz &gt; 1)
+                    KomponenteZkette := KomponenteZkette ":" AktInstanz
+                LV_Add("", KomponenteZkette, AktRegler, Einstellung, AktMixer)
+            }  <em>; Für jeden Regler.</em>
+        }  <em>; Für jede Instanz der Komponente.</em>
+    }  <em>; Für jede Komponente.</em>
 }  <em>; Für jeden Mixer.</em>
 
 Loop % LV_GetCount("Col")  <em>; Passt die Breiten der Spalten an den Inhalt der Reihen an.</em>

@@ -15,20 +15,20 @@
 
 <p>Ermittelt diverse Einstellungen eines Audiogeräts (Master-Stummschaltung, Master-Lautstärke und so weiter).</p>
 
-<pre class="Syntax"><span class="func">SoundGet</span>, AusgabeVar <span class="optional">, Komponententyp, Kontrolltyp, Gerätenummer</span></pre>
+<pre class="Syntax"><span class="func">SoundGet</span>, AusgabeVar <span class="optional">, Komponente, Regler, Gerätenummer</span></pre>
 <h2>Parameter</h2>
 <dl>
 
   <dt>AusgabeVar</dt>
-  <dd><p>Name der Variable, in der die abgerufene Einstellung gespeichert werden soll, welche entweder eine Floating-Point-Zahl zwischen 0 und 100 oder das Wort ON oder OFF ist (gilt nur für die <em>Kontrolltypen</em> ONOFF, MUTE, MONO, LOUDNESS, STEREOENH und BASSBOOST). Die Variable wird leer gemacht, wenn ein Problem beim Abrufen der Einstellung aufgetreten ist. Das Format der Floating-Point-Zahl, z. B. deren Dezimalstellen, wird über <a href="SetFormat.htm">SetFormat</a> bestimmt.</p></dd>
+  <dd><p>Name der Variable, in der die abgerufene Einstellung gespeichert werden soll, welche entweder eine Floating-Point-Zahl zwischen 0 und 100 oder das Wort ON oder OFF ist (gilt nur für die <em>Regler</em> ONOFF, MUTE, MONO, LOUDNESS, STEREOENH und BASSBOOST). Die Variable wird leer gemacht, wenn ein Problem beim Abrufen der Einstellung aufgetreten ist. Das Format der Floating-Point-Zahl, z. B. deren Dezimalstellen, wird über <a href="SetFormat.htm">SetFormat</a> bestimmt.</p></dd>
 
-  <dt>Komponententyp</dt>
-  <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig das Wort MASTER verwendet. Ansonsten kann eines der folgenden Wörter angegeben werden: MASTER (gleichbedeutend mit SPEAKERS), DIGITAL, LINE, MICROPHONE, SYNTH, CD, TELEPHONE, PCSPEAKER, WAVE, AUX, ANALOG, HEADPHONES oder N/A. Wenn das Audiogerät den angegebenen <em>Komponententyp</em> nicht hat, wird ErrorLevel das Problem kennzeichnen.</p>
+  <dt>Komponente</dt>
+  <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig das Wort MASTER verwendet. Ansonsten kann eines der folgenden Wörter angegeben werden: MASTER (gleichbedeutend mit SPEAKERS), DIGITAL, LINE, MICROPHONE, SYNTH, CD, TELEPHONE, PCSPEAKER, WAVE, AUX, ANALOG, HEADPHONES oder N/A. Wenn das Audiogerät die angegebene <em>Komponente</em> nicht hat, wird ErrorLevel das Problem kennzeichnen.</p>
       <p>Die Komponente mit der Bezeichnung Auxiliary muss bei einigen Mixern eventuell via ANALOG statt AUX angesteuert werden.</p>
-    <p>Wenn ein Gerät mehr als eine Instanz vom <em>Komponententyp</em> hat (zum Beispiel zwei vom Typ LINE), enthält der erste Typ für gewöhnlich die Wiedergabeeinstellungen und der zweite Typ die Aufnahmeeinstellungen. Um anstelle der ersten Instanz auf eine andere zuzugreifen, müssen Sie nach diesem Parameter ein Doppelpunkt und eine Nummer anfügen. Zum Beispiel: <code>Analog:2</code> ist die zweite Instanz der analogen Komponente.</p></dd>
+    <p>Wenn ein Gerät mehr als eine Instanz der <em>Komponente</em> hat (zum Beispiel zwei vom Typ LINE), enthält die erste Instanz für gewöhnlich die Wiedergabeeinstellungen und die zweite die Aufnahmeeinstellungen. Um anstelle der ersten Instanz auf eine andere zuzugreifen, müssen Sie nach diesem Parameter ein Doppelpunkt und eine Nummer anfügen. Zum Beispiel: <code>Analog:2</code> ist die zweite Instanz der analogen Komponente.</p></dd>
 
-  <dt>Kontrolltyp</dt>
-  <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig das Wort VOLUME verwendet. Ansonsten kann eines der folgenden Wörter angegeben werden: VOLUME (oder VOL), ONOFF, MUTE, MONO, LOUDNESS, STEREOENH, BASSBOOST, PAN, QSOUNDPAN, BASS, TREBLE, EQUALIZER oder die Nummer eines gültigen Kontrolltyps (siehe <a href="SoundSet.htm#Ex">Soundkartenanalyse-Skript</a>). Wenn der <em>Komponententyp</em> den angegebenen <em>Kontrolltyp</em> nicht hat, wird ErrorLevel das Problem kennzeichnen.</p>
+  <dt>Regler</dt>
+  <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig das Wort VOLUME verwendet. Ansonsten kann eines der folgenden Wörter angegeben werden: VOLUME (oder VOL), ONOFF, MUTE, MONO, LOUDNESS, STEREOENH, BASSBOOST, PAN, QSOUNDPAN, BASS, TREBLE, EQUALIZER oder die Nummer eines gültigen Reglers (siehe <a href="SoundSet.htm#Ex">Soundkartenanalyse-Skript</a>). Wenn die angegebene <em>Komponente</em> den angegebenen <em>Regler</em> nicht hat, wird ErrorLevel das Problem kennzeichnen.</p>
     <p class="note"><strong>Hinweis</strong>: Soundgeräte unterstützen üblicherweise nur VOLUME (oder VOL) und MUTE, auch wenn andere je nach Windows-Version und dem Soundgerät verfügbar sein könnten.</p></dd>
 
   <dt>Gerätenummer</dt>
@@ -39,16 +39,16 @@
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn der Befehl erfolgreich war. Ansonsten wird es auf einen der folgenden Sätze gesetzt:</p>
 <ul>
-    <li>Invalid Control Type or Component Type (ungültiger Kontrolltyp oder Komponententyp)</li>
+    <li>Invalid Control Type or Component Type (ungültiger Regler oder Komponente)</li>
     <li>Can't Open Specified Mixer (der angegebene Mixer konnte nicht geöffnet werden)</li>
-    <li>Mixer Doesn't Support This Component Type (der Mixer unterstützt nicht diesen Komponententyp)</li>
-    <li>Mixer Doesn't Have That Many of That Component Type (der Mixer hat nicht so viele Komponententypen)</li>
-    <li>Component Doesn't Support This Control Type (die Komponente unterstützt nicht diesen Kontrolltyp)</li>
+    <li>Mixer Doesn't Support This Component Type (Mixer unterstützt diese Komponente nicht)</li>
+    <li>Mixer Doesn't Have That Many of That Component Type (Mixer hat nicht so viele von dieser Komponente)</li>
+    <li>Component Doesn't Support This Control Type (Komponente unterstützt diesen Regler nicht)</li>
     <li>Can't Get Current Setting (aktuelle Einstellung konnte nicht ermittelt werden)</li>
 </ul>
 <h2>Bemerkungen</h2>
 <p>Seit v1.1.10 wird Windows Vista und höher unterstützt.</p>
-<p>Um den Leistungsumfang der installierten Audiogeräte (Mixer) zu ermitteln -- z. B. verfügbare Komponenten- und Kontrolltypen -- führt man das <a href="SoundSet.htm#Ex">Soundkartenanalyse-Skript</a> aus.</p>
+<p>Um den Leistungsumfang der installierten Audiogeräte (Mixer) zu ermitteln -- z. B. verfügbare Komponenten und Regler -- führen Sie das <a href="SoundSet.htm#Ex">Soundkartenanalyse-Skript</a> aus.</p>
 <p>Für mehr Funktionalität und feinere Audio-Steuerung ist die <a href="https://www.autohotkey.com/board/topic/21984-vista-audio-control-functions/">VA-Bibliothek</a> besser geeignet.</p>
 <p>Mit <a href="SoundSet.htm">SoundSet</a> kann eine Einstellung geändert werden.</p>
 <h2>Siehe auch</h2>
