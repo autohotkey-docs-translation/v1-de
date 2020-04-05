@@ -64,8 +64,8 @@
 <p>Dieser Unterbefehl ist für mehrere Zwecke gedacht. <em>Menüpunktname</em> ist der Name oder die Position eines Menüpunkts (siehe <a href="#MenuItemName">Menüpunktname</a>, um mehr zu erfahren). Wenn <em>Menüpunktname</em> noch nicht existiert, wird er in das Menü eingefügt. Ansonsten wird <em>Menüpunktname</em> mit dem neu angegebenen <em>LabelOderUntermenü</em> aktualisiert.</p>
 <p>Um eine Trennlinie in das Menü einzufügen, lassen Sie alle drei Parameter weg.</p>
 <p>Die Label-Subroutine wird als neuer <a href="../misc/Threads.htm">Thread</a> gestartet, wenn der Benutzer den Menüpunkt anklickt (vergleichbar mit <a href="Gosub.htm">Gosub</a> und <a href="../Hotkeys.htm">Hotkey-Subroutinen</a>). Lässt man <em>LabelOderUntermenü</em> weg, wird <em>Menüpunktname</em> sowohl als Labelname als auch als Menüpunktname verwendet.</p>
-<p id="Functor"><span class="ver">[v1.1.20+]:</span> Wenn es nicht der Name eines vorhandenen Labels ist, kann <em>LabelOderUntermenü</em> der Name einer Funktion sein, oder eine einzelne Variablenreferenz mit einem <a href="../objects/Functor.htm">Funktionsobjekt</a>. Zum Beispiel <code>%FunkObj%</code> oder <code>% FunkObj</code>. Andere Ausdrücke, die Objekte zurückgeben, werden zurzeit nicht unterstützt. Optional kann die Funktion wie folgt Parameter definieren:</p>
-<pre class="Syntax"><i>Funktionsname</i>(Menüpunktname, Menüpunktposition, Menüname)</pre>
+<p id="Functor"><span class="ver">[v1.1.20+]:</span> Wenn es nicht der Name eines vorhandenen Labels ist, kann <em>LabelOderUntermenü</em> der Name einer Funktion sein, oder eine einzelne Variablenreferenz mit einem <a href="../objects/Functor.htm">Funktionsobjekt</a>. Zum Beispiel <code>%FunkObj%</code> oder <code>% FunkObj</code>. Ein voll funktionsfähiges Beispiel finden Sie unter <a href="#ExBoundFunc">Beispiel #5</a>. Andere Ausdrücke, die Objekte zurückgeben, werden zurzeit nicht unterstützt. Optional kann die Funktion wie folgt Parameter definieren:</p>
+<pre><i>Funktionsname</i>(Menüpunktname, Menüpunktposition, Menüname)</pre>
 <p>Wenn <em>Menüpunktname</em> ein Untermenü werden soll - also ein Menüpunkt, der ein neues Menü öffnet - muss in <em>LabelOderUntermenü</em> ein Doppelpunkt und der <em>Menüname</em> eines vorhandenen benutzerdefinierten Menüs angegeben werden. Zum Beispiel:</p>
 <pre>Menu, MeinUntermenü, Add, Menüpunkt1
 Menu, Tray, Add, Dieser Menüpunkt ist ein Untermenü, :MeinUntermenü</pre>
@@ -413,6 +413,28 @@ return
 Exit:
 ExitApp
 </pre>
+</div>
+
+<div class="ex" id="ExBoundFunc">
+  <p><a href="#ExBoundFunc">#5</a>: Dieses Skript zeigt, wie man mit <a href="../objects/Functor.htm#BoundFunc">BoundFunc-Objekte</a> zusätzliche Parameter übergeben kann, wenn man eine Funktion anstelle einer Subroutine verwendet:</p>
+  <pre><em>; Parameter an die Funktion binden und ein BoundFunc-Objekt zurückgeben:</em>
+BoundGivePar := Func("GivePar").Bind("First", "Test one")
+BoundGivePar2 := Func("GivePar").Bind("Second", "Test two")
+
+<em>; Das Menü erstellen und anzeigen:</em>
+Menu MeinMenü, Add, Parameter übergeben, % BoundGivePar
+Menu MeinMenü, Add, Parameter2 übergeben, % BoundGivePar2
+Menu MeinMenü, Show
+
+<em>; Definition der benutzerdefinierten Funktion GivePar:</em>
+GivePar(a, b, PunktName, MenüName, PunktPos)
+{
+    MsgBox % "a:`t`t" a "`n"
+           . "b:`t`t" b "`n"
+           . "PunktName:`t" PunktName "`n"
+           . "MenüName:`t" MenüName "`n"
+           . "PunktPos:`t" PunktPos
+}</pre>
 </div>
 </body>
 </html>
