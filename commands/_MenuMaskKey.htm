@@ -27,7 +27,9 @@
 <h2>Bemerkungen</h2>
 <p>Die Maskierungstaste wird automatisch gesendet, um zu verhindern, dass das Startmenü oder die Menüleiste des aktiven Fensters ungewollt aktiviert wird.</p>
 <p>Die Standard-Maskierungstaste ist <kbd>Strg</kbd>. Diese Direktive kann genutzt werden, um eine andere Maskierungstaste mit weniger Nebenwirkungen zu bestimmen.</p>
-<p>Gute Kandidaten dafür sind virtuelle Tastencodes, die in der Regel keinen Effekt haben, wie z. B. vk07, das Microsoft als "undefined" dokumentiert, oder vkFF, das als "no mapping" (eine Taste, die keine Funktion hat) reserviert ist. <span class="ver">[v1.1.28+]:</span> Sie können sowohl VK als auch SC angeben, die nicht mit einer vorhandenen Taste übereinstimmen müssen. Geben Sie <code>vk00sc000</code> an, um alle automatischen Maskierungen zu deaktivieren. Einige Werte, wie z. B. vk00 in Verbindung mit einem SC ungleich 0, führen dazu, dass das Startmenü nicht unterdrückt wird.</p>
+<p>Gute Kandidaten dafür sind virtuelle Tastencodes, die in der Regel keinen Effekt haben, wie z. B. vkE8, das Microsoft als "unassigned" dokumentiert, oder vkFF, das als "no mapping" (eine Taste, die keine Funktion hat) reserviert ist.</p>
+<p class="note"><strong>Hinweis</strong>: Microsoft kann jederzeit einem unbelegten Tastencode einen Effekt zuweisen. Zum Beispiel war vk07 einst undefiniert und konnte bedenkenlos verwendet werden, aber seit Windows 10 1909 ist vk07 für das Öffnen der "Game Bar" reserviert.</p>
+<p><span class="ver">[v1.1.28+]:</span> Sie können sowohl VK als auch SC angeben, die nicht mit einer vorhandenen Taste übereinstimmen müssen. Geben Sie <code>vk00sc000</code> an, um alle automatischen Maskierungen zu deaktivieren. Einige Werte, wie z. B. vk00 in Verbindung mit einem SC ungleich 0, führen dazu, dass das Startmenü nicht unterdrückt wird.</p>
 <p>Diese Einstellung ist global - das heißt, dass die Direktive nur einmal angegeben werden muss (egal wo), um das Verhalten des ganzen Skripts zu beeinflussen.</p>
 <p><strong>Hotkeys</strong>: Wenn ein Hotkey via Tastatur- oder Maus-Hook implementiert ist, ist der finale Tastendruck eventuell für das aktive Fenster und das System unsichtbar. Wenn das System <em>nur</em> ein KeyPress- und KeyDown-Ereignis einer <kbd>Win</kbd>- oder <kbd>Alt</kbd>-Taste ohne zwischenzeitlichen Tastendruck erkennt, aktiviert es normalerweise ein Menü. Um das zu verhindern, kann der Tastatur- oder Maus-Hook automatisch die Maskierungstaste senden.</p>
 <p><span class="ver">[v1.1.27+]</span>: Das Drücken eines Hook-Hotkeys bewirkt, dass das nächste KeyUp-Ereignis einer <kbd>Alt</kbd>- oder <kbd>Win</kbd>-Taste maskiert wird, wenn alle folgenden Bedingungen erfüllt sind:</p>
@@ -42,7 +44,7 @@
 <p>Maus-Hotkeys werden die Maskierungstaste eventuell sofort senden, wenn der Tastatur-Hook nicht installiert ist.</p>
 <p>Hotkeys mit dem <a href="../Hotkeys.htm#Tilde">Tilde-Modifikator</a> sind nicht dazu gedacht, die ursprüngliche Funktion der Taste zu blockieren, daher bewirken sie in <span class="ver">[v1.1.27+]</span> keine Maskierung. Hotkeys wie <code>~#a::</code> unterdrücken das Menü immer noch, da das System in solchen Fällen erkennt, dass die <kbd>Win</kbd>-Taste in Kombination mit einer anderen Taste verwendet wurde. Maus-Hotkeys und die <kbd>Win</kbd>-Tasten selbst (<code>~LWin::</code> und <code>~RWin::</code>) unterdrücken jedoch nicht das Startmenü.</p>
 <p>Das Startmenü (bzw. die Menüleiste des aktiven Fensters) kann durch Drücken einer beliebigen Taste unterdrückt werden. Das folgende Beispiel deaktiviert die Fähigkeit der linken <kbd>Win</kbd>-Taste, das Startmenü zu aktivieren, aber lässt die Möglichkeit offen, sie weiterhin als Modifikator zu verwenden:</p>
-<pre>~LWin::Send {Blind}{vk07}</pre>
+<pre>~LWin::Send {Blind}{vkE8}</pre>
 <p><strong>Send</strong>: <a href="Send.htm">Send</a>, <a href="ControlSend.htm">ControlSend</a> und so weiter haben als Teil ihres normalen Funktionsablaufs den Effekt, Modifikatortasten loszulassen. Zum Beispiel muss der Hotkey <code>&lt;#a::SendRaw %Adresse%</code> in der Regel vor dem Senden des Inhalts von <em>Adresse</em> die linke <kbd>Win</kbd>-Taste loslassen und danach die linke <kbd>Win</kbd>-Taste wieder nach unten drücken (damit andere <kbd>Win</kbd>-Tastenkombinationen auch weiterhin funktionieren). Die Maskierungstaste kann in solchen Fällen gesendet werden, um das KeyUp-Ereignis einer <kbd>Win</kbd>- oder <kbd>Alt</kbd>-Taste daran zu hindern, ein Menü zu aktivieren.</p>
 
 <h2>Siehe auch</h2>
@@ -50,8 +52,14 @@
 
 <h2>Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a href="#ExBasic">#1</a></p>
-<pre>#MenuMaskKey vk07  <em>; vk07 ist unbelegt.</em>
+<p><a href="#ExBasic">#1</a>: Grundlegende Verwendung</p>
+<pre>#MenuMaskKey vkE8  <em>; Maskierungstaste zu etwas Unbelegtem ändern, wie z. B. vkE8.</em>
+#Space::Run % A_ScriptDir  <em>; Zusätzlicher Strg-Tastendruck wird nicht ausgelöst.</em></pre>
+</div>
+
+<div class="ex" id="ExAdvanced">
+<p><a href="#ExAdvanced">#2</a>: Zeigt im Detail, wie diese Direktive bewirkt, dass vkFF anstelle von LControl gesendet wird.</p>
+<pre>#MenuMaskKey vkFF  <em>; vkFF ist "no mapping".</em>
 #UseHook
 #Space::
 !Space::

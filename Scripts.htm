@@ -24,7 +24,7 @@
   <li><a href="#intro">Einführung</a></li>
   <li><a href="#auto">Der oberste Bereich des Skripts (automatischer Ausführungsbereich)</a>: Dieser Bereich wird beim Starten des Skripts automatisch ausgeführt.</li>
   <li><a href="#continuation">Eine lange Zeile in mehreren kurzen Zeilen aufteilen</a>: Zur Erhöhung der Übersichtlichkeit und Wartbarkeit des Skripts.</li>
-  <li><a href="#ahk2exe">Ein Skript in eine EXE-Datei umwandeln (ahk2exe)</a>: Ein .ahk-Skript in eine .exe-Datei umwandeln, die auf jedem PC ausgeführt werden kann.</li>
+  <li><a href="#ahk2exe">Ein Skript in eine EXE-Datei umwandeln (Ahk2Exe)</a>: Ein .ahk-Skript in eine .exe-Datei umwandeln, die auf jedem PC ausgeführt werden kann.</li>
   <li><a href="#cmd">Befehlszeilenparameter an einem Skript übergeben</a>: Die Variablen %1%, %2% usw. enthalten die eingehenden Parameter.</li>
   <li><a href="#cp">Zeichensatz einer Skript-Datei</a>: ASCII-fremde Zeichen sicher in Skripten verwenden.</li>
   <li><a href="#debug">Ein Skript debuggen</a>: Wie die Fehler eines Skripts, das sich falsch verhält, gefunden werden können.</li>
@@ -103,40 +103,96 @@ FileAppend, %Var%, C:\Meine Datei.txt</pre>
 <p>Unmittelbar nach einem Fortsetzungsbereich kann eine Zeile angegeben werden, die die runde Startklammer eines weiteren Fortsetzungsbereichs enthält. Auf diese Weise können unterschiedliche Optionen beim Konstruieren einer einzelnen Zeile angewendet werden.</p>
 <p>Die stückweise Konstruktion eines Fortsetzungsbereichs via <a href="commands/_Include.htm">#Include</a> wird nicht unterstützt.</p>
 
-<h2 id="ahk2exe">Ein Skript in eine EXE-Datei umwandeln (ahk2exe)</h2>
-<p>Ein Skript-Compiler ist im Lieferumfang des Programms enthalten (zur Verfügung gestellt von fincs).</p>
-<p>Ein kompiliertes Skript ist eine eigenständige ausführbare Datei; das heißt, dass das Skript ohne AutoHotkey.exe gestartet werden kann. Der Kompilierungsvorgang bestückt die ausführbare Datei mit folgenden Dingen: der AutoHotkey-Interpreter, das Skript, via <a href="commands/_Include.htm">#Include</a> definierte Dateien und via <a href="commands/FileInstall.htm">FileInstall</a> definierte Dateien.</p>
+<h2 id="ahk2exe">Ein Skript in eine EXE-Datei umwandeln (Ahk2Exe)</h2>
+<p>Es ist ein Skript-Compiler im Lieferumfang des Programms enthalten (von fincs bereitgestellt und von TAC109 um Features erweitert).</p>
+<p>Ein kompiliertes Skript ist eine eigenständige ausführbare Datei; das heißt, dass das Skript ohne AutoHotkey.exe gestartet werden kann. Der Kompilierungsvorgang bestückt die ausführbare Datei mit folgenden Dingen: der AutoHotkey-Interpreter, das Skript, via <a href="commands/_Include.htm">#Include</a> definierte Dateien und via <a href="commands/FileInstall.htm">FileInstall</a> definierte Dateien. <span class="ver">[v1.1.33+]:</span> Zusätzliche Dateien können mittels <a href="misc/Ahk2ExeDirectives.htm">Compiler-Direktiven</a> eingebunden werden.</p>
 <p>Ahk2Exe kann auf folgenden Arten verwendet werden:</p>
-<ol>
-  <li><strong>GUI-Schnittstelle</strong>: Starten Sie die Verknüpfung "Convert .ahk to .exe" im Startmenü.</li>
-  <li><strong>Rechtsklick</strong>: Klicken Sie mit der rechten Maustaste auf eine .ahk-Datei und wählen Sie "Compile Script" aus (nur verfügbar, wenn die Option "Script Compiler" in der Installation von AutoHotkey ausgewählt wurde). Nach einer kurzen Zeit wird im Verzeichnis des Skripts eine gleichnamige EXE-Datei erstellt. Hinweis: Das Erstellen der EXE-Datei erfolgt mit den Einstellungen (Symbol, .bin-Datei, <a href="#mpress">MPRESS</a>), die Sie zuletzt für Methode #1 benutzt hatten.</li>
-  <li id="ahk2exeCmd"><strong>Befehlszeile</strong>: Der Compiler kann mit folgenden Parametern via Befehlszeile ausgeführt werden:
-  <pre class="no-highlight">Ahk2Exe.exe /in Skript.ahk [/out Skript.exe] [/icon Symbol.ico] [/bin AutoHotkeySC.bin] [/mpress 0oder1]</pre>
-  Zum Beispiel:
-<pre class="no-highlight">Ahk2exe.exe /in "Skript.ahk" /icon "Symbol.ico"</pre>
-Verwendung:
 <ul>
-<li>Parameter, die Leerzeichen enthalten, müssen in Anführungszeichen gesetzt werden.</li>
-<li>Lässt man den out-Parameter weg, wird zum Benennen der EXE-Datei der Basisname des Skripts verwendet.</li>
-</ul></li>
-</ol>
+  <li>
+    <p><strong>GUI-Schnittstelle</strong>: Starten Sie die Verknüpfung "Convert .ahk to .exe" im Startmenü.</p>
+  </li>
+  <li>
+    <p><strong>Rechtsklick</strong>: Klicken Sie mit der rechten Maustaste auf eine .ahk-Datei und wählen Sie "Compile Script" aus (nur verfügbar, wenn die Option "Script Compiler" in der Installation von AutoHotkey ausgewählt wurde). Nach einer kurzen Zeit wird im Verzeichnis des Skripts eine gleichnamige EXE-Datei erstellt. Hinweis: Das Erstellen der EXE-Datei erfolgt mit den Einstellungen (Symbol, .bin-Datei, <a href="#mpress">Komprimierung</a>), die Sie zuletzt für Methode #1 benutzt hatten.</p>
+  </li>
+  <li id="ahk2exeCmd">
+    <p><strong>Befehlszeile</strong>: Der Compiler kann von der Befehlszeile aus mit den unten gezeigten Parametern gestartet werden. Jeder Befehlszeilenparameter, außer <code class="no-highlight">/gui</code>, führt dazu, dass das Skript sofort kompiliert wird.</p>
+    <style>
+      #param_pairs td:not(:last-child) {
+        white-space: nowrap;
+      }
+    </style>
+    <table class="info" id="param_pairs">
+      <tr>
+        <th>Parameterpaar</th>
+        <th>Bedeutung</th>
+      </tr>
+      <tr id="SlashIn">
+        <td>/in <i>Skriptname</i></td>
+        <td>Der Pfad und Name des Skripts, das kompiliert werden soll. Dies muss angegeben werden, sobald mindestens einer der anderen Parameter verwendet wird, es sei denn, es wird <code class="no-highlight">/gui</code> verwendet.</td>
+      </tr>
+      <tr id="SlashOut">
+        <td>/out <i>EXE_Name</i></td>
+        <td>Der Pfad\Name der EXE-Datei, die erstellt werden soll. Standardmäßig wird das Verzeichnis und der Basisname der Eingabedatei verwendet, plus ".exe" als Dateiendung.</td>
+      </tr>
+      <tr id="slashIcon">
+        <td>/icon <i>Symbolname</i></td>
+        <td>Die zu verwendende Symboldatei. Standardmäßig wird das zuletzt in der GUI-Oberfläche verwendete Symbol verwendet.</td>
+      </tr>
+      <tr id="SlashBin">
+        <td>/bin <i>Dateiname</i></td>
+        <td>Die zu verwendende BIN-Datei. Standardmäßig wird der zuletzt in der GUI-Oberfläche verwendete BIN-Dateiname verwendet.</td>
+      </tr>
+      <tr id="SlashCp">
+        <td>/cp <i>Zeichensatz</i></td>
+        <td><span class="ver">[v1.1.23.01+]:</span> Überschreibt den Standard-Zeichensatz, mit dem die Skript-Dateien gelesen werden. Eine Liste möglicher Werte finden Sie unter <a href="https://docs.microsoft.com/de-de/windows/win32/intl/code-page-identifiers">Code Page Identifiers</a>. Beachten Sie, dass Unicode-Skripte mit einer Byte-Order-Markierung (BOM) beginnen sollten, was die Verwendung dieses Parameters überflüssig macht.</td>
+      </tr>
+      <tr id="SlashCompress">
+        <td>/compress <i>n</i></td>
+        <td><span class="ver">[v1.1.33+]:</span> Soll die EXE-Datei <a href="#mpress">komprimiert</a> werden? 0 = nein, 1 = MPRESS verwenden (falls vorhanden), 2 = UPX verwenden (falls vorhanden). Standardmäßig wird die zuletzt in der GUI-Oberfläche verwendete Einstellung verwendet.</td>
+      </tr>
+      <tr id="SlashAhk">
+        <td>/ahk <i>Dateiname</i></td>
+        <td><span class="ver">[v1.1.33+]:</span> Der Pfad\Name der AutoHotkey.exe-Datei, die zum Kompilieren des Skripts verwendet werden soll. Standardmäßig wird die AutoHotkey.exe-Datei im Verzeichnis eine Navigationsebene höher verwendet. Wenn sie dort nicht finden ist, wird die installierte Autohotkey.exe-Datei verwendet.</td>
+      </tr>
+      <tr id="SlashGui">
+        <td>/gui</td>
+        <td><span class="ver">[v1.1.33+]:</span> Zeigt die GUI, anstatt sofort zu kompilieren. Die anderen Parameter können verwendet werden, um die zuletzt in der GUI verwendeten Einstellungen zu überschreiben. <code>/in</code> ist in diesem Fall optional.</td>
+      </tr>
+      <tr id="SlashMpress">
+        <td class="warning"><strong>Veraltet:</strong><br>/mpress <i>0oder1</i></td>
+        <td class="warning">Soll die EXE-Datei mit MPRESS <a href="#mpress">komprimiert</a> werden? 0 = nein, 1 = ja. Standardmäßig wird die zuletzt in der GUI-Oberfläche verwendete Einstellung verwendet.</td>
+      </tr>
+    </table>
+    <p>Zum Beispiel:</p>
+    <pre class="no-highlight">Ahk2exe.exe /in "Skript.ahk" /icon "Symbol.ico"</pre>
+  </li>
+</ul>
 <p>Hinweise:</p>
 <ul>
+  <li>Parameter, die Leerzeichen enthalten, müssen in Anführungszeichen gesetzt werden.</li>
   <li>Die Leistung des Skripts kann in der Regel nicht durch das Kompilieren verbessert werden.</li>
   <li>Der Passwortschutz und /NoDecompile wird seit v1.1.01 nicht mehr unterstützt.</li>
-  <li>Die Befehle <a href="commands/_NoTrayIcon.htm">#NoTrayIcon</a> und "<a href="commands/Menu.htm">Menu, Tray, ShowMainWindow</a>" beeinflussen das Verhalten von kompilierten Skripts.</li>
-  <li>Um die Versionsinformation (siehe Eigenschaftsfenster des Explorers) Ihrer kompilierten Skripte zu ändern, muss die Datei "AutoHotkeySC.bin" mit Programmen wie <a href="http://www.angusj.com/resourcehacker/">Resource Hacker</a> (Freeware) bearbeitet werden. Diese Datei ist im Unterordner "Compiler" enthalten, der im AutoHotkey-Verzeichnis zu finden ist. Mit <a href="https://github.com/mercury233/compile-ahk">Compile AHK</a> kann dieser Vorgang leichter durchgeführt werden. Seit v1.1.01 kann das kompilierte Skript anstelle von AutoHotkeySC.bin bearbeitet werden.</li>
-  <li>Die obige Methode kann auch verwendet werden, um bestehende Symbole eines kompilierten Skripts zu ändern oder neue hinzuzufügen.</li>
-  <li>Die interne Variable A_IsCompiled enthält eine 1, wenn das Skript in kompilierter Form ausgeführt wird. Ansonsten ist sie leer.</li>
-  <li>Wenn Parameter an Ahk2Exe übergeben werden, wird eine Meldung über den Erfolg oder Misserfolg des Kompilierungsvorgangs in die Standardausgabe (stdout) geschrieben. Obwohl die Meldung nicht in der Eingabeaufforderung angezeigt wird, kann sie mit Mitteln wie z. B. durch Weiterleiten der Ausgabe an eine Datei "abgefangen" werden. <span class="ver">[v1.0.43+]</span></li>
-  <li>Im Fall eines Fehlers kann Ahk2Exe eine Vielzahl von Exitcodes zurückgeben, die den Typ des Fehlers kennzeichnen. Solche Fehlercodes finden Sie auf <a href="https://github.com/fincs/Ahk2Exe/blob/master/ErrorCodes.md">GitHub (ErrorCodes.md)</a>. <span class="ver">[v1.1.22.03+]</span></li>
+  <li>Die Befehle <a href="commands/_NoTrayIcon.htm">#NoTrayIcon</a> und "<a href="commands/Menu.htm#MainWindow">Menu, Tray, MainWindow</a>" beeinflussen das Verhalten von kompilierten Skripts.</li>
+  <li>Die interne Variable <a href="Variables.htm#IsCompiled">A_IsCompiled</a> enthält eine 1, wenn das Skript in kompilierter Form ausgeführt wird. Ansonsten ist sie leer.</li>
+  <li><span class="ver">[v1.0.43+]:</span> Wenn Parameter an Ahk2Exe übergeben werden, wird eine Meldung über den Erfolg oder Misserfolg des Kompilierungsvorgangs in die Standardausgabe (stdout) geschrieben. Obwohl die Meldung nicht in der Eingabeaufforderung angezeigt wird, kann sie mit Mitteln wie z. B. durch Weiterleiten der Ausgabe an eine Datei "abgefangen" werden. </li>
+  <li> <span class="ver">[v1.1.22.03+]:</span> Im Fall eines Fehlers kann Ahk2Exe eine Vielzahl von Exitcodes zurückgeben, die den Typ des Fehlers kennzeichnen. Solche Fehlercodes finden Sie auf <a href="https://github.com/AutoHotkey/Ahk2Exe/blob/master/ErrorCodes.md">GitHub (ErrorCodes.md)</a>.</li>
 </ul>
-<p>Den Quellcode sowie neuere Versionen des Compilers finden Sie auf <a href="https://github.com/fincs/Ahk2Exe">GitHub</a>.</p>
+<p>Den Quellcode sowie neuere Versionen des Compilers finden Sie auf <a href="https://github.com/AutoHotkey/Ahk2Exe">GitHub</a>.</p>
+
+<h3 id="CompilerDirectives">Skript-Compiler-Direktiven</h3>
+<p><span class="ver">[v1.1.33+]:</span> Skript-Compiler-Direktiven ermöglichen es dem Benutzer, genaue Angaben darüber zu machen, wie ein Skript kompiliert werden soll. Einige der Features sind:</p>
+<ul>
+  <li>Möglichkeiten zum Ändern der Versionsinformationen (z. B. Name, Beschreibung, Version...).</li>
+  <li>Möglichkeiten, um Ressourcen zum kompilierten Skript hinzuzufügen.</li>
+  <li>Möglichkeiten, an verschiedenen Aspekten der Kompilierung zu feilen.</li>
+  <li>Möglichkeiten, um Codeabschnitte aus dem kompilierten Skript zu entfernen, und umgekehrt.</li>
+</ul>
+<p>Weitere Informationen finden Sie unter <a href="misc/Ahk2ExeDirectives.htm">Skript-Compiler-Direktiven</a>.</p>
 
 <h3 id="mpress">Komprimieren von kompilierten Skripten</h3>
-<p>Ahk2Exe kann optional MPRESS (ein Freeware-Programm von MATCODE Software) verwenden, um kompilierte Skripte zu komprimieren. MPRESS wird automatisch benutzt, wenn <strong>mpress.exe</strong> im AutoHotkey-Unterordner "Compiler" vorhanden ist. Diese Automatik kann mit <code>/mpress 0</code> oder GUI-Einstellung deaktiviert werden. </p>
-<p>Offizielle Website (war im März 2016 offline): <a href="http://www.matcode.com/mpress.htm">http://www.matcode.com/mpress.htm</a></p>
-<p>Mirror (Downloads und Information): <a href="https://www.autohotkey.com/mpress/">https://www.autohotkey.com/mpress/</a></p>
+<p>Ahk2Exe kann optional MPRESS- oder in <span class="ver">[v1.1.33+]</span> UPX-Freeware verwenden, um kompilierte Skripte zu komprimieren. Wenn <strong>MPRESS.exe</strong> und/oder <strong>UPX.exe</strong> in den Compiler-Unterordner von AutoHotkey kopiert wurde, kann die EXE-Datei via <code>/compress</code>-Parameter oder GUI-Einstellung komprimiert werden. </p>
+<p><strong>MPRESS</strong>'s offizielle Webseite (Downloads und Information): <a href="http://www.matcode.com/mpress.htm">http://www.matcode.com/mpress.htm</a><br>MPRESS Mirror: <a href="https://www.autohotkey.com/mpress/">https://www.autohotkey.com/mpress/</a></p>
+<p><strong>UPX</strong>'s offizielle Webseite (Downloads und Information): <a href="https://upx.github.io/">https://upx.github.io/</a></p>
 <p><strong>Hinweis:</strong> Eine auf diese Weise komprimierte EXE-Datei unterbindet eine einfache Einsicht in den Quellcode des Skripts mithilfe eines Texteditors wie z. B. Notepad oder PE-Resource-Editor. Allerdings kann es nicht verhindern, dass der Quellcode mit Tools extrahiert werden kann, die speziell dafür entwickelt worden sind.</p>
 
 <h2 id="cmd">Befehlszeilenparameter an einem Skript übergeben</h2>
@@ -158,8 +214,11 @@ Verwendung:
     <td>Ja</td>
   </tr>
   <tr id="ErrorStdOut">
-    <td>/ErrorStdOut</td>
-    <td>Sendet alle Syntaxfehler, die den Start eines Skripts verhindern, zur Standardfehlerausgabe (stderr), anstatt ein Dialogfenster anzuzeigen. Siehe <a href="commands/_ErrorStdOut.htm">#ErrorStdOut</a> für weitere Details. Diese Option kann mit /iLib kombiniert werden, um die Gültigkeit des Skripts zu überprüfen, ohne es auszuführen.</td>
+    <td>/ErrorStdOut<br><br>/ErrorStdOut=<em>Codierung</em></td>
+    <td>
+      <p>Sendet alle Syntaxfehler, die den Start eines Skripts verhindern, zur Standardfehlerausgabe (stderr), anstatt ein Dialogfenster anzuzeigen. Siehe <a href="commands/_ErrorStdOut.htm">#ErrorStdOut</a> für weitere Details. Diese Option kann mit /iLib kombiniert werden, um die Gültigkeit des Skripts zu überprüfen, ohne es auszuführen.</p>
+      <p><span class="ver">[v1.1.33+]:</span> Es kann optional eine <a href="commands/FileEncoding.htm">Codierung</a> angegeben werden. <code>/ErrorStdOut=UTF-8</code> beispielsweise kodiert Meldungen als UTF-8, bevor sie in die Standardfehlerausgabe geschrieben werden.</p>
+    </td>
     <td>Ja</td>
   </tr>
   <tr id="SlashDebug">
@@ -169,7 +228,10 @@ Verwendung:
   </tr>
   <tr id="CPn">
     <td>/CP<i>n</i></td>
-    <td><span class="ver">[AHK_L 51+]:</span> Überschreibt den Standard-Zeichensatz, mit dem die Skript-Dateien gelesen werden. Weitere Informationen finden Sie unter <a href="#cp">Zeichensatz einer Skript-Datei</a>.</td>
+    <td>
+      <p><span class="ver">[AHK_L 51+]:</span> Überschreibt den Standard-Zeichensatz, mit dem die Skript-Dateien gelesen werden. Weitere Informationen finden Sie unter <a href="#cp">Zeichensatz einer Skript-Datei</a>.</p>
+      <p><span class="ver">[v1.1.33+]:</span> Wenn "Default to UTF-8" im Installer aktiviert ist, wird der Dateityp ".ahk" mit einer Befehlszeile registriert, die <code>/CP65001</code> enthält. Dies führt dazu, dass alle Skripte, die über die Shell (Explorer) gestartet werden, standardmäßig UTF-8 verwenden, wenn keine UTF-16-Byte-Order-Markierung vorhanden ist. Skripte, die direkt über AutoHotkey.exe gestartet werden, verwenden weiterhin standardmäßig <code>CP0</code>, da der Parameter <code>/CP65001</code> nicht vorhanden ist.</p>
+    </td>
     <td>Nein</td>
   </tr>
   <tr>
@@ -238,10 +300,11 @@ Verwendung:
 }</pre>
 
 <h2 id="cp">Zeichensatz einer Skript-Datei <span class="ver">[AHK_L 51+]</span></h2>
-<p>Die Zeichen, die eine Skript-Datei enthalten darf, sind vom Zeichensatz (Codepage) vorgegeben, mit der die Datei geladen wurde.</p>
+<p>Damit ASCII-fremde Zeichen korrekt aus der Datei gelesen werden können, muss die Codierung, die beim Speichern der Datei verwendet wurde (meistens via Texteditor), mit der Codierung übereinstimmen, die AutoHotkey beim Lesen der Datei verwendet. Wenn sie nicht übereinstimmen, werden Zeichen falsch dekodiert. AutoHotkey entscheidet anhand folgender Regeln, welche Codierung verwendet werden soll:</p>
 <ul>
   <li>Beginnt die Datei mit einer UTF-8- oder UTF-16-Byte-Order-Markierung (BOM), wird der entsprechende Zeichensatz verwendet und die <a href="#CPn">/CP<i>n</i></a>-Option ignoriert.</li>
-  <li>Wenn die <a href="#CPn">/CP<i>n</i></a>-Option via Befehlszeile übergeben wurde, wird der Zeichensatz <i>n</i> verwendet. Eine Liste von gültigen numerischen Zeichensatzidentifikatoren finden Sie unter <a href="https://msdn.microsoft.com/de-de/library/dd317756.aspx">MSDN</a>.</li>
+  <li>Wenn die <a href="#CPn">/CP<i>n</i></a>-Option via Befehlszeile übergeben wurde, wird der Zeichensatz <i>n</i> verwendet. Eine Liste möglicher Werte finden Sie unter <a href="https://docs.microsoft.com/de-de/windows/win32/intl/code-page-identifiers">Code Page Identifiers</a>.
+  <p class="note"><strong>Hinweis:</strong> Die Option "Default to UTF-8" im Installer von AutoHotkey <span class="ver">[v1.1.33+]</span> fügt <code>/CP65001</code> zu den Befehlszeilen aller Skripte hinzu, die über die Shell (Explorer) gestartet werden.</p></li>
   <li>In allen anderen Fällen wird der Standard-ANSI-Zeichensatz des Betriebssystems verwendet.</li>
 </ul>
 <p>Beachten Sie, dass die oben genannten Punkte nur für Skript-Dateien gelten, die AutoHotkey geladen hat, nicht für die Dateibearbeitung im Skript selbst. <a href="commands/FileEncoding.htm">FileEncoding</a> steuert die Standardcodierung von Dateien, die das Skript liest oder schreibt, während <a href="commands/IniRead.htm">IniRead</a> und <a href="commands/IniWrite.htm">IniWrite</a> immer auf Basis von UTF-16 oder ANSI arbeiten.</p>
@@ -274,7 +337,7 @@ Pause</pre>
 <h3 id="idebug">Interaktives Debuggen <span class="ver">[AHK_L 11+]</span></h3>
 <p>Interaktives Debuggen ist mit einem unterstützten <a href="AHKL_DBGPClients.htm">DBGp-Client</a> möglich. Üblicherweise sind folgende Aktionen möglich:</p>
 <ul>
-  <li>Haltepunkte auf Zeilen setzen oder entfernen - die Ausführung pausieren, wenn ein <a href="http://de.wikipedia.org/wiki/Haltepunkt_(Programmierung)">Haltepunkt</a> erreicht ist.</li>
+  <li>Haltepunkte auf Zeilen setzen oder entfernen - die Ausführung pausieren, wenn ein <a href="https://de.wikipedia.org/wiki/Haltepunkt_(Programmierung)">Haltepunkt</a> erreicht ist.</li>
   <li>Den Code zeilenweise durchgehen - Funktionen und Subroutinen betreten, überspringen oder verlassen.</li>
   <li>Alle oder eine bestimmte Variable überwachen.</li>
   <li>Den Stapel von laufenden Subroutinen und Funktionen anzeigen.</li>

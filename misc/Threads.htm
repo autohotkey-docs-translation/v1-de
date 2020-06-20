@@ -19,7 +19,9 @@
 <p class="note"><strong>Hinweis</strong>: Der Befehl bzw. Menüpunkt <a href="../commands/KeyHistory.htm">KeyHistory</a> zeigt an, wie viele Threads im unterbrochenen Zustand sind. Der Befehl bzw. Menüpunkt <a href="../commands/ListHotkeys.htm">ListHotkeys</a> zeigt an, welche Hotkeys Threads haben.</p>
 <p>Ein einzelnes Skript kann mehrere Dialogfenster wie <a href="../commands/MsgBox.htm">MsgBox</a>, <a href="../commands/InputBox.htm">InputBox</a>, <a href="../commands/FileSelectFile.htm">FileSelectFile</a> und <a href="../commands/FileSelectFolder.htm">FileSelectFolder</a> gleichzeitig haben. Dies kann durch Starten eines neuen Threads erreicht werden (via <a href="../Hotkeys.htm">Hotkey</a>, <a href="../commands/SetTimer.htm">zeitgesteuerte Subroutine</a>, <a href="../commands/Menu.htm">benutzerdefinierter Menüpunkt</a> und so weiter), während ein vorheriger Thread bereits ein Dialogfenster anzeigt.</p>
 <p>Standardmäßig kann eine bereits laufende <a href="../Hotkeys.htm">Hotkey</a>- oder <a href="../Hotstrings.htm">Hotstring</a>-Subroutine nicht zum zweiten Mal ausgeführt werden. Mit <a href="../commands/_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a> kann dieses Verhalten geändert werden.</p>
-<h2>Thread-Priorität</h2>
+<p><strong>Siehe auch:</strong> Der <a href="../commands/Thread.htm">Thread</a>-Befehl bestimmt die Priorität oder Unterbrechbarkeit von Threads.</p>
+
+<h2 id="Priority">Thread-Priorität</h2>
 <p>Jeder Thread (<a href="../Hotkeys.htm">Hotkey</a>, <a href="../commands/SetTimer.htm">zeitgesteuerte Subroutine</a>, <a href="../commands/Menu.htm">benutzerdefinierter Menüpunkt</a> und so weiter), dessen Priorität niedriger ist als die Priorität des <em>aktuellen Threads</em>, kann ihn nicht unterbrechen. Während dieser Zeit werden solche Timer nicht laufen. Jeder Versuch des Benutzers, einen Thread zu erstellen (z. B. durch Drücken eines <a href="../Hotkeys.htm">Hotkeys</a> oder einer <a href="../commands/GuiControls.htm#Button">GUI-Schaltfläche</a>), ist wirkungslos und wird nicht gepuffert. Aus diesem Grund ist es für gewöhnlich am besten, hoch-priorisierte Threads so aufzubauen, dass sie schnell zum Ende kommen, oder setze sie mit <a href="../commands/Critical.htm">Critical</a> auf hoher Priorität.</p>
 <p>Die Standard-Priorität ist 0. Alle Threads verwenden die Standard-Priorität, sofern sie nicht durch eine der folgenden Methoden geändert wurde:<br>
   1) Eine zeitgesteuerte Subroutine kann von <a href="../commands/SetTimer.htm">SetTimer</a> eine bestimmte Priorität erhalten.<br>
@@ -28,5 +30,21 @@
   4) Ein benutzerdefinierter Menüpunkt kann vom <a href="../commands/Menu.htm">Menu</a>-Befehl eine bestimmte Priorität erhalten.<br>
   5) Der <em>aktuelle Thread</em> kann seine eigene Priorität über den <a href="../commands/Thread.htm">Thread</a>-Befehl setzen.</p>
 <p>Die <a href="../commands/OnExit.htm">OnExit</a>-Subroutine (falls vorhanden) wird bei Aufruf immer laufen, egal welche Priorität der <em>aktuelle Thread</em> hat.</p>
+
+<h2 id="Interrupt">Thread-Unterbrechbarkeit</h2>
+<p>Bei den meisten Ereignissen dürfen neue Threads nur dann gestartet werden, wenn der aktuelle Thread <em>unterbrechbar</em> ist. Ein Thread kann zum Beispiel aufgrund folgender Fälle <em>unterbrechungsfrei</em> sein:</p>
+<ul>
+  <li>Der Thread wurde als <em>kritisch</em> eingestuft. <a href="../commands/Critical.htm">Critical</a> könnte durch den Thread selbst oder aus dem <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> heraus aufgerufen worden sein.</li>
+  <li>Der Thread läuft noch nicht lange genug, um die Bedingungen zu erfüllen, um unterbrechbar zu werden, wie durch <a href="../commands/Thread.htm#Interrupt">Thread Interrupt</a> festgelegt.</li>
+  <li>Eines der Menüs des Skripts wird gerade angezeigt (wie z. B. das Tray-Menü oder eine Menüleiste).</li>
+  <li>Eine Verzögerung wird gerade durchgeführt, die von <a href="../commands/Send.htm">Send</a> (meistens durch <a href="../commands/SetKeyDelay.htm">SetKeyDelay</a>), <a href="../commands/WinActivate.htm">WinActivate</a> oder einer <a href="Clipboard.htm">Clipboard</a>-Operation eingeleitet wurde.</li>
+  <li>Eine <a href="../commands/OnExit.htm">OnExit</a>-Subroutine wird ausgeführt.</li>
+  <li>Ein Warndialogfenster wird gerade angezeigt, weil das <a href="../commands/_MaxHotkeysPerInterval.htm">#MaxHotkeysPerInterval</a>-Limit erreicht wurde oder weil ein Problem bei der Aktivierung des Tastatur- oder Maus-Hooks aufgetreten ist (sehr selten).</li>
+</ul>
+<h3 id="Behave">Verhalten von unterbrechungsfreien Threads</h3>
+<p>Im Gegensatz zu hochpriorisierten Threads werden Ereignisse, die während der unterbrechungsfreien Phase des Threads auftreten, nicht verworfen. Drückt der Benutzer beispielsweise einen <a href="../Hotkeys.htm">Hotkey</a>, während der aktuelle Thread unterbrechungsfrei ist, wird dieser Hotkey solange gepuffert, bis der aktuelle Thread endet oder unterbrechbar wird, erst dann wird der Hotkey als neuer Thread gestartet.</p>
+<p>Jeder Thread kann im Notfall unterbrochen werden. Notfälle sind: 1) ein <a href="../commands/OnExit.htm">OnExit</a>-Callback; 2) eine <a href="../commands/OnMessage.htm">OnMessage</a>-Funktion, die eine Meldungsnummer kleiner als 0x312 überwacht (oder ein <a href="../commands/RegisterCallback.htm">Callback</a>, das von so einer Meldung ausgelöst wird); und 3) ein <a href="../commands/RegisterCallback.htm">Callback</a>, das indirekt vom Thread selbst ausgelöst wird (z. B. via <a href="../commands/PostMessage.htm">SendMessage</a> oder <a href="../commands/DllCall.htm">DllCall</a>). Um diese Unterbrechungen zu vermeiden, können solche Funktionen vorübergehend deaktiviert werden.</p>
+<p>Ein <a href="../commands/Critical.htm">kritischer</a> Thread wird unterbrechbar, wenn ein <a href="../commands/MsgBox.htm">Mitteilungsfenster</a> oder ein anderes Dialogfenster angezeigt wird. Im Gegensatz zu <a href="../commands/Thread.htm">Thread Interrupt</a> wird der Thread allerdings wieder kritisch (und demzufolge unterbrechungsfrei), wenn der Benutzer das Dialogfenster schließt.</p>
+
 </body>
 </html>

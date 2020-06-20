@@ -1,143 +1,15 @@
 <!DOCTYPE HTML>
 <html lang="de">
+
 <head>
-<title>Lautstärke-Bildschirmanzeige - Skriptbeispiel | AutoHotkey</title>
-<meta name="description" content="Das Lautstärke-Bildschirmanzeige-Skript erlaubt das Drücken von Hotkeys, um die Master- und/oder Wave-Lautstärke zu erhöhen oder zu verringern, die als verschiedene Farbbalkendiagramme angezeigt werden." />
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<script src="../static/content.js" type="text/javascript"></script>
-<script src="../static/ga.js" type="text/javascript"></script>
+  <meta http-equiv="refresh" content="0; url=index.htm#VolumeOSD">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="canonical" href="index.htm#VolumeOSD">
+  <title>Weiterleitung</title>
 </head>
+
 <body>
-
-<h1>Lautstärke-Bildschirmanzeige (OSD) <span class="headnote">von Rajat</span></h1>
-
-<p>Dieses Skript weist Hotkeys Ihrer Wahl zu, um die Master- und/oder Wave-Lautstärke zu erhöhen und zu verringern. Beide Lautstärken werden als Balkendiagramme mit unterschiedlichen Farben angezeigt.
-</p>
-<p><a href="VolumeOSD.ahk">Dieses Skript herunterladen</a>  |  <a href="index.htm">Andere Beispiel-Skripte</a>  |  <a href="../AutoHotkey.htm">Home</a></p>
-
-<pre class="NoIndent"><em>;_________________________________________________ 
-;_______Benutzereinstellungen_____________________</em>
-
-<em>; Nur in diesem Bereich oder Hotkey-Bereich Änderungen durchführen!!</em>
-
-<em>; Der Prozentwert, um wieviel die Lautstärke jedes Mal erhöht oder verringert wird:</em>
-vol_Step = 4
-
-<em>; Wie lange die Balkendiagramme der Lautstärken angezeigt werden sollen:</em>
-vol_DisplayTime = 2000
-
-<em>; Balkenfarbe der Master-Lautstärke (siehe Hilfe-Datei, um präzisere
-; Farbtöne anzugeben):</em>
-vol_CBM = Red
-
-<em>; Balkenfarbe der Wave-Lautstärke</em>
-vol_CBW = Blue
-
-<em>; Hintergrundfarbe</em>
-vol_CW = Silver
-
-<em>; Balkenposition auf dem Bildschirm.  Verwendet -1, um den Balken in dieser Abmessung zu zentrieren:</em>
-vol_PosX = -1
-vol_PosY = -1
-vol_Width = 150  <em>; Balkenbreite</em>
-vol_Thick = 12   <em>; Balkendicke</em>
-
-<em>; Wenn die aktuelle Tastatur Multimedia-Tasten für die Lautstärke hat, dann
-; können Sie versuchen, die unteren Hotkeys so zu ändern, dass sie
-; Volume_Up, ^Volume_Up, Volume_Down und ^Volume_Down verwenden:</em>
-Hotkey, #Up, vol_MasterUp      <em>; Win+Pfeil nach oben</em>
-Hotkey, #Down, vol_MasterDown
-Hotkey, +#Up, vol_WaveUp       <em>; Umschalt+Win+Pfeil nach oben</em>
-Hotkey, +#Down, vol_WaveDown
-
-
-<em>;___________________________________________ 
-;_____Automatischer Ausführungsbereich______</em>
-
-<em>; HIER DANACH KEINE ÄNDERUNGEN DURCHFÜHREN (es sei denn, Sie wissen, was Sie tun).</em>
-
-vol_BarOptionsMaster = 1:B ZH%vol_Thick% ZX0 ZY0 W%vol_Width% CB%vol_CBM% CW%vol_CW%
-vol_BarOptionsWave   = 2:B ZH%vol_Thick% ZX0 ZY0 W%vol_Width% CB%vol_CBW% CW%vol_CW%
-
-<em>; Wenn die X-Position angegeben wurde, dann wird sie zu den Optionen hinzugefügt.
-; Ansonsten wird sie weggelassen, um den Balken horizontal zu zentrieren:</em>
-if vol_PosX &gt;= 0
-{
-    vol_BarOptionsMaster = %vol_BarOptionsMaster% X%vol_PosX%
-    vol_BarOptionsWave   = %vol_BarOptionsWave% X%vol_PosX%
-}
-
-<em>; Wenn die Y-Position angegeben wurde, dann wird sie zu den Optionen hinzugefügt.
-; Ansonsten wird sie weggelassen, um sie später zu berechnen:</em>
-if vol_PosY &gt;= 0
-{
-    vol_BarOptionsMaster = %vol_BarOptionsMaster% Y%vol_PosY%
-    vol_PosY_wave = %vol_PosY%
-    vol_PosY_wave += %vol_Thick%
-    vol_BarOptionsWave = %vol_BarOptionsWave% Y%vol_PosY_wave%
-}
-
-#SingleInstance
-SetBatchLines, 10ms
-Return
-
-
-<em>;___________________________________________</em>
-
-vol_WaveUp:
-SoundSet, +%vol_Step%, Wave
-Gosub, vol_ShowBars
-return
-
-vol_WaveDown:
-SoundSet, -%vol_Step%, Wave
-Gosub, vol_ShowBars
-return
-
-vol_MasterUp:
-SoundSet, +%vol_Step%
-Gosub, vol_ShowBars
-return
-
-vol_MasterDown:
-SoundSet, -%vol_Step%
-Gosub, vol_ShowBars
-return
-
-vol_ShowBars:
-<em>; Um den Blinkeffekt zu unterdrücken, wird nur das Balkenfenster erstellt,
-; falls noch nicht vorhanden:</em>
-IfWinNotExist, vol_Wave
-    Progress, %vol_BarOptionsWave%, , , vol_Wave
-IfWinNotExist, vol_Master
-{
-    <em>; Falls sich die Bildschirmauflösung ändert, wird hier die Position berechnet,</em>
-    <em>; während das Skript läuft:</em>
-    if vol_PosY &lt; 0
-    {
-        <em>; Wave-Balken direkt über den Master-Balken erstellen:</em>
-        WinGetPos, , vol_Wave_Posy, , , vol_Wave
-        vol_Wave_Posy -= %vol_Thick%
-        Progress, %vol_BarOptionsMaster% Y%vol_Wave_Posy%, , , vol_Master
-    }
-    else
-        Progress, %vol_BarOptionsMaster%, , , vol_Master
-}
-<em>; Sobald beide Lautstärken vom Benutzer oder von einem externen Programm geändert werden, werden die neuen Lautstärken abgerufen:</em>
-SoundGet, vol_Master, Master
-SoundGet, vol_Wave, Wave
-Progress, 1:%vol_Master%
-Progress, 2:%vol_Wave%
-SetTimer, vol_BarOff, %vol_DisplayTime%
-return
-
-vol_BarOff:
-SetTimer, vol_BarOff, Off
-Progress, 1:Off
-Progress, 2:Off
-return
-</pre>
+  <p>Weiterleitung zu <a href="index.htm#VolumeOSD">Lautstärke-Bildschirmanzeige (OSD)</a>.</p>
 </body>
+
 </html>

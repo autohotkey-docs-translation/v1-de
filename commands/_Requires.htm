@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>#Requires - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Die #Requires-Direktive zeigt einen Fehler an und beendet das Programm, wenn die Versionsanforderung nicht erfüllt ist." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>#Requires <span class="ver">[v1.1.33+]</span></h1>
+
+<p>Zeigt einen Fehler an und beendet das Programm, wenn die Versionsanforderung nicht erfüllt ist.</p>
+
+<pre class="Syntax"><span class="func">#Requires</span> Anforderung</pre>
+
+<h2>Parameter</h2>
+<dl>
+  <dt>Anforderung</dt>
+  <dd>
+    <p>Wenn dieser Parameter mit dem Wort "AutoHotkey" und einem Leer- oder Tabulatorzeichen beginnt, muss danach eine Versionszeichenkette (optional mit einem "v" davor) erfolgen. Wenn <a href="../Variables.htm#AhkVersion">A_AhkVersion</a> als kompatibel eingestuft wird, wird das Laden des Skripts ohne Fehlermeldung fortgesetzt. Ein Skript, das z. B. v1.1.33 erfordert, läuft auch unter v1.1.33.01 und v1.1.34, aber nicht unter v2.0.</p>
+    <p>Ansonsten wird eine Fehlermeldung angezeigt und das Programm beendet.</p>
+  </dd>
+</dl>
+
+<h2>Fehlermeldung</h2>
+<p>Wenn eine andere Version von AutoHotkey erforderlich ist, wird die Meldung <a href="../Variables.htm#AhkVersion">A_AhkVersion</a> enthalten:</p>
+<pre class="no-highlight">This script requires <i>%Requirement%</i>, but you have v<i>%A_AhkVersion%</i>.</pre>
+<p>Wenn die Anforderung nicht erkannt wurde, sieht die Meldung wie folgt aus:</p>
+<pre class="no-highlight">This script requires <i>%Requirement%</i>.</pre>
+<p>Wenn das Skript mit einer Version von AutoHotkey gestartet wird, die diese Direktive nicht unterstützt, sieht die Fehlermeldung ungefähr wie folgt aus:</p>
+<pre class="no-highlight">Line Text: #Requires <i>%Requirement%</i>
+Error: This line does not contain a recognized action.</pre>
+
+<h2>Bemerkungen</h2>
+<p>Wenn das Skript Syntaxelemente oder Funktionen verwendet, die in früheren Versionen nicht verfügbar sind, können Sie mit dieser Direktive sicherstellen, dass die Fehlermeldung die unerfüllte Anforderung und nicht einen willkürlichen Syntaxfehler anzeigt. Das ist mit so etwas wie <code>if (A_AhkVersion &lt;= "1.1.33")</code> nicht möglich, weil ein Syntaxfehler an anderer Stelle im Skript dessen Ausführung verhindern würde.</p>
+<p>Wenn Sie ein Skript mit anderen teilen oder den Code online stellen, können Sie mit dieser Direktive sicherstellen, dass jeder, der den Code findet, schnell erkennen kann, für welche AutoHotkey-Version dieser gedacht war.</p>
+<p>Andere Programme oder Skripte können diese Direktive für verschiedene Zwecke überprüfen. Ein Launcher-Skript könnte diese Information zum Beispiel verwenden, um zu bestimmen, welche EXE-Datei von AutoHotkey gestartet werden soll, während ein Skripteditor oder ähnliche Tools diese Information beispielsweise verwenden können, um zu bestimmen, wie die Skriptdatei interpretiert bzw. die Syntax farblich markiert werden soll.</p>
+<p>Versionszeichenketten werden als eine Reihe von via Punkt getrennten Komponenten verglichen, optional gefolgt von einem Bindestrich und Pre-Release-Identifikator(en).</p>
+<ul>
+  <li>Numerische Komponenten werden numerisch verglichen. Zum Beispiel ist v1.01 = v1.1, aber a20 &gt; a112.</li>
+  <li>Numerische Komponenten werden in Vergleich zu nicht-numerischen Komponenten innerhalb derselben Position immer als niedriger angesehen.</li>
+  <li>Jede fehlende via Punkt getrennte Komponente wird als Null behandelt. Zum Beispiel ist v1.1.33-alpha dasselbe wie v1.1.33.00-alpha.0.</li>
+  <li>Nicht-numerische Komponenten werden alphabetisch verglichen und sind Groß-/Kleinschreibung-sensitiv.</li>
+  <li>Pre-Release-Versionen werden in Vergleich zu Standard-Releases als niedriger angesehen. Ein Skript mit <code>#Requires AutoHotkey v2</code> beispielsweise wird unter v2.0-a112 nicht ausgeführt. Um Pre-Release Versionen zu erlauben, fügen Sie einen Bindestrich an. Zum Beispiel: <code class="no-highlight">v2.0-</code>.</li>
+  <li>Jegliches Suffix, das mit "+" beginnt, wird ignoriert.</li>
+</ul>
+<p>Ein "+" am Ende genügt, um den Leser darauf hinzuweisen, dass spätere Versionen akzeptabel, aber nicht erforderlich sind.</p>
+
+<h2>Siehe auch</h2>
+<p><a href="_ErrorStdOut.htm">#ErrorStdOut</a></p>
+
+<h2>Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a></p>
+<pre>#Requires AutoHotkey v1.1.33+
+MsgBox Dieses Skript läuft nur unter v1.1.33.00 oder höher.</pre>
+</div>
+
+</body>
+</html>

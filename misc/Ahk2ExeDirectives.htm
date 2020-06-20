@@ -1,0 +1,344 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>Skript-Compiler-Direktiven | AutoHotkey</title>
+<meta name="description" content="Skript-Compiler-Direktiven ermöglichen es dem Benutzer, genaue Angaben darüber zu machen, wie ein Skript via Ahk2Exe kompiliert werden soll." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+<h1>Skript-Compiler-Direktiven <span class="ver">[v1.1.33+]</span></h1>
+<h2>Inhaltsverzeichnis</h2>
+<ul>
+  <li><a href="#Intro1">Einführung</a></li>
+  <li><a href="#IgnoreKeep">Direktiven, die das Skriptverhalten steuern</a>:</li>
+  <ul>
+    <li><a href="#IgnoreKeep">IgnoreBegin</a></li>
+    <li><a href="#IgnoreKeep">IgnoreEnd</a></li>
+    <li><a href="#IgnoreKeep">IgnoreKeep</a></li>
+  </ul>
+  <li><a href="#Directives">Direktiven, die die Metadaten der EXE-Datei beeinflussen</a>:</li>
+  <ul>
+    <li><a href="#Intro2">Einführung</a></li>
+    <li><a href="#AddResource">AddResource</a>: Fügt der EXE-Datei eine Ressource hinzu.</li>
+    <li><a href="#Bin">Bin</a>: Spezifiziert die zu verwendende binäre Version von AutoHotkey.</li>
+    <li><a href="#ConsoleApp">ConsoleApp</a>: Setzt den Konsolenmodus.</li>
+    <li><a href="#Cont">Cont</a>: Spezifiziert eine Fortsetzungszeile für eine Direktive.</li>
+    <li><a href="#Debug">Debug</a>: Zeigt Debugging-Text an.</li>
+    <li><a href="#ExeName">ExeName</a>: Spezifiziert den Standort und Namen für die EXE-Datei.</li>
+    <li><a href="#Let">Let</a>: Setzt eine Benutzervariable.</li>
+    <li><a href="#Obey">Obey</a>: Führt einen Befehl oder Ausdruck aus.</li>
+    <li><a href="#PostExec">PostExec</a>: Führt ein Programm nach der Kompilierung aus.</li>
+    <li><a href="#SetMainIcon">SetMainIcon</a>: Setzt das Hauptsymbol.</li>
+    <li><a href="#SetProp">Set<i>Eigenschaft</i></a>: Setzt eine Eigenschaft der EXE-Datei.</li>
+    <li><a href="#Set">Set</a>: Setzt sonstige Eigenschaften.</li>
+    <li><a href="#UpdateManifest">UpdateManifest</a>: Ändert das Manifest der EXE-Datei.</li>
+    <li><a href="#UseResourceLang">UseResourceLang</a>: Ändert die Ressourcensprache.</li>
+  </ul>
+</ul>
+<h2 id="Intro1">Einführung</h2>
+<p>Skript-Compiler-Direktiven ermöglichen es dem Benutzer, genaue Angaben darüber zu machen, wie ein Skript via <a href="../Scripts.htm#ahk2exe">Ahk2Exe</a> kompiliert werden soll. Einige der Features sind:</p>
+<ul>
+  <li>Möglichkeiten zum Ändern der Versionsinformationen (z. B. Name, Beschreibung, Version...).</li>
+  <li>Möglichkeiten, um Ressourcen zum kompilierten Skript hinzuzufügen.</li>
+  <li>Möglichkeiten, an verschiedenen Aspekten der Kompilierung zu feilen.</li>
+  <li>Möglichkeiten, um Codeabschnitte aus dem kompilierten Skript zu entfernen, und umgekehrt.</li>
+</ul>
+<p>Der Skript-Compiler sucht nach speziellen Kommentaren im Quelltext-Skript und erkennt diese als Compiler-Direktiven. Alle Compiler-Direktiven müssen mit der Zeichenkette <code>@Ahk2Exe-</code> beginnen und als Kommentar gekennzeichnet werden (üblicherweise via <code>;</code>).</p>
+
+<h2 id="IgnoreKeep">Direktiven, die das Skriptverhalten steuern</h2>
+<p>Es ist möglich, Codeabschnitte aus dem kompilierten Skript zu entfernen. Setzen Sie vor und nach dem betroffenen Codeabschnitt die folgenden Direktiven:</p>
+<pre class="NoIndent">MsgBox Diese Meldung erscheint sowohl im kompilierten als auch nicht-kompilierten Skript
+<em>;@Ahk2Exe-IgnoreBegin</em>
+MsgBox Diese Meldung erscheint NICHT im kompilierten Skript
+<em>;@Ahk2Exe-IgnoreEnd</em>
+MsgBox Diese Meldung erscheint sowohl im kompilierten als auch nicht-kompilierten Skript
+</pre>
+<p>Der umgekehrte Weg ist auch möglich; man kann einen Codeabschnitt markieren, der nur im kompilierten Skript ausgeführt werden soll:</p>
+<pre class="NoIndent"><em>/*@Ahk2Exe-Keep
+MsgBox Diese Meldung erscheint nur im kompilierten Skript
+*/</em>
+MsgBox Diese Meldung erscheint sowohl im kompilierten als auch nicht-kompilierten Skript
+</pre>
+<p>Dies hat gegenüber <a href="../Variables.htm#IsCompiled">A_IsCompiled</a> den Vorteil, dass der Code während der Präprozessierung vollständig aus dem kompilierten Skript entfernt und folglich dessen Größe verringert wird. Umgekehrt gilt das gleiche: Es ist nicht notwendig, <a href="../Variables.htm#IsCompiled">A_IsCompiled</a> zu prüfen, da sich der Code im nicht-kompilierten Skript innerhalb eines Kommentarblocks befindet.</p>
+
+<h2 id="Directives">Direktiven, die die Metadaten der EXE-Datei beeinflussen</h2>
+<h3 id="Intro2">Einführung</h3>
+<p>In den Parametern dieser Direktiven werden die folgenden Escapesequenzen unterstützt: <code>``</code>, <code>`,</code>, <code>`n</code>, <code>`r</code> und <code>`t</code>. Kommas müssen <em>immer</em> mit einem Escapezeichen versehen werden, unabhängig von der Position des Parameters. "Integer" bezieht sich auf vorzeichenlose 16-Bit-Integer (0..0xFFFF).</p>
+
+<p>Falls erforderlich, können Direktivenparameter auf die folgenden internen Variablen verweisen, indem man den Variablennamen mit <code>%</code>-Zeichen umschließt:</p>
+<p id="group1"><strong>Gruppe 1:</strong> <a href="../Variables.htm#AhkPath">A_AhkPath</a>, <a href="../Variables.htm#AppData">A_AppData</a>, <a href="../Variables.htm#AppDataCommon">A_AppDataCommon</a>, <a href="../Variables.htm#ComputerName">A_ComputerName</a>, <a href="../Variables.htm#ComSpec">A_ComSpec</a>, <a href="../Variables.htm#Desktop">A_Desktop</a>, <a href="../Variables.htm#DesktopCommon">A_DesktopCommon</a>, <a href="../Variables.htm#MyDocuments">A_MyDocuments</a>, <a href="../Variables.htm#ProgramFiles">A_ProgramFiles</a>, <a href="../Variables.htm#Programs">A_Programs</a>, <a href="../Variables.htm#ProgramsCommon">A_ProgramsCommon</a>, <a href="../Variables.htm#ScriptDir">A_ScriptDir</a>, <a href="../Variables.htm#ScriptFullPath">A_ScriptFullPath</a>, <a href="../Variables.htm#ScriptName">A_ScriptName</a>, <a href="../Variables.htm#Space">A_Space</a>, <a href="../Variables.htm#StartMenu">A_StartMenu</a>, <a href="../Variables.htm#StartMenuCommon">A_StartMenuCommon</a>, <a href="../Variables.htm#Startup">A_Startup</a>, <a href="../Variables.htm#StartupCommon">A_StartupCommon</a>, <a href="../Variables.htm#Tab">A_Tab</a>, <a href="../Variables.htm#Temp">A_Temp</a>, <a href="../Variables.htm#UserName">A_UserName</a>, <a href="../Variables.htm#WinDir">A_WinDir</a>.</p>
+
+<p><strong>Gruppe 2:</strong> <a href="../Variables.htm#AhkVersion">A_AhkVersion</a>, <a href="../Variables.htm#IsCompiled">A_IsCompiled</a>, <a href="../Variables.htm#IsUnicode">A_IsUnicode</a>, <a href="../Variables.htm#PtrSize">A_PtrSize</a>.</p>
+
+<p id="WorkFileName">Zusätzlich zu diesen Variablennamen gibt es noch die Spezialvariable <strong>A_WorkFileName</strong>, die den temporären Namen der gerade verwendeten EXE-Datei enthält. Diese kann genutzt werden, um den Dateinamen als Parameter an eine <a href="#PostExec">PostExec</a>-Direktive zu übergeben, die auf die generierte EXE-Datei zugreifen muss.</p>
+
+<p id="PriorLine">Des Weiteren gibt es die Spezialvariable <strong>A_PriorLine</strong>, die die Quellcodezeile enthält, die unmittelbar vor der aktuellen Compiler-Direktive steht. Dazwischenliegende leere Zeilen und Kommentaren werden ignoriert, ebenso wie alle Compiler-Direktiven-Zeilen. Diese Variable kann genutzt werden, um konstante Informationen aus dem Quelltext des Skripts "herauszupicken" und sie in späteren Compiler-Direktiven zu verwenden. Zum Beispiel könnten Sie damit auf die Versionsnummer des Skripts zugreifen, welche oft geändert wird. Diese Art des Zugriffs hat den Vorteil, dass die Versionsnummer nur einmal im Quellcode geändert werden muss - die Änderung wird dann zur entsprechenden Direktive weitergeleitet. (Weitere Informationen finden Sie im RegEx-Beispiel unten.)</p>
+
+<p>Darüber hinaus können spezielle Benutzervariablen im Format <code>U_<i>Name</i></code> mit den unten genannten <a href="#Let">Let</a>- und <a href="#Obey">Obey</a>-Direktiven erstellt werden.</p>
+
+<p>Sämtliche Variablen stehen nicht nur für Direktivenparameter zur Verfügung, sondern können auch von jeder RT_MENU-, RT_DIALOG-, RT_STRING-, RT_ACCELERATORS-, RT_HTML- und RT_MANIFEST-Datei aus abgerufen werden, die der unten genannten <a href="#AddResource">AddResource</a>-Direktive übergeben wurde.</p>
+
+<p>Falls erforderlich, kann der Rückgabewert von den oben genannten Variablen manipuliert werden, indem man am Ende des Namens der internen Variable, vor dem Endzeichen <code>%</code>, bis zu 2 Parameter (genannt p2 und p3) einfügt, die alle mit einem Tildezeichen (<code>~</code>) voneinander getrennt sind. Die Parameter p2 und p3 werden als direkt geschriebener Text im zweiten und dritten Parameter einer <a href="../commands/RegExReplace.htm">RegExReplace</a>-Funktion verwendet, um den zurückgegebenen Wert zu manipulieren. (Siehe <a href="RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>.) Beachten Sie, dass p3 optional ist.</p>
+
+<p>Um ein Tildezeichen als Teil des Textes in p2 oder p3 einzufügen, setzen Sie ein umgekehrtes Häkchen davor, also <code>`~</code>. Um ein umgekehrtes Häkchen als Teil des Textes in p2 oder p3 einzufügen, verdoppeln Sie es, also <code>``</code>.</p>
+
+<strong>RegEx-Beispiele:</strong>
+<ul>
+  <li>
+    <pre class="NoIndent">%A_ScriptName~\.[^\.]+$~.exe%</pre>
+    <p>Dies ersetzt die Dateiendung des aktuellen Skriptnamens (inklusive Punkt) mit <code>.exe</code>.<br>(<code>\.[^\.]+$~.exe</code> sucht nach einem <code>.</code>, gefolgt von 1 oder mehr Nicht-<code>.</code>-Zeichen, gefolgt vom Ende der Zeichenkette, und ersetzt es mit <code>.exe</code>)</p>
+  </li>
+  <li>
+    <p>Stellen Sie sich vor, es gäbe eine Quelltextzeile, gefolgt von zwei Compiler-Direktiven wie folgt:</p>
+    <pre>CodeVersion := "1.2.3.4", Firma := "Meine Firma"</pre>
+    <pre>;@Ahk2Exe-Let U_version = %A_PriorLine~U)^(.+"){1}(.+)".*$~$2%</pre>
+    <pre>;@Ahk2Exe-Let U_company = %A_PriorLine~U)^(.+"){3}(.+)".*$~$2%</pre>
+    <p>Diese Direktiven kopieren die Versionsnummer <code>1.2.3.4</code> in die Spezialvariable <code>U_version</code> und den Firmennamen <code>Meine Firma</code> in die Spezialvariable <code>U_company</code>, um sie später in anderen Direktiven zu verwenden.<br>
+    (Das <code>{1}</code> in ersten RegEx-Zeichenkette wurde in der zweiten RegEx-Zeichenkette mit <code>{3}</code> ersetzt, um den Firmennamen nach dem dritten <code>"</code> zu extrahieren.)</p>
+  </li>
+</ul>
+<p><strong>Weitere Beispiele:</strong> Weitere funktionierende Beispiele, die heruntergeladen und untersucht werden können, finden Sie <a href="https://github.com/AutoHotkey/Ahk2Exe/releases/tag/DemoCode_1">hier</a>.</p>
+
+<h3 id="AddResource">AddResource</h3>
+<p>Fügt der kompilierten EXE-Datei eine Ressource hinzu. (Siehe auch <a href="#UseResourceLang">UseResourceLang</a>)</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-AddResource</span> Dateiname <span class="optional">, Ressourcenname</span></pre>
+<dl>
+  <dt>Dateiname</dt>
+  <dd>Dateiname der Ressource, die hinzugefügt werden soll. Der Typ der Ressource (als Integer oder Zeichenkette) kann durch Voranstellen eines Sternchens explizit angegeben werden: <code>*Typ Dateiname</code>. Lässt man dies weg, wird Ahk2Exe den Typ automatisch anhand der Dateiendung erkennen.</dd>
+  <dt>Ressourcenname</dt>
+  <dd><i>(Optional)</i> Der Name, den die Ressource haben wird (kann eine Zeichenkette oder ein Integer sein). Lässt man diesen Parameter weg, wird standardmäßig der Name der Datei (ohne Pfad) verwendet - alles in Großbuchstaben.</dd>
+</dl>
+<p>Hier eine Liste mit gängigen Ressourcentypen und den Dateiendungen, die diese standardmäßig auslösen.</p>
+<ul>
+  <li>2 (RT_BITMAP): <code>.bmp</code>, <code>.dib</code></li>
+  <li>4 (RT_MENU)</li>
+  <li>5 (RT_DIALOG)</li>
+  <li>6 (RT_STRING)</li>
+  <li>9 (RT_ACCELERATORS)</li>
+  <li>10 (RT_RCDATA): Jede andere Dateiendung.</li>
+  <li>11 (RT_MESSAGETABLE)</li>
+  <li>12 (RT_GROUP_CURSOR): <code>.cur</code> (noch nicht unterstützt)</li>
+  <li>14 (RT_GROUP_ICON): <code>.ico</code></li>
+  <li>23 (RT_HTML): <code>.htm</code>, <code>.html</code>, <code>.mht</code></li>
+  <li>24 (RT_MANIFEST): <code>.manifest</code>. Wenn der Name für die Ressource nicht angegeben ist, wird standardmäßig <code>1</code> verwendet</li>
+</ul>
+<p><strong>Beispiel:</strong> Die Standardsymbole ersetzen (außer das <a href="#SetMainIcon">Hauptsymbol</a>):</p>
+<pre>;@Ahk2Exe-AddResource Icon1.ico, 160  ; Ersetzt 'H auf Blau'
+;@Ahk2Exe-AddResource Icon2.ico, 206  ; Ersetzt 'S auf Grün'
+;@Ahk2Exe-AddResource Icon3.ico, 207  ; Ersetzt 'H auf Rot'
+;@Ahk2Exe-AddResource Icon4.ico, 208  ; Ersetzt 'S auf Rot'</pre>
+
+<h3 id="Bin">Bin</h3>
+<p>Spezifiziert die binäre Version von AutoHotkey, die in der generierten EXE-Datei enthalten sein soll. (Dies überschreibt alles, was in der GUI oder CLI angegeben ist.) Diese Direktive kann bei Bedarf mehrfach angegeben werden, allerdings nur in einer Skriptdatei, die nicht via <a href="../commands/_Include.htm">#Include</a> eingebunden wird. Der Compiler wird mindestens einmal für jede gefundene <em>Bin</em>-Direktive ausgeführt. (Wenn dieser Direktive aktuell ein Kommentar angehängt ist, muss dieser die <code>&nbsp;;</code>-Markierung verwenden. Um diese Direktive tatsächlich auszukommentieren, fügen Sie nach der ersten Kommentar-Markierung ein Leerzeichen ein.)</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-Bin</span> [Pfad\]Name <span class="optional">, [EXE_Pfad\][Name], Zeichensatz</span></pre>
+<dl>
+  <dt>[Pfad\]Name</dt>
+  <dd>Die zu verwendende BIN-Datei. Wenn keine Dateiendung angegeben ist, wird <code>.bin</code> vermutet. Für <em>Name</em> kann auch ein Platzhaltermuster verwendet werden; zum Beispiel <code>ANSI*</code>, <code>Unicode 32*</code>, <code>Unicode 64*</code>, oder <code>*bit</code> für alle drei. Wenn kein Pfad angegeben ist, werden die Standard-BIN-Dateien im Compiler-Ordner durchgegangen. Der Compiler wird für jede übereinstimmende BIN-Datei ausgeführt. Es dürfen nur die internen Variablen der oben genannten <a href="#group1">Gruppe 1</a> verwendet werden.</dd>
+  <dt>[EXE_Pfad\][Name]</dt>
+  <dd><i>(Optional)</i> Der Dateiname für die EXE-Datei. Jede angegebene Dateiendung wird mit <code>.exe</code> ersetzt. Wenn kein Pfad angegeben ist, wird die EXE-Datei im Ordner des Skripts erstellt. Wenn kein Name angegeben ist, bekommt die EXE-Datei den Standardnamen zugewiesen. (Dieser Parameter kann mit der <a href="#ExeName">ExeName</a>-Direktive überschrieben werden.)</dd>
+  <dt>Zeichensatz</dt>
+  <dd><i>(Optional)</i> Überschreibt den Standard-<a href="https://msdn.microsoft.com/de-de/library/dd317756.aspx">Zeichensatz</a>, mit dem die Skript-Dateien verarbeitet werden. (Skripte sollten mit einer Byte-Order-Markierung (BOM) beginnen, was die Verwendung dieses Parameters überflüssig macht.)</dd>
+</dl>
+
+<h3 id="ConsoleApp">ConsoleApp</h3>
+<p>Wechselt das Subsystem der EXE-Datei in den Konsolenmodus.</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-ConsoleApp</span></pre>
+
+<h3 id="Cont">Cont</h3>
+<p>Spezifiziert eine Fortsetzungszeile für die vorherige Direktive. Dies ermöglicht es, eine langzeilige Direktive so zu gestalten, dass sie im Quellcode gut lesbar ist.</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-Cont</span> Text</pre>
+<dl>
+  <dt>Text</dt>
+  <dd>Der Text, der an die vorherige Direktivenzeile angehängt werden soll, bevor diese Zeile verarbeitet wird. Der Text beginnt nach dem einzelnen Leerzeichen hinter dem <code>Cont</code>-Schlüsselwort.</dd>
+</dl>
+
+<h3 id="Debug">Debug</h3>
+<p>Zeigt ein Meldungsfenster mit dem angegebenen Text an (für Debugging-Zwecke gedacht).</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-Debug</span> Text</pre>
+<dl>
+  <dt>Text</dt>
+  <dd>Ein Text, der angezeigt werden soll. Umschließen Sie jede Spezialvariable mit <code>%</code>-Zeichen, um ihren (manipulierten) Inhalt zu sehen.</dd>
+</dl>
+
+<h3 id="ExeName">ExeName</h3>
+<p>Spezifiziert den Standort und Namen für die generierte EXE-Datei. (Siehe auch <a href="#Bin">Bin</a>-Direktive.)</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-ExeName</span> [Pfad\][Name]</pre>
+<dl>
+  <dt>[Pfad\][Name]</dt>
+  <dd>Der Name der EXE-Datei. Jede angegebene Dateiendung wird mit <code>.exe</code> ersetzt. Wenn kein Pfad angegeben ist, wird die EXE-Datei im Ordner des Skripts erstellt. Wenn kein Name angegeben ist, bekommt die EXE-Datei den Standardnamen zugewiesen.</dd>
+</dl>
+<strong>Beispiel:</strong>
+<pre>;@Ahk2Exe-Obey U_bits, = %A_PtrSize% * 8
+;@Ahk2Exe-Obey U_type, = "%A_IsUnicode%" ? "Unicode" : "ANSI"
+;@Ahk2Exe-ExeName %A_ScriptName~\.[^\.]+$%_%U_type%_%U_bits%</pre>
+
+<h3 id="Let">Let</h3>
+<p>Erstellt (oder modifiziert) eine oder mehrere Benutzervariablen, auf die via <code>%U_<i>Name</i>%</code> zugegriffen werden kann, ähnlich wie bei den internen Variablen (siehe oben).</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-Let</span> Name = Wert <span class="optional">, Name = Wert, ...</span></pre>
+<dl>
+  <dt>Name</dt>
+  <dd>Der Name der Variable (mit oder ohne <code>U_</code>-Präfix).</dd>
+  <dt>Wert</dt>
+  <dd>Der zu verwendende Wert.</dd>
+</dl>
+
+<h3 id="Obey">Obey</h3>
+<p>Führt isolierte AutoHotkey-Befehle oder Ausdrücke aus, deren Ergebnisse in <code>U_<i>Name</i></code> gespeichert werden müssen.</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-Obey</span> Name, BefehlOderAusdruck <span class="optional">, Extra</span></pre>
+<dl>
+  <dt>Name</dt>
+  <dd>Der Name der Variable (mit oder ohne <code>U_</code>-Präfix), in der das Ergebnis gespeichert werden soll.</dd>
+  <dt>BefehlOderAusdruck</dt>
+  <dd>
+    <p>Ein Befehl oder Ausdruck, der ausgeführt werden soll.</p>
+    <p>Bei <strong>Befehlen</strong> muss <em>Name</em> als Ausgabevariable angegeben werden (häufig der erste Parameter), z. B.</p>
+    <pre>;@Ahk2Exe-Obey U_date, FormatTime U_date`, R D2 T2</pre>
+    <p>Bei <strong>Ausdrücken</strong> muss <code>=</code> davor gesetzt werden, z. B.</p>
+    <pre>;@Ahk2Exe-Obey U_type, = "%A_IsUnicode%" ? "Unicode" : "ANSI"</pre>
+    <p>Ausdrücke können im Befehlsformat geschrieben werden, z. B.</p>
+    <pre>;@Ahk2Exe-Obey U_bits, U_bits := %A_PtrSize% * 8</pre>
+    <p>Falls erforderlich, trennen Sie mehrere Befehle und Ausdrücke mit <code>`n</code>.</p>
+  </dd>
+  <dt>Extra</dt>
+  <dd><i>(Optional)</i> Eine Zahl (1-9), die die Anzahl der zusätzlichen Ergebnisse angibt, die zurückgegeben werden sollen. Wenn Extra beispielsweise 2 ist, werden die Ergebnisse in <code>U_<i>name</i></code>, <code>U_<i>name</i>1</code> und <code>U_<i>name</i>2</code> gespeichert. Der Wert in jedem <code><i>name</i></code> muss zuerst vom Ausdruck oder Befehl gesetzt werden.</dd>
+</dl>
+
+<h3 id="PostExec">PostExec</h3>
+<p>Spezifiziert ein Programm, das nach einer erfolgreichen Kompilierung ausgeführt werden soll, bevor (oder nachdem) eine <a href="../Scripts.htm#mpress">Komprimierung</a> der EXE-Datei erfolgt.</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-PostExec</span> Programm [Parameter] <span class="optional">, Bedingung</span></pre>
+<dl>
+  <dt>Programm [Parameter]</dt>
+  <dd>Ein Programm, das ausgeführt werden soll, inklusive einem oder mehr Parameter. Um den Zugriff auf die verarbeitete EXE-Datei zu ermöglichen, geben Sie die Spezialvariable <a href="#WorkFileName">A_WorkFileName</a> als in Anführungszeichen gesetzten Parameter an, z. B. <code>"%A_WorkFileName%"</code>. Wenn das Programm die EXE-Datei ändert, muss das Programm die geänderte EXE-Datei in die via <code>%A_WorkFileName%</code> spezifizierte Eingabedatei zurückschieben. (Beachten Sie, dass die EXE-Datei binäre Daten enthalten wird.)</dd>
+  <dt>Bedingung</dt>
+  <dd>
+    <p><i>(Optional)</i> Lassen Sie diesen Parameter weg, um das Programm vor einer <a href="../Scripts.htm#mpress">Komprimierung</a> ausführen zu lassen. Ansonsten können Sie eine der folgenden Zahlen angeben, um das Programm nach einer bestimmten Komprimierung ausführen zu lassen:</p>
+    <ul>
+      <li>0 - Nur ausführen, wenn keine Komprimierung angegeben ist.</li>
+      <li>1 - Nur ausführen, wenn die MPRESS-Komprimierung angegeben ist.</li>
+      <li>2 - Nur ausführen, wenn die UPX-Komprimierung angegeben ist.</li>
+    </ul>
+  </dd>
+</dl>
+<p><strong>Beispiel 1:</strong> (Um diese Beispiele zu verwenden, laden Sie zunächst <a href="https://github.com/AutoHotkey/Ahk2Exe/blob/master/BinMod.ahk">BinMod.ahk</a> herunter und kompilieren Sie es gemäß den Anweisungen des heruntergeladenen Skripts.)</p>
+<p>Dieses Beispiel kann verwendet werden, um jegliche Referenzen zu "AutoHotkey" aus der generierten EXE-Datei zu entfernen, um zu verschleiern, dass es sich um ein kompiliertes AutoHotkey-Skript handelt:</p>
+<pre>;@Ahk2Exe-Obey U_au, = "%A_IsUnicode%" ? 2 : 1    ; Skript ANSI oder Unicode?
+;@Ahk2Exe-PostExec "BinMod.exe" "%A_WorkFileName%"
+;@Ahk2Exe-Cont  "%U_au%2.&gt;AUTOHOTKEY SCRIPT&lt;. DATA              "</pre>
+<p><strong>Beispiel 2:</strong> Dieses Beispiel ändert eine UPX-komprimierte EXE-Datei derart, dass sie nicht mehr mit <code>UPX -d</code> dekomprimiert werden kann:</p>
+<pre>;@Ahk2Exe-PostExec "BinMod.exe" "%A_WorkFileName%"
+;@Ahk2Exe-Cont  "11.UPX." "1.UPX!.", 2</pre>
+<p>Weitere Beispiele finden Sie im Skript <a href="https://github.com/AutoHotkey/Ahk2Exe/blob/master/BinMod.ahk">BinMod.ahk</a> selbst.</p>
+
+<h3 id="SetMainIcon">SetMainIcon</h3>
+<p>Überschreibt das EXE-Symbol, welches für die Kompilierung verwendet wird. (Um die anderen Symbole zu ändern, werfen Sie einen Blick auf das <a href="#AddResource">AddResource</a>-Beispiel.)</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-SetMainIcon</span> <span class="optional">Symboldatei</span></pre>
+<dl>
+  <dt>Symboldatei</dt>
+  <dd><i>(Optional)</i> Die zu verwendende Symboldatei. Lässt man diesen Parameter weg, wird das Standardsymbol von AutoHotkey verwendet.</dd>
+</dl>
+
+<h3 id="SetProp">Set<em>Eigenschaft</em></h3>
+<p>Ändert eine Eigenschaft in den Versionsinformationen der kompilierten EXE-Datei. Beachten Sie, dass alle Eigenschaften in alphabetischer Reihenfolge verarbeitet werden, unabhängig von der Reihenfolge, in der sie angegeben sind.</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-Set<i>Eigenschaft</i></span> Wert</pre>
+<dl>
+  <dt><em>Eigenschaft</em></dt>
+  <dd>
+    <p>Der Name einer Eigenschaft, die geändert werden soll. Muss eine der unten genannten sein.</p>
+    <table class="info">
+      <tr>
+        <th>Eigenschaft</th>
+        <th>Beschreibung</th>
+      </tr>
+      <tr>
+        <td>CompanyName</td>
+        <td>Ändert den Firmennamen.</td>
+      </tr>
+      <tr>
+        <td>Copyright</td>
+        <td>Ändert die rechtlichen Copyright-Informationen.</td>
+      </tr>
+      <tr>
+        <td>Description</td>
+        <td>Ändert die Dateibeschreibung.</td>
+      </tr>
+      <tr>
+        <td>FileVersion</td>
+        <td>Ändert die Dateiversion, sowohl im Text- als auch Binärformat. (Einzelheiten finden Sie unter <em>Version</em> weiter unten.)</td>
+      </tr>
+      <tr>
+        <td>InternalName</td>
+        <td>Ändert den internen Namen.</td>
+      </tr>
+      <tr>
+        <td>Language</td>
+        <td>Ändert den <a href="Languages.htm">Sprachcode</a>. <br>Bitte beachten Sie, dass hexadezimale Zahlen das Präfix <code>0x</code> haben müssen.</td>
+      </tr>
+      <tr>
+        <td>LegalTrademarks</td>
+        <td>Ändert die rechtlichen Informationen bezüglich des Markenzeichens.</td>
+      </tr>
+      <tr>
+        <td>Name</td>
+        <td>Ändert den Produktnamen und den internen Namen.</td>
+      </tr>
+      <tr>
+        <td>OrigFilename</td>
+        <td>Ändert die Informationen bezüglich des originalen Dateinamens.</td>
+      </tr>
+      <tr>
+        <td>ProductName</td>
+        <td>Ändert den Produktnamen.</td>
+      </tr>
+      <tr>
+        <td>ProductVersion</td>
+        <td>Ändert die Produktversion, sowohl im Text- als auch Binärformat. (Einzelheiten finden Sie unter <em>Version</em> weiter unten.)</td>
+      </tr>
+      <tr>
+        <td>Version</td>
+        <td>Ändert die Dateiversion und die Produktversion, sowohl im Text- als auch Binärformat.<br>Ahk2Exe füllt die binären Versionsfelder mit den via Punkte getrennten Zahlen (bis zu vier), die am Anfang des Versionstextes stehen können. Ungefüllte Felder werden auf Null gesetzt. <code>1.3-Alpha</code> beispielsweise würde die binäre Versionsnummer <code>1.3.0.0</code> erzeugen. Wenn diese Eigenschaft nicht geändert wird, wird standardmäßig die AutoHotkey-Version verwendet, die zum Kompilieren des Skripts verwendet wurde.</td>
+      </tr>
+    </table>
+  </dd>
+  <dt>Wert</dt>
+  <dd>Der Wert, auf den die Eigenschaft gesetzt werden soll.</dd>
+</dl>
+
+<h3 id="Set">Set</h3>
+<p>Ändert Eigenschaften in den Versionsinformationen der kompilierten EXE-Datei, die nicht von der <a href="#SetProp">SetEigenschaft</a>-Direktive abgedeckt werden. Beachten Sie, dass alle Eigenschaften in alphabetischer Reihenfolge verarbeitet werden, unabhängig von der Reihenfolge, in der sie angegeben sind. Diese Direktive ist nur für besondere Anwendungsfälle gedacht.</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-Set</span> Eigenschaft, Wert</pre>
+<dl>
+  <dt>Eigenschaft</dt>
+  <dd>Der Name einer Eigenschaft, die geändert werden soll.</dd>
+  <dt>Wert</dt>
+  <dd>Der Wert, auf den die Eigenschaft gesetzt werden soll.</dd>
+</dl>
+
+<h3 id="UpdateManifest">UpdateManifest</h3>
+<p>Ändert Einzelheiten im Manifest der EXE-Datei. Diese Direktive ist nur für besondere Anwendungsfälle gedacht.</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-UpdateManifest</span> BenötigtAdmin <span class="optional">, Name, Version, UIAccess</span></pre>
+<dl>
+  <dt>BenötigtAdmin</dt>
+  <dd>Setzen Sie diesen Parameter auf 1, um die EXE-Datei nur mit administrativen Rechten ausführen zu lassen. Setzen Sie ihn auf 2, um die EXE-Datei nur mit den höchsten verfügbaren Rechten ausführen zu lassen. Setzen Sie ihn auf 0, um ihn unverändert zu lassen.</dd>
+  <dt>Name</dt>
+  <dd><i>(Optional)</i> Ein Name, der im Manifest gesetzt werden soll.</dd>
+  <dt>Version</dt>
+  <dd><i>(Optional)</i> Eine Version, die im Manifest gesetzt werden soll.</dd>
+  <dt>UIAccess</dt>
+  <dd><i>(Optional)</i> Setzen Sie diesen Parameter auf 1, um UIAccess im Manifest zu aktivieren.</dd>
+</dl>
+
+<h3 id="UseResourceLang">UseResourceLang</h3>
+<p>Ändert die Ressourcensprache, welche von <a href="#AddResource">AddResource</a> verwendet wird. Diese Direktive ist von der Position abhängig und beeinflusst alle nachfolgenden <a href="#AddResource">AddResource</a>-Direktiven.</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-UseResourceLang</span> Sprachcode</pre>
+<dl>
+  <dt>Sprachcode</dt>
+  <dd>Der <a href="Languages.htm">Sprachcode</a>. Bitte beachten Sie, dass hexadezimale Zahlen das Präfix <code>0x</code> haben müssen. Die Standard-Ressourcensprache ist US English (0x0409).</dd>
+</dl>
+
+</body>
+
+</html>

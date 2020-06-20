@@ -15,6 +15,7 @@ tocData = [
     ["Label","misc/Labels.htm"],
     ["Threads","misc/Threads.htm"],
     ["Debugging-Clients","AHKL_DBGPClients.htm"],
+    ["Compiler-Direktiven","misc/Ahk2ExeDirectives.htm"],
     ["Objekte","Objects.htm",
     [
       ["Grundlegende Verwendung","Objects.htm#Usage"],
@@ -442,6 +443,7 @@ tocData = [
     ["#NoEnv","commands/_NoEnv.htm"],
     ["#NoTrayIcon","commands/_NoTrayIcon.htm"],
     ["#Persistent","commands/_Persistent.htm"],
+    ["#Requires","commands/_Requires.htm"],
     ["#SingleInstance","commands/_SingleInstance.htm"],
     ["#UseHook","commands/_UseHook.htm"],
     ["#Warn","commands/_Warn.htm"],
