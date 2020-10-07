@@ -25,11 +25,11 @@
 </dl>
 
 <h2>Bemerkungen</h2>
-<p>Durch die Granularität (Ungenauigkeit) der Zeiterfassung im Betriebssystem wird die <em>Verzögerung</em> möglicherweise auf das nächstmögliche Vielfache von 10 oder 15.6 Millisekunden aufgerundet (abhängig vom Typ der installierten Hardware und Treiber). Auf den meisten Windows 2000/XP-Systemen ist eine Verzögerung zwischen 1 und 10 gleichbedeutend mit 10 oder 15.6. Um eine kürzere Verzögerung zu erreichen, siehe <a href="#ShorterSleep">Beispiele</a>.</p>
+<p>Durch die Granularität (Ungenauigkeit) der Zeiterfassung im Betriebssystem wird <em>Verzögerung</em> möglicherweise auf das nächstmögliche Vielfache von 10 oder 15.6 Millisekunden aufgerundet (abhängig vom Typ der installierten Hardware und Treiber). Auf den meisten Windows 2000/XP-Systemen ist eine Verzögerung von 1 bis 10 äquivalent zu 10 oder 15.6. Um eine kürzere Verzögerung zu erreichen, siehe <a href="#ShorterSleep">Beispiele</a>.</p>
 <p>Die tatsächliche Verzögerung kann länger dauern als erwartet, wenn die CPU unter hoher Last ist. Das liegt daran, dass das Betriebssystem jedem bedürftigen Prozess einen Teil der CPU-Zeit übergibt (in der Regel 20 Millisekunden), bevor das Skript eine weitere Zeitscheibe erhält.</p>
 <p>Eine Verzögerung von 0 übergibt den Rest der Skript-Zeitscheibe je nach Bedarf an andere Prozesse (solange diese nicht eine deutlich niedrigere <a href="Process.htm#Priority">Priorität</a> haben als das Skript). Daher erzeugt eine Verzögerung von 0 eine tatsächliche Verzögerung von 0 bis 20 ms (oder mehr), abhängig von der Anzahl bedürftiger Prozesse (sind keine vorhanden, besteht überhaupt keine Verzögerung). Allerdings sollte eine <em>Verzögerung</em> von 0 immer damit enden, kürzer zu sein, als jede längere <em>Verzögerung</em> sein würde.</p>
-<p>Während der Ruhephase können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
-<p><strong>Sleep -1</strong>: Eine Verzögerung von -1 erzeugt keine Ruhephase, sondern ermöglicht dem Skript, seine Meldungswarteschlange sofort zu überprüfen. Dies kann genutzt werden, um ausstehende <a href="../misc/Threads.htm">Unterbrechungen</a> nicht zufällig, sondern gezielt an einer bestimmten Stelle stattfinden zu lassen. Siehe <a href="Critical.htm">Critical</a> für mehr Details.</p>
+<p>Während des Sleeps können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
+<p><strong>Sleep -1</strong>: Eine Verzögerung von -1 erzeugt kein Sleep, sondern ermöglicht dem Skript, seine Meldungswarteschlange sofort zu überprüfen. Dies kann genutzt werden, um ausstehende <a href="../misc/Threads.htm">Unterbrechungen</a> nicht zufällig, sondern gezielt an einer bestimmten Stelle stattfinden zu lassen. Siehe <a href="Critical.htm">Critical</a> für mehr Details.</p>
 <h2>Siehe auch</h2>
 <p><a href="SetKeyDelay.htm">SetKeyDelay</a>, <a href="SetMouseDelay.htm">SetMouseDelay</a>, <a href="SetControlDelay.htm">SetControlDelay</a>, <a href="SetWinDelay.htm">SetWinDelay</a>, <a href="SetBatchLines.htm">SetBatchLines</a></p>
 <h2>Beispiele</h2>
@@ -39,23 +39,23 @@
 </div>
 
 <div class="ex" id="ShorterSleep">
-<p><a href="#ShorterSleep">#2</a>: Das folgende Beispiel zeigt, wie die Ruhephase kleiner als 10 oder 15.6 Millisekunden sein kann. HINWEIS: Während ein Skript dieser Art läuft, wird das ganze Betriebssystem und alle Anwendungen von timeBeginPeriod beeinflusst.</p>
+<p><a href="#ShorterSleep">#2</a>: Das folgende Beispiel zeigt, wie ein Sleep kleiner als die üblichen 10 oder 15.6 Millisekunden erzeugt werden kann. HINWEIS: Während ein Skript dieser Art läuft, wird das ganze Betriebssystem und alle Anwendungen von timeBeginPeriod beeinflusst.</p>
 <pre>SetBatchLines -1  <em>; Ermöglicht maximale Effektivität dieser Methode.</em>
 
-Ruhedauer := 1  <em>; Das kann manchmal nachjustiert werden (z. B. ist 2 anders als 3), abhängig vom unteren Wert.</em>
+SleepDauer := 1  <em>; Muss manchmal nachjustiert werden (z. B. ist 2 anders als 3), abhängig vom unteren Wert.</em>
 Zeitperiode := 3 <em>; Probieren Sie 7 oder 3 aus.  Siehe unteren Kommentar.
-; Auf einem PC, dessen Ruhephase normalerweise auf 15.6 ms gerundet wird, sollte Zeitperiode:=7 ausprobiert werden,
-; um kürzere Ruhephasen zu ermöglichen, und Zeitperiode:=3 oder weniger, um die kürzesten Ruhephasen zu ermöglichen.</em>
+; Sie können auf einem PC, wo die Sleep-Dauer normalerweise auf 15.6 ms aufgerundet wird, Zeitperiode:=7 ausprobieren,
+; um kürzere Sleeps zu ermöglichen, und Zeitperiode:=3 oder weniger, um die kürzesten Sleeps zu ermöglichen.</em>
 
 DllCall("Winmm\timeBeginPeriod", "UInt", Zeitperiode)  <em>; Wirkt sich auf alle Anwendungen aus, nicht nur auf das DllCall("Sleep"...) vom Skript, aber nicht auf SetTimer.</em>
 Iterationen := 50
 Startzeit := A_TickCount
 
 Loop %Iterationen%
-    DllCall("Sleep", "UInt", Ruhedauer)  <em>; Es muss DllCall anstelle des Sleep-Befehls verwendet werden.</em>
+    DllCall("Sleep", "UInt", SleepDauer)  <em>; Es muss DllCall anstelle des Sleep-Befehls verwendet werden.</em>
 
 DllCall("Winmm\timeEndPeriod", "UInt", Zeitperiode)  <em>; Sollte aufgerufen werden, um die Normalität des Systems wiederherzustellen.</em>
-MsgBox % "Ruhedauer = " . (A_TickCount - Startzeit) / Iterationen</pre>
+MsgBox % "Sleep-Dauer = " . (A_TickCount - Startzeit) / Iterationen</pre>
 </div>
 
 </body>
