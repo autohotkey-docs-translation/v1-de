@@ -189,10 +189,10 @@ MsgBox,, Titel
 
 <h3 id="VarSetCapacity">VarSetCapacity</h3>
 <p>VarSetCapacity bestimmt die Kapazität einer Variable <i>in Bytes</i>. Um die Kapazität einer Variable in Bezug auf die Zeichenanzahl zu setzen, muss die Größe eines Zeichens berücksichtigt werden. Zum Beispiel:</p>
-<pre>VarSetCapacity(ANSI_Var,    Zeichenkapazität)
-VarSetCapacity(Unicode_Var, Zeichenkapazität * 2)
-VarSetCapacity(Native_Var,  Zeichenkapazität * (A_IsUnicode ? 2 : 1))
-VarSetCapacity(Native_Var,  t_size(Zeichenkapazität))  <em>; siehe <a href="#NumPutGet">unten</a></em>
+<pre>VarSetCapacity(ansi_var,    capacity_in_chars)
+VarSetCapacity(unicode_var, capacity_in_chars * 2)
+VarSetCapacity(native_var,  capacity_in_chars * (A_IsUnicode ? 2 : 1))
+VarSetCapacity(native_var,  t_size(capacity_in_chars))  <em>; siehe <a href="#NumPutGet">unten</a></em>
 </pre>
 <p>Es gibt zwei Anwendungsmöglichkeiten für VarSetCapacity:</p>
 <ol>
@@ -225,20 +225,20 @@ DllCall("DeleteFileW", "WStr", Dateiname)</pre></li>
 
 <h3 id="NumPutGet">NumPut / NumGet</h3>
 <p>Wenn man NumPut() oder NumGet() bei Zeichenketten anwendet, muss der korrekte Offset und Typ für den angegebenen Zeichenkettentyp angegeben werden. Das folgende Beispiel könnte Ihnen dabei helfen:</p>
-<pre><em>;  8-Bit/ANSI   Zeichenketten:  Zeichengröße=1  Zeichentyp="Char"
-; 16-Bit/UTF-16 Zeichenketten:  Zeichengröße=2  Zeichentyp="UShort"</em>
-<i>n</i>te_Zeichen := NumGet(var, (<i>n</i>-1)*<i>Zeichengröße</i>, <i>Zeichentyp</i>)
-NumPut(<i>n</i>te_Zeichen, var, (<i>n</i>-1)*<i>Zeichengröße</i>, <i>Zeichentyp</i>)</pre>
+<pre><em>;  8-Bit/ANSI   Zeichenketten:  size_of_char=1  type_of_char="Char"
+; 16-Bit/UTF-16 Zeichenketten:  size_of_char=2  type_of_char="UShort"</em>
+<i>n</i>th_char := NumGet(var, (<i>n</i>-1)*<i>size_of_char</i>, <i>type_of_char</i>)
+NumPut(<i>n</i>th_char, var, (<i>n</i>-1)*<i>size_of_char</i>, <i>type_of_char</i>)</pre>
 <p>Wenn <code>var</code> eine Zeichenkette im nativen Format enthält, können die passenden Werte auf Basis von <code>A_IsUnicode</code> bestimmt werden:</p>
-<pre><i>n</i>te_Zeichen := NumGet(var, t_size(<i>n</i>-1), t_char())
-NumPut(<i>n</i>te_Zeichen, var, t_size(<i>n</i>-1), t_char())
+<pre><i>n</i>th_char := NumGet(var, t_size(<i>n</i>-1), t_char())
+NumPut(<i>n</i>th_char, var, t_size(<i>n</i>-1), t_char())
 
 <em>; Definieren Sie Funktionen für Komfort und Übersichtlichkeit:</em>
 t_char() {
     return A_IsUnicode ? "UShort" : "Char"
 }
-t_size(AnzahlZeichen=1) {
-    return A_IsUnicode ? AnzahlZeichen*2 : AnzahlZeichen
+t_size(char_count=1) {
+    return A_IsUnicode ? char_count*2 : char_count
 }</pre>
 
 <h2 id="ptr">Pointer-Größe</h2>

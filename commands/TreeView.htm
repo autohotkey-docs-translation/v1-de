@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>TreeView (GUI) - Syntax &amp; Verwendung | AutoHotkey</title>
-<meta name="description" content="Das TreeView-Steuerelement zeigt eine Hierarchie von Elementen an, indem untergeordnete Elemente unter ihren übergeordneten Elementen eingerückt werden. Diese Seite enthält die Funktionen, um es zu modifizieren." />
+<meta name="description" content="Eine TreeView (auf Deutsch: Baumansicht) wird in der Regel verwendet, um eine hierarchisch gegliederte Liste darzustellen, die aus mehreren ineinander geschachtelten Elementen besteht. Diese Seite enthält die Funktionen, um sie zu modifizieren." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -19,7 +19,7 @@
   <li><a href="#Options">Optionen und Styles</a></li>
   <li><a href="#BuiltIn">Interne Funktionen</a>:
     <ul>
-      <li><a href="#bifAddModifyDelete">Hinzufügen, Modifizieren und Entfernen von Elementen</a></li>
+      <li><a href="#bifAddModifyDelete">Elemente hinzufügen, ändern und löschen</a></li>
       <li><a href="#bifGet">Daten aus einer TreeView abrufen</a></li>
       <li><a href="#bifIcon">Symbole setzen</a></li>
     </ul>
@@ -30,73 +30,73 @@
 </ul>
 
 <h2 id="Intro">Einführung und einfaches Beispiel</h2>
-<p>Eine Baum-Ansicht zeigt eine Hierarchie von Elementen an, indem untergeordnete Elemente unter ihren übergeordneten Elementen eingerückt werden. Das bekannteste Beispiel dafür ist der Navigationsbereich des Explorers.</p>
+<p>Eine TreeView (auf Deutsch: Baumansicht) wird in der Regel verwendet, um eine hierarchisch gegliederte Liste darzustellen, die aus mehreren ineinander geschachtelten Elementen besteht. Das wohl bekannteste Beispiel dafür ist der Navigationsbereich des Explorers, der Laufwerke und Ordner hierarchisch darstellt.</p>
 <p>Eine typische TreeView sieht wie folgt aus:</p>
 <img src="../static/ctrl_treeview.png" alt="TreeView" />
 <p>Die Syntax zur Erstellung einer TreeView ist:</p>
 <pre class="Syntax" id="GuiAdd"><span class="func">Gui</span>, Add, TreeView, Optionen</pre>
-<p>Das folgende Skript zeigt, wie eine einfache Hierarchie von Elementen erstellt und angezeigt werden kann:</p>
+<p>Hier sehen Sie ein funktionierendes Skript, das eine einfache Hierarchie von Elementen erstellt und anzeigt:</p>
 <pre>Gui, Add, TreeView
-<span class="red">P1</span> := <a href="#TV_Add">TV_Add</a>("Erstes Oberelement")
-P1C1 := TV_Add("Erstes Unterelement von Oberelement 1", <span class="red">P1</span>)  <em>; Geben Sie P1 an, um dieses Element unterzuordnen.</em>
-P2 := TV_Add("Zweites Oberelement")
-P2C1 := TV_Add("Erstes Unterelement von Oberelement 2", P2)
-P2C2 := TV_Add("Zweites Unterelement von Oberelement 2", P2)
-P2C2C1 := TV_Add("Erstes Unterelement von Unterelement 2", P2C2)
+<span class="red">P1</span> := <a href="#TV_Add">TV_Add</a>("Erstes Elternelement")
+P1C1 := TV_Add("Erstes Kindelement von Elternelement 1", <span class="red">P1</span>)  <em>; P1 als Elternelement für dieses Element festlegen.</em>
+P2 := TV_Add("Zweites Elternelement")
+P2C1 := TV_Add("Erstes Kindelement von Elternelement 2", P2)
+P2C2 := TV_Add("Zweites Kindelement von Elternelement 2", P2)
+P2C2C1 := TV_Add("Erstes Kindelement von Kindelement 2", P2C2)
 
-Gui, Show  <em>; Anzeigen des Fensters mit TreeView.</em>
+Gui, Show  <em>; Das Fenster und dessen TreeView anzeigen.</em>
 return
 
-GuiClose:  <em>; Beendet das Skript, wenn der Benutzer das TreeView-GUI-Fenster schließt.</em>
+GuiClose:  <em>; Skript beenden, wenn der Benutzer die GUI der TreeView schließt.</em>
 ExitApp</pre>
 
 <h2 id="Options">Optionen und Styles für "<em>Gui, Add, TreeView, <u>Optionen</u></em>"</h2>
-<p id="AltSubmit"><strong>AltSubmit</strong>: Teilt dem Skript mehr TreeView-Ereignisse als normal mit. Das heißt, dass das g-Label öfters gestartet wird. Siehe <a href="#notify">TreeView-Benachrichtigungen</a> für Details.</p>
-<p><strong>Background</strong>: Geben Sie das Wort Background an und fügen Sie direkt danach einen Farbnamen (siehe <a href="Progress.htm#colors">Farbentabelle</a>) oder einen RGB-Wert (das 0x-Präfix ist optional) ein. Beispiele: <code>BackgroundSilver</code>, <code>BackgroundFFDD99</code>. Wenn diese Option nicht vorhanden ist, verwendet TreeView als Hintergrundfarbe standardmäßig die im letzten Parameter von <a href="Gui.htm#Color">Gui Color</a> definierte Farbe (wenn keine definiert ist, dann die Standardhintergrundfarbe des Systems). Mit <code>BackgroundDefault</code> kann die Standardhintergrundfarbe des Systems gesetzt werden (in der Regel weiß). Mit <code>GuiControl, +BackgroundDefault, MeineTreeView</code> kann beispielsweise die Standardfarbe wiederhergestellt werden.</p>
-<p><strong>Buttons</strong>: Geben Sie <code>-Buttons</code> (minus Buttons) an, um die Plus- oder Minuszeichen zu entfernen, die jeweils auf der linken Seite eines Elements mit Unterelementen zu finden sind.</p>
-<p><strong>C</strong>: Textfarbe. Geben Sie den Buchstaben C an und fügen Sie direkt danach einen Farbnamen (siehe <a href="Progress.htm#colors">Farbentabelle</a>) oder einen RGB-Wert (das 0x-Präfix ist optional) ein. Beispiele: <code>cRed</code>, <code>cFF2211</code>, <code>c0xFF2211</code>, <code>cDefault</code>.</p>
-<p id="Checked"><strong>Checked</strong>: Fügt links neben jedem Element eine CheckBox hinzu. Beim <a href="#TV_Add">Hinzufügen</a> eines Elements kann das Wort <em>Check</em> in die Optionen eingefügt werden, um die CheckBox zu Beginn im abgehakten Zustand anzuzeigen. Der Benutzer kann die CheckBox entweder anklicken oder die Leertaste drücken, um sie in den abgehakten oder nicht-abgehakten Zustand zu versetzen. Um herauszufinden, welches Element aktuell in der TreeView abgehakt ist, rufen Sie <a href="#TV_GetNext">TV_GetNext()</a> oder <a href="#TV_Get">TV_Get()</a> auf.</p>
-<p><strong>HScroll</strong>: Geben Sie <code>-HScroll</code> (minus HScroll) an, um das horizontale Scrollen im Steuerelement zu deaktivieren (zusätzlich wird das Steuerelement keine horizontale Scrollbalken anzeigen).</p>
-<p id="ImageList"><strong>ImageList</strong>: Mit dieser Option können Symbole in eine ListView eingefügt werden. Geben Sie das Wort <em>ImageList</em> an und fügen Sie direkt danach eine ImageListID an, die von <a href="ListView.htm#IL_Create">IL_Create()</a> zurückgegeben wird. Diese Option funktioniert nur beim Erstellen einer TreeView (allerdings hat <a href="#TV_SetImageList">TV_SetImageList()</a> diese Einschränkung nicht). Hier ein funktionierendes Beispiel:</p>
-<pre>ImageListID := <a href="ListView.htm#IL_Create">IL_Create</a>(10)  <em>; Erstellt eine ImageList für anfänglich 10 Symbole.</em>
-Loop 10  <em>; Lädt die ImageList mit einigen vordefinierten Systemsymbolen.</em>
+<p id="AltSubmit"><strong>AltSubmit</strong>: Teilt dem Skript mehr TreeView-Ereignisse als normal mit. Mit anderen Worten, das g-Label wird öfters gestartet. Weitere Informationen finden Sie unter <a href="#notify">TreeView-Benachrichtigungen</a>.</p>
+<p><strong>Background</strong>: Geben Sie das Wort Background an, unmittelbar gefolgt von einem Farbnamen (siehe <a href="Progress.htm#colors">Farbentabelle</a>) oder RGB-Wert (das 0x-Präfix ist optional). Beispiele: <code>BackgroundSilver</code>, <code>BackgroundFFDD99</code>. Wenn diese Option nicht vorhanden ist, verwendet TreeView als Hintergrundfarbe standardmäßig die im letzten Parameter von <a href="Gui.htm#Color">Gui Color</a> definierte Farbe (wenn keine definiert ist, dann die Standardhintergrundfarbe des Systems). Mit <code>BackgroundDefault</code> kann die Standardhintergrundfarbe des Systems gesetzt werden (in der Regel weiß). Zum Beispiel kann die Standardfarbe einer TreeView via <code>GuiControl, +BackgroundDefault, MeineTreeView</code> wiederhergestellt werden.</p>
+<p><strong>Buttons</strong>: Geben Sie <code>-Buttons</code> (minus Buttons) an, um die Plus- oder Minuszeichen auf der linken Seite eines Elements, das Kindelemente hat, zu entfernen.</p>
+<p><strong>C</strong>: Textfarbe. Geben Sie den Buchstaben C an, unmittelbar gefolgt von einem Farbnamen (siehe <a href="Progress.htm#colors">Farbentabelle</a>) oder RGB-Wert (das 0x-Präfix ist optional). Beispiele: <code>cRed</code>, <code>cFF2211</code>, <code>c0xFF2211</code>, <code>cDefault</code>.</p>
+<p id="Checked"><strong>Checked</strong>: Zeigt auf der linken Seite jeden Elements eine CheckBox an. Fügt man ein Element via <a href="#TV_Add">TV_Add</a> hinzu, kann das Wort <em>Check</em> in den Optionen angegeben werden, um die CheckBox zu Beginn im abgehakten Zustand anzuzeigen. Der Benutzer kann die CheckBox anklicken oder die Leertaste drücken, um ein Häkchen zu setzen oder zu entfernen. Um herauszufinden, welche Elemente aktuell in der TreeView abgehakt sind, rufen Sie <a href="#TV_GetNext">TV_GetNext()</a> oder <a href="#TV_Get">TV_Get()</a> auf.</p>
+<p><strong>HScroll</strong>: Geben Sie <code>-HScroll</code> (minus HScroll) an, um das horizontale Scrollen im Steuerelement zu deaktivieren (zusätzlich wird der horizontale Scrollbalken entfernt).</p>
+<p id="ImageList"><strong>ImageList</strong>: Das Mittel, mit dem Symbole zu einer TreeView hinzugefügt werden. Geben Sie das Wort <em>ImageList</em> an, unmittelbar gefolgt von der ImageListID, die von einem vorherigen <a href="ListView.htm#IL_Create">IL_Create()</a>-Aufruf zurückgegeben wurde. Diese Option funktioniert nur, während eine TreeView erstellt wird (<a href="#TV_SetImageList">TV_SetImageList()</a> hingegen unterliegt nicht dieser Einschränkung). Hier ein funktionierendes Beispiel:</p>
+<pre>ImageListID := <a href="ListView.htm#IL_Create">IL_Create</a>(10)  <em>; ImageList für vsl. 10 Symbole erstellen.</em>
+Loop 10  <em>; ImageList mit einigen Standard-Systemsymbolen befüllen.</em>
     <a href="ListView.htm#IL_Add">IL_Add</a>(ImageListID, "shell32.dll", A_Index)
 Gui, Add, TreeView, <strong>ImageList%ImageListID%</strong>
-<a href="#TV_Add">TV_Add</a>("Elementname", 0, "Icon4")  <em>; Fügt ein Element in die TreeView ein und gibt ihm ein Ordnersymbol.</em>
+<a href="#TV_Add">TV_Add</a>("Elementname", 0, "Icon4")  <em>; Element zur TreeView hinzufügen und Ordnersymbol zuweisen.</em>
 Gui Show</pre>
-<p><strong>Lines</strong>: Geben Sie <code>-Lines</code> (minus Lines) an, um die Verbindungslinien zwischen den Ober- und Unterelementen zu entfernen. Das Entfernen solcher Linien verhindert allerdings auch, dass die Plus-/Minuszeichen bei auf oberster Ebene befindlichen Elementen angezeigt werden.</p>
-<p id="ReadOnly"><strong>ReadOnly</strong>: Geben Sie <code>-ReadOnly</code> (minus ReadOnly) an, um die Texte/Namen aller Elemente editierbar zu machen. Um ein Element zu editieren, wählen Sie es aus und drücken Sie <kbd>F2</kbd> (siehe die <a href="#WantF2">WantF2</a>-Option unten). Oder klicken Sie das Element einmal an, um es auszuwählen, warten Sie mindestens eine halbe Sekunde und klicken Sie dann das Element nochmals an, um es zu editieren. Das folgende Beispiel zeigt, wie ein Element, nachdem es editiert wurde, in Bezug auf seine Nachbarelemente alphabetisch neu positioniert werden kann:</p>
-<pre>Gui, Add, TreeView, -ReadOnly gMeinTree  <em>; Näheres zu gMeinTree finden Sie unter <a href="#notify">TreeView's g-Label</a>.</em>
+<p><strong>Lines</strong>: Geben Sie <code>-Lines</code> (minus Lines) an, um die Verbindungslinien zwischen den Eltern- und Kindelementen zu verstecken. Das Entfernen solcher Linien verhindert allerdings auch, dass die Plus-/Minuszeichen bei Top-Level-Elementen angezeigt werden.</p>
+<p id="ReadOnly"><strong>ReadOnly</strong>: Geben Sie <code>-ReadOnly</code> (minus ReadOnly) an, um dem Benutzer zu erlauben, den Text/Namen eines Elements zu editieren. Um ein Element zu editieren, wählen Sie es aus und drücken Sie <kbd>F2</kbd> (weitere Informationen finden Sie unter <a href="#WantF2">WantF2</a>). Alternativ können Sie ein Element einmal anklicken, um es auszuwählen, mindestens eine halbe Sekunde warten und dann das gleiche Element erneut anklicken, um es zu editieren. Nach dem Editieren kann ein Element unter seinen Geschwisterelementen alphabetisch neu positioniert werden; zum Beispiel:</p>
+<pre>Gui, Add, TreeView, -ReadOnly gMeinTree  <em>; Für gMeinTree siehe <a href="#notify">TreeView's g-Label</a>.</em>
 <em>; ...</em>
 MeinTree:
-if (A_GuiEvent == "e")  <em>; Der Benutzer ist mit dem Editieren des Elements fertig (das == ist für einen Groß-/Kleinschreibung-sensitiven Vergleich).</em>
-    TV_Modify(TV_GetParent(A_EventInfo), "Sort")  <em>; Funktioniert auch, wenn das Element kein Oberelement hat.</em>
+if (A_GuiEvent == "e")  <em>; Der Benutzer hat aufgehört, ein Element zu editieren (== ermöglicht einen Groß-/Kleinschreibung-sensitiven Vergleich).</em>
+    TV_Modify(TV_GetParent(A_EventInfo), "Sort")  <em>; Funktioniert auch, wenn das Element kein Elternelement hat.</em>
 return</pre>
-<p><strong>R</strong>: Reihen-Höhe (bei der Erstellung). Geben Sie den Buchstaben R an und fügen Sie direkt danach die Anzahl der Reihen ein, für die innerhalb des Steuerelements Platz geschaffen werden soll. Zum Beispiel würde <code>R10</code> das Steuerelement 10 Elemente hoch machen.</p>
-<p id="WantF2"><strong>WantF2</strong>: Geben Sie <code>-WantF2</code> (minus WantF2) an, um die Möglichkeit zu entfernen, das aktuell ausgewählte Element mit <kbd>F2</kbd> zu <a href="#ReadOnly">editieren</a>. Diese Einstellung wird ignoriert, es sei denn, <a href="#ReadOnly">-ReadOnly</a> ist ebenfalls wirksam. Das g-Label empfängt weiterhin, unabhängig von dieser Einstellung, <kbd>F2</kbd>-<a href="#NotifyK">Benachrichtigungen</a>.</p>
-<p><strong>(Namenlose numerische Styles)</strong>: Da die restlichen Styles nur selten verwendet werden, haben sie keine Namen. Siehe <a href="../misc/Styles.htm#TreeView">Style-Tabelle von TreeView</a>.</p>
+<p><strong>R</strong>: Höhe in Zeilen (beim Erstellen). Geben Sie den Buchstaben R an, unmittelbar gefolgt von der Anzahl der Zeilen, für die innerhalb des Steuerelements Platz geschaffen werden soll. <code>R10</code> beispielsweise macht das Steuerelement 10 Elemente hoch.</p>
+<p id="WantF2"><strong>WantF2</strong>: Geben Sie <code>-WantF2</code> (minus WantF2) an, um den Benutzer daran zu hindern, mithilfe von <kbd>F2</kbd> das aktuell ausgewählte Element zu <a href="#ReadOnly">editieren</a>. Diese Einstellung wird ignoriert, wenn <a href="#ReadOnly">-ReadOnly</a> ebenfalls wirksam ist. Unabhängig von dieser Einstellung erhält das g-Label weiterhin <kbd>F2</kbd>-<a href="#NotifyK">Benachrichtigungen</a>.</p>
+<p><strong>(Namenlose numerische Styles)</strong>: Andere Styles als die oben genannten werden selten verwendet und haben dementsprechend keine Namen. Eine vollständige Liste finden Sie unter <a href="../misc/Styles.htm#TreeView">TreeView-Styles</a>.</p>
 
-<h2 id="BuiltIn">Interne Funktionen für TreeView</h2>
-<p>Alle TreeView-Funktionen agieren mit dem <a href="Gui.htm#DefaultWin">Standard-GUI-Fenster</a> des aktuellen Threads (das mit <code><a href="Gui.htm#Default">Gui, 2:Default</a></code> geändert werden kann). Wenn das Standardfenster weder vorhanden ist noch TreeView-Steuerelemente hat, dann geben alle Funktionen Null zurück, um das Problem zu kennzeichnen.</p>
-<p id="GuiTV">Wenn das Fenster mehrere TreeView-Steuerelemente hat, agieren die Funktionen standardmäßig mit dem zuletzt hinzugefügten Steuerelement. Um das zu ändern, verwenden Sie <code>Gui, TreeView, TreeViewName</code> - hierbei ist <em>TreeViewName</em> entweder die <a href="Gui.htm#var">zugeordnete Variable</a>, die ClassNN-Bezeichnung (wie vom internen Tool Window Spy gezeigt) oder <span class="ver">[in v1.1.04+]</span> die HWND-Nummer (eindeutige ID) der TreeView. Einmal geändert, werden alle vorhandenen und zukünftigen <a href="../misc/Threads.htm">Threads</a> die angegebene TreeView verwenden. <span class="ver">[v1.1.23+]:</span> <a href="../Variables.htm#DefaultTreeView">A_DefaultTreeView</a> enthält die aktuelle Einstellung.</p>
+<h2 id="BuiltIn">Interne TreeView-Funktionen</h2>
+<p>Alle TreeView-Funktionen agieren mit dem <a href="Gui.htm#DefaultWin">Standard-GUI-Fenster</a> des aktuellen Threads (das mit <code><a href="Gui.htm#Default">Gui, 2:Default</a></code> geändert werden kann). Wenn das Standardfenster weder vorhanden ist noch TreeView-Steuerelemente hat, geben alle Funktionen Null zurück, um das Problem zu kennzeichnen.</p>
+<p id="GuiTV">Wenn das Fenster mehrere TreeView-Steuerelemente aufweist, agieren die Funktionen standardmäßig mit dem zuletzt hinzugefügten Steuerelement. Um das zu ändern, verwenden Sie <code>Gui, TreeView, TreeViewName</code> - hierbei ist <em>TreeViewName</em> entweder der Name der <a href="Gui.htm#var">zugeordneten Variable</a>, die ClassNN-Bezeichnung (wie vom internen Tool Window Spy gezeigt) oder <span class="ver">[in v1.1.04+]</span> die HWND-Nummer (eindeutige ID) der TreeView. Einmal geändert, werden alle vorhandenen und zukünftigen <a href="../misc/Threads.htm">Threads</a> die angegebene TreeView verwenden. <span class="ver">[v1.1.23+]:</span> <a href="../Variables.htm#DefaultTreeView">A_DefaultTreeView</a> enthält die aktuelle Einstellung.</p>
 
-<p id="bifAddModifyDelete"><strong>Hinzufügen, Modifizieren und Entfernen von Elementen</strong></p>
+<p id="bifAddModifyDelete"><strong>Elemente hinzufügen, ändern und löschen</strong></p>
 <ul>
     <li><a href="#TV_Add">TV_Add</a>: Fügt ein neues Element zur TreeView hinzu.</li>
-    <li><a href="#TV_Modify">TV_Modify</a>: Modifiziert die Attribute und/oder den Namen eines Elements.</li>
-    <li><a href="#TV_Delete">TV_Delete</a>: Entfernt ein bestimmtes Element oder alle Elemente.</li>
+    <li><a href="#TV_Modify">TV_Modify</a>: Ändert die Attribute und/oder den Namen eines Elements.</li>
+    <li><a href="#TV_Delete">TV_Delete</a>: Löscht ein bestimmtes Element oder alle Elemente.</li>
 </ul>
 
 <p id="bifGet"><strong>Daten aus einer TreeView abrufen</strong></p>
 <ul>
     <li><a href="#TV_GetSelection">TV_GetSelection</a>: Gibt die ID-Nummer des ausgewählten Elements zurück.</li>
     <li><a href="#TV_GetCount">TV_GetCount</a>: Gibt die Anzahl aller Elemente im Steuerelement zurück.</li>
-    <li><a href="#TV_GetParent">TV_GetParent</a>: Gibt das Oberelement eines bestimmten Elements als Element-ID zurück.</li>
-    <li><a href="#TV_GetChild">TV_GetChild</a>: Gibt die ID-Nummer des ersten/obersten Unterelements eines bestimmten Elements zurück.</li>
-    <li><a href="#TV_GetPrev">TV_GetPrev</a>: Gibt die ID-Nummer des Nachbarelements zurück, das sich über einem bestimmten Element befindet.</li>
-    <li><a href="#TV_GetNext">TV_GetNext</a>: Gibt die ID-Nummer des nächsten Elements zurück, das sich unter einem bestimmten Element befindet.</li>
-    <li><a href="#TV_GetText">TV_GetText</a>: Ermittelt den Text/Namen eines bestimmten Elements.</li>
-    <li><a href="#TV_Get">TV_Get</a>: Gibt die ID-Nummer eines bestimmten Elements zurück, sofern es das angegebene Attribut hat.</li>
+    <li><a href="#TV_GetParent">TV_GetParent</a>: Gibt das Elternelement eines bestimmten Elements als Element-ID zurück.</li>
+    <li><a href="#TV_GetChild">TV_GetChild</a>: Gibt die ID-Nummer des ersten/obersten Kindelements eines bestimmten Elements zurück.</li>
+    <li><a href="#TV_GetPrev">TV_GetPrev</a>: Gibt die ID-Nummer des Geschwisterelements zurück, das sich oberhalb eines bestimmten Elements befindet.</li>
+    <li><a href="#TV_GetNext">TV_GetNext</a>: Gibt die ID-Nummer des nächsten Elements zurück, das sich unterhalb eines bestimmten Elements befindet.</li>
+    <li><a href="#TV_GetText">TV_GetText</a>: Ruft den Text/Namen eines bestimmten Elements ab.</li>
+    <li><a href="#TV_Get">TV_Get</a>: Gibt die ID-Nummer eines bestimmten Elements zurück, unter Beachtung des angegebenen Attributs.</li>
 </ul>
 
 <p id="bifIcon"><strong>Symbole setzen</strong></p>
@@ -105,31 +105,31 @@ return</pre>
 </ul>
 
 <h3 id="TV_Add">TV_Add</h3>
-<p>Fügt ein neues Element zur TreeView hinzu und gibt dessen eindeutige Element-ID-Nummer zurück (oder 0 bei Misserfolg).</p>
-<pre class="Syntax"><span class="func">TV_Add</span>(Name, <span class="optional">OberelementID, Optionen</span>)</pre>
-<p><em>Name</em> ist der Anzeigetext des Elements, das auch numerisch sein kann (einschließlich numerische <a href="../Variables.htm#Expressions">Ausdrücke</a>). <em>OberelementID</em> ist die ID-Nummer des neuen Oberelements (wenn dieser Parameter weggelassen wird oder 0 ist, wird das Element auf der obersten Ebene hinzugefügt). Um das Hinzufügen sehr vieler Elemente leistungsfähiger zu machen, können Sie vor der Operation <code>GuiControl, -Redraw, MeineTreeView</code> und nach der Operation <code>GuiControl, +Redraw, MeineTreeView</code> verwenden.</p>
+<p>Fügt ein neues Element zur TreeView hinzu und gibt seine eindeutige Element-ID-Nummer zurück (oder 0 bei Misserfolg).</p>
+<pre class="Syntax"><span class="func">TV_Add</span>(Name, <span class="optional">ElternElementID, Optionen</span>)</pre>
+<p><em>Name</em> ist der Anzeigetext des Elements, das textuell oder numerisch sein kann (einschließlich numerische Ergebnisse von <a href="../Variables.htm#Expressions">Ausdrücken</a>). <em>ElternElementID</em> ist die ID-Nummer des Elternelements des neuen Elements (wenn dieser Parameter weggelassen wird oder 0 ist, wird das Element als Top-Level-Element hinzugefügt). Um das Hinzufügen sehr vieler Elemente leistungsfähiger zu machen, verwenden Sie <code>GuiControl, -Redraw, MeineTreeView</code>, bevor Sie die Elemente hinzufügen, und danach <code>GuiControl, +Redraw, MeineTreeView</code>.</p>
 
 <h4>Optionen für TV_Add() und TV_Modify()</h4>
-<p>Der <em>Optionen</em>-Parameter kann eine Zeichenkette mit null oder mehreren Wörtern aus der unteren Liste sein (nicht Groß-/Kleinschreibung-sensitiv). Trennen Sie alle Wörter jeweils mit einem Leer- oder Tabulatorzeichen. Um eine Option zu entfernen, setzen Sie ein Minuszeichen davor. Um eine Option hinzuzufügen, lassen Sie das Vorzeichen weg oder setzen Sie ein Pluszeichen davor.</p>
-<p id="Bold"><strong>Bold</strong>: Zeigt den Namen des Elements in fetter Schrift an. Mit <code>TV_Modify(ElementID, "-Bold")</code> kann das Element wieder normalisiert werden. <span class="ver">[v1.1.30.01+]:</span> Direkt nach dem Wort <em>Bold</em> kann optional eine 0 oder 1 erfolgen, um den Startzustand zu bestimmen.</p>
-<p id="Check"><strong>Check</strong>: Zeigt ein Häkchen links neben dem Element an (wenn die TreeView über <a href="#Checked">CheckBoxen</a> verfügt). Mit <code>TV_Modify(ElementID, "-Check")</code> kann das Häkchen später wieder entfernt werden. Direkt nach dem Wort <em>Check</em> kann optional eine 0 oder 1 erfolgen, um den Startzustand zu bestimmen. In diesem Fall ist <code>"Check"</code> das gleiche wie <code>"Check" <strong>.</strong> VarEnhältEins</code> (der hier verwendete Punkt ist ein <a href="../Variables.htm#concat">Verkettungsoperator</a>).</p>
-<p id="Expand"><strong>Expand</strong>: Klappt das Element auf, um seine Unterelemente anzuzeigen (falls vorhanden). Mit <code>TV_Modify(ElementID, "-Expand")</code> kann das Element wieder zugeklappt werden. Wenn es keine Unterelemente gibt, wird <a href="#TV_Modify">TV_Modify()</a> eine 0 anstelle der Element-ID zurückgeben. <a href="#TV_Add">TV_Add()</a> hingegen kennzeichnet das Element als aufgeklappt, für den Fall, dass später Unterelemente hinzugefügt werden. Im Gegensatz zu "Select" (siehe unten) bewirkt das Aufklappen eines Elements nicht, dass sein Oberelement auch automatisch mit aufgeklappt wird. Direkt nach dem Wort <em>Expand</em> kann optional eine 0 oder 1 erfolgen, um den Startzustand zu bestimmen. In diesem Fall ist <code>"Expand"</code> das gleiche wie <code>"Expand" <strong>.</strong> VarEnhältEins</code>.</p>
-<p><strong>First | Sort | N</strong>: Diese Optionen gelten nur für <a href="#TV_Add">TV_Add()</a>. Sie bestimmen die Position des neuen Elements relativ zu seinen Nachbarelementen (<em>Nachbarelemente</em> sind alle Elemente auf gleicher Ebene). Wenn keine dieser Optionen vorhanden ist, wird das neue Element als letztes/unterstes Nachbarelement eingefügt. Verwenden Sie ansonsten <em>First</em>, um das Element als erstes/oberstes Nachbarelement einzufügen, oder <em>Sort</em>, um das Element in Bezug auf seine Nachbarelemente in alphabetischer Reihenfolge einzufügen. Gibt man einen reinen Integer-Wert an (<strong>N</strong>), wird er als ID-Nummer des Nachbarelements angesehen, wo danach das neue Element eingefügt werden soll (wenn Integer N nur als einzige Option vorhanden ist, muss er nicht in Anführungszeichen gesetzt werden).</p>
-<p><strong>Icon</strong>: Geben Sie das Wort <em>Icon</em> und direkt danach eine Symbolnummer an, um ein Symbol auf der linken Seite des Elementnamens anzuzeigen. Fehlt diese Option, wird das erste Symbol in der <a href="#ImageList">ImageList</a> verwendet. Um ein leeres Symbol darzustellen, geben Sie eine Nummer an, die größer als die Anzahl der Symbole in der ImageList ist. Wenn das Steuerelement keine ImageList hat, werden weder Symbole angezeigt noch Speicher für so eins reserviert.</p>
-<p id="Select"><strong>Select</strong>: Wählt das Element aus. Da jeweils nur ein einziges Element ausgewählt sein kann, wird jedes zuvor ausgewählte Element automatisch abgewählt. Darüber hinaus wird jedes Oberelement des neu ausgewählten Elements aufgeklappt, falls erforderlich. Mit <a href="#TV_GetSelection">TV_GetSelection()</a> kann die aktuelle Auswahl herausgefunden werden.</p>
-<p><strong>Sort</strong>: Bei <a href="#TV_Modify">TV_Modify()</a> wird diese Option die Unterelemente des angegebenen Elements in alphabetischer Reihenfolge sortieren. Mit <code>TV_Modify(0, "Sort")</code> können stattdessen alle auf oberster Ebene befindliche Elemente sortiert werden. Wenn es keine Unterelemente gibt, wird eine 0 anstelle der ID des modifizierten Elements zurückgegeben.</p>
-<p><strong>Vis</strong>: Sorgt dafür, dass das Element durch Scrollen der TreeView und/oder Aufklappen seiner Oberelemente sichtbar bleibt, falls erforderlich.</p>
-<p><strong>VisFirst</strong>: Das gleiche wie oben, außer dass die TreeView zusätzlich gescrollt wird, so dass das Element ganz oben erscheint, wenn möglich. Diese Option ist in Verbindung mit <a href="#TV_Modify">TV_Modify()</a> in der Regel effektiver als mit <a href="#TV_Add">TV_Add()</a>.</p>
+<p>Der <em>Optionen</em>-Parameter ist eine Zeichenkette bestehend aus null oder mehr Wörtern von der unteren Liste (nicht Groß-/Kleinschreibung-sensitiv). Trennen Sie alle Wörter jeweils mit einem Leer- oder Tabulatorzeichen. Um eine Option zu entfernen, setzen Sie ein Minuszeichen davor. Um eine Option hinzuzufügen, lassen Sie das Vorzeichen weg oder setzen Sie ein Pluszeichen davor.</p>
+<p id="Bold"><strong>Bold</strong>: Stellt den Namen des Elements in fetter Schrift dar. Um dessen Schrift später wieder zu normalisieren, verwenden Sie <code>TV_Modify(ElementID, "-Bold")</code>. <span class="ver">[v1.1.30.01+]:</span> Direkt nach dem Wort <em>Bold</em> kann optional eine 0 oder 1 erfolgen, um den Startzustand zu bestimmen.</p>
+<p id="Check"><strong>Check</strong>: Zeigt ein Häkchen links neben dem Element an (sofern die TreeView über <a href="#Checked">CheckBoxen</a> verfügt). Um das Häkchen später wieder zu entfernen, verwenden Sie <code>TV_Modify(ElementID, "-Check")</code>. Direkt nach dem Wort <em>Check</em> kann optional eine 0 oder 1 erfolgen, um den Startzustand zu bestimmen. In diesem Fall ist <code>"Check"</code> das gleiche wie <code>"Check" <strong>.</strong> VarEnhältEins</code> (der hier verwendete Punkt ist ein <a href="../Variables.htm#concat">Verkettungsoperator</a>).</p>
+<p id="Expand"><strong>Expand</strong>: Klappt das Element auf, um seine Kindelemente anzuzeigen (sofern vorhanden). Um das Element später wieder zuzuklappen, verwenden Sie <code>TV_Modify(ElementID, "-Expand")</code>. Wenn es keine Kindelemente hat, wird <a href="#TV_Modify">TV_Modify()</a> eine 0 anstelle der Element-ID zurückgeben. <a href="#TV_Add">TV_Add()</a> hingegen markiert das Element als aufgeklappt, falls später noch Kindelemente hinzugefügt werden. Im Gegensatz zu "Select" (siehe unten) wird beim Aufklappen eines Elements nicht automatisch sein Elternelement aufgeklappt. Direkt nach dem Wort <em>Expand</em> kann optional eine 0 oder 1 erfolgen, um den Startzustand zu bestimmen. In diesem Fall ist <code>"Expand"</code> das gleiche wie <code>"Expand" <strong>.</strong> VarEnhältEins</code>.</p>
+<p><strong>First | Sort | N</strong>: Diese Optionen gelten nur für <a href="#TV_Add">TV_Add()</a>. Sie bestimmen die Position des neuen Elements relativ zu seinen Geschwisterelementen (ein <em>Geschwisterelement</em> befindet sich auf derselben Ebene). Wenn keine dieser Optionen vorhanden ist, wird das neue Element als letztes/unterstes Geschwisterelement hinzugefügt. Geben Sie ansonsten <em>First</em> an, um das Element als erstes/oberstes Geschwisterelement hinzuzufügen, oder <em>Sort</em>, um das Element unter seinen Geschwisterelementen in alphabetischer Reihenfolge einzufügen. Wenn eine Nummer (<strong>N</strong>) angegeben ist, wird sie als ID-Nummer des Geschwisterelements vermutet, nach der das neue Element eingefügt werden soll (wenn die Nummer die einzige vorhandene Option ist, muss sie nicht in Anführungszeichen gesetzt werden).</p>
+<p><strong>Icon</strong>: Geben Sie das Wort <em>Icon</em> an, unmittelbar gefolgt von der Nummer eines Symbols, das auf der linken Seite des Elementnamens angezeigt werden soll. Fehlt diese Option, wird das erste Symbol in der <a href="#ImageList">ImageList</a> verwendet. Um ein leeres Symbol darzustellen, geben Sie eine Nummer größer als die Anzahl der Symbole in der ImageList an. Wenn dem Steuerelement keine ImageList zugewiesen wurde, wird weder ein Symbol angezeigt noch dafür Platz reserviert.</p>
+<p id="Select"><strong>Select</strong>: Wählt das Element aus. Da jeweils nur ein einziges Element ausgewählt werden kann, wird das zuvor ausgewählte Element automatisch abgewählt. Darüber hinaus wird diese Option alle Elternelemente des neu ausgewählten Elements aufklappen, falls erforderlich. Um die aktuelle Auswahl festzustellen, verwenden Sie <a href="#TV_GetSelection">TV_GetSelection()</a>.</p>
+<p><strong>Sort</strong>: In Verbindung mit <a href="#TV_Modify">TV_Modify()</a> wird diese Option die Kindelemente des angegebenen Elements in alphabetischer Reihenfolge sortieren. Um stattdessen alle Top-Level-Elemente zu sortieren, verwenden Sie <code>TV_Modify(0, "Sort")</code>. Wenn es keine Kindelemente hat, wird nicht die ID des geänderten Elements, sondern 0 zurückgegeben.</p>
+<p><strong>Vis</strong>: Stellt sicher, dass das Element vollständig sichtbar ist, gegebenenfalls durch Scrollen der TreeView und/oder Aufklappen seines Elternelements.</p>
+<p><strong>VisFirst</strong>: Das gleiche wie oben, außer dass die TreeView zusätzlich gescrollt wird, damit das Element ganz oben erscheint, wenn möglich. Diese Option ist in Verbindung mit <a href="#TV_Modify">TV_Modify()</a> in der Regel effektiver als mit <a href="#TV_Add">TV_Add()</a>.</p>
 
 <h3 id="TV_Modify">TV_Modify</h3>
-<p>Modifiziert die Attribute und/oder den Namen eines Elements.</p>
+<p>Ändert die Attribute und/oder den Namen eines Elements.</p>
 <pre class="Syntax"><span class="func">TV_Modify</span>(ElementID <span class="optional">, Optionen, NeuerName</span>)</pre>
-<p>Sie gibt bei Erfolg die ID des Elements und bei Misserfolg (oder teilweisem Misserfolg) eine 0 zurück. Sollte nur der erste Parameter vorhanden sein, wird das Element <a href="#Select">ausgewählt</a>. Lässt man <em>NeuerName</em> weg, bleibt der aktuelle Name unverändert. Eine Liste von den <em>Optionen</em> finden Sie weiter unten.</p>
+<p>Diese Funktion gibt bei Erfolg die ID des Elements und bei Misserfolg (oder teilweisem Misserfolg) eine 0 zurück. Verwendet man nur den ersten Parameter, wird das angegebene Element <a href="#Select">ausgewählt</a>. Lässt man <em>NeuerName</em> weg, bleibt der aktuelle Name unverändert. Für <em>Optionen</em> können die Optionen aus der oberen Liste verwendet werden.</p>
 
 <h3 id="TV_Delete">TV_Delete</h3>
-<p>Entfernt ein bestimmtes Element oder alle Elemente.</p>
+<p>Löscht ein bestimmtes Element oder alle Elemente.</p>
 <pre class="Syntax"><span class="func">TV_Delete</span>(<span class="optional">ElementID</span>)</pre>
-<p>Lässt man <em>ElementID</em> weg, werden <strong>alle</strong> Elemente in der TreeView gelöscht. Ansonsten wird nur die angegebene <em>ElementID</em> gelöscht. Sie gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zurück.</p>
+<p>Lässt man <em>ElementID</em> weg, werden <strong>alle</strong> Elemente in der TreeView gelöscht. Ansonsten wird nur <em>ElementID</em> gelöscht. Diese Funktion gibt bei Erfolg eine 1 und bei Misserfolg eine 0 zurück.</p>
 
 <h3 id="TV_GetSelection">TV_GetSelection</h3>
 <p>Gibt die ID-Nummer des ausgewählten Elements zurück.</p>
@@ -138,198 +138,198 @@ return</pre>
 <h3 id="TV_GetCount">TV_GetCount</h3>
 <p>Gibt die Anzahl aller Elemente im Steuerelement zurück.</p>
 <pre class="Syntax"><span class="func">TV_GetCount</span>()</pre>
-<p>Diese Funktion gibt den Wert ohne Verzögerung zurück, weil das Steuerelement die Zählung immer im Blick behält.</p>
+<p>Diese Funktion gibt diesen Wert ohne Verzögerung zurück, weil das Steuerelement diesen stets zwischenspeichert.</p>
 
 <h3 id="TV_GetParent">TV_GetParent</h3>
-<p>Gibt das Oberelement eines bestimmten Elements als Element-ID zurück.</p>
+<p>Gibt das Elternelement eines bestimmten Elements als Element-ID zurück.</p>
 <pre class="Syntax"><span class="func">TV_GetParent</span>(ElementID)</pre>
-<p>Auf oberster Ebene befindliche Elemente haben keine übergeordneten Elemente und geben daher eine 0 zurück.</p>
+<p>Top-Level-Elemente haben keine Elternelemente und geben daher 0 zurück.</p>
 
 <h3 id="TV_GetChild">TV_GetChild</h3>
-<p>Gibt die ID-Nummer des ersten/obersten Unterelements eines bestimmten Elements zurück (oder 0, wenn es keine gibt).</p>
-<pre class="Syntax"><span class="func">TV_GetChild</span>(OberelementID)</pre>
+<p>Gibt die ID-Nummer des ersten/obersten Kindelements eines bestimmten Elements zurück (oder 0, wenn keines vorhanden ist).</p>
+<pre class="Syntax"><span class="func">TV_GetChild</span>(ElternElementID)</pre>
 
 <h3 id="TV_GetPrev">TV_GetPrev</h3>
-<p>Gibt die ID-Nummer des Nachbarelements zurück, das sich über einem bestimmten Element befindet (oder 0, wenn kein Element vorhanden ist).</p>
+<p>Gibt die ID-Nummer des Geschwisterelements zurück, das sich oberhalb eines bestimmten Elements befindet (oder 0, wenn keines vorhanden ist).</p>
 <pre class="Syntax"><span class="func">TV_GetPrev</span>(ElementID)</pre>
 
 <h3 id="TV_GetNext">TV_GetNext</h3>
-<p>Gibt die ID-Nummer des nächsten Elements zurück, das sich unter einem bestimmten Element befindet (oder 0, wenn kein Element vorhanden ist).</p>
-<pre class="Syntax"><span class="func">TV_GetNext</span>(<span class="optional">ElementID, Elementtyp</span>)</pre>
-<p>Folgende Modi sind verfügbar:</p>
+<p>Gibt die ID-Nummer des nächsten Elements zurück, das sich unterhalb eines bestimmten Elements befindet (oder 0, wenn keines vorhanden ist).</p>
+<pre class="Syntax"><span class="func">TV_GetNext</span>(<span class="optional">ElementID, ElementTyp</span>)</pre>
+<p>Diese Funktion verfügt über folgende Modi:</p>
 <ol>
-  <li>Wenn alle Parameter weggelassen werden, wird die ID-Nummer des ersten/obersten Elements in der TreeView zurückgegeben (oder 0, wenn kein Element vorhanden ist).</li>
-  <li>Wenn nur der <em>ElementID</em>-Parameter vorhanden ist, wird die ID-Nummer des Nachbarelements zurückgegeben, das sich unter dem angegebenen Element befindet (oder 0, wenn kein Element vorhanden ist). Wenn <em>ElementID</em> eine 0 ist, wird die ID-Nummer des ersten/obersten Elements in der TreeView zurückgegeben (oder 0, wenn kein Element vorhanden ist).</li>
-  <li>Wenn <em>Elementtyp</em> "Full" oder "F" ist, wird das nächste Element abgerufen, unabhängig seines Verhältnisses zum angegebenen Element. Auf diese Weise kann das Skript die Baumstruktur Element für Element durchgehen. Zum Beispiel:
-    <pre>ElementID := 0  <em>; Beginnt die Suche beim ersten Element.</em>
+  <li>Wenn alle Parameter weggelassen werden, gibt sie die ID-Nummer des ersten/obersten Elements in der TreeView zurück (oder 0, wenn keines vorhanden ist).</li>
+  <li>Verwendet man nur <em>ElementID</em>, gibt sie die ID-Nummer des Geschwisterelements zurück, das sich unterhalb des angegebenen Elements befindet (oder 0, wenn keines vorhanden ist). Wenn <em>ElementID</em> eine 0 ist, gibt sie die ID-Nummer des ersten/obersten Elements in der TreeView zurück (oder 0, wenn keines vorhanden ist).</li>
+  <li>Wenn <em>ElementTyp</em> "Full" oder "F" ist, wird das nächste Element abgerufen, egal wie seine Beziehung zu dem angegebenen Element ist. Dadurch kann das Skript auf einfache Weise die gesamte TreeView Element für Element durchgehen. Zum Beispiel:
+    <pre>ElementID := 0  <em>; Die Suche beim ersten Element beginnen.</em>
 Loop
 {
     ElementID := TV_GetNext(ElementID, "Full")  <em>; Ersetzen Sie "Full" mit "Checked", um alle abgehakten Elemente zu finden.</em>
     if not ElementID  <em>; Keine weiteren Elemente verfügbar.</em>
         break
-    TV_GetText(Elementtext, ElementID)
-    MsgBox Das nächste Element ist %ElementID%, das den Text "%Elementtext%" beinhaltet.
+    TV_GetText(ElementText, ElementID)
+    MsgBox Das nächste Element ist %ElementID% und enthält "%ElementText%".
 }</pre>
   </li>
-  <li>Wenn <em>Elementtyp</em> entweder "Check", "Checked" oder "C" ist, erfolgt das gleiche Verhalten wie oben, außer dass Elemente ohne Häkchen übersprungen werden. Auf diese Weise können alle abgehakten Elemente in der TreeView einzeln abgerufen werden.</li>
+  <li>Wenn <em>ElementTyp</em> "Check", "Checked" oder "C" ist, erfolgt dasselbe wie oben, außer dass Elemente ohne Häkchen übersprungen werden. Dadurch können alle abgehakten Elemente in der TreeView einzeln abgerufen werden.</li>
 </ol>
 
 <h3 id="TV_GetText">TV_GetText</h3>
-<p>Ermittelt den Text/Namen von einer bestimmten <em>ElementID</em> und speichert ihn in <em>AusgabeVar</em>.</p>
+<p>Ruft den Text/Namen der angegebenen <em>ElementID</em> ab und speichert ihn in <em>AusgabeVar</em>.</p>
 <pre class="Syntax"><span class="func">TV_GetText</span>(AusgabeVar, ElementID)</pre>
-<p>Wenn der Text länger als 8191 ist, werden nur die ersten 8191 Zeichen abgerufen. Bei Erfolg gibt die Funktion die ID des Elements zurück. Bei Misserfolg eine 0 (zudem wird <em>AusgabeVar</em> leer gemacht).</p>
+<p>Wenn der Text länger als 8191 ist, werden nur die ersten 8191 Zeichen abgerufen. Bei Erfolg gibt die Funktion die ID des Elements zurück. Bei Misserfolg gibt sie eine 0 zurück (und macht <em>AusgabeVar</em> zudem leer).</p>
 
 <h3 id="TV_Get">TV_Get</h3>
-<p>Gibt die ID-Nummer eines bestimmten Elements zurück, sofern es das angegebene Attribut hat.</p>
+<p>Gibt die ID-Nummer eines bestimmten Elements zurück, unter Beachtung des angegebenen Attributs.</p>
 <pre class="Syntax"><span class="func">TV_Get</span>(ElementID, Attribut)</pre>
-<p>Wenn das angegebene Element das angegebene Attribut hat, wird seine <em>ElementID</em> zurückgegeben. Ansonsten wird eine 0 zurückgegeben. Geben Sie für <em>Attribut</em> "E", "Expand" oder "Expanded" an, um zu ermitteln, ob das Element gerade <a href="#Expand">aufgeklappt</a> ist (also wenn die Unterelemente angezeigt werden); geben Sie "C", "Check" oder "Checked" an, um zu ermitteln, ob das Element ein <a href="#Check">Häkchen</a> hat; geben Sie "B" oder "Bold" an, um zu ermitteln, ob das Element gerade in <a href="#Bold">fetter</a> Schrift dargestellt wird.</p>
+<p>Wenn das angegebene Element das angegebene Attribut aufweist, wird seine <em>ElementID</em> zurückgegeben. Ansonsten wird eine 0 zurückgegeben. Geben Sie für <em>Attribut</em> "E", "Expand" oder "Expanded" an, um zu ermitteln, ob das Element gerade <a href="#Expand">aufgeklappt</a> ist (oder anders gesagt, ob seine Kindelemente gerade sichtbar sind); geben Sie "C", "Check" oder "Checked" an, um zu ermitteln, ob das Element ein <a href="#Check">Häkchen</a> hat; oder geben Sie "B" oder "Bold" an, um zu ermitteln, ob das Element gerade in <a href="#Bold">fetter</a> Schrift dargestellt wird.</p>
 <p class="note"><strong>Hinweis:</strong> Da eine IF-Anweisung jeden Wert ungleich 0 als "wahr" ansieht, sind die folgenden zwei Zeilen funktionsgemäß identisch: <code>if TV_Get(ElementID, "Checked") = ElementID</code> and <code>if TV_Get(ElementID, "Checked")</code>.</p>
 
 <h3 id="TV_SetImageList">TV_SetImageList <span class="ver">[v1.1.02+]</span></h3>
-<p>Setzt oder ersetzt die <a href="#ImageList">ImageList</a> von TreeView.</p>
-<pre class="Syntax"><span class="func">TV_SetImageList</span>(ImageListID <span class="optional">, Symboltyp</span>)</pre>
-<p><em>ImageListID</em> ist die Nummer, die von einem vorherigen <a href="ListView.htm#IL_Create">IL_Create()</a>-Aufruf zurückgegeben wurde. <em>Symboltyp</em> wird normalerweise weggelassen, um standardmäßig 0 zu verwenden. Geben Sie ansonsten eine 2 für Statussymbole an (Statussymbole werden nur via <a href="PostMessage.htm">SendMessage</a> unterstützt). Bei Erfolg gibt TV_SetImageList() die <em>ImageListID</em> zurück, die zuvor mit der TreeView verbunden wurde (oder eine 0, wenn dies nicht der Fall ist). Jede nicht mehr benötigte ImageList kann mit <a href="ListView.htm#IL_Destroy">IL_Destroy(ImageListID)</a> zerstört werden.</p>
+<p>Setzt oder ersetzt die <a href="#ImageList">ImageList</a> der TreeView.</p>
+<pre class="Syntax"><span class="func">TV_SetImageList</span>(ImageListID <span class="optional">, SymbolTyp</span>)</pre>
+<p><em>ImageListID</em> ist die Nummer, die von einem vorherigen <a href="ListView.htm#IL_Create">IL_Create()</a>-Aufruf zurückgegeben wurde. <em>SymbolTyp</em> wird normalerweise weggelassen, um standardmäßig 0 zu verwenden. Geben Sie ansonsten eine 2 für Zustandssymbole an (Zustandssymbole werden noch nicht direkt unterstützt, aber können via <a href="PostMessage.htm">SendMessage</a> verwendet werden). Bei Erfolg gibt TV_SetImageList() die <em>ImageListID</em> zurück, die vorher mit der TreeView verknüpft war (oder 0, wenn nicht). Jede nicht mehr verwendete ImageList sollte normalerweise mit <a href="ListView.htm#IL_Destroy">IL_Destroy(ImageListID)</a> zerstört werden.</p>
 
-<h2 id="notify">g-Label-Benachrichtigungen (Primär)</h2>
-<p>Ein <a href="Gui.htm#label">g-Label</a> wie z. B. <code><strong>g</strong>MeineSubroutine</code> kann in den Optionen des Steuerelements eingefügt werden. Dies führt dazu, dass jedes Mal das Label <em>MeineSubroutine</em> gestartet wird, wenn der Benutzer eine Aktion im Steuerelement durchführt. Diese Subroutine hat Zugriff auf die internen Variablen <a href="../Variables.htm#Gui">A_Gui</a> und <a href="../Variables.htm#GuiControl">A_GuiControl</a>, um herauszufinden, welches Fenster oder TreeView das Ereignis erzeugt hat. Noch wichtiger ist, dass sie zudem auf <strong>A_GuiEvent</strong> zugreifen kann, die eine der folgenden Zeichenketten oder Buchstaben enthalten kann (für die Kompatibilität mit zukünftigen Versionen sollte ein Skript nicht davon ausgehen, dass das die einzigen möglichen Werte sind):</p>
+<h2 id="notify">G-Label-Benachrichtigungen (Primär)</h2>
+<p>Ein <a href="Gui.htm#label">g-Label</a> wie z. B. <code><strong>g</strong>MeineSubroutine</code> kann in den Optionen des Steuerelements eingefügt werden. Dies führt dazu, dass jedes Mal das Label <em>MeineSubroutine</em> gestartet wird, wenn der Benutzer eine Aktion im Steuerelement durchführt. Diese Subroutine hat Zugriff auf die internen Variablen <a href="../Variables.htm#Gui">A_Gui</a> und <a href="../Variables.htm#GuiControl">A_GuiControl</a>, um zu ermitteln, welches Fenster und welche TreeView für das Ereignis verantwortlich war. Noch wichtiger ist, dass sie zudem auf <strong>A_GuiEvent</strong> zugreifen kann. Diese interne Variable enthält eine der folgenden Zeichenketten oder Buchstaben (aus Gründen der Kompatibilität mit zukünftigen Versionen sollte ein Skript nicht davon ausgehen, dass dies die einzigen möglichen Werte sind):</p>
 <p><strong>DoubleClick</strong>: Der Benutzer hat ein Element doppelt angeklickt. Die Variable A_EventInfo enthält die ID des Elements.</p>
-<p><strong>D</strong>: Der Benutzer hat den Versuch gestartet, ein Element zu verschieben (es gibt derzeit keine interne Unterstützung für das Verschieben von Elementen). Die Variable A_EventInfo enthält die ID des Elements.</p>
-<p><strong>d</strong> (kleingeschriebenes D): Das gleiche wie oben, außer dass das Verschieben mit Rechtsklick begonnen wurde, statt mit Linksklick.</p>
-<p><strong>e</strong> (kleingeschriebenes E): Der Benutzer ist mit dem Editieren des Elements fertig (der Benutzer kann es nur editieren, wenn <code>-<a href="#ReadOnly">ReadOnly</a></code> in den Optionen vorhanden ist). Die Variable A_EventInfo enthält die ID des Elements.</p>
-<p><strong>S</strong>: Ein neues Element wurde ausgewählt, entweder vom Benutzer oder vom Skript selbst. Die Variable A_EventInfo enthält die ID des neu ausgewählten Elements.</p>
+<p><strong>D</strong>: Der Benutzer hat den Versuch gestartet, ein Element via Drag-and-Drop zu verschieben (es gibt derzeit keine interne Unterstützung für das Verschieben von Elementen). Die Variable A_EventInfo enthält die ID des Elements.</p>
+<p><strong>d</strong> (kleines D): Das gleiche wie oben, außer dass beim Drag-and-Drop die rechte statt linke Maustaste verwendet wurde.</p>
+<p><strong>e</strong> (kleines E): Der Benutzer hat aufgehört, ein Element zu editieren (der Benutzer kann Elemente nur editieren, wenn <code>-<a href="#ReadOnly">ReadOnly</a></code> in den Optionen der TreeView vorhanden ist). Die Variable A_EventInfo enthält die ID des Elements.</p>
+<p><strong>S</strong>: Ein neues Element wurde ausgewählt, entweder durch den Benutzer oder das Skript selbst. Die Variable A_EventInfo enthält die ID des neu ausgewählten Elements.</p>
 
-<h2>g-Label-Benachrichtigungen (Sekundär)</h2>
-<p>Wenn die TreeView das Wort AltSubmit in ihren <a href="#Options">Optionen</a> hat, wird ihr g-Label öfters aufgerufen und <strong>A_GuiEvent</strong> folgende zusätzliche Werte enthalten:</p>
+<h2>G-Label-Benachrichtigungen (Sekundär)</h2>
+<p>Wenn die TreeView das Wort AltSubmit in ihren <a href="#Options">Optionen</a> verwendet, wird ihr g-Label öfters gestartet und <strong>A_GuiEvent</strong> folgende zusätzliche Werte enthalten:</p>
 <p><strong>Normal</strong>: Der Benutzer hat ein Element mit der linken Maustaste angeklickt. Die Variable A_EventInfo enthält die ID des Elements.</p>
-<p><strong>RightClick</strong>: Der Benutzer hat ein Element mit der rechten Maustaste angeklickt. Die Variable A_EventInfo enthält die ID des Elements. In den meisten Fällen sollte man verhindern, ein Menü im Zusammenhang mit dieser Meldung anzeigen zu lassen. Ein <a href="Gui.htm#GuiContextMenu">GuiContextMenu-Label</a> ist dafür besser geeignet, weil es auch die MENÜ-Taste erkennt. Zum Beispiel:</p>
-<pre>GuiContextMenu:  <em>; Startet, wenn man einen Rechtsklick macht oder die MENÜ-Taste drückt.</em>
-if (A_GuiControl != "MeineTreeView")  <em>; Diese Überprüfung ist optional. Sie zeigt das Menü nur an, wenn Klicks innerhalb der ListView gemacht werden.</em>
+<p><strong>RightClick</strong>: Der Benutzer hat ein Element mit der rechten Maustaste angeklickt. Die Variable A_EventInfo enthält die ID des Elements. In den meisten Fällen ist es ratsam, kein Popup-Menü in Reaktion auf dieses Ereignis anzuzeigen. Verwenden Sie stattdessen das <a href="Gui.htm#GuiContextMenu">GuiContextMenu-Label</a>, da es auch die MENÜ-Taste erkennt. Zum Beispiel:</p>
+<pre>GuiContextMenu:  <em>; Startet bei einem Rechtsklick oder MENÜ-Tastendruck.</em>
+if (A_GuiControl != "MeineTreeView")  <em>; Diese Überprüfung ist optional. Das Menü wird nur bei einem Klick innerhalb der TreeView angezeigt.</em>
     return
-<em>; Zeigt das Menü bei den Koordinaten A_GuiX und A_GuiY an. Diese Koordinaten
+<em>; Das Menü auf den Koordinaten A_GuiX und A_GuiY anzeigen. Diese Koordinaten
 ; sind auch dann korrekt, wenn der Benutzer die MENÜ-Taste drückt:</em>
 Menu, MeinKontextmenü, Show, %A_GuiX%, %A_GuiY%
 return</pre>
-<p><strong>E</strong>: Der Benutzer hat mit dem Editieren des Elements begonnen (der Benutzer kann es nur editieren, wenn <a href="#ReadOnly">-ReadOnly</a> in den Optionen vorhanden ist). Die Variable A_EventInfo enthält die ID des Elements.</p>
+<p><strong>E</strong>: Der Benutzer hat begonnen, ein Element zu editieren (der Benutzer kann Elemente nur editieren, wenn <a href="#ReadOnly">-ReadOnly</a> in den Optionen der TreeView vorhanden ist). Die Variable A_EventInfo enthält die ID des Elements.</p>
 <p><strong>F</strong>: Die TreeView hat den Tastaturfokus erhalten.</p>
-<p><strong>f</strong>: Die TreeView hat den Tastaturfokus verloren.</p>
-<p id="NotifyK"><strong>K</strong>: Der Benutzer hat eine Taste gedrückt, während die TreeView den Fokus hat. A_EventInfo enthält den virtuellen Tastencode der Taste - eine Zahl zwischen 1 und 255. Wenn die Taste alphabetisch ist, kann sie bei den meisten Tastaturbelegungen via <code><a href="Chr.htm">Chr</a>(A_EventInfo)</code> in das entsprechende Zeichen umgewandelt werden. <kbd>F2</kbd>-Tastendrücke werden erfasst, unabhängig von <a href="#WantF2">WantF2</a>. <kbd>Enter</kbd>-Tastendrücke hingegen werden nicht erfasst; um sie dennoch zu erfassen, können Sie, wie <a href="#Enter">unten</a> beschrieben, eine Standardschaltfläche nutzen.</p>
-<p><strong>+</strong> (Pluszeichen): Ein Element wurde aufgeklappt, um seine Unterelemente anzuzeigen. Die Variable A_EventInfo enthält die ID des Elements.</p>
-<p><strong>-</strong> (Minuszeichen): Ein Element wurde zugeklappt, um seine Unterelemente zu verstecken. Die Variable A_EventInfo enthält die ID des Elements.</p>
+<p><strong>f</strong> (kleines F): Die TreeView hat den Tastaturfokus verloren.</p>
+<p id="NotifyK"><strong>K</strong>: Der Benutzer hat eine Taste gedrückt, während die TreeView den Fokus hat. A_EventInfo enthält den virtuellen Tastencode der Taste (eine Zahl zwischen 1 und 255). Wenn die Taste alphabetisch ist, kann sie bei den meisten Tastaturlayouts via <code><a href="Chr.htm">Chr</a>(A_EventInfo)</code> in das entsprechende Zeichen übersetzt werden. <kbd>F2</kbd>-Tastendrücke werden unabhängig von <a href="#WantF2">WantF2</a> erfasst. <kbd>Enter</kbd>-Tastendrücke hingegen werden nicht erfasst; um sie dennoch zu erfassen, können Sie, wie <a href="#Enter">unten</a> beschrieben, eine Standardschaltfläche nutzen.</p>
+<p><strong>+</strong> (Pluszeichen): Ein Element wurde aufgeklappt, um seine Kindelemente anzuzeigen. Die Variable A_EventInfo enthält die ID des Elements.</p>
+<p><strong>-</strong> (Minuszeichen): Ein Element wurde zugeklappt, um seine Kindelemente zu verstecken. Die Variable A_EventInfo enthält die ID des Elements.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Der Befehl <a href="Gui.htm#Submit">Gui Submit</a> hat keine Auswirkung auf ein TreeView-Steuerelement. Demzufolge kann das Skript die <a href="Gui.htm#var">zugeordnete Variable</a> der TreeView zum Speichern von weiteren Daten verwenden (falls vorhanden), um andere Daten zu speichern, ohne befürchten zu müssen, dass sie jemals überschrieben wird.</p>
-<p id="Enter">Um die Eingabe einer <kbd>Enter</kbd>-Taste bei einer fokussierten TreeView zu erfassen, können Sie eine <a href="GuiControls.htm#DefaultButton">Standardschaltfläche</a> nutzen (die man natürlich verstecken kann). Zum Beispiel:</p>
+<p>Der Befehl <a href="Gui.htm#Submit">Gui Submit</a> funktioniert nicht mit einem TreeView-Steuerelement. Demzufolge kann das Skript die <a href="Gui.htm#var">zugeordnete Variable</a> der TreeView (falls vorhanden) zum Speichern anderer Daten verwenden, ohne befürchten zu müssen, dass diese jemals überschrieben werden.</p>
+<p id="Enter">Um einen <kbd>Enter</kbd>-Tastendruck in einer fokussierten TreeView zu erfassen, verwenden Sie eine <a href="GuiControls.htm#DefaultButton">Standardschaltfläche</a> (die bei Bedarf versteckt werden kann). Zum Beispiel:</p>
 <pre>Gui, Add, Button, Hidden Default, OK
 ...
 ButtonOK:
-GuiControlGet, FokussiertesSteuerelement, FocusV
-if (FokussiertesSteuerelement != "MeineTreeView")
+GuiControlGet, FokussiertesStrlmnt, FocusV
+if (FokussiertesStrlmnt != "MeineTreeView")
     return
 MsgBox % "Sie haben ENTER gedrückt. Die ID des ausgewählten Elements ist " . TV_GetSelection()
 return</pre>
-<p>Neben der Möglichkeit, mit der Tastatur von Element zu Element zu navigieren, könnte der Benutzer auch eine inkrementelle Suche durchführen, indem er die ersten Zeichen eines Elementnamens eingibt. Dabei springt die Auswahl auf das nächst passende Element.</p>
-<p>Obwohl ein beliebig langer Text einem TreeView-Element zugewiesen werden kann, werden nur die ersten 260 Zeichen angezeigt.</p>
-<p>Auch wenn die TreeView theoretisch maximal 65536 Elemente enthalten kann, wird die Leistung beim Hinzufügen von Elementen schon lange vorher merklich abnehmen. Um diesen Leistungsverfall etwas abzuschwächen, können Sie den bei <a href="#TV_Add">TV_Add()</a> beschriebenen Neuzeichnen-Tipp befolgen.</p>
-<p id="ILremarks">Im Gegensatz zu den ImageLists einer <a href="ListView.htm">ListView</a> werden ImageLists einer TreeView nicht automatisch zerstört, wenn die TreeView zerstört wird. Demzufolge sollte ein Skript <a href="ListView.htm#IL_Destroy">IL_Destroy(ImageListID)</a> nach dem Zerstören eines TreeView-Fensters aufrufen, wenn die ImageList nicht weiter benötigt wird. Dies ist jedoch nicht erforderlich, wenn das Skript bald beendet wird, da alle ImageLists automatisch zu diesem Zeitpunkt zerstört werden.</p>
-<p>Ein Skript kann mehr als ein TreeView pro Fenster erstellen. Wie man mit einer anderen TreeView anstelle der Standard-TreeView agieren kann, erfahren Sie unter <a href="#BuiltIn">Interne Funktionen</a>.</p>
-<p><a href="GuiControl.htm">GuiControl</a> kann z. B. genutzt werden, um eine TreeView größer/kleiner zu machen, zu verstecken, oder um die Schrift einer TreeView zu ändern.</p>
+<p>Neben der Möglichkeit, mit der Tastatur von Element zu Element zu navigieren, kann der Benutzer auch eine inkrementelle Suche durchführen, indem er die ersten paar Zeichen eines Elementnamens eingibt. Dies führt dazu, dass die Auswahl zum nächst passenden Element springt.</p>
+<p>Obwohl ein beliebig langer Text in einem TreeView-Element gespeichert werden kann, werden nur die ersten 260 Zeichen angezeigt.</p>
+<p>Auch wenn die TreeView theoretisch maximal 65536 Elemente enthalten kann, wird die Leistung beim Hinzufügen von Elementen schon lange vorher merklich abnehmen. Um diesen Leistungsverfall etwas abzuschwächen, können Sie den in <a href="#TV_Add">TV_Add()</a> beschriebenen Tipp bzgl. Redraw verwenden.</p>
+<p id="ILremarks">Im Gegensatz zu den ImageLists einer <a href="ListView.htm">ListView</a> werden ImageLists einer TreeView nicht automatisch zerstört, wenn die TreeView zerstört wird. Demzufolge sollte ein Skript <a href="ListView.htm#IL_Destroy">IL_Destroy(ImageListID)</a> nach dem Zerstören eines TreeView-Fensters aufrufen, wenn die ImageList nicht länger benötigt wird. Dies ist jedoch nicht erforderlich, wenn das Skript schon bald beendet wird, da in diesem Fall alle ImageLists automatisch zerstört werden.</p>
+<p>Ein Skript kann mehr als eine TreeView pro Fenster erstellen. Informationen darüber, wie man mit einer anderen als der Standard-TreeView agieren kann, finden Sie unter <a href="#BuiltIn">interne Funktionen</a>.</p>
+<p>Um eine TreeView zum Beispiel größer/kleiner zu machen, zu verstecken, oder um die Schrift einer TreeView zu ändern, verwenden Sie <a href="GuiControl.htm">GuiControl</a>.</p>
 <p>Tree View eXtension (TVX) erweitert TreeViews mit der Möglichkeit, Elemente zu verschieben, einzufügen und zu löschen. Siehe dazu <a href="https://www.autohotkey.com/forum/topic19021.html">www.autohotkey.com/forum/topic19021.html</a>.</p>
 
 <h2>Siehe auch</h2>
-<p><a href="ListView.htm">ListView</a>, <a href="GuiControls.htm">Andere Steuerelemente</a>, <a href="Gui.htm">Gui</a>, <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a>, <a href="GuiControl.htm">GuiControl</a>, <a href="GuiControlGet.htm">GuiControlGet</a>, <a href="../misc/Styles.htm#TreeView">Style-Tabelle von TreeView</a></p>
+<p><a href="ListView.htm">ListView</a>, <a href="GuiControls.htm">Andere Steuerelemente</a>, <a href="Gui.htm">Gui</a>, <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a>, <a href="GuiControl.htm">GuiControl</a>, <a href="GuiControlGet.htm">GuiControlGet</a>, <a href="../misc/Styles.htm#TreeView">TreeView-Styles</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 
 <div class="ex" id="ExAdvanced">
-<p><a href="#ExAdvanced">#1</a>: Das folgende Skript ist aufwendiger als das Beispiel ganz oben. Es erstellt und zeigt eine TreeView an, die alle Startmenüordner von allen Benutzern enthält. Wenn der Benutzer einen Ordner auswählt, wird sein Inhalt auf der rechten Seite angezeigt (wie beim Windows Explorer). Darüber hinaus zeigt ein <a href="GuiControls.htm#StatusBar">StatusBar</a>-Steuerelement Informationen über den aktuell ausgewählten Ordner an:</p>
-<pre><em>; Der folgende Ordner wird der Stammordner für die TreeView. Beachten Sie, dass das Laden lange dauern kann,
-; wenn ein komplettes Laufwerk wie C:\ angegeben ist:</em>
-Stammordner := A_StartMenuCommon
+<p><a href="#ExAdvanced">#1</a>: Das folgende Beispiel ist ein funktionierendes Skript, das umfangreicher als das Beispiel ganz oben ist. Es erstellt und zeigt eine TreeView mit allen Ordnern, die sich im Alle-Benutzer-Startmenü befinden. Wenn der Benutzer einen Ordner auswählt, wird dessen Inhalt in einer ListView auf der rechten Seite angezeigt (so ähnlich wie der Windows Explorer). Zusätzlich zeigt ein <a href="GuiControls.htm#StatusBar">StatusBar</a>-Steuerelement Informationen über den aktuell ausgewählten Ordner an:</p>
+<pre><em>; Der folgende Ordner definiert den Root-Ordner der TreeView. Beachten Sie, dass das
+; Laden lange dauern kann, wenn ein komplettes Laufwerk wie C:\ angegeben ist:</em>
+TreeRoot := A_StartMenuCommon
 TreeViewBreite := 280
 ListViewBreite := A_ScreenWidth - TreeViewBreite - 30
 
-<em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder dessen Größe beliebig anzupassen:</em>
+<em>; Dem Benutzer erlauben, das Fenster zu maximieren oder dessen Größe anzupassen:</em>
 Gui +Resize
 
-<em>; Erstellt eine ImageList und fügt einige vordefinierte Systemsymbole ein:</em>
+<em>; Eine ImageList erstellen und mit einigen Standard-Systemsymbolen befüllen:</em>
 ImageListID := <a href="ListView.htm#IL_Create">IL_Create</a>(5)
 Loop 5 
     <a href="ListView.htm#IL_Add">IL_Add</a>(ImageListID, "shell32.dll", A_Index)
-<em>; Erstellt eine <a href="#GuiAdd">TreeView</a> und ListView, um den Windows Explorer nachzuahmen:</em>
+<em>; Eine <a href="#GuiAdd">TreeView</a> und ListView nebeneinander setzen, ähnlich zum Windows Explorer:</em>
 Gui, Add, TreeView, vMeineTreeView r20 w%TreeViewBreite% gMeineTreeView <a href="#ImageList">ImageList</a>%ImageListID%
-Gui, Add, ListView, vMeineListView r20 w%ListViewBreite% x+10, Name|Bearbeitet
+Gui, Add, ListView, vMeineListView r20 w%ListViewBreite% x+10, Name|Änderungsdatum
 
-<em>; Setzt die Spaltenbreiten der ListView (optional):</em>
-Spalte2Breite := 70  <em>; Kürzen, um nur den YYYYMMDD-Teil sichtbar zu machen.</em>
-LV_ModifyCol(1, ListViewBreite - Spalte2Breite - 30)  <em>; Genug Platz für vertikalen Scrollbalken machen.</em>
+<em>; Spaltenbreiten der ListView setzen (dies ist optional):</em>
+Spalte2Breite := 70  <em>; Kürzen, um nur den YYYYMMDD-Teil anzuzeigen.</em>
+LV_ModifyCol(1, ListViewBreite - Spalte2Breite - 30)  <em>; Platz machen für vertikalen Scrollbalken.</em>
 LV_ModifyCol(2, Spalte2Breite)
 
-<em>; Erstellt eine <a href="GuiControls.htm#StatusBar">Statusleiste</a>, um Infos über die Anzahl an Dateien und ihre Gesamtgrößen anzuzeigen:</em>
+<em>; <a href="GuiControls.htm#StatusBar">Statusleiste</a> erstellen, um Anzahl der Dateien und Gesamtgröße anzuzeigen:</em>
 Gui, Add, StatusBar
-<a href="GuiControls.htm#SB_SetParts">SB_SetParts</a>(60, 85)  <em>; Erstellt drei Bereiche in der Leiste (der dritte Bereich füllt die restliche Breite).</em>
+<a href="GuiControls.htm#SB_SetParts">SB_SetParts</a>(60, 85)  <em>; Leiste in drei Segmente aufteilen (das dritte Segment füllt die restliche Breite aus).</em>
 
-<em>; Fügt Ordner und deren Unterordner in die Baumstruktur ein. Zeigt ein Ladebildschirm an, wenn es etwas länger dauert:</em>
-SplashTextOn, 200, 25, Beispiel mit TreeView und StatusBar, Lade Baumstruktur ...
-UnterordnerInBaumEinfügen(Stammordner)
+<em>; Ordner und ihre Unterordner zur TreeView hinzufügen. Status anzeigen, falls das Laden länger dauert:</em>
+SplashTextOn, 200, 25, TreeView-StatusBar-Beispiel, Lade Baumstruktur...
+UnterordnerInBaumEinfügen(TreeRoot)
 SplashTextOff
 
-<em>; Zeigt das Fenster an und geht in den Leerlauf. Das Betriebssystem benachrichtigt das Skript, wenn der Benutzer eine berechtigte Aktion durchführt:</em>
-Gui, Show,, %Stammordner%  <em>; Zeigt das Quellverzeichnis (Stammordner) in der Titelleiste an.</em>
+<em>; Das Fenster anzeigen und in den Leerlauf gehen. Das Skript wird benachrichtigt, wenn der Benutzer eine gültige Aktion durchführt:</em>
+Gui, Show,, %TreeRoot%  <em>; Root-Ordner in der Titelleiste anzeigen.</em>
 return
 
-UnterordnerInBaumEinfügen(Ordner, OberelementID = 0)
+UnterordnerInBaumEinfügen(Ordner, ElternElementID = 0)
 {
-    <em>; Diese Funktion fügt alle Unterordner eines bestimmten Ordners in die TreeView ein.</em>
-    <em>; Außerdem ruft sie sich selbst rekursiv auf, um Unterordner in jeder Ebene zu sammeln.</em>
-    Loop %Ordner%\*.*, 2  <em>; Ermittelt alle Unterordner des Ordners.</em>
-        UnterordnerInBaumEinfügen(A_LoopFileFullPath, <a href="#TV_Add">TV_Add</a>(A_LoopFileName, OberelementID, "Icon4"))
+    <em>; Diese Funktion fügt alle Unterordner eines Ordners zur TreeView hinzu.</em>
+    <em>; Sie ruft sich selbst auf, um Unterordner in beliebiger Tiefe zu erfassen.</em>
+    Loop %Ordner%\*.*, 2  <em>; Alle Unterordner des Ordners abrufen.</em>
+        UnterordnerInBaumEinfügen(A_LoopFileFullPath, <a href="#TV_Add">TV_Add</a>(A_LoopFileName, ElternElementID, "Icon4"))
 }
 
-MeineTreeView:  <em>; Diese Subroutine behandelt Benutzeraktionen (beispielsweise Klicken).</em>
-if (A_GuiEvent != "S")  <em>; also ein Ereignis anders als "das Auswählen eines neuen Baumelements".</em>
+MeineTreeView:  <em>; Diese Subroutine verarbeitet Benutzeraktionen (z. B. Klicken).</em>
+if (A_GuiEvent != "S")  <em>; Ein anderes Ereignis als "Neues Baumelement auswählen".</em>
     return  <em>; Nichts tun.
-; Fülle ansonsten die ListView mit dem Inhalt des ausgewählten Ordners.
-; Bestimme zuerst den vollständigen Pfad des ausgewählten Ordners:</em>
-<a href="#TV_GetText">TV_GetText</a>(AusgewählterElementtext, A_EventInfo)
-OberelementID := A_EventInfo
-Loop  <em>; Vollständigen Pfad zum ausgewählten Ordner zusammensetzen.</em>
+; Ansonsten die ListView mit dem Inhalt des ausgewählten Ordners füllen.
+; Zuerst den vollständigen Pfad des ausgewählten Ordners ermitteln:</em>
+<a href="#TV_GetText">TV_GetText</a>(AusgewähltesElementText, A_EventInfo)
+ElternID := A_EventInfo
+Loop  <em>; Vollständigen Pfad des ausgewählten Ordners zusammensetzen.</em>
 {
-    OberelementID := <a href="#TV_GetParent">TV_GetParent</a>(OberelementID)
-    if not OberelementID  <em>; Keine weiteren Oberelemente.</em>
+    ElternID := <a href="#TV_GetParent">TV_GetParent</a>(ElternID)
+    if not ElternID  <em>; Keine weiteren Elternelemente.</em>
         break
-    TV_GetText(Oberelementtext, OberelementID)
-    AusgewählterElementtext := Oberelementtext "\" AusgewählterElementtext
+    TV_GetText(ElternText, ElternID)
+    AusgewähltesElementText := ElternText "\" AusgewähltesElementText
 }
-AusgewählterVollpfad := Stammordner "\" AusgewählterElementtext
+AusgewähltesElementPfad := TreeRoot "\" AusgewähltesElementText
 
 <em>; Dateien in die ListView einfügen:</em>
-LV_Delete()  <em>; Alle Reihen leeren.</em>
-GuiControl, -Redraw, MeineListView  <em>; Verbessert die Leistung durch Deaktivieren der Neuzeichnung während des Ladens.</em>
-Dateienanzahl := 0  <em>; Vorher für die untere Schleife initialisieren.</em>
-Gesamtgröße := 0
-Loop %AusgewählterVollpfad%\*.*  <em>; Der Einfachheit halber werden die Ordner weggelassen, nur um die Dateien in der ListView anzuzeigen.</em>
+LV_Delete()  <em>; Alle Zeilen löschen.</em>
+GuiControl, -Redraw, MeineListView  <em>; Leistung verbessern durch Abschalten von Redraw beim Laden.</em>
+DateienAnzahl := 0  <em>; Für die untere Schleife initialisieren.</em>
+GesamtGröße := 0
+Loop %AusgewähltesElementPfad%\*.*  <em>; Nur die Dateien in der ListView anzeigen.</em>
 {
     LV_Add("", A_LoopFileName, A_LoopFileTimeModified)
-    Dateienanzahl += 1
-    Gesamtgröße += A_LoopFileSize
+    DateienAnzahl += 1
+    GesamtGröße += A_LoopFileSize
 }
 GuiControl, +Redraw, MeineListView
 
-<em>; Aktualisiert die drei Bereiche der Statusleiste, um Infos über den aktuell ausgewählten Ordner anzuzeigen:</em>
-<a href="GuiControls.htm#SB_SetText">SB_SetText</a>(Dateienanzahl . " Dateien", 1)
-SB_SetText(Round(Gesamtgröße / 1024, 1) . " KB", 2)
-SB_SetText(AusgewählterVollpfad, 3)
+<em>; Die drei Segmente der Statusleiste mit Infos über den aktuell ausgewählten Ordner aktualisieren:</em>
+<a href="GuiControls.htm#SB_SetText">SB_SetText</a>(DateienAnzahl . " Dateien", 1)
+SB_SetText(Round(GesamtGröße / 1024, 1) . " KB", 2)
+SB_SetText(AusgewähltesElementPfad, 3)
 return
 
-GuiSize:  <em>; Vergrößert/Verkleinert die ListView und TreeView, wenn der Benutzer das Fenster skaliert.</em>
+GuiSize:  <em>; ListView und TreeView kleiner/größer machen, wenn Benutzer die Fenstergröße ändert.</em>
 if (A_EventInfo = 1)  <em>; Das Fenster wurde minimiert. Keine Aktion notwendig.</em>
     return
-<em>; Ansonsten wurde die Größe des Fensters geändert oder maximiert. Die Größe des Steuerelements anpassen.</em>
-GuiControl, Move, MeineTreeView, % "H" . (A_GuiHeight - 30)  <em>; -30 für Statusleiste und Abstände.</em>
+<em>; Ansonsten wurde das Fenster kleiner/größer gemacht oder maximiert. Größe der Steuerelemente anpassen.</em>
+GuiControl, Move, MeineTreeView, % "H" . (A_GuiHeight - 30)  <em>; -30 für StatusBar und Abstände.</em>
 GuiControl, Move, MeineListView, % "H" . (A_GuiHeight - 30) . " W" . (A_GuiWidth - TreeViewBreite - 30)
 return
 
-GuiClose:  <em>; Beendet das Skript, wenn der Benutzer das TreeView-GUI-Fenster schließt.</em>
+GuiClose:  <em>; Skript beenden, wenn der Benutzer die GUI der TreeView schließt.</em>
 ExitApp</pre>
 </div>
 

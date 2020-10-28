@@ -15,7 +15,7 @@
 <p>Liest einen Wert aus der Registry.</p>
 
 <h2 id="new">Neue Syntax <span class="ver">[v1.1.21+]</span></h2>
-<pre class="Syntax"><span class="func">RegRead</span>, AusgabeVar, KeyName <span class="optional">, Wertname</span></pre>
+<pre class="Syntax"><span class="func">RegRead</span>, AusgabeVar, KeyName <span class="optional">, ValueName</span></pre>
 
 <h3>Parameter</h3>
 <dl>
@@ -27,7 +27,7 @@
   <dd><p>Der vollständige Name des Registry-Keys.</p>
       <p>Der Name muss entweder mit HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG beginnen (oder jeweils die Abkürzung, wie z. B. HKLM). Um Zugriff auf eine <a href="LoopReg.htm#remote">Remote-Registry</a> zu erhalten, setzen Sie wie folgt den Computernamen und einen Doppelpunkt (oder <span class="ver">[in v1.1.21+]</span> einen Schrägstrich) davor: <code>\\workstation01:HKEY_LOCAL_MACHINE</code></p></dd>
 
-  <dt>Wertname</dt>
+  <dt>ValueName</dt>
   <dd><p>Der Name des Wertes, der abgerufen werden soll. Lässt man diesen Parameter weg, wird der Standardwert von <em>KeyName</em> abgerufen - das ist der Wert, der in RegEdit als "(Standard)" angezeigt wird. Wenn es keinen Standardwert gibt (also wenn RegEdit "Wert nicht festgelegt" anzeigt), wird <em>AusgabeVar</em> leer gemacht und ErrorLevel auf 1 gesetzt.</p></dd>
 
 </dl>
@@ -49,7 +49,7 @@ MsgBox, Programme sind in: %AusgabeVar%
 
 <h2 id="old">Alte Syntax</h2>
 <p class="warning"><strong>Veraltet:</strong> Diese Syntax ist nicht für neue Skripte empfohlen. Verwenden Sie stattdessen die <a href="#new">neue Syntax</a>.</p>
-<pre class="Syntax"><span class="func">RegRead</span>, AusgabeVar, Rootkey, Subkey <span class="optional">, Wertname</span></pre>
+<pre class="Syntax"><span class="func">RegRead</span>, AusgabeVar, RootKey, SubKey <span class="optional">, ValueName</span></pre>
 
 <h3>Parameter</h3>
 <dl>
@@ -57,14 +57,14 @@ MsgBox, Programme sind in: %AusgabeVar%
   <dt>AusgabeVar</dt>
   <dd><p>Name der Variable, in der der abgerufene Wert gespeichert werden soll. Falls der Wert nicht abgerufen werden kann, wird die Variable leer gemacht und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p></dd>
 
-  <dt>Rootkey</dt>
+  <dt>RootKey</dt>
   <dd><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC). Um Zugriff auf eine <a href="LoopReg.htm#remote">Remote-Registry</a> zu erhalten, setzen Sie wie folgt den Computernamen und einen Doppelpunkt (oder <span class="ver">[in v1.1.21+]</span> einen Schrägstrich) davor: <code>\\workstation01:HKEY_LOCAL_MACHINE</code></p></dd>
 
-  <dt>Subkey</dt>
+  <dt>SubKey</dt>
   <dd><p>Der Name des Subkeys (z. B. Software\BeliebigeAnwendung).</p></dd>
   
-  <dt>Wertname</dt>
-  <dd><p>Der Name des Wertes, der abgerufen werden soll. Lässt man diesen Parameter weg, wird der Standardwert von <em>Subkey</em> abgerufen - das ist der Wert, der in RegEdit als "(Standard)" angezeigt wird. Wenn es keinen Standardwert gibt (also wenn RegEdit "Wert nicht festgelegt" anzeigt), wird <em>AusgabeVar</em> leer gemacht und ErrorLevel auf 1 gesetzt.</p></dd>
+  <dt>ValueName</dt>
+  <dd><p>Der Name des Wertes, der abgerufen werden soll. Lässt man diesen Parameter weg, wird der Standardwert von <em>SubKey</em> abgerufen - das ist der Wert, der in RegEdit als "(Standard)" angezeigt wird. Wenn es keinen Standardwert gibt (also wenn RegEdit "Wert nicht festgelegt" anzeigt), wird <em>AusgabeVar</em> leer gemacht und ErrorLevel auf 1 gesetzt.</p></dd>
 
 </dl>
 
@@ -106,10 +106,10 @@ MsgBox, Programme sind in: %AusgabeVar%</pre>
 <pre>MsgBox % RegKeyTyp("HKCU", "Environment", "TEMP")
 return
 
-RegKeyTyp(Rootkey, Subkey, Wertname)  <em>; Diese Funktion gibt den Typ eines bestimmten Wertes zurück.</em>
+RegKeyTyp(RootKey, SubKey, ValueName)  <em>; Diese Funktion gibt den Typ eines bestimmten Wertes zurück.</em>
 {
-    Loop, %Rootkey%, %Subkey%
-        if (A_LoopRegName = Wertname)
+    Loop, %RootKey%, %SubKey%
+        if (A_LoopRegName = ValueName)
             return A_LoopRegType
     return "Fehler"
 }</pre>

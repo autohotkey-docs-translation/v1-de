@@ -105,12 +105,12 @@ Array := Object("KeyA", ValueA, "KeyB", ValueB, ..., "KeyZ", ValueZ)</pre>
 <p>Setzen einer Eigenschaft:</p>
 <pre>Objekt.Eigenschaft := Wert</pre>
 <p>Aufrufen einer Methode:</p>
-<pre>Rückgabewert := Objekt.Methode(Parameter)</pre>
+<pre>RückgabeWert := Objekt.Methode(Params)</pre>
 <p>Aufrufen einer Methode mit einem errechneten Methodennamen:</p>
-<pre>Rückgabewert := Object[Methodenname](Parameter)</pre>
+<pre>RückgabeWert := Object[MethodeName](Params)</pre>
 <p>Einige Eigenschaften von COM-Objekten und benutzerdefinierten Objekten können Parameter akzeptieren:</p>
-<pre>Wert := Objekt.Eigenschaft[Parameter]
-Objekt.Eigenschaft[Parameter] := Wert</pre>
+<pre>Wert := Objekt.Eigenschaft[Params]
+Objekt.Eigenschaft[Params] := Wert</pre>
 <p><strong>Siehe auch</strong>: <a href="objects/Object.htm">Objekt</a>, <a href="objects/File.htm">File-Objekt</a>, <a href="objects/Func.htm">Func-Objekt</a>, <a href="commands/ComObjCreate.htm">COM-Objekt</a></p>
 <p><b>Bekannte Einschränkung:</b></p>
 <ul><li>Zurzeit wird <code><span class="dull">x</span>.y[z]<span class="dull">()</span></code> als <code><span class="dull">x</span>["y", z]<span class="dull">()</span></code> behandelt, aber nicht unterstützt. Als Übergangslösung kann <code><span class="red">(</span><span class="dull">x.y</span><span class="red">)</span>[z]()</code> benutzen werden, um <code>x.y</code> zuerst auswerten zu lassen und dann das Ergebnis als Ziel des Methodenaufrufs zu verwenden. Beachten Sie, dass <code>x.y[z].Call()</code> diese Einschränkung nicht hat, weil es genauso wie <code>(x.y[z]).Call()</code> ausgewertet wird.</li></ul>
@@ -167,14 +167,14 @@ obj.item[x] := y</pre>
 <pre>Funk := Func("MeineFunk")</pre>
 <p>Mit der folgenden Syntax kann eine Funktion via Referenz aufgerufen werden:</p>
 <pre>
-RückWert := %Funk%(<i>Parameter</i>)     <em>; Benötigt <span class="ver">[v1.1.07+]</span></em>
-RückWert := Funk.Call(<i>Parameter</i>)  <em>; Benötigt <span class="ver">[v1.1.19+]</span></em>
-RückWert := Funk.(<i>Parameter</i>)      <em>; Nicht empfohlen</em>
+RückWert := %Funk%(<i>Params</i>)     <em>; Benötigt <span class="ver">[v1.1.07+]</span></em>
+RückWert := Funk.Call(<i>Params</i>)  <em>; Benötigt <span class="ver">[v1.1.19+]</span></em>
+RückWert := Funk.(<i>Params</i>)      <em>; Nicht empfohlen</em>
 </pre>
 <p>Weitere Eigenschaften von Funktionsreferenzen finden Sie unter <a href="objects/Func.htm">Func-Objekt</a>.</p>
 
 <span id="JaggedArrays"></span><h3 id="Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</h3>
-<p>AutoHotkey unterstützt "mehrdimensionale" Arrays, indem Arrays in andere Arrays gespeichert werden. Zum Beispiel repräsentieren die Reihen einer Tabelle die Felder eines Arrays, während die Felder selbst die Spalten der jeweiligen Reihe in Form eines Arrays enthalten. In diesem Fall kann der Inhalt der Spalte <code>y</code> von der Reihe <code>x</code> mit einer der folgenden Methoden gesetzt werden:</p>
+<p>AutoHotkey unterstützt "mehrdimensionale" Arrays, indem Arrays in andere Arrays gespeichert werden. Zum Beispiel repräsentieren die Zeilen einer Tabelle die Felder eines Arrays, während die Felder selbst die Spalten der jeweiligen Zeile in Form eines Arrays enthalten. In diesem Fall kann der Inhalt der Spalte <code>y</code> von der Zeile <code>x</code> mit einer der folgenden Methoden gesetzt werden:</p>
 <pre>Tabelle[x][y] := Inhalt  <em>; A</em>
 Tabelle[x, y] := Inhalt  <em>; B</em></pre>
 <p>Wenn <code>Tabelle[x]</code> nicht vorhanden ist, unterscheiden sich <span class="Code"><em>A</em></span> und <span class="Code"><em>B</em></span> wie folgt:</p>
@@ -207,11 +207,11 @@ Loop 2
 Loop 2
     array[A_Index]()
 
-ErsteFunk(Parameter) {
-    MsgBox % A_ThisFunc ": " (IsObject(Parameter) ? "Objekt" : Parameter)
+ErsteFunk(Param) {
+    MsgBox % A_ThisFunc ": " (IsObject(Param) ? "Objekt" : Param)
 }
-ZweiteFunk(Parameter) {
-    MsgBox % A_ThisFunc ": " (IsObject(Parameter) ? "Objekt" : Parameter)
+ZweiteFunk(Param) {
+    MsgBox % A_ThisFunc ": " (IsObject(Param) ? "Objekt" : Param)
 }</pre>
 <p>Aus Gründen der Abwärtskompatibilität wird die zweite Form das <i>array</i> nicht als Parameter übergeben, wenn <code>array[A_Index]</code> einen Funktionsnamen anstelle einer Funktionsreferenz enthält. Wenn aber <code>array[A_Index]</code> von <code>array.base[A_Index]</code> <a href="#Custom_Objects">geerbt</a> wurde, wird das <i>array</i> als Parameter übergeben.</p>
 
@@ -254,10 +254,10 @@ anderesObj.test()</pre>
 
 <h3 id="Custom_Classes">Klassen <span class="ver">[v1.1.00+]</span></h3>
 <p>Eine "Klasse" ist im Grunde eine Gruppe oder Kategorie von Dingen, die Eigenschaften oder Attribute gemeinsam nutzen. Da ein <a href="#Custom_Objects">Base</a>- oder <a href="#Custom_Prototypes">Prototyp</a>-Objekt Eigenschaften und Verhaltensweisen für eine Gruppe von Objekten definiert, kann es auch als <em>Klassen</em>objekt bezeichnet werden. Das folgende Beispiel zeigt, wie auf einfache Weise Base-Objekte mithilfe des Schlüsselworts "class" definiert werden können:</p>
-<pre>class Klassenname extends BaseKlassenname
+<pre>class KlasseName extends BaseKlasseName
 {
     InstanzVar := Ausdruck
-    static KlassenVar := Ausdruck
+    static KlasseVar := Ausdruck
 
     class VerschachtelteKlasse
     {
@@ -280,7 +280,7 @@ anderesObj.test()</pre>
     }
 }
 </pre>
-<p>Dieses Beispiel konstruiert, nachdem das Skript geladen wurde, ein Objekt und speichert es in die globale (oder <span class="ver">[in v1.1.05+]</span> in die <a href="Functions.htm#SuperGlobal">superglobale</a>) Variable <i>Klassenname</i>. Um diese Klasse innerhalb einer <a href="Functions.htm#ForceLocal">Force-Local</a>-Funktion (oder vor <span class="ver">[v1.1.05]</span> innerhalb einer Assume-Local- oder Assume-Static-Funktion) zu verweisen, ist eine Deklaration wie <code>global Klassenname</code> notwendig. Wenn <code>extends BaseKlassenname</code> vorhanden ist, muss der <i>BaseKlassenname</i> der vollständige Name einer anderen Klasse sein (in <span class="ver">[v1.1.11+]</span> spielt die Reihenfolge, in der sie definiert werden, keine Rolle mehr). Der vollständige Name jeder Klasse ist in <code><i>objekt</i>.__Class</code> gespeichert.</p>
+<p>Dieses Beispiel konstruiert, nachdem das Skript geladen wurde, ein Objekt und speichert es in die globale (oder <span class="ver">[in v1.1.05+]</span> in die <a href="Functions.htm#SuperGlobal">superglobale</a>) Variable <i>KlasseName</i>. Um diese Klasse innerhalb einer <a href="Functions.htm#ForceLocal">Force-Local</a>-Funktion (oder vor <span class="ver">[v1.1.05]</span> innerhalb einer Assume-Local- oder Assume-Static-Funktion) zu verweisen, ist eine Deklaration wie <code>global KlasseName</code> notwendig. Wenn <code>extends BaseKlasseName</code> vorhanden ist, muss der <i>BaseKlasseName</i> der vollständige Name einer anderen Klasse sein (in <span class="ver">[v1.1.11+]</span> spielt die Reihenfolge, in der sie definiert werden, keine Rolle mehr). Der vollständige Name jeder Klasse ist in <code><i>objekt</i>.__Class</code> gespeichert.</p>
 <p>Da die Klasse via Variable verwiesen wird, kann der Klassenname nicht genutzt werden, um im selben Kontext sowohl die Klasse zu verweisen als auch eine separate Variable zu erstellen (um z. B. eine Instanz der Klasse zu enthalten). Zum Beispiel würde <code>box := new Box</code> das Klassenobjekt in <em>Box</em> mit einer Instanz von sich selbst ersetzen. <span class="ver">[v1.1.27+]:</span> <a href="commands/_Warn.htm#ClassOverwrite">#Warn ClassOverwrite</a> aktiviert eine Warnung, die angezeigt wird, wenn Sie versuchen, eine Klasse zu überschreiben.</p>
 <p>In dieser Dokumentation bezieht sich das Wort "Klasse" in der Regel auf ein Klassenobjekt, das mit dem Schlüsselwort <code>class</code> erstellt wurde.</p>
 <p>Klassendefinitionen können Variablendeklarationen, Methodendefinitionen und Unterklassendefinitionen enthalten.</p>
@@ -294,13 +294,13 @@ anderesObj.test()</pre>
 
 <h4 id="Custom_Classes_staticvar">Statische bzw. Klassenvariablen <span class="ver">[v1.1.00.01+]</span></h4>
 <p>Statische bzw. Klassenvariablen gehören nur der Klasse selbst, die aber von abgeleiteten Objekten (einschließlich Unterklassen) geerbt werden können. Solche Variablen müssen mit dem Schlüsselwort "static" deklariert werden:</p>
-<pre>static KlassenVar := Ausdruck</pre>
+<pre>static KlasseVar := Ausdruck</pre>
 <p>Statische Deklarationen werden nur einmal ausgewertet - bevor der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> erfolgt, und in der Reihenfolge, wie sie im Skript vorkommen. Jede Deklaration speichert einen Wert in das Klassenobjekt. Alle Variablenreferenzen in <i>Ausdruck</i> werden als global angesehen.</p>
-<p>Um einer Klassenvariable etwas zuzuweisen, müssen Sie immer das Klassenobjekt angeben; zum Beispiel <code><b>Klassenname</b>.KlassenVar := Wert</code>. Wenn ein Objekt <em>x</em> von <em>Klassenname</em> abgeleitet wurde und wenn <em>x</em> selbst nicht den Key "KlassenVar" enthält, kann mit <code>x.KlassenVar</code> zudem der Wert von <code>Klassenname.KlassenVar</code> dynamisch abgerufen werden. Allerdings würde <code>x.KlassenVar := y</code> den Wert nicht in <em>Klassenname</em>, sondern in <em>x</em> speichern.</p>
-<p><span class="ver">[v1.1.08+]:</span> Deklarationen wie <code>static x.y := z</code> werden auch unterstützt, sofern <code>x</code> zuvor in dieser Klasse deklariert wurde. <code>static x := {}, x.y := 42</code> würde beispielsweise <code>x</code> deklarieren und außerdem <code><i>Klassenname</i>.x.y</code> initialisieren.</p>
+<p>Um einer Klassenvariable etwas zuzuweisen, müssen Sie immer das Klassenobjekt angeben; zum Beispiel <code><b>KlasseName</b>.KlasseVar := Wert</code>. Wenn ein Objekt <em>x</em> von <em>KlasseName</em> abgeleitet wurde und wenn <em>x</em> selbst nicht den Key "KlasseVar" enthält, kann mit <code>x.KlasseVar</code> zudem der Wert von <code>KlasseName.KlasseVar</code> dynamisch abgerufen werden. Allerdings würde <code>x.KlasseVar := y</code> den Wert nicht in <em>KlasseName</em>, sondern in <em>x</em> speichern.</p>
+<p><span class="ver">[v1.1.08+]:</span> Deklarationen wie <code>static x.y := z</code> werden auch unterstützt, sofern <code>x</code> zuvor in dieser Klasse deklariert wurde. <code>static x := {}, x.y := 42</code> würde beispielsweise <code>x</code> deklarieren und außerdem <code><i>KlasseName</i>.x.y</code> initialisieren.</p>
 
 <h4 id="Custom_Classes_class">Verschachtelte Klassen</h4>
-<p>Mit verschachtelten Klassendefinitionen können Klassenobjekte innerhalb von anderen Klassenobjekten gespeichert werden, ohne dass separat eine globale Variable verwendet werden muss. Im obigen Beispiel konstruiert <code>class VerschachtelteKlasse</code> ein Objekt und speichert es in <code>Klassenname.VerschachtelteKlasse</code>. Unterklassen können <em>VerschachtelteKlasse</em> erben oder es mit ihrer eigenen verschachtelten Klasse überschreiben (in diesem Fall kann mit <code>new this.VerschachtelteKlasse</code> eine geeignete Klasse instanziiert werden).</p>
+<p>Mit verschachtelten Klassendefinitionen können Klassenobjekte innerhalb von anderen Klassenobjekten gespeichert werden, ohne dass separat eine globale Variable verwendet werden muss. Im obigen Beispiel konstruiert <code>class VerschachtelteKlasse</code> ein Objekt und speichert es in <code>KlasseName.VerschachtelteKlasse</code>. Unterklassen können <em>VerschachtelteKlasse</em> erben oder es mit ihrer eigenen verschachtelten Klasse überschreiben (in diesem Fall kann mit <code>new this.VerschachtelteKlasse</code> eine geeignete Klasse instanziiert werden).</p>
 <pre>
 class VerschachtelteKlasse
 {
@@ -317,7 +317,7 @@ Methode()
 }
 </pre>
 
-<p id="Custom_Classes_base">Innerhalb einer Methode kann das Pseudo-Schlüsselwort <code>base</code> verwendet werden, um auf Super-Klassen-Versionen von Methoden oder auf Eigenschaften, die in einer abgeleiteten Klasse überschrieben werden, zugreifen zu können. <code>base.Methode()</code> in der Klasse oben würde beispielsweise bewirken, dass eine Version von <em>Methode</em> aufgerufen wird, die über <em>BaseKlassenname</em> definiert wurde. <a href="#Meta_Functions">Metafunktionen</a> werden nicht aufgerufen; ansonsten verhält sich <code>base.Methode()</code> wie <code>BaseKlassenname.Methode.Call(this)</code>. Das heißt,</p>
+<p id="Custom_Classes_base">Innerhalb einer Methode kann das Pseudo-Schlüsselwort <code>base</code> verwendet werden, um auf Super-Klassen-Versionen von Methoden oder auf Eigenschaften, die in einer abgeleiteten Klasse überschrieben werden, zugreifen zu können. <code>base.Methode()</code> in der Klasse oben würde beispielsweise bewirken, dass eine Version von <em>Methode</em> aufgerufen wird, die über <em>BaseKlasseName</em> definiert wurde. <a href="#Meta_Functions">Metafunktionen</a> werden nicht aufgerufen; ansonsten verhält sich <code>base.Methode()</code> wie <code>BaseKlasseName.Methode.Call(this)</code>. Das heißt,</p>
 <ul>
   <li>dass <code>base.Methode()</code> immer dort das Base der Klasse aufruft, wo die aktuelle Methode definiert wurde, egal ob <code>this</code> von einer <em>Unterklasse</em> aus dieser Klasse oder von einer ganz anderen Klasse abgeleitet worden ist.</li>
   <li>dass <code>base.Methode()</code> implizit <code>this</code> als ersten (versteckten) Parameter übergibt.</li>
@@ -371,7 +371,7 @@ class GMem
 <h3 id="Meta_Functions">Metafunktionen</h3>
 <pre class="Syntax">
 <strong>Methodensyntax:</strong>
-class <i>Klassenname</i> {
+class <i>KlasseName</i> {
     __Get([Key, Key2, ...])
     __Set([Key, Key2, ...], Value)
     __Call(Name [, Parameter...])
@@ -382,7 +382,7 @@ class <i>Klassenname</i> {
 <i>MeinSet</i>(this [, Key, Key2, ...], Value)
 <i>MeinCall</i>(this, Name [, Parameter...])
 
-<i>Klassenname</i> := { __Get: Func("<i>MeinGet</i>"), __Set: Func("<i>MeinSet</i>"), __Call: Func("<i>MeinCall</i>") }
+<i>KlasseName</i> := { __Get: Func("<i>MeinGet</i>"), __Set: Func("<i>MeinSet</i>"), __Call: Func("<i>MeinCall</i>") }
 </pre>
 <p>Metafunktionen definieren, was passieren soll, wenn ein Key angefordert, aber nicht im Zielobjekt gefunden wird. Wenn einem <code>obj.key</code> beispielsweise keinen Wert zugewiesen wurde, wird die <i>__Get</i>-Metafunktion aufgerufen. <code>obj.key := value</code> veranlasst hingegen den Aufruf von <i>__Set</i> und <code>obj.key()</code> den Aufruf von <i>__Call</i>. Diese Metafunktionen (oder Methoden) sollten in <code>obj.base</code>, <code>obj.base.base</code> oder so ähnlich definiert sein.</p>
 <p>Metafunktionen werden in der Regel wie Methoden definiert, folgen aber nicht den gleichen Regeln (außer wenn sie explizit vom Skript aufgerufen werden). Sie müssen in einem Base-Objekt definiert sein; jede Definition im Zielobjekt selbst wird ignoriert. Jede auf das Zielobjekt anwendbare Definition von __Get, __Set und __Call wird automatisch gemäß den folgenden Regeln aufgerufen und sollte nicht <code>base.__Get(key)</code> oder ähnlich aufrufen. <a href="#Custom_NewDelete">__New</a> und <a href="#Custom_NewDelete">__Delete</a> müssen in einem Base-Objekt definiert sein, verhalten sich aber ansonsten wie Methoden.</p>
@@ -434,25 +434,25 @@ class Farbe
         this.RGB := aRGB
     }
 
-    static Verschiebung := {R:16, G:8, B:0}
+    static Shift := {R:16, G:8, B:0}
 
     __Get(aName)
     {
-        <em>; <span class="red">HINWEIS:</span> this.Verschiebung würde hier eine Endlosschleife erzeugen!</em>
-        Verschiebung := Farbe.Verschiebung[aName]  <em>; Ermittelt die Anzahl der zu verschiebenden Bits.</em>
-        if (Verschiebung != "")  <em>; Ist sie eine bekannte Eigenschaft?</em>
-            return (this.RGB &gt;&gt; Verschiebung) &amp; 0xff
+        <em>; <span class="red">HINWEIS:</span> this.Shift würde hier eine Endlosschleife erzeugen!</em>
+        shift := Farbe.Shift[aName]  <em>; Ermittelt die Anzahl der zu verschiebenden Bits.</em>
+        if (shift != "")  <em>; Ist sie eine bekannte Eigenschaft?</em>
+            return (this.RGB &gt;&gt; shift) &amp; 0xff
         <em>; <span class="red">HINWEIS:</span> Ein 'return' hier würde this.RGB unbrauchbar machen.</em>
     }
 
     __Set(aName, aWert)
     {
-        if ((Verschiebung := Farbe.Verschiebung[aName]) != "")
+        if ((shift := Farbe.Shift[aName]) != "")
         {
             aWert &amp;= 255  <em>; Kürzt es auf eine geeignete Länge.
 
             ; Errechnet und speichert den neuen RGB-Wert.</em>
-            this.RGB := (aWert &lt;&lt; Verschiebung) | (this.RGB &amp; ~(0xff &lt;&lt; Verschiebung))
+            this.RGB := (aWert &lt;&lt; shift) | (this.RGB &amp; ~(0xff &lt;&lt; shift))
 
             <em>; 'Return' ist notwendig, um die Erstellung eines neuen Key-Value-Paares zu verhindern.
             ; Dies bestimmt auch, was in dem 'x' in 'x := clr[name] := val' gespeichert wird:</em>
@@ -477,11 +477,11 @@ class Farbe
 <h4 id="Objects_as_Functions">Objekte als Funktionen</h4>
 <p>Siehe <a href="objects/Functor.htm#User-Defined">Funktionsobjekte</a>, wie Objekte geändert werden können, um sie wie Funktionen verhalten zu lassen.</p>
 <p>Ein Funktionsobjekt kann sich auch wie eine Metafunktion verhalten, um z. B. dynamische Eigenschaften wie im vorherigen Abschnitt zu definieren. Obwohl es ratsam ist, immer die <a href="#Custom_Classes_property">Eigenschaftssyntax</a> zu benutzen, zeigt das folgende Beispiel, wie nützlich Metafunktionen sein können, um neue Konzepte oder Verhaltensmuster zu implementieren, oder um die Struktur des Skripts zu ändern.</p>
-<pre><em>; Dieses Beispiel benötigt die <a href="objects/Functor.htm#class_FunctionObject">Funktionsobjekt-Klasse</a>, um zu funktionieren.</em>
+<pre><em>; Dieses Beispiel benötigt die <a href="objects/Functor.htm#class_FunctionObject">FunktionObjekt-Klasse</a>, um zu funktionieren.</em>
 blau := new Farbe(0x0000ff)
 MsgBox % blau.R "," blau.G "," blau.B
 
-class Eigenschaften extends Funktionsobjekt
+class Eigenschaften extends FunktionObjekt
 {
     Call(aZiel, aName, aParams*)
     {

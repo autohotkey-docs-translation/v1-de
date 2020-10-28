@@ -151,8 +151,8 @@ MsgBox % Verbinden("`n", "eins", "zwei", "drei")</pre>
 </ul>
 <h3 id="VariadicCall">Variadische Funktionsaufrufe</h3>
 <p>Variadische Funktionen können mithilfe eines Arrays eine variable Anzahl von Parametern <i>akzeptieren</i>, während variadische Funktionsaufrufe verwendet werden können, um eine variable Anzahl von Parametern an eine <i>beliebige</i> Funktion mithilfe derselben Syntax zu übergeben:</p>
-<pre>Teilzeichenketten := ["eins", "zwei", "drei"]
-MsgBox % Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
+<pre>TeilZketten := ["eins", "zwei", "drei"]
+MsgBox % Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
 <p>Hinweise:</p>
 <ul>
   <li>Die Nummerierung der Parameter innerhalb des Quellarrays beginnt bei 1.</li>
@@ -188,33 +188,33 @@ MsgBox % Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
 
 <h3 id="Global">Globale Variablen</h3>
 <p>Um innerhalb einer Funktion auf eine vorhandene globale Variable zu verweisen (oder eine neue zu erstellen), deklarieren Sie die Variable als globale Variable, bevor Sie sie verwenden. Zum Beispiel:</p>
-<pre>LogZuDatei(TextZuLog)
+<pre>InDateiLoggen(ZuLoggenderText)
 {
-    global LogDateiname  <em>; Dieser globalen Variable wurde bereits ein Wert außerhalb dieser Funktion zugewiesen.</em>
-    FileAppend, %TextZuLog%`n, %LogDateiname%
+    global LogDateiName  <em>; Dieser globalen Variable wurde bereits ein Wert außerhalb dieser Funktion zugewiesen.</em>
+    FileAppend, %ZuLoggenderText%`n, %LogDateiName%
 }</pre>
 <p id="AssumeGlobal"><strong>Assume-Global-Modus</strong>: Muss eine Funktion viele globale Variablen erstellen oder auf sie zugreifen, kann die Funktion so definiert werden, dass sie all ihre Variablen (außer ihre Parameter) global behandelt. Dazu muss in der ersten Zeile entweder das Wort "global" stehen oder eine lokale Variable deklariert sein. Zum Beispiel:</p>
-<pre>SetzeStandardwerte()
+<pre>StandardwerteSetzen()
 {
     global  <em>; Kann weggelassen werden, wenn die erste Zeile so etwas wie "local MeineVar" ist.</em>
-    MeineGlobal := 33  <em>; Speichert 33 in eine globale Variable und erstellt sie, falls notwendig.</em>
+    GlobaleVar := 33  <em>; Speichert 33 in eine globale Variable und erstellt sie, falls notwendig.</em>
     local x, y:=0, z  <em>; Lokale Variablen müssen in diesem Modus deklariert werden, weil sie sonst global behandelt werden.</em>
 }</pre>
 <p>Dieser Assume-Global-Modus kann auch von einer Funktion verwendet werden, um ein globales <a href="misc/Arrays.htm">Array</a> zu erstellen - z. B. eine Schleife, die Werte in <code>Array%A_Index%</code> speichert.</p>
 <p id="SuperGlobal"><strong>Superglobale Variablen</strong> <span class="ver">[v1.1.05+]:</span> Geschieht eine globale Deklaration außerhalb einer Funktion, gilt sie standardmäßig für alle Funktionen (außer <a href="#ForceLocal">Force-Local</a>-Funktionen). Dadurch wird verhindert, dass die Variablen in jeder Funktion neu deklariert werden müssen. Allerdings haben Funktionsparameter oder lokale Variablen, die denselben Namen haben wie globale Variablen, Vorrang vor globale Variablen. Variablen, die mit dem Schlüsselwort <a href="Objects.htm#Custom_Classes">class</a> erzeugt wurden, sind ebenfalls superglobal.</p>
 <h3 id="static">Statische Variablen</h3>
 <p>Obwohl statische Variablen immer indirekt lokal sind, unterscheiden sie sich von lokalen Variablen, weil ihre Werte zwischen den Funktionsaufrufen erhalten bleiben. Zum Beispiel:</p>
-<pre>LogZuDatei(TextZuLog)
+<pre>InDateiLoggen(ZuLoggenderText)
 {
-    <strong>static</strong> Zeilenanzahl := 0
-    Zeilenanzahl += 1  <em>; Behandelt einen Zähler lokal (der Wert bleibt zwischen den Funktionsaufrufen erhalten).</em>
-    global LogDateiname
-    FileAppend, %Zeilenanzahl%: %TextZuLog%`n, %LogDateiname%
+    <strong>static</strong> GeloggteZeilen := 0
+    GeloggteZeilen += 1  <em>; Behandelt einen Zähler lokal (der Wert bleibt zwischen den Funktionsaufrufen erhalten).</em>
+    global LogDateiName
+    FileAppend, %GeloggteZeilen%: %ZuLoggenderText%`n, %LogDateiName%
 }</pre>
 <p id="InitStatic"><strong>Statische Initialisierungen</strong>: In den Versionen vor v1.0.46 enthielten alle statischen Variablen zu Beginn einen leeren Wert; um also zu erkennen, ob statische Variablen zum ersten Mal verwendet wurden, musste man überprüfen, ob sie leer waren. <span class="ver">[v1.0.46+]</span>: Es ist möglich, eine statische Variable bei ihrer Deklaration mit etwas anderes als <code>""</code> zu initialisieren. Fügen Sie einfach auf der rechten Seite des Variablennamens den Operator <code>:=</code> oder <code>=</code> und einen der folgenden Werte an: <code>True</code>, <code>False</code>, ein direkt geschriebener Integer, eine direkt geschriebene Floating-Point-Zahl oder eine direkt geschriebene, in Anführungszeichen gesetzte Zeichenkette wie <code>"fox"</code>. Zum Beispiel: <code>static X:=0, Y:="fox"</code>. Jede statische Variable wird nur einmal initialisiert (bevor das Skript seine Ausführung beginnt).</p>
 <p><span class="ver">[AHK_L 58+]:</span> <code>Static Var := Ausdruck</code> wird unterstützt. Alle derartigen Ausdrücke werden unmittelbar vor dem automatischen Ausführungsbereich ausgewertet - in der Reihenfolge, wie sie im Skript vorkommen.</p>
 <p id="AssumeStatic"><strong>Assume-Static-Modus</strong> <span class="ver">[v1.0.48+]:</span> Eine Funktion kann so definiert werden, dass sie all ihre Variablen (außer ihre Parameter) statisch behandelt. Dazu muss in der ersten Zeile das Wort "static" stehen. Zum Beispiel:</p>
-<pre>ErmittleVomStatischenArray(Elementnummer)
+<pre>VomStatischenArrayAbrufen(ElementNummer)
 {
     <strong>static</strong>
     static ErsterAufruf := true  <em>; Die Initialisierung einer statischen Deklaration wird nur einmal ausgeführt (beim Start).</em>
@@ -224,25 +224,25 @@ MsgBox % Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
         Loop 10
             StatischesArray%A_Index% := "Wert #" . A_Index
     }
-    return StatischesArray%Elementnummer%
+    return StatischesArray%ElementNummer%
 }</pre>
 <p>Im Assume-Static-Modus muss jede Variable, die nicht statisch sein soll, als lokal oder global deklariert werden (mit den gleichen Ausnahmen wie beim <a href="#AssumeLocal">Assume-Local-Modus</a>, sofern der <a href="#ForceLocal">Force-Local-Modus</a> nicht auch noch aktiv ist).</p>
 <p><span class="ver">[v1.1.27+]:</span> Der <a href="#ForceLocal">Force-Local-Modus</a> kann mit dem Assume-Static-Modus kombiniert werden, indem man <code>local</code> und dann <code>static</code> angibt, wie unten gezeigt. Dies ermöglicht es der Funktion, Force-Local-Regeln zu verwenden, aber standardmäßig Variablen als statische Variablen zu erstellen.</p>
 <pre>global MeineVar := "Das ist global"
-ZeigeForceStatic()
+ForceStaticDemonstrieren()
 
-ZeigeForceStatic()
+ForceStaticDemonstrieren()
 {
     local
     static
-    MeineVar := "Das ist statisch"
+    MeineVar := "Dies ist statisch"
     ListVars
     MsgBox
 }
 </pre>
 <h3>Mehr über lokale und globale Variablen</h3>
 <p>Mehrere Variablen können mithilfe eines Kommas auf derselben Zeile deklariert werden. Zum Beispiel:</p>
-<pre>global LogDateiname, MaxVersuche := 5
+<pre>global LogDateiName, MaxVersuche := 5
 static GesamtVersuche := 0, VorherErgebnis</pre>
 <p id="DeclareInit"><span class="ver">[v1.0.46+]</span>: Es ist möglich, eine lokale oder globale Variable bei ihrer Deklaration zu initialisieren. Fügen Sie einfach auf der rechten Seite des Variablennamens den Operator <code>:=</code> oder <code>=</code> und einen beliebigen <a href="Variables.htm#Expressions">Ausdruck</a> an (der <code>=</code>-Operator verhält sich in Deklarationen genauso wie <code>:=</code>). Im Gegensatz zu <a href="#InitStatic">statischen Initialisierungen</a> werden die Initialisierungen von lokalen oder globalen Variablen bei jedem Funktionsaufruf ausgeführt, aber nur, wenn die Ablaufsteuerung sie tatsächlich erreicht. Eine Zeile wie <code>local x := 0</code> hätte also den gleichen Effekt wie, als würde man zwei einzelne Zeilen schreiben: <code>local x</code>, gefolgt von <code>x := 0</code>.</p>
 <p>Da die Wörter <em>local</em>, <em>global</em> und <em>static</em> unmittelbar beim Starten des Skripts verarbeitet werden, kann eine Variable nicht mithilfe einer <a href="commands/IfExpression.htm">IF-Anweisung</a> deklariert werden. Das heißt, dass eine Deklaration innerhalb eines IF- oder ELSE-<a href="commands/Block.htm">Blocks</a> auf alle Zeilen zwischen der Deklaration und der geschweiften Endklammer der Funktion eine Auswirkung hat. Beachten Sie zudem, dass es zurzeit nicht möglich ist, eine dynamische Variable zu deklarieren, wie z. B. <code>global Array%i%</code>.</p>
@@ -260,12 +260,12 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p>Beachten Sie, dass ein dynamischer Aufruf etwas langsamer ist als ein normaler Aufruf, weil normale Aufrufe aufgelöst (nachgeschlagen) werden, bevor das Skript seine Ausführung beginnt.</p>
 <h2 id="ShortCircuit">Boolesche Kurzschlussauswertung</h2>
 <p><em>AND, OR</em> und der <a href="Variables.htm#ternary">ternäre Operator</a> innerhalb eines <a href="Variables.htm#Expressions">Ausdrucks</a> reduzieren die Auswertung auf ein Minimum, um die Leistung zu erhöhen (egal ob Funktionsaufrufe vorhanden sind oder nicht). Beim Kurzschließen werden nur Bereiche des Ausdrucks ausgewertet, die Einfluss auf das Endergebnis haben. Im folgenden Beispiel wird gezeigt, wie genau das abläuft:</p>
-<pre>if (FarbName != "" AND not FindeFarbe(FarbName))
-    MsgBox %FarbName% konnte nicht gefunden werden.</pre>
-<p>Wenn die <em>FarbName</em>-Variable leer sein sollte, wird die FindeFarbe()-Funktion nie aufgerufen, weil die linke Seite von <em>AND</em> als <em>falsch</em> gewertet wird, wodurch die rechte Seite nicht mehr in der Lage wäre, das Endergebnis auf <em>wahr</em> zu bringen.</p>
+<pre>if (FarbeName != "" AND not FindeFarbe(FarbeName))
+    MsgBox %FarbeName% konnte nicht gefunden werden.</pre>
+<p>Wenn die <em>FarbeName</em>-Variable leer sein sollte, wird die FindeFarbe()-Funktion nie aufgerufen, weil die linke Seite von <em>AND</em> als <em>falsch</em> gewertet wird, wodurch die rechte Seite nicht mehr in der Lage wäre, das Endergebnis auf <em>wahr</em> zu bringen.</p>
 <p>Dieses Verhalten führt dazu, dass die Nebeneffekte einer Funktion (wie das Ändern des Inhalts einer globalen Variable) nie auftreten werden, wenn diese Funktion auf der rechten Seite von <em>AND</em> oder <em>OR</em> aufgerufen wird.</p>
-<p>Beachten Sie außerdem, dass die Kurzschlussauswertung verschachtelte <em>AND</em>s und <em>OR</em>s stufenweise abarbeitet. Wenn <em>FarbName</em> z. B. im folgenden Ausdruck leer ist, wird nur der am weitesten links befindliche Vergleich durchgeführt, weil die linke Seite dann ausreichen würde, um das Endergebnis zweifelsfrei zu bestimmen:</p>
-<pre>if (FarbName = "" <u>OR</u> FindeFarbe(FarbName, Region1) <u>OR</u> FindeFarbe(FarbName, Region2))
+<p>Beachten Sie außerdem, dass die Kurzschlussauswertung verschachtelte <em>AND</em>s und <em>OR</em>s stufenweise abarbeitet. Wenn <em>FarbeName</em> z. B. im folgenden Ausdruck leer ist, wird nur der am weitesten links befindliche Vergleich durchgeführt, weil die linke Seite dann ausreichen würde, um das Endergebnis zweifelsfrei zu bestimmen:</p>
+<pre>if (FarbeName = "" <u>OR</u> FindeFarbe(FarbeName, Region1) <u>OR</u> FindeFarbe(FarbeName, Region2))
     break   <em>; Nichts zu durchsuchen oder Übereinstimmung gefunden.</em></pre>
 <p>Wie die Beispiele oben zeigen, sollten umfangreiche (zeitaufwendige) Funktionen in der Regel auf der rechten Seite von <em>AND</em> oder <em>OR</em> aufgerufen werden, um die Leistung zu erhöhen. Diese Technik kann auch genutzt werden, um das Aufrufen einer Funktion zu verhindern, wenn ihr ein Wert übergeben wurde, den sie für unpassend hält (z. B. eine leere Zeichenkette).</p>
 <p><span class="ver">[v1.0.46+]</span>: Der <a href="Variables.htm#ternary">ternäre Bedingungsoperator (?:)</a> wendet auch die Kurzschlussauswertung an, indem er nur die gewinnende Abzweigung auswertet.</p>
@@ -285,7 +285,7 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p>Wenn der Ausführungsablauf die geschweifte Endklammer der Funktion vor einem <a href="commands/Return.htm">Return</a> erreicht hat, endet die Funktion und gibt eine leere Zeichenkette zurück. Es wird auch ein leerer Wert zurückgegeben, wenn die Funktion den Parameter von <a href="commands/Return.htm">Return</a> explizit weglässt.</p>
 <p>Wenn eine Funktion den <a href="commands/Exit.htm">Exit</a>-Befehl zum Beenden des <a href="misc/Threads.htm">aktuellen Threads</a> verwendet, erhält ihr Aufrufer überhaupt keinen Rückgabewert. Das <code>Var</code> in <code>Var := Addieren(2, 3)</code> bliebe beispielsweise unverändert, wenn <code>Addieren()</code> via Exit beendet wird. Das gleiche passiert, wenn die Funktion einen Laufzeitfehler verursacht, wie z. B. das <a href="commands/Run.htm">Ausführen</a> einer nicht-existierenden Datei (nur wenn <a href="commands/Run.htm#UseErrorLevel">UseErrorLevel</a> nicht aktiv ist).</p>
 <p>Eine Funktion kann den Wert von <a href="misc/ErrorLevel.htm">ErrorLevel</a> verändern, um einen leicht zu merkenden zusätzlichen Wert zurückzugeben.</p>
-<p>Um eine Funktion mit einem oder mehreren leeren Werten (leeren Zeichenketten) aufzurufen, verwenden Sie zwei aufeinanderfolgende Anführungszeichen. Zum Beispiel: <code>FindeFarbe(FarbName, "")</code>.</p>
+<p>Um eine Funktion mit einem oder mehreren leeren Werten (leeren Zeichenketten) aufzurufen, verwenden Sie zwei aufeinanderfolgende Anführungszeichen. Zum Beispiel: <code>FindeFarbe(FarbeName, "")</code>.</p>
 <p>Da das Aufrufen einer Funktion keinen neuen <a href="misc/Threads.htm">Thread</a> startet, werden Änderungen an Einstellungen wie <a href="commands/SendMode.htm">SendMode</a> und <a href="commands/SetTitleMatchMode.htm">SetTitleMatchMode</a> auch für den Aufrufer wirksam.</p>
 <p>Der Aufrufer kann nicht-existierende Variablen oder <a href="misc/Arrays.htm">Array</a>-Elemente an eine Funktion übergeben. Dies ist nützlich, wenn die Funktion den entsprechenden Parameter als <a href="#ByRef">ByRef</a> erwartet. Ruft man beispielsweise <code>ErmittleNächsteZeile(LeeresArray%i%)</code> auf, wird die Variable <code>LeeresArray%i%</code> automatisch als <a href="#Local">lokale</a> oder globale Variable erstellt (abhängig davon, ob der Aufrufer sich in einer Funktion befindet und ob der <a href="#AssumeGlobal">Assume-Global-Modus</a> wirksam ist).</p>
 <p><a href="commands/ListVars.htm">ListVars</a> kann, wenn es in einer Funktion verwendet wird, die Namen und Inhalte von <a href="#Local">lokalen Variablen</a> anzeigen. Solche Informationen können helfen, ein Skript zu debuggen (Fehler zu finden und zu beseitigen).</p>
@@ -438,7 +438,7 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="ListView">
     <td><a href="commands/ListView.htm#BuiltIn">LV_XXX</a></td>
-    <td>Funktion zum Hinzufügen, Einfügen, Modifizieren oder Löschen von ListView-Reihen/Spalten, oder zum Abrufen ihrer Daten.</td>
+    <td>Funktion zum Hinzufügen, Einfügen, Modifizieren oder Löschen von ListView-Zeilen/Spalten, oder zum Abrufen ihrer Daten.</td>
   </tr>
   <tr id="MenuGetHandle">
     <td><a href="commands/MenuGetHandle.htm">MenuGetHandle</a></td>

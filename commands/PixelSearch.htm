@@ -15,12 +15,12 @@
 
 <p>Durchsucht einen Bereich des Bildschirms, um einen Pixel mit einer bestimmten Farbe zu finden.</p>
 
-<pre class="Syntax"><span class="func">PixelSearch</span>, AusgabeX, AusgabeY, X1, Y1, X2, Y2, Farbkennung <span class="optional">, Variation, Modus</span></pre>
+<pre class="Syntax"><span class="func">PixelSearch</span>, AusgabeX, AusgabeY, X1, Y1, X2, Y2, FarbeID <span class="optional">, Variation, Modus</span></pre>
 <h2>Parameter</h2>
 <dl>
 
   <dt>AusgabeX/Y</dt>
-  <dd><p>Namen der Variablen, in denen die X/Y-Koordinaten des ersten Pixels, das mit <em>Farbkennung</em> übereinstimmt, gespeichert werden sollen (wenn das Pixel nicht gefunden wird, werden diese Variablen leer gemacht). Koordinaten sind relativ zum aktiven Fenster, sofern das nicht mit <a href="CoordMode.htm">CoordMode</a> geändert wurde.</p>
+  <dd><p>Namen der Variablen, in denen die X/Y-Koordinaten des ersten Pixels, das mit <em>FarbeID</em> übereinstimmt, gespeichert werden sollen (wenn das Pixel nicht gefunden wird, werden diese Variablen leer gemacht). Koordinaten sind relativ zum aktiven Fenster, sofern das nicht mit <a href="CoordMode.htm">CoordMode</a> geändert wurde.</p>
     <p>Einer oder beide Parameter können leer gelassen werden - in diesem Fall kann mit ErrorLevel (siehe unten) festgestellt werden, ob eine Übereinstimmung gefunden wurde.</p></dd>
 
   <dt>X1, Y1</dt>
@@ -29,16 +29,16 @@
   <dt>X2, Y2</dt>
   <dd><p>Die X/Y-Koordinaten der Ecke, in der das zu suchende Rechteck endet; die Koordinaten können <a href="../Variables.htm#Expressions">Ausdrücke</a> sein. Koordinaten sind relativ zum aktiven Fenster, sofern das nicht mit <a href="CoordMode.htm">CoordMode</a> geändert wurde.</p></dd>
 
-  <dt>Farbkennung</dt>
-  <dd><p>Die dezimale oder hexadezimale der zu suchenden Farbkennung im BGR-Format, die ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein kann. Farbkennungen können mithilfe von Window Spy (über das Tray-Menü erreichbar) oder via <a href="PixelGetColor.htm">PixelGetColor</a> ermittelt werden. Zum Beispiel: <code>0x9d6346</code>.</p></dd>
+  <dt>FarbeID</dt>
+  <dd><p>Die dezimale oder hexadezimale der zu suchenden Farben-ID im BGR-Format, die ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein kann. Farben-IDs können mithilfe von Window Spy (über das Tray-Menü erreichbar) oder via <a href="PixelGetColor.htm">PixelGetColor</a> ermittelt werden. Zum Beispiel: <code>0x9d6346</code>.</p></dd>
 
   <dt>Variation</dt>
   <dd><p>Eine Nummer zwischen 0 und 255, die den Farbtontoleranzbereich der Rot-, Grün- und Blaukomponenten von der angegebenen Farbe kennzeichnet (kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein). Dieser Parameter ist hilfreich, wenn die gesuchte Farbe nicht immer den gleichen Farbton hat. Wenn Sie 255 Farbtonvarianten angeben, werden alle Farben gefunden. Standardmäßig gelten 0 Farbtonvarianten.</p></dd>
 
   <dt>Modus</dt>
   <dd><p>Dieser Parameter kann das Wort Fast, RGB oder beide enthalten (wenn beide vorhanden sind, müssen sie mit einem Leerzeichen getrennt werden; also <em>Fast RGB</em>).</p>
-      <p id="fast"><strong>Fast</strong>: Ermöglicht eine schnellere Suchmethode, die den CPU-Verbrauch beim Suchen in den meisten Fällen drastisch reduziert. Zwar werden niedrige Farbtiefen wie 8-Bit (256 Farben) unterstützt, allerdings ist der Fast-Modus bei 24-Bit- oder 32-Bit-Farben deutlich leistungsfähiger. Hat der Bildschirm eine Farbtiefe von 16-Bit oder niedriger, könnte sich der <em>Variation</em>-Parameter im Fast-Modus etwas anders verhalten, als wie im Slow-Modus. Der Fast-Modus durchsucht den Bildschirm nicht spaltenweise, sondern reihenweise (von oben nach unten). Demzufolge findet er einen Pixel, das sich vom im Slow-Modus gefundenen Pixel unterscheidet könnte, sofern es mehr als einen übereinstimmenden Pixel gibt.</p>
-      <p><strong>RGB</strong>: Lässt <em>Farbkennung</em> als RGB- statt BGR-Wert interpretieren. Das heißt, dass die roten und blauen Komponenten vertauscht sind.</p></dd>
+      <p id="fast"><strong>Fast</strong>: Ermöglicht eine schnellere Suchmethode, die den CPU-Verbrauch beim Suchen in den meisten Fällen drastisch reduziert. Zwar werden niedrige Farbtiefen wie 8-Bit (256 Farben) unterstützt, allerdings ist der Fast-Modus bei 24-Bit- oder 32-Bit-Farben deutlich leistungsfähiger. Hat der Bildschirm eine Farbtiefe von 16-Bit oder niedriger, könnte sich der <em>Variation</em>-Parameter im Fast-Modus etwas anders verhalten, als wie im Slow-Modus. Der Fast-Modus durchsucht den Bildschirm nicht spaltenweise, sondern zeilenweise (von oben nach unten). Demzufolge findet er einen Pixel, das sich vom im Slow-Modus gefundenen Pixel unterscheidet könnte, sofern es mehr als einen übereinstimmenden Pixel gibt.</p>
+      <p><strong>RGB</strong>: Bewirkt, dass <em>FarbeID</em> als RGB- statt BGR-Wert interpretiert wird. Mit anderen Worten, die roten und blauen Komponenten sind vertauscht.</p></dd>
 
 </dl>
 
@@ -49,7 +49,7 @@
 <h2>Bemerkungen</h2>
 <p>Der Suchbereich muss sichtbar sein; das heißt, dass es nicht möglich ist, einen Bereich in einem Fenster zu suchen, das hinter einem anderen Fenster liegt. Pixel, die unterhalb des Mauszeigers sind, werden in der Regel erkannt. Videospielmauszeiger hingegen behindern die Sicht auf darunterliegende Pixel in den meisten Fällen.</p>
 <p>Die Suchrichtung ist von der Anordnung der Parameter abhängig. Das heißt: Wenn <em>X1</em> größer als <em>X2</em> ist, wird die Suche von rechts nach links durchgeführt, beginnend bei Spalte <em>X1</em>. Wenn <em>Y1</em> größer als <em>Y2</em> ist, wird die Suche von unten nach oben durchgeführt. Früher vor <span class="ver">[v1.1.32]</span> war es allerdings so, dass im Fast-Modus <em>X1</em> und <em>Y1</em> die obere linke Ecke sein musste.</p>
-<p>Fast-Modus: Die Suche beginnt bei den via <em>X1</em> und <em>Y1</em> angegebenen Koordinaten und überprüft alle Pixel reihenweise von <em>X1</em> bis <em>X2</em>, um eine Übereinstimmung zu finden. Wird dort keine Übereinstimmung gefunden, wird die Suche in Richtung <em>Y2</em> fortgesetzt, Reihe für Reihe, bis sie ein passendes Pixel findet.</p>
+<p>Fast-Modus: Die Suche beginnt bei den via <em>X1</em> und <em>Y1</em> angegebenen Koordinaten und überprüft alle Pixel zeilenweise von <em>X1</em> bis <em>X2</em>, um eine Übereinstimmung zu finden. Wird dort keine Übereinstimmung gefunden, wird die Suche in Richtung <em>Y2</em> fortgesetzt, Zeile für Zeile, bis sie ein passendes Pixel findet.</p>
 <p>Slow-Modus: Die Suche beginnt bei den via <em>X1</em> und <em>Y1</em> angegebenen Koordinaten und überprüft alle Pixel spaltenweise von <em>Y1</em> bis <em>Y2</em>, um eine Übereinstimmung zu finden. Wird dort keine Übereinstimmung gefunden, wird die Suche in Richtung <em>X2</em> fortgesetzt, Spalte für Spalte, bis sie ein passendes Pixel findet.</p>
 <p>Eine Suche in einem großen Bereich und mit hoher Frequenz kann zu einem hohen CPU-Verbrauch führen. Um diesen Verbrauch zu verringern, halten Sie die Größe des Bereichs so klein wie möglich.</p>
 

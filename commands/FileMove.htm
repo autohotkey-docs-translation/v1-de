@@ -15,14 +15,14 @@
 
 <p>Verschiebt eine oder mehrere Dateien, oder benennt sie um.</p>
 
-<pre class="Syntax"><span class="func">FileMove</span>, Quellmuster, Zielmuster <span class="optional">, Überschreiben</span></pre>
+<pre class="Syntax"><span class="func">FileMove</span>, QuelleMuster, ZielMuster <span class="optional">, Überschreiben</span></pre>
 <h2>Parameter</h2>
 <dl>
 
-  <dt>Quellmuster</dt>
-  <dd><p>Name einer Datei oder ein Platzhaltermuster wie C:\Temp\*.tmp. Wenn kein absoluter Pfad angegeben ist, wird <em>Quellmuster</em> im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p></dd>
+  <dt>QuelleMuster</dt>
+  <dd><p>Name einer Datei oder ein Platzhaltermuster wie C:\Temp\*.tmp. Wenn kein absoluter Pfad angegeben ist, wird <em>QuelleMuster</em> im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p></dd>
 
-  <dt>Zielmuster</dt>
+  <dt>ZielMuster</dt>
   <dd><p>Name oder Suchmuster des Ziels. Wenn kein absoluter Pfad angegeben ist, wird das Ziel im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
       <p>Wenn vorhanden, wird das erste Sternchen (<code>*</code>) im Dateinamen mit dem Quelldateinamen ohne Dateiendung ersetzt, während das erste Sternchen nach dem letzten Punkt (<code>.</code>) mit der Dateiendung der Quelldatei ersetzt wird. Wenn ein Sternchen vorhanden ist, aber die Dateiendung weggelassen wird, wird die Dateiendung der Quelldatei verwendet.</p>
       <p>Die folgenden nahezu identischen Beispiele zeigen, wie man eine einfache Verschiebung durchführen kann (unter Beibehaltung der vorhandenen Dateinamen), indem man nur den Ordnernamen angibt:</p>
@@ -61,29 +61,29 @@ FileMove, C:\Ordner1\*.txt, D:\Neuer Ordner\*.bkp  <em>; Verschiebt und ändert 
 
 <div class="ex" id="ExMoveAll">
 <p><a href="#ExMoveAll">#2</a>: Das folgende Beispiel verschiebt alle Dateien und Unterordner in einen anderen Ordner:</p>
-<pre>Fehleranzahl := VerschiebeDateienUndOrdner("C:\Mein Ordner\*.*", "D:\Zielordner für Dateien &amp; Ordner")
-if (Fehleranzahl != 0)
-    MsgBox %Fehleranzahl% Dateien/Ordner konnten nicht verschoben werden.
+<pre>FehlerAnzahl := VerschiebeDateienUndOrdner("C:\Mein Ordner\*.*", "D:\Zielordner für Dateien &amp; Ordner")
+if (FehlerAnzahl != 0)
+    MsgBox %FehlerAnzahl% Dateien/Ordner konnten nicht verschoben werden.
 
-VerschiebeDateienUndOrdner(Quellmuster, Zielordner, Überschreiben = false)
-<em>; Verschiebt alle Dateien und Ordner vom Quellmuster in dem Zielordner und
+VerschiebeDateienUndOrdner(QuelleMuster, ZielOrdner, Überschreiben = false)
+<em>; Verschiebt alle Dateien und Ordner von QuelleMuster in dem ZielOrdner und
 ; gibt die Anzahl an Dateien/Ordnern zurück, die nicht verschoben werden konnten. Diese Funktion benötigt <span class="ver">[v1.0.38+]</span>,
 ; weil sie Modus 2 von FileMoveDir verwendet.</em>
 {
     if (Überschreiben = 1)
         Überschreiben := 2  <em>; Siehe <a href="FileMoveDir.htm">FileMoveDir</a> zum Thema Modus 1 vs 2.</em>
     <em>; Zuerst alle Dateien verschieben (aber nicht die Ordner):</em>
-    FileMove, %Quellmuster%, %Zielordner%, %Überschreiben%
-    Fehleranzahl := ErrorLevel
+    FileMove, %QuelleMuster%, %ZielOrdner%, %Überschreiben%
+    FehlerAnzahl := ErrorLevel
     <em>; Jetzt alle Ordner verschieben:</em>
-    Loop, %Quellmuster%, 2  <em>; 2 bedeutet "nur Ordner".</em>
+    Loop, %QuelleMuster%, 2  <em>; 2 bedeutet "nur Ordner".</em>
     {
-        FileMoveDir, %A_LoopFileFullPath%, %Zielordner%\%A_LoopFileName%, %Überschreiben%
-        Fehleranzahl += ErrorLevel
+        FileMoveDir, %A_LoopFileFullPath%, %ZielOrdner%\%A_LoopFileName%, %Überschreiben%
+        FehlerAnzahl += ErrorLevel
         if ErrorLevel  <em>; Jeden Problemordner mit Namen anzeigen.</em>
-            MsgBox %A_LoopFileFullPath% kann nicht nach %Zielordner% verschoben werden.
+            MsgBox %A_LoopFileFullPath% kann nicht nach %ZielOrdner% verschoben werden.
     }
-    return Fehleranzahl
+    return FehlerAnzahl
 }</pre>
 </div>
 

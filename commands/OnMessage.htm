@@ -15,11 +15,11 @@
 
 <p>Bestimmt eine <a href="../Functions.htm">Funktion</a> oder ein <a href="../objects/Functor.htm">Funktionsobjekt</a>, das automatisch aufgerufen werden soll, wenn das Skript eine bestimmte Meldung empfängt.</p>
 
-<pre class="Syntax"><span class="func">OnMessage</span>(Meldenummer <span class="optional">, Funktion, MaxThreads</span>)</pre>
+<pre class="Syntax"><span class="func">OnMessage</span>(MldNummer <span class="optional">, Funktion, MaxThreads</span>)</pre>
 <h2>Parameter</h2>
 <dl>
 
-  <dt>Meldenummer</dt>
+  <dt>MldNummer</dt>
   <dd><p>Die Nummer einer Meldung zwischen 0 und 4294967295 (0xFFFFFFFF), die überwacht oder abgefragt werden soll. Sofern das Überwachen einer <a href="../misc/SendMessageList.htm">Systemmeldung</a> nicht erforderlich ist (also eine unter 0x400), sollte man am besten eine Nummer verwenden, die größer ist als 4096 (0x1000). Diese Methode verringert die Chance, dass interne Meldungen von AutoHotkey gestört werden.</p></dd>
 
   <dt>Funktion</dt>
@@ -30,7 +30,7 @@
   <dt id="MaxThreads">MaxThreads <span class="ver">[v1.0.47+]</span></dt>
   <dd><p>Normalerweise lässt man diesen Parameter weg, um die überwachende Funktion jeweils auf einen einzigen <a href="../misc/Threads.htm">Thread</a> zu begrenzen. Diese Methode ist üblicherweise am sinnvollsten, weil das Skript sonst Meldungen in chronologisch falscher Reihenfolge abarbeiten würde, wann immer die überwachende Funktion sich selbst unterbricht. Demzufolge kann <em>Critical</em> als Alternative zu <em>MaxThreads</em> verwendet werden, wie es <a href="#Critical">weiter unten</a> beschrieben wird.</p>
   <p><span class="ver">[v1.1.20+]:</span> Geben Sie 0 an, um eine zuvor registrierte Funktion zu deregistrieren. Wenn <em>Funktion</em> eine Zeichenkette ist, wird die "altmodische" Überwachung entfernt. Andernfalls wird nur das angegebene Funktionsobjekt deregistriert.</p>
-  <p><span class="ver">[v1.1.20+]:</span> Standardmäßig werden mehrere Funktionen, die für eine einzige <em>Meldenummer</em> registriert sind, in der Reihenfolge aufgerufen, wie sie registriert wurden. Um die zu registrierende Funktion vor allen anderen bereits registrierten Funktionen aufzurufen, geben Sie für <em>MaxThreads</em> einen negativen Wert an. Zum Beispiel würde <code>OnMessage(Meld, Fn,-2)</code> die Funktion <code>Fn</code> vor allen anderen registrierten Funktionen für <em>Meld</em> aufrufen, und maximal 2 Threads für <em>Fn</em> erlauben. Wenn die Funktion allerdings bereits registriert ist, wird die Reihenfolge nicht geändert, sofern sie nicht de- und dann neuregistriert wurde.</p></dd>
+  <p><span class="ver">[v1.1.20+]:</span> Standardmäßig werden mehrere Funktionen, die für eine einzige <em>MldNummer</em> registriert sind, in der Reihenfolge aufgerufen, wie sie registriert wurden. Um die zu registrierende Funktion vor allen anderen bereits registrierten Funktionen aufzurufen, geben Sie für <em>MaxThreads</em> einen negativen Wert an. Zum Beispiel würde <code>OnMessage(Mld, Fn, -2)</code> die Funktion <code>Fn</code> vor allen anderen registrierten Funktionen für <em>Mld</em> aufrufen, und maximal 2 Threads für <em>Fn</em> erlauben. Wenn die Funktion allerdings bereits registriert ist, wird die Reihenfolge nicht geändert, sofern sie nicht de- und dann neuregistriert wurde.</p></dd>
 
 </dl>
 
@@ -38,31 +38,31 @@
 <p>OnMessage's Rückgabewert und Verhalten sind abhängig davon, ob der <em>Funktion</em>sparameter ein Funktionsname oder ein Objekt ist.</p>
 
 <h3>Funktionsname</h3>
-<p>Aus Gründen der Abwärtskompatibilität kann höchstens eine Funktion via Name registriert werden, um jede einzigartige <em>Meldenummer</em> zu überwachen -- dies wird auch als "Legacy"-Überwachung bezeichnet.</p>
+<p>Aus Gründen der Abwärtskompatibilität kann höchstens eine Funktion via Name registriert werden, um jede einzigartige <em>MldNummer</em> zu überwachen -- dies wird auch als "Legacy"-Überwachung bezeichnet.</p>
 <p>Wenn die Legacy-Überwachung das erste Mal registriert wird, ist die Tatsache, ob sie vor oder nach zuvor registrierten Überwachungen aufgerufen wird, abhängig vom <em>MaxThreads</em>-Parameter. Die Überwachung dahingehend zu ändern, eine andere Funktion aufzurufen, beeinflusst nicht die Reihenfolge, sofern die Überwachung nicht erst deregistriert wird.</p>
-<p>Folgendes registriert oder ändert die Legacy-Überwachung für <em>Meldenummer</em> (lassen Sie die Anführungszeichen weg, wenn Sie eine Variable übergeben wollen):</p>
-<pre class="Syntax">Name := <span class="func">OnMessage</span>(Meldenummer, "Funktionsname")</pre>
+<p>Folgendes registriert oder ändert die Legacy-Überwachung für <em>MldNummer</em> (lassen Sie die Anführungszeichen weg, wenn Sie eine Variable übergeben wollen):</p>
+<pre class="Syntax">Name := <span class="func">OnMessage</span>(MldNummer, "FunktionName")</pre>
 <p>Der Rückgabewert ist einer der folgenden:</p>
 <ul>
-  <li>Eine leere Zeichenkette bei <a href="#Failure">Fehlschlag</a>.</li>
+  <li>Eine leere Zeichenkette bei <a href="#Failure">Misserfolg</a>.</li>
   <li>Der Name der vorherigen Funktion, sofern es eine gab.</li>
   <li>Ansonsten der Name der neuen Funktion.</li>
 </ul>
-<p>Folgendes deregistriert die aktuelle Legacy-Überwachung für <em>Meldenummer</em> (falls vorhanden) und gibt ihren Namen zurück (leer, wenn sie keinen hat):</p>
-<pre class="Syntax">Name := <span class="func">OnMessage</span>(Meldenummer, "")</pre>
-<p>Folgendes gibt den Namen der aktuellen Legacy-Überwachung für <em>Meldenummer</em> zurück (leer, wenn sie keinen hat):</p>
-<pre class="Syntax">Name := <span class="func">OnMessage</span>(Meldenummer)</pre>
+<p>Folgendes deregistriert die aktuelle Legacy-Überwachung für <em>MldNummer</em> (falls vorhanden) und gibt ihren Namen zurück (leer, wenn sie keinen hat):</p>
+<pre class="Syntax">Name := <span class="func">OnMessage</span>(MldNummer, "")</pre>
+<p>Folgendes gibt den Namen der aktuellen Legacy-Überwachung für <em>MldNummer</em> zurück (leer, wenn sie keinen hat):</p>
+<pre class="Syntax">Name := <span class="func">OnMessage</span>(MldNummer)</pre>
 
 <h3>Funktionsobjekt</h3>
-<p>Beliebig viele <a href="../objects/Functor.htm">Funktionsobjekte</a> (einschließlich <a href="../objects/Func.htm">normale Funktionen</a>) können die angegebene <em>Meldenummer</em> überwachen.</p>
+<p>Beliebig viele <a href="../objects/Functor.htm">Funktionsobjekte</a> (einschließlich <a href="../objects/Func.htm">normale Funktionen</a>) können die angegebene <em>MldNummer</em> überwachen.</p>
 <p>Beide folgenden Zeilen registrieren ein Funktionsobjekt, das <strong>nach</strong> allen zuvor registrierten Funktionen aufgerufen wird:</p>
 <pre class="Syntax">
-<span class="func">OnMessage</span>(Meldenummer, FunkObj)     <em>; Option 1</em>
-<span class="func">OnMessage</span>(Meldenummer, FunkObj, 1)  <em>; Option 2 (MaxThreads = 1)</em></pre>
+<span class="func">OnMessage</span>(MldNummer, FunkObj)     <em>; Option 1</em>
+<span class="func">OnMessage</span>(MldNummer, FunkObj, 1)  <em>; Option 2 (MaxThreads = 1)</em></pre>
 <p>Folgendes registriert ein Funktionsobjekt, das <strong>vor</strong> allen zuvor registrierten Funktionen aufgerufen wird:</p>
-<pre class="Syntax"><span class="func">OnMessage</span>(Meldenummer, FunkObj, -1)</pre>
+<pre class="Syntax"><span class="func">OnMessage</span>(MldNummer, FunkObj, -1)</pre>
 <p>Um die Registrierung eines Funktionsobjekts rückgängig zu machen, geben Sie für <em>MaxThreads</em> eine 0 an:</p>
-<pre class="Syntax"><span class="func">OnMessage</span>(Meldenummer, FunkObj, 0)</pre>
+<pre class="Syntax"><span class="func">OnMessage</span>(MldNummer, FunkObj, 0)</pre>
 
 <h2 id="Failure">Misserfolg</h2>
 <p>Misserfolg tritt auf, wenn <em>Funktion</em>:</p>
@@ -76,9 +76,9 @@
 
 <h2>Die Parameter der Funktion</h2>
 <p>Eine <a href="../Functions.htm">Funktion</a>, die zum Überwachen von einer oder mehreren Meldungen zugeteilt wurde, akzeptiert bis zu vier Parameter:</p>
-<pre>MeineMeldeüberwachung(wParam, lParam, msg, hwnd)
+<pre>MeineMldÜberwachung(wParam, lParam, Mld, Hwnd)
 {
-    ... Funktionsbereich ...
+    ... Funktionskörper ...
 }</pre>
 <p>Obwohl die Namen, die Sie den Parametern geben, keine Rolle spielen, werden ihnen die folgenden Informationen nacheinander zugewiesen:</p>
 <p>Parameter #1: Der WPARAM-Wert der Meldung.<br>
@@ -88,7 +88,7 @@ Parameter #4: Die HWND-Nummer (eindeutige ID) des Fensters oder Steuerelements, 
 <p>WPARAM und LPARAM sind vorzeichenlose 32-Bit-Integer (von 0 bis 2<sup>32</sup>-1) oder vorzeichenfähige 64-Bit-Integer (von -2<sup>63</sup> bis 2<sup>63</sup>-1), abhängig davon, ob die zum Ausführen verwendete EXE-Datei 32- oder 64-Bit ist. Wenn bei einem 32-Bit-Skript ein eingehender Parameter als vorzeichenfähiger Integer vorgesehen ist, können negative Zahlen zum Beispiel wie folgt offenbart werden:</p>
 <pre>if (A_PtrSize = 4 &amp;&amp; wParam &gt; 0x7FFFFFFF)  <em>; Das Überprüfen von <a href="../Variables.htm#PtrSize">A_PtrSize</a> stellt sicher, dass das Skript 32-Bit ist.</em>
     wParam := -(~wParam) - 1</pre>
-<p>Sie können eine oder mehrere Parameter vom Ende der Liste weglassen, wenn Sie die entsprechende Information nicht benötigen. Zum Beispiel würde eine Funktion, definiert als <code>MeineMeldeüberwachung(wParam, lParam)</code>, nur die ersten zwei Parameter empfangen, und eine, definiert als <code>MeineMeldeüberwachung()</code>, gar keine von  ihnen.</p>
+<p>Sie können eine oder mehrere Parameter vom Ende der Liste weglassen, wenn Sie die entsprechende Information nicht benötigen. Zum Beispiel würde <code>MeineMldÜberwachung(wParam, lParam)</code> nur die ersten zwei Parameter empfangen und <code>MeineMldÜberwachung()</code> gar keine.</p>
 
 <h2>Weitere verfügbare Informationen für die Funktion</h2>
 <p>Neben den oben genannten Parametern kann die Funktion auch auf die Werte der folgenden internen Variablen zurückgreifen:</p>
@@ -100,7 +100,7 @@ Parameter #4: Die HWND-Nummer (eindeutige ID) des Fensters oder Steuerelements, 
 </ul>
 <p>Das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> einer überwachenden Funktion ist zu Beginn das übergeordnete Fenster, zu dem die Meldung gesendet wurde (selbst wenn sie zu einem Steuerelement gesendet wurde). Ist das Fenster versteckt, aber kein GUI-Fenster (z. B. das Hauptfenster des Skripts), muss zuvor <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> aktiviert werden. Zum Beispiel:</p>
 <pre>DetectHiddenWindows On
-MeldÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des Fensters, das die Meldung erhalten hat.</em></pre>
+MldÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des Fensters, das die Meldung erhalten hat.</em></pre>
 
 <h2>Was die Funktion per <em>Return</em> zurückgeben sollte</h2>
 <p>Verwendet eine überwachende Funktion <a href="Return.htm">Return</a> ohne Parameter oder mit einem leeren Wert wie "" (oder verwendet sie überhaupt kein Return), wird die eingehende Meldung beim Erreichen des Funktionsendes normal fortgesetzt. Das gleiche passiert, wenn man das Ende der Funktion via <a href="Exit.htm">Exit</a> erzwingt oder einen Laufzeitfehler verursacht (der beispielsweise durch <a href="Run.htm">Ausführen</a> einer nicht-existierenden Datei ausgelöst werden kann). Verwendet man als Rückgabewert hingegen einen Integer, wird dieser Wert sofort als Antwort gesendet; das heißt, dass das Programm die Meldung nicht weiter fortsetzen wird. Zum Beispiel könnte eine Funktion, die WM_LBUTTONDOWN (0x201) überwacht, einen Integer zurückgeben, um das Zielfenster daran zu hindern, benachrichtigt zu werden, dass ein Mausklick erfolgt ist. In vielen Fällen (z. B. als eine Meldung, empfangen via <a href="PostMessage.htm">PostMessage</a>) ist es egal, welcher Integer zurückgegeben wird; aber im Zweifelsfall ist eine 0 am sichersten.</p>
@@ -134,8 +134,8 @@ WM_LBUTTONDOWN(wParam, lParam)
     X := lParam &amp; 0xFFFF
     Y := lParam &gt;&gt; 16
     if A_GuiControl
-        Steuerelement := "`n(im Steuerelement " . A_GuiControl . ")"
-    ToolTip Sie haben im GUI-Fenster #%A_Gui% auf die Koordinaten %X%x%Y% geklickt.%Steuerelement%
+        Strlmnt := "`n(im Steuerelement " . A_GuiControl . ")"
+    ToolTip Sie haben im GUI-Fenster #%A_Gui% auf die Koordinaten %X%x%Y% geklickt.%Strlmnt%
 }
 
 GuiClose:
@@ -196,14 +196,14 @@ StoppeBlockenHerunterfahren()
 
 <div class="ex" id="ExCustom">
 <p><a href="#ExCustom">#3</a>: Zeigt, wie ein Skript eine benutzerdefinierte Meldung und bis zu zwei Zahlen von einem anderen Skript oder Programm empfängt (schauen Sie sich das Beispiel danach an, wie man Zeichenketten sendet).</p>
-<pre>OnMessage(0x5555, "Meldeüberwachung")
-OnMessage(0x5556, "Meldeüberwachung")
+<pre>OnMessage(0x5555, "MldÜberwachung")
+OnMessage(0x5556, "MldÜberwachung")
 
-Meldeüberwachung(wParam, lParam, msg)
+MldÜberwachung(wParam, lParam, Mld)
 {
     <em>; Damit die Funktion schnell zum Ende kommen kann, ist es besser, ein ToolTip zu verwenden,</em>
     <em>; weil so etwas wie eine MsgBox dies verhindern würde:</em>
-    ToolTip Meldung %msg% angekommen:`nWPARAM: %wParam%`nLPARAM: %lParam%
+    ToolTip Meldung %Mld% empfangen:`nWPARAM: %wParam%`nLPARAM: %lParam%
 }
 
 <em>; Mit den folgenden Zeilen innerhalb eines anderen Skripts kann die Funktion im oberen Skript ausgeführt werden:</em>
@@ -223,35 +223,35 @@ return
 
 Empfange_WM_COPYDATA(wParam, lParam)
 {
-    ZeichenketteAdresse := NumGet(lParam + 2*A_PtrSize)  <em>; Ermittelt die Adresse des lpData-Elements in CopyDataStruct.</em>
-    Datenkopie := StrGet(ZeichenketteAdresse)  <em>; Kopiert die Zeichenkette aus der Struktur.</em>
+    ZketteAdresse := NumGet(lParam + 2*A_PtrSize)  <em>; Ermittelt die Adresse des lpData-Elements in CopyDataStruct.</em>
+    KopieDaten := StrGet(ZketteAdresse)  <em>; Kopiert die Zeichenkette aus der Struktur.</em>
     <em>; Zeige die Zeichenkette via ToolTip statt MsgBox an, so dass wir rechtzeitig fertig werden:</em>
-    ToolTip %A_ScriptName%`nhat die folgende Zeichenkette empfangen:`n%Datenkopie%
+    ToolTip %A_ScriptName%`nhat die folgende Zeichenkette empfangen:`n%KopieDaten%
     return true  <em>; Die Rückgabe einer 1 (wahr) ist der übliche Weg, um diese Meldung zu bestätigen.</em>
 }</pre>
 <p>Speichern Sie das folgende Skript als "<strong>Sender.ahk</strong>" und starten Sie es. Drücken Sie danach den Hotkey <kbd>Win</kbd>+<kbd>Leer</kbd>.</p>
 <pre filename="Sender.ahk">ZielSkriptTitel := "Receiver.ahk ahk_class AutoHotkey"
 
 #space::  <em>; Hotkey: WIN+LEERTASTE. Drücken Sie ihn, um eine InputBox zur Eingabe einer Zeichenkette anzuzeigen.</em>
-InputBox, ZuSendendeZeichenkette, Text via WM_COPYDATA senden, Tragen Sie den zu sendenden Text ein:
+InputBox, ZuSendendeZkette, Text via WM_COPYDATA senden, Tragen Sie den zu sendenden Text ein:
 if ErrorLevel  <em>; Benutzer hat die Abbrechen-Schaltfläche gedrückt.</em>
     return
-Ergebnis := Sende_WM_COPYDATA(ZuSendendeZeichenkette, ZielSkriptTitel)
+Ergebnis := Sende_WM_COPYDATA(ZuSendendeZkette, ZielSkriptTitel)
 if (Ergebnis = "FAIL")
     MsgBox SendMessage fehlgeschlagen. Gibt es den folgenden Fenstertitel?:`n%ZielSkriptTitel%
 else if (Ergebnis = 0)
     MsgBox Meldung wurde gesendet, aber das Zielfenster hat mit 0 geantwortet, was bedeuten könnte, dass sie ignoriert wurde.
 return
 
-Sende_WM_COPYDATA(ByRef ZuSendendeZeichenkette, ByRef ZielSkriptTitel)  <em>; ByRef verbraucht in diesem Fall weniger Speicher.
+Sende_WM_COPYDATA(ByRef ZuSendendeZkette, ByRef ZielSkriptTitel)  <em>; ByRef verbraucht in diesem Fall weniger Speicher.
 ; Diese Funktion sendet eine bestimmte Zeichenkette an ein bestimmtes Fenster und gibt die Anwort zurück.
 ; Die Antwort ist 1, wenn das Zielfenster die Meldung akzeptiert hat, oder 0, wenn die Meldung ignoriert wurde.</em>
 {
     VarSetCapacity(KopieDatenStrukt, 3*A_PtrSize, 0)  <em>; Richtet den Speicherbereich der Struktur ein.</em>
     <em>; Zuerst wird das cbData-Element der Struktur auf die Größe der Zeichenkette gesetzt, einschließlich dem Null-Terminator:</em>
-    GrößeInBytes := (StrLen(ZuSendendeZeichenkette) + 1) * (A_IsUnicode ? 2 : 1)
+    GrößeInBytes := (StrLen(ZuSendendeZkette) + 1) * (A_IsUnicode ? 2 : 1)
     NumPut(GrößeInBytes, KopieDatenStrukt, A_PtrSize)  <em>; Muss für das OS getan werden.</em>
-    NumPut(&amp;ZuSendendeZeichenkette, KopieDatenStrukt, 2*A_PtrSize)  <em>; Lässt lpData auf die Zeichenkette selbst verweisen.</em>
+    NumPut(&amp;ZuSendendeZkette, KopieDatenStrukt, 2*A_PtrSize)  <em>; Lässt lpData auf die Zeichenkette selbst verweisen.</em>
     Vorher_DetectHiddenWindows := A_DetectHiddenWindows
     Vorher_TitleMatchMode := A_TitleMatchMode
     DetectHiddenWindows On

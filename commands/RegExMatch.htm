@@ -15,7 +15,7 @@
 
 <p>Überprüft, ob ein Suchmuster (regulärer Ausdruck) in einer Zeichenkette vorkommt.</p>
 
-<pre class="Syntax">Fundposition := <span class="func">RegExMatch</span>(Heuhaufen, NadelRegEx <span class="optional">, AusgabeVar, Startposition := 1</span>)</pre>
+<pre class="Syntax">FundPos := <span class="func">RegExMatch</span>(Heuhaufen, NadelRegEx <span class="optional">, AusgabeVar, StartPos := 1</span>)</pre>
 <h2>Parameter</h2>
 <dl>
 
@@ -33,10 +33,10 @@
       <p id="ObjectMode"><strong>Modus 3 (Match-Objekt)</strong> <span class="ver">[v1.1.05+]</span><strong>:</strong> Wenn ein großes O in den RegEx-Optionen vorhanden ist - z. B. "<span class="red">O)</span>abc.*123" - wird ein <a href="#MatchObject">Match-Objekt</a> in <em>AusgabeVar</em> gespeichert. Mit diesem Objekt kann die Position, die Länge und der Wert der gesamten Übereinstimmung sowie von jedem <a href="../misc/RegEx-QuickRef.htm#subpat">erfassten Teilsuchmuster</a> abgerufen werden, sofern vorhanden.</p>
     </dd>
 
-  <dt>Startposition</dt>
-  <dd><p>Lässt man <em>Startposition</em> weg, wird standardmäßig 1 verwendet (das erste Zeichen der <em>Heuhaufen</em>-Zeichenkette). Ansonsten kann eine 2 angegeben werden, um beim zweiten Zeichen zu beginnen, eine 3, um beim dritten Zeichen zu beginnen, und so weiter. Wenn <em>Startposition</em> die Länge der <em>Heuhaufen</em>-Zeichenkette überschreitet, beginnt die Suche bei der leeren Zeichenkette am Ende der <em>Heuhaufen</em>-Zeichenkette (was in der Regel zu keiner Übereinstimmung führt).</p>
-      <p>Wenn <em>Startposition</em> kleiner als 1 ist, wird der angegebene Wert als Offset vom Ende von <em>Heuhaufen</em> angesehen. Zum Beispiel kann eine 0 angegeben werden, um beim letzten Zeichen zu beginnen, -1, um beim vorletzten Zeichen zu beginnen, und so weiter. Wenn <em>Startposition</em> versucht, über das linke Ende von <em>Heuhaufen</em> hinauszugehen, wird die gesamte <em>Heuhaufen</em>-Zeichenkette durchsucht.</p>
-      <p>Egal welchen Wert man als <em>Startposition</em> verwendet - der Rückgabewert ist immer relativ zum ersten Zeichen der <em>Heuhaufen</em>-Zeichenkette. Zum Beispiel ist die Position von "abc" in "123abc789" immer 4.</p></dd>
+  <dt>StartPos</dt>
+  <dd><p>Lässt man <em>StartPos</em> weg, wird standardmäßig 1 verwendet (das erste Zeichen der <em>Heuhaufen</em>-Zeichenkette). Ansonsten kann eine 2 angegeben werden, um beim zweiten Zeichen zu beginnen, eine 3, um beim dritten Zeichen zu beginnen, und so weiter. Wenn <em>StartPos</em> die Länge der <em>Heuhaufen</em>-Zeichenkette überschreitet, beginnt die Suche bei der leeren Zeichenkette am Ende der <em>Heuhaufen</em>-Zeichenkette (was in der Regel zu keiner Übereinstimmung führt).</p>
+      <p>Wenn <em>StartPos</em> kleiner als 1 ist, wird der angegebene Wert als Offset vom Ende von <em>Heuhaufen</em> angesehen. Zum Beispiel kann eine 0 angegeben werden, um beim letzten Zeichen zu beginnen, -1, um beim vorletzten Zeichen zu beginnen, und so weiter. Wenn <em>StartPos</em> versucht, über das linke Ende von <em>Heuhaufen</em> hinauszugehen, wird die gesamte <em>Heuhaufen</em>-Zeichenkette durchsucht.</p>
+      <p>Egal welchen Wert man als <em>StartPos</em> verwendet - der Rückgabewert ist immer relativ zum ersten Zeichen der <em>Heuhaufen</em>-Zeichenkette. Zum Beispiel ist die Position von "abc" in "123abc789" immer 4.</p></dd>
 
 </dl>
 
@@ -93,21 +93,21 @@
 <pre>MsgBox % RegExMatch("xxxabc123xyz", "abc.*xyz")  <em>; Zeigt 4 an, weil das die Position ist, auf der die Übereinstimmung gefunden wurde.</em>
 MsgBox % RegExMatch("abc123123", "123$")  <em>; Zeigt 7 an, weil durch $ die Übereinstimmung am Ende vorkommen muss.</em>
 MsgBox % RegExMatch("abc123", "i)^ABC")  <em>; Zeigt 1 an, weil eine Übereinstimmung aufgrund der nicht-Groß-/Kleinschreibung-sensitiven Option möglich gemacht wurde.</em>
-MsgBox % RegExMatch("abcXYZ123", "abc(.*)123", Teilmuster)  <em>; Zeigt 1 an und speichert "XYZ" in Teilmuster1.</em>
-MsgBox % RegExMatch("abc123abc456", "abc\d+", "", 2)  <em>; Zeigt 7 statt 1 an, wegen einer 2 als Startposition.</em></pre>
+MsgBox % RegExMatch("abcXYZ123", "abc(.*)123", TeilMust)  <em>; Zeigt 1 an und speichert "XYZ" in TeilMust1.</em>
+MsgBox % RegExMatch("abc123abc456", "abc\d+", "", 2)  <em>; Zeigt 7 statt 1 an, wegen StartPos 2 statt 1.</em></pre>
 </div>
 
 <div class="ex" id="ExObject">
 <p><a href="#ExObject">#2</a>: Match-Objekt</p>
-<pre>Fundposition := RegExMatch("Musterstraße 1", "O)(.*) (?&lt;nr&gt;\d+)", Teilmuster)  <em>; Das "O)" am Anfang macht Teilmuster zu einem Objekt.</em>
-Msgbox % Teilmuster.Count() ": " Teilmuster.Value(1) " " Teilmuster.Name(2) "=" Teilmuster["nr"]  <em>; Zeigt "2: Musterstraße nr=1"</em></pre>
+<pre>FundPos := RegExMatch("Musterstraße 1", "O)(.*) (?&lt;nr&gt;\d+)", TeilMust)  <em>; Das "O)" am Anfang macht TeilMust zu einem Objekt.</em>
+Msgbox % TeilMust.Count() ": " TeilMust.Value(1) " " TeilMust.Name(2) "=" TeilMust["nr"]  <em>; Zeigt "2: Musterstraße nr=1"</em></pre>
 </div>
 
 <div class="ex" id="ExExtension">
 <p><a href="#ExExtension">#3</a>: Ein einfaches Beispiel, das die Erweiterung einer Datei abruft. Beachten Sie, dass <a href="SplitPath.htm">SplitPath</a> auch dafür verwendet werden kann, aber mit höherer Zuverlässigkeit.</p>
 <pre>Pfad := "C:\Foo\Bar\Baz.txt"
-RegExMatch(Pfad, "\w+$", Erweiterung)
-MsgBox % Erweiterung  <em>; Zeigt "txt".</em></pre>
+RegExMatch(Pfad, "\w+$", Endung)
+MsgBox % Endung  <em>; Zeigt "txt".</em></pre>
 </div>
 
 </body>
