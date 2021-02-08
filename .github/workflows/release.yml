@@ -1,4 +1,4 @@
-name: Create release on new tag
+name: Build search data and create release on new tag
 
 # Controls when the action will run. Triggers the workflow on new tags
 on:
@@ -6,10 +6,12 @@ on:
     tags:
       - 'v*.*.*.*'
 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
+  build-and-commit-search-data:
     # The type of runner that the job will run on
     runs-on: windows-latest
 
@@ -18,49 +20,51 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        ref: master
 
-    - name: Create and compress CHM file
+    - name: Install AutoHotkey v2 32-bit
       run: |
-        # Create and compress CHM file
-        
-        Write-Host "Get index data"
-        $data_index = Get-Content .\static\source\data_index.js -Encoding UTF8 -Raw
-        $needle = 'indexData = ['
-        $data_index = $data_index.Substring($data_index.IndexOf($needle)+$needle.Length-1).TrimEnd().TrimEnd(';')
-        $entries = $data_index | ConvertFrom-Json
+        choco install autohotkey.portable --pre --x86
 
-        Write-Host "Create HHK file"
-        $output = @"
-        <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-        <html>
-        <body>
-        <ul>
-        "@
-        foreach ($entry in $entries)
-        {
-        $output += @"
-        <li>
-          <object type="text/sitemap">
-            <param name="Name" value="$($entry[0])">
-            <param name="Local" value="$($entry[1])">
-          </object>
-        </li>
-        "@
-        }
-        $output += @"
-        </ul>
-        </body>
-        </html>
-        "@
-        Set-Content .\Index.hhk $output
+    - name: Run build_search.ahk
+      run: |
+        Start-Process -FilePath "AutoHotkey.exe" -ArgumentList "/ErrorStdOut `"static/source/build_search.ahk`"" -NoNewWindow -Wait
 
-        Write-Host "::group::Create CHM file"
-        & "C:\Program Files (x86)\HTML Help Workshop\hhc.exe" "Project.hhp"
-        # Negate hhc's exit code to prevent GitHub Actions from mistakenly seeing it as a failure.
-        $LASTEXITCODE = [int]!$LASTEXITCODE
-        Write-Host "::endgroup::"
+    - name: Commit
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git commit -a -m "Build data_search.js"
+        git push
 
-        Write-Host "Compress CHM file"
+  compile-chm-and-create-release:
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+
+    # Force to run the jobs sequentially
+    needs: build-and-commit-search-data
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: master
+
+    - name: Install AutoHotkey v1.1 32-bit
+      run: |
+        # choco install autohotkey.portable --x86
+        choco install autohotkey.install --params='/DefaultVer:U32'
+
+    - name: Run compile_chm.ahk
+      run: |
+        # Start-Process -FilePath "AutoHotkey.exe" -ArgumentList "/ErrorStdOut `"compile_chm.ahk`"" -NoNewWindow -Wait
+        Start-Process -FilePath "$env:ProgramFiles/AutoHotkey/AutoHotkey.exe" -ArgumentList "/ErrorStdOut `"compile_chm.ahk`"" -NoNewWindow -Wait
+
+    - name: Compress CHM file
+      run: |
         Compress-Archive -Path *.chm -DestinationPath .\AutoHotkeyHelp_DE -Force
 
     - name: Create Release
