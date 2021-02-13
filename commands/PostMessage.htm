@@ -19,7 +19,7 @@
 <span class="func">PostMessage</span>, Mld <span class="optional">, wParam, lParam, Steuerelement, FensterTitel, FensterText, IgnoriereTitel, IgnoriereText</span>
 <span class="func">SendMessage</span>, Mld <span class="optional">, wParam, lParam, Steuerelement, FensterTitel, FensterText, IgnoriereTitel, IgnoriereText, Zeitlimit</span>
 </pre>
-<h2>Parameter</h2>
+<h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>Mld</dt>
@@ -53,7 +53,7 @@
 
 </dl>
 
-<h2>ErrorLevel</h2>
+<h2 id="ErrorLevel">ErrorLevel</h2>
 <p><span class="ver">[v1.1.04+]</span>: Diese Befehle sind in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p>PostMessage: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn es ein Problem gab - z. B. wenn das Zielfenster oder Steuerelement nicht vorhanden ist. Ansonsten wird es auf 0 gesetzt.</p>
 <p>SendMessage: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf FAIL gesetzt, wenn es ein Problem gab oder der Befehl die Zeit überschritten hat. Ansonsten wird es auf das numerische Ergebnis der Meldung gesetzt, das manchmal eine "Antwort" sein könnte, abhängig von der Art der Meldung und ihrem Zielfenster.</p>
@@ -62,7 +62,7 @@
 <pre>MldAntwort := ErrorLevel &lt;&lt; 32 &gt;&gt; 32</pre>
 <p>Diese Umwandlung könnte auch in der 64-Bit-Version von AutoHotkey notwendig sein, weil die Ergebnisse von 32-Bit-Fenstern mit Nullen erweitert sind. Zum Beispiel würde ein Ergebnis von -1, zurückgegeben von einem 32-Bit-Fenster, in einer beliebigen AutoHotkey-Version als 0xFFFFFFFF  gesehen werden, aber ein Ergebnis von -1, zurückgegeben von einem 64-Bit-Fenster, in der 32-Bit-Version als 0xFFFFFFFF und in der 64-Bit-Version als -1.</p>
 
-<h2>Bemerkungen</h2>
+<h2 id="Remarks">Bemerkungen</h2>
 <p>Seien Sie vorsichtig, wenn Sie solche Befehle verwenden - das Senden einer Meldung an das falsche Fenster (oder Senden einer ungültigen Meldung) kann dazu führen, dass die Zielanwendung sich falsch verhält oder abstürzt. Die meisten Anwendungen sind nicht darauf abgestimmt, bestimmte Arten von Meldungen aus externen Quellen zu erwarten.</p>
 <p>PostMessage setzt die Meldung in die Meldungswarteschlange des Zielfensters. PostMessage wartet nicht auf eine Bestätigung oder Antwort. SendMessage hingegen wartet, bis das Zielfenster die Meldung verarbeitet hat oder bis das Zeitlimit überschritten wurde.</p>
 <p>Die <em>wParam</em>- und <em>lParam</em>-Parameter sollten Integer sein. Wenn AutoHotkey oder das Zielfenster 32-Bit ist, werden nur die unteren 32 Bits verwendet; also sollte der Wert zwischen -2147483648 und 4294967295 (0xFFFFFFFF) liegen. Wenn sowohl AutoHotkey als auch das Zielfenster 64-Bit sind, kann jeder Integer, <a href="../Variables.htm#cap">der von AutoHotkey unterstützt wird</a>, verwendet werden. Ein Präfix von 0x kennzeichnet einen hexadezimalen Wert, wie bei allen Integer-Werten in AutoHotkey. Zum Beispiel wäre 0xFF das gleiche wie 255.</p>
@@ -72,19 +72,19 @@
 <p>Eine direkt geschriebene bzw. in Anführungszeichen gesetzte Zeichenkette kann auch gesendet werden (in diesem Fall sollte der &amp;-Operator weggelassen werden):</p>
 <pre>Run Notepad
 WinWait Unbenannt - Editor
-SendMessage, 0xC, 0, <strong>"Neuer Editor-Titel"</strong>  <em>; 0XC ist WM_SETTEXT</em></pre>
+SendMessage, 0xC, 0, "<strong>Neuer Editor-Titel</strong>"  <em>; 0XC ist WM_SETTEXT</em></pre>
 <p>Um allen Fenstern im Betriebssystem eine Meldung zu senden - einschließlich solcher, die versteckt oder deaktiviert sind - fügen Sie <code>ahk_id 0xFFFF</code> in <em>FensterTitel</em> ein (0xFFFF ist HWND_BROADCAST). Diese Technik sollte nur für Meldungen benutzt werden, die zum Broadcasten geeignet sind, wie z. B.:</p>
 <pre>SendMessage, 0x1A,,,, ahk_id 0xFFFF  <em>; 0x1A ist WM_SETTINGCHANGE</em></pre>
 <p>Mit <a href="OnMessage.htm">OnMessage()</a> kann ein Skript eine Meldung abfangen.</p>
 <p>Um mehr über das Verwenden solcher Befehle zu erfahren, siehe <a href="../misc/SendMessage.htm">Tutorial zum Senden von Meldungen</a>.</p>
 <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
 
-<h2>Siehe auch</h2>
+<h2 id="Related">Siehe auch</h2>
 <p><a href="../misc/SendMessageList.htm">Meldungsliste</a>, <a href="../misc/SendMessage.htm">Tutorial zum Senden von Meldungen</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="../misc/Winamp.htm">Winamp automatisieren</a>, <a href="DllCall.htm">DllCall()</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="WinMenuSelectItem.htm">WinMenuSelectItem</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExMonitorPower">
-<p><a href="#ExMonitorPower">#1</a>: Drücken Sie <kbd>Win</kbd>+<kbd>O</kbd>, um den Bildschirm auszuschalten.</p>
-<pre>#o::
+<p><a href="#ExMonitorPower">#1</a>: Drücken Sie einen Hotkey, um den Bildschirm auszuschalten.</p>
+<pre>#o:: <em>; WIN+O</em>
 Sleep 1000  <em>; Gibt dem Benutzer die Chance, die Tasten loszulassen (falls das Loslassen der Tasten den Bildschirm wieder aufwecken sollte).
 ; Schaltet den Bildschirm aus:</em>
 SendMessage, 0x112, 0xF170, 2,, Program Manager  <em>; 0x112 ist WM_SYSCOMMAND, 0xF170 ist SC_MONITORPOWER.
@@ -94,29 +94,29 @@ return</pre>
 </div>
 
 <div class="ex" id="ExScreenSave">
-<p><a href="#ExScreenSave">#2</a>: Startet den vom Benutzer festgelegten Bildschirmschoner:</p>
+<p><a href="#ExScreenSave">#2</a>: Startet den vom Benutzer festgelegten Bildschirmschoner.</p>
 <pre>SendMessage, 0x112, 0xF140, 0,, Program Manager  <em>; 0x112 ist WM_SYSCOMMAND und 0xF140 ist SC_SCREENSAVE.</em></pre>
 </div>
 
 <div class="ex" id="ExVScrollUp">
-<p><a href="#ExVScrollUp">#3</a>: Eine Zeile nach oben scrollen (bei einem Steuerelement mit vertikalem Scrollbalken):</p>
+<p><a href="#ExVScrollUp">#3</a>: Scrollt eine Zeile nach oben (bei einem Steuerelement mit vertikalem Scrollbalken).</p>
 <pre>ControlGetFocus, Steuerelement, A
 SendMessage, 0x115, 0, 0, %Steuerelement%, A</pre>
 </div>
 
 <div class="ex" id="ExVScrollDown">
-<p><a href="#ExVScrollDown">#4</a>: Eine Zeile nach unten scrollen:</p>
+<p><a href="#ExVScrollDown">#4</a>: Scrollt eine Zeile nach unten (bei einem Steuerelement mit vertikalem Scrollbalken).</p>
 <pre>ControlGetFocus, Steuerelement, A
 SendMessage, 0x115, 1, 0, %Steuerelement%, A</pre>
 </div>
 
 <div class="ex" id="ExSwitchKeybLang">
-<p><a href="#ExSwitchKeybLang">#5</a>: Schaltet die Tastaturbelegung/Sprache des aktiven Fensters auf Englisch:</p>
+<p><a href="#ExSwitchKeybLang">#5</a>: Schaltet die Tastaturbelegung/Sprache des aktiven Fensters auf Englisch.</p>
 <pre>PostMessage, 0x50, 0, 0x4090409,, A  <em>; 0x50 ist WM_INPUTLANGCHANGEREQUEST.</em></pre>
 </div>
 
 <div class="ex" id="ExWinamp">
-<p><a href="#ExWinamp">#6</a>: Dieses Beispiel fragt Winamp, welche Track-Nummer zurzeit aktiv ist (weitere Informationen finden Sie unter <a href="../misc/Winamp.htm">Winamp automatisieren</a>):</p>
+<p><a href="#ExWinamp">#6</a>: Fragt Winamp, welche Track-Nummer zurzeit aktiv ist (weitere Informationen finden Sie unter <a href="../misc/Winamp.htm">Winamp automatisieren</a>).</p>
 <pre>SetTitleMatchMode, 2
 SendMessage, 1024, 0, 120,, - Winamp
 if (ErrorLevel != "FAIL")
@@ -127,7 +127,7 @@ if (ErrorLevel != "FAIL")
 </div>
 
 <div class="ex" id="ExPID">
-<p><a href="#ExPID">#7</a>: Um die Prozess-ID eines AHK-Skripts zu finden (eine Alternative zu <a href="WinGet.htm">WinGet PID</a>):</p>
+<p><a href="#ExPID">#7</a>: Ermittelt die Prozess-ID eines AHK-Skripts (eine Alternative zu <a href="WinGet.htm">WinGet PID</a>).</p>
 <pre>SetTitleMatchMode, 2
 DetectHiddenWindows, On
 SendMessage, 0x44, 0x405, 0, , BeliebigesSkript.ahk - AutoHotkey v

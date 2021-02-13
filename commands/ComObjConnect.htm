@@ -15,7 +15,7 @@
 <p>Verbindet die Ereignisquellen eines COM-Objekts mit Funktionen, die ein bestimmtes Präfix haben.</p>
 <pre class="Syntax"><span class="func">ComObjConnect</span>(ComObject <span class="optional">, Präfix</span>)</pre>
 
-<h2>Parameter</h2>
+<h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>ComObject</dt>
@@ -48,27 +48,27 @@
 <p>Mit <code>ComObjConnect(MeinObjekt)</code> kann die Verbindung zum Objekt getrennt werden (um die Ereignisbehandlung zu stoppen).</p>
 <p>Ist die Anzahl der Parameter unbekannt, kann eine <a href="../Functions.htm#Variadic">variadische Funktion</a> verwendet werden.</p>
 
-<h2>Bemerkungen</h2>
+<h2 id="Remarks">Bemerkungen</h2>
 <p>Das Skript muss eine Referenz zu <em>ComObject</em> behalten, da ComObject sonst automatisch freigegeben und von dessen COM-Objekt getrennt werden würde, wodurch die Erkennung weiterer Ereignisse verhindert wird. Es gibt keine Standardmethode, um zu erkennen, wann die Verbindung überflüssig ist, daher muss das Skript die Verbindung manuell trennen, indem es ComObjConnect aufruft.</p>
 <p>Die <a href="_Persistent.htm">#Persistent</a>-Direktive ist eventuell vonnöten, um das Skript am Laufen zu halten, während es auf Ereignisse wartet.</p>
 <p>Bei Misserfolg wird die Funktion je nach aktueller <a href="ComObjError.htm">ComObjError()</a>-Einstellung und <a href="ComObjError.htm#factors">anderen Faktoren</a> eventuell eine Ausnahme auslösen, das Skript beenden oder einfach ihren Wert zurückgeben.</p>
 
-<h2>Siehe auch</h2>
+<h2 id="Related">Siehe auch</h2>
 <p><a href="ComObjCreate.htm">ComObjCreate()</a>, <a href="ComObjGet.htm">ComObjGet()</a>, <a href="ComObjActive.htm">ComObjActive()</a>, <a href="ComObjError.htm">ComObjError()</a>, <a href="https://msdn.microsoft.com/de-de/library/ccxe1xe6.aspx">WScript.ConnectObject (MSDN)</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExIE">
-<p><a href="#ExIE">#1</a></p>
-<pre>ie := ComObjCreate("<a href="https://msdn.microsoft.com/de-de/library/aa752084.aspx">InternetExplorer.Application</a>")
+<p><a href="#ExIE">#1</a>: Startet eine Instanz des Internet Explorers und verbindet Ereignisse mit entsprechenden Skript-Funktionen, die das Präfix "IE_" haben. Einzelheiten über das hier verwendete COM-Objekt und DocumentComplete-Ereignis finden Sie unter <a href="https://msdn.microsoft.com/de-de/library/aa752084.aspx">InternetExplorer object (Microsoft Docs)</a>.</p>
+<pre>ie := ComObjCreate("InternetExplorer.Application")
 
-<em>; Verbindet Ereignisse mit entsprechenden Skript-Funktionen, die den Präfix "IE_" haben.</em>
-<b>ComObjConnect</b>(ie, "IE_")
+<em>; Verbindet Ereignisse mit entsprechenden Skript-Funktionen, die das Präfix "IE_" haben.</em>
+ComObjConnect(ie, "IE_")
 
 ie.Visible := true  <em>; Funktioniert nicht korrekt unter IE7.</em>
 ie.Navigate("https://www.autohotkey.com/")
 #Persistent
 
-<b>IE_<a href="https://msdn.microsoft.com/de-de/library/aa768329.aspx">DocumentComplete</a></b>(ieEventParam, url, ieFinalParam) {
+IE_DocumentComplete(ieEventParam, url, ieFinalParam) {
     global ie
     if (ie != ieEventParam)
         s .= "Erster Parameter ist ein neues Wrapper-Objekt.`n"

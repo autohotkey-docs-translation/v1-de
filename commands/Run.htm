@@ -14,7 +14,7 @@
 </head>
 <body>
 
-<h1>Run[Wait]</h1>
+<h1>Run / RunWait</h1>
 
 <p>Startet ein externes Programm. RunWait wartet, bis das Programm endet, bevor es fortfährt.</p>
 
@@ -22,7 +22,7 @@
 <span class="func">Run</span>, Ziel <span class="optional">, ArbeitVerz, Optionen, AusgabeVarPID</span>
 <span class="func">RunWait</span>, Ziel <span class="optional">, ArbeitVerz, Optionen, AusgabeVarPID</span>
 </pre>
-<h2>Parameter</h2>
+<h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>Ziel</dt>
@@ -46,13 +46,13 @@
       <p>Nachdem der Run-Befehl eine PID ermittelt hat, kann es sein, dass Fenster, die vom Prozess erstellt werden, noch nicht verfügbar sind. Verwenden Sie <code><a href="WinWait.htm">WinWait</a> ahk_pid %AusgabeVarPID%</code>, um wenigstens auf eines dieser Fenster zu warten.</p></dd>
 
 </dl>
-<h2>Fehlerbehandlung</h2>
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p>Run: Setzt kein <a href="../misc/ErrorLevel.htm">ErrorLevel</a>, es sei denn, UseErrorLevel (oben) ist wirksam, dann wird ErrorLevel bei Misserfolg auf ERROR und bei Erfolg auf 0 gesetzt.</p>
 <p>RunWait: Setzt ErrorLevel auf den Exitcode des Programms (ein vorzeichenfähiger 32-Bit-Integer). Wenn das Starten fehlschlägt, während UseErrorLevel aktiv ist, wird das Wort ERROR gespeichert.</p>
-<h2>Bemerkungen</h2>
+<h2 id="Remarks">Bemerkungen</h2>
 <p>RunWait wird, im Gegensatz zu Run, warten, bis das <em>Ziel</em> geschlossen oder beendet wird, und setzt dann <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf den Exitcode des Programms (ein vorzeichenfähiger 32-Bit-Integer). Einige Programme geben sofort einen Exitcode zurück, obwohl sie noch laufen; solche Programme erzeugen einen weiteren Prozess.</p>
-<p>Wenn das <em>Ziel</em> Kommas enthält, müssen sie mit einem <a href="_EscapeChar.htm">Escapezeichen</a> versehen werden, wie es in dem folgenden Beispiel dreimal gemacht wird:</p>
+<p>Wenn das <em>Ziel</em> Kommas enthält, müssen sie mit einem <a href="../misc/EscapeChar.htm">Escapezeichen</a> versehen werden, wie es in dem folgenden Beispiel dreimal gemacht wird:</p>
 <pre>Run rundll32.exe shell32.dll<span class="style3">`,</span>Control_RunDLL desk.cpl<span class="style3">`,`,</span> 3  <em>; Öffnet Systemsteuerung &gt; Anzeige &gt; Einstellungen</em></pre>
 <p>Startet man ein Programm via <a href="../Variables.htm#ComSpec">ComSpec</a> (cmd.exe) - z. B. um die Ein- oder Ausgabe des Programms umzuleiten - sollte, sofern Leerzeichen im Pfad oder Namen enthalten sind, die komplette Zeichenkette mit äußeren Anführungszeichen umschlossen werden. Im folgenden Beispiel werden die äußeren Anführungszeichen in rot und alle inneren Anführungszeichen in schwarz dargestellt:</p>
 <pre>Run %ComSpec% /c <span class="style3">"</span>"C:\Mein Tool.exe" "param 1" "zweiter param" &gt;"C:\Meine Datei.txt"<span class="style3">"</span></pre>
@@ -65,7 +65,7 @@ Run ::{645ff040-5081-101b-9f08-00aa002f954e}  <em>; Öffnet den Papierkorb.</em>
 <table class="info">
   <tr>
     <td style="width:8%">*<i>verb</i></td>
-    <td><span class="ver">[AHK_L 57+]:</span> Beliebiges systemdefiniertes oder benutzerdefiniertes Verb. Zum Beispiel: <code>Run *Compile %A_ScriptFullPath%</code><br>In Windows Vista und höher kann das Verb <a href="#RunAs">*RunAs</a> als Ersatz für den Kontextmenüpunkt <i>Als Administrator ausführen</i> benutzt werden.</td>
+    <td><span class="ver">[AHK_L 57+]:</span> Beliebiges systemdefiniertes oder benutzerdefiniertes Verb. Zum Beispiel: <code>Run *Compile %A_ScriptFullPath%</code>. In Windows Vista und höher kann das Verb <a href="#RunAs">*RunAs</a> als Ersatz für den Kontextmenüpunkt <i>Als Administrator ausführen</i> benutzt werden.</td>
   </tr>
   <tr>
     <td>properties</td>
@@ -125,39 +125,57 @@ MsgBox A_IsAdmin: %A_IsAdmin%`nCommand line: %full_command_line%</pre>
 </ul>
 <p><span class="ver">[v1.0.92.01+]:</span> Wenn UAC aktiviert ist, wird der AutoHotkey-Installer das Verb <em>RunAs</em> bei <em>.ahk</em>-Dateien registrieren, wodurch <code>Run *RunAs skript.ahk</code> ein Skript als Administrator starten kann - mit der vordefinierten ausführbaren Datei.</p>
 
-<h2>Siehe auch</h2>
+<h2 id="Related">Siehe auch</h2>
 <p><a href="RunAs.htm">RunAs</a>, <a href="Process.htm">Process</a>, <a href="Exit.htm">Exit</a>, <a href="../misc/CLSID-List.htm">CLSID-Liste</a>, <a href="DllCall.htm">DllCall()</a></p>
 
-<h2>Beispiele</h2>
+<h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a href="#ExBasic">#1</a></p>
-<pre>Run, Notepad.exe, C:\Meine Dokumente, max
+<p><a href="#ExBasic">#1</a>: Run kann Windows-Systemprogramme aus einem beliebigen Verzeichnis heraus starten. Beachten Sie, dass Endungen von ausführbaren Dateien wie .exe weggelassen werden können.</p>
+<pre>Run, notepad</pre>
+</div>
 
-Run, mailto:someone@domain.com?subject=Das ist die Betreffzeile.&amp;body=Das ist der Haupttext der Nachricht.
-Run, ReadMe.doc, , Max UseErrorLevel  <em>; Startet maximiert und zeigt bei Misserfolg kein Dialogfenster an.</em>
+<div class="ex" id="ExURL">
+<p><a href="#ExURL">#2</a>: Run kann URLs starten:</p>
+<p>Das folgende Beispiel öffnet eine Internetadresse im Standard-Webbrowser des Benutzers.</p>
+<pre>Run, https://www.google.com</pre>
+<p>Das folgende Beispiel öffnet die Standard-E-Mail-Anwendung mit ausgefülltem Empfänger.</p>
+<pre>Run, mailto:someone@somedomain.com</pre>
+<p>Das folgende Beispiel macht das Gleiche wie oben, plus den Betreff und den Haupttext.</p>
+<pre>Run, mailto:someone@somedomain.com?subject=Das ist die Betreffzeile.&amp;body=Das ist der Haupttext der Nachricht.</pre>
+</div>
+
+<div class="ex" id="ExErrorLevel">
+<p><a href="#ExErrorLevel">#3</a>: Öffnet ein Dokument in einer maximierten Anwendung und zeigt bei einem Fehler eine benutzerdefinierte Fehlermeldung an.</p>
+<pre>Run, ReadMe.doc, , Max UseErrorLevel
 if (ErrorLevel = "ERROR")
-    MsgBox Das Dokument konnte nicht geöffnet werden.
+    MsgBox Das Dokument konnte nicht geöffnet werden.</pre>
+</div>
 
-RunWait, %ComSpec% /c dir c:\ &gt;&gt;c:\DirTest.txt, , min
-Run, c:\DirTest.txt
-Run, properties c:\DirTest.txt
+<div class="ex" id="ExVerb">
+<p><a href="#ExVerb">#4</a>: Führt den dir-Befehl im minimierten Zustand aus und speichert die Ausgabe in einer Textdatei. Danach wird die Textdatei und ihr Eigenschaftsfenster geöffnet.</p>
+<pre>#Persistent
+RunWait, %ComSpec% /c dir C:\ &gt;&gt;C:\DirTest.txt, , Min
+Run, C:\DirTest.txt
+Run, properties C:\DirTest.txt</pre>
+</div>
 
-Run, https://www.google.com <em>; Jede URL kann geöffnet werden.</em>
-Run, mailto:someone@somedomain.com  <em>; Dies sollte die voreingestellte E-Mail-Anwendung öffnen.</em>
+<div class="ex" id="ExCLSID">
+<p><a href="#ExCLSID">#5</a>: Run kann <a href="../misc/CLSID-List.htm">CLSIDs</a> starten:</p>
+<p>Das folgende Beispiel öffnet den Papierkorb.</p>
+<pre>Run, ::{645ff040-5081-101b-9f08-00aa002f954e}</pre>
+<p>Das folgende Beispiel öffnet das "Dieser PC"-Verzeichnis.</p>
+<pre>Run, ::{20d04fe0-3aea-1069-a2d8-08002b30309d}</pre>
+</div>
 
-Run ::{20d04fe0-3aea-1069-a2d8-08002b30309d}  <em>; Öffnet den Arbeitsplatz/Computer.</em>
-Run ::{645ff040-5081-101b-9f08-00aa002f954e}  <em>; Öffnet den Papierkorb.</em>
-
-<em>; Mit "&amp;&amp;" können mehrere Befehle hintereinander ausgeführt werden:</em>
-Run, %ComSpec% /c dir /b &gt; C:\Liste.txt &amp;&amp; type C:\Liste.txt &amp;&amp; pause
-</pre>
+<div class="ex" id="ExMultipleCmds">
+<p><a href="#ExMultipleCmds">#6</a>: Mit "&amp;&amp;" können mehrere Befehle hintereinander ausgeführt werden.</p>
+<pre>Run, %ComSpec% /c dir /b &gt; C:\Liste.txt &amp;&amp; type C:\Liste.txt &amp;&amp; pause</pre>
 </div>
 
 <div class="ex" id="StdOut">
-<p><a href="#StdOut">#2</a>: Das folgende Beispiel zeigt, wie ein Befehl ausgeführt und seine Ausgabe ermittelt werden kann:</p>
+<p><a href="#StdOut">#7</a>: Die folgenden Funktionen können verwendet werden, um einen einzelnen Befehl auszuführen und dessen Ausgabe abzurufen oder um mehrere Befehle in einem Rutsch auszuführen und deren Ausgabe abzurufen.</p>
 <pre>MsgBox % RunWaitEin("dir " A_ScriptDir)
 
-<em>; ...oder wie mehrere Befehle in einem Rutsch ausgeführt und deren Ausgaben ermittelt werden können:</em>
 MsgBox % RunWaitViele("
 (
 echo Fügen Sie hier Ihre Befehle ein,
@@ -187,7 +205,7 @@ RunWaitViele(Befehle) {
 </div>
 
 <div class="ex" id="ExecScript">
-<p><a href="#ExecScript">#3</a>: Startet den angegeben Code als neuen AutoHotkey-Prozess.</p>
+<p><a href="#ExecScript">#8</a>: Startet den angegeben Code als neuen AutoHotkey-Prozess.</p>
 <pre>ExecScript(Script, Warten:=true)
 {
     shell := ComObjCreate("WScript.Shell")

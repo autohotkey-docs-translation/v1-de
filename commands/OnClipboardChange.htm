@@ -17,17 +17,19 @@
 <p>Registriert eine <a href="../Functions.htm">Funktion</a> oder ein <a href="../objects/Functor.htm">Funktionsobjekt</a>, die immer dann gestartet werden sollen, wenn sich der Inhalt der Zwischenablage ändert.</p>
 <pre class="Syntax"><span class="func">OnClipboardChange</span>(Func <span class="optional">, HinzufügenEntfernen</span>)</pre>
 
-<h3>Parameter</h3>
+<h3 id="Parameters">Parameter</h3>
 <dl>
 
   <dt>Func</dt>
   <dd><p>Ein Funktionsname oder <a href="../objects/Functor.htm">Funktionsobjekt</a>, die aufgerufen werden sollen. Die Parameter und der Rückgabewert der Funktion sind <a href="#Func">unten</a> beschrieben.</p></dd>
   
   <dt>HinzufügenEntfernen</dt>
-  <dd><p>Geben Sie einen der folgenden Werte an:<br>
-  <strong>1</strong> (Standard): Rufen Sie die Funktion nach anderen zuvor registrierten Funktionen auf.<br>
-  <strong>-1</strong>: Rufen Sie die Funktion vor anderen zuvor registrierten Funktionen auf.<br>
-  <strong>0</strong>: Rufen Sie die Funktion nicht auf.</p>
+  <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig 1 (die Funktion nach anderen zuvor registrierten Funktionen aufrufen) verwendet. Ansonsten können Sie eine der folgenden Zahlen angeben:</p>
+    <ul>
+      <li>1 = Die Funktion nach anderen zuvor registrierten Funktionen aufrufen.</li>
+      <li>-1 = Die Funktion vor anderen zuvor registrierten Funktionen aufrufen.</li>
+      <li>0 = Die Funktion nicht aufrufen.</li>
+    </ul>
   <p>Existiert ein OnClipboardChange-Label, wird das immer zuerst aufgerufen.</p></dd>
 
 </dl>
@@ -36,18 +38,40 @@
 <pre class="Syntax"><i>FunktionName</i>(Typ)</pre>
 <dl>
   <dt>Typ</dt>
-  <dd><p>Enthält einen der folgenden Werte:<br>
-    <strong>0</strong>, wenn die Zwischenablage gerade leer ist;<br>
-    <strong>1</strong>, wenn sie etwas enthält, das Text sein könnte (einschließlich <a href="../misc/Clipboard.htm#CopiedFiles">kopierte Dateien</a> aus einem Explorerfenster);<br>
-    <strong>2</strong>, wenn sie etwas enthält, das überhaupt kein Text ist, wie z. B. ein Bild.</p></dd>
+  <dd><p>Enthält eine der folgenden Zahlen:</p>
+    <ul>
+      <li>0 = Die Zwischenablage ist jetzt leer.</li>
+      <li>1 = Die Zwischenablage enthält etwas, das als Text ausgegeben werden kann (dazu gehören <a href="../misc/Clipboard.htm#CopiedFiles">Dateien, die aus einem Explorer-Fenster kopiert wurden</a>).</li>
+      <li>2 = Die Zwischenablage enthält etwas völlig textfreies, wie z. B. ein Bild.</li>
+    </ul>
+  </dd>
   
   <dt><em>Rückgabewert</em></dt>
   <dd><p>Ist dies die letzte bzw. einzige OnClipboardChange-Funktion, wird der Rückgabewert ignoriert. Ansonsten kann die Funktion einen Integer ungleich null zurückgeben, um zu verhindern, dass nachfolgende Funktionen aufgerufen werden.</p></dd>
 </dl>
 
-<h3 id="FunctionExample">Beispiel</h3>
-<p>Dieses Beispiel ist das gleiche wie <a href="#LabelExample">das von unten</a>, außer dass die Funktion nicht aufgerufen wird, wenn das Skript zum ersten Mal startet; nur wenn sich der Inhalt der Zwischenablage ändert.</p>
-<pre>#Persistent
+<h2 id="label">OnClipboardChange-Label</h2>
+<p class="warning"><strong>Veraltet:</strong> Diese Vorgehensweise ist nicht für neue Skripte empfohlen. Verwenden Sie stattdessen die <a href="#function">OnClipboardChange</a>-Funktion.</p>
+<p>Ein Label namens OnClipboardChange wird automatisch gestartet (falls vorhanden), sobald eine beliebige Anwendung (auch das Skript selbst) den Inhalt der Zwischenablage geändert hat. Das Label wird zudem beim Starten des Skripts einmal ausgeführt.</p>
+<p>Die interne Variable A_EventInfo enthält eine der folgenden Zahlen:</p>
+<ul>
+  <li>0 = Die Zwischenablage ist jetzt leer.</li>
+  <li>1 = Die Zwischenablage enthält etwas, das als Text ausgegeben werden kann (dazu gehören <a href="../misc/Clipboard.htm#CopiedFiles">Dateien, die aus einem Explorer-Fenster kopiert wurden</a>).</li>
+  <li>2 = Die Zwischenablage enthält etwas völlig textfreies, wie z. B. ein Bild.</li>
+</ul>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Wenn die Zwischenablage geändert wird, während die Funktion oder das Label von OnClipboardChange läuft, geht das Benachrichtigungsereignis verloren. Falls das unerwünscht ist, können Sie <a href="Critical.htm">Critical</a> in der ersten Zeile des Labels nutzen. Allerdings werden dadurch auch andere <a href="../misc/Threads.htm">Threads</a> gepuffert/hinausgezögert (z. B. das Drücken eines Hotkeys), während der OnClipboardChange-Thread läuft.</p>
+<p>Sobald das Skript selbst die Zwischenablage ändert, wird seine Funktion oder sein Label von OnClipboardChange normalerweise nicht sofort ausgeführt. Das heißt, dass Befehle unterhalb des Befehls, der die Zwischenablage geändert hat, wahrscheinlich vorher ausgeführt werden. Um die sofortige Ausführung der Funktion oder des Labels zu erzwingen, führen Sie nach dem Ändern der Zwischenablage eine kurze Verzögerung wie z. B. <code><a href="Sleep.htm">Sleep</a> 20</code> durch.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="../misc/Clipboard.htm">Clipboard</a>, <a href="OnExit.htm#function">OnExit()</a>, <a href="OnExit.htm#command">OnExit</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="RegisterCallback.htm">RegisterCallback()</a></p>
+
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExFnVsLabel">
+<p><a href="#ExFnVsLabel">#1</a>: Funktion vs. Label.</p>
+<p>Trotz der unterschiedlichen Herangehensweise haben beide Beispiele den gleichen Effekt: Sie zeigen jedes Mal, wenn sich die Zwischenablage ändert, kurz ein Tooltip an. Beachten Sie, dass die Funktion nicht aufgerufen wird, wenn das Skript zum ersten Mal startet; nur wenn sich der Inhalt der Zwischenablage ändert.</p>
+<pre id="FunctionExample">#Persistent
 OnClipboardChange("ZwischenablageGeändert")
 return
 
@@ -56,15 +80,6 @@ ZwischenablageGeändert(Typ) {
     Sleep 1000
     ToolTip  <em>; Schaltet das ToolTip aus.</em>
 }</pre>
-
-<h2 id="label">OnClipboardChange-Label</h2>
-<p class="warning"><strong>Veraltet:</strong> Diese Vorgehensweise ist nicht für neue Skripte empfohlen. Verwenden Sie stattdessen die <a href="#function">OnClipboardChange</a>-Funktion.</p>
-<p>Ein Label namens OnClipboardChange wird automatisch gestartet (falls vorhanden), sobald eine beliebige Anwendung (auch das Skript selbst) den Inhalt der Zwischenablage geändert hat. Das Label wird zudem beim Starten des Skripts einmal ausgeführt.</p>
-<p>Die interne Variable A_EventInfo enthält:<br>
-  0, falls die Zwischenablage leer ist;<br>
-1, falls etwas enthalten ist, das in Textform ist (einschließlich <a href="../misc/Clipboard.htm#CopiedFiles">kopierte Dateien</a>);<br>
-2, falls etwas enthalten ist, das kein Text ist, wie z. B. ein Bild.</p>
-<p>Das folgende Beispiel ist ein funktionierendes Skript. Sobald es ausgeführt wird, wird bei jeder Änderung der Zwischenablage kurz ein ToolTip angezeigt.</p>
 <pre id="LabelExample">#Persistent
 return
 
@@ -73,13 +88,7 @@ ToolTip Datentyp der Zwischenablage: %A_EventInfo%
 Sleep 1000
 ToolTip  <em>; Schaltet das ToolTip aus.</em>
 return</pre>
-
-<h2>Bemerkungen</h2>
-<p>Wenn die Zwischenablage geändert wird, während die Funktion oder das Label von OnClipboardChange läuft, geht das Benachrichtigungsereignis verloren. Falls das unerwünscht ist, können Sie <a href="Critical.htm">Critical</a> in der ersten Zeile des Labels nutzen. Allerdings werden dadurch auch andere <a href="../misc/Threads.htm">Threads</a> gepuffert/hinausgezögert (z. B. das Drücken eines Hotkeys), während der OnClipboardChange-Thread läuft.</p>
-<p>Sobald das Skript selbst die Zwischenablage ändert, wird seine Funktion oder sein Label von OnClipboardChange normalerweise nicht sofort ausgeführt. Das heißt, dass Befehle unterhalb des Befehls, der die Zwischenablage geändert hat, wahrscheinlich vorher ausgeführt werden. Um die sofortige Ausführung der Funktion oder des Labels zu erzwingen, führen Sie nach dem Ändern der Zwischenablage eine kurze Verzögerung wie z. B. <code><a href="Sleep.htm">Sleep</a> 20</code> durch.</p>
-
-<h2>Siehe auch</h2>
-<p><a href="../misc/Clipboard.htm">Clipboard</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="RegisterCallback.htm">RegisterCallback()</a></p>
+</div>
 
 </body>
 </html>

@@ -17,7 +17,7 @@
 <h2 id="new">Neue Syntax <span class="ver">[v1.1.21+]</span></h2>
 <pre class="Syntax"><span class="func">Loop, Reg</span>, KeyName <span class="optional">, Modus</span></pre>
 
-<h3>Parameter</h3>
+<h3 id="New_Parameters">Parameter</h3>
 <dl>
 
   <dt>Reg</dt>
@@ -28,10 +28,13 @@
       <p>Der Name muss entweder mit HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG beginnen (oder jeweils die Abkürzung, wie z. B. HKLM). Um Zugriff auf eine <a href="#remote">Remote-Registry</a> zu erhalten, setzen Sie wie folgt den Computernamen und einen Doppelpunkt davor: \\workstation01:HKEY_LOCAL_MACHINE</p></dd>
 
   <dt>Modus</dt>
-  <dd><p>Keine oder mehrere der folgenden Buchstaben:</p>
-      <p><code>K</code>: Keys einbeziehen.<br>
-      <code>V</code>: Werte einbeziehen. Werte werden auch einbezogen, wenn K und V weggelassen werden.<br>
-      <code>R</code>: Subkeys werden einbezogen. Lässt man R weg, werden Keys und Werte innerhalb der Subkeys von <em>KeyName</em> nicht mit einbezogen.</p></dd>
+  <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, werden nur Werte einbezogen und Subkeys nicht rekursiv durchsucht. Ansonsten können Sie einen oder mehrere der folgenden Buchstaben angeben:</p>
+    <ul>
+      <li>K = Keys einbeziehen.</li>
+      <li>V = Werte einbeziehen. Werte werden auch einbezogen, wenn K und V weggelassen werden.</li>
+      <li>R = Subkeys werden einbezogen. Lässt man R weg, werden Keys und Werte innerhalb der Subkeys von <em>KeyName</em> nicht mit einbezogen.</li>
+    </ul>
+  </dd>
 
 </dl>
 
@@ -39,7 +42,7 @@
 <p class="warning"><strong>Veraltet:</strong> Diese Syntax ist nicht für neue Skripte empfohlen. Verwenden Sie stattdessen die <a href="#new">neue Syntax</a>.</p>
 <pre class="Syntax"><span class="func">Loop</span>, RootKey <span class="optional">, Key, SubkeysEinbeziehen?, Rekursiv?</span></pre>
 
-<h3>Parameter</h3>
+<h3 id="Old_Parameters">Parameter</h3>
 <dl>
 
   <dt>RootKey</dt>
@@ -50,17 +53,25 @@
   <dd><p>Name des Keys (z. B. Software\BeliebigeAnwendung). Wenn dieser Parameter weggelassen wird oder leer ist, werden der Inhalt von <em>RootKey</em> abgerufen.</p></dd>
   
   <dt>SubkeysEinbeziehen?</dt>
-  <dd><p>0 (Standard) Subkeys innerhalb von <em>Key</em> werden nicht abgerufen (nur die Werte).<br>
-      1 Alle Werte und Subkeys werden abgerufen.<br>
-      2 Nur die Subkeys werden abgerufen (nicht die Werte).</p></dd>
+  <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig 0 (nur Werte werden abgerufen) verwendet. Ansonsten können Sie eine der folgenden Ziffern angeben:</p>
+    <ul>
+      <li>0 = Subkeys innerhalb von <em>Key</em> werden nicht abgerufen (nur die Werte).</li>
+      <li>1 = Alle Werte und Subkeys werden abgerufen.</li>
+      <li>2 = Nur die Subkeys werden abgerufen (nicht die Werte).</li>
+    </ul>
+  </dd>
 
   <dt>Rekursiv?</dt>
-  <dd>0 (Standard) Subkeys werden nicht durchsucht.<br>
-      1 Subkeys werden durchsucht - die darin enthaltenen Werte und Subkeys werden abgerufen.</dd>
+  <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig 0 (Subkeys werden nicht rekursiv durchsucht) verwendet. Ansonsten können Sie eine der folgenden Ziffern angeben:</p>
+    <ul>
+      <li>0 = Subkeys werden nicht durchsucht.</li>
+      <li>1 = Subkeys werden durchsucht - die darin enthaltenen Werte und Subkeys werden abgerufen.</li>
+    </ul>
+  </dd>
 
 </dl>
 
-<h2>Bemerkungen</h2>
+<h2 id="Remarks">Bemerkungen</h2>
 <p>Eine Registry-Schleife ist nützlich, wenn Sie mehrere Werte und Subkeys einzeln abarbeiten wollen. Die Werte und Subkeys werden in umgekehrter Reihenfolge abgerufen (von unten nach oben), so dass <a href="RegDelete.htm">RegDelete</a> innerhalb der Schleife verwendet werden kann, ohne sie unterbrechen zu müssen.</p>
 <p id="vars">Die folgenden Variablen sind nur in einer Registry-Schleife von Bedeutung. Wenn eine innere Registry-Schleife von einer äußeren Registry-Schleife umschlossen ist, wird der Eintrag von der innersten Schleife Vorrang haben:</p>
 <table class="info">
@@ -111,18 +122,18 @@
 </ul>
 <p>Auf der <a href="Loop.htm">Loop</a>-Seite finden Sie Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (sie können in jeder Schleifenvariante verwendet werden).</p>
 
-<h2>Siehe auch</h2>
+<h2 id="Related">Siehe auch</h2>
 <p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="RegRead.htm">RegRead</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="RegDelete.htm">RegDelete</a>, <a href="SetRegView.htm">SetRegView</a></p>
 
-<h2>Beispiele</h2>
+<h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExRegDelete">
-<p><a href="#ExRegDelete">#1</a>: Löscht den Link-Verlauf des Internet Explorer:</p>
+<p><a href="#ExRegDelete">#1</a>: Löscht den Link-Verlauf des Internet Explorer.</p>
 <pre>Loop, HKEY_CURRENT_USER, Software\Microsoft\Internet Explorer\TypedURLs
     RegDelete</pre>
 </div>
 
 <div class="ex" id="ExBasic">
-<p><a href="#ExBasic">#2</a>: Ein funktionierendes Testskript:</p>
+<p><a href="#ExBasic">#2</a>: Ein funktionierendes Testskript.</p>
 <pre>Loop, Reg, HKEY_CURRENT_USER\Software\Microsoft\Windows, KVR
 {
     if (A_LoopRegType = "key")
@@ -139,7 +150,7 @@
 </div>
 
 <div class="ex" id="ExRegSearch">
-<p><a href="#ExRegSearch">#3</a>: Dieses Beispiel sucht in der gesamten Registry nach einem oder mehreren bestimmten Werten.</p>
+<p><a href="#ExRegSearch">#3</a>: Sucht in der gesamten Registry nach einem oder mehreren bestimmten Werten.</p>
 <pre>SetBatchLines -1  <em>; Führt die Operation mit maximaler Geschwindigkeit aus.</em>
 RegSuchziel := "Notepad"  <em>; Teilt der Subroutine mit, was gesucht werden soll.</em>
 Gosub, RegSuche

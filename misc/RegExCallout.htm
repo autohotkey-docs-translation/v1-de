@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>Callouts in Regulären Ausdrücken | AutoHotkey</title>
-<meta name="description" content="Callouts bieten die Möglichkeit, die Kontrolle vorübergehend an das Skript zu übergeben, während ein Suchmuster (regulärer Ausdruck) ausgewertet wird." />
+<meta name="description" content="RegEx-Callouts bieten die Möglichkeit, die Kontrolle vorübergehend an das Skript zu übergeben, während ein Suchmuster (regulärer Ausdruck) ausgewertet wird." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,14 +13,14 @@
 
 <h1>Callouts in Regulären Ausdrücken <span class="ver">[AHK_L 14+]</span></h1>
 
-<p>Callouts bieten die Möglichkeit, die Kontrolle vorübergehend an das Skript zu übergeben, während ein Suchmuster (regulärer Ausdruck) ausgewertet wird. Detaillierte Informationen über das PCRE-Standard-Callout-Feature finden Sie unter <a href="http://www.pcre.org/pcre.txt">pcre.txt</a>.</p>
+<p>RegEx-Callouts bieten die Möglichkeit, die Kontrolle vorübergehend an das Skript zu übergeben, während ein Suchmuster (regulärer Ausdruck) ausgewertet wird. Detaillierte Informationen über das PCRE-Standard-Callout-Feature finden Sie unter <a href="http://www.pcre.org/pcre.txt">pcre.txt</a>.</p>
 
-<p>Callouts werden zurzeit nur von <a href="../commands/RegExMatch.htm">RegExMatch()</a> und <a href="../commands/RegExReplace.htm">RegExReplace()</a> unterstützt.</p>
+<p>RegEx-Callouts werden zurzeit nur von <a href="../commands/RegExMatch.htm">RegExMatch()</a> und <a href="../commands/RegExReplace.htm">RegExReplace()</a> unterstützt.</p>
 
 <h2 id="toc">Inhaltsverzeichnis</h2>
 <ul>
     <li><a href="#syntax">Syntax</a></li>
-    <li><a href="#callout-functions">Callout-Funktionen</a></li>
+    <li><a href="#callout-functions">RegEx-Callout-Funktionen</a></li>
     <li><a href="#EventInfo">EventInfo</a></li>
     <li><a href="#auto">Auto-Callout</a></li>
     <li><a href="#remarks">Bemerkungen</a></li>
@@ -28,11 +28,11 @@
 
 <h2 id="syntax">Syntax</h2>
 
-<p>Die Syntax zum Definieren eines Callouts ist <span class="Syntax">(?C<em>Nummer</em>:<em>Funktion</em>)</span> - hierbei ist <em>Nummer</em> und <em>Funktion</em> optional. Der Doppelpunkt (:) ist nur erlaubt, wenn <em>Funktion</em> angegeben ist, und optional, wenn <em>Nummer</em> weggelassen wird. Wenn <em>Funktion</em> angegeben ist, aber nicht der Name einer benutzerdefinierten Funktion ist, wird ein Kompilierungsfehler auftreten und die Suchmusterauswertung abgebrochen.</p>
+<p>Die Syntax zum Definieren eines RegEx-Callouts ist <span class="regex">(?C<em>Nummer</em>:<em>Funktion</em>)</span> - hierbei ist <em>Nummer</em> und <em>Funktion</em> optional. Der Doppelpunkt (:) ist nur erlaubt, wenn <em>Funktion</em> angegeben ist, und optional, wenn <em>Nummer</em> weggelassen wird. Wenn <em>Funktion</em> angegeben ist, aber nicht der Name einer benutzerdefinierten Funktion ist, wird ein Kompilierungsfehler auftreten und die Suchmusterauswertung abgebrochen.</p>
 
-<p>Lässt man <em>Funktion</em> weg, muss der Funktionsname in einer Variable namens <b>pcre_callout</b> angegeben werden. Wenn sowohl eine globale als auch lokale Variable mit diesem Namen existieren, hat die lokale Variable Vorrang. Wenn <em>pcre_callout</em> nicht den Namen einer benutzerdefinierten Funktion enthält, werden Callouts, die <em>Funktion</em> weglassen, ignoriert.</p>
+<p>Lässt man <em>Funktion</em> weg, muss der Funktionsname in einer Variable namens <b>pcre_callout</b> angegeben werden. Wenn sowohl eine globale als auch lokale Variable mit diesem Namen existieren, hat die lokale Variable Vorrang. Wenn <em>pcre_callout</em> nicht den Namen einer benutzerdefinierten Funktion enthält, werden RegEx-Callouts, die <em>Funktion</em> weglassen, ignoriert.</p>
 
-<h2 id="callout-functions">Callout-Funktionen</h2>
+<h2 id="callout-functions">RegEx-Callout-Funktionen</h2>
 
 <pre class="Syntax">
 Funktion(Match, CalloutNummer, FundPos, Heuhaufen, NadelRegEx)
@@ -40,17 +40,17 @@ Funktion(Match, CalloutNummer, FundPos, Heuhaufen, NadelRegEx)
     ...
 }
 </pre>
-<p>Callout-Funktionen akzeptieren bis zu 5 Parameter:</p>
+<p>RegEx-Callout-Funktionen akzeptieren bis zu 5 Parameter:</p>
 <ul>
   <li><b>Match</b>: Entspricht dem <em>AusgabeVar</em>-Parameter von RegExMatch(), inklusive der Erstellung von Array-Variablen, falls notwendig.</li>
-  <li><b>CalloutNummer</b>: Enthält die <em>Nummer</em> des Callouts.</li>
+  <li><b>CalloutNummer</b>: Enthält die <em>Nummer</em> des RegEx-Callouts.</li>
   <li><b>FundPos</b>: Enthält die Position der aktuellen potenziellen Übereinstimmung.</li>
   <li><b>Heuhaufen</b>: Enthält die <em>Heuhaufen</em>-Zeichenkette, die an RegExMatch() oder RegExReplace() übergeben wurde.</li>
   <li><b>NadelRegEx</b>: Enthält das <em>NadelRegEx</em>-Suchmuster, das an RegExMatch() oder RegExReplace() übergeben wurde.</li>
 </ul>
 <p>Diese Namen dienen nur als Beispiel. Es können beliebige Namen verwendet werden.</p>
 
-<p>Die Suchmusterauswertung kann je nach Rückgabewert der Callout-Funktion fortgesetzt werden oder fehlschlagen:</p>
+<p>Die Suchmusterauswertung kann je nach Rückgabewert der RegEx-Callout-Funktion fortgesetzt werden oder fehlschlagen:</p>
 <ul>
   <li>Wenn die Funktion <b>0</b> oder einen nicht-numerischen Wert zurückgibt, wird die Auswertung normal fortgesetzt.</li>
   <li>Wenn die Funktion <b>1</b> oder höher zurückgibt, wird die Auswertung an aktueller Stelle fehlschlagen, aber das Testen von anderen Auswertungsmöglichkeiten fortgesetzt.</li>
@@ -65,7 +65,7 @@ Callout(m) {
     MsgBox m=%m%`nm1=%m1%`nm2=%m2%
     return 1
 }</pre>
-<p>Das Beispiel oben bewirkt, dass <em>Callout</em> einmal für jede Teilzeichenkette, die mit dem Teil des Suchmusters vor dem Callout übereinstimmt, aufgerufen wird. Das <span class="Syntax">\b</span> dient dazu, unvollständige Wörter in Übereinstimmungen wie <em>The quic</em>, <em>The qui</em>, <em>The qu</em>, etc. auszuschließen.</p>
+<p>Das Beispiel oben bewirkt, dass <em>Callout</em> einmal für jede Teilzeichenkette, die mit dem Teil des Suchmusters vor dem RegEx-Callout übereinstimmt, aufgerufen wird. Das <span class="regex">\b</span> dient dazu, unvollständige Wörter in Übereinstimmungen wie <em>The quic</em>, <em>The qui</em>, <em>The qu</em>, etc. auszuschließen.</p>
 
 <h2 id="EventInfo">EventInfo</h2>
 
@@ -90,8 +90,8 @@ if (version &gt;= 2)
 
 <h2 id="auto">Auto-Callout</h2>
 
-<p>Fügen Sie <span class="Syntax">C</span> in den Optionen des Suchmusters ein, um den Auto-Callout-Modus zu aktivieren. In diesem Modus werden Callouts in Form von <span class="Syntax">(?C255)</span> vor jedem Element im Suchmuster eingefügt. Das folgende Beispiel kann genutzt werden, um reguläre Ausdrücke zu debuggen:</p>
-<pre><em>; Standard-Callout-Funktion setzen.</em>
+<p>Fügen Sie <strong>C</strong> in den Optionen des Suchmusters ein, um den Auto-Callout-Modus zu aktivieren. In diesem Modus werden RegEx-Callouts in Form von <span class="regex">(?C255)</span> vor jedem Element im Suchmuster eingefügt. Das folgende Beispiel kann genutzt werden, um reguläre Ausdrücke zu debuggen:</p>
+<pre><em>; Standard-RegEx-Callout-Funktion setzen.</em>
 pcre_callout := "DebugRegEx"
 
 <em>; RegExMatch mit der Auto-Callout-Option C aufrufen.</em>
@@ -123,8 +123,8 @@ DebugRegEx(Match, CalloutNumber, FoundPos, Haystack, NeedleRegEx)
 
 <h2 id="remarks">Bemerkungen</h2>
 
-<p>Callouts werden auf dem aktuellen Pseudo-Thread ausgeführt, allerdings wird der vorherige Wert von A_EventInfo wiederhergestellt, wenn die Callout-Funktion zurückkehrt. ErrorLevel wird erst gesetzt, wenn RegExMatch() oder RegExReplace() zurückkehrt.</p>
-<p>PCRE ist so optimiert, dass es in einigen Fällen vorzeitig abbricht, wenn es feststellt, dass eine Übereinstimmung nicht möglich ist. Damit Callouts in solchen Fällen aufgerufen werden können, müssen diese Optimierungen durch Angabe von <code>(*NO_START_OPT)</code> am Anfang des Suchmusters deaktiviert werden. Dies benötigt <span class="ver">[v1.1.05]</span> oder höher.</p>
+<p>RegEx-Callouts werden auf dem aktuellen Pseudo-Thread ausgeführt, allerdings wird der vorherige Wert von A_EventInfo wiederhergestellt, wenn die RegEx-Callout-Funktion zurückkehrt. ErrorLevel wird erst gesetzt, wenn RegExMatch() oder RegExReplace() zurückkehrt.</p>
+<p>PCRE ist so optimiert, dass es in einigen Fällen vorzeitig abbricht, wenn es feststellt, dass eine Übereinstimmung nicht möglich ist. Damit RegEx-Callouts in solchen Fällen aufgerufen werden können, müssen diese Optimierungen durch Angabe von <span class="regex">(*NO_START_OPT)</span> am Anfang des Suchmusters deaktiviert werden. Dies benötigt <span class="ver">[v1.1.05]</span> oder höher.</p>
 
 </body>
 </html>

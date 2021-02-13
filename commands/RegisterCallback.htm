@@ -17,7 +17,7 @@
 <p>Erstellt eine Maschinencode-Adresse, die, wenn aufgerufen, den Aufruf an eine <a href="../Functions.htm">Funktion</a> im Skript weiterleitet.</p>
 
 <pre class="Syntax">Adresse := <span class="func">RegisterCallback</span>("FunktionName" <span class="optional">, Optionen := "", ParamAnzahl := FormaleAnzahl, EventInfo := Adresse</span>)</pre>
-<h2>Parameter</h2>
+<h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>Adresse</dt>
@@ -44,7 +44,7 @@
 
 </dl>
 
-<h2>Die Parameter der Callback-Funktion</h2>
+<h2 id="The_Callback_Functions_Parameters">Die Parameter der Callback-Funktion</h2>
 <p>Eine <a href="../Functions.htm">Funktion</a>, die einer Callback-Adresse zugewiesen wurde, kann bis zu 31 Parameter akzeptieren. <a href="../Functions.htm#optional">Optionale Parameter</a> sind erlaubt; dies ist nützlich, wenn die Funktion von mehr als einem Aufrufer aufgerufen wird.</p>
 <p>Die korrekte Interpretation der Parameter erfordert ein gewisses Verständnis dafür, wie die x86-Aufrufkonventionen funktionieren. Da Autohotkey keine typisierten Parameter besitzt, wird davon ausgegangen, dass die Parameterliste des Callbacks aus Integern besteht und dass einige Neuinterpretationen gemacht werden müssen.</p>
 
@@ -84,7 +84,7 @@ DieFunk(params*) {
 <p>Die meisten Callbacks verwenden die <em>stdcall</em>-Aufrufkonvention, die eine feste Anzahl von Parametern voraussetzt. In solchen Fällen muss <em>ParamAnzahl</em> auf die Größe der Parameterliste gesetzt werden, wobei Int64 und Double als zwei 32-Bit-Parameter zählen.</p>
 <p>Bei <em>Cdecl</em>- oder 64-Bit-Aufrufkonventionen hat <em>ParamAnzahl</em> nur Einfluss darauf, wie vielen Skriptparametern Werte zugewiesen werden. Lässt man diesen Parameter weg, bekommen alle optionalen Parameter ihren Standardwert zugewiesen, außerdem werden sie von der Berechnung der in <em>params</em> gespeicherten Adresse ausgeschlossen.</p>
 
-<h2>Was die Funktion per <em>Return</em> zurückgeben sollte</h2>
+<h2 id="What_the_Function_Should_Return">Was die Funktion per <em>Return</em> zurückgeben sollte</h2>
 <p>Wenn die Funktion ein <a href="Return.htm">Return</a> ohne Parameter verwendet oder einen leeren Wert wie "" zurückgibt (oder überhaupt kein Return verwendet), wird 0 an den Aufrufer des Callbacks zurückgegeben. Ansonsten sollte die Funktion einen Integer zurückgeben, der dann an den Aufrufer zurückgegeben wird. AutoHotkey 32-Bit kürzt Rückgabewerte auf das 32-Bit-Format, während AutoHotkey 64-Bit Rückgabewerte im 64-Bit-Format unterstützt. Zurückgegebene Strukturen größer als diesen Wert werden nicht unterstützt.</p>
 
 <h2 id="Threads">Fast vs. Slow</h2>
@@ -92,19 +92,19 @@ DieFunk(params*) {
 <p>Der <a href="#Fast">Fast-Modus</a> hingegen erbt die globalen Einstellungen von einem <a href="../misc/Threads.htm">Thread</a>, der zum Zeitpunkt des Funktionsaufrufs aktiv war. Darüber hinaus werden jegliche Änderungen, die die Funktion an den globalen Einstellungen (einschließlich <a href="../misc/ErrorLevel.htm">ErrorLevel</a> und dem <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundenen Fenster</a>) vornimmt, für den <a href="../misc/Threads.htm">aktuellen Thread</a> wirksam. Demzufolge sollte der Fast-Modus nur verwendet werden, wenn genau bekannt ist, in welchem oder welchen Threads die Funktion aufgerufen wird.</p>
 <p>Um zu verhindern, dass ein Callback sich selbst unterbricht (oder von einem anderen Thread unterbrochen wird), können Sie <a href="Critical.htm">Critical</a> in die erste Zeile einfügen. Allerdings ist diese Vorgehensweise nicht besonders effektiv, wenn die Funktion indirekt über eine eingehende Meldung kleiner als 0x312 aufgerufen wird (das <a href="Critical.htm#Interval">Intervall</a> von Critical zu erhöhen könnte hierbei helfen). Darüber hinaus hindert <a href="Critical.htm">Critical</a> die Funktion nicht daran, etwas zu tun, das zum indirekten Selbstaufruf führen könnte, wie z. B. der Aufruf von <a href="PostMessage.htm">SendMessage</a> oder <a href="DllCall.htm">DllCall()</a>.</p>
 
-<h2>Speicher</h2>
+<h2 id="Memory">Speicher</h2>
 <p>Jedes Mal, wenn RegisterCallback() verwendet wird, wird eine kleine Menge an Speicher reserviert (32 Bytes plus System-Overhead). Da das Betriebssystem diesen Speicher automatisch beim Beenden des Skripts freigibt, muss jedes Skript, das Speicher für eine kleine <em>feste</em> Anzahl von Callbacks reserviert hat, den Speicher nicht explizit freigegeben. Ein Skript hingegen, das RegisterCallback() unbestimmt/unbegrenzt oft aufruft, sollte folgende Anweisung bei jedem unbenutzten Callback aufrufen:</p>
 <pre>DllCall("GlobalFree", "Ptr", Adresse, "Ptr")</pre>
 
-<h2>Siehe auch</h2>
-<p><a href="DllCall.htm">DllCall()</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="Sort.htm#callback">Sort-Callback</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a></p>
+<h2 id="Related">Siehe auch</h2>
+<p><a href="DllCall.htm">DllCall()</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="OnExit.htm#function">OnExit()</a>, <a href="OnExit.htm#command">OnExit</a>, <a href="OnClipboardChange.htm#function">OnClipboardChange()</a>, <a href="OnClipboardChange.htm#label">OnClipboardChange-Label</a>, <a href="Sort.htm#callback">Sort's Callback</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a></p>
 
-<h2>Beispiele</h2>
+<h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExWinList">
-<p><a href="#ExWinList">#1</a>: Das folgende Skript zeigt eine Zusammenfassung aller nicht-untergeordneten Fenster an.</p>
+<p><a href="#ExWinList">#1</a>: Zeigt eine Zusammenfassung aller nicht-untergeordneten Fenster an.</p>
 <pre><em>; Aus Leistungs- und Speichergründen wird RegisterCallback() nur einmal für einen bestimmten Callback aufgerufen:</em>
 if not EnumAdresse  <em>; Fast-Modus ist okay, weil er nur von diesem Thread aufgerufen wird:</em>
-    EnumAdresse := <strong>RegisterCallback</strong>("EnumWindowsProc", "Fast")
+    EnumAddresse := RegisterCallback("EnumWindowsProc", "Fast")
 
 DetectHiddenWindows On  <em>; Aufgrund des Fast-Modus wird diese Einstellung auch für Callback wirksam.</em>
 
@@ -124,7 +124,7 @@ EnumWindowsProc(hwnd, lParam)
 </div>
 
 <div class="ex" id="ExSubclassGUI">
-<p><a href="#ExSubclassGUI">#2</a>: Das folgende Skript zeigt, wie ein GUI-Fenster zu einer Unterklasse gemacht werden kann, wenn man dessen WindowProc an einen neuen WindowProc weiterleitet. In diesem Fall wird die Hintergrundfarbe des Text-Steuerelements auf eine benutzerdefinierte Farbe gesetzt.</p>
+<p><a href="#ExSubclassGUI">#2</a>: Demonstriert, wie ein GUI-Fenster zu einer Unterklasse gemacht werden kann, wenn man dessen WindowProc an einen neuen WindowProc weiterleitet. In diesem Fall wird die Hintergrundfarbe des Text-Steuerelements auf eine benutzerdefinierte Farbe gesetzt.</p>
 <pre>TextHintergrundFarbe := 0xFFBBBB  <em>; Eine benutzerdefinierte Farbe im BGR-Format.</em>
 TextHintergrundPinsel := DllCall("CreateSolidBrush", "UInt", TextHintergrundFarbe)
 
@@ -135,7 +135,7 @@ GuiHwnd := WinExist()
 <em>; 64-Bit-Skripte müssen SetWindowLongPtr statt SetWindowLong aufrufen:</em>
 SetWindowLong := A_PtrSize=8 ? "SetWindowLongPtr" : "SetWindowLong"
 
-WindowProcNeu := <strong>RegisterCallback</strong>("WindowProc", ""  <em>; Mit "" wird der Fast-Modus beim Setzen der Unterklasse verhindert.</em>
+WindowProcNeu := RegisterCallback("WindowProc", ""  <em>; Mit "" wird der Fast-Modus beim Setzen der Unterklasse verhindert.</em>
     , , MeinTextHwnd)  <em>; In <span class="ver">[v1.1.12+]</span> kann ParamAnzahl wie hier gezeigt weggelassen werden.</em>
 WindowProcAlt := DllCall(SetWindowLong, "Ptr", GuiHwnd, "Int", -4  <em>; -4 ist GWL_WNDPROC</em>
     , "Ptr", WindowProcNeu, "Ptr") <em>; Rückgabewert muss auf Ptr oder UPtr statt auf Int gesetzt werden.</em>

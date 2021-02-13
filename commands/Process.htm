@@ -16,7 +16,7 @@
 <p>Führt verschiedene Operationen an einem Prozess aus: überprüft, ob er vorhanden ist; ändert seine Priorität; schließt ihn; wartet, bis er geschlossen wurde.</p>
 <pre class="Syntax"><span class="func">Process</span>, <a href="#SubCommands">Unterbefehl</a> <span class="optional">, PIDOderName, Wert</span></pre>
 
-<h2>Parameter</h2>
+<h2 id="Parameters">Parameter</h2>
 <dl>
     <dt>Unterbefehl, Wert</dt>
     <dd>Diese Parameter sind voneinander abhängig und können wie <a href="#SubCommands">unten gezeigt</a> genutzt werden.</dd>
@@ -69,26 +69,26 @@
 <pre class="Syntax"><span class="func">Process</span>, WaitClose, PIDOderName <span class="optional">, Zeitlimit</span></pre>
 <p>Geben Sie für <em>Zeitlimit</em> die maximale Wartezeit in Sekunden an (kann ein Dezimalpunkt enthalten). Lässt man <em>Zeitlimit</em> weg, wird der Unterbefehl unendlich lang warten. Wenn alle gefundenen Prozesse geschlossen sind, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 0 gesetzt. Hat der Unterbefehl das Zeitlimit überschritten, wird ErrorLevel auf die Prozess-ID (PID) des ersten noch vorhandenen gefundenen Prozesses gesetzt.</p>
 
-<h2>ErrorLevel</h2>
+<h2 id="ErrorLevel">ErrorLevel</h2>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn ein Unterbefehl scheitert oder das Zeitlimit überschreitet. Ansonsten wird es auf eine Prozess-ID (PID) gesetzt. Schauen Sie sich die Unterbefehle oben an, um mehr zu erfahren.</p>
 
-<h2>Bemerkungen</h2>
+<h2 id="Remarks">Bemerkungen</h2>
 <p>Für die Unterbefehle <a href="#Wait">Wait</a> und <a href="#WaitClose">WaitClose</a>: Prozesse werden alle 100 Millisekunden überprüft; sobald die Bedingung erfüllt wurde, hört der Unterbefehl auf zu warten. Das heißt, dass der Unterbefehl nicht bis zum Ablaufen des Zeitlimits wartet, sondern dass er <a href="../misc/ErrorLevel.htm">ErrorLevel</a> sofort auf einen der oben genannten Werte setzt und dann die Ausführung des Skripts fortsetzt. Während der Unterbefehl im Wartezustand ist, können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
 
-<h2>Siehe auch</h2>
-<p><a href="Run.htm">Run</a>, <a href="WinGet.htm">WinGet</a>, <a href="WinClose.htm">WinClose</a>, <a href="WinKill.htm">WinKill</a>, <a href="WinWait.htm">WinWait</a>, <a href="WinWaitClose.htm">WinWaitClose</a>, <a href="WinExist.htm">WinExist() / IfWinExist</a></p>
+<h2 id="Related">Siehe auch</h2>
+<p><a href="Run.htm">Run</a>, <a href="WinGet.htm">WinGet</a>, <a href="WinClose.htm">WinClose</a>, <a href="WinKill.htm">WinKill</a>, <a href="WinWait.htm">WinWait</a>, <a href="WinWaitClose.htm">WinWaitClose</a>, <a href="WinExist.htm">WinExist()</a></p>
 
-<h2>Beispiele</h2>
+<h2 id="Examples">Beispiele</h2>
 
 <div class="ex" id="ExBasic">
-<p><a href="#ExBasic">#1</a>: Startet den Texteditor, setzt seine Priorität auf "Hoch" und zeigt seine aktuelle PID:</p>
+<p><a href="#ExBasic">#1</a>: Startet den Texteditor, setzt seine Priorität auf "Hoch" und meldet seine aktuelle PID.</p>
 <pre>Run notepad.exe,,, NeuePID
 Process, Priority, %NeuePID%, High
 MsgBox Die PID des neu gestarteten Texteditors ist %NeuePID%.</pre>
 </div>
 
 <div class="ex" id="ExAdvanced">
-<p><a href="#ExAdvanced">#2</a>: Wartet bis zu 5.5 Sekunden auf das Erscheinen des Texteditors. Wenn der Texteditor innerhalb dieses Zeitrahmens erscheint, wird seine Priorität auf "Niedrig" und die Priorität des Skripts auf "Hoch" gesetzt. Danach wird der Texteditor geschlossen und ein Mitteilungsfenster angezeigt, wenn der Texteditor nicht innerhalb von 5 Sekunden geschlossen wird:</p>
+<p><a href="#ExAdvanced">#2</a>: Wartet bis zu 5.5 Sekunden auf das Erscheinen des Texteditors. Wenn der Texteditor innerhalb dieses Zeitrahmens erscheint, wird seine Priorität auf "Niedrig" und die Priorität des Skripts auf "Hoch" gesetzt. Danach wird der Texteditor geschlossen und ein Mitteilungsfenster angezeigt, wenn der Texteditor nicht innerhalb von 5 Sekunden geschlossen wird.</p>
 <pre>Process, Wait, notepad.exe, 5.5
 NeuePID := ErrorLevel  <em>; Den Wert sofort speichern, da ErrorLevel ständig geändert wird.</em>
 if not NeuePID
@@ -107,8 +107,8 @@ if ErrorLevel <em>; Die PID ist noch vorhanden.</em>
 </div>
 
 <div class="ex" id="ExHotkey">
-<p><a href="#ExHotkey">#3</a>: Ein Hotkey zum Ändern der Prozess-Priorität eines aktiven Fensters:</p>
-<pre>#z:: <em>; Hotkey: WIN+Z</em>
+<p><a href="#ExHotkey">#3</a>: Drücken Sie einen Hotkey, um die Priorität des Prozesses des aktiven Fensters zu ändern.</p>
+<pre>#z:: <em>; WIN+Z-Hotkey</em>
 WinGet, aktive_pid, PID, A
 WinGetTitle, aktiver_titel, A
 Gui, 5:Add, Text,, Drücken Sie ESCAPE zum Abbrechen, oder klicken Sie doppelt auf einen`nneuen Prioritätslevel für das folgende Fenster:`n%aktiver_titel%
@@ -138,7 +138,7 @@ return</pre>
 </div>
 
 <div class="ex" id="ListEx">
-<p><a href="#ListEx">#4</a>: Ermittelt eine Liste von allen laufenden Prozessen via <a href="DllCall.htm">DllCall()</a> und zeigt sie dann in einem Mitteilungsfenster an:</p>
+<p><a href="#ListEx">#4</a>: Ermittelt eine Liste von allen laufenden Prozessen via <a href="DllCall.htm">DllCall()</a> und zeigt sie dann in einem Mitteilungsfenster an.</p>
 <pre>d := "  |  "  <em>; Zeichenkette-Trennzeichen</em>
 s := 4096  <em>; Größe der Pufferspeicher und Arrays (4 KB)</em>
 
@@ -184,7 +184,7 @@ MsgBox, 0, %c% Prozesse, %l%</pre>
 </div>
 
 <div class="ex" id="ListCom">
-<p><a href="#ListCom">#5</a>: Ermittelt eine Liste von allen laufenden Prozessen via COM:</p>
+<p><a href="#ListCom">#5</a>: Ermittelt eine Liste von allen laufenden Prozessen via COM.</p>
 <pre>Gui, Add, ListView, x2 y0 w400 h500, Prozessname|Befehlszeile
 for Prozess in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process")
     LV_Add("", Prozess.Name, Prozess.CommandLine)

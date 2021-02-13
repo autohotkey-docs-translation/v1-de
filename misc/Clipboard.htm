@@ -57,7 +57,7 @@ ClipSicherung := ""   <em>; Speicher freigeben, falls die Zwischenablage sehr gr
   <li>Schreiben Sie die Zwischenablagedaten in eine Datei mithilfe von <a href="../commands/FileAppend.htm">FileAppend</a>, wie oben gezeigt.</li>
   <li>Kopieren Sie die Daten in eine andere Variable (oder <a href="../Functions.htm#ByRef">ByRef</a>-Parameter) wie in diesem Beispiel: <code>ClipSicherung2 := ClipSicherung</code>.</li>
   <li>Übergeben Sie die Daten an eine <a href="../Functions.htm">benutzerdefinierte Funktion</a>, entweder <a href="../Functions.htm#ByRef">via Referenz</a> oder in <span class="ver">[v1.0.46+]</span> via Wert.</li>
-  <li>Bestimmen Sie die Größe der Daten, indem Sie sie an <a href="../commands/StringLen.htm">StrLen() / StringLen</a> übergeben, wie <a href="#len">unten</a> beschrieben.</li>
+  <li>Bestimmen Sie die Größe der Daten, indem Sie sie an <a href="../commands/StrLen.htm">StrLen()</a> übergeben, wie <a href="#len">unten</a> beschrieben.</li>
   <li>Vergleichen Sie zwei solcher Variablen unter Verwendung einer altmodischen If-Anweisung, wie <a href="#compare">unten</a> gezeigt.</li>
   <li>Nehmen Sie die <a href="../Variables.htm#amp">Adresse</a> der Variable oder übergeben Sie die Variable selbst an <a href="../commands/NumGet.htm">NumGet</a>, um die Daten zu untersuchen.</li>
 </ul>
@@ -65,15 +65,15 @@ ClipSicherung := ""   <em>; Speicher freigeben, falls die Zwischenablage sehr gr
 <ul>
   <li>Wenn binäre Zwischenablagendaten einer Variable zugewiesen werden, wird die Variable mit einem versteckten Attribut markiert. Dieses Attribut kann nur durch <a href="../commands/FileRead.htm">FileRead</a> mit der Option <code>*c</code> gesetzt werden, oder durch direkte Zuweisung von <em>ClipboardAll</em> (wie oben gezeigt) oder einer anderen Variable mit dem Attribut.</li>
   <li>Wenn binäre Zwischenablagendaten anders als oben beschrieben verwendet werden, werden diese in der Regel als Text interpretiert und beim ersten Nullzeichen abgeschnitten, das normalerweise am Anfang der Daten steht. Dies geschieht zum Beispiel, wenn man versucht, die Daten von einer Funktion zurückzugeben oder sie einer Eigenschaft oder einem Array-Element zuzuweisen.</li>
-  <li>Das Clipboard-Attribut wird entfernt, wenn die Variable freigegeben oder ihr ein anderer Wert zugewiesen wird, selbst mit indirekten Mitteln wie <a href="../commands/StringReplace.htm">StringReplace</a>.</li>
+  <li>Das Clipboard-Attribut wird entfernt, wenn die Variable freigegeben oder ihr ein anderer Wert zugewiesen wird, selbst mit indirekten Mitteln wie <a href="../commands/StrReplace.htm">StrReplace()</a> oder <a href="../commands/StringReplace.htm">StringReplace</a>.</li>
   <li>Variablen ohne Clipboard-Attribut werden als Text behandelt, wenn sie der <em>Clipboard</em>-Variable zugewiesen oder an FileAppend übergeben werden, sogar wenn die Daten im richtigen Binärformat vorliegen.</li>
 </ul>
 
-<h3>Hinweise</h3>
+<h3 id="Notes">Hinweise</h3>
 <p>Falls <em>ClipboardAll</em> nicht in der Lage ist, eine oder mehrere Datenobjekte (Formate) von der Zwischenablage abzurufen, werden die Objekte ausgelassen und die restlichen gespeichert.</p>
 <p>Mit <a href="../commands/ClipWait.htm">ClipWait</a> kann festgestellt werden, wann die Zwischenablage Daten enthält (wahlweise auch Daten, die kein Text sind).</p>
-<p id="len"><a href="../commands/StringLen.htm">StrLen / StringLen</a> kann genutzt werden, um die Gesamtgröße einer Variable zu ermitteln, der <em>ClipboardAll</em> zugewiesen wurde. Um die Größe bei den Unicode-Versionen von AutoHotkey abzurufen (in Bytes), muss die Länge mit 2 multipliziert werden. <a href="../Variables.htm#IsUnicode">A_IsUnicode</a> kann verwendet werden, um ANSI- und Unicode-Versionen zu unterstützen. Zum Beispiel: <code>Größe := StrLen(ClipSicherung) * (A_IsUnicode ? 2 : 1)</code>.</p>
-<p id="compare">Variablen, denen <em>ClipboardAll</em> zugewiesen wurde, können mittels <a href="../commands/IfEqual.htm">IfEqual, IfNotEqual</a>, <code>If Var1 = %Var2%</code> oder <code>If Var1 != %Var2%</code> miteinander verglichen werden (aber nicht direkt mit <em>ClipboardAll</em>). Im folgenden Beispiel wird zunächst die Länge jeder Variable überprüft. Falls das nicht reicht, können die Variablen noch wie folgt verglichen werden:</p>
+<p id="len"><a href="../commands/StrLen.htm">StrLen()</a> kann genutzt werden, um die Gesamtgröße einer Variable zu ermitteln, der <em>ClipboardAll</em> zugewiesen wurde. Um die Größe bei den Unicode-Versionen von AutoHotkey abzurufen (in Bytes), muss die Länge mit 2 multipliziert werden. <a href="../Variables.htm#IsUnicode">A_IsUnicode</a> kann verwendet werden, um ANSI- und Unicode-Versionen zu unterstützen. Zum Beispiel: <code>Größe := StrLen(ClipSicherung) * (A_IsUnicode ? 2 : 1)</code>.</p>
+<p id="compare">Variablen, denen <em>ClipboardAll</em> zugewiesen wurde, können mittels <a href="../commands/IfEqual.htm">If[Not]Equal</a>, <code>If Var1 = %Var2%</code> oder <code>If Var1 != %Var2%</code> miteinander verglichen werden (aber nicht direkt mit <em>ClipboardAll</em>). Im folgenden Beispiel wird zunächst die Länge jeder Variable überprüft. Falls das nicht reicht, können die Variablen noch wie folgt verglichen werden:</p>
 <pre>if ClipSicherung1 != %ClipSicherung2%   <em>; <u>Muss</u> eine IF-Anweisung im alten Stil sein, kein Ausdruck.</em>
     MsgBox Die zwei gespeicherten Zwischenablagen sind unterschiedlich.</pre>
 <p>Das Speichern von <em>ClipboardAll</em> in eine Variable wird nicht durch das Speicherlimit von <a href="../commands/_MaxMem.htm">#MaxMem</a> beeinflusst.</p>
@@ -86,7 +86,7 @@ ClipSicherung := ""   <em>; Speicher freigeben, falls die Zwischenablage sehr gr
 </ul>
 
 <h2 id="OnClipboardChange">OnClipboardChange</h2>
-<p>Skripte können mithilfe von <a href="../commands/OnClipboardChange.htm">OnClipboardChange</a> Änderungen in der Zwischenablage erkennen.</p>
+<p>Skripte können mittels <a href="../commands/OnClipboardChange.htm#function">OnClipboardChange()</a> oder <a href="../commands/OnClipboardChange.htm#label">OnClipboardChange-Label</a> Änderungen in der Zwischenablage erkennen.</p>
 
 </body>
 </html>

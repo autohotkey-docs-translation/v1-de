@@ -16,7 +16,7 @@
 <p>Ruft eine Funktion aus einer DLL-Datei auf, wie z. B. eine API-Funktion von Windows.</p>
 
 <pre class="Syntax">Ergebnis := <span class="func">DllCall</span>("<span class="optional">DllDatei\</span>Funktion" <span class="optional">, Typ1, Arg1, Typ2, Arg2, "Cdecl RückgabeTyp"</span>)</pre>
-<h2>Parameter</h2>
+<h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>Ergebnis</dt>
@@ -161,9 +161,9 @@ Ergebnis := DllCall("CharLower", "<strong><u>Str</u></strong>", DllCall("CharUpp
 <p>Der Großteil des .NET-Frameworks kann auch via COM und DllCall angesteuert werden. Weitere Informationen finden Sie unter <a href="https://www.autohotkey.com/forum/topic26191.html">.NET Framework Interop</a> (englisch).
 </p>
 
-<h2>Siehe auch</h2>
+<h2 id="Related">Siehe auch</h2>
 <p><a href="../Compat.htm#DllCall">Skript-Kompatibilität</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="Run.htm">Run</a>, <a href="VarSetCapacity.htm">VarSetCapacity()</a>, <a href="../Functions.htm">Funktionen</a>, <a href="SysGet.htm">SysGet</a>, <a href="https://msdn.microsoft.com/de-de/library/">MSDN-Bibliothek</a></p>
-<h2>Beispiele</h2>
+<h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExMessageBox">
 <p><a href="#ExMessageBox">#1</a>: Ruft die Windows-API-Funktion "MessageBox" auf und meldet, welche Schaltfläche der Benutzer drückt.</p>
 <pre>WelcheSchaltfl := DllCall("MessageBox", "Int", 0, "Str", "Ja oder Nein drücken", "Str", "Titel der Box", "Int", 4)
@@ -194,7 +194,7 @@ MsgBox % Format("{:010}", 432)
 </div>
 
 <div class="ex" id="QPC">
-<p><a href="#QPC">#5</a>: Zeigt, wie man mit QueryPerformanceCounter() eine höhere Präzision als die 10 ms von <a href="../Variables.htm#TickCount">A_TickCount</a> erreichen kann.</p>
+<p><a href="#QPC">#5</a>: Demonstriert, wie man mit QueryPerformanceCounter() eine höhere Präzision als die 10 ms von <a href="../Variables.htm#TickCount">A_TickCount</a> erreichen kann.</p>
 <pre>DllCall("QueryPerformanceFrequency", "Int64*", freq)
 DllCall("QueryPerformanceCounter", "Int64*", CounterDavor)
 Sleep 1000
@@ -203,7 +203,7 @@ MsgBox % "Die Differenz zwischen den Zeiten beträgt " . (CounterDanach - Counte
 </div>
 
 <div class="ex" id="ExMouseSpeed">
-<p><a href="#ExMouseSpeed">#6</a>: Ein Hotkey, der vorübergehend die Geschwindigkeit des Mauszeigers verringert, um eine genauere Positionierung zu ermöglichen. Halten Sie <kbd>F1</kbd> gedrückt, um den Mauszeiger zu verlangsamen. Lassen Sie diese Taste wieder los, um die originale Geschwindigkeit wiederherzustellen.</p>
+<p><a href="#ExMouseSpeed">#6</a>: Drücken Sie einen Hotkey, um die Geschwindigkeit des Mauszeigers vorübergehend zu verringern, was eine genauere Positionierung ermöglicht. Halten Sie <kbd>F1</kbd> gedrückt, um den Mauszeiger zu verlangsamen. Lassen Sie diese Taste wieder los, um die originale Geschwindigkeit wiederherzustellen.</p>
 <pre>F1::
 SPI_GETMOUSESPEED := 0x70
 SPI_SETMOUSESPEED := 0x71
@@ -217,13 +217,8 @@ return
 F1 up::DllCall("SystemParametersInfo", "UInt", SPI_SETMOUSESPEED, "UInt", 0, "Ptr", OrigMausGeschw, "UInt", 0)  <em>; Stellt die ursprüngliche Geschwindigkeit wieder her.</em></pre>
 </div>
 
-<div class="ex" id="GetChildHWND">
-<p><a href="#GetChildHWND">#7</a>: Wenn Sie die eindeutige ID des Fensters und den Text oder die ClassNN-Bezeichnung eines der darin enthaltenen Steuerelemente übergeben, gibt die folgende Funktion die HWND-Nummer (eindeutige ID) dieses Steuerelements zurück. <span class="ver">[v1.0.43.06+]</span>: Diese Funktion wurde von <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a> abgelöst, das wesentlich präziser ist.</p>
-<pre>ControlGet, AusgabeVar, Hwnd,, ClassNN, FensterTitel</pre>
-</div>
-
 <div class="ex" id="ExWatchScrollBar">
-<p><a href="#ExWatchScrollBar">#8</a>: Überwacht das aktive Fenster und zeigt die Position der vertikalen Scrollleiste seines fokussierten Steuerelements an (in Echzeit). Dieses Beispiel benötigt <span class="ver">[v1.0.43.06+]</span>, weil es <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a> verwendet.</p>
+<p><a href="#ExWatchScrollBar">#7</a>: Überwacht das aktive Fenster und zeigt die Position der vertikalen Scrollleiste seines fokussierten Steuerelements an (in Echzeit). Dieses Beispiel benötigt <span class="ver">[v1.0.43.06+]</span>, weil es <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a> verwendet.</p>
 <pre>#Persistent
 SetTimer, ScrollleisteÜberwachen, 100
 return
@@ -235,14 +230,14 @@ if not AktivesFenster  <em>; Kein aktives Fenster.</em>
 ControlGetFocus, FokussiertesStrlmnt, ahk_id %AktivesFenster%
 if not FokussiertesStrlmnt  <em>; Kein fokussiertes Steuerelement.</em>
     return
-<em>; Zeigt die vertikale oder horizontale Position der Scrollleiste in einem ToolTip an:</em>
+<em>; Zeigt die vertikale oder horizontale Position der Scrollleiste in einem Tooltip an:</em>
 ControlGet, UnterelementHWND, Hwnd,, %FokussiertesStrlmnt%, ahk_id %AktivesFenster%
 ToolTip % DllCall("GetScrollPos", "Ptr", UnterelementHWND, "Int", 1)  <em>;  Letzter Parameter kann 1 für SB_VERT und 0 für SB_HORZ sein.</em>
 return</pre>
 </div>
 
 <div class="ex" id="file">
-<p><a href="#file">#9</a>: Dieses Skript schreibt etwas Text in eine Datei und liest ihn zurück in den Speicher (benötigt <span class="ver">[v1.0.34+]</span>). Diese Methode kann genutzt werden, um die Performance beim gleichzeitigen Lesen oder Schreiben mehrerer Dateien zu verbessern. <span class="ver">[AHK_L 42+]</span>: Das gleiche kann mit <a href="FileOpen.htm">FileOpen()</a> erreicht werden. Siehe dazu das <a href="FileOpen.htm#writeread">Beispiel</a>.</p>
+<p><a href="#file">#8</a>: Schreibt etwas Text in eine Datei und liest ihn zurück in den Speicher (benötigt <span class="ver">[v1.0.34+]</span>). Diese Methode kann genutzt werden, um die Performance beim gleichzeitigen Lesen oder Schreiben mehrerer Dateien zu verbessern. <span class="ver">[AHK_L 42+]</span>: Das gleiche kann mit <a href="FileOpen.htm">FileOpen()</a> erreicht werden. Siehe dazu das <a href="FileOpen.htm#writeread">Beispiel</a>.</p>
 <pre>FileSelectFile, DateiName, S16,, Neue Datei erstellen:
 if (DateiName = "")
     return
@@ -278,7 +273,7 @@ MsgBox Die folgende Zeichenkette wurde aus der Datei gelesen: %TestZkette%</pre>
 </div>
 
 <div class="ex" id="HideCursor">
-<p><a href="#HideCursor">#10</a>: Versteckt den Mauszeiger, wenn Sie <kbd>WIN</kbd>+<kbd>C</kbd> drücken. Um den Mauszeiger wieder sichtbar zu machen, drücken Sie erneut diesen Hotkey. Dieses Skript stammt von <a href="https://www.autohotkey.com/forum/topic6107.html">www.autohotkey.com/forum/topic6107.html</a></p>
+<p><a href="#HideCursor">#9</a>: Versteckt den Mauszeiger, wenn Sie <kbd>WIN</kbd>+<kbd>C</kbd> drücken. Um den Mauszeiger wieder sichtbar zu machen, drücken Sie erneut diesen Hotkey. Dieses Skript stammt von <a href="https://www.autohotkey.com/forum/topic6107.html">www.autohotkey.com/forum/topic6107.html</a></p>
 <pre>OnExit, ZeigeCursor  <em>; Stellt sicher, dass der Mauszeiger beim Beenden des Skripts wieder sichtbar gemacht wird.</em>
 return
 
@@ -324,7 +319,7 @@ SystemCursor(OnOff=1)   <em>; INIT = "I","Init"; OFF = 0,"Off"; TOGGLE = -1,"T",
 </div>
 
 <div class="ex" id="ExStruct">
-<p><a href="#ExStruct">#11</a>: Struktur-Beispiel. Übergibt die Adresse einer RECT-Struktur an die GetWindowRect-Funktion, die die Strukturelemente auf die Positionen der linken, oberen, rechten und unteren Seite des Fensters setzt (relativ zum Bildschirm).</p>
+<p><a href="#ExStruct">#10</a>: Struktur-Beispiel. Übergibt die Adresse einer RECT-Struktur an die GetWindowRect-Funktion, die die Strukturelemente auf die Positionen der linken, oberen, rechten und unteren Seite des Fensters setzt (relativ zum Bildschirm).</p>
 <pre>Run Notepad
 WinWait Unbenannt - Editor  <em>; Setzt auch das "<a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>" für das untere WinExist().</em>
 VarSetCapacity(Rect, 16)  <em>; RECT ist eine Struktur, die aus vier 32-Bit-Integern besteht (also 4*4=16).</em>
@@ -334,7 +329,7 @@ MsgBox % "Links " . <a href="NumGet.htm">NumGet</a>(Rect, 0, "Int") . " Oben " .
 </div>
 
 <div class="ex" id="ExStructRect">
-<p><a href="#ExStructRect">#12</a>: Struktur-Beispiel. Übergibt an FillRect() die Adresse einer RECT-Struktur, die einen Bereich des Bildschirms kennzeichnet, der kurzzeitig rot gefärbt werden soll.</p>
+<p><a href="#ExStructRect">#11</a>: Struktur-Beispiel. Übergibt an FillRect() die Adresse einer RECT-Struktur, die einen Bereich des Bildschirms kennzeichnet, der kurzzeitig rot gefärbt werden soll.</p>
 <pre>VarSetCapacity(Rect, 16, 0)  <em>; Setzt die Kapazität zum Speichern von vier 4-Byte-Integern und initialisiert sie alle mit Null.</em>
 <a href="NumPut.htm">NumPut</a>(A_ScreenWidth//2, Rect, 8, "Int")  <em>; Der dritte Integer in der Struktur ist "rect.right".</em>
 NumPut(A_ScreenHeight//2, Rect, 12, "Int") <em>; Der vierte Integer in der Struktur ist "rect.bottom".</em>
@@ -346,7 +341,7 @@ DllCall("DeleteObject", "Ptr", hBrush)  <em>; Gibt Speicher frei.</em></pre>
 </div>
 
 <div class="ex" id="ExSystemTime">
-<p><a href="#ExSystemTime">#13</a>: Struktur-Beispiel. Stellt die Systemuhr auf ein bestimmtes Datum und eine bestimmte Uhrzeit um. Seien Sie vorsichtig, wenn Sie ein zukünftiges Datum setzen, da dies dazu führen kann, dass geplante Tasks vorzeitig ausgeführt werden!</p>
+<p><a href="#ExSystemTime">#12</a>: Struktur-Beispiel. Stellt die Systemuhr auf ein bestimmtes Datum und eine bestimmte Uhrzeit um. Seien Sie vorsichtig, wenn Sie ein zukünftiges Datum setzen, da dies dazu führen kann, dass geplante Tasks vorzeitig ausgeführt werden!</p>
 <pre>SetzeSystemuhr("20051008142211")  <em>; Übergeben Sie einen <a href="FileSetTime.htm#YYYYMMDD">Zeitstempel</a> (lokal, nicht UTC).</em>
 
 SetzeSystemuhr(YYYYMMDDHHMISS)
@@ -384,7 +379,7 @@ SetzeSystemuhr(YYYYMMDDHHMISS)
 </div>
 
 <div class="ex" id="ExTaskbar">
-<p><a href="#ExTaskbar">#14</a>: Entfernt mithilfe von COM vorübergehend das aktive Fenster aus der Taskleiste.</p>
+<p><a href="#ExTaskbar">#13</a>: Entfernt mithilfe von COM vorübergehend das aktive Fenster aus der Taskleiste.</p>
 <pre><em>/*
   Methoden in der <a href="https://msdn.microsoft.com/de-de/library/bb774652.aspx">ITaskbarList</a>-VTable:
     IUnknown:
