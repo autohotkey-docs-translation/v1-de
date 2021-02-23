@@ -46,7 +46,7 @@ deprecateData = {
   "commands/Transform.htm#Ln": "Ln()",
   "commands/Transform.htm#Log": "Log()",
   "commands/Transform.htm#Mod": "Mod()",
-  "commands/Transform.htm#Pow": "den "**"-Operator",
+  "commands/Transform.htm#Pow": "den \"**\"-Operator",
   "commands/Transform.htm#Round": "Round()",
   "commands/Transform.htm#Sin": "Sin()",
   "commands/Transform.htm#Sqrt": "Sqrt()",
