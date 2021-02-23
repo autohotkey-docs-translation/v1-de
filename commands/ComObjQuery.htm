@@ -37,7 +37,7 @@
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExClassName">
-<p><a href="#ExClassName">#1</a>: Ermittelt den Klassennamen eines Objekts.</p>
+<p><a class="ex_number" href="#ExClassName"></a> Ermittelt den Klassennamen eines Objekts.</p>
 <pre>obj := ComObjCreate("Scripting.Dictionary")
 
 MsgBox % "Interface-Name: " ComObjType(obj, "name")
@@ -55,10 +55,13 @@ if !(pci := ComObjQuery(obj, IID_IProvideClassInfo))
 DllCall(vtable(pci, 3), "ptr", pci, "ptr*", ti)
 
 <em>; GetDocumentation aufrufen, um den vollständigen Typennamen des Objekts zu erhalten.</em>
-DllCall(vtable(ti, 12), "ptr", ti, "int", -1, "ptr*", name, "ptr", 0, "ptr", 0, "ptr", 0)
+DllCall(vtable(ti, 12), "ptr", ti, "int", -1, "ptr*", pname, "ptr", 0, "ptr", 0, "ptr", 0)
 
 <em>; Den BSTR-Pointer in eine brauchbare Zeichenkette umwandeln.</em>
-name := StrGet(name, "UTF-16")
+name := StrGet(pname, "UTF-16")
+
+<em>; Gibt den von pname referenzierten BSTR frei.</em>
+DllCall("OleAut32\SysFreeString", "ptr", pname)
 
 <em>; Rohe Interface-Pointer freigeben.</em>
 ObjRelease(ti)
@@ -77,7 +80,7 @@ vtable(ptr, n) {
 </div>
 
 <div class="ex" id="ExIE">
-<p><a href="#ExIE">#2</a>: Automatisiert ein vorhandenes Internet-Explorer-Fenster.</p>
+<p><a class="ex_number" href="#ExIE"></a> Automatisiert ein vorhandenes Internet-Explorer-Fenster.</p>
 <pre>sURL := "https://www.autohotkey.com/boards/"
 if WebBrowser := GetWebBrowser()
     WebBrowser.Navigate(sURL)

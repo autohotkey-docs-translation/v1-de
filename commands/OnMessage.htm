@@ -20,7 +20,7 @@
 <dl>
 
   <dt>MldNummer</dt>
-  <dd><p>Die Nummer einer Meldung zwischen 0 und 4294967295 (0xFFFFFFFF), die überwacht oder abgefragt werden soll. Sofern das Überwachen einer <a href="../misc/SendMessageList.htm">Systemmeldung</a> nicht erforderlich ist (also eine unter 0x400), sollte man am besten eine Nummer verwenden, die größer ist als 4096 (0x1000). Diese Methode verringert die Chance, dass interne Meldungen von AutoHotkey gestört werden.</p></dd>
+  <dd><p>Die Nummer einer Meldung zwischen 0 und 4294967295 (0xFFFFFFFF), die überwacht oder abgefragt werden soll. Sofern das Überwachen einer <a href="../misc/SendMessageList.htm">Systemmeldung</a> nicht erforderlich ist (also eine unter 0x0400), sollte man am besten eine Nummer verwenden, die größer ist als 4096 (0x1000). Diese Methode verringert die Chance, dass interne Meldungen von AutoHotkey gestört werden.</p></dd>
 
   <dt>Funktion</dt>
   <dd><p>Der Name einer <a href="../Functions.htm">Funktion</a>, oder in <span class="ver">[v1.1.20+]</span> ein <a href="../objects/Functor.htm">Funktionsobjekt</a>. Um einen direkt geschriebenen Funktionsnamen zu übergeben, muss er in Anführungszeichen gesetzt werden.</p>
@@ -105,7 +105,7 @@
 MldÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des Fensters, das die Meldung erhalten hat.</em></pre>
 
 <h2 id="What_the_Function_Should_Return">Was die Funktion per <em>Return</em> zurückgeben sollte</h2>
-<p>Verwendet eine überwachende Funktion <a href="Return.htm">Return</a> ohne Parameter oder mit einem leeren Wert wie "" (oder verwendet sie überhaupt kein Return), wird die eingehende Meldung beim Erreichen des Funktionsendes normal fortgesetzt. Das gleiche passiert, wenn man das Ende der Funktion via <a href="Exit.htm">Exit</a> erzwingt oder einen Laufzeitfehler verursacht (der beispielsweise durch <a href="Run.htm">Ausführen</a> einer nicht-existierenden Datei ausgelöst werden kann). Verwendet man als Rückgabewert hingegen einen Integer, wird dieser Wert sofort als Antwort gesendet; das heißt, dass das Programm die Meldung nicht weiter fortsetzen wird. Zum Beispiel könnte eine Funktion, die WM_LBUTTONDOWN (0x201) überwacht, einen Integer zurückgeben, um das Zielfenster daran zu hindern, benachrichtigt zu werden, dass ein Mausklick erfolgt ist. In vielen Fällen (z. B. als eine Meldung, empfangen via <a href="PostMessage.htm">PostMessage</a>) ist es egal, welcher Integer zurückgegeben wird; aber im Zweifelsfall ist eine 0 am sichersten.</p>
+<p>Verwendet eine überwachende Funktion <a href="Return.htm">Return</a> ohne Parameter oder mit einem leeren Wert wie "" (oder verwendet sie überhaupt kein Return), wird die eingehende Meldung beim Erreichen des Funktionsendes normal fortgesetzt. Das gleiche passiert, wenn man das Ende der Funktion via <a href="Exit.htm">Exit</a> erzwingt oder einen Laufzeitfehler verursacht (der beispielsweise durch <a href="Run.htm">Ausführen</a> einer nicht-existierenden Datei ausgelöst werden kann). Verwendet man als Rückgabewert hingegen einen Integer, wird dieser Wert sofort als Antwort gesendet; das heißt, dass das Programm die Meldung nicht weiter fortsetzen wird. Zum Beispiel könnte eine Funktion, die WM_LBUTTONDOWN (0x0201) überwacht, einen Integer zurückgeben, um das Zielfenster daran zu hindern, benachrichtigt zu werden, dass ein Mausklick erfolgt ist. In vielen Fällen (z. B. als eine Meldung, empfangen via <a href="PostMessage.htm">PostMessage</a>) ist es egal, welcher Integer zurückgegeben wird; aber im Zweifelsfall ist eine 0 am sichersten.</p>
 <p>Der Bereich von gültigen Rückgabewerten ist abhängig davon, ob die skript-ausführende EXE-Datei 32- oder 64-Bit ist. Bei einem 32-Bit-Skript (<code><a href="../Variables.htm#PtrSize">A_PtrSize</a> = 4</code>) müssen die Rückgabewerte in einem Bereich von -2<sup>31</sup> und 2<sup>32</sup>-1 sein, und bei einem 64-Bit-Skript (<code><a href="../Variables.htm#PtrSize">A_PtrSize</a> = 8</code>) in einem Bereich von -2<sup>63</sup> und 2<sup>63</sup>-1.</p>
 <p><span class="ver">[v1.1.20+]:</span> Mehrere Funktionen, die eine bestimmte Meldungsnummer überwachen, werden nacheinander aufgerufen, bis eine von denen einen nicht-leeren Wert zurückgibt.</p>
 
@@ -113,22 +113,22 @@ MldÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des F
 <p>Im Gegensatz zu einem normalen Funktionsaufruf wird die überwachende Funktion, wenn sie eine neue Meldung empfängt, als neuer <a href="../misc/Threads.htm">Thread</a> aufgerufen. Aus diesem Grund verwendet die Funktion zu Beginn die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>. Diese Standardwerte können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
 <p>Meldungen, die via SendMessage (statt PostMessage) zu einem Steuerelement gesendet wurden, werden nicht überwacht, weil das Betriebssystem diese Meldungen direkt auf das Steuerelement überträgt, ohne dass jemand etwas mitbekommt. Für system-generierte Meldungen ist das selten ein Problem, weil die meisten von ihnen via PostMessage gesendet werden.</p>
 <p>Jedes Skript, das OnMessage irgendwo aufruft, ist automatisch <a href="_Persistent.htm">persistent</a>. Außerdem wird bei solchen Skripten standardmäßig ein Dialogfenster mit der Anfrage angezeigt, ob die alte Instanz beibehalten oder mit einer neuen Instanz ersetzt werden soll, es sei denn, man überschreibt das mit der <a href="_SingleInstance.htm">#SingleInstance</a>-Direktive.</p>
-<p id="Critical">Kommt eine Meldung an, während die Funktion noch läuft, wird die Funktion nicht erneut aufgerufen (außer wenn <a href="#MaxThreads">MaxThreads</a> größer als 1 ist); stattdessen wird die Meldung so behandelt, als wurde sie nicht überwacht. Wenn dies nicht erwünscht ist, können Sie <a href="Critical.htm">Critical</a> in der ersten Zeile der Funktion nutzen, um eine Meldung größer gleich 0x312 bis zum Abschluss der Funktion zu puffern/hinauszuzögern. Alternativ könnte <a href="Thread.htm">Thread Interrupt</a> das gleiche bewirken, sofern die Funktion genug Zeit zum Beenden hat. Eine Meldung kleiner als 0x312 kann hingegen nicht via Critical oder "Thread Interrupt" gepuffert werden (allerdings kann <span class="ver">[in v1.0.46+]</span> Critical verwendet werden, um die Meldungen <a href="Critical.htm#Interval">seltener</a> überprüfen zu lassen, so dass die Funktion mehr Zeit zum Beenden hat). Um zu garantieren, dass solche Meldungen nicht verloren gehen, muss die Funktion innerhalb von 6 Millisekunden zum Ende kommen (dieses Limit kann mit <a href="Critical.htm#Interval"><em>Critical 30</em></a> erhöht werden). Eine Möglichkeit, dies zu tun, ist es, einen zukünftigen Thread in die Warteschlange zu setzen, indem man eine überwachte Meldungsnummer größer als 0x312 via <a href="PostMessage.htm">PostMessage</a> sendet. Die Funktion dieser Meldung sollte <a href="Critical.htm">Critical</a> in der ersten Zeile verwenden, um sicherzustellen, dass ihre Meldungen gepuffert werden.</p>
-<p>Kommt eine überwachte Meldung kleiner als 0x312 an, während das Skript absolut unterbrechungsfrei ist - z. B. während ein <a href="Menu.htm">Menü</a> angezeigt wird, <a href="SetKeyDelay.htm">KeyDelay</a>/<a href="SetMouseDelay.htm">MouseDelay</a> im Gange ist oder die Zwischenablage <a href="_ClipboardTimeout.htm">offen</a> ist - wird die Funktion der Meldung nicht aufgerufen und die Meldung so behandelt, als wurde sie nicht überwacht. Eine überwachte Meldung größer gleich 0x312 hingegen wird während diesen unterbrechungsfreien Perioden gepuffert; das heißt, dass ihre Funktion aufgerufen wird, wenn das Skript wieder unterbrochen werden kann.</p>
-<p>Kommt eine überwachte Meldung kleiner als 0x312 an, während das Skript aufgrund von <a href="Thread.htm">Thread Interrupt</a> oder <a href="Critical.htm">Critical</a> unterbrechungsfrei ist, wird der aktuelle Thread unterbrochen, so dass die Funktion aufgerufen werden kann. Eine überwachte Meldung größer gleich 0x312 hingegen wird gepuffert, bis der Thread endet oder wieder unterbrochen werden kann.</p>
+<p id="Critical">Kommt eine Meldung an, während die Funktion noch läuft, wird die Funktion nicht erneut aufgerufen (außer wenn <a href="#MaxThreads">MaxThreads</a> größer als 1 ist); stattdessen wird die Meldung so behandelt, als wurde sie nicht überwacht. Wenn dies nicht erwünscht ist, können Sie <a href="Critical.htm">Critical</a> in der ersten Zeile der Funktion nutzen, um eine Meldung größer gleich 0x0312 bis zum Abschluss der Funktion zu puffern/hinauszuzögern. Alternativ könnte <a href="Thread.htm">Thread Interrupt</a> das gleiche bewirken, sofern die Funktion genug Zeit zum Beenden hat. Eine Meldung kleiner als 0x0312 kann hingegen nicht via Critical oder "Thread Interrupt" gepuffert werden (allerdings kann <span class="ver">[in v1.0.46+]</span> Critical verwendet werden, um die Meldungen <a href="Critical.htm#Interval">seltener</a> überprüfen zu lassen, so dass die Funktion mehr Zeit zum Beenden hat). Um zu garantieren, dass solche Meldungen nicht verloren gehen, muss die Funktion innerhalb von 6 Millisekunden zum Ende kommen (dieses Limit kann mit <a href="Critical.htm#Interval"><em>Critical 30</em></a> erhöht werden). Eine Möglichkeit, dies zu tun, ist es, einen zukünftigen Thread in die Warteschlange zu setzen, indem man eine überwachte Meldungsnummer größer als 0x0312 via <a href="PostMessage.htm">PostMessage</a> sendet. Die Funktion dieser Meldung sollte <a href="Critical.htm">Critical</a> in der ersten Zeile verwenden, um sicherzustellen, dass ihre Meldungen gepuffert werden.</p>
+<p>Kommt eine überwachte Meldung kleiner als 0x0312 an, während das Skript absolut unterbrechungsfrei ist - z. B. während ein <a href="Menu.htm">Menü</a> angezeigt wird, <a href="SetKeyDelay.htm">KeyDelay</a>/<a href="SetMouseDelay.htm">MouseDelay</a> im Gange ist oder die Zwischenablage <a href="_ClipboardTimeout.htm">offen</a> ist - wird die Funktion der Meldung nicht aufgerufen und die Meldung so behandelt, als wurde sie nicht überwacht. Eine überwachte Meldung größer gleich 0x0312 hingegen wird während diesen unterbrechungsfreien Perioden gepuffert; das heißt, dass ihre Funktion aufgerufen wird, wenn das Skript wieder unterbrochen werden kann.</p>
+<p>Kommt eine überwachte Meldung kleiner als 0x0312 an, während das Skript aufgrund von <a href="Thread.htm">Thread Interrupt</a> oder <a href="Critical.htm">Critical</a> unterbrechungsfrei ist, wird der aktuelle Thread unterbrochen, so dass die Funktion aufgerufen werden kann. Eine überwachte Meldung größer gleich 0x0312 hingegen wird gepuffert, bis der Thread endet oder wieder unterbrochen werden kann.</p>
 <p>Die <a href="../misc/Threads.htm">Priorität</a> von OnMessage-Threads ist immer 0. Demzufolge werden keine Meldungen überwacht oder gepuffert, wenn der aktuelle Thread eine Priorität höher als 0 hat.</p>
-<p>Seien Sie vorsichtig, wenn Sie Systemmeldungen (solche unter 0x400) überwachen. Kommt eine überwachende Funktion beispielsweise nicht schnell genug zum Ende, kann die Antwort auf die Meldung länger dauern als vom System erwartet, was zu Nebeneffekten führen könnte. Unerwünschtes Verhalten kann auch auftreten, wenn eine überwachende Funktion die Meldung durch Zurückgeben eines Integers nicht weiter fortsetzen lässt, während das System etwas anderes erwartet.</p>
+<p>Seien Sie vorsichtig, wenn Sie Systemmeldungen (solche unter 0x0400) überwachen. Kommt eine überwachende Funktion beispielsweise nicht schnell genug zum Ende, kann die Antwort auf die Meldung länger dauern als vom System erwartet, was zu Nebeneffekten führen könnte. Unerwünschtes Verhalten kann auch auftreten, wenn eine überwachende Funktion die Meldung durch Zurückgeben eines Integers nicht weiter fortsetzen lässt, während das System etwas anderes erwartet.</p>
 <p>Zeigt das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> an, werden Meldungen, die via PostMessage an ein Steuerelement gesendet werden, nicht überwacht. Wenn beispielsweise das Skript ein Mitteilungsfenster anzeigt und der Benutzer innerhalb eines GUI-Fensters auf eine Schaltfläche klickt, wird die WM_LBUTTONDOWN-Meldung direkt an die Schaltfläche gesendet, ohne dass die überwachende Funktion aufgerufen wird.</p>
 <p>Ein externes Programm kann Meldungen mithilfe von PostThreadMessage() oder einer anderen API-Funktion direkt an ein Thread des Skripts senden, allerdings wird dies nicht empfohlen, weil solche Meldungen verloren gehen würden, wenn das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt. Stattdessen ist es besser, Meldungen an das Hauptfenster des Skripts oder an eines seiner GUI-Fenster zu senden.</p>
 <h2 id="Related">Siehe auch</h2>
 <p><a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="OnExit.htm#function">OnExit()</a>, <a href="OnExit.htm#command">OnExit</a>, <a href="OnClipboardChange.htm#function">OnClipboardChange()</a>, <a href="OnClipboardChange.htm#label">OnClipboardChange-Label</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Critical.htm">Critical</a>, <a href="DllCall.htm">DllCall()</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExLButtonDown">
-<p><a href="#ExLButtonDown">#1</a>: Überwacht Mausklicks innerhalb eines GUI-Fensters. Verwandtes Thema: <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a></p>
+<p><a class="ex_number" href="#ExLButtonDown"></a> Überwacht Mausklicks innerhalb eines GUI-Fensters. Verwandtes Thema: <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a></p>
 <pre>Gui, Add, Text,, Klicken Sie irgendwo auf das Fenster.
 Gui, Add, Edit, w200 vMeinEdit
 Gui, Show
-OnMessage(0x201, "WM_LBUTTONDOWN")
+OnMessage(0x0201, "WM_LBUTTONDOWN")
 return
 
 WM_LBUTTONDOWN(wParam, lParam)
@@ -145,10 +145,10 @@ ExitApp</pre>
 </div>
 
 <div class="ex" id="shutdown">
-<p><a href="#shutdown">#2</a>: Erkennt das Herunterfahren/Abmelden des Systems und erlaubt dem Benutzer, diesen Vorgang abzubrechen. In Windows Vista und höher erscheint eine Benutzeroberfläche, die anzeigt, welches Programm das Herunterfahren/Abmelden blockiert, und dem Benutzer ermöglicht, das Herunterfahren/Abmelden zu erzwingen. In älteren Betriebssystemen zeigt das Skript eine Sicherheitsabfrage an. Verwandtes Thema: <a href="OnExit.htm">OnExit</a></p>
+<p><a class="ex_number" href="#shutdown"></a> Erkennt das Herunterfahren/Abmelden des Systems und erlaubt dem Benutzer, diesen Vorgang abzubrechen. In Windows Vista und höher erscheint eine Benutzeroberfläche, die anzeigt, welches Programm das Herunterfahren/Abmelden blockiert, und dem Benutzer ermöglicht, das Herunterfahren/Abmelden zu erzwingen. In älteren Betriebssystemen zeigt das Skript eine Sicherheitsabfrage an. Verwandtes Thema: <a href="OnExit.htm">OnExit</a></p>
 <pre><em>; Das folgende DllCall ist optional: es teilt dem OS mit, dass dieses Skript zuerst beendet werden soll (bevor alle anderen Anwendungen beendet werden).</em>
 DllCall("kernel32.dll\SetProcessShutdownParameters", "UInt", 0x4FF, "UInt", 0)
-OnMessage(0x11, "WM_QUERYENDSESSION")
+OnMessage(0x0011, "WM_QUERYENDSESSION")
 return
 
 WM_QUERYENDSESSION(wParam, lParam)
@@ -197,7 +197,7 @@ StoppeBlockenHerunterfahren()
 </div>
 
 <div class="ex" id="ExCustom">
-<p><a href="#ExCustom">#3</a>: Empfängt eine benutzerdefinierte Meldung und bis zu zwei Zahlen von einem anderen Skript oder Programm (schauen Sie sich das Beispiel danach an, wie man Zeichenketten sendet).</p>
+<p><a class="ex_number" href="#ExCustom"></a> Empfängt eine benutzerdefinierte Meldung und bis zu zwei Zahlen von einem anderen Skript oder Programm (schauen Sie sich das Beispiel danach an, wie man Zeichenketten sendet).</p>
 <pre>OnMessage(0x5555, "MldÜberwachung")
 OnMessage(0x5556, "MldÜberwachung")
 
@@ -217,10 +217,10 @@ DetectHiddenWindows Off  <em>; Kann nach PostMessage wieder deaktiviert werden.<
 </div>
 
 <div class="ex" id="SendString">
-<p><a href="#SendString">#4</a>: Sendet eine Zeichenkette mit beliebiger Länge an ein anderes Skript. Um dies zu nutzen, speichern und starten Sie beide folgenden Skripte und drücken Sie <kbd>Win</kbd>+<kbd>Leer</kbd>, um ein Eingabefenster anzuzeigen, die den Benutzer zur Eingabe einer Zeichenkette auffordert. Beide Skripte müssen die gleiche <a href="../Concepts.htm#native-encoding">native Codierung</a> verwenden.</p>
+<p><a class="ex_number" href="#SendString"></a> Sendet eine Zeichenkette mit beliebiger Länge an ein anderes Skript. Um dies zu nutzen, speichern und starten Sie beide folgenden Skripte und drücken Sie <kbd>Win</kbd>+<kbd>Leer</kbd>, um ein Eingabefenster anzuzeigen, die den Benutzer zur Eingabe einer Zeichenkette auffordert. Beide Skripte müssen die gleiche <a href="../Concepts.htm#native-encoding">native Codierung</a> verwenden.</p>
 <p>Speichern Sie das folgende Skript als <strong>Receiver.ahk</strong> und starten Sie es.</p>
 <pre filename="Receiver.ahk">#SingleInstance
-OnMessage(0x4a, "Empfange_WM_COPYDATA")  <em>; 0x4a ist WM_COPYDATA</em>
+OnMessage(0x004A, "Empfange_WM_COPYDATA")  <em>; 0x004A ist WM_COPYDATA</em>
 return
 
 Empfange_WM_COPYDATA(wParam, lParam)
@@ -260,7 +260,7 @@ Sende_WM_COPYDATA(ByRef ZuSendendeZkette, ByRef ZielSkriptTitel)  <em>; ByRef ve
     SetTitleMatchMode 2
     TimeoutWert := 4000  <em>; Optional. Zeit in Millisekunden, die Empfänger.ahk zum Antworten hat. Standard ist 5000</em>
     <em>; Muss Send verwenden, nicht Post.</em>
-    SendMessage, 0x4a, 0, &amp;KopieDatenStrukt,, %ZielSkriptTitel%,,,, %TimeoutWert% <em>; 0x4a ist WM_COPYDATA.</em>
+    SendMessage, 0x004A, 0, &amp;KopieDatenStrukt,, %ZielSkriptTitel%,,,, %TimeoutWert% <em>; 0x004A ist WM_COPYDATA.</em>
     DetectHiddenWindows %Vorher_DetectHiddenWindows%  <em>; Stellt die ursprüngliche Einstellung wieder her.</em>
     SetTitleMatchMode %Vorher_TitleMatchMode%         <em>; Hier auch.</em>
     return ErrorLevel  <em>; Gibt SendMessage's Antwort zum Aufrufer zurück.</em>

@@ -90,7 +90,7 @@ DieFunk(params*) {
 <h2 id="Threads">Fast vs. Slow</h2>
 <p>Der Standard/Slow-Modus bewirkt, dass die Funktion zu Beginn die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> verwendet. Diese Standardwerte können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
 <p>Der <a href="#Fast">Fast-Modus</a> hingegen erbt die globalen Einstellungen von einem <a href="../misc/Threads.htm">Thread</a>, der zum Zeitpunkt des Funktionsaufrufs aktiv war. Darüber hinaus werden jegliche Änderungen, die die Funktion an den globalen Einstellungen (einschließlich <a href="../misc/ErrorLevel.htm">ErrorLevel</a> und dem <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundenen Fenster</a>) vornimmt, für den <a href="../misc/Threads.htm">aktuellen Thread</a> wirksam. Demzufolge sollte der Fast-Modus nur verwendet werden, wenn genau bekannt ist, in welchem oder welchen Threads die Funktion aufgerufen wird.</p>
-<p>Um zu verhindern, dass ein Callback sich selbst unterbricht (oder von einem anderen Thread unterbrochen wird), können Sie <a href="Critical.htm">Critical</a> in die erste Zeile einfügen. Allerdings ist diese Vorgehensweise nicht besonders effektiv, wenn die Funktion indirekt über eine eingehende Meldung kleiner als 0x312 aufgerufen wird (das <a href="Critical.htm#Interval">Intervall</a> von Critical zu erhöhen könnte hierbei helfen). Darüber hinaus hindert <a href="Critical.htm">Critical</a> die Funktion nicht daran, etwas zu tun, das zum indirekten Selbstaufruf führen könnte, wie z. B. der Aufruf von <a href="PostMessage.htm">SendMessage</a> oder <a href="DllCall.htm">DllCall()</a>.</p>
+<p>Um zu verhindern, dass ein Callback sich selbst unterbricht (oder von einem anderen Thread unterbrochen wird), können Sie <a href="Critical.htm">Critical</a> in die erste Zeile einfügen. Allerdings ist diese Vorgehensweise nicht besonders effektiv, wenn die Funktion indirekt über eine eingehende Meldung kleiner als 0x0312 aufgerufen wird (das <a href="Critical.htm#Interval">Intervall</a> von Critical zu erhöhen könnte hierbei helfen). Darüber hinaus hindert <a href="Critical.htm">Critical</a> die Funktion nicht daran, etwas zu tun, das zum indirekten Selbstaufruf führen könnte, wie z. B. der Aufruf von <a href="PostMessage.htm">SendMessage</a> oder <a href="DllCall.htm">DllCall()</a>.</p>
 
 <h2 id="Memory">Speicher</h2>
 <p>Jedes Mal, wenn RegisterCallback() verwendet wird, wird eine kleine Menge an Speicher reserviert (32 Bytes plus System-Overhead). Da das Betriebssystem diesen Speicher automatisch beim Beenden des Skripts freigibt, muss jedes Skript, das Speicher für eine kleine <em>feste</em> Anzahl von Callbacks reserviert hat, den Speicher nicht explizit freigegeben. Ein Skript hingegen, das RegisterCallback() unbestimmt/unbegrenzt oft aufruft, sollte folgende Anweisung bei jedem unbenutzten Callback aufrufen:</p>
@@ -101,7 +101,7 @@ DieFunk(params*) {
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExWinList">
-<p><a href="#ExWinList">#1</a>: Zeigt eine Zusammenfassung aller nicht-untergeordneten Fenster an.</p>
+<p><a class="ex_number" href="#ExWinList"></a> Zeigt eine Zusammenfassung aller nicht-untergeordneten Fenster an.</p>
 <pre><em>; Aus Leistungs- und Speichergründen wird RegisterCallback() nur einmal für einen bestimmten Callback aufgerufen:</em>
 if not EnumAdresse  <em>; Fast-Modus ist okay, weil er nur von diesem Thread aufgerufen wird:</em>
     EnumAdresse := RegisterCallback("EnumWindowsProc", "Fast")
@@ -124,7 +124,7 @@ EnumWindowsProc(hwnd, lParam)
 </div>
 
 <div class="ex" id="ExSubclassGUI">
-<p><a href="#ExSubclassGUI">#2</a>: Demonstriert, wie ein GUI-Fenster zu einer Unterklasse gemacht werden kann, wenn man dessen WindowProc an einen neuen WindowProc weiterleitet. In diesem Fall wird die Hintergrundfarbe des Text-Steuerelements auf eine benutzerdefinierte Farbe gesetzt.</p>
+<p><a class="ex_number" href="#ExSubclassGUI"></a> Demonstriert, wie ein GUI-Fenster zu einer Unterklasse gemacht werden kann, wenn man dessen WindowProc an einen neuen WindowProc weiterleitet. In diesem Fall wird die Hintergrundfarbe des Text-Steuerelements auf eine benutzerdefinierte Farbe gesetzt.</p>
 <pre>TextHintergrundFarbe := 0xFFBBBB  <em>; Eine benutzerdefinierte Farbe im BGR-Format.</em>
 TextHintergrundPinsel := DllCall("CreateSolidBrush", "UInt", TextHintergrundFarbe)
 
@@ -147,7 +147,7 @@ WindowProc(hwnd, uMsg, wParam, lParam)
 {
     Critical
     global TextHintergrundFarbe, TextHintergrundPinsel, WindowProcAlt
-    if (uMsg = 0x138 &amp;&amp; lParam = A_EventInfo)  <em>; 0x138 ist WM_CTLCOLORSTATIC.</em>
+    if (uMsg = 0x0138 &amp;&amp; lParam = A_EventInfo)  <em>; 0x0138 ist WM_CTLCOLORSTATIC.</em>
     {
         DllCall("SetBkColor", "Ptr", wParam, "UInt", TextHintergrundFarbe)
         return TextHintergrundPinsel  <em>; Gibt HBRUSH zurück, um dem OS mitzuteilen, dass wir HDC geändert haben.</em>
