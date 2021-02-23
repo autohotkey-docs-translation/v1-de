@@ -2,10 +2,10 @@ translateData = {
   // Sidebar
   "C̲ontent":"I̲nhalt",
   "Content tab":"Inhalt-Tab",
-  "Shortcut: ALT+C":"Tastenkürzel: ALT+I",
+  "Shortcut: ALT+C":"Tastaturkurzbefehl: ALT+I",
   "In̲dex":true,
   "Index tab":"Index-Tab",
-  "Shortcut: ALT+N":"Tastenkürzel: ALT+N",
+  "Shortcut: ALT+N":"Tastaturkurzbefehl: ALT+N",
   "Filter":true,
   "Directives":"Direktiven",
   "Built-in Variables":"Interne Variablen",
@@ -16,7 +16,7 @@ translateData = {
   "Commands":"Befehle",
   "S̲earch":"S̲uchen",
   "Search tab":"Suchen-Tab",
-  "Shortcut: ALT+S":"Tastenkürzel: ALT+S",
+  "Shortcut: ALT+S":"Tastaturkurzbefehl: ALT+S",
   "Search":"Suchen",
   "Highlight keywords":"Suchwörter hervorheben",
   "Go to previous/next occurrence":"Gehe zum vorherigen/nächsten Vorkommen",
@@ -37,7 +37,7 @@ translateData = {
   "Open this document in the default browser (requires internet connection). Middle-click to copy the link address.":"Dieses Dokument im Standardbrowser öffnen (benötigt Internetverbindung). Klicken Sie mit der mittleren Maustaste, um die Adresse des Links zu kopieren.",
   "Use the dark or light theme":"Dunkles oder helles Farbschema verwenden",
   "Open the help settings":"Einstellungen für die Hilfe öffnen",
-  // ALT+... Tastenkürzel (muss in Großbuchstaben sein)
+  // ALT+... Tastaturkurzbefehle (muss in Großbuchstaben sein)
   "C":"I",
   "N":true,
   "S":true,
