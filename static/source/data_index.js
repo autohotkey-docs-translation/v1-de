@@ -365,7 +365,7 @@ indexData = [
   ["continuation sections","Scripts.htm#continuation"],["Fortsetzungsbereiche","Scripts.htm#continuation"],
   ["Continue","commands/Continue.htm",3,"S"],
   ["Control","commands/Control.htm",6,"SSSSSSS"],
-  ["control flow","Language.htm#control-flow"],["Ablaufsteuerung","Language.htm#control-flow"],
+  ["control flow","Language.htm#control-flow"],["Kontrollfluss","Language.htm#control-flow"],
   ["ControlClick","commands/ControlClick.htm",6,"SSSSESSS"],
   ["ControlFocus","commands/ControlFocus.htm",6,"SSSSS"],
   ["ControlGet","commands/ControlGet.htm",6,"OSSSSSSS"],

@@ -10,7 +10,7 @@ translateData = {
   "Directives":"Direktiven",
   "Built-in Variables":"Interne Variablen",
   "Built-in Functions":"Interne Funktionen",
-  "Control Flow Statements":"Ablaufsteuerungsanweisungen",
+  "Control Flow Statements":"Kontrollanweisungen",
   "Declarations":"Deklarationen",
   "Operators":"Operatoren",
   "Commands":"Befehle",

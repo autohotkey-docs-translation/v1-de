@@ -106,7 +106,7 @@ tocData = [
     ["SetWorkingDir","commands/SetWorkingDir.htm"],
     ["SplitPath","commands/SplitPath.htm"]
   ]],
-  ["Ablaufsteuerung","",
+  ["Kontrollfluss","",
   [
     ["#Include[Again]","commands/_Include.htm"],
     ["{ ... } (Block)","commands/Block.htm"],
