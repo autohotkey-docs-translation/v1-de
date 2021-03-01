@@ -21,7 +21,7 @@
 <dl>
 
   <dt>Func</dt>
-  <dd><p>Ein Funktionsname oder <a href="../objects/Functor.htm">Funktionsobjekt</a>, die aufgerufen werden sollen, wenn das Skript beendet wird. Optional kann die Funktion Parameter definieren, wie unten gezeigt. Wenn eine OnExit-Funktion einen Integer ungleich null zurückgibt, wird das Skript nicht beendet. Ansonsten wird das Skript beendet, nachdem alle registrierten Funktionen aufgerufen wurden.</p>
+  <dd><p>Ein Funktionsname oder <a href="../objects/Functor.htm">Funktionsobjekt</a>, die aufgerufen werden sollen, wenn das Skript beendet wird. Optional kann die Funktion Parameter definieren, wie unten gezeigt. Wenn eine OnExit-Funktion einen Integer ungleich Null zurückgibt, wird das Skript nicht beendet (mit einigen <a href="#close">seltenen Ausnahmen</a>) und es werden keine weiteren Funktionen aufgerufen. Ansonsten wird das Skript beendet, nachdem alle registrierten Funktionen aufgerufen wurden.</p>
   <pre class="Syntax"><span class="func">ExitFunk</span>(<a href="#ExitReason">ExitGrund</a>, <a href="ExitApp.htm">ExitCode</a>)</pre></dd>
   
   <dt>HinzufügenEntfernen</dt>
@@ -66,6 +66,10 @@
 
 <h2 id="ExitReason">Exit-Gründe</h2>
 <table class="info">
+  <tr>
+    <th>Grund</th>
+    <th abbr="Beschr">Beschreibung</th>
+  </tr>
   <tr id="logoff">
     <td>Logoff</td>
     <td>Der Benutzer meldet sich ab.</td>
@@ -74,12 +78,16 @@
     <td>Shutdown</td>
     <td>Das System wird heruntergefahren oder neu gestartet (z. B. mit dem <a href="Shutdown.htm">Shutdown</a>-Befehl).</td>
   </tr>
-  <tr>
+  <tr id="close">
     <td>Close</td>
-    <td>Das Skript hat eine WM_CLOSE- oder WM_QUIT-Meldung empfangen, hatte einen kritischen Fehler, oder wurde auf andere Weise geschlossen. Obwohl all diese Ursachen ungewöhnlich sind, wird WM_CLOSE eventuell ausgelöst, wenn man <a href="WinClose.htm">WinClose</a> auf das Hauptfenster des Skripts anwendet. Um das Fenster zu schließen (zu verstecken), ohne das Skript zu beenden, verwenden Sie <a href="WinHide.htm">WinHide</a>.</td>
+    <td>
+      <p>Das Skript hat eine WM_CLOSE- oder WM_QUIT-Meldung empfangen, hatte einen kritischen Fehler, oder wurde auf andere Weise geschlossen. Obwohl all diese Ursachen ungewöhnlich sind, wird WM_CLOSE eventuell ausgelöst, wenn man <a href="WinClose.htm">WinClose</a> auf das Hauptfenster des Skripts anwendet. Um das Fenster zu schließen (zu verstecken), ohne das Skript zu beenden, verwenden Sie <a href="WinHide.htm">WinHide</a>.</p>
+      <p>Wenn das Skript wegen eines kritischen Fehlers oder der Zerstörung des <a href="../Program.htm#main-window">Hauptfensters</a> beendet wird, wird es nach Abschluss des OnExit-Threads bedingungslos terminiert.</p>
+      <p>Wenn das Hauptfenster zerstört wird, ist es möglicherweise noch vorhanden, kann aber nicht angezeigt werden. Dieser Zustand kann durch Überwachung der WM_DESTROY-Meldung mittels <a href="OnMessage.htm">OnMessage</a> erkannt werden.</p>
+    </td>
   </tr>
   <tr>
-    <td>Fehler</td>
+    <td>Error</td>
     <td>Ein Laufzeitfehler ist in einem Skript aufgetreten, das weder Hotkeys hat noch <a href="_Persistent.htm">persistent</a> ist. Ein Laufzeitfehler ist beispielsweise ein <a href="Run.htm">Run/RunWait</a>, der das angegebene Programm oder Dokument nicht öffnen kann.</td>
   </tr>
   <tr>
