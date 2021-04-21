@@ -91,6 +91,23 @@ return</pre>
 <p>Die interne Variable <a href="Variables.htm#ScriptHwnd">A_ScriptHwnd</a> enthält die HWND-Nummer (eindeutige ID) des Skript-Hauptfensters.</p>
 <p id="title">Der Titel dieses Fensters wird von Mechanismen wie <a href="commands/_SingleInstance.htm">#SingleInstance</a> und <a href="commands/Reload.htm">Reload</a> verwendet, um andere Instanzen desselben Skripts zu identifizieren. Das <a href="commands/WinSetTitle.htm">Ändern des Titels</a> verhindert, dass das Skript als solches identifiziert wird. Der Standardtitel entspricht dem Ausdruck <code>A_ScriptFullPath (A_IsCompiled ? "" : " - AutoHotkey v" A_AhkVersion)</code>.</p>
 <p>Schließt man dieses Fenster mit <a href="commands/WinClose.htm">WinClose</a> (auch von einem anderen Skript aus), wird das Skript beendet, aber die meisten anderen Methoden verstecken das Fenster und lassen das Skript laufen.</p>
+<p>Wenn das Hauptfenster minimiert wird, wird es automatisch versteckt. Dieses Verhalten ist notwendig, um zu verhindern, dass untergeordnete Fenster (z. B. GUI-Fenster oder einige Dialogfenster) automatisch minimiert werden, und um zu bewirken, dass die Schaltfläche in der Taskleiste des Hauptfensters versteckt wird. Um das Hauptfenster stattdessen normal minimieren zu lassen, überschreiben Sie das Standardverhalten mit <a href="commands/OnMessage.htm">OnMessage</a>. Zum Beispiel:</p>
+<pre>; Dies verhindert, dass das Hauptfenster beim Minimieren versteckt wird:
+OnMessage(0x0112, Func("AutoMinimierungVerhindern")) <em>; WM_SYSCOMMAND = 0x0112</em>
+OnMessage(0x0005, Func("AutoMinimierungVerhindern")) <em>; WM_SIZE = 0x0005
+; Dies verhindert, dass untergeordnete GUI-Fenster (außer Dialogfenster) automatisch minimiert werden:</em>
+OnMessage(0x0018, Func("AutoMinimierungVerhindern"))
+
+AutoMinimierungVerhindern(wParam, lParam, uMsg, hwnd) {
+    if (uMsg = 0x0112 &amp;&amp; wParam = 0xF020 &amp;&amp; hwnd = A_ScriptHwnd) { <em>; SC_MINIMIZE = 0xF020</em>
+        WinMinimize
+        return 0 <em>; Verhindern, dass das Hauptfenster versteckt wird.</em>
+    }
+    if (uMsg = 0x0005 &amp;&amp; wParam = 1 &amp;&amp; hwnd = A_ScriptHwnd) <em>; SIZE_MINIMIZED = 1</em>
+        return 0 <em>; Verhindern, dass das Hauptfenster versteckt wird.</em>
+    if (uMsg = 0x0018 &amp;&amp; lParam = 1) <em>; SW_PARENTCLOSING = 1</em>
+        return 0 <em>; Verhindern, dass untergeordnete Fenster versteckt werden.</em>
+}</pre>
 
 <h2 id="cmd">Verwendung der Befehlszeile</h2>
 <p>Weitere Informationen zur Verwendung der Befehlszeile finden Sie unter <a href="Scripts.htm#cmd">Befehlszeilenparameter an ein Skript übergeben</a>, einschließlich einer Liste von Befehlszeilenoptionen, die das Verhalten des Programms beeinflussen.</p>

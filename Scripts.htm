@@ -57,17 +57,24 @@
 <pre><em>; BEISPIEL #1:</em>
 Var =
 (
-Zeile 1 vom Text.
-Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) zwischen den Zeilen.
+Eine Textzeile.
+<i>Standardmäßig</i> wird das CR-Zeichen (Enter) zwischen der vorherigen und dieser Zeile als LF-Zeichen (`n) gespeichert.
+    <i>Standardmäßig</i> werden die Leerzeichen auf der linken Seite dieser Zeile auch gespeichert (das gleiche gilt auch für Tabulatoren).
+<i>Standardmäßig</i> werden Variablenreferenzen wie %Var% mit dem Inhalt der Variable ersetzt.
 )
 
-<em>; BEISPIEL #2:</em>
+<em>; BEISPIEL #2 - Ausdruckssyntax (empfohlen):</em>
+Var := "
+(
+Wie oben, außer dass Variablenreferenzen wie %Var% nicht aufgelöst werden.
+Geben Sie stattdessen Variablen wie folgt an:" Var "
+)"
+
+<em>; BEISPIEL #3:</em>
 FileAppend,  <em>; Das Komma ist in diesem Fall erforderlich.</em>
 (
-Eine Textzeile.
-<i>Standardmäßig</i> wird das CR-Zeichen (Enter) zwischen der vorherigen und dieser Zeile als LF-Zeichen (`n) in die Datei geschrieben.
-    <i>Standardmäßig</i> wird der Tabulator auf der linken Seite dieser Zeile auch in die Datei geschrieben (das gleiche gilt auch für Leerzeichen).
-<i>Standardmäßig</i> werden Variablenreferenzen wie %Var% mit dem Inhalt der Variable ersetzt.
+Zeile 1 vom Text.
+Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) zwischen den Zeilen.
 ), C:\Meine Datei.txt</pre>
 <p>In den oberen Beispielen sieht man oben und unten runde Klammern, die mehrere Zeilen eingrenzen. Auch <em>Fortsetzungsbereich</em> genannt. Beachten Sie, dass in der untersten Zeile nach der runden Endklammer der letzte Parameter von <a href="commands/FileAppend.htm">FileAppend</a> enthalten ist. Diese Anwendungsart ist optional; das wird in solchen Fällen getan, um das Komma nicht als direkt geschriebenes Komma, sondern als Parametertrennung zu behandeln.</p>
 <p>Das Standardverhalten eines Fortsetzungsbereichs kann überschrieben werden, indem man eine oder mehrere der folgenden Optionen auf der rechten Seite der runden Startklammer einfügt. Mehrere Optionen müssen mit Leerzeichen voneinander getrennt werden. Zum Beispiel: <code>( LTrim Join| %</code>.</p>
@@ -90,14 +97,14 @@ Eine Textzeile.
 ), C:\Datei.txt   <em>; Kommentar.</em></pre>
 <p>Der oben genannte Punkt ist der Grund, warum Semikolons innerhalb eines Fortsetzungsbereichs nie mit einem <a href="misc/EscapeChar.htm">Escapezeichen</a> versehen werden müssen.</p>
 <p>Ein Fortsetzungsbereich kann keine Zeile erzeugen, deren Länge 16383 Zeichen überschreitet (das Programm warnt Sie bei dem Versuch, sobald es gestartet wird). Diese Einschränkung kann zum Beispiel mit mehreren Verkettungen umgangen werden. Zum Beispiel:</p>
-<pre>Var =
+<pre>Var := "
 (
 ...
-)
-Var = %Var%`n  <em>; Füge mithilfe eines weiteren Fortsetzungsbereichs mehr Text hinzu.</em>
+)"
+Var .= "`n  <em>; Füge mithilfe eines weiteren Fortsetzungsbereichs mehr Text hinzu.</em>
 (
 ...
-)
+)"
 FileAppend, %Var%, C:\Meine Datei.txt</pre>
 <p>Aufgrund der Tatsache, dass eine runde Endklammer das Ende eines Fortsetzungsbereichs kennzeichnet, muss eine direkt geschriebene runde Endklammer mit einem Escapezeichen (Akzent/umgekehrtes Häkchen) versehen werden: <code>`)</code>.</p>
 <p>Unmittelbar nach einem Fortsetzungsbereich kann eine Zeile angegeben werden, die die runde Startklammer eines weiteren Fortsetzungsbereichs enthält. Auf diese Weise können unterschiedliche Optionen beim Konstruieren einer einzelnen Zeile angewendet werden.</p>
