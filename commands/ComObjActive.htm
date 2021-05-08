@@ -84,6 +84,7 @@ vref := ComObject(0x400C, &amp;var)  <em>; 0x400C ist eine Kombination von VT_BY
 vref[] := "Eingabewert"
 sc.Run("Beispiel", vref)  <em>; sc sollte wie im <a href="#ByRefEx">Beispiel unten</a> initialisiert werden.</em>
 MsgBox % vref[]</pre>
+<p>Beachten Sie, dass zwar jeder vorherige Wert freigegeben wird, wenn ein neuer Wert mittels <code>vref[]</code> oder der COM-Methode zugewiesen wird, aber der finale Wert nicht automatisch freigegeben wird. Für die Freigabe des Wertes muss man wissen, um welchen Typ es sich handelt. Da es sich in diesem Fall um VT_VARIANT handelt, kann es durch Aufrufen von <a href="https://docs.microsoft.com/de-de/windows/win32/api/oleauto/nf-oleauto-variantclear">VariantClear</a> mit <a href="DllCall.htm">DllCall</a> oder durch Verwendung einer einfacheren Methode freigegeben werden: weisen Sie einen Integer zu, z. B. <code>vref[] := 0</code>.</p>
 
 <h2 id="Remarks">Allgemeine Bemerkungen</h2>
 <p>In den aktuellen Versionen wird jeder Funktionsaufruf, der mit "ComObj" beginnt, aber keine der internen COM-Funktionen ist, tatsächlich ComObjActive aufrufen. Zum Beispiel sind <code>ComObjEnwrap(DispPtr)</code> und <code>ComObjActive(DispPtr)</code> beide äquivalent zu <code>ComObject(DispPtr)</code> (standardmäßig mit <em>VarTyp</em> 9). Allerdings wird dieses Verhalten in einer zukünftigen Version nicht mehr verfügbar sein, so dass es am besten ist, nur <code>ComObject()</code> und <code>ComObjActive()</code> zu verwenden, wie auf dieser Seite gezeigt.</p>
@@ -112,40 +113,62 @@ sc := <a href="ComObjCreate.htm">ComObjCreate</a>("ScriptControl"), sc.Language 
 
 <em>; Beispiel: VARIANT-ByRef an eine COM-Funktion übergeben.</em>
 var := ComVar()
+var[] := "Eingabewert"  <em>; Mit [] einen Wert zuweisen.</em>
+sc.Run("Beispiel", var.ref)  <em>; VT_BYREF ComObject übergeben (.ref).</em>
+MsgBox % var[]  <em>; Mit [] einen Wert abrufen.</em>
+
+<em>; Das Gleiche noch einmal, aber direkter:</em>
+VarSetCapacity(variant_buf, 24, 0)  <em>; Einen Puffer anlegen, der groß genug für ein VARIANT ist.</em>
+var := ComObject(0x400C, &amp;variant_buf)  <em>; Referenz auf ein VARIANT machen.</em>
 var[] := "Eingabewert"
-sc.Run("Beispiel", var.ref)
+sc.Run("Beispiel", var)  <em>; VT_BYREF ComObject selbst übergeben, kein [] oder .ref.</em>
 MsgBox % var[]
+<em>; Wenn ein VARIANT eine Zeichenkette oder ein Objekt enthält, muss es explizit freigegeben
+; werden, indem VariantClear aufgerufen oder ein rein numerischer Wert zugewiesen wird:</em>
+var[] := 0
 
 
 <em>; ComVar: Erstellt ein Objekt, mit dem ein Wert via ByRef übergeben werden kann.
 ;   ComVar[] bekommt den Wert.
 ;   ComVar[] := Val setzt den Wert.
 ;   ComVar.ref bekommt ein ByRef-Objekt, das eine COM-Funktion nutzen kann.</em>
-ComVar(Type=0xC)
+ComVar(Type := 0xC)
 {
-    static base := { __Get: "ComVarGet", __Set: "ComVarSet", __Delete: "ComVarDel" } <em>; Näheres zu base finden Sie unter <a href="../Objects.htm#Custom_Objects">Benutzerdefinierte Objekte</a>.</em>
-    <em>; Erstellt ein Array mit 1 VARIANT. Durch diese Methode kann der interne Code sich um
-    ; alle Umwandlungen zwischen VARIANT und AutoHotkey's interne Typen kümmern.</em>
-    arr := <a href="ComObjArray.htm">ComObjArray</a>(Type, 1)
-    <em>; Sperrt das Array und bekommt einen Pointer, der auf das VARIANT verweist.</em>
-    DllCall("oleaut32\SafeArrayAccessData", "ptr", <a href="ComObjValue.htm">ComObjValue</a>(arr), "ptr*", arr_data)
-    <em>; Speichert das Array und ein Objekt, mit dem das VARIANT-ByRef übergeben werden kann.</em>
-    return { ref: ComObject(0x4000|Type, arr_data), _: arr, base: base }
+    static base := { __Get: Func("ComVarGet"), __Set: Func("ComVarSet")
+        , __Delete: Func("ComVarDel") } <em>; Näheres zu base finden Sie unter Benutzerdefinierte Objekte.
+    
+    ; Neues Objekt basierend auf base erstellen.</em>
+    cv := {base: base}
+    
+    <em>; Speicher für ein VARIANT reservieren, damit unser Wert reinpasst. VARIANT wird auch dann
+    ; verwendet, wenn Type != VT_VARIANT, damit VariantClear von __delete verwendet werden kann.</em>
+    cv.SetCapacity("buf", 24), ptr := cv.GetAddress("buf")
+    NumPut(0, NumPut(0, ptr+0, "int64"), "int64")
+    
+    if (Type != 0xC) { <em>; Kein VT_VARIANT.</em>
+        NumPut(Type, ptr+0, "ushort") <em>; Variantentyp für __delete setzen.</em>
+        ptr += 8 <em>; Auf den tatsächlichen Wert verweisen.</em>
+    }
+    
+    <em>; Ein Objekt erstellen, mit dem die Variable via ByRef übergeben werden kann.</em>
+    cv.ref := ComObject(0x4000|Type, ptr)
+    
+    return cv
 }
 
-ComVarGet(cv, <a href="../Functions.htm#Variadic">p*</a>) { <em>; Wird aufgerufen, wenn das Skript auf ein unbekanntes Feld zugreift.</em>
+ComVarGet(cv, p*) { <em>; Wird aufgerufen, wenn das Skript auf ein unbekanntes Feld zugreift.</em>
     if p.MaxIndex() = "" <em>; Keine Namen/Parameter, also cv[]</em>
-        return cv._[0]
+        return cv.ref[]
 }
 
 ComVarSet(cv, v, p*) { <em>; Wird aufgerufen, wenn das Skript ein unbekanntes Feld setzt.</em>
     if p.MaxIndex() = "" <em>; Keine Namen/Parameter, also cv[]:=v</em>
-        return cv._[0] := v
+        return cv.ref[] := v
 }
 
 ComVarDel(cv) { <em>; Wird aufgerufen, wenn das Objekt freigegeben wird.
-    ; Notwendig, damit das interne Array freigegeben werden kann.</em>
-    DllCall("oleaut32\SafeArrayUnaccessData", "ptr", ComObjValue(cv._))
+    ; Je nach Typ kann dies erforderlich sein, um den Wert freizugeben, sofern gesetzt.</em>
+    DllCall("oleaut32\VariantClear", "ptr", cv.GetAddress("buf"))
 }
 </pre>
 </div>
