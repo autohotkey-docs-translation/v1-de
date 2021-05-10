@@ -38,7 +38,7 @@
 
 <h3 id="Function_Remarks">Bemerkungen</h3>
 <p>Neue Skripte sollten eine Funktion anstelle einer Subroutine verwenden, um so das Risiko zu verringern, ein Skript zu erstellen, das nicht beendet werden kann, und um sicherstellen zu können, dass der übergebene Exitcode an Exit oder ExitApp beibehalten wird.</p>
-<p>Es können beliebig viele OnExit-Funktionen registriert werden. Wenn zusätzlich noch ein Label (Subroutine) registriert wurde, werden die Funktionen aufgerufen, nachdem die Subroutine <a href="ExitApp.htm">ExitApp</a> aufgerufen hat. Eine OnExit-Funktion sollte in der Regel nicht ExitApp aufrufen; wäre dies der Fall, würde das Skript sofort beendet werden.</p>
+<p>Es können beliebig viele OnExit-Funktionen registriert werden. Wenn zusätzlich noch ein Label (Subroutine) registriert wurde, werden die Funktionen aufgerufen, nachdem die Subroutine <a href="ExitApp.htm">ExitApp</a> aufgerufen hat. Eine OnExit-Funktion sollte in der Regel nicht ExitApp aufrufen; wäre dies der Fall, würde das Skript sofort terminiert werden.</p>
 
 <h2 id="command">OnExit</h2>
 <p class="warning"><strong>Veraltet:</strong> Dieser Befehl ist nicht für neue Skripte empfohlen. Verwenden Sie stattdessen die <a href="#function">OnExit</a>-Funktion.</p>
@@ -53,14 +53,14 @@
 </dl>
 
 <h3 id="Command_Remarks">Bemerkungen</h3>
-<p><strong>WICHTIG</strong>: Anstatt das Skript zu beenden, wird die angegebene Subroutine aufgerufen - das heißt, dass der <a href="ExitApp.htm">ExitApp</a>-Befehl in dieser Subroutine verwendet werden muss, wenn man das Skript beenden will.</p>
+<p><strong>WICHTIG</strong>: Anstatt das Skript zu terminieren, wird die angegebene Subroutine aufgerufen - das heißt, dass der <a href="ExitApp.htm">ExitApp</a>-Befehl in dieser Subroutine verwendet werden muss, wenn man das Skript terminieren will.</p>
 <p>Die interne Variable <strong>A_ExitReason</strong> enthält nur einen Wert, wenn die OnExit-Subroutine entweder gerade läuft oder mindestens einmal aufgrund eines vorherigen Exitversuchs aufgerufen wurde. Wenn dies der Fall ist, enthält die Variable eines der Wörter aus der <a href="#ExitReason">unteren Tabelle</a>.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Die Callback-Funktion oder Subroutine von OnExit wird aufgerufen, wenn das Skript in irgendeiner Form beendet wird (nur nicht, wenn das Beenden von so etwas wie "Task beenden" erzwungen wird). Sie wird auch aufgerufen, wann immer <a href="_SingleInstance.htm">#SingleInstance</a> und <a href="Reload.htm">Reload</a> eine vorherige Instanz zum Beenden auffordert.</p>
+<p>Die Callback-Funktion oder Subroutine von OnExit wird aufgerufen, wenn das Skript in irgendeiner Form beendet wird (nur nicht, wenn das Beenden von so etwas wie "Task beenden" erzwungen wird). Sie wird auch aufgerufen, wann immer <a href="_SingleInstance.htm">#SingleInstance</a> und <a href="Reload.htm">Reload</a> eine vorherige Instanz zum Terminieren auffordert.</p>
 <p>Mit <code>OnMessage(0x0011, "WM_QUERYENDSESSION")</code> kann das Herunterfahren oder Abmelden des Betriebssystems erkannt und optional abgebrochen werden (siehe <a href="OnMessage.htm#shutdown">OnMessage-Beispiel #2</a> für ein funktionsfähiges Beispiel).</p>
-<p>Der OnExit-<a href="../misc/Threads.htm">Thread</a> nimmt keine Rücksicht auf <a href="_MaxThreads.htm">#MaxThreads</a> (er wird bei Bedarf immer gestartet). Darüber hinaus kann dieser Thread, während er läuft, nicht von anderen <a href="../misc/Threads.htm">Threads</a> unterbrochen werden, einschließlich <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="SetTimer.htm">zeitgesteuerte Subroutinen</a>. Allerdings wird er unterbrochen (und das Skript beendet), wenn der Benutzer den Menüpunkt Exit im Tray-Menü oder Hauptmenü auswählt, oder das Skript aufgrund von <a href="Reload.htm">Reload</a> oder <a href="_SingleInstance.htm">#SingleInstance</a> zum Beenden aufgefordert wird. Aus diesem Grund sollte die Callback-Funktion oder Subroutine von OnExit so gestaltet werden, dass sie schnell zum Ende kommen kann, sofern der Benutzer das nicht will.</p>
-<p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> auf einen fehlerhaften Zustand wie z. B. Laufzeitfehler stößt, wird das Skript beendet. Dadurch wird verhindert, dass das Skript aufgrund einer fehlerhaften Callback-Funktion oder Subroutine von OnExit nicht mehr beendet werden kann.</p>
+<p>Der OnExit-<a href="../misc/Threads.htm">Thread</a> nimmt keine Rücksicht auf <a href="_MaxThreads.htm">#MaxThreads</a> (er wird bei Bedarf immer gestartet). Darüber hinaus kann dieser Thread, während er läuft, nicht von anderen <a href="../misc/Threads.htm">Threads</a> unterbrochen werden, einschließlich <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="SetTimer.htm">zeitgesteuerte Subroutinen</a>. Allerdings wird er unterbrochen (und das Skript terminiert), wenn der Benutzer den Menüpunkt Exit im Tray-Menü oder Hauptmenü auswählt, oder das Skript aufgrund von <a href="Reload.htm">Reload</a> oder <a href="_SingleInstance.htm">#SingleInstance</a> zum Terminieren aufgefordert wird. Aus diesem Grund sollte die Callback-Funktion oder Subroutine von OnExit so gestaltet werden, dass sie schnell zum Ende kommen kann, sofern der Benutzer das nicht will.</p>
+<p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> auf einen fehlerhaften Zustand wie z. B. Laufzeitfehler stößt, wird das Skript terminiert. Dadurch wird verhindert, dass das Skript aufgrund einer fehlerhaften Callback-Funktion oder Subroutine von OnExit nicht mehr terminiert werden kann.</p>
 <p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> via <a href="Exit.htm">Exit</a> oder <a href="ExitApp.htm">ExitApp</a> inklusive Exitcode gestartet wurde, wird in <span class="ver">[v1.1.19]</span> und niedriger dieser Code ignoriert und verworfen. In <span class="ver">[v1.1.20+]</span> wird der initiale Exitcode verwendet, es sei denn, der Exitcode wurde durch Aufrufen von <a href="ExitApp.htm">ExitApp</a> mit einem neuen überschrieben.</p>
 <p>Jede via Exitversuch gestartete Callback-Funktion oder Subroutine verwendet zu Beginn die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a>. Diese Standardwerte können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
 
@@ -81,7 +81,7 @@
   <tr id="close">
     <td>Close</td>
     <td>
-      <p>Das Skript hat eine WM_CLOSE- oder WM_QUIT-Meldung empfangen, hatte einen kritischen Fehler, oder wurde auf andere Weise geschlossen. Obwohl all diese Ursachen ungewöhnlich sind, wird WM_CLOSE eventuell ausgelöst, wenn man <a href="WinClose.htm">WinClose</a> auf das Hauptfenster des Skripts anwendet. Um das Fenster zu schließen (zu verstecken), ohne das Skript zu beenden, verwenden Sie <a href="WinHide.htm">WinHide</a>.</p>
+      <p>Das Skript hat eine WM_CLOSE- oder WM_QUIT-Meldung empfangen, hatte einen kritischen Fehler, oder wurde auf andere Weise geschlossen. Obwohl all diese Ursachen ungewöhnlich sind, wird WM_CLOSE eventuell ausgelöst, wenn man <a href="WinClose.htm">WinClose</a> auf das Hauptfenster des Skripts anwendet. Um das Fenster zu schließen (zu verstecken), ohne das Skript zu terminieren, verwenden Sie <a href="WinHide.htm">WinHide</a>.</p>
       <p>Wenn das Skript wegen eines kritischen Fehlers oder der Zerstörung des <a href="../Program.htm#main-window">Hauptfensters</a> beendet wird, wird es nach Abschluss des OnExit-Threads bedingungslos terminiert.</p>
       <p>Wenn das Hauptfenster zerstört wird, ist es möglicherweise noch vorhanden, kann aber nicht angezeigt werden. Dieser Zustand kann durch Überwachung der WM_DESTROY-Meldung mittels <a href="OnMessage.htm">OnMessage()</a> erkannt werden.</p>
     </td>
@@ -139,7 +139,7 @@ if A_ExitReason not in Logoff,Shutdown  <em>; Vermeiden Sie in dieser Zeile Leer
     IfMsgBox, No
         return
 }
-ExitApp  <em>; Ein Skript mit einer OnExit-Subroutine wird nicht beendet, solange die Subroutine kein ExitApp verwendet.</em></pre>
+ExitApp  <em>; Ein Skript mit einer OnExit-Subroutine wird nicht terminiert, solange die Subroutine kein ExitApp verwendet.</em></pre>
 </div>
 
 <div class="ex" id="ExFnObj">
