@@ -23,13 +23,16 @@ jobs:
       with:
         ref: master
 
-    - name: Install AutoHotkey v2 32-bit
+    - name: Download and unzip AutoHotkey v2
       run: |
-        choco install autohotkey.portable --pre --x86
+        $source = "https://www.autohotkey.com/download/ahk-v2.zip"
+        $dest = "ahk-v2.zip"
+        Invoke-WebRequest -Uri $source -OutFile $dest
+        Expand-Archive -Path $dest
 
     - name: Run build_search.ahk
       run: |
-        Start-Process -FilePath "AutoHotkey.exe" -ArgumentList "/ErrorStdOut `"static/source/build_search.ahk`"" -NoNewWindow -Wait
+        Start-Process -FilePath "ahk-v2/AutoHotkey32.exe" -ArgumentList "/ErrorStdOut `"static/source/build_search.ahk`"" -NoNewWindow -Wait
 
     - name: Commit
       run: |
@@ -53,13 +56,16 @@ jobs:
       with:
         ref: master
 
-    - name: Install AutoHotkey v1.1 32-bit
+    - name: Download and unzip AutoHotkey v1.1
       run: |
-        choco install autohotkey.portable --x86
+        $source = "https://www.autohotkey.com/download/ahk.zip"
+        $dest = "ahk.zip"
+        Invoke-WebRequest -Uri $source -OutFile $dest
+        Expand-Archive -Path $dest
 
     - name: Run compile_chm.ahk
       run: |
-        Start-Process -FilePath "AutoHotkey.exe" -ArgumentList "/ErrorStdOut `"compile_chm.ahk`"" -NoNewWindow -Wait
+        Start-Process -FilePath "ahk/AutoHotkeyU32.exe" -ArgumentList "/ErrorStdOut `"compile_chm.ahk`"" -NoNewWindow -Wait
 
     - name: Compress CHM file
       run: |
