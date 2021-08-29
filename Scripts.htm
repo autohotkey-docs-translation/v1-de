@@ -186,6 +186,10 @@ FileAppend, %Var%, C:\Meine Datei.txt</pre>
 </ul>
 <p>Den Quellcode sowie neuere Versionen des Compilers finden Sie auf <a href="https://github.com/AutoHotkey/Ahk2Exe">GitHub</a>.</p>
 
+<h3 id="ahk2exe-base">Ausführbare Basisdatei</h3>
+<p>Jede EXE-Datei eines kompilierten Skripts basiert auf einer ausführbaren Datei, die den Interpreter implementiert. Die im Compiler-Verzeichnis enthaltenen Basisdateien haben die Dateiendung ".bin"; diese Dateien sind Versionen des Interpreters, die nicht die Möglichkeit bieten, externe Skriptdateien zu laden. Stattdessen wird das Programm nach einer Win32-Ressource (RCDATA) namens "&gt;AUTOHOTKEY SCRIPT&lt;" suchen und diese laden, oder fehlschlagen, wenn sie nicht gefunden wird.</p>
+<p><span class="ver">[v1.1.34+]:</span> Die ausführbaren Standard-AutoHotkey-Dateien können auch als Basis für ein kompiliertes Skript verwendet werden, indem eine Win32-Ressource (RCDATA) mit der ID 1 eingebettet wird. Dadurch kann die EXE-Datei eines kompilierten Skripts zusammen mit der Befehlszeilenoption <a href="#SlashScript">/script</a> verwenden werden, um anstelle des eingebetteten Hauptskripts andere Skripte auszuführen. Weitere Informationen finden Sie unter <a href="Program.htm#embedded-scripts">Eingebettete Skripte</a>.</p>
+
 <h3 id="CompilerDirectives">Skript-Compiler-Direktiven</h3>
 <p><span class="ver">[v1.1.33+]:</span> Skript-Compiler-Direktiven ermöglichen es dem Benutzer, genaue Angaben darüber zu machen, wie ein Skript kompiliert werden soll. Einige der Features sind:</p>
 <ul>
@@ -251,6 +255,24 @@ FileAppend, %Var%, C:\Meine Datei.txt</pre>
       <p>Enthält das Skript Syntaxfehler, wird die Ausgabedatei eventuell leer sein. Der Exitcode des Prozesses kann verwendet werden, um diesen Zustand zu erkennen; bei einem Syntaxfehler ist der Exitcode eine 2. Mit der /ErrorStdOut-Option kann die Fehlermeldung unterdrückt oder abgefangen werden.</p>
     </td>
     <td>Nein</td>
+  </tr>
+  <tr id="SlashInclude">
+    <td>/include <em>"IncDatei"</em></td>
+    <td>
+      <p><span class="ver">[v1.1.34+]:</span> <a href="commands/_Include.htm">Inkludiert</a> eine Datei vor dem Hauptskript. Mit dieser Methode kann nur eine einzelne Datei inkludiert werden. Wenn das Skript <a href="commands/Reload.htm">neu geladen</a> wird, wird diese Befehlszeilenoption automatisch an die neue Instanz übergeben.</p>
+    </td>
+    <td>Nein</td>
+  </tr>
+  <tr id="SlashScript">
+    <td>/script</td>
+    <td>
+      <p><span class="ver">[v1.1.34+]:</span> Wenn diese Befehlszeilenoption mit einem kompilierten Skript basierend auf einer EXE-Datei verwendet wird, veranlasst sie das Programm, das eingebettete Hauptskript zu ignorieren. Dadurch kann die EXE-Datei eines kompilierten Skripts anstelle des Hauptskripts externe Skriptdateien oder eingebettete Skripte ausführen. Andere Befehlszeilenoptionen, die normalerweise von kompilierten Skripten nicht unterstützt werden, können ebenfalls verwendet werden, müssen aber rechts von dieser Befehlszeilenoption angegeben werden. Zum Beispiel:</p>
+      <pre class="no-highlight">KompiliertesSkript.exe /script /ErrorStdOut MeinSkript.ahk "Skript-Arg 1"</pre>
+      <p>Wenn die aktuelle ausführbare Datei kein eingebettetes Skript hat, ist diese Befehlszeilenoption erlaubt, aber wirkungslos.</p>
+      <p>Diese Befehlszeilenoption wird von kompilierten Skripten, die auf einer BIN-Datei basieren, nicht unterstützt.</p>
+      <p>Siehe auch: <a href="#ahk2exe-base">Ausführbare Basisdatei (Ahk2Exe)</a></p>
+    </td>
+    <td>N/A</td>
   </tr>
 </table>
 

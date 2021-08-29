@@ -29,6 +29,7 @@ return</pre>
   <li><a href="#run">Ein Skript starten</a></li>
   <li><a href="#tray-icon">Tray-Symbol</a></li>
   <li><a href="#main-window">Hauptfenster</a></li>
+  <li><a href="#embedded-scripts">Eingebettete Skripte</a></li>
   <li><a href="#cmd">Verwendung der Befehlszeile</a></li>
   <li><a href="#portability">Portabilität von AutoHotkey.exe</a></li>
   <li><a href="#install">Installer-Optionen</a>
@@ -89,7 +90,6 @@ return</pre>
 </ul>
 <p><strong>Bekanntes Problem:</strong> Die Tastaturkurzbefehle der Menüpunkte funktionieren nicht, wenn das Skript ein <a href="commands/MsgBox.htm">Mitteilungsfenster</a> oder ein anderes Dialogfenster anzeigt.</p>
 <p>Die interne Variable <a href="Variables.htm#ScriptHwnd">A_ScriptHwnd</a> enthält die HWND-Nummer (eindeutige ID) des Skript-Hauptfensters.</p>
-<p id="title">Der Titel dieses Fensters wird von Mechanismen wie <a href="commands/_SingleInstance.htm">#SingleInstance</a> und <a href="commands/Reload.htm">Reload</a> verwendet, um andere Instanzen desselben Skripts zu identifizieren. Das <a href="commands/WinSetTitle.htm">Ändern des Titels</a> verhindert, dass das Skript als solches identifiziert wird. Der Standardtitel entspricht dem Ausdruck <code>A_ScriptFullPath (A_IsCompiled ? "" : " - AutoHotkey v" A_AhkVersion)</code>.</p>
 <p>Schließt man dieses Fenster mit <a href="commands/WinClose.htm">WinClose</a> (auch von einem anderen Skript aus), wird das Skript beendet, aber die meisten anderen Methoden verstecken das Fenster und lassen das Skript laufen.</p>
 <p>Wenn das Hauptfenster minimiert wird, wird es automatisch versteckt. Dieses Verhalten ist notwendig, um zu verhindern, dass untergeordnete Fenster (z. B. GUI-Fenster oder einige Dialogfenster) automatisch minimiert werden, und um zu bewirken, dass die Schaltfläche in der Taskleiste des Hauptfensters versteckt wird. Um das Hauptfenster stattdessen normal minimieren zu lassen, überschreiben Sie das Standardverhalten mit <a href="commands/OnMessage.htm">OnMessage</a>. Zum Beispiel:</p>
 <pre>; Dies verhindert, dass das Hauptfenster beim Minimieren versteckt wird:
@@ -108,6 +108,42 @@ AutoMinimierungVerhindern(wParam, lParam, uMsg, hwnd) {
     if (uMsg = 0x0018 &amp;&amp; lParam = 1) <em>; SW_PARENTCLOSING = 1</em>
         return 0 <em>; Verhindern, dass untergeordnete Fenster versteckt werden.</em>
 }</pre>
+
+<h3 id="title">Titel des Hauptfensters</h3>
+<p>Der Titel des Skript-Hauptfensters wird von Mechanismen wie <a href="commands/_SingleInstance.htm">#SingleInstance</a> und <a href="commands/Reload.htm">Reload</a> verwendet, um andere Instanzen desselben Skripts zu identifizieren. Das <a href="commands/WinSetTitle.htm">Ändern des Titels</a> verhindert, dass das Skript als solches identifiziert wird. Welcher Titel standardmäßig verwendet wird, hängt davon ab, wie das Skript geladen wurde:</p>
+<table class="info">
+  <tr><th>Geladen aus</th><th>Titelausdruck</th><th>Beispiel</th></tr>
+  <tr><td>.ahk-Datei</td><td><code>A_ScriptFullPath " - AutoHotkey v" A_AhkVersion</code></td><td>E:\Mein Skript.ahk - AutoHotkey v1.1.33.09</td></tr>
+  <tr><td>Hauptressource (kompiliertes Skript)</td><td><code>A_ScriptFullPath</code></td><td>E:\Mein Skript.exe</td></tr>
+  <tr><td>Jede andere Ressource</td><td><code>A_ScriptFullPath " - " A_LineFile</code></td><td>E:\Mein AutoHotkey.exe - *INTERNES-TOOL.AHK</td></tr>
+</table>
+<p>Der folgende Code veranschaulicht, wie der Standardtitel mit dem Skript selbst ermittelt werden kann (wobei der tatsächliche Titel mit <a href="commands/WinGetTitle.htm">WinGetTitle</a> abgerufen werden kann):</p>
+<pre>
+Titel := A_ScriptFullPath
+if !A_IsCompiled
+    Titel .= " - AutoHotkey v" A_AhkVersion
+<em>; Für ein korrektes Ergebnis muss dies von der auszuführenden Ressource ausgewertet werden,
+; nicht von einem #Include (es sei denn, das #Include wurde von Ahk2Exe in das Skript eingebunden):</em>
+else if SubStr(A_LineFile, 1, 1) = "*" &amp;&amp; A_LineFile != "*#1"
+    Titel .= " - " A_LineFile
+</pre>
+
+<h2 id="embedded-scripts">Eingebettete Skripte <span class="ver">[v1.1.34+]</span></h2>
+<p>Um Skripte in eine Standard-AutoHotkey-EXE-Datei einzubetten, fügen Sie die Skripte als Win32-Ressourcen (RCDATA) hinzu. Ein eingebettetes Skript kann in der Befehlszeile angegeben werden, oder mit <a href="commands/_Include.htm">#Include</a> durch Angabe eines Sternchens (*) gefolgt vom Ressourcennamen. Handelt es sich um eine Integer-ID, muss der Ressourcenname ein Rautezeichen (#) gefolgt von einer Dezimalzahl sein.</p>
+<p>Das Programm kann automatisch Skriptcode aus den folgenden Ressourcen laden, wenn diese in der Datei vorhanden sind:</p>
+<table class="info">
+  <tr><th>ID</th><th>Angabe</th><th>Verwendung</th></tr>
+  <tr>
+    <td>1</td><td>*#1</td>
+    <td>Dies ist das Mittel, mit dem ein <a href="Scripts.htm#ahk2exe">kompiliertes Skript</a> aus einer EXE-Datei erstellt wird. Dieses Skript wird automatisch ausgeführt, und die meisten Befehlszeilenoptionen werden an das Skript übergeben, anstatt vom Programm interpretiert zu werden. Externe Skripte und alternative eingebettete Skripte können mit der Befehlszeilenoption <a href="Scripts.htm#SlashScript">/script</a> ausgeführt werden.</td>
+  </tr>
+  <tr>
+    <td>2</td><td>*#2</td>
+    <td>Wenn vorhanden, wird dieses Skript automatisch vor jedem Skript, das das Programm lädt, und vor jeder mit <a href="Scripts.htm#SlashInclude">/include</a> angegebenen Datei "eingebunden".</td>
+  </tr>
+</table>
+<p>Wenn die Quelle des Hauptskripts eine eingebettete Ressource ist, verhält sich das Programm im Modus "kompiliertes Skript", mit der Ausnahme, dass <a href="Variables.htm#AhkPath">A_AhkPath</a> immer den Pfad der aktuellen EXE-Datei enthält (derselbe wie <a href="Variables.htm#ScriptFullPath">A_ScriptFullPath</a>). Bei anderen Ressourcen außer *#1 wird der Ressourcenbezeichner in den <a href="#title">Titel des Hauptfensters</a> eingefügt, um <a href="commands/_SingleInstance.htm">#SingleInstance</a> und <a href="commands/Reload.htm">Reload</a> zu unterstützen.</p>
+<p>Wenn <a href="Variables.htm#LineFile">A_LineFile</a> von einem Code referenziert wird, der aus einer eingebetteten Ressource stammt, enthält es ein Sternchen (*), gefolgt von dem Ressourcennamen.</p>
 
 <h2 id="cmd">Verwendung der Befehlszeile</h2>
 <p>Weitere Informationen zur Verwendung der Befehlszeile finden Sie unter <a href="Scripts.htm#cmd">Befehlszeilenparameter an ein Skript übergeben</a>, einschließlich einer Liste von Befehlszeilenoptionen, die das Verhalten des Programms beeinflussen.</p>

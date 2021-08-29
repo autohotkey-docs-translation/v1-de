@@ -156,7 +156,7 @@ indexData = [
   ["A_KeyDuration","Variables.htm#KeyDelay",1],
   ["A_KeyDurationPlay","Variables.htm#KeyDelayPlay",1],
   ["A_Language","Variables.htm#Language",1],
-  ["A_Language-Werte","misc/Languages.htm",1],
+  ["A_Language-Werte","misc/Languages.htm"],
   ["A_LastError","Variables.htm#LastError",1],
   ["A_LineFile","Variables.htm#LineFile",1],
   ["A_LineNumber","Variables.htm#LineNumber",1],
@@ -1061,7 +1061,7 @@ indexData = [
   ["WriteLine-Methode (File)","objects/File.htm#WriteLine"],
   ["WriteNumType-Methode (File)","objects/File.htm#WriteNum"],
   ["WS_* (GUI-Styles)","misc/Styles.htm"],
-  ["XButton","commands/Click.htm"],
+  ["XButton","KeyList.htm#mouse-advanced"],
   ["YYYYMMDDHH24MISS","commands/FileSetTime.htm#YYYYMMDD"],
   ["{Blind}","commands/Send.htm#blind"]
 ];
