@@ -101,7 +101,7 @@
   <li><a href="../Variables.htm#GuiX">A_GuiX</a> und <a href="../Variables.htm#GuiY">A_GuiY</a>: Beide enthalten -2147483648, wenn die eingehende Meldung via <a href="PostMessage.htm">SendMessage</a> gesendet wurde. Wenn sie via <a href="PostMessage.htm">PostMessage</a> gesendet wurde, enthalten beide Variablen die Koordinaten des Mauszeigers (relativ zum Bildschirm), die während des Sendens gegolten haben.</li>
   <li><a href="../Variables.htm#EventInfo">A_EventInfo</a>: Enthält 0, wenn die eingehende Meldung via SendMessage gesendet wurde. Wenn sie via PostMessage gesendet wurde, enthält die Variable die <a href="../Variables.htm#TickCount">Tick-Count-Zeit</a>, die während des Sendens gegolten hat.</li>
 </ul>
-<p>Das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> einer überwachenden Funktion ist zu Beginn das übergeordnete Fenster, zu dem die Meldung gesendet wurde (selbst wenn sie zu einem Steuerelement gesendet wurde). Ist das Fenster versteckt, aber kein GUI-Fenster (z. B. das Hauptfenster des Skripts), muss zuvor <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> aktiviert werden. Zum Beispiel:</p>
+<p>Das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> einer überwachenden Funktion ist zunächst das übergeordnete Fenster, an das die Meldung gesendet wurde (selbst wenn sie an ein Steuerelement gesendet wurde). Wenn das Fenster versteckt und kein GUI-Fenster ist (wie z. B. das Hauptfenster des Skripts), schalten Sie <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ein, bevor Sie es verwenden. Zum Beispiel:</p>
 <pre>DetectHiddenWindows On
 MldÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des Fensters, das die Meldung erhalten hat.</em></pre>
 
@@ -126,7 +126,7 @@ MldÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des F
 <p>Die <a href="../misc/Threads.htm">Priorität</a> von OnMessage-Threads ist immer 0. Demzufolge werden keine Meldungen überwacht oder gepuffert, wenn der aktuelle Thread eine Priorität höher als 0 hat.</p>
 <p>Seien Sie vorsichtig, wenn Sie Systemmeldungen (solche unter 0x0400) überwachen. Kommt eine überwachende Funktion beispielsweise nicht schnell genug zum Ende, kann die Antwort auf die Meldung länger dauern als vom System erwartet, was zu Nebeneffekten führen könnte. Unerwünschtes Verhalten kann auch auftreten, wenn eine überwachende Funktion die Meldung durch Zurückgeben eines Integers nicht weiter fortsetzen lässt, während das System etwas anderes erwartet.</p>
 <p>Zeigt das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> an, werden Meldungen, die via PostMessage an ein Steuerelement gesendet werden, nicht überwacht. Wenn beispielsweise das Skript ein Mitteilungsfenster anzeigt und der Benutzer innerhalb eines GUI-Fensters auf eine Schaltfläche klickt, wird die WM_LBUTTONDOWN-Meldung direkt an die Schaltfläche gesendet, ohne dass die überwachende Funktion aufgerufen wird.</p>
-<p>Ein externes Programm kann Meldungen mithilfe von PostThreadMessage() oder einer anderen API-Funktion direkt an ein Thread des Skripts senden, allerdings wird dies nicht empfohlen, weil solche Meldungen verloren gehen würden, wenn das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt. Stattdessen ist es besser, Meldungen an das Hauptfenster des Skripts oder an eines seiner GUI-Fenster zu senden.</p>
+<p>Ein externes Programm kann Meldungen mithilfe von PostThreadMessage() oder einer anderen API-Funktion direkt an einen Thread des Skripts senden, allerdings wird dies nicht empfohlen, weil solche Meldungen verloren gehen würden, wenn das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt. Stattdessen ist es besser, Meldungen an das Hauptfenster des Skripts oder an eines seiner GUI-Fenster zu senden.</p>
 <h2 id="Related">Siehe auch</h2>
 <p><a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="OnExit.htm#function">OnExit()</a>, <a href="OnExit.htm#command">OnExit</a>, <a href="OnClipboardChange.htm#function">OnClipboardChange()</a>, <a href="OnClipboardChange.htm#label">OnClipboardChange-Label</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Critical.htm">Critical</a>, <a href="DllCall.htm">DllCall()</a></p>
 <h2 id="Examples">Beispiele</h2>
@@ -253,7 +253,7 @@ else if (Ergebnis = 0)
 return
 
 Sende_WM_COPYDATA(ByRef ZuSendendeZkette, ByRef ZielSkriptTitel)  <em>; ByRef verbraucht in diesem Fall weniger Speicher.
-; Diese Funktion sendet eine bestimmte Zeichenkette an ein bestimmtes Fenster und gibt die Anwort zurück.
+; Diese Funktion sendet eine bestimmte Zeichenkette an ein bestimmtes Fenster und gibt die Antwort zurück.
 ; Die Antwort ist 1, wenn das Zielfenster die Meldung akzeptiert hat, oder 0, wenn die Meldung ignoriert wurde.</em>
 {
     VarSetCapacity(KopieDatenStrukt, 3*A_PtrSize, 0)  <em>; Richtet den Speicherbereich der Struktur ein.</em>

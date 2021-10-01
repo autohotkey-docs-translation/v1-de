@@ -76,7 +76,7 @@
 <pre>Addieren(X, Y, Z:=0) {
     return X + Y + Z
 }</pre>
-<p>Ruft man die Funktion mit <strong>drei</strong> Parametern auf, wird der Standardwert von Z ignoriert. Ruft man aber die Funktion nur mit <strong>zwei</strong> Parametern auf, wird der Z-Variable automatisch eine 0 zugewiesen.</p>
+<p>Ruft man die Funktion mit <strong>drei</strong> Parametern auf, wird der Standardwert von Z ignoriert. Ruft man aber die Funktion nur mit <strong>zwei</strong> Parametern auf, bekommt die Z-Variable automatisch eine 0 zugewiesen.</p>
 <p id="missing">Es ist nicht möglich, optionale Parameter in der Mitte der Parameterliste zu platzieren. Alle Parameter auf der rechten Seite des ersten optionalen Parameters müssen in diesem Fall auch optional sein. <span class="ver">[AHK_L 31+]:</span> Optionale Parameter können in der Mitte der Parameterliste weggelassen werden, wenn die Funktion aufgerufen wird (siehe unten). In <span class="ver">[v1.1.12+]</span> gilt das auch für dynamische Funktionen und Methoden.</p>
 <pre>MeineFunk(1,, 3)
 MeineFunk(X, Y:=2, Z:=0) {  <em>; Beachten Sie, dass Z in diesem Fall weiterhin optional sein muss.</em>
@@ -163,7 +163,7 @@ MsgBox % Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
 </ul>
 <p>Bekannte Einschränkungen:</p>
 <ul>
-  <li>Nur der am weitesten rechts befindliche Parameter kann auf diese Weise erweitert werden. Zum Beispiel wird <code>MeineFunk(x, y*)</code> unterstützt, aber nicht <code>MeineFunk(x*, y)</code>.</li>
+  <li>Nur der Parameter ganz rechts kann auf diese Weise erweitert werden. Zum Beispiel wird <code>MeineFunk(x, y*)</code> unterstützt, aber nicht <code>MeineFunk(x*, y)</code>.</li>
   <li>Zwischen dem Sternchen (<code>*</code>) und dem Symbol, das die Parameterliste beendet, dürfen keine Leerraumzeichen stehen.</li>
 </ul>
 <h2 id="Locals">Lokale und globale Variablen</h2>
@@ -190,7 +190,7 @@ MsgBox % Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
 <p>Um innerhalb einer Funktion auf eine vorhandene globale Variable zu verweisen (oder eine neue zu erstellen), deklarieren Sie die Variable als globale Variable, bevor Sie sie verwenden. Zum Beispiel:</p>
 <pre>InDateiLoggen(ZuLoggenderText)
 {
-    global LogDateiName  <em>; Dieser globalen Variable wurde bereits ein Wert außerhalb dieser Funktion zugewiesen.</em>
+    global LogDateiName  <em>; Diese globale Variable bekam bereits einen Wert außerhalb dieser Funktion zugewiesen.</em>
     FileAppend, %ZuLoggenderText%`n, %LogDateiName%
 }</pre>
 <p id="AssumeGlobal"><strong>Assume-Global-Modus</strong>: Muss eine Funktion viele globale Variablen erstellen oder auf sie zugreifen, kann die Funktion so definiert werden, dass sie all ihre Variablen (außer ihre Parameter) global behandelt. Dazu muss in der ersten Zeile entweder das Wort "global" stehen oder eine lokale Variable deklariert sein. Zum Beispiel:</p>
@@ -264,7 +264,7 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
     MsgBox %FarbeName% konnte nicht gefunden werden.</pre>
 <p>Wenn die <em>FarbeName</em>-Variable leer sein sollte, wird die FindeFarbe()-Funktion nie aufgerufen, weil die linke Seite von <em>AND</em> als <em>falsch</em> gewertet wird, wodurch die rechte Seite nicht mehr in der Lage wäre, das Endergebnis auf <em>wahr</em> zu bringen.</p>
 <p>Dieses Verhalten führt dazu, dass die Nebeneffekte einer Funktion (wie das Ändern des Inhalts einer globalen Variable) nie auftreten werden, wenn diese Funktion auf der rechten Seite von <em>AND</em> oder <em>OR</em> aufgerufen wird.</p>
-<p>Beachten Sie außerdem, dass die Kurzschlussauswertung verschachtelte <em>AND</em>s und <em>OR</em>s stufenweise abarbeitet. Wenn <em>FarbeName</em> z. B. im folgenden Ausdruck leer ist, wird nur der am weitesten links befindliche Vergleich durchgeführt, weil die linke Seite dann ausreichen würde, um das Endergebnis zweifelsfrei zu bestimmen:</p>
+<p>Beachten Sie außerdem, dass die Kurzschlussauswertung verschachtelte <em>AND</em>s und <em>OR</em>s stufenweise abarbeitet. Wenn <em>FarbeName</em> z. B. im folgenden Ausdruck leer ist, wird nur der Vergleich ganz links durchgeführt, weil die linke Seite dann ausreichen würde, um das Endergebnis zweifelsfrei zu bestimmen:</p>
 <pre>if (FarbeName = "" <u>OR</u> FindeFarbe(FarbeName, Region1) <u>OR</u> FindeFarbe(FarbeName, Region2))
     break   <em>; Nichts zu durchsuchen oder Übereinstimmung gefunden.</em></pre>
 <p>Wie die Beispiele oben zeigen, sollten umfangreiche (zeitaufwendige) Funktionen in der Regel auf der rechten Seite von <em>AND</em> oder <em>OR</em> aufgerufen werden, um die Leistung zu erhöhen. Diese Technik kann auch genutzt werden, um das Aufrufen einer Funktion zu verhindern, wenn ihr ein Wert übergeben wurde, den sie für unpassend hält (z. B. eine leere Zeichenkette).</p>
