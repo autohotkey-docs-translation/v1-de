@@ -25,7 +25,7 @@
   <ul>
     <li><a href="#Intro2">Einführung</a></li>
     <li><a href="#AddResource">AddResource</a>: Fügt der EXE-Datei eine Ressource hinzu.</li>
-    <li><a href="#Bin">Bin</a>: Spezifiziert die zu verwendende binäre Version von AutoHotkey.</li>
+    <li><a href="#Bin">Bin / Base</a> <span class="ver">[v1.1.33.10+]</span>: Spezifiziert die zu verwendende Basisversion von AutoHotkey.</li>
     <li><a href="#ConsoleApp">ConsoleApp</a>: Setzt den Konsolenmodus.</li>
     <li><a href="#Cont">Cont</a>: Spezifiziert eine Fortsetzungszeile für eine Direktive.</li>
     <li><a href="#Debug">Debug</a>: Zeigt Debugging-Text an.</li>
@@ -33,6 +33,7 @@
     <li><a href="#Let">Let</a>: Setzt eine Benutzervariable.</li>
     <li><a href="#Obey">Obey</a>: Führt einen Befehl oder Ausdruck aus.</li>
     <li><a href="#PostExec">PostExec</a>: Führt ein Programm nach der Kompilierung aus.</li>
+    <li><a href="#ResourceID">ResourceID</a> <span class="ver">[v1.1.34+]</span>: Weist dem Hauptskript eine untypische Ressourcen-ID zu.</li>
     <li><a href="#SetMainIcon">SetMainIcon</a>: Setzt das Hauptsymbol.</li>
     <li><a href="#SetProp">Set<i>Eigenschaft</i></a>: Setzt eine Eigenschaft der EXE-Datei.</li>
     <li><a href="#Set">Set</a>: Setzt sonstige Eigenschaften.</li>
@@ -127,18 +128,23 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
   <li>23 (RT_HTML): <code>.htm</code>, <code>.html</code>, <code>.mht</code></li>
   <li>24 (RT_MANIFEST): <code>.manifest</code>. Wenn der Name für die Ressource nicht angegeben ist, wird standardmäßig <code>1</code> verwendet</li>
 </ul>
-<p><strong>Beispiel:</strong> Die Standardsymbole ersetzen (außer das <a href="#SetMainIcon">Hauptsymbol</a>):</p>
+<p><strong>Beispiel 1:</strong> Die Standardsymbole ersetzen (außer das <a href="#SetMainIcon">Hauptsymbol</a>):</p>
 <pre>;@Ahk2Exe-AddResource Icon1.ico, 160  ; Ersetzt 'H auf Blau'
 ;@Ahk2Exe-AddResource Icon2.ico, 206  ; Ersetzt 'S auf Grün'
 ;@Ahk2Exe-AddResource Icon3.ico, 207  ; Ersetzt 'H auf Rot'
 ;@Ahk2Exe-AddResource Icon4.ico, 208  ; Ersetzt 'S auf Rot'</pre>
 
-<h3 id="Bin">Bin</h3>
-<p>Spezifiziert die binäre Version von AutoHotkey, die in der generierten EXE-Datei enthalten sein soll. (Dies überschreibt alles, was in der GUI oder CLI angegeben ist.) Diese Direktive kann bei Bedarf mehrfach angegeben werden, allerdings nur in einer Skriptdatei, die nicht via <a href="../commands/_Include.htm">#Include</a> eingebunden wird. Der Compiler wird mindestens einmal für jede gefundene <em>Bin</em>-Direktive ausgeführt. (Wenn dieser Direktive aktuell ein Kommentar angehängt ist, muss dieser die <code>&nbsp;;</code>-Markierung verwenden. Um diese Direktive tatsächlich auszukommentieren, fügen Sie nach der ersten Kommentar-Markierung ein Leerzeichen ein.)</p>
-<pre class="Syntax"><span class="func">;@Ahk2Exe-Bin</span> [Pfad\]Name <span class="optional">, [EXE_Pfad\][Name], Zeichensatz</span></pre>
+<p><strong>Beispiel 2:</strong> <span class="ver">[v1.1.34+]</span> Ein anderes Skript als separate RCDATA-Ressource einbinden (siehe <a href="../Program.htm#embedded-scripts">Eingebettete Skripte</a>):</p>
+<pre>;@Ahk2Exe-AddResource MeinSkript.ahk, MEINERESSOURCE</pre>
+
+<h3 id="Bin">Bin / Base <span class="ver">[v1.1.33.10+]</span></h3>
+<p>Spezifiziert die Basisversion von AutoHotkey, die zum Generieren der EXE-Datei genutzt werden soll. Diese Direktive kann mit einem in der GUI oder CLI angegebenen Basisdateiparameter überschrieben werden. Diese Direktive kann bei Bedarf mehrfach angegeben werden, allerdings nur in einer Skriptdatei, die nicht via <a href="../commands/_Include.htm">#Include</a> eingebunden wird. Der Compiler wird mindestens einmal für jede gefundene Bin/Base-Direktive ausgeführt. (Wenn dieser Direktive aktuell ein Kommentar angehängt ist, muss dieser die <code>&nbsp;;</code>-Markierung verwenden. Um diese Direktive tatsächlich auszukommentieren, fügen Sie nach der ersten Kommentar-Markierung ein Leerzeichen ein.)</p>
+
+<pre class="Syntax"><span class="func">;@Ahk2Exe-Bin </span> [Pfad\]Name <span class="optional">, [EXE_Pfad\][Name], Zeichensatz</span> <em>; Veraltet</em>
+<span class="func">;@Ahk2Exe-Base</span> [Pfad\]Name <span class="optional">, [EXE_Pfad\][Name], Zeichensatz</span> <em>; <span class="ver">[v1.1.33.10+]</span></em></pre>
 <dl>
   <dt>[Pfad\]Name</dt>
-  <dd>Die zu verwendende BIN-Datei. Wenn keine Dateiendung angegeben ist, wird <code>.bin</code> vermutet. Für <em>Name</em> kann auch ein Platzhaltermuster verwendet werden; zum Beispiel <code>ANSI*</code>, <code>Unicode 32*</code>, <code>Unicode 64*</code>, oder <code>*bit</code> für alle drei. Wenn kein Pfad angegeben ist, werden die Standard-BIN-Dateien im Compiler-Ordner durchgegangen. Der Compiler wird für jede übereinstimmende BIN-Datei ausgeführt. Es dürfen nur die internen Variablen der oben genannten <a href="#group1">Gruppe 1</a> verwendet werden.</dd>
+  <dd>Die BIN- oder in <span class="ver">[v1.1.33.10+]</span> die EXE-Datei, die verwendet werden soll. Wenn keine Dateiendung angegeben ist, wird <code>.bin</code> vermutet. Für <em>Name</em> kann auch ein Platzhaltermuster verwendet werden; zum Beispiel <code>ANSI*</code>, <code>Unicode 32*</code>, <code>Unicode 64*</code>, oder <code>*bit</code> für alle drei. Wenn kein Pfad angegeben ist, werden die Standard-BIN-Dateien im Compiler-Ordner durchgegangen. Der Compiler wird für jede übereinstimmende BIN- oder EXE-Datei ausgeführt. Es dürfen nur die internen Variablen der oben genannten <a href="#group1">Gruppe 1</a> verwendet werden.</dd>
   <dt>[EXE_Pfad\][Name]</dt>
   <dd><i>(Optional)</i> Der Dateiname für die EXE-Datei. Jede angegebene Dateiendung wird mit <code>.exe</code> ersetzt. Wenn kein Pfad angegeben ist, wird die EXE-Datei im Ordner des Skripts erstellt. Wenn kein Name angegeben ist, bekommt die EXE-Datei den Standardnamen zugewiesen. (Dieser Parameter kann mit der <a href="#ExeName">ExeName</a>-Direktive überschrieben werden.)</dd>
   <dt>Zeichensatz</dt>
@@ -166,7 +172,7 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
 </dl>
 
 <h3 id="ExeName">ExeName</h3>
-<p>Spezifiziert den Standort und Namen für die generierte EXE-Datei. (Siehe auch <a href="#Bin">Bin</a>-Direktive.)</p>
+<p>Spezifiziert den Standort und Namen für die generierte EXE-Datei. (Siehe auch <a href="#Bin">Base</a>-Direktive.) Diese Direktive kann mit einer in der GUI oder CLI angegebenen Ausgabedatei überschrieben werden.</p>
 <pre class="Syntax"><span class="func">;@Ahk2Exe-ExeName</span> [Pfad\][Name]</pre>
 <dl>
   <dt>[Pfad\][Name]</dt>
@@ -241,8 +247,16 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
 ;@Ahk2Exe-Cont  "11.UPX." "1.UPX!.", 2</pre>
 <p>Weitere Beispiele finden Sie im Skript <a href="https://github.com/AutoHotkey/Ahk2Exe/blob/master/BinMod.ahk">BinMod.ahk</a> selbst.</p>
 
+<h3 id="ResourceID">ResourceID <span class="ver">[v1.1.34+]</span></h3>
+<p>Weist eine untypische Ressourcen-ID zu, die für das Hauptskript bei Kompilierungen verwendet wird, die eine <a href="#Bin">EXE-Basisdatei</a> verwenden (siehe <a href="../Program.htm#embedded-scripts">Eingebettete Skripte</a>). Diese Direktive kann mit einer in der GUI oder CLI angegebenen Ressourcen-ID überschrieben werden. Diese Direktive wird ignoriert, wenn sie in einem Skript vorkommt, das über die <a href="#AddResource">AddResource</a>-Direktive eingefügt wurde.</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-ResourceID</span> Name</pre>
+<dl>
+  <dt>Name</dt>
+  <dd>Die zu verwendende Ressourcen-ID. Numerische Ressourcen-IDs müssen aus einem Rautezeichen (#), gefolgt von einer Dezimalzahl, bestehen.</dd>
+</dl>
+
 <h3 id="SetMainIcon">SetMainIcon</h3>
-<p>Überschreibt das EXE-Symbol, welches für die Kompilierung verwendet wird. (Um die anderen Symbole zu ändern, werfen Sie einen Blick auf das <a href="#AddResource">AddResource</a>-Beispiel.)</p>
+<p>Überschreibt das EXE-Symbol, welches für die Kompilierung verwendet wird. (Um die anderen Symbole zu ändern, siehe <a href="#AddResource">AddResource</a>-Beispiel.) Diese Direktive kann mit einer in der GUI oder CLI angegebenen Symboldatei überschrieben werden.</p>
 <pre class="Syntax"><span class="func">;@Ahk2Exe-SetMainIcon</span> <span class="optional">Symboldatei</span></pre>
 <dl>
   <dt>Symboldatei</dt>

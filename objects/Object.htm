@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>Grundlegendes Objekt - Methoden &amp; Eigenschaften | AutoHotkey</title>
-<meta name="description" content="Ein grundlegendes Objekt bietet eine Schnittstelle zum Durchführen von Aktionen wie z. B. Keys einfügen oder entfernen, Anzahl der Keys abrufen, Objekt klonen, etc." />
+<title>Reguläres Objekt - Methoden &amp; Eigenschaften | AutoHotkey</title>
+<meta name="description" content="Das reguläre Objekt bietet eine Schnittstelle zum Durchführen von Aktionen wie z. B. Keys einfügen oder entfernen, Anzahl der Keys abrufen, Objekt klonen, etc." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,43 +13,48 @@
 <body>
 
 <h1>Object</h1>
+<p>In AutoHotkey ist der reguläre Objektdatentyp ein assoziatives Array, dessen Verhalten <a href="../Objects.htm#Custom_Objects">individuell angepasst werden kann</a>. Standardmäßig unterstützen alle Objekte, die mit <code>{}</code>, <code>[]</code>, <code>Object()</code> und <code>Array()</code> erstellt wurden, folgende Methoden, Eigenschaften und Funktionen.</p>
 
-<p>In AutoHotkey ist der grundlegende Objektdatentyp ein assoziatives Array, dessen Verhalten <a href="../Objects.htm#Custom_Objects">individuell angepasst werden kann</a>. Standardmäßig unterstützen alle Objekte, die mit <code>{}</code>, <code>[]</code>, <code>Object()</code> und <code>Array()</code> erstellt wurden, folgende Dinge:</p>
-<p><strong>Methoden:</strong></p>
-<ul>
-  <li><a href="#InsertAt">InsertAt</a> / <a href="#RemoveAt">RemoveAt</a></li>
-  <li><a href="#Push">Push</a> / <a href="#Pop">Pop</a></li>
-  <li><a href="#Delete">Delete</a></li>
-	<li><a href="#MinMaxIndex">MinIndex / MaxIndex</a> / <a href="#Length">Length</a> / <a href="#Count">Count</a></li>
-	<li><a href="#SetCapacity">SetCapacity</a> / <a href="#GetCapacity">GetCapacity</a></li>
-	<li><a href="#GetAddress">GetAddress</a></li>
-	<li><a href="#NewEnum">_NewEnum</a></li>
-	<li><a href="#HasKey">HasKey</a></li>
-	<li><a href="#Clone">Clone</a></li>
+<h2 id="toc">Inhaltsverzeichnis</h2>
+<ul class="indent">
+  <li><a href="#Methods">Methoden</a>:
+    <ul>
+      <li><a href="#InsertAt">InsertAt</a>: Fügt einen oder mehrere Werte auf einer bestimmten Position innerhalb eines linearen Arrays ein.</li>
+      <li><a href="#RemoveAt">RemoveAt</a>: Entfernt Elemente auf der angegebenen Position in einem linearen Array.</li>
+      <li><a href="#Push">Push</a>: Fügt Values an das Ende eines Arrays an.</li>
+      <li><a href="#Pop">Pop</a>: Entfernt und gibt das letzte Array-Element zurück.</li>
+      <li><a href="#Delete">Delete</a>: Entfernt Key-Value-Paare von einem Objekt.</li>
+      <li><a href="#MinMaxIndex">MinIndex / MaxIndex</a>: Gibt den niedrigsten oder höchsten Integer-Key zurück, sofern vorhanden.</li>
+      <li><a href="#Length">Length</a>: Gibt die Länge eines linearen Arrays zurück.</li>
+      <li><a href="#Count">Count</a>: Gibt die Anzahl der Key-Value-Paare zurück, die in einem Objekt vorhanden sind.</li>
+      <li><a href="#SetCapacity">SetCapacity</a>: Passt die Kapazität eines Objekts oder eines seiner Felder an.</li>
+      <li><a href="#GetCapacity">GetCapacity</a>: Gibt die Kapazität eines Objekts oder eines seiner Felder zurück.</li>
+      <li><a href="#GetAddress">GetAddress</a>: Gibt die aktuelle Adresse des Zeichenketten-Puffers eines Feldes zurück, wenn es einen hat.</li>
+      <li><a href="#NewEnum">_NewEnum</a>: Gibt einen neuen Enumerator zurück, um Key-Value-Paare eines Objekts zu enumerieren.</li>
+      <li><a href="#HasKey">HasKey</a>: Gibt True zurück, wenn der angegebene Key mit einem Value innerhalb eines Objekts verbunden ist.</li>
+      <li><a href="#Clone">Clone</a>: Gibt eine flache Kopie eines Objekts zurück.</li>
+      <li><a class="deprecated" href="#Insert" title="Veraltet. Verwenden Sie stattdessen InsertAt, Push, ObjRawSet oder eine einfache Zuweisung.">Insert</a> (veraltet): Fügt Key-Value-Paare in ein Objekt ein.</li>
+      <li><a class="deprecated" href="#Remove" title="Veraltet. Verwenden Sie stattdessen RemoveAt, Delete oder Pop.">Remove</a> (veraltet): Entfernt Key-Value-Paare von einem Objekt.</li>
+    </ul>
+  </li>
+  <li><a href="#Properties">Eigenschaften</a>:
+    <ul>
+      <li><a href="#Base">Base</a>: Ermittelt oder setzt das Base-Objekt eines Objekts.</li>
+    </ul>
+  </li>
+  <li><a href="#Functions">Funktionen</a>:
+    <ul>
+      <li><a href="#RawGet">ObjRawGet</a>: Ermittelt den Wert, der einem bestimmten Key innerhalb eines Objekts zugeordnet ist.</li>
+      <li><a href="#RawSet">ObjRawSet</a>: Speichert oder überschreibt ein Key-Value-Paar in einem Objekt.</li>
+      <li><a href="#GetBase">ObjGetBase</a>: Gibt das Base-Objekt eines Objekts zurück.</li>
+      <li><a href="#SetBase">ObjSetBase</a>: Setzt das Base-Objekt eines Objekts.</li>
+    </ul>
+  </li>
+  <li><a href="#Remarks">Bemerkungen</a></li>
 </ul>
-<p><strong>Eigenschaften:</strong></p>
-<ul>
-	<li><a href="#Base">Base</a></li>
-</ul>
-<p><strong>Funktionen:</strong></p>
-<ul>
-	<li><a href="#RawGet">ObjRawGet</a></li>
-	<li><a href="#RawSet">ObjRawSet</a></li>
-	<li><a href="#GetBase">ObjGetBase</a></li>
-	<li><a href="#SetBase">ObjSetBase</a></li>
-</ul>
-<p><strong>Veraltet</strong> (sollte nicht mehr verwendet werden):</p>
-<ul>
-	<li><a href="#Insert">Insert</a></li>
-	<li><a href="#Remove">Remove</a></li>
-</ul>
-<p>Jede Methode hat außerdem eine äquivalente Funktion, mit der jedes <a href="../Objects.htm#Custom_Objects">benutzerdefinierte Verhalten</a>, das vom Objekt implementiert wurde, umgangen werden kann. Diese Funktionen sollten nur für diesen Zweck verwendet werden. Um eine derartige Funktion aufzurufen, fügen Sie "Obj" vor dem Methodennamen an und übergeben Sie das Zielobjekt als ersten Parameter. Zum Beispiel:</p>
-<pre>array := [1, 2, 3]
-MsgBox % ObjMaxIndex(array) " = " array.MaxIndex()</pre>
-<p>Wenn eine Obj-Methode mit einem Objekt oder Wert falschen Typs aufgerufen wird, gibt sie eine leere Zeichenkette zurück. Eigenständige Funktionen wie ObjRawSet lösen eine Ausnahme aus.</p>
-&nbsp;
 
-<div class="methodShort" id="InsertAt"><h2>InsertAt <span class="ver">[v1.1.21+]</span></h2>
+<h2 id="Methods">Methoden</h2>
+<div class="methodShort" id="InsertAt"><h3>InsertAt <span class="ver">[v1.1.21+]</span></h3>
 <p>Fügt einen oder mehrere Werte auf einer bestimmten Position innerhalb eines linearen Arrays ein.</p>
 <pre class="Syntax">Object.<span class="func">InsertAt</span>(Pos, Value1 <span class="optional">, Value2, ... Value<i>N</i></span>)</pre>
 <dl>
@@ -58,7 +63,6 @@ MsgBox % ObjMaxIndex(array) " = " array.MaxIndex()</pre>
   <dt>Value1 ...</dt>
   <dd><p>Eine oder mehrere Werte, die eingefügt werden sollen. Um einen Array mit Werten einzufügen, übergeben Sie <code><a href="../Functions.htm#VariadicCall">dasArray*</a></code> als letzten Parameter.</p></dd>
 </dl>
-<h3 id="InsertAt_Remarks">Bemerkungen</h3>
 <p>InsertAt ist das Gegenstück von <a href="#RemoveAt">RemoveAt</a>.</p>
 <p>Da Objekte assoziative Arrays sind, ist <em>Pos</em> zudem der Integer-Key, der mit <em>Value1</em> verbunden wird. Alle Elemente, die sich auf oder rechts neben <em>Pos</em> befinden, werden in Abhängigkeit der exakten Value-Parameteranzahl nach rechts verschoben, sogar wenn einige davon fehlen (also wenn das Objekt ein lückenhaftes Array ist). Zum Beispiel:</p>
 <pre>x := []
@@ -81,7 +85,7 @@ MsgBox % x[handleX+1]  <em>; Dies ist die neue "Position" von "A"</em></pre>
 <p>InsertAt hat keinen Effekt auf Zeichenketten- oder Objekt-Keys, demzufolge kann es ohne Probleme bei Objekten mit unterschiedlichen Key-Typen verwenden werden.</p>
 </div>
 
-<div class="methodShort" id="RemoveAt"><h2>RemoveAt <span class="ver">[v1.1.21+]</span></h2>
+<div class="methodShort" id="RemoveAt"><h3>RemoveAt <span class="ver">[v1.1.21+]</span></h3>
 <p>Entfernt Elemente auf der angegebenen Position in einem linearen Array.</p>
 <pre class="Syntax">Object.<span class="func">RemoveAt</span>(Pos <span class="optional">, Länge</span>)</pre>
 <dl>
@@ -94,7 +98,6 @@ MsgBox % x[handleX+1]  <em>; Dies ist die neue "Position" von "A"</em></pre>
   <dt>Rückgabewert</dt>
   <dd><p>Lässt man <em>Länge</em> weg, wird der auf <em>Pos</em> entfernte Wert zurückgegeben (leer, wenn keine entfernt wurden). Ansonsten ist der Rückgabewert die Anzahl der entfernten Elemente, die Werte enthielten. Die Anzahl und <em>Länge</em> können bei einem lückenhaften Array unterschiedlich sein, aber sie geht immer von 0 bis <em>Länge</em>.</p></dd>
 </dl>
-<h3 id="RemoveAt_Remarks">Bemerkungen</h3>
 <p>RemoveAt ist das Gegenstück der <a href="#InsertAt">InsertAt</a>.</p>
 <p>Die restlichen Elemente auf der rechten Seite von <em>Pos</em> werden um den via <em>Länge</em> definierten Wert (oder standardmäßig um 1) nach links verschoben, selbst wenn einige Elemente im entfernten Bereich keine Werte haben. Zum Beispiel:</p>
 <pre>x := ["A", "B"]
@@ -112,7 +115,7 @@ MsgBox % x[0x4321-1]        <em>; A</em></pre>
 <p>RemoveAt hat keinen Effekt auf Zeichenketten- oder Objekt-Keys, demzufolge kann es ohne Probleme bei Objekten mit unterschiedlichen Key-Typen verwenden werden.</p>
 </div>
 
-<div class="methodShort" id="Push"><h2>Push <span class="ver">[v1.1.21+]</span></h2>
+<div class="methodShort" id="Push"><h3>Push <span class="ver">[v1.1.21+]</span></h3>
 <p>Fügt Values an das Ende eines Arrays an.</p>
 <pre class="Syntax">Object.<span class="func">Push</span>(<span class="optional"> Value, Value2, ..., Value<i>N</i> </span>)</pre>
 <dl>
@@ -121,19 +124,18 @@ MsgBox % x[0x4321-1]        <em>; A</em></pre>
   <dt>Rückgabewert</dt>
   <dd><p>Die Position des zuletzt eingefügten Wertes. Kann negativ sein, wenn das Array nur Elemente bei negativen Indexen enthält.</p></dd>
 </dl>
-<h3 id="Push_Remarks">Bemerkungen</h3>
 <p>Der erste Wert wird auf Position 1 eingefügt, wenn das Array leer ist oder nur Zeichenketten- oder Objekt-Keys enthält.</p>
 <p>Ansonsten wird der erste Wert auf <code>Object.MaxIndex() + 1</code> eingefügt, selbst wenn diese Position negativ oder null ist. Alternativ kann man, wenn das unerwünscht ist, besonders bei einem Objekt mit negativen Keys, <code>Object.InsertAt(Object.Length() + 1, ...)</code> benutzen.</p>
 </div>
 
-<div class="methodShort" id="Pop"><h2>Pop <span class="ver">[v1.1.21+]</span></h2>
+<div class="methodShort" id="Pop"><h3>Pop <span class="ver">[v1.1.21+]</span></h3>
 <p>Entfernt und gibt das letzte Array-Element zurück.</p>
 <pre class="Syntax">Value := Object.<span class="func">Pop</span>()</pre>
 <p>Wenn es keine Array-Elemente gibt, ist der Rückgabewert eine leere Zeichenkette. Ansonsten ist es das gleiche wie:</p>
 <pre>Value := Object.RemoveAt(Object.Length())</pre>
 </div>
 
-<div class="methodShort" id="Delete"><h2>Delete <span class="ver">[v1.1.21+]</span></h2>
+<div class="methodShort" id="Delete"><h3>Delete <span class="ver">[v1.1.21+]</span></h3>
 <p>Entfernt Key-Value-Paare von einem Objekt.</p>
 <pre class="Syntax">
 Object.<span class="func">Delete</span>(Key)
@@ -147,7 +149,6 @@ Object.<span class="func">Delete</span>(ErsterKey, LetzterKey)
   <dt>Rückgabewert</dt>
   <dd><p>Bei nur einem Parameter wird der entfernte Wert zurückgegeben (leer, wenn es keinen gibt). Ansonsten ist der Rückgabewert die Anzahl der Keys, die gefunden und entfernt wurden.</p></dd>
 </dl>
-<h3 id="Delete_Remarks">Bemerkungen</h3>
 <p>Im Gegensatz zu <a href="#RemoveAt">RemoveAt</a> hat Delete keine Auswirkung auf Key-Value-Paare, die es nicht entfernt. Zum Beispiel:</p>
 <pre>x := ["A", "B"]
 MsgBox % x.RemoveAt(1)  <em>; A</em>
@@ -158,16 +159,18 @@ MsgBox % x.Delete(1)    <em>; A</em>
 MsgBox % x[1]           <em>; Leer</em></pre>
 </div>
 
-<div class="methodShort" id="MinMaxIndex"><h2>MinIndex / MaxIndex <span class="ver">[AHK_L 31+]</span></h2>
+<div class="methodShort" id="MinMaxIndex"><h3>MinIndex / MaxIndex <span class="ver">[AHK_L 31+]</span></h3>
+<p>Gibt den niedrigsten oder höchsten Integer-Key zurück, sofern vorhanden.</p>
 <pre class="Syntax">
 MinIndex := Object.<span class="func">MinIndex</span>()
 MaxIndex := Object.<span class="func">MaxIndex</span>()
 </pre>
-<p>Sofern Integer-Keys vorhanden sind, gibt MinIndex den niedrigsten und MaxIndex den höchsten Key zurück. Ansonsten wird eine leere Zeichenkette zurückgegeben.</p></div>
+<p>Wenn keine Keys vorhanden sind, wird eine leere Zeichenkette zurückgegeben.</p></div>
 
-<div class="methodShort" id="Length"><h2>Length <span class="ver">[v1.1.21+]</span></h2>
+<div class="methodShort" id="Length"><h3>Length <span class="ver">[v1.1.21+]</span></h3>
+<p>Gibt die Länge eines linearen Arrays zurück.</p>
 <pre class="Syntax">Länge := Object.<span class="func">Length</span>()</pre>
-<p>Gibt die Länge eines linearen Arrays zurück, beginnend bei Position 1; also entweder der höchste positive Integer-Key innerhalb des Objekts, oder 0, wenn keine vorhanden sind.</p>
+<p>Diese Methode gibt die Länge eines linearen Arrays zurück, beginnend bei Position 1; also entweder der höchste positive Integer-Key innerhalb des Objekts, oder 0, wenn keine vorhanden sind.</p>
 <pre>
 MsgBox % ["A", "B", "C"].Length()  <em>;  3</em>
 MsgBox % ["A",    , "C"].Length()  <em>;  3</em>
@@ -175,9 +178,10 @@ MsgBox % {-10: 0, 10: 0}.Length()  <em>; 10</em>
 MsgBox % {-10: 0, -1: 0}.Length()  <em>;  0</em>
 </pre></div>
 
-<div class="methodShort" id="Count"><h2>Count <span class="ver">[v1.1.29+]</span></h2>
+<div class="methodShort" id="Count"><h3>Count <span class="ver">[v1.1.29+]</span></h3>
+<p>Gibt die Anzahl der Key-Value-Paare zurück, die in einem Objekt vorhanden sind.</p>
 <pre class="Syntax">Anzahl := Object.<span class="func">Count</span>()</pre>
-<p>Gibt die Anzahl der im Objekt vorhandenen Key-Value-Paare zurück.</p>
+<p>Beispiele:</p>
 <pre>
 MsgBox % {A: 1, Z: 26}.Count()    <em>;  2</em>
 MsgBox % ["A", "B", "C"].Count()  <em>;  3</em>
@@ -185,7 +189,7 @@ MsgBox % ["A",    , "C"].Count()  <em>;  2</em>
 </pre>
 </div>
 
-<div class="methodShort" id="SetCapacity"><h2>SetCapacity <span class="ver">[AHK_L 31+]</span></h2>
+<div class="methodShort" id="SetCapacity"><h3>SetCapacity <span class="ver">[AHK_L 31+]</span></h3>
 <p>Passt die Kapazität eines Objekts oder eines seiner Felder an.</p>
 <pre class="Syntax">
 Object.<span class="func">SetCapacity</span>(MaxElemente)
@@ -203,71 +207,32 @@ Object.<span class="func">SetCapacity</span>(Key, Bytegröße)
 </dl>
 </div>
 
-<div class="methodShort" id="GetCapacity"><h2>GetCapacity <span class="ver">[AHK_L 31+]</span></h2>
+<div class="methodShort" id="GetCapacity"><h3>GetCapacity <span class="ver">[AHK_L 31+]</span></h3>
+<p>Gibt die Kapazität eines Objekts oder eines seiner Felder zurück.</p>
 <pre class="Syntax">
 MaxElemente := Object.<span class="func">GetCapacity</span>()
 Bytegröße := Object.<span class="func">GetCapacity</span>(Key)
 </pre>
-<p>Gibt die Kapazität eines Objekts oder eines seiner Felder zurück.</p>
-<p>Gibt eine leere Zeichenkette zurück, wenn das Feld nicht existiert oder keine Zeichenkette enthält.</p></div>
+<p>Wenn das Feld nicht vorhanden ist oder keine Zeichenkette enthält, wird eine leere Zeichenkette zurückgegeben.</p></div>
 
-<div class="methodShort" id="GetAddress"><h2>GetAddress <span class="ver">[AHK_L 31+]</span></h2>
-<pre class="Syntax">Ptr := Object.<span class="func">GetAddress</span>(Key)</pre>
-<p>Gibt die aktuelle Adresse des Zeichenketten-Zwischenspeichers des Feldes zurück, wenn es einen hat.</p></div>
+<div class="methodShort" id="GetAddress"><h3>GetAddress <span class="ver">[AHK_L 31+]</span></h3>
+<p>Gibt die aktuelle Adresse des Zeichenketten-Puffers eines Feldes zurück, wenn es einen hat.</p>
+<pre class="Syntax">Ptr := Object.<span class="func">GetAddress</span>(Key)</pre></div>
 
-<div class="methodShort" id="NewEnum"><h2>NewEnum <span class="ver">[AHK_L 49+]</span></h2>
+<div class="methodShort" id="NewEnum"><h3>NewEnum <span class="ver">[AHK_L 49+]</span></h3>
+<p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zurück, um Key-Value-Paare eines Objekts zu enumerieren.</p>
 <pre class="Syntax">Enum := Object._<span class="func">NewEnum</span>()</pre>
-<p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zurück, um Key-Value-Paare des Objekts zu enumerieren. Diese Methode wird in der Regel nicht direkt, sondern über die <a href="../commands/For.htm">For-Schleife</a> aufgerufen.</p></div>
+<p>Diese Methode wird in der Regel nicht direkt, sondern über die <a href="../commands/For.htm">For-Schleife</a> aufgerufen.</p></div>
 
-<div class="methodShort" id="HasKey"><h2>HasKey <span class="ver">[AHK_L 53+]</span></h2>
-<pre class="Syntax">Object.<span class="func">HasKey</span>(Key)</pre>
-<p>Gibt wahr zurück, wenn <i>Key</i> mit einem Value (auch "") innerhalb des <i>Objekts</i> verbunden ist, ansonsten falsch.</p></div>
+<div class="methodShort" id="HasKey"><h3>HasKey <span class="ver">[AHK_L 53+]</span></h3>
+<p>Gibt True zurück, wenn der angegebene Key mit einem Value (auch "") innerhalb eines Objekts verbunden ist, ansonsten False.</p>
+<pre class="Syntax">Object.<span class="func">HasKey</span>(Key)</pre></div>
 
-<div class="methodShort" id="Clone"><h2>Clone <span class="ver">[AHK_L 60+]</span></h2>
-<pre class="Syntax">Klon := Object.<span class="func">Clone</span>()</pre>
-<p>Gibt eine flache Kopie des Objekts zurück.</p></div>
+<div class="methodShort" id="Clone"><h3>Clone <span class="ver">[AHK_L 60+]</span></h3>
+<p>Gibt eine flache Kopie eines Objekts zurück.</p>
+<pre class="Syntax">Klon := Object.<span class="func">Clone</span>()</pre></div>
 
-<div class="methodShort" id="Base"><h2>Base</h2>
-<p>Ermittelt oder setzt das <a href="../Objects.htm#Custom_Objects">Base-Objekt</a> des Objekts.</p>
-<pre class="Syntax">BaseObject := Object.Base</pre>
-<pre class="Syntax">Object.Base := BaseObject</pre>
-<p><em>BaseObject</em> muss ein Objekt oder eine leere Zeichenkette sein.</p>
-<p>Eigenschaften und Methoden, die via Base-Objekt definiert werden, sind nur zugänglich, während dieses Base-Objekt in Gebrauch ist. Ändert man also das Base von <em>Object</em>, würde man gleichzeitig auch die Auswahl an verfügbaren Eigenschaften und Methoden ändern.</p>
-<p>Siehe auch: <a href="#GetBase">ObjGetBase()</a>, <a href="#SetBase">ObjSetBase()</a></p>
-</div>
-
-<div class="methodShort" id="RawGet"><h2>ObjRawGet <span class="ver">[v1.1.29+]</span></h2>
-<p>Ermittelt den Wert, der einem bestimmten Key innerhalb von <em>Object</em> zugeordnet ist.</p>
-<pre class="Syntax">Value := <span class="func">ObjRawGet</span>(Object, Key)</pre>
-<p>Wenn <em>Object</em> den <em>Key</em> nicht enthält, ist der Rückgabewert eine leere Zeichenkette. Es werden keine <a href="../Objects.htm#Meta_Functions">Metafunktionen</a> oder <a href="../Objects.htm#Custom_Classes_property">Eigenschaftsfunktionen</a> aufgerufen. Die Inhalte der Base-Objekte von <em>Object</em> werden nicht berücksichtigt, und da <a href="#Base">base</a> selbst <a href="../Objects.htm#base-key">standardmäßig</a> eine Eigenschaft und kein Key-Value-Paar ist, wird es normalerweise nicht zurückgegeben.</p>
-<p>Es wird eine Ausnahme ausgelöst, wenn <em>Object</em> vom falschen Typ ist.</p>
-</div>
-
-<div class="methodShort" id="RawSet"><h2>ObjRawSet <span class="ver">[v1.1.21+]</span></h2>
-<p>Speichert oder überschreibt ein Key-Value-Paar im Objekt.</p>
-<pre class="Syntax"><span class="func">ObjRawSet</span>(Object, Key, Value)</pre>
-<p>Diese Funktion wurde bereitgestellt, um den Skripten die Möglichkeit zu bieten, die __Set-<a href="../Objects.htm#Meta_Functions">Metafunktion</a> und <a href="../Objects.htm#Custom_Classes_property">Eigenschaften</a> zu umgehen. Falls dies nicht notwendig ist, sollte stattdessen eine normale Zuweisung verwendet werden. Zum Beispiel: <code>Object[Key] := Value</code></p>
-<p>Da der Zweck darin besteht, Metafunktionen zu umgehen, ist dies nur eine Funktion, keine Methode. Das Aufrufen einer internen Methode ruft generell auch die __Call-Metafunktion auf.</p>
-<p>Es wird eine Ausnahme ausgelöst, wenn <em>Object</em> vom falschen Typ ist.</p>
-</div>
-
-<div class="methodShort" id="GetBase"><h2>ObjGetBase <span class="ver">[v1.1.29+]</span></h2>
-<p>Gibt das <a href="../Objects.htm#Custom_Objects">Base-Objekt</a> des Objekts zurück.</p>
-<pre class="Syntax">BaseObject := <span class="func">ObjGetBase</span>(Object)</pre>
-<p>Es werden keine <a href="../Objects.htm#Meta_Functions">Metafunktionen</a> aufgerufen. Das base des Objekts wird auch dann zurückgegeben, wenn der Key "base" in das Objekt gespeichert worden ist (z. B. mit <a href="#RawSet">ObjRawSet</a> oder <a href="#SetCapacity">SetCapacity</a>). Es wird eine leere Zeichenkette zurückgegeben, wenn das Objekt kein base hat.</p>
-<p>Es wird eine Ausnahme ausgelöst, wenn <em>Object</em> vom falschen Typ ist.</p>
-<p>Siehe auch: <a href="#Base">Base-Eigenschaft</a></p>
-</div>
-
-<div class="methodShort" id="SetBase"><h2>ObjSetBase <span class="ver">[v1.1.29+]</span></h2>
-<p>Setzt das <a href="../Objects.htm#Custom_Objects">Base-Objekt</a> des Objekts.</p>
-<pre class="Syntax"><span class="func">ObjSetBase</span>(Object, BaseObject)</pre>
-<p>Es werden keine <a href="../Objects.htm#Meta_Functions">Metafunktionen</a> aufgerufen. Das base des Objekts wird auch dann gesetzt, wenn der Key "base" in das Objekt gespeichert worden ist (z. B. mit <a href="#RawSet">ObjRawSet</a> oder <a href="#SetCapacity">SetCapacity</a>). Es wird eine leere Zeichenkette zurückgegeben, wenn das Objekt kein base hat.</p>
-<p>Es wird eine Ausnahme ausgelöst, wenn <em>Object</em> vom falschen Typ ist oder wenn <em>BaseObject</em> kein Objekt oder eine leere Zeichenkette ist.</p>
-<p>Siehe auch: <a href="#Base">Base-Eigenschaft</a></p>
-</div>
-
-<div class="methodShort" id="Insert"><h2>Insert <span class="ver">[AHK_L 31+]</span></h2>
+<div class="methodShort" id="Insert"><h3>Insert <span class="ver">[AHK_L 31+]</span></h3>
 <div class="warning"><strong>Veraltet:</strong> Insert ist nicht bei neuen Skripten empfohlen. Verwenden Sie stattdessen <a href="#InsertAt">InsertAt</a>, <a href="#Push">Push</a>, <a href="#RawSet">ObjRawSet</a> oder eine einfache Zuweisung.</div>
 <p>Fügt Key-Value-Paare in das Objekt ein, und passt vorhandene Keys automatisch an, wenn ein Integer-Key angegeben ist.</p>
 <pre class="Syntax">
@@ -284,7 +249,7 @@ Object.<span class="func">Insert</span>(ZeichenketteOderObjektKey, Value)
 <p>Insert gibt <i>True</i> zurück. In <span class="ver">[v1.1.21]</span> und höher wird eine Ausnahme ausgelöst, wenn eine Speicherreservierung fehlschlägt. Ältere Versionen gaben in diesem Fall eine leere Zeichenkette zurück.</p>
 </div>
 
-<div class="methodShort" id="Remove"><h2>Remove <span class="ver">[AHK_L 31+]</span></h2>
+<div class="methodShort" id="Remove"><h3>Remove <span class="ver">[AHK_L 31+]</span></h3>
 <div class="warning"><strong>Veraltet:</strong> Remove ist nicht bei neuen Skripten empfohlen. Verwenden Sie stattdessen <a href="#RemoveAt">RemoveAt</a>, <a href="#Delete">Delete</a> oder <a href="#Pop">Pop</a>.</div>
 <p>Entfernt Key-Value-Paare von einem Objekt.</p>
 <pre class="Syntax">Object.<span class="func">Remove</span>(ErsterKey, LetzterKey)</pre>
@@ -297,6 +262,50 @@ Object.<span class="func">Insert</span>(ZeichenketteOderObjektKey, Value)
   <li>Jede andere gültige Kombination von Parametern verhält sich wie <a href="#Delete">Delete</a>.</li>
 </ul>
 </div>
+
+<h2 id="Properties">Eigenschaften</h2>
+<div class="methodShort" id="Base"><h3>Base</h3>
+<p>Ermittelt oder setzt das <a href="../Objects.htm#Custom_Objects">Base-Objekt</a> eines Objekts.</p>
+<pre class="Syntax">BaseObject := Object.Base</pre>
+<pre class="Syntax">Object.Base := BaseObject</pre>
+<p><em>BaseObject</em> muss ein Objekt oder eine leere Zeichenkette sein.</p>
+<p>Eigenschaften und Methoden, die via Base-Objekt definiert werden, sind nur zugänglich, während dieses Base-Objekt in Gebrauch ist. Ändert man also das Base von <em>Object</em>, würde man gleichzeitig auch die Auswahl an verfügbaren Eigenschaften und Methoden ändern.</p>
+<p>Siehe auch: <a href="#GetBase">ObjGetBase()</a>, <a href="#SetBase">ObjSetBase()</a></p>
+</div>
+
+<h2 id="Functions">Funktionen</h2>
+<h3 id="RawGet">ObjRawGet <span class="ver">[v1.1.29+]</span></h3>
+<p>Ermittelt den Wert, der einem bestimmten Key innerhalb eines Objekts zugeordnet ist.</p>
+<pre class="Syntax">Value := <span class="func">ObjRawGet</span>(Object, Key)</pre>
+<p>Wenn <em>Object</em> den <em>Key</em> nicht enthält, ist der Rückgabewert eine leere Zeichenkette. Es werden keine <a href="../Objects.htm#Meta_Functions">Metafunktionen</a> oder <a href="../Objects.htm#Custom_Classes_property">Eigenschaftsfunktionen</a> aufgerufen. Die Inhalte der Base-Objekte von <em>Object</em> werden nicht berücksichtigt, und da <a href="#Base">base</a> selbst <a href="../Objects.htm#base-key">standardmäßig</a> eine Eigenschaft und kein Key-Value-Paar ist, wird es normalerweise nicht zurückgegeben.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn <em>Object</em> vom falschen Typ ist.</p>
+
+<h3 id="RawSet">ObjRawSet <span class="ver">[v1.1.21+]</span></h3>
+<p>Speichert oder überschreibt ein Key-Value-Paar in einem Objekt.</p>
+<pre class="Syntax"><span class="func">ObjRawSet</span>(Object, Key, Value)</pre>
+<p>Diese Funktion wurde bereitgestellt, um den Skripten die Möglichkeit zu bieten, die __Set-<a href="../Objects.htm#Meta_Functions">Metafunktion</a> und <a href="../Objects.htm#Custom_Classes_property">Eigenschaften</a> zu umgehen. Falls dies nicht notwendig ist, sollte stattdessen eine normale Zuweisung verwendet werden. Zum Beispiel: <code>Object[Key] := Value</code></p>
+<p>Da der Zweck darin besteht, Metafunktionen zu umgehen, ist dies nur eine Funktion, keine Methode. Das Aufrufen einer internen Methode ruft generell auch die __Call-Metafunktion auf.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn <em>Object</em> vom falschen Typ ist.</p>
+
+<h3 id="GetBase">ObjGetBase <span class="ver">[v1.1.29+]</span></h3>
+<p>Gibt das <a href="../Objects.htm#Custom_Objects">Base-Objekt</a> eines Objekts zurück.</p>
+<pre class="Syntax">BaseObject := <span class="func">ObjGetBase</span>(Object)</pre>
+<p>Es werden keine <a href="../Objects.htm#Meta_Functions">Metafunktionen</a> aufgerufen. Das base des Objekts wird auch dann zurückgegeben, wenn der Key "base" in das Objekt gespeichert worden ist (z. B. mit <a href="#RawSet">ObjRawSet</a> oder <a href="#SetCapacity">SetCapacity</a>). Es wird eine leere Zeichenkette zurückgegeben, wenn das Objekt kein base hat.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn <em>Object</em> vom falschen Typ ist.</p>
+<p>Siehe auch: <a href="#Base">Base-Eigenschaft</a></p>
+
+<h3 id="SetBase">ObjSetBase <span class="ver">[v1.1.29+]</span></h3>
+<p>Setzt das <a href="../Objects.htm#Custom_Objects">Base-Objekt</a> eines Objekts.</p>
+<pre class="Syntax"><span class="func">ObjSetBase</span>(Object, BaseObject)</pre>
+<p>Es werden keine <a href="../Objects.htm#Meta_Functions">Metafunktionen</a> aufgerufen. Das base des Objekts wird auch dann gesetzt, wenn der Key "base" in das Objekt gespeichert worden ist (z. B. mit <a href="#RawSet">ObjRawSet</a> oder <a href="#SetCapacity">SetCapacity</a>). Es wird eine leere Zeichenkette zurückgegeben, wenn das Objekt kein base hat.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn <em>Object</em> vom falschen Typ ist oder wenn <em>BaseObject</em> kein Objekt oder eine leere Zeichenkette ist.</p>
+<p>Siehe auch: <a href="#Base">Base-Eigenschaft</a></p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Jede Methode hat außerdem eine äquivalente Funktion, mit der jedes <a href="../Objects.htm#Custom_Objects">benutzerdefinierte Verhalten</a>, das vom Objekt implementiert wurde, umgangen werden kann. Diese Funktionen sollten nur für diesen Zweck verwendet werden. Um eine derartige Funktion aufzurufen, fügen Sie "Obj" vor dem Methodennamen an und übergeben Sie das Zielobjekt als ersten Parameter. Zum Beispiel:</p>
+<pre>array := [1, 2, 3]
+MsgBox % ObjMaxIndex(array) " = " array.MaxIndex()</pre>
+<p>Wenn eine Obj-Methode mit einem Objekt oder Wert falschen Typs aufgerufen wird, gibt sie eine leere Zeichenkette zurück. Eigenständige Funktionen wie ObjRawSet lösen eine Ausnahme aus.</p>
 
 </body>
 </html>

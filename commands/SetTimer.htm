@@ -23,7 +23,7 @@
   <dt id="Label">Label</dt>
   <dd><p>Name des <a href="../misc/Labels.htm">Labels</a> oder <a href="../Hotkeys.htm">Hotkey-Labels</a>, der angesprungen werden soll, um die Befehle unterhalb von <em>Label</em> auszuführen, bis ein <a href="Return.htm">Return</a> oder <a href="Exit.htm">Exit</a> erreicht wurde. <em>Label</em> kann, wie die meisten Parameter von anderen Befehlen auch, eine <a href="../Variables.htm">Variablenreferenz</a> wie %MeinLabel% sein, um den Inhalt der Variable als Ziel zu verwenden.</p>
   <p id="OmitLabel"><span class="ver">[v1.1.01+]:</span> Lässt man <em>Label</em> weg, wird standardmäßig <a href="../Variables.htm#ThisLabel">A_ThisLabel</a> verwendet. Zum Beispiel könnte <code>SetTimer,, Off</code> innerhalb einer Timer-Subroutine verwendet werden, um den Timer zu deaktivieren. <code>SetTimer,, 1000</code> wiederum würde entweder die <em>Periode</em> des aktuellen Timers ändern oder einen neuen Timer mit dem Label der aktuell laufenden Subroutine erstellen. <span class="ver">[v1.1.24+]:</span> Wenn A_ThisLabel leer ist, aber der aktuelle Thread durch einen Timer gestartet wurde, wird dieser Timer verwendet. Das ist besonders für Timer nützlich, die Funktionen oder Funktionsobjekte starten müssen.</p>
-  <p id="Functor"><span class="ver">[v1.1.20+]:</span> Wenn es kein gültiger Labelname ist, kann dieser Parameter der Name einer Funktion sein, oder eine einzelne Variablenreferenz mit einem <a href="../objects/Functor.htm">Funktionsobjekt</a>. Zum Beispiel <code>SetTimer %FunkObj%, 1000</code> oder <code>SetTimer % FunkObj, 1000</code>. Andere Ausdrücke, die Objekte zurückgeben, werden zurzeit nicht unterstützt. Mehr dazu finden Sie im Beispiel <a href="#ExampleClass">weiter unten</a>.</p>
+  <p id="Functor"><span class="ver">[v1.1.20+]:</span> Wenn es kein gültiger Labelname ist, kann dieser Parameter der Name einer Funktion sein, deren Parameterliste keine Pflichtparameter aufweist (siehe <a href="#ExFunction">Funktionsbeispiel</a>), oder eine einzelne Variablenreferenz mit einem <a href="../objects/Functor.htm">Funktionsobjekt</a>. Zum Beispiel <code>SetTimer %FunkObj%, 1000</code> oder <code>SetTimer % FunkObj, 1000</code>. Andere Ausdrücke, die Objekte zurückgeben, werden zurzeit nicht unterstützt. Mehr dazu finden Sie im Beispiel <a href="#ExampleClass">weiter unten</a>.</p>
   <p class="note"><strong>Hinweis:</strong> <span class="ver">[v1.1.24+]:</span> Die Übergabe einer leeren Variable oder eines Ausdrucks, der zu einem leeren Wert führt, wird als Fehler eingestuft. Dieser Parameter darf weder leer sein noch weggelassen werden.</p>
   </dd>
 
@@ -137,8 +137,20 @@ winc_eingaben := 0
 return</pre>
 </div>
 
+<div class="ex" id="ExFunction">
+<p><a class="ex_number" href="#ExFunction"></a> Ein einfacher Zähler. Verwendet eine <a href="../Functions.htm">Funktion</a> als Timer-Subroutine.</p>
+<pre>#Persistent
+SetTimer, Tick, 1000
+
+Tick()
+{
+    static count := 0
+    ToolTip % count++
+}</pre>
+</div>
+
 <div class="ex" id="ExampleClass">
-<p><a class="ex_number" href="#ExampleClass"></a> Verwendet eine <a href="../Objects.htm#Custom_Classes_method">Methode</a> als Timer-Subroutine.</p>
+<p><a class="ex_number" href="#ExampleClass"></a> Ein komplexerer Zähler. Verwendet eine <a href="../Objects.htm#Custom_Classes_method">Methode</a> als Timer-Subroutine.</p>
 <pre>counter := new SecondCounter
 counter.Start()
 Sleep 5000

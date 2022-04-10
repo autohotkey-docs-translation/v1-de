@@ -21,6 +21,8 @@ translateData = {
   "Search":"Suchen",
   "Highlight keywords":"Suchwörter hervorheben",
   "Go to previous/next occurrence":"Gehe zum vorherigen/nächsten Vorkommen",
+  "Quick reference":"Kurzübersicht",
+  "Collapse or uncollapse the quick reference":"Kurzübersicht zu- oder aufklappen",
   // Oberleiste
   "Skip navigation":"Navigation überspringen",
   "Hide or show the sidebar":"Seitenleiste verstecken oder anzeigen",
