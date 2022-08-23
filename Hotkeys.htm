@@ -126,7 +126,7 @@ AppsKey Up::ToolTip
       <pre>*LWin::Send {LControl down}
 *LWin Up::Send {LControl up}
 </pre>
-      <p>Das UP-Wort kann auch bei normalen Hotkeys angewendet werden. Zum Beispiel: <code>^!r Up::MsgBox Sie haben STRG+ALT+R gedrückt und losgelassen</code>. Dieses Wort funktioniert auch bei <a href="#combo">Kombinations-Hotkeys</a> (z. B. <code>F1 &amp; e Up::</code>)</p>      
+      <p>Das UP-Wort kann auch bei normalen Hotkeys angewendet werden. Zum Beispiel: <code>^!r Up::MsgBox Sie haben STRG+ALT+R gedrückt und losgelassen</code>. Dieses Wort funktioniert auch bei <a href="#combo">Kombinations-Hotkeys</a> (z. B. <code>F1 &amp; e Up::</code>)</p>
       <p>Einschränkungen: 1) UP funktioniert nicht in Verbindung mit <a href="KeyList.htm">Joystick-Tasten</a>; und 2) Ein UP-Hotkey ohne entsprechenden Counterpart (normaler Hotkey oder DOWN-Hotkey) wird diese Taste komplett übernehmen, um zu verhindern, dass sie stecken bleibt. Eine Möglichkeit dies zu verhindern wäre es, ein <a href="#Tilde">Tilde-Präfix</a> anzufügen (z. B. <code>~LControl up::</code>)</p>
       <p>UP-Hotkeys und ihre Counterparts (DOWN-Hotkeys, sofern vorhanden) benutzen immer den Tastatur-Hook.</p>
       <p>Erwähnenswert ist außerdem, dass mit einer ähnlichen Methode wie oben ein Hotkey zu einer Präfix-Taste gemacht werden kann. Der Vorteil: Obwohl der Hotkey nach dem Loslassen ausgelöst wird, wird er dies nur tun, wenn Sie keine andere Taste drücken, während er gedrückt gehalten wurde. Zum Beispiel:</p>
@@ -158,7 +158,14 @@ WheelDown::Send {Volume_Down} <em>;</em>
 </pre>
 
 <h2 id="combo">Benutzerdefinierte Kombinationen</h2>
-<p>Um eine benutzerdefinierte Kombination zu definieren, die aus zwei Tasten (außer Joystick-Tasten) besteht, ist es erforderlich, " &amp; " zwischen diesen Tasten zu setzen. Das folgende Beispiel zeigt, wie ein Hotkey ausgelöst werden kann, wenn Numpad0 gedrückt gehalten und danach eine zweite Taste gedrückt wird:</p>
+<p>Normalerweise bestehen die Kombinationen von Tastaturkurzbefehlen aus optionalen Präfix-/Modifikatortasten (<kbd>Strg</kbd>, <kbd>Alt</kbd>, <kbd>Umschalt</kbd> und <kbd>LWin</kbd>/<kbd>RWin</kbd>) und einer einzelnen Suffixtaste. Da die regulären Modifikatortasten standardmäßig nur für diesen Zweck vorgesehen sind, haben sie keinen unmittelbaren Effekt, wenn sie gedrückt werden.</p>
+<p>Um eine benutzerdefinierte Kombination von zwei Tasten (einschließlich der Maustasten, aber nicht der Joystick-Tasten) zu definieren, fügen Sie " &amp; " zwischen den Tasten ein. Da sie für die Nutzung mit Präfixtasten gedacht sind, die normalerweise nicht als solche verwendet werden, weisen benutzerdefinierte Kombinationen das folgende Sonderverhalten auf:</p>
+<ul>
+  <li>Die Präfixtaste verliert ihre ursprüngliche Funktion, es sei denn, es handelt sich um eine reguläre Modifikatortaste oder eine umschaltbare Taste wie <kbd>Feststell</kbd>.</li>
+  <li>Wenn die Präfixtaste auch als Suffix in einem anderen Hotkey verwendet wird, wird dieser Hotkey standardmäßig beim Loslassen ausgelöst, und überhaupt nicht ausgelöst, wenn sie zur Aktivierung einer benutzerdefinierten Kombination verwendet wurde. <span class="ver">[v1.1.14+]:</span> Wenn es sowohl einen Taste-Unten- als auch <a href="#keyup">Taste-Oben</a>-Hotkey gibt, werden beide Hotkeys gleichzeitig ausgelöst. Der Auslösen-beim-Loslassen-Effekt wird deaktiviert, wenn das <a href="#Tilde">Tilde-Präfix</a> auf die Präfixtaste in mindestens einer aktiven benutzerdefinierten Kombination oder auf den Suffix-Hotkey selbst angewendet wird.</li>
+</ul>
+<p class="note"><strong>Hinweis:</strong> Bei Kombinationen mit regulären Modifikatortasten ist es in der Regel besser, die Standardsyntax zu verwenden. Verwenden Sie zum Beispiel <code>&lt;+s::</code> anstelle von <code>LShift &amp; s::</code>.</p>
+<p>Das folgende Beispiel zeigt, wie ein Hotkey ausgelöst werden kann, wenn Numpad0 gedrückt gehalten und danach eine zweite Taste gedrückt wird:</p>
 <pre id="prefix">Numpad0 &amp; Numpad1::MsgBox Sie haben Numpad1 gedrückt, während Sie Numpad0 gedrückt hielten.
 Numpad0 &amp; Numpad2::Run Notepad</pre>
 <p><strong>Die Präfixtaste verliert ihre ursprüngliche Funktion:</strong> Im oberen Beispiel wurde Numpad0 zu einer <em>Präfixtaste</em> gemacht; allerdings hat dies den Effekt, dass Numpad0 ihre originale/ursprüngliche Funktion nicht durchführen kann, sobald sie selbst gedrückt wird. Um das zu vermeiden, können Sie das Skript so konfigurieren, dass Numpad0 eine neue Aktion durchführt, wie z. B.:</p>
@@ -166,7 +173,6 @@ Numpad0 &amp; Numpad2::Run Notepad</pre>
 Numpad0::Send {Numpad0}  <em>; Numpad0 erzeugt nach dem <i>Loslassen</i> einen Numpad0-Tastendruck. Siehe unteren Kommentar.</em></pre>
 <p><strong>Hotkey nach dem Loslassen auslösen:</strong> Bereits einer der oben genannten benutzerdefinierten Kombinations-Hotkeys bewirkt, dass die definierte Aktion erst ausgelöst wird, wenn Numpad0 <em>losgelassen</em> wird, aber nur, wenn Sie keine andere Taste drücken, während Numpad0 gedrückt gehalten wurde. <span class="ver">[v1.1.14+]</span>: Dieses Verhalten kann durch Anfügen des <a href="#Tilde">Tilde-Präfixes</a> an beiden Hotkeys unterdrückt werden.</p>
 <p id="combo_mods"><strong>Modifikatoren:</strong> Im Gegensatz zu normalen Hotkeys verhalten sich benutzerdefinierte Kombinationen so, als hätten sie standardmäßig den <a href="#wildcard">Platzhalter-Modifikator (*)</a>. Zum Beispiel wird <code>1 &amp; 2::</code> immer ausgelöst, egal ob man beim Drücken von <kbd>1</kbd> und <kbd>2</kbd> die <kbd>Strg</kbd>- oder <kbd>Alt</kbd>-Taste gedrückt hält, während <code>^1::</code> nur durch Drücken von <kbd>Strg</kbd>+<kbd>1</kbd> ausgelöst werden kann, und nicht durch <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>1</kbd>.</p>
-<p>In Bezug auf standardmäßigen Modifikatortasten funktionieren normale Hotkeys in der Regel genauso oder besser als "benutzerdefinierte" Kombinationen. Zum Beispiel ist <code>&lt;+s::</code> eher zu empfehlen als <code>LShift &amp; s::</code>.</p>
 <p>Kombinationen, die aus drei oder mehr Tasten bestehen, werden nicht unterstützt. Kombinationen können, sofern sie von Ihrer Tastatur unterstützt werden, mithilfe von <a href="commands/_If.htm">#If</a> und <a href="commands/GetKeyState.htm#function">GetKeyState()</a> erkannt werden, allerdings ist dann nicht immer ein konsistentes Ergebnis gegeben. Zum Beispiel:</p>
 <pre><em>; Halten Sie die MENÜ- und ALT-Taste gedrückt, und drücken Sie dann Bindestrich (-).</em>
 #if GetKeyState("AppsKey", "P")

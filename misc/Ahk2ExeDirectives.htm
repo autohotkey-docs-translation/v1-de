@@ -30,6 +30,7 @@
     <li><a href="#Debug">Debug</a>: Zeigt Debugging-Text an.</li>
     <li><a href="#ExeName">ExeName</a>: Spezifiziert den Standort und Namen für die EXE-Datei.</li>
     <li><a href="#Let">Let</a>: Setzt eine Benutzervariable.</li>
+    <li><a href="#Nop">Nop</a>: Bewirkt nichts.</li>
     <li><a href="#Obey">Obey</a>: Führt einen Befehl oder Ausdruck aus.</li>
     <li><a href="#PostExec">PostExec</a>: Führt ein Programm nach der Kompilierung aus.</li>
     <li><a href="#ResourceID">ResourceID</a> <span class="ver">[v1.1.34+]</span>: Weist dem Hauptskript eine untypische Ressourcen-ID zu.</li>
@@ -109,7 +110,7 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
 <pre class="Syntax"><span class="func">;@Ahk2Exe-AddResource</span> DateiName <span class="optional">, RessourceName</span></pre>
 <dl>
   <dt>DateiName</dt>
-  <dd>Dateiname der Ressource, die hinzugefügt werden soll. Der Typ der Ressource (als Integer oder Zeichenkette) kann durch Voranstellen eines Sternchens explizit angegeben werden: <code>*Typ Dateiname</code>. Lässt man dies weg, wird Ahk2Exe den Typ automatisch anhand der Dateiendung erkennen.</dd>
+  <dd>Dateiname der Ressource, die hinzugefügt werden soll. Wenn kein absoluter Pfad angegeben ist, wird die Datei im Arbeitsverzeichnis des Skripts vermutet (bzw. ist relativ zu diesem Verzeichnis). Der Typ der Ressource (als Integer oder Zeichenkette) kann durch Voranstellen eines Sternchens explizit angegeben werden: <code>*Typ Dateiname</code>. Lässt man dies weg, wird Ahk2Exe den Typ automatisch anhand der Dateiendung erkennen.</dd>
   <dt>RessourceName</dt>
   <dd><i>(Optional)</i> Der Name, den die Ressource haben wird (kann eine Zeichenkette oder ein Integer sein). Lässt man diesen Parameter weg, wird standardmäßig der Name der Datei (ohne Pfad) verwendet - alles in Großbuchstaben.</dd>
 </dl>
@@ -134,7 +135,9 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
 ;@Ahk2Exe-AddResource Icon4.ico, 208  ; Ersetzt 'S auf Rot'</pre>
 
 <p><strong>Beispiel 2:</strong> <span class="ver">[v1.1.34+]</span> Ein anderes Skript als separate RCDATA-Ressource einbinden (siehe <a href="../Program.htm#embedded-scripts">Eingebettete Skripte</a>):</p>
-<pre>;@Ahk2Exe-AddResource MeinSkript.ahk, MEINERESSOURCE</pre>
+<pre>;@Ahk2Exe-AddResource MeinSkript1.ahk, #2
+;@Ahk2Exe-AddResource MeinSkript2.ahk, MEINERESSOURCE
+</pre><p>Beachten Sie, dass jedes Skript, das mit dieser Direktive hinzugefügt wird, vollständig und separat vom Compiler verarbeitet wird und weitere Direktiven enthalten kann. Wenn es konkurrierende Direktiven gibt, wird die zuletzt vom Compiler gefundene verwendet.</p>
 
 <h3 id="Bin">Bin / Base <span class="ver">[v1.1.33.10+]</span></h3>
 <p>Spezifiziert die Basisversion von AutoHotkey, die zum Generieren der EXE-Datei genutzt werden soll. Diese Direktive kann mit einem in der GUI oder CLI angegebenen Basisdateiparameter überschrieben werden. Diese Direktive kann bei Bedarf mehrfach angegeben werden, allerdings nur in einer Skriptdatei, die nicht via <a href="../commands/_Include.htm">#Include</a> eingebunden wird. Der Compiler wird mindestens einmal für jede gefundene Bin/Base-Direktive ausgeführt. (Wenn dieser Direktive aktuell ein Kommentar angehängt ist, muss dieser die <code>&nbsp;;</code>-Markierung verwenden. Um diese Direktive tatsächlich auszukommentieren, fügen Sie nach der ersten Kommentar-Markierung ein Leerzeichen ein.)</p>
@@ -143,7 +146,7 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
 <span class="func">;@Ahk2Exe-Base</span> [Pfad\]Name <span class="optional">, [EXE_Pfad\][Name], Zeichensatz</span> <em>; <span class="ver">[v1.1.33.10+]</span></em></pre>
 <dl>
   <dt>[Pfad\]Name</dt>
-  <dd>Die BIN- oder in <span class="ver">[v1.1.33.10+]</span> die EXE-Datei, die verwendet werden soll. Wenn keine Dateiendung angegeben ist, wird <code>.bin</code> vermutet. Für <em>Name</em> kann auch ein Platzhaltermuster verwendet werden; zum Beispiel <code>ANSI*</code>, <code>Unicode 32*</code>, <code>Unicode 64*</code>, oder <code>*bit</code> für alle drei. Wenn kein Pfad angegeben ist, werden die Standard-BIN-Dateien im Compiler-Ordner durchgegangen. Der Compiler wird für jede übereinstimmende BIN- oder EXE-Datei ausgeführt. Es dürfen nur die internen Variablen der oben genannten <a href="#group1">Gruppe 1</a> verwendet werden.</dd>
+  <dd>Die BIN- oder in <span class="ver">[v1.1.33.10+]</span> die EXE-Datei, die verwendet werden soll. Wenn keine Dateiendung angegeben ist, wird <code>.bin</code> vermutet. Wenn kein absoluter Pfad angegeben ist, wird die Datei im Arbeitsverzeichnis des Compilers vermutet (bzw. ist relativ zu diesem Verzeichnis). Für <em>Name</em> kann auch ein Platzhaltermuster verwendet werden; zum Beispiel <code>ANSI*</code>, <code>Unicode 32*</code>, <code>Unicode 64*</code>, oder <code>*bit</code> für alle drei. Der Compiler wird für jede übereinstimmende BIN- oder EXE-Datei ausgeführt. Es dürfen nur die internen Variablen der oben genannten <a href="#group1">Gruppe 1</a> verwendet werden.</dd>
   <dt>[EXE_Pfad\][Name]</dt>
   <dd><i>(Optional)</i> Der Dateiname für die EXE-Datei. Jede angegebene Dateiendung wird mit <code>.exe</code> ersetzt. Wenn kein Pfad angegeben ist, wird die EXE-Datei im Ordner des Skripts erstellt. Wenn kein Name angegeben ist, bekommt die EXE-Datei den Standardnamen zugewiesen. (Dieser Parameter kann mit der <a href="#ExeName">ExeName</a>-Direktive überschrieben werden.)</dd>
   <dt>Zeichensatz</dt>
@@ -191,6 +194,18 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
   <dt>Wert</dt>
   <dd>Der zu verwendende Wert.</dd>
 </dl>
+
+<h3 id="Nop">Nop</h3>
+<p>Bewirkt nichts.</p>
+<pre class="Syntax"><span class="func">;@Ahk2Exe-Nop</span> <span class="optional">Text</span></pre>
+<dl>
+  <dt>Text</dt>
+  <dd><i>(Optional)</i> Beliebiger Text, der ignoriert wird.</dd>
+</dl>
+<strong>Beispiel:</strong>
+<pre>Ver := A_AhkVersion "" ; Wenn angegebenes Literal nicht leer ist, tue 'SetVersion'
+;@Ahk2Exe-Obey U_V, = "%A_PriorLine~U)^(.+")(.*)".*$~$2%" ? "SetVersion" : "Nop"
+;@Ahk2Exe-%U_V%        %A_AhkVersion%%A_PriorLine~U)^(.+")(.*)".*$~$2%</pre>
 
 <h3 id="Obey">Obey</h3>
 <p>Führt isolierte AutoHotkey-Befehle oder Ausdrücke aus, deren Ergebnisse in <code>U_<i>Name</i></code> gespeichert werden müssen.</p>
@@ -255,7 +270,7 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
 </dl>
 
 <h3 id="SetMainIcon">SetMainIcon</h3>
-<p>Überschreibt das EXE-Symbol, welches für die Kompilierung verwendet wird. (Um die anderen Symbole zu ändern, siehe <a href="#AddResource">AddResource</a>-Beispiel.) Diese Direktive kann mit einer in der GUI oder CLI angegebenen Symboldatei überschrieben werden.</p>
+<p>Überschreibt das EXE-Symbol, welches für die Kompilierung verwendet wird. (Um die anderen Symbole zu ändern, siehe <a href="#AddResource">AddResource</a>-Beispiel.) Diese Direktive kann mit einer in der GUI oder CLI angegebenen Symboldatei überschrieben werden. Das neue Symbol ist möglicherweise nicht sofort im Windows Explorer sichtbar, wenn die kompilierte Datei zuvor mit einem anderen Symbol vorhanden war. Das neue Symbol kann jedoch durch Auswählen von <code>Refresh Windows Icons</code> im <code>File</code>-Menü von Ahk2Exe angezeigt werden.</p>
 <pre class="Syntax"><span class="func">;@Ahk2Exe-SetMainIcon</span> <span class="optional">Symboldatei</span></pre>
 <dl>
   <dt>Symboldatei</dt>
