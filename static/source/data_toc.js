@@ -277,7 +277,7 @@ tocData = [
   ]],
   ["Objekttypen","",
   [
-    ["Object","objects/Object.htm"],
+    ["Objekt","objects/Object.htm"],
     ["Enumerator-Objekt","objects/Enumerator.htm"],
     ["Exception-Objekt","commands/Throw.htm#Exception"],
     ["File-Objekt","objects/File.htm"],
