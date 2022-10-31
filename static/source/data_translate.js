@@ -14,6 +14,8 @@ translateData = {
   "Declarations":"Deklarationen",
   "Operators":"Operatoren",
   "Commands":"Befehle",
+  "Sub-commands":"Unterbefehle",
+  "Built-in Methods/Properties":"Interne Methoden/Eigenschaften",
   "Ahk2Exe Compiler":"Ahk2Exe-Compiler",
   "S̲earch":"S̲uchen",
   "Search tab":"Suchen-Tab",

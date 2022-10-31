@@ -107,7 +107,8 @@ Menu, Tray, Add, Dieser Menüpunkt ist ein Untermenü, :MeinUntermenü</pre>
 <h3 id="Delete">Delete</h3>
 <p>Entfernt einen bestimmten Menüpunkt aus dem Menü.</p>
 <pre class="Syntax"><span class="func">Menu</span>, MenüName, Delete <span class="optional">, MenüpunktName</span></pre>
-<p><em>MenüpunktName</em> ist der Name oder die Position eines Menüpunkts (siehe <a href="#MenuItemName">MenüpunktName</a>, um mehr zu erfahren). Voreingestellte Menüpunkte wie "Exit" (siehe unten) können nicht einzeln gelöscht werden. Den <em>Standard</em>-Menüpunkt mit diesem Unterbefehl zu entfernen hat denselben Effekt wie, als hätte man den <a href="#NoDefault">NoDefault</a>-Unterbefehl verwendet. Lässt man <em>MenüpunktName</em> weg, wird das gesamte <em>MenüName</em>-Menü gelöscht, sowie alle Menüpunkte in anderen Menüs, die <em>MenüName</em> als Untermenü verwenden. Das Löschen eines Menüs bewirkt zudem, dass das aktuelle <a href="#Win32_Menus">Win32-Menü</a> von seinen übergeordneten Menüs und Untermenüs zerstört wird, um später bei Bedarf neu erstellt werden zu können.</p>
+<p><em>MenüpunktName</em> ist der Name oder die Position eines Menüpunkts (siehe <a href="#MenuItemName">MenüpunktName</a>, um mehr zu erfahren). Voreingestellte Menüpunkte wie "Exit" (siehe unten) können nicht einzeln gelöscht werden. Den <em>Standard</em>-Menüpunkt mit diesem Unterbefehl zu entfernen hat denselben Effekt wie, als hätte man den <a href="#NoDefault">NoDefault</a>-Unterbefehl verwendet.</p>
+<p>Lässt man <em>MenüpunktName</em> weg, wird das gesamte <em>MenüName</em>-Menü gelöscht, sowie alle Menüpunkte in anderen Menüs, die <em>MenüName</em> als Untermenü verwenden. Das Löschen eines Menüs bewirkt zudem, dass das aktuelle <a href="#Win32_Menus">Win32-Menü</a> all seiner Untermenüs zerstört wird, um später bei Bedarf neu erstellt werden zu können. Andere Menüs, die solche Untermenüs enthalten, könnten ebenfalls davon betroffen sein. Um das zu vermeiden, löschen Sie die Menüpunkte mit <a href="#DeleteAll">DeleteAll</a>, bevor Sie das Menü selbst löschen.</p>
 
 <h3 id="DeleteAll">DeleteAll</h3>
 <p>Entfernt alle benutzerdefinierten Menüpunkte aus dem Menü.</p>
@@ -216,7 +217,7 @@ Menu, Tray, Add, Dieser Menüpunkt ist ein Untermenü, :MeinUntermenü</pre>
 <h3 id="Show">Show</h3>
 <p>Zeigt <em>MenüName</em> an.</p>
 <pre class="Syntax"><span class="func">Menu</span>, MenüName, Show <span class="optional">, X, Y</span></pre>
-<p>Der Benutzer kann ein Menüpunkt mit Pfeiltasten, Tastaturkurzbefehlen (unterstrichene Buchstaben) oder mit dem Mauszeiger auswählen. Mit Ausnahme der <a href="Gui.htm">GUI</a>-Menüleiste kann jedes Menü, einschließlich des Tray-Menüs, angezeigt werden. Lässt man sowohl X als auch Y weg, wird das Menü bei der aktuellen Position des Mauszeigers angezeigt. Lässt man nur eine dieser Koordinaten weg, wird stattdessen die Position des Mauszeigers verwendet. Die Koordinaten sind relativ zum aktiven Fenster. Verwenden Sie davor "<a href="CoordMode.htm">CoordMode</a>, Menu", um sie relativ zum ganzen Bildschirm zu machen.</p>
+<p>Der Benutzer kann ein Menüpunkt mit Pfeiltasten, Tastaturkurzbefehlen (unterstrichene Buchstaben) oder mit dem Mauszeiger auswählen. Mit Ausnahme der <a href="Gui.htm">GUI</a>-Menüleiste kann jedes Menü, einschließlich des Tray-Menüs, angezeigt werden. Lässt man sowohl X als auch Y weg, wird das Menü bei der aktuellen Position des Mauszeigers angezeigt. Lässt man nur eine dieser Koordinaten weg, wird stattdessen die Position des Mauszeigers verwendet. Die Koordinaten sind relativ zum aktiven Fenster. Verwenden Sie davor <code><a href="CoordMode.htm">CoordMode</a>, Menu</code>, um sie relativ zum ganzen Bildschirm zu machen.</p>
 
 <h3 id="Color">Color</h3>
 <p>Setzt die Hintergrundfarbe des Menüs auf den angegebenen <em>FarbeWert</em>.</p>
@@ -251,18 +252,20 @@ Menu, Tray, Add, Dieser Menüpunkt ist ein Untermenü, :MeinUntermenü</pre>
 <h2 id="MenuItemName">Der <em>MenüpunktName</em>-Parameter</h2>
 <p>Name oder Position eines Menüpunkts. Es gelten einige allgemeine Regeln für diesen Parameter, der bei vielen Unterbefehlen zu finden ist:</p>
 <ul>
-    <li>Um einen Buchstaben im Namen eines Menüpunktnamens zu unterstreichen, muss ein Und-Zeichen (&amp;) davorgesetzt werden. Sobald das Menü angezeigt wird, kann man so ein Menüpunkt durch Drücken der entsprechenden Taste aktivieren. Geben Sie zwei aufeinanderfolgende Und-Zeichen an, um ein direkt geschriebenes Und-Zeichen anzuzeigen. Zum Beispiel: <code>Save &amp;&amp; Exit</code></li>
-    <li>Beim Verweisen auf ein vorhandenes Menü oder Menüpunkt ist der Name zwar nicht Groß-/Kleinschreibung-sensitiv, aber jegliche Und-Zeichen müssen enthalten sein. Zum Beispiel: <code>&amp;Open</code></li>
-    <li><span class="ver">[v1.1.23+]:</span> Um einen vorhandenen Menüpunkt anhand seiner Position im Menü zu identifizieren, geben Sie die Position des Menüpunkts an, gefolgt von einem Und-Zeichen. Zum Beispiel wäre <code>1&amp;</code> der erste Menüpunkt.</li>
+    <li>Um einen Buchstaben im Namen eines Menüpunktnamens zu unterstreichen, muss ein Und-Zeichen (&amp;) davorgesetzt werden. Sobald das Menü angezeigt wird, kann man so ein Menüpunkt durch Drücken der entsprechenden Taste aktivieren. Geben Sie zwei aufeinanderfolgende Und-Zeichen an, um ein direkt geschriebenes Und-Zeichen anzuzeigen. Zum Beispiel: <code class="no-highlight">Save &amp;&amp; Exit</code></li>
+    <li>Beim Verweisen auf ein vorhandenes Menü oder Menüpunkt ist der Name zwar nicht Groß-/Kleinschreibung-sensitiv, aber jegliche Und-Zeichen müssen enthalten sein. Zum Beispiel: <code class="no-highlight">&amp;Open</code></li>
+    <li><span class="ver">[v1.1.23+]:</span> Um einen vorhandenen Menüpunkt anhand seiner Position im Menü zu identifizieren, geben Sie die Position des Menüpunkts an, gefolgt von einem Und-Zeichen. Zum Beispiel wäre <code class="no-highlight">1&amp;</code> der erste Menüpunkt.</li>
 </ul>
 
 <h2 id="Win32_Menus">Win32-Menüs</h2>
-<p>Beim Einfügen oder Modifizieren von Menüpunkten werden ihre Namen und Eigenschaften vom Menu-Befehl aufgezeichnet, allerdings wird das eigentliche <a href="https://msdn.microsoft.com/de-de/library/ms646977">Win32-Menü</a> nicht sofort konstruiert. Dies geschieht immer dann, wenn das Menü oder sein übergeordnetes Menü mit einem GUI verbunden wird oder wenn es angezeigt wird, entweder zum ersten Mal oder wenn das Menü seit seiner letzten Anzeige "zerstört" wurde. Folgende Punkte können dieses Win32-Menü zerstören, einschließlich seiner übergeordneten Menüs und Untermenüs:</p>
+<p>Beim Einfügen oder Modifizieren von Menüpunkten werden ihre Namen und Eigenschaften vom Menu-Befehl aufgezeichnet, allerdings wird das eigentliche <a href="https://msdn.microsoft.com/de-de/library/ms646977">Win32-Menü</a> nicht sofort konstruiert. Dies geschieht immer dann, wenn das Menü oder sein übergeordnetes Menü mit einem GUI verbunden wird oder wenn es angezeigt wird, entweder zum ersten Mal oder wenn das Menü seit seiner letzten Anzeige "zerstört" wurde. Folgende Dinge können dazu führen, dass dieses Win32-Menü zerstört wird:</p>
 <ul>
   <li>Ein Menü löschen.</li>
   <li>Das Untermenü eines Menüpunktes mit einem Label oder anderen Menü ersetzen.</li>
   <li>Vor <span class="ver">[v1.1.27.03]</span> den <a href="#NoStandard">NoStandard</a>- (wenn die voreingestellten Menüpunkte vorhanden waren) oder <a href="#DeleteAll">DeleteAll</a>-Unterbefehl aufrufen.</li>
 </ul>
+<p>Beim Zerstören des Win32-Menüs wird eventuell auch das Win32-Menü aller Untermenüs und des übergeordneten Menüs zerstört.</p>
+<p>Wenn das Win32-Menü eines Menüs, das die voreingestellten Menüpunkte enthält, neu erstellt wird, werden die voreingestellten Menüpunkte am Anfang des Menüs platziert.</p>
 <p>Jegliche Modifikationen am Menü, die direkt mittels Win32-API-Aufrufen durchgeführt werden, gelten nur für die aktuelle "Instanz" des Menüs, und gehen verloren, wenn das Menü zerstört wird.</p>
 <p>Jeder Menüpunkt bekommt eine ID zugewiesen, wenn er das erste Mal zum Menü hinzugefügt wird. Skripte können sich nicht auf einen Menüpunkt mit einer bestimmten ID verlassen, aber sie können die ID eines Menüpunktes via GetMenuItemID abrufen, wie im <a href="MenuGetHandle.htm#Examples">MenuGetHandle-Beispiel</a> gezeigt. Diese ID kann nicht in Verbindung mit dem Menu-Befehl verwendet werden, sondern nur in Verbindung mit den <a href="https://msdn.microsoft.com/de-de/library/ms646977">Win32-Funktionen</a>.</p>
 

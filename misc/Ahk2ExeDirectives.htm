@@ -30,7 +30,7 @@
     <li><a href="#Debug">Debug</a>: Zeigt Debugging-Text an.</li>
     <li><a href="#ExeName">ExeName</a>: Spezifiziert den Standort und Namen für die EXE-Datei.</li>
     <li><a href="#Let">Let</a>: Setzt eine Benutzervariable.</li>
-    <li><a href="#Nop">Nop</a>: Bewirkt nichts.</li>
+    <li><a href="#Nop">Nop</a> <span class="ver">[v1.1.34.03c+]</span>: Bewirkt nichts.</li>
     <li><a href="#Obey">Obey</a>: Führt einen Befehl oder Ausdruck aus.</li>
     <li><a href="#PostExec">PostExec</a>: Führt ein Programm nach der Kompilierung aus.</li>
     <li><a href="#ResourceID">ResourceID</a> <span class="ver">[v1.1.34+]</span>: Weist dem Hauptskript eine untypische Ressourcen-ID zu.</li>
@@ -78,6 +78,8 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
 
 <p id="WorkFileName">Zusätzlich zu diesen Variablennamen gibt es noch die Spezialvariable <strong>A_WorkFileName</strong>, die den temporären Namen der gerade verwendeten EXE-Datei enthält. Diese kann genutzt werden, um den Dateinamen als Parameter an eine <a href="#PostExec">PostExec</a>-Direktive zu übergeben, die auf die generierte EXE-Datei zugreifen muss.</p>
 
+<p id="BasePath"> <span class="ver">[v1.1.34.04b+]</span> Außerdem enthält die Spezialvariable <strong>A_BasePath</strong> den vollständigen Pfad und Namen der ausgewählten Basisdatei.</p>
+
 <p id="PriorLine">Des Weiteren gibt es die Spezialvariable <strong>A_PriorLine</strong>, die die Quellcodezeile enthält, die unmittelbar vor der aktuellen Compiler-Direktive steht. Dazwischenliegende leere Zeilen und Kommentaren werden ignoriert, ebenso wie alle Compiler-Direktiven-Zeilen. Diese Variable kann genutzt werden, um konstante Informationen aus dem Quelltext des Skripts "herauszupicken" und sie in späteren Compiler-Direktiven zu verwenden. Zum Beispiel könnten Sie damit auf die Versionsnummer des Skripts zugreifen, welche oft geändert wird. Diese Art des Zugriffs hat den Vorteil, dass die Versionsnummer nur einmal im Quellcode geändert werden muss - die Änderung wird dann zur entsprechenden Direktive weitergeleitet. (Weitere Informationen finden Sie im RegEx-Beispiel unten.)</p>
 
 <p>Darüber hinaus können spezielle Benutzervariablen im Format <code>U_<i>Name</i></code> mit den unten genannten <a href="#Let">Let</a>- und <a href="#Obey">Obey</a>-Direktiven erstellt werden.</p>
@@ -97,8 +99,8 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
   <li>
     <p>Stellen Sie sich vor, es gäbe eine Quelltextzeile, gefolgt von zwei Compiler-Direktiven wie folgt:</p>
     <pre>CodeVersion := "1.2.3.4", Firma := "Meine Firma"</pre>
-    <pre>;@Ahk2Exe-Let U_version = %A_PriorLine~U)^(.+"){1}(.+)".*$~$2%</pre>
-    <pre>;@Ahk2Exe-Let U_company = %A_PriorLine~U)^(.+"){3}(.+)".*$~$2%</pre>
+    <pre><em>;@Ahk2Exe-Let U_version = %A_PriorLine~U)^(.+"){1}(.+)".*$~$2%</em></pre>
+    <pre><em>;@Ahk2Exe-Let U_company = %A_PriorLine~U)^(.+"){3}(.+)".*$~$2%</em></pre>
     <p>Diese Direktiven kopieren die Versionsnummer <code>1.2.3.4</code> in die Spezialvariable <code>U_version</code> und den Firmennamen <code>Meine Firma</code> in die Spezialvariable <code>U_company</code>, um sie später in anderen Direktiven zu verwenden.<br>
     (Das <code>{1}</code> in ersten RegEx-Zeichenkette wurde in der zweiten RegEx-Zeichenkette mit <code>{3}</code> ersetzt, um den Firmennamen nach dem dritten <code>"</code> zu extrahieren.)</p>
   </li>
@@ -129,15 +131,15 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
   <li>24 (RT_MANIFEST): <code>.manifest</code>. Wenn der Name für die Ressource nicht angegeben ist, wird standardmäßig <code>1</code> verwendet</li>
 </ul>
 <p><strong>Beispiel 1:</strong> Die Standardsymbole ersetzen (außer das <a href="#SetMainIcon">Hauptsymbol</a>):</p>
-<pre>;@Ahk2Exe-AddResource Icon1.ico, 160  ; Ersetzt 'H auf Blau'
+<pre><em>;@Ahk2Exe-AddResource Icon1.ico, 160  ; Ersetzt 'H auf Blau'
 ;@Ahk2Exe-AddResource Icon2.ico, 206  ; Ersetzt 'S auf Grün'
 ;@Ahk2Exe-AddResource Icon3.ico, 207  ; Ersetzt 'H auf Rot'
-;@Ahk2Exe-AddResource Icon4.ico, 208  ; Ersetzt 'S auf Rot'</pre>
+;@Ahk2Exe-AddResource Icon4.ico, 208  ; Ersetzt 'S auf Rot'</em></pre>
 
 <p><strong>Beispiel 2:</strong> <span class="ver">[v1.1.34+]</span> Ein anderes Skript als separate RCDATA-Ressource einbinden (siehe <a href="../Program.htm#embedded-scripts">Eingebettete Skripte</a>):</p>
-<pre>;@Ahk2Exe-AddResource MeinSkript1.ahk, #2
-;@Ahk2Exe-AddResource MeinSkript2.ahk, MEINERESSOURCE
-</pre><p>Beachten Sie, dass jedes Skript, das mit dieser Direktive hinzugefügt wird, vollständig und separat vom Compiler verarbeitet wird und weitere Direktiven enthalten kann. Wenn es konkurrierende Direktiven gibt, wird die zuletzt vom Compiler gefundene verwendet.</p>
+<pre><em>;@Ahk2Exe-AddResource MeinSkript1.ahk, #2
+;@Ahk2Exe-AddResource MeinSkript2.ahk, MEINERESSOURCE</em></pre>
+<p>Beachten Sie, dass jedes Skript, das mit dieser Direktive hinzugefügt wird, vollständig und separat vom Compiler verarbeitet wird und weitere Direktiven enthalten kann. Wenn es konkurrierende Direktiven gibt, wird die zuletzt vom Compiler gefundene verwendet.</p>
 
 <h3 id="Bin">Bin / Base <span class="ver">[v1.1.33.10+]</span></h3>
 <p>Spezifiziert die Basisversion von AutoHotkey, die zum Generieren der EXE-Datei genutzt werden soll. Diese Direktive kann mit einem in der GUI oder CLI angegebenen Basisdateiparameter überschrieben werden. Diese Direktive kann bei Bedarf mehrfach angegeben werden, allerdings nur in einer Skriptdatei, die nicht via <a href="../commands/_Include.htm">#Include</a> eingebunden wird. Der Compiler wird mindestens einmal für jede gefundene Bin/Base-Direktive ausgeführt. (Wenn dieser Direktive aktuell ein Kommentar angehängt ist, muss dieser die <code>&nbsp;;</code>-Markierung verwenden. Um diese Direktive tatsächlich auszukommentieren, fügen Sie nach der ersten Kommentar-Markierung ein Leerzeichen ein.)</p>
@@ -150,7 +152,7 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
   <dt>[EXE_Pfad\][Name]</dt>
   <dd><i>(Optional)</i> Der Dateiname für die EXE-Datei. Jede angegebene Dateiendung wird mit <code>.exe</code> ersetzt. Wenn kein Pfad angegeben ist, wird die EXE-Datei im Ordner des Skripts erstellt. Wenn kein Name angegeben ist, bekommt die EXE-Datei den Standardnamen zugewiesen. (Dieser Parameter kann mit der <a href="#ExeName">ExeName</a>-Direktive überschrieben werden.)</dd>
   <dt>Zeichensatz</dt>
-  <dd><i>(Optional)</i> Überschreibt den Standard-<a href="https://msdn.microsoft.com/de-de/library/dd317756.aspx">Zeichensatz</a>, mit dem die Skript-Dateien verarbeitet werden. (Skripte sollten mit einer Byte-Order-Markierung (BOM) beginnen, was die Verwendung dieses Parameters überflüssig macht.)</dd>
+  <dd><i>(Optional)</i> Überschreibt den Standard-<a href="https://learn.microsoft.com/windows/desktop/Intl/code-page-identifiers">Zeichensatz</a>, mit dem die Skript-Dateien verarbeitet werden. (Skripte sollten mit einer Byte-Order-Markierung (BOM) beginnen, was die Verwendung dieses Parameters überflüssig macht.)</dd>
 </dl>
 
 <h3 id="ConsoleApp">ConsoleApp</h3>
@@ -181,9 +183,9 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
   <dd>Der Name der EXE-Datei. Jede angegebene Dateiendung wird mit <code>.exe</code> ersetzt. Wenn kein Pfad angegeben ist, wird die EXE-Datei im Ordner des Skripts erstellt. Wenn kein Name angegeben ist, bekommt die EXE-Datei den Standardnamen zugewiesen.</dd>
 </dl>
 <strong>Beispiel:</strong>
-<pre>;@Ahk2Exe-Obey U_bits, = %A_PtrSize% * 8
+<pre><em>;@Ahk2Exe-Obey U_bits, = %A_PtrSize% * 8
 ;@Ahk2Exe-Obey U_type, = "%A_IsUnicode%" ? "Unicode" : "ANSI"
-;@Ahk2Exe-ExeName %A_ScriptName~\.[^\.]+$%_%U_type%_%U_bits%</pre>
+;@Ahk2Exe-ExeName %A_ScriptName~\.[^\.]+$%_%U_type%_%U_bits%</em></pre>
 
 <h3 id="Let">Let</h3>
 <p>Erstellt (oder modifiziert) eine oder mehrere Benutzervariablen, auf die via <code>%U_<i>Name</i>%</code> zugegriffen werden kann, ähnlich wie bei den internen Variablen (siehe oben).</p>
@@ -195,7 +197,7 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
   <dd>Der zu verwendende Wert.</dd>
 </dl>
 
-<h3 id="Nop">Nop</h3>
+<h3 id="Nop">Nop <span class="ver">[v1.1.34.03c+]</span></h3>
 <p>Bewirkt nichts.</p>
 <pre class="Syntax"><span class="func">;@Ahk2Exe-Nop</span> <span class="optional">Text</span></pre>
 <dl>
@@ -203,9 +205,9 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
   <dd><i>(Optional)</i> Beliebiger Text, der ignoriert wird.</dd>
 </dl>
 <strong>Beispiel:</strong>
-<pre>Ver := A_AhkVersion "" ; Wenn angegebenes Literal nicht leer ist, tue 'SetVersion'
+<pre>Ver := A_AhkVersion "" <em>; Wenn angegebenes Literal nicht leer ist, tue 'SetVersion'
 ;@Ahk2Exe-Obey U_V, = "%A_PriorLine~U)^(.+")(.*)".*$~$2%" ? "SetVersion" : "Nop"
-;@Ahk2Exe-%U_V%        %A_AhkVersion%%A_PriorLine~U)^(.+")(.*)".*$~$2%</pre>
+;@Ahk2Exe-%U_V%        %A_AhkVersion%%A_PriorLine~U)^(.+")(.*)".*$~$2%</em></pre>
 
 <h3 id="Obey">Obey</h3>
 <p>Führt isolierte AutoHotkey-Befehle oder Ausdrücke aus, deren Ergebnisse in <code>U_<i>Name</i></code> gespeichert werden müssen.</p>
@@ -217,11 +219,11 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
   <dd>
     <p>Ein Befehl oder Ausdruck, der ausgeführt werden soll.</p>
     <p>Bei <strong>Befehlen</strong> muss <em>Name</em> als Ausgabevariable angegeben werden (häufig der erste Parameter), z. B.</p>
-    <pre>;@Ahk2Exe-Obey U_date, FormatTime U_date`, R D2 T2</pre>
+    <pre><em>;@Ahk2Exe-Obey U_date, FormatTime U_date`, R D2 T2</em></pre>
     <p>Bei <strong>Ausdrücken</strong> muss <code>=</code> davorgesetzt werden, z. B.</p>
-    <pre>;@Ahk2Exe-Obey U_type, = "%A_IsUnicode%" ? "Unicode" : "ANSI"</pre>
+    <pre><em>;@Ahk2Exe-Obey U_type, = "%A_IsUnicode%" ? "Unicode" : "ANSI"</em></pre>
     <p>Ausdrücke können im Befehlsformat geschrieben werden, z. B.</p>
-    <pre>;@Ahk2Exe-Obey U_bits, U_bits := %A_PtrSize% * 8</pre>
+    <pre><em>;@Ahk2Exe-Obey U_bits, U_bits := %A_PtrSize% * 8</em></pre>
     <p>Falls erforderlich, trennen Sie mehrere Befehle und Ausdrücke mit <code>`n</code>.</p>
   </dd>
   <dt>Extra</dt>
@@ -229,7 +231,7 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
 </dl>
 
 <h3 id="PostExec">PostExec</h3>
-<p>Spezifiziert ein Programm, das nach einer erfolgreichen Kompilierung ausgeführt werden soll, bevor (oder nachdem) eine <a href="../Scripts.htm#mpress">Komprimierung</a> der EXE-Datei erfolgt.</p>
+<p>Spezifiziert ein Programm, das nach einer erfolgreichen Kompilierung ausgeführt werden soll, bevor (oder nachdem) eine <a href="../Scripts.htm#mpress">Komprimierung</a> der EXE-Datei erfolgt. Diese Direktive kann mehrmals vorkommen und wird in der vom Compiler gesehenen Reihenfolge ausgeführt, entsprechend der durch den <code>When</code>-Parameter festgelegten Warteschlange.</p>
 <pre class="Syntax">
 <span class="func">;@Ahk2Exe-PostExec</span> Programm [Parameter] <span class="optional">, Bedingung, ArbeitVerz, Versteckt, FehlerIgnorieren</span></pre>
 <dl>
@@ -251,15 +253,20 @@ MsgBox Diese Meldung erscheint sowohl im kompilierten als auch unkompilierten Sk
   <dt>FehlerIgnorieren <span class="ver">[v1.1.33.03+]</span></dt>
   <dd><i>(Optional)</i> Wenn dieser Parameter auf 1 gesetzt ist, werden Fehler, die während des Starts oder der Ausführung des Programms auftreten, nicht dem Benutzer gemeldet.</dd>
 </dl>
-<p><strong>Beispiel 1:</strong> (Um diese Beispiele zu verwenden, laden Sie zunächst <a href="https://github.com/AutoHotkey/Ahk2Exe/blob/master/BinMod.ahk">BinMod.ahk</a> herunter und kompilieren Sie es gemäß den Anweisungen des heruntergeladenen Skripts.)</p>
+<p><strong>Beispiel 1:</strong> (Um die ersten beiden Beispiele zu verwenden, laden Sie zunächst <a href="https://github.com/AutoHotkey/Ahk2Exe/blob/master/BinMod.ahk">BinMod.ahk</a> herunter und kompilieren Sie es gemäß den Anweisungen des heruntergeladenen Skripts.)</p>
 <p>Dieses Beispiel kann verwendet werden, um jegliche Referenzen zu "AutoHotkey" aus der generierten EXE-Datei zu entfernen, um zu verschleiern, dass es sich um ein kompiliertes AutoHotkey-Skript handelt:</p>
-<pre>;@Ahk2Exe-Obey U_au, = "%A_IsUnicode%" ? 2 : 1    ; Skript ANSI oder Unicode?
+<pre><em>;@Ahk2Exe-Obey U_au, = "%A_IsUnicode%" ? 2 : 1    ; Skript ANSI oder Unicode?
 ;@Ahk2Exe-PostExec "BinMod.exe" "%A_WorkFileName%"
-;@Ahk2Exe-Cont  "%U_au%2.&gt;AUTOHOTKEY SCRIPT&lt;. DATA              "</pre>
+;@Ahk2Exe-Cont  "%U_au%2.&gt;AUTOHOTKEY SCRIPT&lt;. DATA              "</em></pre>
 <p><strong>Beispiel 2:</strong> Dieses Beispiel ändert eine UPX-komprimierte EXE-Datei derart, dass sie nicht mehr mit <code>UPX -d</code> dekomprimiert werden kann:</p>
-<pre>;@Ahk2Exe-PostExec "BinMod.exe" "%A_WorkFileName%"
-;@Ahk2Exe-Cont  "11.UPX." "1.UPX!.", 2</pre>
-<p>Weitere Beispiele finden Sie im Skript <a href="https://github.com/AutoHotkey/Ahk2Exe/blob/master/BinMod.ahk">BinMod.ahk</a> selbst.</p>
+<pre><em>;@Ahk2Exe-PostExec "BinMod.exe" "%A_WorkFileName%"
+;@Ahk2Exe-Cont  "11.UPX." "1.UPX!.", 2</em></pre>
+<p>(Weitere Beispiele finden Sie im Skript <a href="https://github.com/AutoHotkey/Ahk2Exe/blob/master/BinMod.ahk">BinMod.ahk</a> selbst.)</p>
+<p><strong>Beispiel 3:</strong> Dieses Beispiel spezifiziert die <a href="../Scripts.htm#mpress">Komprimierung</a>, die für ein kompiliertes Skript verwendet werden soll, wenn in der CLI oder GUI keine angegeben ist. Es werden die Standardparameter angezeigt, die der Compiler normalerweise verwendet.</p><p>Für MPRESS:</p>
+<pre>;@Ahk2Exe-PostExec "MPRESS.exe" "%A_WorkFileName%" -q -x, 0,, 1</pre>
+<p>Für UPX:</p>
+<pre>;@Ahk2Exe-PostExec "UPX.exe" "%A_WorkFileName%" 
+;@Ahk2Exe-Cont  -q --all-methods --compress-icons=0, 0,, 1</pre>
 
 <h3 id="ResourceID">ResourceID <span class="ver">[v1.1.34+]</span></h3>
 <p>Weist eine untypische Ressourcen-ID zu, die für das Hauptskript bei Kompilierungen verwendet wird, die eine <a href="#Bin">EXE-Basisdatei</a> verwenden (siehe <a href="../Program.htm#embedded-scripts">Eingebettete Skripte</a>). Diese Direktive kann mit einer in der GUI oder CLI angegebenen Ressourcen-ID überschrieben werden. Diese Direktive wird ignoriert, wenn sie in einem Skript vorkommt, das über die <a href="#AddResource">AddResource</a>-Direktive eingefügt wurde.</p>

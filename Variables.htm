@@ -143,8 +143,14 @@ SucheFortsetzen := true</pre>
   </tr>
   <tr id="bitwise">
     <td class="center bold">&lt;&lt;<br>
-    &gt;&gt;</td>
-    <td><strong>Bitweise Verschiebung nach links (&lt;&lt;)</strong> und <strong>nach rechts (&gt;&gt;)</strong>. Anwendungsbeispiel: <code>Wert1 &lt;&lt; Wert2</code>. Jeder Floating-Point-Eingabewert wird vor der Berechnung auf einen Integer gekürzt. Die bitweise Verschiebung nach links (<strong>&lt;&lt;</strong>) wäre das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" multiplizieren. Die bitweise Verschiebung nach rechts (<strong>&gt;&gt;</strong>) wäre das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" dividieren und dann das Ergebnis auf den am nächsten links befindlichen Integer runden; zum Beispiel wäre <code>-3&gt;&gt;1</code> gleich -2.</td>
+    &gt;&gt;<br>
+    &gt;&gt;&gt;</td>
+    <td>
+      <p><strong>Bitweise Verschiebung nach links (&lt;&lt;)</strong>. Anwendungsbeispiel: <code>Wert1 &lt;&lt; Wert2</code>. Das ist das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" multiplizieren.</p>
+      <p><strong>Arithmetische bitweise Verschiebung nach rechts (&gt;&gt;)</strong>. Anwendungsbeispiel: <code>Wert1 &gt;&gt; Wert2</code>. Das ist das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" dividieren und dann das Ergebnis auf den am nächsten links befindlichen Integer runden; zum Beispiel wäre <code>-3&gt;&gt;1</code> gleich -2.</p>
+      <p><strong>Logische bitweise Verschiebung nach rechts (&gt;&gt;&gt;)</strong> <span class="ver">[v1.1.35+]</span>. Anwendungsbeispiel: <code>Wert1 &gt;&gt;&gt; Wert2</code>. Im Gegensatz zur arithmetischen bitweisen Verschiebung nach rechts wird bei dieser Verschiebung das Vorzeichen der Zahl nicht beibehalten. Zum Beispiel hat -1 die gleiche Bitdarstellung wie der vorzeichenlose 64-Bit-Integer 0xffffffffffffffffff, daher ist <code>-1 &gt;&gt;&gt; 1</code> 0x7fffffffffffffffff.</p>
+      <p>Bei allen drei Operatoren werden Floating-Point-Eingabewerte vor der Berechnung auf einen Integer gekürzt. Die Ergebnisse sind undefiniert, wenn <em>Wert2</em> kleiner als 0 oder größer als 63 ist.</p>
+    </td>
   </tr>
   <tr>
     <td class="center bold">&amp;<br>
@@ -176,9 +182,11 @@ SucheFortsetzen := true</pre>
   <tr id="equal">
     <td class="center bold">=<br>
     ==<br>
-    &lt;&gt; !=</td>
+    &lt;&gt; !=<br>
+    !==</td>
     <td>
       <p><strong>Gleich (=)</strong>, <strong>Groß-/Kleinschreibung-sensitiv gleich (==)</strong> und <strong>ungleich (&lt;&gt; oder !=)</strong>. Wenn beide Eingabewerte <a href="Concepts.htm#numbers">Zahlen</a> oder <a href="Concepts.htm#numeric-strings">numerische Zeichenketten</a> sind, werden sie numerisch verglichen; ansonsten werden sie alphabetisch verglichen. Die Operatoren <strong>!=</strong> und <strong>&lt;&gt;</strong> sind funktional identisch. Die Operatoren <strong>==</strong> und <strong>=</strong> verhalten sich gleich, wenn beide Eingabewerte numerisch sind, es sei denn, einer der Eingabewerte ist nicht numerisch, dann ist <strong>==</strong> immer Groß-/Kleinschreibung-sensitiv und <strong>=</strong> immer nicht-Groß-/Kleinschreibung-sensitiv (die Methode der Nichtsensitivität ist abhängig von <a href="commands/StringCaseSense.htm">StringCaseSense</a>). Die Operatoren <strong>&lt;&gt;</strong> und <strong>!=</strong> berücksichtigen hingegen <a href="commands/StringCaseSense.htm">StringCaseSense</a>.</p>
+      <p><strong>Groß-/Kleinschreibung-sensitiv ungleich (!==)</strong> <span class="ver">[v1.1.35+]</span>. Verhält sich identisch zu <strong>==</strong>, außer dass das Ergebnis invertiert wird.</p>
       <p class="note"><strong>Hinweis</strong>: In AutoHotkey v1 wird eine in Anführungszeichen gesetzte Zeichenkette (oder das Ergebnis vom Verketten mit einer in Anführungszeichen gesetzte Zeichenkette) nie als numerisch gewertet, wenn sie direkt in einem Ausdruck verwendet wird.</p>
       <p class="warning"><strong>Veraltet:</strong> Der Operator &lt;&gt; ist nicht für neue Skripte empfohlen. Verwenden Sie stattdessen den Operator !=.</p>
     </td>
@@ -213,12 +221,14 @@ SucheFortsetzen := true</pre>
         &amp;=<br>
         ^=<br>
         &gt;&gt;=<br>
-        &lt;&lt;=
+        &lt;&lt;=<br>
+        &gt;&gt;&gt;=
     </td>
     <td><p><strong>Zuweisung</strong>. Führt eine Operation auf den Inhalt einer Variable aus und speichert das Ergebnis wieder in die gleiche Variable (früher vor v1.0.46 konnten sie nur als Operator ganz links auf einer Zeile verwendet werden, außerdem wurden nur die ersten fünf Operatoren unterstützt). Der einfachste Zuweisungsoperator ist der <a href="commands/SetExpression.htm">Doppelpunkt-Gleich-Operator (:=)</a>, der das Ergebnis eines Ausdrucks in eine Variable speichert. Eine Beschreibung dessen, was die anderen Operatoren tun, finden Sie in den entsprechenden Einträgen dieser Tabelle. <code>Var //= 2</code> beispielsweise führt eine <a href="#FloorDivide">Floor-Division</a> durch, um <em>Var</em> durch 2 zu teilen, und speichert dann das Ergebnis wieder in <em>Var</em>. Ein weiteres Beispiel ist <code>Var <strong>.=</strong> "abc"</code>, was die Kurzschreibweise für <code>Var := Var <strong>.</strong> "abc"</code> wäre.</p>
       <p>Im Gegensatz zu den meisten anderen Operatoren werden Zuweisungen von rechts nach links ausgewertet. Eine Zeile wie <code>Var1 := Var2 := 0</code> würde also erst eine 0 in <em>Var2</em> speichern und dann <em>Var2</em> in <em>Var1</em> speichern.</p>
     <p>Verwendet man eine Zuweisung im Eingabewert eines anderen Operators, wird die Variable selbst als Eingabewert genommen. Der Ausdruck <code>(Var += 2) &gt; 50</code> wäre beispielsweise wahr, wenn der gerade eben erhöhte Wert in <em>Var</em> größer als 50 ist. Eine auf diese Weise verwendete Zuweisung kann auch via Referenz (<a href="Functions.htm#ByRef">ByRef</a>) übergeben werden, oder ihre <a href="#amp">Adresse</a> zurückgeben; zum Beispiel: <code>&amp;(x:="abc")</code>.</p>
     <p>Die Priorität der Zuweisungsoperatoren erhöht sich automatisch, wenn dadurch ein Syntaxfehler verhindert oder ein besseres Verhalten bereitgestellt werden kann. Zum Beispiel: <code>not x := y</code> würde als <code>not (x := y)</code> ausgewertet werden. <code>++Var := X</code> würde als <code>++(Var := X)</code> ausgewertet werden; und <code>Z &gt; 0 ? X := 2 : Y := 2</code> würde als <code>Z &gt; 0 ? (X := 2) : (Y := 2)</code> ausgewertet werden.</p>
+    <p><strong>&gt;&gt;&gt;=</strong> benötigt <span class="ver">[v1.1.35+]</span>.</p>
     <p>Bekannte Einschränkungen durch Abwärtskompatibilität (die eventuell in einer zukünftigen Version behoben werden): 1) Wenn <strong>/=</strong> der Operator ganz links in einem Ausdruck ist und nicht zu einer <a href="#comma">Mehrfachanweisung</a> gehört, führt dieser Operator eine <a href="#FloorDivide">Floor-Division</a> durch, es sei denn, einer der Eingabewerte ist eine Floating-Point-Zahl (in allen anderen Fällen führt <strong>/=</strong> eine <a href="#divide">echte Division</a> durch); 2) <a href="commands/EnvAdd.htm">Datum/Zeit-Berechnung</a> mit <strong>+=</strong> und <strong>-=</strong> ist nur möglich, wenn dieser Operator der Operator ganz links auf der Zeile ist; 3) Die Operatoren <strong>+=</strong>, <strong>-=</strong> und <strong>*=</strong> behandeln leere Variablen als 0, aber nur, wenn sie einzeln auf einer Zeile stehen; <code>y := 1, x += 1</code> und <code>MsgBox % x -= 3</code> würden beispielsweise ein leeres Ergebnis erzeugen, falls x leer ist.</p></td>
   </tr>
   <tr id="comma">
@@ -236,7 +246,10 @@ SucheFortsetzen := true</pre>
   </tr>
   <tr>
     <td class="center"><strong>(</strong><em>Ausdruck</em><strong>)</strong></td>
-    <td><p>Ein beliebiger in Klammern gesetzter Teilausdruck. <code>(3 + 2) * 2</code> beispielsweise würde zuerst <code>3 + 2</code> auswerten.</p></td>
+    <td>
+      <p>Ein beliebiger in Klammern gesetzter Teilausdruck. <code>(3 + 2) * 2</code> beispielsweise würde zuerst <code>3 + 2</code> auswerten.</p>
+      <p>Bei einer Mehrfachanweisung wird das Ergebnis der <u>ersten</u> Anweisung zurückgegeben. <code>(a := 1, b := 2, c := 3)</code> beispielsweise gibt 1 zurück.</p>
+    </td>
   </tr>
   <tr>
     <td class="center"><p><strong>mod()<br>
@@ -322,6 +335,10 @@ SucheFortsetzen := true</pre>
   <tr id="WorkingDir">
     <td>A_WorkingDir</td>
     <td>Das aktuelle Arbeitsverzeichnis, von wo aus das Skript standardmäßig auf Dateien zugreift. Der letzte umgekehrte Schrägstrich ist nicht enthalten, es sei denn, es handelt sich um das Stammverzeichnis. Zwei Beispiele: C:\ und C:\Meine Dokumente. Mit <a href="commands/SetWorkingDir.htm">SetWorkingDir</a> kann das Arbeitsverzeichnis geändert werden.</td>
+  </tr>
+  <tr id="InitialWorkingDir">
+    <td>A_InitialWorkingDir<br><span class="ver">[v1.1.35+]</span></td>
+    <td>Das anfängliche Arbeitsverzeichnis des Skripts, das abhängig davon ist, wie das Skript gestartet wurde. Wurde es beispielsweise über eine Verknüpfung gestartet (z. B. im Startmenü), richtet sich dessen anfängliche Arbeitsverzeichnis nach dem Feld "Ausführen in", das im Eigenschaftsfenster der Verknüpfung zu finden ist.</td>
   </tr>
   <tr id="ScriptDir">
     <td>A_ScriptDir</td>
