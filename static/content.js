@@ -993,7 +993,7 @@ function ctor_structure()
       });
       // 'Edit page on GitHub' button:
       $("li.edit > a").attr({
-        href: T("https://github.com/Lexikos/AutoHotkey_L-Docs/edit/master/docs/") + relPath,
+        href: T("https://github.com/Lexikos/AutoHotkey_L-Docs/edit/v1/docs/") + relPath,
         target: "_blank"
       });
 
@@ -1384,7 +1384,7 @@ function ctor_structure()
         anchor = document.getElementById(location.hash.substr(1));
       else
         return;
-      $(anchor).css("backgroundColor", "#ff9632");
+      $(anchor).css("backgroundColor", cache.colorTheme ? "#3e2f23" : "#ff9632");
       setTimeout( function() {
         $(anchor).css("backgroundColor", "")
                  .css("transition", "background-color 1s"); // CSS3 only

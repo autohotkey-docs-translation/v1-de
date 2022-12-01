@@ -27,6 +27,7 @@ tocData = [
   ["Umgebung","",
   [
     ["ClipWait","commands/ClipWait.htm"],
+    ["DPI-Skalierung","misc/DPIScaling.htm"],
     ["EnvGet","commands/EnvGet.htm"],
     ["EnvSet","commands/EnvSet.htm"],
     ["EnvUpdate","commands/EnvUpdate.htm"],
@@ -349,7 +350,8 @@ tocData = [
     ["StrReplace()","commands/StrReplace.htm"],
     ["StrSplit()","commands/StrSplit.htm"],
     ["SubStr()","commands/SubStr.htm"],
-    ["Trim() / LTrim() / RTrim()","commands/Trim.htm"]
+    ["Trim() / LTrim() / RTrim()","commands/Trim.htm"],
+    ["VerCompare()","commands/VerCompare.htm"]
   ]],
   ["Fenster","",
   [
