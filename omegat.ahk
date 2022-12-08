@@ -2,9 +2,10 @@
 SetBatchLines, -1
 SetWorkingDir, % A_ScriptDir
 
-FileGetTime, LastSaveTime, tmx_ahk_docs-omegat.tmx
+SplitPath, A_ScriptDir, parentName
+FileGetTime, LastSaveTime, % parentName "-omegat.tmx"
 TotalProcessedFiles := 0
-Loop, target\*.htm,, 1
+Loop, target\docs\*.htm,, 1
 {
     ; Get number of processed files to determine whether only one or all documents was created:
     
@@ -22,12 +23,12 @@ Loop, target\*.htm,, 1
     
     ; skip sites
     
-    if (A_LoopFileFullPath ~= "target\\search\.htm")
+    if (A_LoopFileFullPath ~= "target\\docs\\search\.htm")
       continue
 
     ; add more infos about the translation 
 
-    if (A_LoopFileFullPath = "target\AutoHotkey.htm")
+    if (A_LoopFileFullPath = "target\docs\AutoHotkey.htm")
     {
         content := RegExReplace(content, "<p><a.*?</a></p>", "<p>Eine deutsche &Uuml;bersetzung von <a href=""https://autohotkey.com/docs/"">https://autohotkey.com/docs/</a> (siehe <a href=""https://autohotkey.com/boards/viewtopic.php?f=9&amp;t=43"">hier</a> f&uuml;r mehr Details).</p>")
     }
