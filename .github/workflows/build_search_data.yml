@@ -1,0 +1,42 @@
+name: Build search data
+
+# Controls when the action will run. Triggers the workflow on new tags
+on:
+  push:
+    paths:
+      - 'target/**'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build-and-commit-search-data:
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: master
+
+    - name: Download and unzip AutoHotkey v2
+      run: |
+        $source = "https://www.autohotkey.com/download/ahk-v2.zip"
+        $dest = "ahk-v2.zip"
+        Invoke-WebRequest -Uri $source -OutFile $dest
+        Expand-Archive -Path $dest
+    - name: Run build_search.ahk
+      run: |
+        New-Item -Name target\docs\static\source\data_search.js -ItemType File -ea 0
+        Start-Process -FilePath "ahk-v2/AutoHotkey32.exe" -ArgumentList "/ErrorStdOut `"target/docs/static/source/build_search.ahk`"" -NoNewWindow -Wait
+    - name: Commit
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git add target\docs\static\source\data_search.js
+        git commit -a -m "Build data_search.js"
+        git push
