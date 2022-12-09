@@ -1,8 +1,8 @@
 ﻿#NoEnv
 SetBatchLines, -1
-SetWorkingDir, % A_ScriptDir
+SetWorkingDir, % A_ScriptDir "\.."
 
-SplitPath, A_ScriptDir, parentName
+SplitPath, A_WorkingDir, parentName
 FileGetTime, LastSaveTime, % parentName "-omegat.tmx"
 TotalProcessedFiles := 0
 Loop, target\docs\*.htm,, 1
@@ -65,18 +65,28 @@ Loop, target\docs\*.htm,, 1
 if (TotalProcessedFiles = 1)
     ExitApp
 
+; add/replace target files
+
+FileCopyDir, % A_ScriptDir "\target", % "target" , 1
+
 ; create search index
 
-; RunWait, % A_AhkPath "/../v2-alpha/AutoHotkeyU32.exe" " """ A_ScriptDir "/target/static/source/build_search.ahk"""
+FileAppend,, % "target\docs\static\source\data_search.js"
+RunWait, % A_AhkPath "\..\v2\AutoHotkey32.exe" " """ "target\docs\static\source\build_search.ahk"""
 
 ; compile docs to chm
 
-RunWait, % A_ScriptDir "/target/compile_chm.ahk"
+RunWait, % "target\compile_chm.ahk"
 
 ; compress chm into zip file
 
-SmartZip(A_ScriptDir "\target\AutoHotkey.chm", A_ScriptDir "\temp.zip")
-FileMove, % A_ScriptDir "\temp.zip", % A_ScriptDir "\AutoHotkeyHelp_DE.zip", 1
+SmartZip("target\AutoHotkey.chm", "temp.zip")
+FileMove, % "temp.zip", % "AutoHotkeyHelp_DE.zip", 1
+
+; delete chm files
+
+FileDelete, % "target\*.chm"
+FileDelete, % "target\*.hhk"
 
 /*
 SmartZip()
