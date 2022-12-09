@@ -25,15 +25,15 @@ for i, env_var in ["ProgramFiles", "ProgramFiles(x86)", "ProgramW6432"]
     }
 }
 
-FileRead IndexJS, static\source\data_index.js
+FileRead IndexJS, docs\static\source\data_index.js
 Overwrite("Index.hhk", INDEX_CreateHHK(IndexJS))
 
 ; Use old sidebar:
-; FileDelete, static\content.js
-; FileRead TocJS, static\source\data_toc.js
+; FileDelete, docs\static\content.js
+; FileRead TocJS, docs\static\source\data_toc.js
 ; Overwrite("Table of Contents.hhc", TOC_CreateHHC(TocJS))
 ; IniWrite, Table of Contents.hhc, Project.hhp, OPTIONS, Contents file
-; IniWrite, % "AutoHotkey Help,Table of Contents.hhc,Index.hhk,AutoHotkey.htm,AutoHotkey.htm,,,,,0x73520,,0x10200e,[200,0,1080,700],0,,,,0,,0", Project.hhp, WINDOWS, Contents
+; IniWrite, % "AutoHotkey Help,Table of Contents.hhc,Index.hhk,docs\AutoHotkey.htm,docs\AutoHotkey.htm,,,,,0x73520,,0x10200e,[200,0,1080,700],0,,,,0,,0", Project.hhp, WINDOWS, Contents
 
 ; Compile AutoHotkey.chm.
 RunWait %hhc% "%A_ScriptDir%\Project.hhp"
@@ -81,7 +81,7 @@ TOC_CreateListCallback(byref output, data)
         if data[i][1]
         {
             Transform, param_local, HTML, % data[i][1]
-            output .= "<param name=""Local"" value=""" param_local """>"
+            output .= "<param name=""Local"" value=""docs/" param_local """>"
         }
 
         output .= "</object>"
@@ -118,7 +118,7 @@ INDEX_CreateHHK(data)
         Transform, param_name, HTML, % data[i][0]
         output .= "<param name=""Name"" value=""" param_name """>"
         Transform, param_local, HTML, % data[i][1]
-        output .= "<param name=""Local"" value=""" param_local """>"
+        output .= "<param name=""Local"" value=""docs/" param_local """>"
 
         output .= "</object>`n"
     }
