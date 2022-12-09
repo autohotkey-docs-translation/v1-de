@@ -71,8 +71,8 @@ FileCopyDir, % A_ScriptDir "\target", % "target" , 1
 
 ; create search index
 
-FileAppend,, % "target\docs\static\source\data_search.js"
-RunWait, % A_AhkPath "\..\v2\AutoHotkey32.exe" " """ "target\docs\static\source\build_search.ahk"""
+; FileAppend,, % "target\docs\static\source\data_search.js"
+; RunWait, % A_AhkPath "\..\v2\AutoHotkey32.exe" " """ "target\docs\static\source\build_search.ahk"""
 
 ; compile docs to chm
 
