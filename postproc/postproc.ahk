@@ -67,7 +67,9 @@ if (TotalProcessedFiles = 1)
 
 ; add/replace target files
 
-FileCopyDir, % A_ScriptDir "\target", % "target" , 1
+ErrorCount := CopyFilesAndFolders(A_ScriptDir "\target\*.*", "target", true)
+if (ErrorCount != 0)
+    MsgBox % ErrorCount " files/folders could not be copied."
 
 ; create search index
 
@@ -161,4 +163,22 @@ CreateZip(n)    ; Create empty Zip file
     ZIPFile.Write(ZIPHeader1)
     ZIPFile.RawWrite(ZIPHeader2, 18)
     ZIPFile.close()
+}
+
+CopyFilesAndFolders(SourcePattern, DestinationFolder, DoOverwrite = false)
+; Copies all files and folders matching SourcePattern into the folder named DestinationFolder and
+; returns the number of files/folders that could not be copied.
+{
+    ; First copy all the files (but not the folders):
+    FileCopy, %SourcePattern%, %DestinationFolder%, %DoOverwrite%
+    ErrorCount := ErrorLevel
+    ; Now copy all the folders:
+    Loop, %SourcePattern%, 2  ; 2 means "retrieve folders only".
+    {
+        FileCopyDir, %A_LoopFileFullPath%, %DestinationFolder%\%A_LoopFileName%, %DoOverwrite%
+        ErrorCount += ErrorLevel
+        if ErrorLevel  ; Report each problem folder by name.
+            MsgBox Could not copy %A_LoopFileFullPath% into %DestinationFolder%.
+    }
+    return ErrorCount
 }
