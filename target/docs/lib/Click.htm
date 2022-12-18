@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>Click - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Der Click-Befehl klickt mit einer Maustaste auf bestimmte Koordinaten. Click kann auch eine Maustaste gedrückt halten, das Mausrad drehen oder den Mauszeiger bewegen." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>Click <span class="ver">[v1.0.43+]</span></h1>
+
+<p>Klickt mit einer Maustaste auf bestimmte Koordinaten. Click kann auch eine Maustaste gedrückt halten, das Mausrad drehen oder den Mauszeiger bewegen.</p>
+<pre class="Syntax"><span class="func">Click</span> <span class="optional">, Optionen</span></pre>
+
+<h2 id="Parameters">Parameter</h2>
+<dl>
+  <dt>Optionen</dt>
+  <dd>
+    <p>Geben Sie null oder mehr der folgenden Komponenten an: <var>Koordinaten</var>, <var>WelcheTaste</var>, <var>KlicksAnzahl</var>, <var>DownOderUp</var>, und/oder <var>Relativ</var>. Alle Komponenten müssen mit jeweils mindestens einem Leerzeichen, Tabulator und/oder Komma voneinander getrennt werden. Die Komponenten können in beliebiger Reihenfolge gesetzt werden, außer <var>KlicksAnzahl</var>, das auf der rechten Seite von <var>Koordinaten</var> erfolgen muss, falls vorhanden.</p>
+    <p><strong>Koordinaten:</strong> Die X- und Y-Koordinate der Position, auf die der Mauszeiger vor dem Anklicken bewegt werden soll. <code>Click, 100 200</code> beispielsweise klickt mit der linken Maustaste auf eine bestimmte Position. Standardmäßig sind Koordinaten relativ zum aktiven Fenster, was aber mit <a href="CoordMode.htm">CoordMode</a> geändert werden kann. Lässt man dies weg, wird stattdessen die aktuelle Position des Mauszeigers verwendet.</p>
+    <p><strong>WelcheTaste:</strong> Left (Standard), Right, Middle (oder jeweils nur der erste Buchstabe); oder die vierte oder fünfte Maustaste (X1 oder X2). <code>Click, Right</code> beispielsweise klickt mit der rechten Maustaste auf die aktuelle Position des Mauszeigers. Im Gegensatz zu <a href="MouseClick.htm">MouseClick</a> verhalten sich die linke und rechte Maustaste auf allen Betriebssystemen immer gleich, selbst wenn der Benutzer diese Tasten per Systemsteuerung vertauscht hat.</p>
+    <p><var>WelcheTaste</var> kann auch WheelUp oder WU sein, um das Mausrad nach oben zu drehen (von Ihnen weg), oder WheelDown oder WD, um es nach unten zu drehen (auf Sie zu). <span class="ver">[v1.0.48+]</span>: WheelLeft (WL) oder WheelRight (WR) kann auch angegeben werden (aber sie funktionieren nicht in Betriebssystemen älter als Windows Vista). Geben Sie für <var>KlicksAnzahl</var> an, wie häufig das Mausrad stufenweise gedreht werden soll. Einige Anwendungen ignorieren jedoch einen <var>KlicksAnzahl</var>-Wert höher als 1 in Bezug auf das Mausrad. Verwenden Sie für solche Anwendungen mehrmals den Click-Befehl, z. B. mithilfe einer <a href="Loop.htm">Schleife</a>.</p>
+    <p><strong>KlicksAnzahl:</strong> Wie oft die Maustaste geklickt werden soll. <code>Click, 2</code> beispielsweise führt einen Doppelklick auf der aktuellen Position des Mauszeigers aus. Lässt man dies weg, wird die Maustaste nur einmal geklickt. Wenn <var>Koordinaten</var> angegeben ist, muss <var>KlicksAnzahl</var> danach erfolgen. Geben Sie eine 0 an, um den Mauszeiger ohne Klicken zu verschieben; zum Beispiel <code>Click, 100 200 0</code>.</p>
+    <p><strong>DownOderUp:</strong> Diese Komponente wird normalerweise weggelassen, damit jeder Mausklick aus einem Down- und Up-Ereignis besteht (Drücken und Loslassen). Ansonsten können Sie das Wort Down (oder den Buchstaben D) angeben, um die Maustaste dauerhaft nach unten zu drücken. Verwenden Sie später das Wort Up (oder den Buchstaben U), um die Maustaste loszulassen. <code>Click, Down</code> beispielsweise drückt die linke Maustaste nach unten und hält sie gedrückt.</p>
+    <p><strong>Relativ:</strong> Das Wort Rel oder Relative behandelt die angegebene X- und Y-Koordinate als Offsets von der aktuellen Mausposition. Das heißt, dass der Zeiger von seiner aktuellen Position um X Pixel nach rechts (nach links, wenn negativ) und um Y Pixel nach unten (nach oben, wenn negativ) verschoben wird.</p>
+  </dd>
+</dl>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Der Click-Befehl ist in der Regel besser geeignet als <a href="MouseClick.htm">MouseClick</a>, weil er automatisch die linke und rechte Maustaste ausgleicht, falls der Benutzer sie via Systemsteuerung vertauscht hat.</p>
+<p>Der Click-Befehl verwendet den via <a href="SendMode.htm">SendMode</a> gesetzten Send-Modus. Um diesen Modus für einen bestimmten Mausklick zu überschreiben, verwenden Sie einen speziellen Send-Befehl in Kombination mit <a href="Send.htm#Click">{Click}</a>, wie z. B.: <code>SendEvent {Click 100 200}</code>.</p>
+<p>Zum Erzeugen eines via UMSCHALT oder STRG modifizierten Klicks ist das <a href="Send.htm#Click">Klicken via Send</a> generell die einfachste Methode. Zum Beispiel:</p>
+<pre>Send +{Click 100 200}  <em>; UMSCHALT+MAUSTASTE-LINKS</em>
+Send ^{Click 100 200 Right}  <em>; STRG+MAUSTASTE-RECHTS</em></pre>
+<p>Im Gegensatz zu <a href="Send.htm">Send</a> wird der Click-Befehl die Modifikatortasten (Strg, Alt, Umschalt und Win) nicht automatisch loslassen. Hält man beispielsweise <kbd>Strg</kbd> gedrückt, würde <code>Click</code> einen via STRG modifizierten Klick und <code>Send {Click}</code> einen normalen Klick erzeugen.</p>
+<p>Der <a href="SendMode.htm">SendPlay-Modus</a> ist im Gegensatz zu den anderen Modi erfolgreicher darin, Mausereignisse in Videospielen zu erzeugen. Darüber hinaus haben einige Anwendungen und Videospiele eventuell Schwierigkeiten, den Mauszeiger zu folgen, wenn er zu schnell bewegt wird - in diesem Fall kann die Geschwindigkeit mit <a href="SetDefaultMouseSpeed.htm">SetDefaultMouseSpeed</a> reduziert werden (aber nur im <a href="SendMode.htm">SendEvent-Modus</a>).</p>
+<p>Der <a href="BlockInput.htm">BlockInput</a>-Befehl kann genutzt werden, um zu verhindern, dass physische Mausaktivitäten des Benutzers die künstlich erzeugten Mausereignisse stören. Allerdings ist das bei den Modi <a href="SendMode.htm">SendInput</a> und <a href="SendMode.htm">SendPlay</a> nicht notwendig, weil sie die physischen Mausaktivitäten des Benutzers automatisch nach hinten verschieben.</p>
+<p>Nach jedem DOWN- und UP-Ereignis eines Mausklicks erfolgt automatisch eine Verzögerung (außer beim <a href="SendMode.htm">SendInput-Modus</a> und beim Drehen des Mausrads). Mit <a href="SetMouseDelay.htm">SetMouseDelay</a> kann die Verzögerungsdauer geändert werden.</p>
+<h2 id="Related">Siehe auch</h2>
+<p><a href="Send.htm#Click">Send {Click}</a>, <a href="SendMode.htm">SendMode</a>, <a href="CoordMode.htm">CoordMode</a>, <a href="SetDefaultMouseSpeed.htm">SetDefaultMouseSpeed</a>, <a href="SetMouseDelay.htm">SetMouseDelay</a>, <a href="MouseClick.htm">MouseClick</a>, <a href="MouseClickDrag.htm">MouseClickDrag</a>, <a href="MouseMove.htm">MouseMove</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="BlockInput.htm">BlockInput</a></p>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Klickt mit der linken Maustaste auf die aktuelle Position des Mauszeigers.</p>
+<pre>Click</pre>
+</div>
+
+<div class="ex" id="ExCoord">
+<p><a class="ex_number" href="#ExCoord"></a> Klickt mit der linken Maustaste auf eine bestimmte Position.</p>
+<pre>Click, 100 200</pre>
+</div>
+
+<div class="ex" id="ExCoordMove">
+<p><a class="ex_number" href="#ExCoordMove"></a> Bewegt den Mauszeiger auf eine bestimmte Position, ohne zu klicken.</p>
+<pre>Click, 100 200 0</pre>
+</div>
+
+<div class="ex" id="ExCoordRight">
+<p><a class="ex_number" href="#ExCoordRight"></a> Klickt mit der rechten Maustaste auf eine bestimmte Position.</p>
+<pre>Click, 100 200 Right</pre>
+</div>
+
+<div class="ex" id="ExDouble">
+<p><a class="ex_number" href="#ExDouble"></a> Führt einen Doppelklick auf der aktuellen Position des Mauszeigers aus.</p>
+<pre>Click, 2</pre>
+</div>
+
+<div class="ex" id="ExDown">
+<p><a class="ex_number" href="#ExDown"></a> Drückt die linke Maustaste nach unten und hält sie gedrückt.</p>
+<pre>Click, Down</pre>
+</div>
+
+<div class="ex" id="ExUp">
+<p><a class="ex_number" href="#ExUp"></a> Lässt die rechte Maustaste los.</p>
+<pre>Click, Up Right</pre>
+</div>
+
+</body>
+</html>

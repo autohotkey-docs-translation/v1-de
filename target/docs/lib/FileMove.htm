@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>FileMove - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Der FileMove-Befehl verschiebt eine oder mehrere Dateien, oder benennt sie um." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>FileMove</h1>
+
+<p>Verschiebt eine oder mehrere Dateien, oder benennt sie um.</p>
+
+<pre class="Syntax"><span class="func">FileMove</span>, QuelleMuster, ZielMuster <span class="optional">, Überschreiben</span></pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>QuelleMuster</dt>
+  <dd><p>Name einer Datei oder ein Platzhaltermuster wie C:\Temp\*.tmp. Wenn kein absoluter Pfad angegeben ist, wird <em>QuelleMuster</em> im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p></dd>
+
+  <dt>ZielMuster</dt>
+  <dd><p>Name oder Suchmuster des Ziels. Wenn kein absoluter Pfad angegeben ist, wird das Ziel im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
+      <p>Wenn vorhanden, wird das erste Sternchen (<code>*</code>) im Dateinamen mit dem Quelldateinamen ohne Dateiendung ersetzt, während das erste Sternchen nach dem letzten Punkt (<code>.</code>) mit der Dateiendung der Quelldatei ersetzt wird. Wenn ein Sternchen vorhanden ist, aber die Dateiendung weggelassen wird, wird die Dateiendung der Quelldatei verwendet.</p>
+      <p>Die folgenden nahezu identischen Beispiele zeigen, wie man eine einfache Verschiebung durchführen kann (unter Beibehaltung der vorhandenen Dateinamen), indem man nur den Ordnernamen angibt:</p>
+<pre>FileMove, C:\*.txt, C:\Mein Ordner</pre>
+<pre>FileMove, C:\*.txt, C:\Mein Ordner\*.*</pre>
+      <p>Das Zielverzeichnis muss bereits vorhanden sein. Wenn <em>Mein Ordner</em> nicht existiert, verwendet das erste Beispiel oben "Mein Ordner" als Zieldateinamen, während das zweite Beispiel keine Dateien verschiebt.</p>
+    </dd>
+
+  <dt>Überschreiben</dt>
+  <dd>
+    <p>Dieser Parameter bestimmt, ob bereits vorhandene Dateien überschrieben werden dürfen. Wenn dieser Parameter 1 (true) ist, wird der Befehl vorhandene Dateien überschreiben. Wenn dieser Parameter weggelassen wird oder 0 (false) ist, wird der Befehl vorhandene Dateien nicht überschreiben.</p>
+    <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein. Es können auch Ausdrücke angegeben werden, die True oder False zurückgeben (weil True und False intern in 1 und 0 aufgelöst werden).</p>
+  </dd>
+
+</dl>
+
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
+<p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf die Anzahl der Dateien gesetzt, die nicht verschoben werden konnten, und bei Erfolg auf 0. Wenn die Quelldatei eine einzelne nicht vorhandene Datei (ohne Platzhalter) ist, wird ErrorLevel auch auf 0 gesetzt. Um diesen Zustand zu erkennen, können Sie <a href="FileExist.htm">FileExist()</a> oder <a href="IfExist.htm">IfExist</a> auf die Quelldatei anwenden, bevor Sie sie verschieben.</p>
+<p>Im Gegensatz zu <a href="FileCopy.htm">FileCopy</a> wird das Verschieben einer Datei auf sich selbst immer als Erfolg angesehen, selbst wenn der Überschreibmodus nicht aktiv ist.</p>
+<p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> entweder auf Null (0) oder unmittelbar nach dem letzten Fehler auf das Ergebnis der Systemfunktion GetLastError() gesetzt. Ansonsten enthält A_LastError einen Fehlercode, der eventuell kenntlich macht, warum keine Dateien gefunden wurden.</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>FileMove verschiebt nur Dateien. Wenn Sie stattdessen den kompletten Inhalt eines Ordners (also alle Dateien und Unterordner) verschieben wollen, können Sie das Beispiel ganz unten verwenden. Mit <a href="FileMoveDir.htm">FileMoveDir</a> kann ein einzelner Ordner verschoben oder umbenannt werden.</p>
+<p>Die Operation wird auch dann fortgesetzt, wenn Fehler auftreten.</p>
+<p>Dieser Befehl ist zwar in der Lage, Dateien auf einen anderen Datenträger zu verschieben, aber die Operation dauert wesentlich länger als das Verschieben von Dateien auf denselben Datenträger. Das liegt daran, dass das Verschieben von Dateien auf denselben Datenträger quasi dem Umbenennen von Dateien entspricht, was bedeutend schneller ist.</p>
+<h2 id="Related">Siehe auch</h2>
+<p><a href="FileCopy.htm">FileCopy</a>, <a href="FileCopyDir.htm">FileCopyDir</a>, <a href="FileMoveDir.htm">FileMoveDir</a>, <a href="FileDelete.htm">FileDelete</a></p>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExNoRename">
+<p><a class="ex_number" href="#ExNoRename"></a> Verschiebt eine Datei, ohne sie umzubenennen.</p>
+<pre>FileMove, C:\Meine Dokumente\Liste1.txt, D:\Backup\</pre>
+</div>
+
+<div class="ex" id="ExRename">
+<p><a class="ex_number" href="#ExRename"></a> Benennt eine einzelne Datei um.</p>
+<pre>FileMove, C:\Datei vorher.txt, C:\Datei nachher.txt</pre>
+</div>
+
+<div class="ex" id="ExNewExt">
+<p><a class="ex_number" href="#ExNewExt"></a> Verschiebt Textdateien in ein anderes Verzeichnis und gibt ihnen eine neue Endung.</p>
+<pre>FileMove, C:\Ordner1\*.txt, D:\Neuer Ordner\*.bkp</pre>
+</div>
+
+<div class="ex" id="ExMoveAll">
+<p><a class="ex_number" href="#ExMoveAll"></a> Verschiebt alle Dateien und Unterordner in einen anderen Ordner.</p>
+<pre>FehlerAnzahl := VerschiebeDateienUndOrdner("C:\Mein Ordner\*.*", "D:\Zielordner für Dateien &amp; Ordner")
+if (FehlerAnzahl != 0)
+    MsgBox %FehlerAnzahl% Dateien/Ordner konnten nicht verschoben werden.
+
+VerschiebeDateienUndOrdner(QuelleMuster, ZielOrdner, Überschreiben = false)
+<em>; Verschiebt alle Dateien und Ordner von QuelleMuster in dem ZielOrdner und
+; gibt die Anzahl an Dateien/Ordnern zurück, die nicht verschoben werden konnten. Diese Funktion benötigt <span class="ver">[v1.0.38+]</span>,
+; weil sie Modus 2 von FileMoveDir verwendet.</em>
+{
+    if (Überschreiben = 1)
+        Überschreiben := 2  <em>; Siehe <a href="FileMoveDir.htm">FileMoveDir</a> zum Thema Modus 1 vs 2.</em>
+    <em>; Zuerst alle Dateien verschieben (aber nicht die Ordner):</em>
+    FileMove, %QuelleMuster%, %ZielOrdner%, %Überschreiben%
+    FehlerAnzahl := ErrorLevel
+    <em>; Jetzt alle Ordner verschieben:</em>
+    Loop, %QuelleMuster%, 2  <em>; 2 bedeutet "nur Ordner".</em>
+    {
+        FileMoveDir, %A_LoopFileFullPath%, %ZielOrdner%\%A_LoopFileName%, %Überschreiben%
+        FehlerAnzahl += ErrorLevel
+        if ErrorLevel  <em>; Jeden Problemordner mit Namen anzeigen.</em>
+            MsgBox %A_LoopFileFullPath% kann nicht nach %ZielOrdner% verschoben werden.
+    }
+    return FehlerAnzahl
+}</pre>
+</div>
+
+</body>
+</html>

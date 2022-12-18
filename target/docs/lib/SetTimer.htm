@@ -1,0 +1,194 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>SetTimer - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Der SetTimer-Befehl lässt eine Subroutine automatisch und wiederholt in einem angegebenen Zeitintervall laufen." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>SetTimer</h1>
+
+<p>Lässt eine Subroutine automatisch und wiederholt in einem angegebenen Zeitintervall laufen.</p>
+
+<pre class="Syntax"><span class="func">SetTimer</span> <span class="optional">, Label, PeriodeOnOffDelete, Priorität</span></pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt id="Label">Label</dt>
+  <dd><p>Name des <a href="../misc/Labels.htm">Labels</a> oder <a href="../Hotkeys.htm">Hotkey-Labels</a>, der angesprungen werden soll, um die Befehle unterhalb von <em>Label</em> auszuführen, bis ein <a href="Return.htm">Return</a> oder <a href="Exit.htm">Exit</a> erreicht wurde. <em>Label</em> kann, wie die meisten Parameter von anderen Befehlen auch, eine <a href="../Variables.htm">Variablenreferenz</a> wie %MeinLabel% sein, um den Inhalt der Variable als Ziel zu verwenden.</p>
+  <p id="OmitLabel"><span class="ver">[v1.1.01+]:</span> Lässt man <em>Label</em> weg, wird standardmäßig <a href="../Variables.htm#ThisLabel">A_ThisLabel</a> verwendet. Zum Beispiel könnte <code>SetTimer,, Off</code> innerhalb einer Timer-Subroutine verwendet werden, um den Timer zu deaktivieren. <code>SetTimer,, 1000</code> wiederum würde entweder die <em>Periode</em> des aktuellen Timers ändern oder einen neuen Timer mit dem Label der aktuell laufenden Subroutine erstellen. <span class="ver">[v1.1.24+]:</span> Wenn A_ThisLabel leer ist, aber der aktuelle Thread durch einen Timer gestartet wurde, wird dieser Timer verwendet. Das ist besonders für Timer nützlich, die Funktionen oder Funktionsobjekte starten müssen.</p>
+  <p id="Functor"><span class="ver">[v1.1.20+]:</span> Wenn es kein gültiger Labelname ist, kann dieser Parameter der Name einer Funktion sein, deren Parameterliste keine Pflichtparameter aufweist (siehe <a href="#ExFunction">Funktionsbeispiel</a>), oder eine einzelne Variablenreferenz mit einem <a href="../misc/Functor.htm">Funktionsobjekt</a>. Zum Beispiel <code>SetTimer %FunkObj%, 1000</code> oder <code>SetTimer % FunkObj, 1000</code>. Andere Ausdrücke, die Objekte zurückgeben, werden zurzeit nicht unterstützt. Mehr dazu finden Sie im Beispiel <a href="#ExampleClass">weiter unten</a>.</p>
+  <p class="note"><strong>Hinweis:</strong> <span class="ver">[v1.1.24+]:</span> Die Übergabe einer leeren Variable oder eines Ausdrucks, der zu einem leeren Wert führt, wird als Fehler eingestuft. Dieser Parameter darf weder leer sein noch weggelassen werden.</p>
+  </dd>
+
+  <dt>PeriodeOnOffDelete</dt>
+  <dd><p><strong>On</strong>: Reaktiviert einen zuvor deaktivierten Timer mit ihrer früheren <em>Periode</em>. Falls der Timer noch nicht vorhanden ist, wird er erstellt (mit einer Standardperiode von 250). Der Timer wird außerdem <a href="#reset">zurückgesetzt</a>. Wenn ein Timer bereits vorhanden ist, der zuvor im <a href="#once">Nur-Einmal-Laufen-Modus</a> gestartet wurde, wird er auch dieses Mal nur einmal ausgeführt.</p>
+      <p><strong>Off</strong>: Deaktiviert einen vorhandenen Timer.</p>
+      <p><strong>Delete</strong> <span class="ver">[v1.1.20+]</span>: Deaktiviert und entfernt einen vorhandenen Timer. Wenn der Timer mit einem <a href="../misc/Functor.htm">Funktionsobjekt</a> verbunden ist, wird das Objekt freigegeben. Nur das Ausschalten eines Timers wird das Objekt nicht freigeben.</p>
+      <p><strong>Periode</strong>: Erstellt oder aktualisiert einen Timer. Der absolute Wert von diesem Parameter ist die <a href="#Precision">ungefähre</a> Zeit in Millisekunden, die ablaufen muss, bevor der Timer ausgeführt wird. Der Timer wird dabei automatisch aktiviert und <a href="#reset">zurückgesetzt</a>. Man kann den Timer so einstellen, dass er sich automatisch wiederholt oder nur einmal läuft:</p>
+      <ul>
+        <li>Wenn <em>Periode</em> positiv ist, wird der Timer sich solange wiederholen, bis er explizit im Skript deaktiviert wird.</li>
+        <li id="once"><p><span class="ver">[v1.0.46.16+]:</span> Wenn <em>Periode</em> negativ ist, wird der Timer nur einmal laufen. Zum Beispiel würde -100 den Timer nach 100 ms einmal ausführen und ihn dann deaktivieren, als hätte man <code>SetTimer, Label, Off</code> angegeben.</p>
+        <p><span class="ver">[v1.1.24+]:</span> Wenn <em>Label</em> ein via Skript erstelltes Objekt ist (also keine Funktion oder Label), wird der Timer automatisch gelöscht, nachdem die Timer-Funktion ihren Wert zurückgegeben hat, es sei denn, der Timer wurde wieder aktiviert. Dadurch kann das Objekt freigegeben werden, wenn es vom Skript nicht länger benötigt wird, aber das bedeutet auch, dass die <em>Periode</em> und <em>Priorität</em> des Timers verworfen werden.</p></li>
+      </ul>
+      <p><em>Periode</em> muss ein Integer sein, es sei denn, es wird eine Variable oder ein Ausdruck genutzt, dann werden alle Nachkommastellen ignoriert. Dessen absoluter Wert darf nicht größer als 4294967295 ms (49,7 Tage) sein.</p>
+      <p><strong>Default</strong>: Wenn dieser Parameter leer ist und:<br>
+      1) der Timer nicht existiert, wird der Timer mit einer Periode von 250 erstellt.<br>
+      2) der Timer bereits vorhanden ist, wird er aktiviert und seine frühere <em>Periode</em> <a href="#reset">wiederhergestellt</a>, sofern eine <em>Priorität</em> noch nicht angegeben wurde.</p>
+
+    </dd>
+
+  <dt>Priority</dt>
+  <dd><p>Dieser optionale Parameter ist ein Integer zwischen -2147483648 und 2147483647 (oder ein <a href="../Variables.htm#Expressions">Ausdruck</a>), um die Thread-Priorität des Timers zu bestimmen. Lässt man diesen Parameter weg, wird standardmäßig 0 verwendet. Siehe <a href="../misc/Threads.htm">Threads</a> für weitere Details.</p>
+      <p>Um die Priorität eines vorhandenen Timers zu ändern, ohne ihn anderweitig zu beeinflussen, lassen Sie den Parameter vor diesem leer.</p></dd>
+
+</dl>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Timer sind nützlich, weil sie asynchron laufen - das heißt, dass sie in einem bestimmten Intervall (Frequenz) ausgeführt werden, auch dann, wenn das Skript auf ein Fenster wartet, ein Dialogfenster anzeigt oder mit einer anderen Aufgabe beschäftigt ist. Unter anderem kann der Timer verwendet werden, um eine Aktion bei Abwesenheit des Benutzers durchzuführen (in Verbindung mit <a href="../Variables.htm#TimeIdle">A_TimeIdle</a>) oder um unerwünschte Fenster sofort wieder zu schließen, wenn sie erscheinen.</p>
+<p>Timer erzeugen nur die Illusion, dass das Skript mehrere Aufgaben gleichzeitig durchführen kann. In Wirklichkeit werden zeitgesteuerte Subroutinen genauso wie andere Threads behandelt: sie können unterbrechen oder von anderen Threads, wie z. B. eine <a href="../Hotkeys.htm">Hotkey-Subroutine</a>, unterbrochen werden. Siehe <a href="../misc/Threads.htm">Threads</a> für weitere Details.</p>
+<p>Die Subroutine eines erstellten, reaktivierten oder mit einer neuen <em>Periode</em> versehenen Timers wird nicht sofort ausgeführt; zuerst muss seine angegebene <em>Periode</em> verstreichen. Wenn der Timer sofort beginnen soll, müssen Sie <a href="Gosub.htm">Gosub</a> zum Ausführen der Timer-Subroutine verwenden (allerdings wird das keinen neuen Thread starten, wie es der Timer selbst machen würde; demzufolge werden Einstellungen wie <a href="SendMode.htm">SendMode</a> nicht mit ihren Standardwerten beginnen).</p>
+<p id="reset"><strong>Zurücksetzen</strong>: Wenn SetTimer auf einen bereits vorhandenen Timer angewendet wird und der 2. Parameter eine Nummer oder das Wort ON ist (oder weggelassen wird), wird der Timer zurückgesetzt; das heißt, dass seine Periode einmal komplett ablaufen muss, bevor seine Subroutine erneut starten kann.</p>
+<p id="Precision"><strong>Genauigkeit des Timers</strong>: Durch die Granularität (Ungenauigkeit) der Zeiterfassung im Betriebssystem wird <em>Periode</em> möglicherweise auf das nächstmögliche Vielfache von 10 oder 15.6 Millisekunden aufgerundet (abhängig vom Typ der installierten Hardware und Treiber). In Windows 2000/XP ist eine <em>Periode</em> von 1 bis 10 äquivalent zu 10 oder 15.6. Eine kürzere Verzögerung kann mittels Loop+Sleep erreicht werden, wie bei <a href="Sleep.htm#ShorterSleep">DllCall+timeBeginPeriod+Sleep</a> gezeigt.</p>
+<p id="Reliability"><strong>Zuverlässigkeit</strong>: Es kann sein, dass ein Timer nicht zum erwarteten Zeitpunkt ausgeführt wird, wenn folgende Bedingungen auftreten:</p>
+<ol>
+  <li>Andere Anwendungen belasten die CPU ziemlich stark.</li>
+  <li>Die Timer-Subroutine selbst läuft noch nach Ablauf der Timer-Periode oder es gibt zu viele konkurrierende Timer (das Ändern von <a href="SetBatchLines.htm">SetBatchLines</a> kann helfen).</li>
+  <li>Der Timer wurde von einem anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen, dazu zählen andere zeitgesteuerte Subroutinen, <a href="../Hotkeys.htm">Hotkey-Subroutinen</a> oder <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> (kann mit <a href="Critical.htm">Critical</a> verhindert werden). Falls das passiert und der unterbrechende Thread lange Zeit zum Beenden braucht, wird der unterbrochene Timer für diese Dauer deaktiviert. Allerdings werden alle anderen Timer weiterlaufen, indem sie den <a href="../misc/Threads.htm">Thread</a> unterbrechen, der den ersten Timer unterbrochen hat.</li>
+  <li>Ein Skript kann nicht unterbrochen werden, wenn man <a href="Critical.htm">Critical</a> oder <a href="Thread.htm">Thread Interrupt/Priority</a> verwendet. In solchen Zeiten werden Timer nicht laufen. Wenn das Skript später wieder unterbrochen werden kann, wird jeder überfällige Timer so bald wie möglich einmal ausgeführt und danach normal fortgesetzt.</li>
+</ol>
+<p>Timer funktionieren zwar, wenn das Skript <a href="Suspend.htm">suspendiert</a> ist, aber nicht, wenn <a href="Thread.htm">Thread NoTimers</a> im <a href="../misc/Threads.htm">aktuellen Thread</a> vorhanden ist oder wenn ein Thread <a href="Pause.htm">pausiert</a> wurde. Darüber hinaus werden sie nicht funktionieren, wenn der Benutzer in einem der Skriptmenüs navigiert (wie z. B. das Tray-Menü oder eine Menüleiste).</p>
+<p>Da Timer vorübergehend die aktuelle Aktivität des Skripts unterbrechen, sollten ihre Subroutinen kurzgehalten werden (so dass sie schnell zum Ende kommen), wann immer eine lange Unterbrechung unerwünscht ist.</p>
+<p id="otherremarks"><strong>Sonstige Bemerkungen</strong>: Timer, die die ganze Zeit laufen sollen, sollten üblicherweise im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> erstellt werden. Dagegen deaktivieren sich temporäre Timer oft mit ihren eigenen Subroutinen (siehe Beispiele weiter unten).</p>
+<p>Jede via SetTimer gestartete Subroutine verwendet vorerst die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a>. Diese Standardwerte können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
+<p>Wenn die <a href="../Hotkeys.htm">Hotkey</a>-Reaktionszeit von entscheidender Bedeutung ist (z. B. bei Videospielen) und das Skript bestimmte Timer enthält, deren Subroutinen länger als 5 ms zum Ausführen benötigen, dann sollte der folgende Befehl verwendet werden, um eine mögliche Verzögerung von 15 ms zu unterbinden. So eine Verzögerung würde ansonsten auftreten, wenn ein Hotkey exakt zu dem Zeitpunkt gedrückt wird, wo ein Timer-Thread in seiner unterbrechungsfreien Phase ist:</p>
+<pre><a href="Thread.htm">Thread</a>, interrupt, 0  <em>; Macht alle Threads jederzeit unterbrechbar.</em></pre>
+<p>Deaktiviert man einen Timer, während seine Subroutine noch läuft, wird diese Subroutine bis zu ihrem Ende fortgesetzt.</p>
+<p>Die <a href="KeyHistory.htm">KeyHistory</a>-Funktion zeigt, wie viele Timer vorhanden und wie viele zurzeit aktiviert sind.</p>
+<p>Um ein Skript dauerhaft laufen zu lassen -- z. B. ein Skript, das ausschließlich Timer enthält -- ist es erforderlich, <a href="_Persistent.htm">#Persistent</a> zu verwenden.</p>
+<h2 id="Related">Siehe auch</h2>
+<p><a href="Gosub.htm">Gosub</a>, <a href="Return.htm">Return</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread (Befehl)</a>, <a href="Critical.htm">Critical</a>, <a href="IsLabel.htm">IsLabel()</a>, <a href="Menu.htm">Menu</a>, <a href="_Persistent.htm">#Persistent</a></p>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExampleClose">
+<p><a class="ex_number" href="#ExampleClose"></a> Schließt unerwünschte Fenster, sobald sie erscheinen.</p>
+<pre>#Persistent
+SetTimer, MailWarnungenSchließen, 250
+return
+
+MailWarnungenSchließen:
+WinClose, Microsoft Outlook, Während der Kommunikation mit dem Server wurde das Zeitlimit überschritten
+WinClose, Microsoft Outlook, Es konnte keine Verbindung aufgebaut werden
+return</pre>
+</div>
+
+<div class="ex" id="ExampleWait">
+<p><a class="ex_number" href="#ExampleWait"></a> Wartet auf ein bestimmtes Fenster und alarmiert danach den Benutzer.</p>
+<pre>#Persistent
+SetTimer, Alarm1, 500
+return
+
+Alarm1:
+if not WinExist("Video-Konvertierung", "Prozess abgeschlossen")
+    return
+<em>; Ansonsten:</em>
+SetTimer, Alarm1, Off  <em>; d. h. der Timer deaktiviert sich selbst.</em>
+SplashTextOn, , , Die Video-Konvertierung wurde abgeschlossen.
+Sleep, 3000
+SplashTextOff
+return</pre>
+</div>
+
+<div class="ex" id="ExampleCount">
+<p><a class="ex_number" href="#ExampleCount"></a> Erkennt, ob ein Hotkey einmal, zweimal oder dreimal gedrückt wurde. Dadurch kann ein Hotkey eine unterschiedliche Operation durchführen, je nachdem, wie oft er gedrückt wurde.</p>
+<pre>#c::
+if (winc_eingaben &gt; 0) <em>; Da SetTimer bereits gestartet wurde, wird stattdessen der Tastendruck protokolliert.</em>
+{
+    winc_eingaben += 1
+    return
+}
+<em>; Ansonsten ist das der erste Tastendruck einer neuen Serie. Zählung wird
+; auf 1 gesetzt und der Timer gestartet:</em>
+winc_eingaben := 1
+SetTimer, TasteWinC, -400 <em>; Wartet auf weitere Eingaben innerhalb eines 400-Millisekunden-Zeitfensters.</em>
+return
+
+TasteWinC:
+if (winc_eingaben = 1) <em>; Die Taste wurde einmal gedrückt.</em>
+{
+    Run, m:\  <em>; Öffnet einen Ordner.</em>
+}
+else if (winc_eingaben = 2) <em>; Die Taste wurde zweimal gedrückt.</em>
+{
+    Run, m:\multimedia  <em>; Öffnet einen anderen Ordner.</em>
+}
+else if (winc_eingaben &gt; 2)
+{
+    MsgBox, Drei oder mehr Klicks erkannt.
+}
+<em>; Unabhängig von der zuvor ausgelösten Aktion wird die Zählung zurückgesetzt,
+; um die nächste Serie von Tastendrücken vorzubereiten:</em>
+winc_eingaben := 0
+return</pre>
+</div>
+
+<div class="ex" id="ExFunction">
+<p><a class="ex_number" href="#ExFunction"></a> Ein einfacher Zähler. Verwendet eine <a href="../Functions.htm">Funktion</a> als Timer-Subroutine.</p>
+<pre>#Persistent
+SetTimer, Tick, 1000
+
+Tick()
+{
+    static count := 0
+    ToolTip % count++
+}</pre>
+</div>
+
+<div class="ex" id="ExampleClass">
+<p><a class="ex_number" href="#ExampleClass"></a> Ein komplexerer Zähler. Verwendet eine <a href="../Objects.htm#Custom_Classes_method">Methode</a> als Timer-Subroutine.</p>
+<pre>counter := new SecondCounter
+counter.Start()
+Sleep 5000
+counter.Stop()
+Sleep 2000
+
+<em>; Eine Beispiel-Klasse zum Zählen der Sekunden...</em>
+class SecondCounter {
+    __New() {
+        this.interval := 1000
+        this.count := 0
+        <em>; Tick() hat einen impliziten Parameter "this", der eine Referenz auf
+        ; das Objekt ist, daher müssen wir eine Funktion erstellen, die
+        ; "this" und die aufzurufende Methode voneinander trennt:</em>
+        this.timer := ObjBindMethod(this, "Tick")
+    }
+    Start() {
+        <em>; Bekannte Einschränkung: SetTimer benötigt eine reine Variablenreferenz.</em>
+        timer := this.timer
+        SetTimer % timer, % this.interval
+        ToolTip % "Counter gestartet"
+    }
+    Stop() {
+        <em>; Um den Timer auszuschalten, müssen wir dasselbe Objekt erneut übergeben:</em>
+        timer := this.timer
+        SetTimer % timer, Off
+        ToolTip % "Counter stoppt bei " this.count
+    }
+    <em>; In diesem Beispiel ruft der Timer diese Methode auf:</em>
+    Tick() {
+        ToolTip % ++this.count
+    }
+}</pre>
+<p>Tipps bezüglich des oberen Beispiels:</p>
+<ul>
+  <li>Wir können auch <code>this.timer := this.Tick.<a href="FuncObj.htm#Bind">Bind</a>(this)</code> verwenden. Wenn <code>this.timer</code> aufgerufen wird, wird es tatsächlich <code>this.Tick.<a href="FuncObj.htm#Call">Call</a>(this)</code> aufrufen (außer dass <code>this.Tick</code> nicht neu berechnet wird). <a href="ObjBindMethod.htm">ObjBindMethod()</a> hingegen erzeugt ein Objekt, das <code>this.Tick()</code> aufruft.</li>
+  <li>Wenn wir <em>Tick</em> in <em>Call</em> umbenennen, können wir <code>this</code> direkt verwenden, anstelle von <code>this.timer</code>. Dadurch kann man temporäre Variablen vermeiden. Allerdings kann ObjBindMethod() auch nützlich sein, wenn das Objekt mehrere Methoden hat, die von verschiedenen Ereignisquellen wie Hotkeys, Menüpunkte, GUI-Steuerelemente aufgerufen werden sollen.</li>
+  <li>Beim Modifizieren des Timers, oder Löschen des Timers innerhalb einer Funktion/Methode, die von dem Timer aufgerufen wurde, kann man den <a href="#OmitLabel"><em>Label</em>-Parameter einfach weglassen</a>. Dadurch entfällt in einigen Fällen die Notwendigkeit, das ursprüngliche Objekt, welches an SetTimer übergeben wurde, zu behalten - man spart sich quasi eine temporäre Variable (z. B. <code>timer</code> im obigen Beispiel).</li>
+</ul>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>WinClose - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Der WinClose-Befehl schließt ein bestimmtes Fenster." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>WinClose</h1>
+
+<p>Schließt ein bestimmtes Fenster.</p>
+
+<pre class="Syntax"><span class="func">WinClose</span> <span class="optional">, FensterTitel, FensterText, Wartezeit, IgnoriereTitel, IgnoriereText</span></pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>FensterTitel</dt>
+  <dd><p>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie unter <a href="../misc/WinTitle.htm">FensterTitel-Parameter</a>.</p></dd>
+
+  <dt>FensterText</dt>
+  <dd><p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem internen Tool Window Spy aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p></dd>
+
+  <dt>Wartezeit</dt>
+  <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, wird der Befehl überhaupt nicht warten. Wenn eine 0 angegeben ist, wird standardmäßig eine Wartezeit von 500 ms verwendet. Jeder andere Wert wird als Sekunden interpretiert (auch mit Dezimalpunkt oder als <a href="../Variables.htm#Expressions">Ausdruck</a>) und definiert, wie lange auf das Schließen des Fensters gewartet werden soll. Schließt sich das Fenster innerhalb dieser Zeit nicht, wird das Skript fortgesetzt. ErrorLevel wird <strong>nicht</strong> gesetzt, demzufolge können Sie <a href="WinExist.htm">WinExist()</a>, <a href="IfWinExist.htm">IfWinExist</a> oder <a href="WinWaitClose.htm">WinWaitClose</a> verwenden, um ein eindeutiges Schließen eines Fensters festzustellen. Während der Befehl im Wartezustand ist, können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p></dd>
+
+  <dt>IgnoriereTitel</dt>
+  <dd><p>Alle Fenster, die diesen Wert in ihren Titeln enthalten, werden ignoriert.</p></dd>
+
+  <dt>IgnoriereText</dt>
+  <dd><p>Alle Fenster, die diesen Wert in ihren Textelementen enthalten, werden ignoriert.</p></dd>
+
+</dl>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Dieser Befehl sendet eine Close-Meldung an das Fenster. Das Ergebnis hängt vom Fenster ab (es könnte fragen, ob Sie die Daten speichern wollen, und so weiter).</p>
+<p>Wenn ein übereinstimmendes Fenster aktiv ist, wird bei mehreren übereinstimmenden Fenstern vorrangig dieses Fenster geschlossen. Im Falle mehrerer übereinstimmender Fenster wird generell das oberste (aktuell verwendete) Fenster geschlossen.</p>
+<p>Dieser Befehl agiert nur mit einem einzelnen Fenster, es sei denn, <em>FensterTitel</em> ist <a href="GroupAdd.htm">ahk_group GruppeName</a> (ohne Angabe weiterer Kriterien), dann sind alle Fenster in der Gruppe betroffen.</p>
+<p>WinClose sendet eine WM_CLOSE-Meldung an das Zielfenster, was eine etwas gewaltsame Methode zum Schließen des Fensters ist. Eine alternative Methode zum Schließen eines Fensters ist das Senden der folgenden Meldung. Beachten Sie aber, dass das Fenster sich dabei eventuell anders verhält, weil diese Methode quasi das gleiche ist wie, als würde man <kbd>Alt</kbd>+<kbd>F4</kbd> oder die Schließen-Schaltfläche in der Titelleiste drücken:</p>
+<pre>PostMessage, 0x0112, 0xF060,,, FensterTitel, FensterText  <em>; 0x0112 = WM_SYSCOMMAND, 0xF060 = SC_CLOSE</em></pre>
+<p>Wenn ein Fenster sich nicht via WinClose schließen lässt, können Sie es mit <a href="WinKill.htm">WinKill</a> erzwingen.</p>
+<p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
+<h2 id="Related">Siehe auch</h2>
+<p><a href="WinKill.htm">WinKill</a>, <a href="WinWaitClose.htm">WinWaitClose</a>, <a href="Process.htm">Process</a>, <a href="WinActivate.htm">WinActivate</a>, <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>, <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>, <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundenes Fenster</a>, <a href="WinExist.htm">WinExist()</a>, <a href="WinActive.htm">WinActive()</a>, <a href="WinWaitActive.htm">WinWaitActive</a>, <a href="WinWait.htm">WinWait</a>, <a href="GroupActivate.htm">GroupActivate</a></p>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Wenn der Texteditor vorhanden ist, schließe ihn, ansonsten schließe den Taschenrechner.</p>
+<pre>if WinExist("Unbenannt - Editor")
+    WinClose <em>; Verwendet das von WinExist gefundene Fenster.</em>
+else
+    WinClose, Rechner</pre>
+</div>
+
+</body>
+</html>

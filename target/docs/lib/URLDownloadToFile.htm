@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>UrlDownloadToFile - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Der UrlDownloadToFile-Befehl lädt eine Datei aus dem Internet herunter." />
+<meta name="ahk:equiv-v2" content="lib/Download.htm" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>UrlDownloadToFile</h1>
+
+<p>Lädt eine Datei aus dem Internet herunter.</p>
+
+<pre class="Syntax"><span class="func">UrlDownloadToFile</span>, URL, DateiName</pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>URL</dt>
+  <dd><p>URL der Datei, die heruntergeladen werden soll. Zum Beispiel könnte mit "https://someorg.org" die Willkommensseite dieser Organisation abgerufen werden.</p></dd>
+
+  <dt>DateiName</dt>
+  <dd><p><strong>Inhalt in eine Datei herunterladen</strong>: Geben Sie den Namen der Datei an, die lokal erstellt werden soll. Wenn kein absoluter Pfad angegeben ist, wird die Datei im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Jede vorhandene Datei wird mit der neuen Datei <strong>überschrieben</strong>.</p>
+    <p><strong>Inhalt in eine Variable herunterladen</strong>: Siehe die <a href="#WHR">Beispiele</a> unten.</p></dd>
+
+</dl>
+
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
+<p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Der Download wird möglicherweise auch dann als erfolgreich angesehen, wenn die Remote-Datei nicht vorhanden ist. Das liegt daran, dass viele Webserver anstelle der fehlenden Datei eine Fehlerseite senden. Das heißt, dass in <em>DateiName</em> die Fehlerseite gespeichert wird.</p>
+<p>Internet Explorer 3 oder höher muss installiert sein, damit diese Funktion richtig funktionieren kann. Firewalls oder das Vorhandensein mehrerer Netzwerkadapter können dazu führen, dass die Funktion fehlschlägt. Zudem ist es möglich, dass einige Webseiten solche Downloads blockieren.</p>
+<p><strong>Caching</strong>:</p>
+<ul>
+  <li><span class="ver">[v1.0.44.07+]</span>: Die URL wird direkt vom Remote-Server abgerufen (also nie vom Cache des Internet Explorers). Um das Caching zuzulassen, fügen Sie vor der URL ein *0 gefolgt von einem Leerzeichen ein; zum Beispiel: <code>*0 https://someorg.org</code>. Die 0 nach dem Sternchen kann mit einer beliebigen gültigen dwFlags-Nummer ersetzt werden; suchen Sie nach InternetOpenUrl auf <a href="https://www.microsoft.com">www.microsoft.com</a> für weitere Details.</li>
+  <li>In den Versionen vor v1.0.44.07 wird die Datei vom Cache abgerufen, wann immer dies möglich ist. Um das zu verhindern, geben Sie am Ende der URL eine Abfragezeichenkette an. Zum Beispiel: <code>https://www.someorg.org/doc.html?fakeParam=42</code>. Hinweis: Soll die Datei mehrmals heruntergeladen werden, muss die Abfragezeichenkette variieren.</li>
+</ul>
+<p><strong>Proxies</strong>: UrlDownloadToFile wird einen Proxy-Server für den Internetzugriff verwenden, falls so ein Proxy in den Einstellungen des Internet Explorers konfiguriert wurde.</p>
+<p><strong>FTP und Gopher</strong>: <span class="ver">[v1.0.48.04+]</span> unterstützt FTP- und Gopher-URLs. Zum Beispiel:</p>
+<pre>UrlDownloadToFile, ftp://example.com/home/Meine Datei.zip, C:\Mein Ordner\Meine Datei.zip  <em>; Anonym anmelden.</em>
+UrlDownloadToFile, ftp://user:pass@example.com:21/home/Meine Datei.zip, C:\Mein Ordner\Meine Datei.zip  <em>; Als bestimmter Benutzer anmelden.</em>
+UrlDownloadToFile, ftp://benutzer:passwort@beispiel.com/Mein Verzeichnis, C:\Verzeichnisliste.html  <em>; Ermittelt eine Verzeichnisliste im HTML-Format.</em></pre>
+<h2 id="Related">Siehe auch</h2>
+<p><a href="FileRead.htm">FileRead</a>, <a href="FileCopy.htm">FileCopy</a></p>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Lädt eine Textdatei herunter.</p>
+<pre>UrlDownloadToFile, https://www.autohotkey.com/download/1.1/version.txt, C:\Aktuellste AutoHotkey-Version.txt</pre>
+</div>
+
+<div class="ex" id="ExZip">
+<p><a class="ex_number" href="#ExZip"></a> Lädt eine ZIP-Datei herunter.</p>
+<pre>UrlDownloadToFile, https://someorg.org/archive.zip, C:\SomeOrg's Archive.zip</pre>
+</div>
+
+<div class="ex" id="WHR">
+<p><a class="ex_number" href="#WHR"></a> Lädt Text in eine Variable herunter.</p>
+<pre>whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+whr.Open("GET", "https://www.autohotkey.com/download/1.1/version.txt", true)
+whr.Send()
+<em>; Durch das 'true' oben und dem Aufruf unten bleibt das Skript ansprechbar.</em>
+whr.WaitForResponse()
+version := whr.ResponseText
+MsgBox % version
+</pre>
+</div>
+
+<div class="ex" id="XHR">
+<p><a class="ex_number" href="#XHR"></a> Macht einen asynchronen HTTP-Request.</p>
+<pre>req := ComObjCreate("Msxml2.XMLHTTP")
+<em>; Öffnet einen Request mit aktivierter async.</em>
+req.open("GET", "https://www.autohotkey.com/download/1.1/version.txt", true)
+<em>; Setzt unsere Callback-Funktion <span class="ver">[benötigt v1.1.17+]</span>.</em>
+req.onreadystatechange := Func("Ready")
+<em>; Sendet den Request.  Ready() wird aufgerufen, wenn es fertig ist.</em>
+req.send()
+<em>/*
+; Wenn Sie warten wollen, brauchen Sie kein onreadystatechange.
+; Durch Setzen von async=true und Warten auf diese Weise bleibt das Skript
+; ansprechbar, während der Download läuft, dagegen macht async=false
+; das Skript unansprechbar.
+while req.readyState != 4
+    sleep 100
+*/</em>
+#Persistent
+
+Ready() {
+    global req
+    if (req.readyState != 4)  <em>; Noch nicht fertig.</em>
+        return
+    if (req.status == 200) <em>; OK.</em>
+        MsgBox % "Neueste AutoHotkey-Version ist: " req.responseText
+    else
+        MsgBox 16,, % "Status " req.status
+    ExitApp
+}</pre>
+</div>
+
+</body>
+</html>

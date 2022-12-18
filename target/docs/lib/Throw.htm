@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>Throw - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Die Throw-Anweisung signalisiert das Vorkommen eines Fehlers. Dieses Signal kann mit einer Try-Catch-Anweisung abgefangen werden." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>Throw <span class="ver">[v1.1.04+]</span></h1>
+
+<p>Signalisiert das Vorkommen eines Fehlers. Dieses Signal kann mit einer <a href="Try.htm">Try</a>-<a href="Catch.htm">Catch</a>-Anweisung abgefangen werden.</p>
+
+<pre class="Syntax"><span class="func">Throw</span> <span class="optional">, Ausdruck</span></pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>Ausdruck</dt>
+  <dd><p>Ein Wert, der in den AusgabeVar von <a href="Catch.htm">Catch</a> gespeichert werden soll.</p>
+      <p>Da dieser Parameter ein <a href="../Variables.htm#Expressions">Ausdruck</a> ist, wären alle folgenden Zeilen gültige Beispiele:</p>
+<pre>throw 3
+throw "direkt geschriebene Zeichenkette"
+throw MeineVar
+throw i + 1
+throw { what: "Benutzerdefinierter Fehler", file: A_LineFile, line: A_LineNumber } <em>; Übergibt ein <a href="Object.htm">Objekt</a></em></pre>
+<p>Dieser Parameter ist immer ein Ausdruck, daher sollten Variablenreferenzen nicht von <a href="../FAQ.htm#percent">Prozentzeichen</a> umschlossen werden, außer, um eine <a href="../Variables.htm#ref">Doppeldereferenzierung</a> durchzuführen.</p>
+<p><span class="ver">[v1.1.05+]:</span> Lässt man diesen Parameter weg, wird ein <a href="#Exception">Exception-Objekt</a> mit einer Standardmeldung ausgelöst.</p></dd>
+
+</dl>
+
+<h2 id="Exception">Exception()</h2>
+<p>Erstellt ein Objekt mit Eigenschaften, die auch bei durch <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a> erzeugten Ausnahmen üblich sind.</p>
+<pre class="Syntax"><span class="func">Exception</span>(Message <span class="optional">, What, Extra</span>)</pre>
+<p>Dieses Objekt enthält die folgenden Eigenschaften:</p>
+<ul>
+  <li><strong>Message:</strong> Eine Fehlermeldung oder ein <a href="../misc/ErrorLevel.htm">ErrorLevel</a>-Wert.</li>
+  <li><strong>What:</strong> Der Name des Befehls, der Funktion oder des Labels, der/die/das ausgeführt wurde oder ausgeführt werden sollte, als der Fehler auftauchte.</li>
+  <li><strong>Extra:</strong> Zusätzliche Informationen über den Fehler, falls verfügbar.</li>
+  <li><strong>File:</strong> Der automatisch gesetzte vollständige Pfad der Skriptdatei, die die fehlerhafte Zeile enthält.</li>
+  <li><strong>Line:</strong> Die automatisch gesetzte Nummer der fehlerhaften Zeile.</li>
+</ul>
+<p>Lässt man <em>What</em> weg, wird standardmäßig der Name der aktuellen Funktion oder Subroutine verwendet. Ansonsten kann eine Zeichenkette oder ein negativer Offset vom Anfang der Aufrufliste angegeben werden. Zum Beispiel bewirkt ein Wert von -1, dass <code>Exception.What</code> auf die aktuelle Funktion oder Subroutine gesetzt wird, und dass <code>Exception.Line</code> und <code>Exception.File</code> auf die Zeile und Datei gesetzt wird, die sie aufgerufen hat. Wenn das Skript jedoch <a href="../Scripts.htm#ahk2exe">kompiliert</a> oder der Offset ungültig ist, wird <em>What</em> einfach in eine Zeichenkette umgewandelt.</p>
+<p><em>Message</em> und <em>Extra</em> werden in Zeichenketten umgewandelt. Diese werden in einem Fehlerdialogfenster angezeigt, wenn die Ausnahme ausgelöst aber nicht abgefangen wurde.</p>
+<pre>try
+    IrgendeineFunktion()
+catch e
+    MsgBox % "Fehler in " e.What ", das auf Zeile " e.Line " aufgerufen wurde." 
+
+IrgendeineFunktion() {
+    throw Exception("Fehlschlag", -1)
+}</pre>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="Try.htm">Try</a>, <a href="Catch.htm">Catch</a>, <a href="Finally.htm">Finally</a>, <a href="OnError.htm">OnError()</a></p>
+
+<h2 id="Examples">Beispiele</h2>
+<p>Siehe <a href="Try.htm#Examples">Try</a>.</p>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>FileCreateShortcut - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Der FileCreateShortcut-Befehl erstellt eine Verknüpfung (LNK-Datei)." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>FileCreateShortcut</h1>
+
+<p>Erstellt eine Verknüpfung (LNK-Datei).</p>
+
+<pre class="Syntax"><span class="func">FileCreateShortcut</span>, Ziel, Verknüpfung <span class="optional">, ArbeitVerz, Args, Beschreibung, SymbolDatei, Tastenkürzel, SymbolNummer, MinMax</span></pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>Ziel</dt>
+  <dd><p>Name der Datei, auf die sich die Verknüpfung bezieht. Geben Sie einen absoluten Pfad an, es sei denn, die Datei ist in das System integriert (z. B. Notepad.exe). Die Datei muss beim Erstellen der Verknüpfung nicht vorhanden sein; in diesem Fall kann es aber vorkommen, dass einige Systeme <a href="https://devblogs.microsoft.com/oldnewthing/20180509-00/?p=98715">den Pfad auf unerwartete Weise ändern</a>.</p></dd>
+
+  <dt>Verknüpfung</dt>
+  <dd><p>Name der Verknüpfung, die erstellt werden soll. Wenn kein absoluter Pfad angegeben ist, wird die Verknüpfung im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis erstellt. Achten Sie darauf, die Dateiendung <strong>.lnk</strong> anzugeben. Das Zielverzeichnis muss bereits vorhanden sein. Wenn die Datei bereits vorhanden ist, wird sie überschrieben.</p></dd>
+
+  <dt>ArbeitVerz</dt>
+  <dd><p>Das Verzeichnis, das zum aktuellen Arbeitsverzeichnis von <em>Ziel</em> wird, wenn die Verknüpfung gestartet wird. Wenn dieser Parameter weggelassen wird oder leer ist, hat die Verknüpfung ein leeres "Ausführen in"-Feld; das heißt, dass das System ihr ein Standard-Arbeitsverzeichnis zuweisen wird, wenn die Verknüpfung gestartet wird.</p></dd>
+
+  <dt>Args</dt>
+  <dd><p>Parameter, die an <em>Ziel</em> übergeben werden, wenn es gestartet wird. Trennen Sie alle Parameter mit Leerzeichen. Wenn ein Parameter Leerzeichen enthält, umschließen Sie ihn mit Anführungszeichen.</p></dd>
+
+  <dt>Beschreibung</dt>
+  <dd><p>Kommentare, die die Verknüpfung beschreiben (wird vom Betriebssystem verwendet, um einen Tooltip usw. anzuzeigen).</p></dd>
+
+  <dt>SymbolDatei</dt>
+  <dd><p>Der vollständige Pfad und Name des Symbols, das für <em>Verknüpfung</em> angezeigt werden soll. Muss entweder eine ICO-Datei oder das allererste Symbol einer EXE- oder DLL-Datei sein.</p></dd>
+
+  <dt>Tastenkürzel</dt>
+  <dd><p>Ein Buchstabe, eine Zahl, oder der Name einer Taste aus der <a href="../KeyList.htm">Tastenliste</a> (Maustasten und andere exotische Tasten werden möglicherweise nicht unterstützt). Modifikatorzeichen <strong>dürfen nicht</strong> verwendet werden. Der Benutzer kann <kbd>Strg</kbd>+<kbd>Alt</kbd> und die angegebene Taste drücken, um die Verknüpfung zu starten. Wenn für diesen Parameter beispielsweise der Buchstabe B angegeben ist, lautet der Tastaturkurzbefehl <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>B</kbd>.</p></dd>
+
+  <dt>SymbolNummer</dt>
+  <dd><p>Um anstelle des ersten Symbols ein anderes in <em>SymbolDatei</em> zu nutzen, geben Sie hier die entsprechende Nummer an (kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein). Zum Beispiel ist 2 das zweite Symbol.</p></dd>
+
+  <dt>MinMax</dt>
+  <dd><p>Startet <em>Ziel</em> minimiert oder maximiert. Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig 1 (Normal) verwendet. Ansonsten können Sie eine der folgenden Ziffern angeben:</p>
+    <ul>
+      <li>1 = Normal</li>
+      <li>3 = Maximiert</li>
+      <li>7 = Minimiert</li>
+    </ul>
+  </dd>
+
+</dl>
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
+<p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
+<h2 id="Remarks">Bemerkungen</h2>
+<p><em>Ziel</em> kann eventuell ohne Pfad angegeben werden, wenn der Ordner der Zieldatei in der PATH-Umgebungsvariable des Systems enthalten ist.</p>
+<p>Das <em>Tastenkürzel</em> einer neu erstellten Verknüpfung funktioniert nur, wenn sich die Verknüpfung auf dem Desktop oder irgendwo im Startmenü befindet. Wenn das von Ihnen gewählte <em>Tastenkürzel</em> bereits verwendet wird, hat Ihre neue Verknüpfung Vorrang.</p>
+<p>Eine URL-Verknüpfung kann auch wie folgt erstellt werden. Passen Sie die ersten beiden Parameter je nach Bedarf an:</p>
+<pre><a href="IniWrite.htm">IniWrite</a>, https://www.google.com, C:\Meine Verknüpfung.url, InternetShortcut, URL</pre>
+<p>Optional können Sie Folgendes hinzufügen, um der URL-Verknüpfung ein Symbol zuzuweisen:</p>
+<pre><a href="IniWrite.htm">IniWrite</a>, &lt;SymbolDatei&gt;, C:\Meine Verknüpfung.url, InternetShortcut, IconFile
+<a href="IniWrite.htm">IniWrite</a>, 0, C:\Meine Verknüpfung.url, InternetShortcut, IconIndex</pre>
+<p>Ersetzen Sie 0 mit der Indexnummer des gewünschten Symbols (0 ist das erste Symbol) und ersetzen Sie &lt;SymbolDatei&gt; mit einer URL-, EXE-, DLL- oder ICO-Datei. Beispiele: C:\Icons.dll, C:\App.exe, https://www.somedomain.com/ShortcutIcon.ico</p>
+<p>Obwohl es sich nicht um eine LNK-Datei handelt, wird das Betriebssystem eine auf diese Weise erstellte URL-Datei wie eine echte Verknüpfung behandeln.</p>
+<h2 id="Related">Siehe auch</h2>
+<p><a href="FileGetShortcut.htm">FileGetShortcut</a>, <a href="FileAppend.htm">FileAppend</a></p>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Der Buchstabe "i" im letzten Parameter bewirkt, dass die Verknüpfung über <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>I</kbd> gestartet werden kann.</p>
+<pre>FileCreateShortcut, Notepad.exe, %A_Desktop%\Meine Verknüpfung.lnk, C:\, "%A_ScriptFullPath%", Meine Beschreibung, C:\Mein Symbol.ico, i</pre>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>FileInstall - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Der FileInstall-Befehl fügt eine bestimmte Datei in die kompilierte Version des Skripts ein." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>FileInstall</h1>
+
+<p>Fügt eine bestimmte Datei in die <a href="../Scripts.htm#ahk2exe">kompilierte Version</a> des Skripts ein.</p>
+
+<pre class="Syntax"><span class="func">FileInstall</span>, Quelle, Ziel <span class="optional">, Überschreiben</span></pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>Quelle</dt>
+  <dd><p>Name der Datei, die in die kompilierte EXE-Datei eingefügt werden soll. Wenn kein absoluter Pfad angegeben ist, wird die Datei im Arbeitsverzeichnis des Skripts vermutet (bzw. ist relativ zu diesem Verzeichnis).</p>
+    <p>Der Dateiname <strong>darf keine</strong> Anführungszeichen, Variablenreferenzen (z. B.%A_ProgramFiles%) oder Platzhalter enthalten. Darüber hinaus müssen Sonderzeichen wie direkt geschriebene Prozentzeichen und Kommas mit einem <a href="../misc/EscapeChar.htm">Escapezeichen</a> versehen werden (wie in jedem anderen Befehlsparameter auch). Dieser Parameter muss auf der rechten Seite von FileInstall erfolgen (also nicht auf einer <a href="../Scripts.htm#continuation">Fortsetzungszeile</a> darunter).</p></dd>
+
+  <dt>Ziel</dt>
+  <dd><p>Der Name einer Datei, die erstellt werden soll, wenn <em>Quelle</em> aus der EXE-Datei extrahiert wird. Wenn kein absoluter Pfad angegeben ist, wird die Datei im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis erstellt. Das Zielverzeichnis muss bereits vorhanden sein. Im Gegensatz zu <em>Quelle</em> können hier Variablenreferenzen eingesetzt werden.</p></dd>
+
+  <dt>Überschreiben</dt>
+  <dd>
+    <p>Dieser Parameter bestimmt, ob bereits vorhandene Dateien überschrieben werden dürfen. Wenn dieser Parameter 1 (true) ist, wird der Befehl vorhandene Dateien überschreiben. Wenn dieser Parameter weggelassen wird oder 0 (false) ist, wird der Befehl vorhandene Dateien nicht überschreiben.</p>
+    <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein. Es können auch Ausdrücke angegeben werden, die True oder False zurückgeben (weil True und False intern in 1 und 0 aufgelöst werden).</p>
+  </dd>
+
+</dl>
+
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
+<p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
+<p>Kann die Datei aus irgendeinem Grund nicht in das Ziel geschrieben werden, wird das als Fehler eingestuft. Zum Beispiel:</p>
+<ul>
+  <li>Die Zieldatei ist bereits vorhanden und der <em>Überschreiben</em>-Parameter war 0 (falsch) oder wurde weggelassen.</li>
+  <li>Die Zieldatei konnte aufgrund eines Berechtigungsfehlers nicht geöffnet werden, oder weil die Datei in Benutzung ist.</li>
+  <li>Der Zielpfad war ungültig oder gibt einen Ordner an, der nicht existiert.</li>
+  <li>Die Quelldatei ist nicht vorhanden (nur bei unkompilierten Skripten).</li>
+  <li>Quelle und Ziel sind derselbe Speicherort (nur bei unkompilierten Skripten).</li>
+</ul>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Wenn dieser Befehl von <a href="../Scripts.htm#ahk2exe">Ahk2Exe</a> während der Kompilierung des Skripts gelesen wird, wird die angegebene Datei in <em>Quelle</em> zum resultierenden kompilierten Skript hinzugefügt. Später, wenn die kompilierte Skript-EXE läuft und der FileInstall-Aufruf ausgeführt wird, wird die Datei aus der EXE extrahiert und in den angegebenen Speicherort von <em>Ziel</em> geschrieben.</p>
+<p>Dateien, die zu einem Skript hinzugefügt werden, werden während der Kompilierung weder komprimiert noch verschlüsselt, aber die kompilierte Skript-EXE kann mithilfe der entsprechenden Option in Ahk2Exe komprimiert werden.</p>
+<p>Wenn dieser Befehl in einem normalen (nicht kompilierten) Skript genutzt wird, werden die Dateien stattdessen einfach kopiert - damit können zukünftig kompilierte Skripte getestet werden.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="FileCopy.htm">FileCopy</a>, <a href="_Include.htm">#Include</a></p>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Fügt eine Textdatei in die kompilierte Version des Skripts ein. Später, wenn das kompilierte Skript ausgeführt wird, wird die eingefügte Datei in ein anderes Verzeichnis mit einem anderen Dateinamen extrahiert. Wenn in diesem Verzeichnis bereits eine Datei mit diesem Namen existiert, wird sie überschrieben.</p>
+<pre>FileInstall, Meine Datei.txt, %A_Desktop%\Beispieldatei.txt, 1</pre>
+</div>
+
+</body>
+</html>

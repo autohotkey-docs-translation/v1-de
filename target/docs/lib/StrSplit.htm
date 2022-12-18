@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>StrSplit() - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Die StrSplit-Funktion teilt anhand bestimmter Trennzeichen eine Zeichenkette in mehrere Teilzeichenketten auf." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>StrSplit() <span class="ver">[v1.1.13+]</span></h1>
+<p>Teilt anhand bestimmter Trennzeichen eine Zeichenkette in mehrere Teilzeichenketten auf.</p>
+<pre class="Syntax">
+Array := <span class="func">StrSplit</span>(Zkette <span class="optional">, Trennzeichen, WegzulassendeZeichen, MaxParts</span>)</pre>
+
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>Zkette</dt>
+  <dd><p>Eine Zeichenkette, die aufgeteilt werden soll.</p></dd>
+
+  <dt>Trennzeichen</dt>
+  <dd>
+    <p>Wenn dieser Parameter weggelassen wird oder leer ist, wird jedes Zeichen der eingehenden Zeichenkette als einzelne Teilzeichenkette behandelt.</p>
+    <p>Ansonsten kann <em>Trennzeichen</em> entweder eine einzelne Zeichenkette oder ein Array mit Zeichenketten sein, um zu bestimmen, wo die Abgrenzungen zwischen den Teilzeichenketten erfolgen sollen. Da die Trennzeichen nicht zu den Teilzeichenketten gehören, sind sie nie im Rückgabewert enthalten. Befindet sich außerdem nichts zwischen einem Paar von Trennzeichen innerhalb der eingehenden Zeichenkette, wird das entsprechende Array-Element leer sein.</p>
+    <p>Zum Beispiel: <code>","</code> würde die Zeichenkette jeweils bei einem Komma teilen. Ebenso würde <code>[A_Tab, A_Space]</code> jedes Mal ein neues Array-Element erstellen, wenn ein Leer- oder Tabulatorzeichen in der eingehenden Zeichenkette vorkommt.</p>
+  </dd>
+
+  <dt>WegzulassendeZeichen</dt>
+  <dd>
+    <p>Eine optionale Liste von Zeichen (Groß-/Kleinschreibung-sensitiv), die jeweils am Anfang und Ende eines Array-Elements weggelassen werden sollen. Wenn <em>WegzulassendeZeichen</em> beispielsweise <code>" `t"</code> wäre, wird bei jedem abgerufenen Element Leer- oder Tabulatorzeichen am Anfang und Ende (aber nicht in der Mitte) entfernt.</p>
+    <p>Wenn <em>Trennzeichen</em> leer ist, gibt <em>WegzulassendeZeichen</em> an, welche Zeichen das Array nicht enthalten soll.</p>
+  </dd>
+
+  <dt>MaxParts <span class="ver">[v1.1.28+]</span></dt>
+  <dd>Wenn dieser Parameter weggelassen wird, wird standardmäßig -1 verwendet, was "kein Limit" bedeutet. Ansonsten können Sie die maximale Anzahl von Teilzeichenketten angeben, die zurückgegeben werden sollen. Wenn dieser Parameter ungleich 0 ist, wird die Zeichenkette maximal <em>MaxParts</em>-1 Mal geteilt und der Rest der Zeichenkette als letzte Teilzeichenkette zurückgegeben (ohne <em>WegzulassendeZeichen</em> am Anfang und Ende).</dd>
+
+</dl>
+
+<h2 id="Return_Value">Rückgabewert</h2>
+<p>Diese Funktion gibt ein <a href="../Objects.htm#Usage_Simple_Arrays">Array</a> (Objekt) mit Zeichenketten zurück.</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Leerraumzeichen wie Leer- und Tabulatorzeichen werden beibehalten, sofern sie selbst keine Trennzeichen sind oder in <em>WegzulassendeZeichen</em> vorkommen. Tabulator- und Leerzeichen können durch Aufrufen der <a href="Trim.htm">Trim</a>-Funktion an beiden Enden jeder Variable entfernt werden. Zum Beispiel: <code>MeinArray1 := Trim(MeinArray1)</code>.</p>
+<p>Um eine Zeichenkette im CSV-Format (kommagetrennte Werte) zu splitten, können Sie eine <a href="LoopParse.htm">parsende Schleife</a> verwenden, weil sie nativ mit CSV umgehen kann.</p>
+<p>Um die Felder vor dem Splitten anders anzuordnen, verwenden Sie den <a href="Sort.htm">Sort</a>-Befehl.</p>
+<p>Wenn die Teilzeichenketten nicht dauerhaft im Arbeitsspeicher vorhanden sein müssen, sollten Sie in Betracht ziehen, eine <a href="LoopParse.htm">parsende Schleife</a> zu verwenden. Sie könnten dadurch viel Speicherplatz sparen, vor allem, wenn <em>Zkette</em> sehr groß ist. Zum Beispiel:</p>
+<pre>Farben := "rot,grün,blau"
+Loop, Parse, Farben, % ","
+    MsgBox % "Farbnummer " A_Index " ist " A_LoopField</pre>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="StringSplit.htm">StringSplit</a>, <a href="LoopParse.htm">parsende Schleife</a>, <a href="../misc/Arrays.htm">Arrays</a>, <a href="Sort.htm">Sort</a>, <a href="SplitPath.htm">SplitPath</a>, <a href="InStr.htm">InStr()</a>, <a href="SubStr.htm">SubStr()</a>, <a href="StrLen.htm">StrLen()</a>, <a href="StringLower.htm">StringLower</a>, <a href="StringLower.htm">StringUpper</a>, <a href="StrReplace.htm">StrReplace()</a></p>
+
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExSpace">
+<p><a class="ex_number" href="#ExSpace"></a> Teilt einen Satz in ein Array von Wörtern auf und meldet das vierte Wort.</p>
+<pre>TestZkette := "Das ist ein Test."
+wort_array := StrSplit(TestZkette, A_Space, ".") <em>; Punkte weglassen.</em>
+MsgBox % "Das vierte Wort ist " wort_array[4]</pre>
+</div>
+
+<div class="ex" id="ExComma">
+<p><a class="ex_number" href="#ExComma"></a> Teilt eine kommagetrennte Liste von Farben in ein Array von Teilzeichenketten auf und geht diese einzeln durch.</p>
+<pre>Farben := "rot,grün,blau"
+for Index, Farbe in StrSplit(Farben, ",")
+    MsgBox % "Farbnummer " Index " ist " Farbe</pre>
+</div>
+
+</body>
+</html>

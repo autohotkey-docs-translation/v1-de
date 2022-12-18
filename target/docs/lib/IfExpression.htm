@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>If (Ausdruck) - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content='Die "if (Ausdruck)" Anweisung bestimmt eine oder mehrere Anweisungen, die ausgeführt werden sollen, wenn ein Ausdruck True ergibt.' />
+<meta name="ahk:equiv-v2" content="lib/If.htm" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>If (Ausdruck)</h1>
+<p>Bestimmt eine oder mehrere <a href="../Concepts.htm#statement">Anweisungen</a>, die ausgeführt werden sollen, wenn ein <a href="../Variables.htm#Expressions">Ausdruck</a> True ergibt.</p>
+<pre class="Syntax"><span class="func">If</span> (<i>Ausdruck</i>)
+{
+    <i>Anweisungen</i>
+}</pre>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Eine <em>If</em>-Anweisung mit Ausdruck unterscheidet sich von einer <a href="IfEqual.htm">traditionellen If-Anweisung</a> wie <code>if GefundeneFarbe != Blau</code> in der Regel dadurch, dass der Ausdruck von runden Klammern umschlossen ist, wie z. B. <code>if (GefundeneFarbe != "Blau")</code>. Allerdings sind diese Klammern nicht immer erforderlich, da davon ausgegangen wird, dass eine <em>If</em>-Anweisung, die keinem <a href="../Language.htm#legacy-if">altmodischen if-Muster</a> entspricht, einen Ausdruck enthält. Folgende Schreibweisen werden auch als <em>If (Ausdruck)</em> erkannt:</p>
+<ul>
+  <li>Mit einer runden Startklammer beginnen, ohne den Ausdruck vollständig zu umschließen: <code>if (x &gt; 0) and (y &gt; 0)</code></li>
+  <li>Mit einem <a href="../Functions.htm">Funktionsaufruf</a> beginnen: <code>if InStr(a, b)</code></li>
+  <li>Mit einem <a href="../Variables.htm#Operators">Operator</a> wie <code>not</code> oder <code>!</code> beginnen: <code>if !MeineVar</code></li>
+</ul>
+<p><strong>Bekannte Einschränkung:</strong> Aus historischen Gründen akzeptiert <em>If (Ausdruck)</em> genau genommen nicht einen reinen Ausdruck, sondern einen <a href="../Language.htm#numeric-parameters">numerischen Parameter</a>. <code>if %MeineVar%</code> beispielsweise ist das gleiche wie <code>if MeineVar</code>. Um das zu umgehen, muss der Ausdruck immer in runden Klammern gesetzt werden.</p>
+<p>Wenn der Ausdruck der <em>If</em>-Anweisung True ergibt (also ein Ergebnis, das weder eine leere Zeichenkette noch 0 ist), wird die Zeile oder der <a href="Block.htm">Block</a> darunter ausgeführt. Ansonsten wird, wenn es ein entsprechendes <a href="Else.htm">Else</a> gibt, die Ausführung auf die Zeile oder den Block darunter springen.</p>
+<p>Wenn ein <em>If</em> mehr als eine Zeile besitzt, müssen diese Zeilen mit geschweiften Klammern umschlossen werden (um einen <a href="Block.htm">Block</a> zu erstellen). Besitzt ein <em>If</em> allerdings nur eine Zeile, können die geschweiften Klammern weggelassen werden. Entsprechende Beispiele finden Sie am unteren Ende dieser Seite.</p>
+<p>Das Leerzeichen nach <code>if</code> ist optional, wenn der Ausdruck mit einer runden Startklammer beginnt, wie z. B. <code>if(Ausdruck)</code>.</p>
+<p id="otb">Der One True Brace Style (OTB) kann je nach Bedarf bei <em>If</em>-Anweisungen angewendet werden, die Ausdrücke sind (aber nicht bei <a href="IfEqual.htm">traditionellen If-Anweisungen</a>). Zum Beispiel:</p>
+<pre>if (x &lt; y) {
+    <em>; ...</em>
+}
+if WinExist("Unbenannt - Editor") {
+    WinActivate
+}
+if IstFertig {
+    <em>; ...</em>
+} else {
+    <em>; ...</em>
+}</pre>
+<p>Im Gegensatz zur <em>If</em>-Anweisung unterstützt eine <a href="Else.htm">Else</a>-Anweisung unmittelbar auf der rechten Seite eine Anweisung beliebiger Art.</p>
+<p>Neben solchen Anweisungen gibt es noch <code><a href="IfBetween.htm">if Var between Untergrenze and Obergrenze</a></code>, um zu überprüfen, ob eine Variable zwischen zwei Werten liegt, und <code><a href="IfIn.htm">if Var in VergleichListe</a></code>, um zu überprüfen, ob der Inhalt einer Variable in einer Liste von Werten vorkommt.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="../Variables.htm#Expressions">Ausdrücke</a>, <a href="SetExpression.htm">Zuweisungsausdruck (:=)</a>, <a href="IfIn.htm">if Var in/contains</a>, <a href="IfBetween.htm">if Var between</a>, <a href="IfInString.htm">IfInString</a>, <a href="Block.htm">Blöcke</a>, <a href="Else.htm">Else</a>, <a href="While.htm">While-Schleife</a></p>
+
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExOne">
+<p><a class="ex_number" href="#ExOne"></a> Wenn <var>A_Index</var> größer als 100 ist, kehre via Return zurück.</p>
+<pre>if (A_Index &gt; 100)
+    return</pre>
+</div>
+
+<div class="ex" id="ExMultiple">
+<p><a class="ex_number" href="#ExMultiple"></a> Wenn das Ergebnis von <code>A_TickCount - StartTime</code> größer als das Ergebnis von <code>2*MaxTime + 100</code> ist, zeige "Zu viel Zeit verstrichen." und terminiere das Skript.</p>
+<pre>if (A_TickCount - StartZeit &gt; 2*MaxZeit + 100)
+{
+    MsgBox Zu viel Zeit verstrichen.
+    ExitApp
+}</pre>
+</div>
+
+<div class="ex" id="ExComplex">
+<p><a class="ex_number" href="#ExComplex"></a> Dieses Beispiel wird wie folgt ausgeführt:</p>
+<ol>
+  <li>Wenn <var>Farbe</var> das Wort "Blau" oder "Weiß" ist:
+    <ol>
+      <li>Zeige "Die Farbe ist einer der erlaubten Werte.".</li>
+      <li>Terminiere das Skript.</li>
+    </ol>
+  </li>
+  <li>Ansonsten, wenn <var>Farbe</var> das Wort "Silber" ist:
+    <ol>
+      <li>Zeige "Silber ist keine erlaubte Farbe.".</li>
+      <li>Stoppe weitere Überprüfungen.</li>
+    </ol>
+  </li>
+  <li>Ansonsten:
+    <ol>
+      <li>Zeige "Diese Farbe wurde nicht erkannt.".</li>
+      <li>Terminiere das Skript.</li>
+    </ol>
+  </li>
+</ol>
+<pre>if (Farbe = "Blau" or Farbe = "Weiß")
+{
+    MsgBox Die Farbe ist einer der erlaubten Werte.
+    ExitApp
+}
+else if (Farbe = "Silber")
+{
+    MsgBox Silber ist keine erlaubte Farbe.
+    return
+}
+else
+{
+    MsgBox Diese Farbe wurde nicht erkannt.
+    ExitApp
+}</pre>
+</div>
+
+<div class="ex" id="ExMultiStatement">
+<p><a class="ex_number" href="#ExMultiStatement"></a> Eine einzelne <a href="../Variables.htm#comma">Mehrfachanweisungszeile</a> muss nicht mit geschweiften Klammern umschlossen werden.</p>
+<pre>MeineVar := 3
+if (MeineVar &gt; 2)
+    MeineVar++, MeineVar := MeineVar - 4, MeineVar .= " test"
+MsgBox % MeineVar  <em>; Meldet "0 test".</em>
+</pre>
+</div>
+
+</body>
+</html>

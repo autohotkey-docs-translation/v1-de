@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>SetRegView - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Der SetRegView-Befehl setzt die Registry-Ansicht für RegRead, RegWrite, RegDelete und Registry-Schleifen, so dass diese in einem 32-Bit-Skript auf die 64-Bit-Registry-Ansicht zugreifen können und umgekehrt." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>SetRegView <span class="ver">[v1.1.08+]</span></h1>
+<p>Setzt die Registry-Ansicht für <a href="RegRead.htm">RegRead</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="RegDelete.htm">RegDelete</a> und <a href="LoopReg.htm">Registry-Schleifen</a>, so dass diese in einem 32-Bit-Skript auf die 64-Bit-Registry-Ansicht zugreifen können und umgekehrt.</p>
+<pre class="Syntax"><span class="func">SetRegView</span>, RegAnsicht</pre>
+
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>RegAnsicht</dt>
+  <dd>
+      <p>Geben Sie <strong>32</strong> an, um die Registry aus Sicht einer 32-Bit-Anwendung zu sehen, oder <strong>64</strong>, um die Registry aus Sicht einer 64-Bit-Anwendung zu sehen.</p>
+      <p>Mit dem Wort <strong>Default</strong> wird das normale Verhalten wiederhergestellt.</p>
+    </dd>
+
+</dl>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Dieser Befehl ist nur in der 64-Bit-Version von Windows nützlich. In der 32-Bit-Version von Windows hat SetRegView keine Wirkung.</p>
+<p>In einem 64-Bit-Betriebssystem werden 32-Bit-Anwendungen über das Untersystem von Windows namens <a href="https://msdn.microsoft.com/de-de/library/aa384249">WOW64</a> ausgeführt. Standardmäßig leitet das System bestimmte <a href="https://msdn.microsoft.com/de-de/library/aa384253">Registry-Schlüssel</a> weiter, um Konflikte zu vermeiden. Zum Beispiel wird in einem 32-Bit-Skript <code>HKLM\SOFTWARE\AutoHotkey</code> nach <code>HKLM\SOFTWARE\Wow6432Node\AutoHotkey</code> weitergeleitet. SetRegView bewirkt, dass Registry-Befehle in einem 32-Bit-Skript auf die 64-Bit-Registry-Ansicht zugreifen können und umgekehrt.</p>
+<p>Die interne Variable <strong>A_RegView</strong> enthält die aktuelle Einstellung.</p>
+<p>Jeder neu gestartete <a href="../misc/Threads.htm">Thread</a> (z. B. ein <a href="../Hotkeys.htm">Hotkey</a>, ein <a href="Menu.htm">benutzerdefinierter Menüpunkt</a> oder eine <a href="SetTimer.htm">zeitgesteuerte</a> Subroutine) verwendet vorerst die Standardeinstellung des Befehls. Um diese zu ändern, muss der Befehl im automatischen Ausführungsbereich (ganz oben im Skript) angegeben werden.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="RegRead.htm">RegRead</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="RegDelete.htm">RegDelete</a>, <a href="LoopReg.htm">Registry-Schleife</a></p>
+
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Zeigt, wie eine bestimmte Registry-Ansicht gesetzt werden kann und wie die Registry-Weiterleitung das Skript beeinflusst.</p>
+<pre id="example1">
+<em>; Greift auf die Registrierung zu, wie es eine 32-Bit-Anwendung tun würde.</em>
+SetRegView 32
+RegWrite REG_SZ, HKLM, SOFTWARE\Test.ahk, Wert, 123
+
+<em>; Greift auf die Registrierung zu, wie es eine 64-Bit-Anwendung tun würde.</em>
+SetRegView 64
+RegRead Wert, HKLM, SOFTWARE\Wow6432Node\Test.ahk, Wert
+RegDelete HKLM, SOFTWARE\Wow6432Node\Test.ahk
+
+MsgBox Gelesener Wert '%Wert%' via Wow6432Node.
+
+<em>; Stellt die Standard-Registrierungsansicht wieder her, je
+; nachdem, ob das Skript im 32-Bit- oder 64-Bit-Format ist.</em>
+SetRegView Default
+<em>;...</em>
+</pre>
+</div>
+
+<div class="ex" id="Ex32Or64">
+<p><a class="ex_number" href="#Ex32Or64"></a> Zeigt, wie der Typ der EXE und des Betriebssystems, auf dem das Skript läuft, erkannt werden kann.</p>
+<pre id="example2">if (A_PtrSize = 8)
+    Skript_ist := "64-Bit"
+else <em>; if (A_PtrSize = 4)</em>
+    Skript_ist := "32-Bit"
+
+if (A_Is64bitOS)
+    OS_ist := "64-Bit"
+else
+    OS_ist := "32-Bit mit nur einer einzigen Registry-Ansicht"
+
+MsgBox Dieses Skript ist %Skript_ist%, und das OS ist %OS_ist%.</pre>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>Random - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Der Random-Befehl erzeugt eine pseudozufällige Zahl." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>Random</h1>
+
+<p>Erzeugt eine pseudozufällige Zahl.</p>
+
+<pre class="Syntax">
+<span class="func">Random</span>, AusgabeVar <span class="optional">, Min, Max</span>
+<span class="func">Random</span>, , NeuerStartwert
+</pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>AusgabeVar</dt>
+  <dd><p>Name der Ausgabevariable, in der das Ergebnis gespeichert werden soll. Das Format von gespeicherten Floating-Point-Zahlen wird durch <a href="SetFormat.htm">SetFormat</a> bestimmt, sofern dessen <a href="SetFormat.htm#Fast">Slow-Modus</a> verwendet wird; andernfalls wirkt sich SetFormat nur auf die Formatierung aus, wenn die Zahl in eine Zeichenkette umgewandelt wird.</p></dd>
+
+  <dt>Min</dt>
+  <dd>Die kleinste Zahl, die generiert werden kann - sie kann negativ, eine Floating-Point-Zahl oder ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein. Lässt man diesen Parameter weg, wird standardmäßig 0 verwendet. Während ein Integer nur einen kleinstmöglichen Wert von -2147483648 haben kann, haben Floating-Point-Zahlen keine Einschränkungen.</dd>
+
+  <dt>Max</dt>
+  <dd><p>Die größte Zahl, die generiert werden kann - sie kann negativ, eine Floating-Point-Zahl oder ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein. Lässt man diesen Parameter weg, wird standardmäßig 2147483647 verwendet (diese Zahl ist gleichzeitig auch der größtmögliche Integer-Wert -- Floating-Point-Zahlen unterliegen keiner Einschränkung).</p></dd>
+
+  <dt>NeuerStartwert</dt>
+  <dd><p>Dieser Modus reseedet ("erneuert") den Zufallszahlengenerator mit <em>NeuerStartwert</em> (kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein). Dieser Vorgang hat Einfluss auf alle danach generierten Zufallszahlen. <em>NeuerStartwert</em> sollte ein Integer zwischen 0 und 4294967295 (0xFFFFFFFF) sein. Das Setzen eines neuen Startwertes kann die Qualität/Sicherheit von erzeugten Zufallszahlen verbessern, besonders wenn es sich bei <em>NeuerStartwert</em> um eine echte Zufallszahl handelt und nicht um eine von minderer Qualität wie eine pseudozufällige Zahl. In der Regel muss das Setzen eines neuen Startwertes nicht mehr als einmal durchgeführt werden.</p>
+      <p>Wenn man dieses Verfahren nie anwendet, wird der Startwert die niedrigwertigen 32-Bits des 64-Bit-Wertes sein, der die Anzahl von 100-Nanosekunden-Intervallen seit 1. Januar 1601 ist. Dieser Wert wandert alle ~7.2 Minuten von 0 bis 4294967295.</p></dd>
+
+</dl>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Dieser Befehl erzeugt eine pseudozufällige Zahl - also eine Zahl, die eine echte Zufallszahl vortäuscht, aber in Wirklichkeit auf Basis einer komplizierten Formel errechnet wurde, um das Bestimmen/Erraten der nächsten Zahl extrem zu erschweren.</p>
+<p>Jede Zahl innerhalb des angegebenen Bereichs hat ungefähr die gleich hohe Chance, generiert zu werden (siehe aber "Bekannte Einschränkungen" weiter unten).</p>
+<p>Enthält <em>Min</em> oder <em>Max</em> einen Dezimalpunkt, wird das Endergebnis eine Floating-Point-Zahl sein, abhängig vom gesetzten Format in <a href="SetFormat.htm">SetFormat</a>. Ansonsten wird das Ergebnis ein Integer sein.</p>
+<p>Bekannte Einschränkungen für das Floating-Point-Format: 1) Es können nur ca. 4294967296 eindeutige Zahlen für einen bestimmten Bereich erzeugt werden, demzufolge werden alle anderen Zahlen in dem Bereich nie erzeugt; 2) es ist möglich, dass ein Ergebnis etwas größer ist als der angegebene <em>Max</em>-Wert (teilweise verursacht durch die Ungenauigkeit innerhalb von Floating-Point-Zahlen).</p>
+<h2 id="Related">Siehe auch</h2>
+<p><a href="Format.htm">Format()</a>, <a href="SetFormat.htm">SetFormat</a></p>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Generiert einen zufälligen Integer im Bereich von 1 bis 10 und speichert ihn in <var>rand</var>.</p>
+<pre>Random, rand, 1, 10</pre>
+</div>
+
+<div class="ex" id="ExFloat">
+<p><a class="ex_number" href="#ExFloat"></a> Generiert eine zufällige Floating-Point-Zahl im Bereich von 0.0 bis 1.0 und speichert sie in <var>rand</var>.</p>
+<pre>Random, rand, 0.0, 1.0</pre>
+</div>
+
+<h2 id="Comments_based_on_the_original_source">Kommentare aus dem originalen Quellcode</h2>
+<p>Diese Funktion verwendet den Mersenne-Twister-Zufallszahlengenerator, MT19937, geschrieben von Takuji Nishimura und Makoto Matsumoto, Shawn Cokus, Matthe Bellew und Isaku Wada.</p>
+<p>Der Mersenne-Twister ist ein Algorithmus zum Erzeugen von Zufallszahlen. Bei dessen Entwicklung wurden die Fehler anderer Generatoren berücksichtigt. Die Periode, 2<sup>19937</sup>-1, und die Gleichverteilung, 623 Dimensionen, sind weitaus größer. Der Generator ist zudem schnell; er verhindert Multiplikation und Division, und profitiert von Caches und Pipelines. Mehr Informationen finden Sie auf der Entwickler-Webseite: <a href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html">www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html</a></p>
+<p>Copyright (C) 1997 - 2002, Makoto Matsumoto und Takuji Nishimura, Alle Rechte vorbehalten.</p>
+<p>Weiterverbreitung und Verwendung in nichtkompilierter oder kompilierter Form, mit oder ohne Veränderung, sind unter den folgenden Bedingungen zulässig:</p>
+<ol>
+  <li>Weiterverbreitete nichtkompilierte Exemplare müssen das obige Copyright, diese Liste der Bedingungen und den folgenden Haftungsausschluss im Quelltext enthalten.</li>
+  <li>Weiterverbreitete kompilierte Exemplare müssen das obige Copyright, diese Liste der Bedingungen und den folgenden Haftungsausschluss in der Dokumentation und/oder anderen Materialien, die mit dem Exemplar verbreitet werden, enthalten.</li>
+  <li>Die Namen der Beitragsleistenden dürfen nicht zum Kennzeichnen oder Bewerben von Produkten, die von dieser Software abgeleitet wurden, ohne spezielle vorherige schriftliche Genehmigung verwendet werden.</li>
+</ol>
+<p class="J">DIESE SOFTWARE WIRD VON DEN COPYRIGHT-HALTERN UND DEN BEITRAGSLEISTENDEN OHNE JEGLICHE SPEZIELLE ODER IMPLIZIERTE GARANTIEN ZUR VERFÜGUNG GESTELLT, DIE UNTER ANDEREM EINSCHLIESSEN: DIE IMPLIZIERTE GARANTIE DER VERWENDBARKEIT DER SOFTWARE FÜR EINEN BESTIMMTEN ZWECK. AUF KEINEN FALL IST DER COPYRIGHT-BESITZER ODER DIE BEITRAGSLEISTENDEN FÜR IRGENDWELCHE DIREKTEN, INDIREKTEN, ZUFÄLLIGEN, SPEZIELLEN, BEISPIELHAFTEN ODER FOLGESCHÄDEN (UNTER ANDEREM VERSCHAFFEN VON ERSATZGÜTERN ODER -DIENSTLEISTUNGEN; EINSCHRÄNKUNG DER NUTZUNGSFÄHIGKEIT; VERLUST VON NUTZUNGSFÄHIGKEIT; DATEN; PROFIT ODER GESCHÄFTSUNTERBRECHUNG), WIE AUCH IMMER VERURSACHT UND UNTER WELCHER VERPFLICHTUNG AUCH IMMER, OB IN VERTRAG, STRIKTER VERPFLICHTUNG ODER UNERLAUBTER HANDLUNG (INKLUSIVE FAHRLÄSSIGKEIT) VERANTWORTLICH, AUF WELCHEM WEG SIE AUCH IMMER DURCH DIE BENUTZUNG DIESER SOFTWARE ENTSTANDEN SIND, SOGAR, WENN SIE AUF DIE MÖGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.</p>
+<p>Diese Funktion sollte NICHT zum KRYPTOGRAPHIEREN verwendet werden, ohne vorher mehrere Rückgabewerte gleichzeitig sicher zu hashen, ansonsten könnte man den Generatorzustand nach Einlesen der 624 nachfolgenden Werte in Erfahrung bringen.</p>
+<p>Wenn Sie sie verwenden, sollten Sie eine E-Mail mit entsprechendem Verweis auf Ihr aktuelles Projekt an folgende Adresse senden: m-mat@math.sci.hiroshima-u.ac.jp.</p>
+<p><i>Das oben genannte wurde bereits für AutoHotkey getan, aber wenn Sie den Random-Befehl in einer öffentlich verbreiteten Anwendung verwenden, sollten Sie in Betracht ziehen, der oben genannten Person eine E-Mail zuzuschicken, um sich bei ihm zu bedanken.</i></p>
+
+</body>
+</html>

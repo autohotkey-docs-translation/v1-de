@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>ImageSearch - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Der ImageSearch-Befehl sucht innerhalb eines bestimmten Bildschirmbereichs nach einem Bild." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>ImageSearch</h1>
+
+<p>Sucht innerhalb eines bestimmten Bildschirmbereichs nach einem Bild.</p>
+
+<pre class="Syntax"><span class="func">ImageSearch</span>, AusgabeVarX, AusgabeVarY, X1, Y1, X2, Y2, BildDatei</pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>AusgabeVarX, AusgabeVarY</dt>
+  <dd><p>Namen der Ausgabevariablen, in denen die X- und Y-Koordinate des oberen linken Pixels, auf dem das Bild gefunden wurde, gespeichert werden sollen (wenn das Bild nicht gefunden wird, werden diese Variablen leer gemacht). Standardmäßig sind Koordinaten relativ zum aktiven Fenster, was aber mit <a href="CoordMode.htm">CoordMode</a> geändert werden kann.</p>
+    <p>Einer oder beide dieser Parameter können leer gelassen werden - in diesem Fall kann mit ErrorLevel (siehe unten) festgestellt werden, ob eine Übereinstimmung gefunden wurde.</p></dd>
+
+  <dt>X1, Y1</dt>
+  <dd><p>Die X- und Y-Koordinate der oberen linken Ecke des rechteckigen Suchbereichs (können <a href="../Variables.htm#Expressions">Ausdrücke</a> sein). Standardmäßig sind Koordinaten relativ zum aktiven Fenster, was aber mit <a href="CoordMode.htm">CoordMode</a> geändert werden kann.</p></dd>
+
+  <dt>X2, Y2</dt>
+  <dd><p>Die X- und Y-Koordinate der unteren rechten Ecke des rechteckigen Suchbereichs (können <a href="../Variables.htm#Expressions">Ausdrücke</a> sein). Standardmäßig sind Koordinaten relativ zum aktiven Fenster, was aber mit <a href="CoordMode.htm">CoordMode</a> geändert werden kann.</p></dd>
+
+  <dt>BildDatei</dt>
+  <dd><p>Der Dateiname des Bildes. Wenn kein absoluter Pfad angegeben ist, wird das Bild im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Alle Betriebssysteme unterstützen GIF-, JPG-, BMP-, ICO-, CUR- und ANI-Bilder (BMP-Bilder müssen 16-Bit oder höher sein). Folgende Dateitypen sind auch für Symbole geeignet: EXE, DLL, CPL, SCR und andere Typen, die Symbolressourcen enthalten. In Windows XP oder höher werden zusätzliche Bildformate wie PNG, TIF, Exif, WMF und EMF unterstützt. Um Betriebssysteme älter als XP zu unterstützen, kopieren Sie Microsofts kostenlose GDIplus-DLL-Datei in den Ordner von AutoHotkey.exe (im Falle eines <a href="../Scripts.htm#ahk2exe">kompilierten Skripts</a> muss die DLL in den Ordner des Skripts kopiert werden). Die DLL finden Sie auf <a href="https://www.microsoft.com">www.microsoft.com</a> mit Suchbegriffen wie: gdi redistributable</p>
+      <p><strong>Optionen</strong>: Direkt vor dem Dateinamen können null oder mehr der folgenden Zeichenketten angegeben werden. Die Optionen müssen jeweils mit einem Leer- oder Tabulatorzeichen voneinander getrennt werden. Zum Beispiel: <code>*2 *w100 *h-1 C:\Hauptlogo.bmp</code>.</p>
+      <p><strong>*IconN</strong>: Um anstelle der ersten Symbolgruppe eine andere in der Datei zu nutzen, geben Sie <code>*Icon</code> an, gefolgt von der Nummer der Gruppe. <code>*Icon2</code> beispielsweise lädt das Standardsymbol von der zweiten Symbolgruppe.</p>
+    <p><strong>*n</strong> (Variation): Geben Sie für <strong>n</strong> eine Zahl im Bereich von 0 bis 255 an, um die erlaubte Anzahl von Variationsnuancen in beiden Richtungen für die Intensität der Rot-, Grün- und Blaukomponenten der Farbe jedes Pixels festzulegen. Wenn z. B. <code>*2</code> angegeben ist und die Farbe eines Pixels 0x444444 ist, wird jede Farbe von 0x424242 bis 0x464646 als Übereinstimmung angesehen. Dieser Parameter ist hilfreich, wenn die Farbgebung des Bildes leicht variiert oder wenn <em>BildDatei</em> ein Format wie GIF oder JPG verwendet, das nicht genau mit einem Bild auf dem Bildschirm übereinstimmt. Wenn Sie 255 Variationsnuancen angeben, werden alle Farben übereinstimmen. Standardmäßig gelten 0 Variationsnuancen.</p>
+    <p><strong>*TransN</strong>: Geben Sie eine im Bild befindliche Farbe an, die mit jeder Farbe auf dem Bildschirm übereinstimmen soll. Diese Option wird hauptsächlich verwendet, um PNG-, GIF- und TIF-Bilder zu finden, die einige transparente Bereiche aufweisen (Symbole benötigen diese Option nicht, weil ihre Transparenz automatisch unterstützt wird). Handelt es sich um GIF-Bilder, dürfte <code>*TransWhite</code> am ehesten funktionieren. Handelt es sich um PNG- oder TIF-Bilder, ist <code>*TransBlack</code> möglicherweise die beste Wahl. Ansonsten können Sie für <strong>N</strong> einen beliebigen Farbnamen oder RGB-Wert angeben (ziehen Sie die <a href="Progress.htm#colors">Farbentabelle</a> zu Rate oder verwenden Sie <a href="PixelGetColor.htm">PixelGetColor</a> in dessen RGB-Modus). Beispiele: <code>*TransBlack</code>, <code>*TransFFFFAA</code>, <code>*Trans0xFFFFAA</code>.</p>
+    <p><strong>*wn</strong> und <strong>*hn</strong>: Breite und Höhe, auf die das Bild skaliert werden soll (diese Breite und Höhe bestimmen auch, welches Symbol aus einer mit mehreren Symbolen bestückten ICO-Datei geladen werden soll). Lässt man beide Optionen weg, werden Symbole, die aus einer ICO-, DLL- oder EXE-Datei geladen wurden, auf die Kleine-Symbole-Standardgröße des Systems skaliert, was in der Regel 16x16 ist (ihre Originalgröße kann mit <code>*w0 *h0</code> erzwungen werden). Bilder, die keine Symbole sind, werden immer in ihrer Originalgröße geladen. Geben Sie -1 für eine der Abmessungen und eine positive Zahl für die jeweils andere an, um das Bild unter Beibehaltung des Seitenverhältnisses zu verkleinern oder zu vergrößern. <code>*w200 *h-1</code> beispielsweise macht das Bild 200 Pixel breit und bewirkt, dass dessen Höhe automatisch gesetzt wird.</p>
+    <p><span class="ver">[v1.1.23+]:</span> Anstelle eines Dateinamens kann auch ein <a href="../misc/ImageHandles.htm">Bitmap- oder Symbol-Handle</a> verwendet werden. Zum Beispiel <code>HBITMAP:*%handle%</code>.</p>
+  </dd>
+
+</dl>
+
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
+<p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, eine Ausnahme auszulösen, wenn beim Suchen ein Problem auftrat. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn das Bild im angegebenen Bereich gefunden wurde, auf 1, wenn es nicht gefunden wurde, oder auf 2, wenn der Befehl die Suche aufgrund eines Problems nicht durchführen konnte (z. B. wenn die Bilddatei nicht geöffnet werden kann oder die Optionsangabe fehlerhaft ist).</p>
+<h2 id="Remarks">Bemerkungen</h2>
+<p>ImageSearch kann verwendet werden, um grafische Objekte auf dem Bildschirm zu finden, die keinen Text haben oder deren Text nicht ohne weiteres abgerufen werden kann. ImageSearch ist zum Beispiel nützlich, um die Position von Bild-Schaltflächen, Symbolen, Webseiten-Links oder Videospielobjekten zu ermitteln. Einmal lokalisiert, können diese Objekte via <a href="Click.htm">Click</a> angeklickt werden.</p>
+<p>Manchmal ist es strategisch sinnvoll, nicht das ganze Bild, sondern nur einen kleinen Ausschnitt des Bildes zu suchen. Diese Vorgehensweise kann die Zuverlässigkeit in Situationen verbessern, wo das Bild als Ganzes variiert, aber bestimmte Teile innerhalb des Bildes immer gleich sind. Ein Teil des Bildes kann zum Beispiel wie folgt ausgeschnitten werden:</p>
+<ol>
+  <li>Drücken Sie <kbd>Alt</kbd>+<kbd>Druck</kbd>, während das Bild im aktiven Fenster sichtbar ist, um ein Screenshot in die Zwischenablage zu platzieren.</li>
+  <li>Öffnen Sie ein Bildbearbeitungsprogramm wie Paint.</li>
+  <li>Fügen Sie den Inhalt der Zwischenablage ein (in diesem Fall das Screenshot).</li>
+  <li>Markieren Sie einen Bereich, der nicht variiert und nur einmal im Bild vorkommt.</li>
+  <li>Kopieren und fügen Sie diesen Bereich in ein neues Bild-Dokument ein.</li>
+  <li>Speichern Sie es als kleine Datei, um es mit ImageSearch zu verwenden.</li>
+</ol>
+<p>Das Bild auf dem Bildschirm kann nur gefunden werden, wenn es genauso groß wie das im <em>BildDatei</em>-Parameter definierte Bild ist.</p>
+<p>Der Suchbereich muss sichtbar sein; das heißt, dass es nicht möglich ist, einen Bereich in einem Fenster zu durchsuchen, das hinter einem anderen Fenster liegt. Bilder unterhalb des Mauszeigers werden in der Regel erkannt. Videospielmauszeiger hingegen verdecken meistens die Sicht auf darunterliegende Bilder.</p>
+<p>Da die Suche zeilenweise von oben nach unten erfolgt, wird bei mehreren Übereinstimmungen der oberste Fund bevorzugt.</p>
+<p>Symbole, die eine transparente Farbe enthalten, sorgen dafür, dass diese Farbe automatisch mit jeder beliebigen Farbe auf dem Bildschirm übereinstimmt. Daher spielt die Farbe hinter dem Symbol keine Rolle.</p>
+<p>ImageSearch unterstützt Bildschirme mit 8-Bit-Farben (256 Farben) oder höher.</p>
+<p>Das Suchverhalten kann je nach Farbtiefe der Grafikkarte variieren (besonders, wenn es sich um GIF- und JPG-Bilder handelt). Ein Skript sollte daher, wenn es unter mehreren Farbtiefen ausgeführt werden soll, zuvor mit jeder Tiefeneinstellung getestet werden. Mithilfe der Variationsnuancen-Option (*n) können Sie das Verhalten über mehrere Farbtiefen hinweg konsistent machen.</p>
+<p>Wenn das Bild auf dem Bildschirm transparent ist, wird ImageSearch es wahrscheinlich nicht finden. Um das zu umgehen, nutzen Sie die Variationsnuancen-Option (*n) oder deaktivieren Sie vorübergehend die Fenstertransparenz via <code><a href="WinSet.htm#trans">WinSet, Transparent</a>, Off</code>.</p>
+<h2 id="Related">Siehe auch</h2>
+<p><a href="PixelSearch.htm">PixelSearch</a>, <a href="PixelGetColor.htm">PixelGetColor</a>, <a href="CoordMode.htm">CoordMode</a>, <a href="MouseGetPos.htm">MouseGetPos</a></p>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Sucht innerhalb eines Bereichs des aktiven Fensters nach einem Bild und speichert in <var>XPos</var> und <var>YPos</var> die X- und Y-Koordinate des oberen linken Pixels des gefundenen Bildes.</p>
+<pre>ImageSearch, XPos, YPos, 40, 40, 300, 300, C:\Meine Bilder\test.bmp</pre>
+</div>
+
+<div class="ex" id="ExScreen">
+<p><a class="ex_number" href="#ExScreen"></a> Sucht innerhalb eines Bereichs auf dem Bildschirm nach einem Bild und speichert in <var>XPos</var> und <var>YPos</var> die X- und Y-Koordinate des oberen linken Pixels des gefundenen Bildes, inklusive erweiterte Fehlerbehandlung.</p>
+<pre>CoordMode Pixel  <em>; Koordinaten relativ zum Bildschirm statt zum aktiven Fenster machen.</em>
+ImageSearch, XPos, YPos, 0, 0, A_ScreenWidth, A_ScreenHeight, *Icon3 %A_ProgramFiles%\BeliebigeApp\BeliebigeApp.exe
+if (ErrorLevel = 2)
+    MsgBox Die Suche konnte nicht durchgeführt werden.
+else if (ErrorLevel = 1)
+    MsgBox Symbol konnte nicht auf dem Bildschirm gefunden werden.
+else
+    MsgBox Das Symbol wurde bei %XPos%x%YPos% gefunden.</pre>
+</div>
+
+</body>
+</html>

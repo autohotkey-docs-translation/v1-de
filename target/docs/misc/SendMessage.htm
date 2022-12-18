@@ -7,23 +7,22 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
 <script src="../static/content.js" type="text/javascript"></script>
-<script src="../static/ga4.js" type="text/javascript"></script>
 </head>
 
 <body>
 <h1>PostMessage / SendMessage Tutorial <span class="headnote">von Rajat</span></h1>
 
-<p>Diese Seite beschreibt, wie man <a href="../commands/PostMessage.htm">PostMessage</a> oder <a href="../commands/PostMessage.htm">SendMessage</a> nutzen kann, um Meldungen an ein Fenster oder an den darin enthaltenen Steuerelementen zu senden, und beantwortet einige Fragen wie:</p>
+<p>Diese Seite beschreibt, wie man <a href="../lib/PostMessage.htm">PostMessage</a> oder <a href="../lib/PostMessage.htm">SendMessage</a> nutzen kann, um Meldungen an ein Fenster oder an den darin enthaltenen Steuerelementen zu senden, und beantwortet einige Fragen wie:</p>
 <ul>
   <li>"Wie kann ich eine Schaltfläche auf einem minimierten Fenster drücken?"</li>
-  <li>"Wie kann ich einen Menüpunkt auswählen, falls <a href="../commands/WinMenuSelectItem.htm">WinMenuSelectItem</a> nicht funktioniert?!"</li>
+  <li>"Wie kann ich einen Menüpunkt auswählen, falls <a href="../lib/WinMenuSelectItem.htm">WinMenuSelectItem</a> nicht funktioniert?!"</li>
   <li>"Dies ist ein Fenster mit anpassbarem Look ... wie sende ich einen Befehl, der immer funktioniert?"</li>
   <li>"und was ist mit <strong>versteckten</strong> Fenstern?!"</li>
 </ul>
 <p>Anforderungen: <span class="ver">[AutoHotkey v1.0.09+]</span> und Winspector Spy (<a href="https://www.softpedia.com/get/Security/Security-Related/Winspector.shtml">kann hier gefunden werden</a>)</p>
-<p>Gehen wir das erste Beispiel an: <a href="../commands/WinMenuSelectItem.htm">WinMenuSelectItem</a> funktioniert nicht mit der Menüleiste innerhalb des Outlook-Fensters "Neue Nachricht". Das heißt, dass dieser Code nicht funktionieren wird:</p>
+<p>Gehen wir das erste Beispiel an: <a href="../lib/WinMenuSelectItem.htm">WinMenuSelectItem</a> funktioniert nicht mit der Menüleiste innerhalb des Outlook-Fensters "Neue Nachricht". Das heißt, dass dieser Code nicht funktionieren wird:</p>
 <pre>WinMenuSelectItem, Neue Nachricht,, E&amp;infügen, &amp;Bild...</pre>
-<p>Aber <a href="../commands/PostMessage.htm">PostMessage</a> könnte diese Aufgabe erledigen:</p>
+<p>Aber <a href="../lib/PostMessage.htm">PostMessage</a> könnte diese Aufgabe erledigen:</p>
 <pre>PostMessage, 0x0111, 40239, 0, , Neue Nachricht</pre>
 <p>Das klappt hervorragend! Aber was zum Teufel ist das? 0x0111 ist der hexadezimale Code für die Meldung <a href="SendMessageList.htm">WM_COMMAND</a>. 40239 ist der Code, den dieses bestimmte Fenster als Menüpunkt 'Einfügen Bild' versteht. Nun lassen Sie mich Ihnen sagen, wie so ein Wert gefunden werden kann:</p>
 <ol>
@@ -41,21 +40,21 @@
 <p>Für das nächste Beispiel habe ich Paint genommen, weil das wahrscheinlich jeder haben wird. Nehmen wir mal an, dass Sie in dieser Anwendung ein Tool aus der Toolbar per AutoHotkey auswählen müssen, wie z. B. die Farbauswahl.</p>
 <p>Was werden Sie tun? Höchstwahrscheinlich per Mausklick auf die Toolbar-Schaltfläche, richtig? Aber Toolbars können verschoben und versteckt werden! Das trifft auch auf Paint zu. Wenn der Zielbenutzer so etwas getan hat, wird Ihr Skript an dieser Stelle fehlschlagen. Der folgende Befehl würde weiterhin funktionieren:</p>
 <pre>PostMessage, 0x0111, 639,,, Unbenannt - Paint</pre>
-<p>Ein weiterer Vorteil von <a href="../commands/PostMessage.htm">PostMessage</a> ist, dass das Fenster im Hintergrund sein kann; dagegen müsste beim Senden von Mausklicks das Fenster aktiv sein.</p>
+<p>Ein weiterer Vorteil von <a href="../lib/PostMessage.htm">PostMessage</a> ist, dass das Fenster im Hintergrund sein kann; dagegen müsste beim Senden von Mausklicks das Fenster aktiv sein.</p>
 <p>Hier ein paar weitere Beispiele. Hinweis: Ich verwende WinXP Pro (SP1) ... Falls sich Ihr Betriebssystem von meinem unterscheidet, könnten Ihre Parameter anders sein (gilt nur für Windows-Anwendungen wie Wordpad und Editor, bei anderen Anwendungen sollten die Parameter nicht abweichen):</p>
 <pre><em>; Macht die Schreibfarbe in Wordpad türkis</em>
-<a href="../commands/PostMessage.htm">PostMessage</a>, 0x0111, 32788, 0, , Dokument - WordPad</pre>
+<a href="../lib/PostMessage.htm">PostMessage</a>, 0x0111, 32788, 0, , Dokument - WordPad</pre>
 <pre><em>; Öffnet das Info-Fenster im Texteditor</em>
-<a href="../commands/PostMessage.htm">PostMessage</a>, 0x0111, 65, 0, , Unbenannt - Editor</pre>
+<a href="../lib/PostMessage.htm">PostMessage</a>, 0x0111, 65, 0, , Unbenannt - Editor</pre>
 <pre><em>; Aktiviert/Deaktiviert Zeilenumbruch im Texteditor</em>
-<a href="../commands/PostMessage.htm">PostMessage</a>, 0x0111, 32, 0, , Unbenannt - Editor</pre>
+<a href="../lib/PostMessage.htm">PostMessage</a>, 0x0111, 32, 0, , Unbenannt - Editor</pre>
 <pre><em>; Wiedergabe/Anhalten im Windows Media Player</em>
-<a href="../commands/PostMessage.htm">PostMessage</a>, 0x0111, 32808, 0, , Windows Media Player</pre>
+<a href="../lib/PostMessage.htm">PostMessage</a>, 0x0111, 32808, 0, , Windows Media Player</pre>
 <pre><em>; Suspendiert die Hotkeys eines laufenden AHK-Skripts</em>
 DetectHiddenWindows, On
 SetTitleMatchMode, 2
 <em>; Verwenden Sie 65306 für Pause oder 65303 für Reload anstelle von Suspend. (siehe <a href="../FAQ.htm#close">FAQ</a>).</em>
-<a href="../commands/PostMessage.htm">PostMessage</a>, 0x0111, 65305,,, MeinSkript.ahk - AutoHotkey
+<a href="../lib/PostMessage.htm">PostMessage</a>, 0x0111, 65305,,, MeinSkript.ahk - AutoHotkey
 </pre>
 <pre><em>; Drücken Sie FESTSTELL+NUMPAD2, um alle AutoHotkey-Skripte neu zu laden</em>
 CapsLock &amp; Numpad2::
@@ -74,7 +73,7 @@ AlleAhkSkripteNeuladen() {
     Reload
 }
 </pre>
-<p>Das oben war für PostMessage. <a href="../commands/PostMessage.htm">SendMessage</a> funktioniert genauso und wartet zusätzlich auf einen Rückgabewert, mit dem beispielsweise der aktuelle Track von Winamp abgerufen werden kann (siehe <a href="Winamp.htm">Winamp automatisieren</a> als Beispiel).</p>
+<p>Das oben war für PostMessage. <a href="../lib/PostMessage.htm">SendMessage</a> funktioniert genauso und wartet zusätzlich auf einen Rückgabewert, mit dem beispielsweise der aktuelle Track von Winamp abgerufen werden kann (siehe <a href="Winamp.htm">Winamp automatisieren</a> als Beispiel).</p>
 <p>Hier ein paar weitere Hinweise:</p>
 <ul>
   <li>Der oben genannte Hinweis in Bezug auf Windows XP und das Ändern der Meldungswerte dient nur als reine Vorsichtsmaßnahme. Finden Sie eine Meldung, die auf Ihrem Betriebssystem funktioniert, können Sie sich sicher sein, dass diese Meldung auch auf anderen Betriebssystemen funktionieren wird, sofern die Software-Versionen identisch sind. Die meisten Anwendungen behalten ihre Meldungswerte auch über verschiedene Versionen hinweg (z. B. Windows Media Player und Winamp).</li>
