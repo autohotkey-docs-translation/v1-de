@@ -360,7 +360,7 @@ indexData = [
   ["class","Objects.htm#Custom_Classes",5],
   ["class ... extends","Objects.htm#Custom_Classes",5],
   ["class (Objekte)","Objects.htm#Custom_Classes"],
-  ["class name of a window","lib/WinGetClass.htm"],["Klassenname eines Fensters","lib/WinGetClass.htm"],
+  ["class name of a window","misc/WinTitle.htm#ahk_class"],["Klassenname eines Fensters","misc/WinTitle.htm#ahk_class"],
   ["Click","lib/Click.htm",6,"S"],
   ["Click a mouse button","lib/Click.htm"],["Klicken einer Maustaste","lib/Click.htm"],
   ["Click (Menu)","lib/Menu.htm#Click",7],
