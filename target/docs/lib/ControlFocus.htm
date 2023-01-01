@@ -45,6 +45,16 @@
 <p>Um die Zuverlässigkeit des Befehls zu verbessern, erfolgt jedes Mal, wenn er ausgeführt wurde, automatisch eine Verzögerung. Diese Verzögerung kann via <a href="SetControlDelay.htm">SetControlDelay</a> geändert werden.</p>
 <p><a href="MouseGetPos.htm">MouseGetPos</a> kann genutzt werden, um die ClassNN-Bezeichnung oder die HWND-Nummer (eindeutige ID) des Steuerelements unterhalb des Mauszeigers abzurufen.</p>
 <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
+<p id="WM_NEXTDLGCTL">Wenn ein Steuerelement durch eine Benutzereingabe fokussiert wird (z. B. durch Drücken der Tabulatortaste), werden zusätzliche Effekte angewendet, die unabhängig vom fokussierten Steuerelement sind. Diese Effekte werden nicht von ControlFocus angewendet, daher gelten die folgenden Einschränkungen:</p>
+<ul>
+  <li>Beim Fokussieren einer Schaltfläche wird diese nicht automatisch zur Standardschaltfläche gemacht (normalerweise geschieht das nur, wenn eine Schaltfläche durch eine Benutzereingabe fokussiert wird). Die Standardschaltfläche kann üblicherweise durch Drücken der Eingabetaste aktiviert werden.</li>
+  <li>Wenn eine Benutzereingabe zuvor eine kurzzeitige Änderung der Standardschaltfläche bewirkt hat, wird beim Fokussieren eines Steuerelements, das keine Schaltfläche ist, die Standardhervorhebung nicht automatisch auf die eigentliche Standardschaltfläche zurückgesetzt. Drückt man dann die Eingabetaste, kann es passieren, dass die Standardschaltfläche aktiviert wird, obwohl sie nicht hervorgehoben ist.</li>
+  <li>Beim Fokussieren eines Eingabefeldes wird dessen Text nicht automatisch markiert. Stattdessen wird die Einfügemarke (der Textcursor) in der Regel dort positioniert, wo sie sich beim letzten Mal befand, als das Steuerelement den Fokus hatte.</li>
+</ul>
+<p>Die <a href="https://learn.microsoft.com/de-de/windows/win32/dlgbox/wm-nextdlgctl">WM_NEXTDLGCTL</a>-Meldung kann verwendet werden, um das Steuerelement zu fokussieren und diese zusätzlichen Effekte anzuwenden. Zum Beispiel:</p>
+<pre>WinExist("A") <em>; Setzt das zuletzt gefundene Fenster auf das aktive Fenster</em>
+ControlGet, StrlmntHwnd, Hwnd,, Button1  <em>; Holt HWND der ersten Schaltfläche</em>
+SendMessage, 0x0028, StrlmntHwnd, True  <em>; 0x0028 ist WM_NEXTDLGCTL</em></pre>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="SetControlDelay.htm">SetControlDelay</a>, <a href="ControlGetFocus.htm">ControlGetFocus</a>, <a href="Control.htm">Control</a>, <a href="ControlGet.htm">ControlGet</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlGetText.htm">ControlGetText</a>, <a href="ControlSetText.htm">ControlSetText</a>, <a href="ControlSend.htm">ControlSend</a></p>
