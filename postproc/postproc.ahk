@@ -28,9 +28,9 @@ Loop, target\docs\*.htm,, 1
 
     ; add more infos about the translation 
 
-    if (A_LoopFileFullPath = "target\docs\AutoHotkey.htm")
+    if (A_LoopFileFullPath = "target\docs\index.htm")
     {
-        content := RegExReplace(content, "<p><a.*?</a></p>", "<p>Eine deutsche &Uuml;bersetzung von <a href=""https://autohotkey.com/docs/"">https://autohotkey.com/docs/</a> (siehe <a href=""https://autohotkey.com/boards/viewtopic.php?f=9&amp;t=43"">hier</a> f&uuml;r mehr Details).</p>")
+        content := RegExReplace(content, "<p><a.*?</a></p>", "<p>Eine deutsche &Uuml;bersetzung von <a href=""https://www.autohotkey.com/docs/v1/"">https://www.autohotkey.com/docs/v1/</a> (siehe <a href=""https://autohotkey.com/boards/viewtopic.php?f=9&amp;t=43"">hier</a> f&uuml;r mehr Details).</p>")
     }
 
     ; add google analytics
