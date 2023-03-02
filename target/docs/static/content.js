@@ -33,7 +33,8 @@ var cache = {
   sidebarWidth: '18em',
   collapseQuickRef: user.collapseQuickRef,
   RightIsFocused: true,
-  toc_clickItem: 0,
+  toc_clickItem: null,
+  toc_clickItemTemp: null,
   toc_scrollPos: 0,
   index_filter:-1,
   index_input: "",
@@ -116,6 +117,42 @@ var isPhone = (document.documentElement.clientWidth <= 600);
   if (isSearchBot)
     return;
 
+  // Get user data:
+  if (!isCacheLoaded) {
+    if (isInsideCHM) {
+      var m = scriptDir.match(/mk:@MSITStore:(.*?)\\[^\\]+\.chm/i);
+      if (m[1])
+        loadScript(decodeURI(m[1]) + '\\chm_config.js', function () {
+          try {
+            $.extend(cache, overwriteProps(user, config));
+            setInitialSettings();
+          } catch (e) {}
+        });
+    }
+    else if (window.localStorage) {
+      config = JSON.parse(window.localStorage.getItem('config'));
+      $.extend(cache, overwriteProps(user, config));
+      setInitialSettings();
+    }
+    else if (navigator.cookieEnabled) {
+      config = document.cookie.match(/config=([^;]+)/);
+      config && (config = JSON.parse(config[1]));
+      $.extend(cache, overwriteProps(user, config));
+      setInitialSettings();
+    }
+  }
+  else
+    setInitialSettings();
+  
+  function setInitialSettings() {
+    // font size
+    if (!isFrameCapable && cache.fontSize != 1)
+      $('head').append('<style>#right .area {font-size:' + cache.fontSize + 'em}</style>');
+    // color theme
+    if (cache.colorTheme)
+      structure.setTheme(cache.colorTheme);
+  }
+
   // Exit the script on sites which doesn't need the sidebar:
   if (forceNoScript || cache.forceNoScript)
     return;
@@ -125,13 +162,14 @@ var isPhone = (document.documentElement.clientWidth <= 600);
   {
     if (isInsideFrame)
     {
-      $('head').append('<style>body {font-size:' + cache.fontSize + 'em}</style>');
+      if (cache.fontSize != 1)
+        $('head').append('<style>body {font-size:' + cache.fontSize + 'em}</style>');
       normalizeParentURL = function() {
         postMessageToParent('normalizeURL', [$.extend({}, window.location), document.title, supportsHistory ? history.state : null, equivPath]);
-        if (cache.toc_clickItem)
+        if (cache.toc_clickItemTemp)
           if (supportsHistory)
-            history.replaceState({toc_clickItem: cache.toc_clickItem}, null, null);
-        cache.set('toc_clickItem', 0);
+            history.replaceState($.extend(history.state, {toc_clickItemTemp: cache.toc_clickItemTemp}), null, null);
+        cache.set('toc_clickItemTemp', null);
       }
       normalizeParentURL(); $(window).on('hashchange', normalizeParentURL);
       structure.setTheme(cache.colorTheme);
@@ -191,12 +229,12 @@ var isPhone = (document.documentElement.clientWidth <= 600);
             structure.modifyTools(relPath, data[4]);
           if ($('#left > div.toc li > span.selected a').attr('href') == data[1].href)
             break;
-          else if (data[3]) {
+          else if (data[3] && data[3].toc_clickItemTemp) {
             toc.deselect($('#left > div.toc'));
-            $('#left > div.toc li > span').eq(data[3].toc_clickItem).trigger('select');
+            $('#left > div.toc li > span').eq(data[3].toc_clickItemTemp).trigger('select');
           }
           else
-            toc.preSelect($('#left > div.toc'), data[1], relPath);
+            toc.preSelect($('#left > div.toc'), data[1]);
           break;
 
           case 'pressKey':
@@ -226,41 +264,6 @@ var isPhone = (document.documentElement.clientWidth <= 600);
 
   // Add elements for sidebar:
   structure.build();
-
-  // Get user data:
-  if (!isCacheLoaded) {
-      if (isInsideCHM) {
-        var m = scriptDir.match(/mk:@MSITStore:(.*?)\\[^\\]+\.chm/i);
-        if (m[1])
-          loadScript(decodeURI(m[1]) + '\\chm_config.js', function () {
-            try {
-              $.extend(cache, overwriteProps(user, config));
-              setInitialSettings();
-            } catch (e) {}
-          });
-      }
-      else if (window.localStorage) {
-        config = JSON.parse(window.localStorage.getItem('config'));
-        $.extend(cache, overwriteProps(user, config));
-        setInitialSettings();
-      }
-      else if (navigator.cookieEnabled) {
-        config = document.cookie.match(/config=([^;]+)/);
-        config && (config = JSON.parse(config[1]));
-        $.extend(cache, overwriteProps(user, config));
-        setInitialSettings();
-      }
-  }
-  else
-    setInitialSettings();
-
-  function setInitialSettings() {
-    // font size
-    $('head').append('<style>#right .area {font-size:' + cache.fontSize + 'em}</style>');
-    // color theme
-    if(cache.colorTheme)
-      structure.setTheme(cache.colorTheme);
-  }
 
   // Load current URL into frame:
   if (isFrameCapable)
@@ -386,28 +389,28 @@ function ctor_toc()
         $(this).css("overflow", "hidden");
       });
     }
-    self.preSelect($toc, location, relPath);
+    self.preSelect($toc, location);
     if (!isFrameCapable || cache.search_input)
       $(document).ready(function() {
-        setTimeout( function() { self.preSelect($toc, location, relPath); }, 0);
+        setTimeout( function() { self.preSelect($toc, location); }, 0);
       });
   };
-  self.preSelect = function($toc, url, relPath) { // Apply stored settings.
+  self.preSelect = function($toc, url) { // Apply stored settings.
     var tocList = $toc.find('li > span');
     var clicked = tocList.eq(cache.toc_clickItem);
-    var relPathNoHash = relPath.replace(url.hash,'');
     var found = null;
     var foundList = [];
     var foundNoHashList = [];
+    var url_href = (url.href.slice(-1) == '/') ? url.href + 'index.htm' : url.href;
     for (var i = 0; i < tocList.length; i++) {
       var href = tocList[i].firstChild.href;
       if (!href)
         continue;
-      // Search for items which matches the address:
-      if (href.indexOf(relPath, href.length - relPath.length) !== -1)
+      // Search for items matching the address:
+      if (href == url_href)
         foundList.push($(tocList[i]));
-      // Search for items which matches the address without anchor:
-      else if (href.indexOf(relPathNoHash, href.length - relPathNoHash.length) !== -1)
+      // Search for items matching the address without anchor:
+      else if (href == url_href.substring(0, url_href.length - url.hash.length))
         foundNoHashList.push($(tocList[i]));
     }
     if (foundList.length)
@@ -1346,9 +1349,9 @@ function ctor_structure()
   // Save scroll position of the right pane on scroll:
   self.saveScrollPosOnScroll = function() {
     if (!history.state) // To have scrolling to top by default.
-      history.replaceState({scrollTop:0}, null, null);
+      history.replaceState($.extend(history.state, {scrollTop:0}), null, null);
     $('#right').on('scroll', function() {
-      history.replaceState({scrollTop:$(this)[0].scrollTop}, null, null);
+      history.replaceState($.extend(history.state, {scrollTop:$(this)[0].scrollTop}), null, null);
     });
   }
   // Add shortcuts:
@@ -1413,7 +1416,9 @@ function ctor_structure()
   // Open new site:
   self.openSite = function(url) {
     if (isFrameCapable) {
+      cache.set('toc_clickItemTemp', cache.toc_clickItem);
       document.getElementById('frame').contentWindow.location.href = url;
+      cache.save();
       if (isPhone)
         setTimeout(function() { self.displaySidebar(false); }, 200);
     }
@@ -1430,20 +1435,16 @@ function ctor_structure()
     }
   }
   // Set color theme:
+  self.themes = [null, 'dark'];
   self.setTheme = function(id) {
-    switch (id)
-    {
-      case 0:
-        $('#current-theme').remove();
-        break;
-      case 1:
-        var link = document.createElement('link');
-        link.href = workingDir + 'static/dark.css';
-        link.rel = 'stylesheet';
-        link.type = 'text/css';
-        link.id = 'current-theme';
-        $('head').append(link);
-        break;
+    $('#current-theme').remove();
+    if (id > 0 && id < self.themes.length) {
+      var link = document.createElement('link');
+      link.href = workingDir + 'static/' + self.themes[id] + '.css';
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.id = 'current-theme';
+      $('head').append(link);
     }
   };
   // Add events for ListBox items such as double-click:

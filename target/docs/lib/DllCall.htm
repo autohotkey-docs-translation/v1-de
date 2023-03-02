@@ -161,11 +161,11 @@ Ergebnis := DllCall("CharLower", "<strong><u>Str</u></strong>", DllCall("CharUpp
 <p>Beim Umgang mit Zeichenketten können bestimmte Einschränkungen auftreten. Weitere Informationen finden Sie unter <a href="../Compat.htm#DllCall">Skript-Kompatibilität</a>.</p>
 <h2 id="COM">Component Object Model (COM)</h2>
 <p>COM-Objekte, die für VBScript und ähnliche Sprachen zugänglich sind, können in der Regel via <a href="ComObjCreate.htm">ComObjCreate()</a>, <a href="ComObjGet.htm">ComObjGet()</a> oder <a href="ComObjActive.htm">ComObjActive()</a> in Kombination mit der internen <a href="../Objects.htm#Usage_Objects">Objektsyntax</a> angesteuert werden.</p>
-<p>COM-Objekte, die kein <a href="https://msdn.microsoft.com/de-de/library/ms221608.aspx">IDispatch</a> unterstützen, können in Verbindung mit DllCall genutzt werden, indem die Adresse einer Funktion aus der virtuellen Funktionstabelle des Objekt-Interfaces ermittelt wird. Weitere Informationen finden Sie <a href="#ExTaskbar">im Beispiel</a> weiter unten.</p>
+<p>COM-Objekte, die kein <a href="https://learn.microsoft.com/windows/win32/api/oaidl/nn-oaidl-idispatch">IDispatch</a> unterstützen, können in Verbindung mit DllCall genutzt werden, indem die Adresse einer Funktion aus der virtuellen Funktionstabelle des Objekt-Interfaces ermittelt wird. Weitere Informationen finden Sie <a href="#ExTaskbar">im Beispiel</a> weiter unten.</p>
 <p>Der Großteil des .NET-Frameworks kann auch via COM und DllCall angesteuert werden. Weitere Informationen finden Sie unter <a href="https://www.autohotkey.com/forum/topic26191.html">.NET Framework Interop</a> (englisch).</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="../Compat.htm#DllCall">Skript-Kompatibilität</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="Run.htm">Run</a>, <a href="VarSetCapacity.htm">VarSetCapacity()</a>, <a href="../Functions.htm">Funktionen</a>, <a href="SysGet.htm">SysGet</a>, <a href="https://msdn.microsoft.com/de-de/library/">MSDN-Bibliothek</a></p>
+<p><a href="../Compat.htm#DllCall">Skript-Kompatibilität</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="Run.htm">Run</a>, <a href="VarSetCapacity.htm">VarSetCapacity()</a>, <a href="../Functions.htm">Funktionen</a>, <a href="SysGet.htm">SysGet</a>, <a href="https://learn.microsoft.com/docs/">Microsoft Docs</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExMessageBox">
 <p><a class="ex_number" href="#ExMessageBox"></a> Ruft die Windows-API-Funktion "MessageBox" auf und meldet, welche Schaltfläche der Benutzer drückt.</p>
@@ -384,7 +384,7 @@ SetzeSystemuhr(YYYYMMDDHHMISS)
 <div class="ex" id="ExTaskbar">
 <p><a class="ex_number" href="#ExTaskbar"></a> Entfernt mithilfe von COM vorübergehend das aktive Fenster aus der Taskleiste.</p>
 <pre><em>/*
-  Methoden in der <a href="https://msdn.microsoft.com/de-de/library/bb774652.aspx">ITaskbarList</a>-VTable:
+  Methoden in der <a href="https://learn.microsoft.com/windows/win32/api/shobjidl_core/nn-shobjidl_core-itaskbarlist">ITaskbarList</a>-VTable:
     IUnknown:
       0 QueryInterface  -- nutze stattdessen <a href="ComObjQuery.htm">ComObjQuery()</a>
       1 AddRef          -- nutze stattdessen <a href="ObjAddRef.htm">ObjAddRef()</a>
@@ -404,10 +404,10 @@ tbl := <a href="ComObjCreate.htm">ComObjCreate</a>(CLSID_TaskbarList, IID_ITaskb
 
 activeHwnd := WinExist("A")
 
-DllCall(vtable(tbl,3), "ptr", tbl)                     <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774650.aspx">HrInit</a>()</em>
-DllCall(vtable(tbl,5), "ptr", tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774648.aspx">DeleteTab</a>(activeHwnd)</em>
+DllCall(vtable(tbl,3), "ptr", tbl)                     <em>; tbl.<a href="https://learn.microsoft.com/windows/win32/api/shobjidl_core/nf-shobjidl_core-itaskbarlist-hrinit">HrInit</a>()</em>
+DllCall(vtable(tbl,5), "ptr", tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://learn.microsoft.com/windows/win32/api/shobjidl_core/nf-shobjidl_core-itaskbarlist-deletetab">DeleteTab</a>(activeHwnd)</em>
 Sleep 3000
-DllCall(vtable(tbl,4), "ptr", tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774646.aspx">AddTab</a>(activeHwnd)</em>
+DllCall(vtable(tbl,4), "ptr", tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://learn.microsoft.com/windows/win32/api/shobjidl_core/nf-shobjidl_core-itaskbarlist-addtab">AddTab</a>(activeHwnd)</em>
 
 <em>; Nicht-Dispatch-Objekte müssen immer manuell freigegeben werden.</em>
 ObjRelease(tbl)

@@ -21,12 +21,12 @@
 <p>Diese Limitierungen werden oft als "MAX_PATH-Limitierungen" bezeichnet; dies bezieht sich auf die Konstante <code>MAX_PATH</code>, die den Wert 260 enthält. Ein Zeichen ist generell für einen Nullterminator reserviert, somit verbleiben 259 Zeichen für den eigentlichen Pfad.</p>
 <p>AutoHotkey <span class="ver">[v1.1.31+]</span> (außer ANSI-Versionen) beseitigt in den meisten Fällen die zweite Art von Limitierung, damit das Skript die erste Art von Limitierung umgehen kann. Es gibt zwei Wege, um das zu erreichen:</p>
 <ul>
-  <li>Lange Pfade können für AutoHotkey und alle anderen Programme, die mit langen Pfaden umgehen können, in Windows 10 aktiviert werden. Weitere Informationen finden Sie in der <a href="https://docs.microsoft.com/de-de/windows/win32/fileio/naming-a-file#enable-long-paths-in-windows-10-version-1607-and-later">Microsoft-Dokumentation</a>. Kurz gesagt, dadurch können die meisten Befehle und Funktionen nachvollziehbar mit langen Pfaden agieren, allerdings nur in Windows 10 Version 1607 oder höher.</li>
+  <li>Lange Pfade können für AutoHotkey und alle anderen Programme, die mit langen Pfaden umgehen können, in Windows 10 aktiviert werden. Weitere Informationen finden Sie in der <a href="https://learn.microsoft.com/windows/win32/fileio/naming-a-file#enable-long-paths-in-windows-10-version-1607-and-later">Microsoft-Dokumentation</a>. Kurz gesagt, dadurch können die meisten Befehle und Funktionen nachvollziehbar mit langen Pfaden agieren, allerdings nur in Windows 10 Version 1607 oder höher.</li>
   <li>In vielen Fällen kann das übliche Limit überschritten werden, wenn der Pfad mit <code>\\?\</code> beginnt. Allerdings gibt es einige Systemfunktionen, die dieses Präfix (oder generell lange Pfade) nicht unterstützen. Weitere Informationen finden Sie unter <a href="#limitations">Bekannte Einschränkungen</a>.</li>
 </ul>
 
 <h2 id="prefix">Langer-Pfad-Präfix</h2>
-<p>Sofern von der internen Systemfunktion unterstützt, erhöht das Präfix <code>\\?\</code> -- zum Beispiel in <code>\\?\C:\Mein Ordner</code> -- das Limit auf 32767 Zeichen. Allerdings wird dabei die <a href="https://blogs.msdn.microsoft.com/jeremykuhne/2016/04/21/path-normalization/">Pfadnormalisierung</a> übersprungen. Einige Elemente des Pfades, die normalerweise durch eine Normalisierung entfernt oder geändert würden, werden stattdessen Teil des eigentlichen Pfades der Datei. Dabei ist Vorsicht geboten, denn dies kann Erstellung von Pfaden ermöglichen, auf die "normale" Programme nicht zugreifen können.</p>
+<p>Sofern von der internen Systemfunktion unterstützt, erhöht das Präfix <code>\\?\</code> -- zum Beispiel in <code>\\?\C:\Mein Ordner</code> -- das Limit auf 32767 Zeichen. Allerdings wird dabei die <a href="https://learn.microsoft.com/archive/blogs/jeremykuhne/path-normalization">Pfadnormalisierung</a> übersprungen. Einige Elemente des Pfades, die normalerweise durch eine Normalisierung entfernt oder geändert würden, werden stattdessen Teil des eigentlichen Pfades der Datei. Dabei ist Vorsicht geboten, denn dies kann Erstellung von Pfaden ermöglichen, auf die "normale" Programme nicht zugreifen können.</p>
 <p>Genauer gesagt macht die Normalisierung Folgendes:</p>
 <ul>
   <li>Sie löst relative Pfade wie <code>verz\datei.erw</code>, <code>\datei.erw</code> und <code>C:datei.erw</code> (man beachte den fehlenden Schrägstrich) auf.</li>
@@ -34,7 +34,7 @@
   <li>Sie kanonisiert (standardisiert) Komponenten-/Verzeichnistrennzeichen, also ersetzt <code>/</code> mit <code>\</code> und eliminiert redundante Trennzeichen.</li>
   <li>Entfernt bestimmte Zeichen am Anfang und Ende, z. B. ein einzelner Punkt am Ende einer Komponente (<code>verz.\datei</code>) oder nachfolgende Leerzeichen und Punkte (<code>verz\dateiname . .</code>).</li>
 </ul>
-<p>Um ein Pfad explizit zu normalisieren, können Sie ihn an <a href="https://docs.microsoft.com/de-de/windows/win32/api/fileapi/nf-fileapi-getfullpathnamew">GetFullPathName</a> über die unten definierte Funktion übergeben, bevor das Präfix angewendet wird. Zum Beispiel:</p>
+<p>Um ein Pfad explizit zu normalisieren, können Sie ihn an <a href="https://learn.microsoft.com/windows/win32/api/fileapi/nf-fileapi-getfullpathnamew">GetFullPathName</a> über die unten definierte Funktion übergeben, bevor das Präfix angewendet wird. Zum Beispiel:</p>
 <pre>MsgBox % "\\?\" PfadNormalisieren("..\datei.erw")</pre>
 <pre filename="foo.ahk">PfadNormalisieren(Pfad) {
     cc := DllCall("GetFullPathName", "str", Pfad, "uint", 0, "ptr", 0, "ptr", 0, "uint")
