@@ -1,6 +1,5 @@
-name: Postprocessing
+name: Postprocessing and build search data
 
-# Controls when the action will run. Triggers the workflow on new tags
 on:
   push:
     paths:
@@ -8,51 +7,12 @@ on:
     branches:
       - '**'
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  postprocessing:
-    # The type of runner that the job will run on
-    runs-on: windows-latest
+  postproc:
+    uses: autohotkey-docs-translation/.github/.github/workflows/postproc.yml@master
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        ref: master
-        fetch-depth: 0
-
-    - name: Download and unzip AutoHotkey v2
-      run: |
-        $source = "https://www.autohotkey.com/download/ahk-v2.zip"
-        $dest = "ahk-v2.zip"
-        Invoke-WebRequest -Uri $source -OutFile $dest
-        Expand-Archive -Path $dest
-
-    - name: Run build_search.ahk
-      run: |
-        New-Item -Name target\docs\static\source\data_search.js -ItemType File -ea 0
-        Start-Process -FilePath "ahk-v2/AutoHotkey32.exe" -ArgumentList "/ErrorStdOut `"target/docs/static/source/build_search.ahk`"" -NoNewWindow -Wait
-
-    - name: Download and unzip AutoHotkey v1.1
-      run: |
-        $source = "https://www.autohotkey.com/download/ahk.zip"
-        $dest = "ahk.zip"
-        Invoke-WebRequest -Uri $source -OutFile $dest
-        Expand-Archive -Path $dest
-
-    - name: Run postproc.ahk
-      run: |
-        Start-Process -FilePath "ahk/AutoHotkeyU32.exe" -ArgumentList "/ErrorStdOut `"postproc/postproc.ahk`"" -NoNewWindow -Wait
-
-    - name: Commit
-      run: |
-        git config user.name "github-actions"
-        git config user.email "github-actions@github.com"
-        git add target\docs\static\source\data_search.js
-        git commit -a --amend --no-edit
-        git push --force-with-lease
+  build-search-data:
+    uses: autohotkey-docs-translation/.github/.github/workflows/build_search_data.yml@master
+    needs: postproc
