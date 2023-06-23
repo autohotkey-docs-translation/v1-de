@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>SoundPlay - Syntax &amp; Verwendung | AutoHotkey</title>
-<meta name="description" content="Der SoundPlay-Befehl gibt den Sound einer Audiodatei, Videodatei oder eines anderen unterstützten Dateityps wieder." />
+<meta name="description" content="Der SoundPlay-Befehl spielt den Sound einer Audiodatei, Videodatei oder eines anderen unterstützten Dateityps ab." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,7 +13,7 @@
 
 <h1>SoundPlay</h1>
 
-<p>Gibt den Sound einer Audiodatei, Videodatei oder eines anderen unterstützten Dateityps wieder.</p>
+<p>Spielt den Sound einer Audiodatei, Videodatei oder eines anderen unterstützten Dateityps ab.</p>
 
 <pre class="Syntax"><span class="func">SoundPlay</span>, DateiName <span class="optional">, Warten</span></pre>
 <h2 id="Parameters">Parameter</h2>
@@ -21,20 +21,19 @@
 
   <dt>DateiName</dt>
   <dd><p>Name der Datei, die abgespielt werden soll. Wenn kein absoluter Pfad angegeben ist, wird die Datei im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
-    <p>Um vordefinierte Systemklänge zu erzeugen, geben Sie ein Sternchen gefolgt von einer Zahl an, wie unten gezeigt (beachten Sie, dass der <em>Warten</em>-Parameter nicht in diesem Modus funktioniert):</p>
+    <p>Um vordefinierte Systemsounds abzuspielen, geben Sie ein Sternchen gefolgt von einer Zahl an, wie unten gezeigt (beachten Sie, dass der <em>Warten</em>-Parameter in diesem Modus nicht funktioniert):</p>
     <ul>
-      <li>*-1 = Einfacher Piepton. Falls keine Soundkarte verfügbar ist, wird der Ton mithilfe des PC-Lautsprechers erzeugt.</li>
+      <li>*-1 = Einfacher Piepton. Wenn keine Soundkarte verfügbar ist, wird der Ton über den PC-Lautsprecher erzeugt.</li>
       <li>*16 = Hand (Stopp/Fehler)</li>
       <li>*32 = Frage</li>
       <li>*48 = Ausruf</li>
       <li>*64 = Sternchen (Info)</li>
     </ul>
-    <p>Bekannte Einschränkung: Aufgrund eines Problems in Windows werden WAV-Dateien mit einem Pfad länger als 127 Zeichen nicht abgespielt. Um das zu umgehen, können Sie andere Dateitypen wie MP3 (mit einer Pfadlänge von bis zu 255 Zeichen) verwenden oder auf kurze 8.3-Pfade zurückgreifen (siehe <a href="LoopFile.htm#LoopFileShortPath">A_LoopFileShortPath</a>, wie man solche Pfade abruft).</p>
   </dd>
 
   <dt>Warten</dt>
-  <dd><p>Lässt man diesen Parameter weg, wird der <a href="../misc/Threads.htm">aktuelle Thread</a> des Skripts die nachfolgenden Befehle ausführen, während die Datei abgespielt wird. Um das zu verhindern, geben Sie 1 oder das Wort WAIT an, um den aktuellen Thread warten zu lassen, bis die Datei fertig abgespielt wurde. Während des Wartevorgangs können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
-      <p>Bekannte Einschränkung: Lässt man den Warten-Parameter weg, sieht das Betriebssystem die abspielende Datei so, als wäre sie "in Verwendung", bis das Skript beendet oder eine andere Datei abgespielt wird (auch eine nicht-existierende Datei).</p></dd>
+  <dd><p>Wenn leer oder weggelassen, wird der <a href="../misc/Threads.htm">aktuelle Thread</a> des Skripts direkt zum nächsten Befehl übergehen, während die Datei abgespielt wird. Andernfalls geben Sie 1 oder das Wort WAIT an, was den aktuellen Thread dazu veranlasst, zu warten, bis die Datei vollständig abgespielt wurde. Während des Wartens können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
+      <p>Bekannte Einschränkung: Wenn der <em>Warten</em>-Parameter nicht verwendet wird, kann es vorkommen, dass das System die abgespielte Datei als "wird verwendet" sieht, bis das Skript geschlossen oder eine andere Datei (sogar eine nicht existierende Datei) abgespielt wird.</p></dd>
 
 </dl>
 
@@ -42,20 +41,21 @@
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Alle Windows-Betriebssysteme sollten in der Lage sein, WAV-Dateien abzuspielen. Allerdings ist es möglich, dass andere Dateien (MP3, AVI usw.) nicht abgespielt werden können, wenn die richtigen Codecs oder Features auf dem Betriebssystem fehlen.</p>
-<p>Wenn das Skript beim Abspielen einer Datei eine zweite Datei startet, wird die erste Datei gestoppt, sodass die zweite abgespielt werden kann. Auf einigen Systemen ist es möglich, dass bestimmte Dateitypen auch dann gestoppt werden, wenn ein völlig anderes Skript eine neue Datei abspielt.</p>
-<p>Um eine gerade abspielende Datei zu stoppen, verwenden Sie wie folgt SoundPlay, um einen nicht-existierenden Dateinamen abzuspielen: <code>SoundPlay, NichtExistierende.avi</code>.</p>
-<p>Sobald das Skript beendet wird, werden alle aktuell abgespielten Dateien gestoppt.</p>
+<p>Alle Windows-Systeme sollten in der Lage sein, WAV-Dateien abzuspielen. Allerdings ist es möglich, dass andere Dateitypen (MP3, AVI usw.) nicht abgespielt werden, wenn die entsprechenden Codecs oder Features nicht auf dem System installiert sind.</p>
+<p>Aufgrund einer Eigenheit von Windows werden WAV-Dateien mit einer Pfadlänge von mehr als 127 Zeichen nicht abgespielt. Um das zu umgehen, können Sie andere Dateitypen wie MP3 (mit einer Pfadlänge von bis zu 255 Zeichen) verwenden oder auf kurze 8.3-Pfade zurückgreifen (siehe <a href="LoopFile.htm#LoopFileShortPath">A_LoopFileShortPath</a>, wie man solche Pfade abruft).</p>
+<p>Wenn das Skript während der Wiedergabe einer Datei eine zweite Datei abspielt, wird die erste Datei gestoppt und die zweite abgespielt. Auf einigen Systemen ist es möglich, dass bestimmte Dateitypen auch dann gestoppt werden, wenn ein völlig anderes Skript eine neue Datei abspielt.</p>
+<p>Um eine Datei zu stoppen, die gerade abgespielt wird, verwenden Sie einen nicht existierenden Dateinamen: <code>SoundPlay, NichtExistierende.avi</code>.</p>
+<p>Bei Beendigung des Skripts werden alle gerade abgespielten Dateien gestoppt.</p>
 <h2 id="Related">Siehe auch</h2>
 <p><a href="SoundBeep.htm">SoundBeep</a>, <a href="SoundGet.htm">SoundGet</a>, <a href="SoundSet.htm">SoundSet</a>, <a href="SoundGetWaveVolume.htm">SoundGetWaveVolume</a>, <a href="SoundSetWaveVolume.htm">SoundSetWaveVolume</a>, <a href="MsgBox.htm">MsgBox</a>, <a href="../misc/Threads.htm">Threads</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a class="ex_number" href="#ExBasic"></a> Gibt den Sound einer WAV-Datei wieder, die sich im Windows-Verzeichnis befindet.</p>
+<p><a class="ex_number" href="#ExBasic"></a> Spielt eine WAV-Datei im Windows-Verzeichnis ab.</p>
 <pre>SoundPlay, %A_WinDir%\Media\ding.wav</pre>
 </div>
 
 <div class="ex" id="ExStandardSound">
-<p><a class="ex_number" href="#ExStandardSound"></a> Erzeugt einen einfachen Piepton. Falls keine Soundkarte verfügbar ist, wird der Ton mithilfe des PC-Lautsprechers erzeugt.</p>
+<p><a class="ex_number" href="#ExStandardSound"></a> Erzeugt einen einfachen Piepton.</p>
 <pre>SoundPlay *-1</pre>
 </div>
 

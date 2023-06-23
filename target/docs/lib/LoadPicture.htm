@@ -20,26 +20,26 @@
 <dl>
 
   <dt>DateiName</dt>
-  <dd><p>Der Dateiname des Bildes. Wenn kein absoluter Pfad angegeben ist, wird das Bild im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Wenn der Name einer DLL- oder EXE-Datei ohne Pfad angegeben ist, wird sie eventuell aus dem Verzeichnis der aktuellen Programmdatei (AutoHotkey.exe oder ein kompiliertes Skript) oder aus einem Systemverzeichnis geladen.</p></dd>
+  <dd><p>Der Dateiname des Bildes. Wenn kein absoluter Pfad angegeben ist, wird das Bild im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Wenn der Name einer DLL- oder EXE-Datei ohne Pfad angegeben ist, wird diese eventuell aus dem Verzeichnis der aktuellen Programmdatei (AutoHotkey.exe oder ein kompiliertes Skript) oder aus einem Systemverzeichnis geladen.</p></dd>
   
   <dt>Optionen</dt>
   <dd>
-    <p>Eine Zeichenkette von null oder mehreren der folgenden Optionen, die jeweils durch ein Leer- oder Tabulatorzeichen voneinander getrennt sind:</p>
-    <p><strong>W</strong><em>n</em> und <strong>H</strong><em>n</em>: Die Breite und Höhe, mit der das Bild geladen werden soll - <em>n</em> muss ein Integer sein. Wenn eine Abmessung weggelassen wird oder -1 ist, wird sie unter Beibehaltung des Seitenverhältnisses automatisch auf Basis der anderen Abmessung berechnet. Wenn beide Abmessungen weggelassen werden, wird die Originalgröße des Bildes verwendet. Wenn eine der Abmessungen 0 ist, wird für diese Abmessung die Originalgröße verwendet. Zum Beispiel: <code>"w80 h50"</code>, <code>"w48 h-1"</code> oder <code>"w48"</code> (behält Seitenverhältnis bei), <code>"h0 w100"</code> (verwendet Originalhöhe, aber überschreibt Breite).</p>
-    <p><strong>Icon</strong><em>n</em>: Kennzeichnet, welches Symbol aus einer Datei mit mehreren Symbolen geladen werden soll (in der Regel eine EXE- oder DLL-Datei). Zum Beispiel würde <code>"Icon2"</code> das zweite Symbol aus der Datei laden. <span class="ver">[v1.1.27+]:</span> Jedes unterstützte Bildformat kann in ein Symbol umgewandelt werden, wenn man <code>"Icon1"</code> angibt. Allerdings wird das Symbol wieder in eine Bitmap umgewandelt, wenn der <em>BildTyp</em>-Parameter weggelassen wird.</p>
-    <p><strong>GDI+</strong>: Verwenden Sie GDI+ zum Laden eines Bildes, falls verfügbar. Zum Beispiel <code>"GDI+ w100"</code>.</p>
+    <p>Eine Zeichenkette aus beliebig vielen der folgenden Optionen, jeweils getrennt durch ein Leer- oder Tabulatorzeichen:</p>
+    <p><strong>W</strong><em>n</em> und <strong>H</strong><em>n</em>: Die Breite und Höhe, mit der das Bild geladen werden soll, wobei <em>n</em> ein Integer ist. Wenn eine Dimension weggelassen wird oder -1 ist, wird sie unter Beibehaltung des Seitenverhältnisses automatisch auf Basis der anderen Dimension berechnet. Wenn beide Dimensionen weggelassen werden, wird die Originalgröße des Bildes verwendet. Wenn eine der Dimensionen 0 ist, wird für diese Dimension die Originalgröße verwendet. Zum Beispiel: <code>"w80 h50"</code>, <code>"w48 h-1"</code> oder <code>"w48"</code> (Seitenverhältnis beibehalten), <code>"h0 w100"</code> (Originalhöhe verwenden, aber Breite überschreiben).</p>
+    <p><strong>Icon</strong><em>n</em>: Gibt an, welches Symbol aus einer Datei mit mehreren Symbolen (meist eine EXE- oder DLL-Datei) geladen werden soll. Zum Beispiel bewirkt <code>"Icon2"</code>, dass das zweite Symbol aus der Datei geladen wird. <span class="ver">[v1.1.27+]</span>: Jedes unterstützte Bildformat kann durch Angabe von <code>"Icon1"</code> in ein Symbol umgewandelt werden. Allerdings wird das Symbol wieder in eine Bitmap umgewandelt, wenn der <em>BildTyp</em>-Parameter weggelassen wird.</p>
+    <p><strong>GDI+:</strong> GDI+ zum Laden eines Bildes verwenden, falls verfügbar. Zum Beispiel <code>"GDI+ w100"</code>.</p>
   </dd>
   
   <dt>BildTyp</dt>
   <dd><p>Wenn eine Variable angegeben ist, bekommt sie eine Nummer zugewiesen, die den Typ des zurückgegebenen Handles kennzeichnet: 0 (IMAGE_BITMAP), 1 (IMAGE_ICON) oder 2 (IMAGE_CURSOR).</p>
-  <p>Wenn dieser Parameter weggelassen wird oder keine Variable ist, wird der Rückgabewert immer ein Bitmap-Handle sein (Symbole/Cursor werden umgewandelt, falls nötig). Ein Symbol/Cursor/Bitmap-Handle kann man nur zuverlässig nutzen oder löschen, wenn man weiß, um welchen Typ es sich handelt.</p></dd>
+  <p>Wenn dieser Parameter weggelassen wird oder keine Variable ist, wird immer ein Bitmap-Handle zurückgegeben (Symbole/Cursor werden ggf. umgewandelt). Der Grund: Um ein Symbol/Cursor/Bitmap-Handle zuverlässig verwenden oder löschen zu können, muss man wissen, um welchen Typ es sich handelt.</p></dd>
 
 </dl>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>LoadPicture unterstützt auch <a href="../misc/ImageHandles.htm">die Handle-Syntax</a>, z. B. zum Erstellen eines skalierten Bildes auf Basis einer Symbol- oder Bitmap-Ressource, die bereits in den Speicher geladen worden ist, oder zum Konvertieren eines Symbols in eine Bitmap durch Weglassen von <em>BildTyp</em>.</p>
-<p>Wenn das Bild aus dem Speicher freigegeben werden muss, kann je nach Typ des Handles eine passende Funktion aufgerufen werden.</p>
-<pre>if (not BildTyp)  <em>; IMAGE_BITMAP (0) oder es wurde der BildTyp-Parameter weggelassen.</em>
+<p>LoadPicture unterstützt auch <a href="../misc/ImageHandles.htm">die Handle-Syntax</a>, z.B. um ein skaliertes Bild auf Basis einer bereits in den Speicher geladenen Symbol- oder Bitmap-Ressource zu erstellen, oder um ein Symbol in eine Bitmap durch Weglassen von <em>BildTyp</em> umzuwandeln.</p>
+<p>Wenn das Bild aus dem Speicher freigegeben werden muss, rufen Sie je nach Typ des Handles eine passende Funktion auf.</p>
+<pre>if (not BildTyp)  <em>; IMAGE_BITMAP (0) oder BildTyp-Parameter wurde weggelassen.</em>
     DllCall("DeleteObject", "ptr", Handle)
 else if (BildTyp = 1)  <em>; IMAGE_ICON</em>
     DllCall("DestroyIcon", "ptr", Handle)
@@ -53,24 +53,24 @@ else if (BildTyp = 2)  <em>; IMAGE_CURSOR</em>
 <div class="ex" id="ExSlideShow">
 <p><a class="ex_number" href="#ExSlideShow"></a> Lädt einige Bilder im Voraus und verwendet sie wieder.</p>
 <pre>Bilder := []
-<em>; Findet einige Bilder zum Anzeigen.</em>
+<em>; Einige Bilder zum Anzeigen finden.</em>
 Loop, Files, %A_WinDir%\Web\Wallpaper\*.jpg, R
 {
-    <em>; Lädt jedes Bild und fügt es in den Array ein.</em>
+    <em>; Jedes Bild laden und zum Array hinzufügen.</em>
     Bilder.Push(LoadPicture(A_LoopFileFullPath))
 }
 if !Bilder.Length()
 {
-    <em>; Wenn das passiert, müssen Sie den Pfad auf der Loop-Zeile darüber ändern.</em>
+    <em>; Wenn das passiert, geben Sie oben bei Loop einen anderen Pfad an.</em>
     MsgBox, Keine Bilder gefunden!  Probieren Sie ein anderes Verzeichnis aus.
     ExitApp
 }
-<em>; Fügt das Picture-Steuerelement hinzu, unter Beibehaltung des Seitenverhältnisses vom ersten Bild.</em>
+<em>; Picture-Steuerelement hinzufügen, unter Beibehaltung des Seitenverhältnisses vom ersten Bild.</em>
 Gui, Add, Pic, w600 h-1 vBild +Border, % "HBITMAP:*" Bilder.1
 Gui, Show
 Loop 
 {
-    <em>; Wechselt auf ein anderes Bild!</em>
+    <em>; Zu einem anderen Bild wechseln!</em>
     GuiControl, , Bild, % "HBITMAP:*" Bilder[Mod(A_Index, Bilder.Length())+1]
     Sleep 3000
 }

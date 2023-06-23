@@ -23,69 +23,69 @@
   <li><a href="#Local">Lokale Variablen</a></li>
   <li><a href="#DynCall">Funktionen dynamisch aufrufen</a></li>
   <li><a href="#ShortCircuit">Boolesche Kurzschlussauswertung</a></li>
-  <li><a href="#gosub">Subroutinen in einer Funktion nutzen</a></li>
+  <li><a href="#gosub">Subroutinen innerhalb von Funktionen</a></li>
   <li><a href="#remarks">Return, Exit und allgemeine Bemerkungen</a></li>
-  <li><a href="#include">Skripte mittels #Include auf die gleichen Funktionen zugreifen lassen</a></li>
+  <li><a href="#include">Skripte mittels #Include auf dieselben Funktionen zugreifen lassen</a></li>
   <li><a href="#lib">Funktionsbibliotheken: Standard- und Benutzerbibliothek</a></li>
   <li><a href="#BuiltIn">Interne Funktionen</a></li>
 </ul>
 <h2 id="intro">Einführung und einfache Beispiele</h2>
-<p id="define">Eine Funktion ist so etwas Ähnliches wie eine Subroutine (<a href="lib/Gosub.htm">GoSub</a>), allerdings mit dem Unterschied, dass eine Funktion zusätzlich mit Parametern (Eingabewerten) aufgerufen werden kann. Eine Funktion kann außerdem einen Wert direkt an ihren Aufrufer zurückgeben. Das folgende Beispiel ist eine einfache Funktion, die zwei Zahlen akzeptiert und ihre Summe zurückgibt:</p>
+<p id="define">Eine Funktion ist so etwas Ähnliches wie eine Subroutine (<a href="lib/Gosub.htm">GoSub</a>), allerdings mit dem Unterschied, dass eine Funktion zusätzlich mit Parametern (Eingabewerten) aufgerufen werden kann. Eine Funktion kann auch direkt einen Wert an ihren Aufrufer zurückgeben. Das folgende Beispiel ist eine einfache Funktion, die zwei Zahlen akzeptiert und deren Summe zurückgibt:</p>
 <pre>Addieren(x, y)
 {
     return x + y   <em>; "<a href="lib/Return.htm">Return</a>" erwartet einen <a href="Variables.htm#Expressions">Ausdruck</a>.</em>
 }</pre>
-<p>So etwas nennt man auch eine <em>Funktionsdefinition</em>, weil es eine Funktion mit dem Namen "Addieren" erstellt (nicht Groß-/Kleinschreibung-sensitiv) und festlegt, dass jeder, der sie aufruft, genau zwei Parameter (x und y) bereitstellen muss. Um die Funktion aufzurufen, können Sie das Ergebnis der Funktion einer Variable mithilfe des <a href="lib/SetExpression.htm">Doppelpunkt-Gleich-Operators</a> (<strong><a href="lib/SetExpression.htm">:=</a></strong>) zuweisen. Zum Beispiel:</p>
+<p>So etwas nennt man auch eine <em>Funktionsdefinition</em>, weil es eine Funktion mit dem Namen "Addieren" erstellt (nicht Groß-/Kleinschreibung-sensitiv) und festlegt, dass jeder, der die Funktion aufruft, genau zwei Parameter (x und y) bereitstellen muss. Um die Funktion aufzurufen, können Sie das Ergebnis der Funktion einer Variable mithilfe des <a href="lib/SetExpression.htm">Doppelpunkt-Gleich-Operators</a> (<strong><a href="lib/SetExpression.htm">:=</a></strong>) zuweisen. Zum Beispiel:</p>
 <pre>Var := Addieren(2, 3)  <em>; Speichert die Zahl 5 in Var.</em></pre>
 <p>Man kann eine Funktion auch aufrufen, ohne ihren Rückgabewert speichern zu müssen:</p>
 <pre>Addieren(2, 3)</pre>
-<p>In diesem Fall aber wird der Rückgabewert der Funktion verworfen; diese Art von Aufruf ist nur sinnvoll, wenn die Funktion mehr als nur einen Rückgabewert zurückgibt.</p>
-<p>Da ein Funktionsaufruf ein <a href="Variables.htm#Expressions">Ausdruck</a> ist, dürfen die Namen der Variablen innerhalb ihrer Parameterliste nicht von Prozentzeichen umschlossen sein. Direkt geschriebene Zeichenketten müssen hingegen in doppelte Anführungszeichen gesetzt werden. Zum Beispiel:</p>
+<p>In diesem Fall wird jedoch der Rückgabewert der Funktion verworfen; diese Art des Aufrufs ist nur dann sinnvoll, wenn die Funktion einen anderen Effekt als ihren Rückgabewert hat.</p>
+<p>Da ein Funktionsaufruf ein <a href="Variables.htm#Expressions">Ausdruck</a> ist, sollten die Variablennamen in der Parameterliste nicht mit Prozentzeichen umschlossen werden. Außerdem müssen direkt geschriebene Zeichenketten in doppelte Anführungszeichen gesetzt werden. Zum Beispiel:</p>
 <pre>if <a href="#InStr">InStr</a>(MeineVar, "Fuchs")
     MsgBox Die Variable MeineVar enthält das Wort Fuchs.</pre>
-<p>Es ist möglich, Funktionen innerhalb der Parameter eines Befehls aufzurufen (außer in EingabeVar- und AusgabeVar-Parametern, wie die von <a href="lib/StringLen.htm">StringLen</a>). Parameter, die keine <a href="Variables.htm#Expressions">Ausdrücke</a> unterstützen, können mit dem Präfix "% " einen Ausdruck erzwingen. Zum Beispiel:</p>
+<p>Es ist möglich, Funktionen innerhalb der Parameter eines Befehls aufzurufen (außer in EingabeVar- und AusgabeVar-Parametern, wie die von <a href="lib/StringLen.htm">StringLen</a>). Allerdings müssen Sie bei Parametern, die keine <a href="Variables.htm#Expressions">Ausdrücke</a> unterstützen, das Präfix "% " verwenden. Zum Beispiel:</p>
 <pre>MsgBox % "Das Ergebnis ist: " . Addieren(3, 2)</pre>
-<p>Wenn dieses Prozentzeichen in einem Parameter angewendet wird, der Ausdrücke bereits unterstützt, wird es einfach ignoriert.</p>
+<p>Das Präfix "% " ist auch in Parametern zulässig, die standardmäßig Ausdrücke unterstützen, aber dann wird es einfach ignoriert.</p>
 <h2 id="param">Parameter</h2>
-<p>Die Parameter einer Funktion werden in die runden Klammern rechts neben dem Funktionsnamen eingefügt (zwischen dem Namen und der runden Startklammer sind keine Leerzeichen erlaubt). Wenn die Funktion keine Parameter akzeptiert, können die runden Klammern leer gelassen werden; zum Beispiel: <code>ErmittleAktuellenZeitstempel()</code>.</p>
-<p id="ByRef"><strong>ByRef-Parameter</strong>: Innerhalb der Funktion werden Parameter grundsätzlich wie <a href="#Local">lokale Variablen</a> behandelt, es sei denn, sie werden wie im folgenden Beispiel als <em>ByRef</em>-Parameter definiert:</p>
+<p>Beim Definieren einer Funktion werden ihre Parameter in runden Klammern rechts neben ihrem Namen aufgelistet (zwischen dem Namen und der runden Startklammer sind keine Leerzeichen erlaubt). Wenn die Funktion keine Parameter akzeptiert, kann der Inhalt zwischen den runden Klammern leer gelassen werden, z.B. <code>ErmittleAktuellenZeitstempel()</code>.</p>
+<p id="ByRef"><strong>ByRef-Parameter:</strong> Innerhalb der Funktion werden Parameter grundsätzlich als <a href="#Local">lokale Variablen</a> behandelt, es sei denn, sie werden wie im folgenden Beispiel als <em>ByRef</em>-Parameter definiert:</p>
 <pre>Tauschen(ByRef Links, ByRef Rechts)
 {
     temp := Links
     Links := Rechts
     Rechts := temp
 }</pre>
-<p>Das <em>ByRef</em> oben macht den Parameter zu einem Pseudonym für die Variable, die der Aufrufer übergeben hat. Das heißt, dass der Parameter und die Variable des Aufrufers auf den gleichen Inhalt im Speicher verweisen. Auf diese Weise kann die Tauschen-Funktion die Variablen des Aufrufers ändern, indem sie den Inhalt der <em>Links</em>-Variable in die <em>Rechts</em>-Variable verschiebt, und umgekehrt.</p>
-<p>Würde man <em>ByRef</em> hingegen nicht verwenden, wären <em>Links</em> und <em>Rechts</em> nur Kopien der Variablen des Aufrufers - die Tauschen-Funktion hätte keine externe Auswirkung.</p>
-<p><em>ByRef</em> kann als Ergänzung zu <a href="lib/Return.htm">Return</a> verwendet werden, um mehr als einen Wert zurückzugeben. Um das zu erreichen, definieren Sie eine Funktion mit ByRef-Parametern, damit der Aufrufer Variablen übergeben kann (üblicherweise leer), in der die Funktion einen Wert speichern kann.</p>
-<p>Die Übergabe langer Zeichenketten an eine Funktion via <em>ByRef</em> ist leistungsfähiger und verhindert, dass die Zeichenketten doppelten Speicherplatz verbrauchen, weil von ihnen eine Kopie erstellt werden muss. Auch die Rückgabe von langen Zeichenketten an den Aufrufer via <em>ByRef</em> ist in der Regel performanter als so etwas wie <code>Return LangeZeichenkette</code>.</p>
-<p><span class="ver">[AHK_L 60+]:</span> Übergibt man eine schreibgeschützte Variable an einen ByRef-Parameter, verhält sich die Funktion so, als wäre das Schlüsselwort "ByRef" nicht vorhanden. <code>Tauschen(A_Index, i)</code> beispielsweise speichert den Wert von <i>A_Index</i> in <i>i</i>, allerdings wird der Wert von <i>Links</i> wieder verworfen, wenn die <i>Tauschen</i>-Funktion fertig ist.</p>
-<p><span class="ver">[v1.1.01+]:</span> Mit der <a href="#IsByRef">IsByRef()</a>-Funktion kann festgestellt werden, ob der Aufrufer eine Variable für einen bestimmten ByRef-Parameter bereitgestellt hat.</p>
+<p>Das <em>ByRef</em> oben macht den Parameter zu einem Pseudonym für die vom Aufrufer übergebene Variable. Mit anderen Worten, der Parameter und die Variable des Aufrufers verweisen auf denselben Inhalt im Speicher. Auf diese Weise kann die Tauschen-Funktion die Variablen des Aufrufers ändern, indem sie den Inhalt der <em>Links</em>-Variable in die <em>Rechts</em>-Variable verschiebt, und umgekehrt.</p>
+<p>Ohne <em>ByRef</em> wären <em>Links</em> und <em>Rechts</em> dagegen nur Kopien der Variablen des Aufrufers - die Tauschen-Funktion hätte keine externe Wirkung.</p>
+<p><em>ByRef</em> kann als Ergänzung zu <a href="lib/Return.htm">Return</a> verwendet werden, um mehr als einen Wert zurückzugeben. Dazu muss der Aufrufer eine Variable übergeben (üblicherweise leer), in der die Funktion einen Wert speichern kann.</p>
+<p>Die Übergabe von langen Zeichenketten an eine Funktion via <em>ByRef</em> ist performanter und verhindert, dass die Zeichenketten doppelten Speicherplatz verbrauchen, weil von ihnen eine Kopie erstellt werden muss. Auch die Rückgabe von langen Zeichenketten an den Aufrufer via <em>ByRef</em> ist in der Regel performanter als z.B. <code>Return LangeZeichenkette</code>.</p>
+<p><span class="ver">[AHK_L 60+]</span>: Übergibt man eine schreibgeschützte Variable an einen ByRef-Parameter, verhält sich die Funktion so, als wäre das Schlüsselwort "ByRef" nicht vorhanden. Zum Beispiel speichert <code>Tauschen(A_Index, i)</code> den Wert von <i>A_Index</i> in <i>i</i>, allerdings wird der Wert von <i>Links</i> wieder verworfen, wenn die <i>Tauschen</i>-Funktion fertig ist.</p>
+<p><span class="ver">[v1.1.01+]</span>: Mit der <a href="#IsByRef">IsByRef</a>-Funktion kann geprüft werden, ob der Aufrufer eine Variable für einen bestimmten ByRef-Parameter bereitgestellt hat.</p>
 <p>Bekannte Einschränkungen:</p>
 <ul>
-  <li>Objektfelder können nicht in Verbindung mit <em>ByRef</em> genutzt werden. Wenn zum Beispiel <code>foo.bar</code> an einen ByRef-Parameter übergeben wird, verhält es sich so, als wäre <em>ByRef</em> nicht vorhanden.</li>
-  <li>Es ist nicht möglich, die <a href="misc/Clipboard.htm">Clipboard</a>-Variable, <a href="Variables.htm#BuiltIn">interne Variablen</a> oder <a href="Concepts.htm#environment-variables">Umgebungsvariablen</a> an den <em>ByRef</em>-Parameter einer Funktion zu übergeben, egal ob <a href="lib/_NoEnv.htm">#NoEnv</a> im Skript vorhanden ist oder nicht.</li>
-  <li id="recurse">Eine Funktion kann sich selbst rekursiv aufrufen. Beachten Sie aber, dass, wenn sie sich selbst ihre eigenen <a href="#Local">lokalen Variablen</a> oder ByRef-lose Parameter via <em>ByRef</em> übergibt, der <em>ByRef</em>-Parameter des neuen Ablegers auf seine eigene lokale Variable mit selben Namen verweist, anstatt auf dem Namen des vorherigen Ablegers. Allerdings tritt dieses Problem nicht auf, wenn eine Funktion sich selbst eine <a href="#Global">globale Variable</a>, <a href="#static">statische Variable</a> oder einen <em>ByRef</em>-Parameter übergibt.</li>
-  <li>Variablen, die innerhalb eines Funktionsparameters aufgelöst werden müssen (z. B. <code>Var</code> oder <code>++Var</code> oder <code>Var *= 2</code>), können von links oder rechts befindlichen Parametern geändert werden, bevor sie an die Funktion übergeben werden. <code>MeineFunk(Var, Var++)</code> würde beispielsweise unerwartet 0 und 1 als Parameter übergeben, wenn <em>Var</em> zu Beginn 0 ist, auch dann, wenn der erste Parameter der Funktion kein <em>ByRef</em> ist. Dieses unlogische Verhalten wird eventuell in einer zukünftigen Version geändert.</li>
-  <li>ByRef wird nicht direkt unterstützt, wenn die Funktion von einem COM-Clienten aufgerufen wurde oder wenn eine COM-Methode aufgerufen wird. Stattdessen erhält oder muss das Skript ein <a href="lib/ComObjActive.htm#ByRef">Wrapper-Objekt</a> übergeben, das den <a href="lib/ComObjType.htm">VarTyp</a> und die Adresse des Wertes enthält.</li>
+  <li>Objektelemente werden in Bezug auf <em>ByRef</em> nicht als Variablen betrachtet. Wenn zum Beispiel <code>foo.bar</code> an einen ByRef-Parameter übergeben wird, verhält es sich so, als wäre <em>ByRef</em> nicht vorhanden.</li>
+  <li>Es ist nicht möglich, <a href="misc/Clipboard.htm">Clipboard</a>, <a href="Variables.htm#BuiltIn">interne Variablen</a> oder <a href="Concepts.htm#environment-variables">Umgebungsvariablen</a> an den <em>ByRef</em>-Parameter einer Funktion zu übergeben, auch dann nicht, wenn kein <a href="lib/_NoEnv.htm">#NoEnv</a> im Skript verwendet wird.</li>
+  <li id="recurse">Eine Funktion kann sich selbst rekursiv aufrufen. Beachten Sie aber, dass, wenn sie sich selbst ihre eigenen <a href="#Local">lokalen Variablen</a> oder ByRef-lose Parameter via <em>ByRef</em> übergibt, der <em>ByRef</em>-Parameter des neuen Ablegers auf seine eigene lokale Variable mit demselben Namen verweist, anstatt auf den Namen des vorherigen Ablegers. Allerdings tritt dieses Problem nicht auf, wenn eine Funktion sich selbst eine <a href="#Global">globale Variable</a>, eine <a href="#static">statische Variable</a> oder einen <em>ByRef</em>-Parameter übergibt.</li>
+  <li>Wenn ein Parameter in einem Funktionsaufruf eine Variable enthält (z.B. <code>Var</code> oder <code>++Var</code> oder <code>Var*=2</code>), können andere Parameter links oder rechts davon diese Variable ändern, bevor sie an die Funktion übergeben wird. Zum Beispiel würde <code>MeineFunk(Var, Var++)</code> unerwartet 1 und 0 als Parameter übergeben, wenn <em>Var</em> zu Beginn 0 ist, sogar wenn der erste Parameter der Funktion kein <em>ByRef</em> ist. Dieses Verhalten ist nicht intuitiv und könnte sich in einer zukünftigen Version ändern.</li>
+  <li>ByRef wird in Funktionen, die von COM-Clients aufgerufen werden, oder beim Aufruf von COM-Methoden nicht direkt unterstützt. Stattdessen erhält oder muss das Skript ein <a href="lib/ComObjActive.htm#ByRef">Wrapper-Objekt</a> übergeben, das den <a href="lib/ComObjType.htm">VarTyp</a> und die Adresse des Wertes enthält.</li>
 </ul>
 <h2 id="optional">Optionale Parameter</h2>
-<p>Bei der Definition einer Funktion können ein oder mehrere Parameter als optional gekennzeichnet werden. Um das zu tun, müssen Sie <code>:=</code> (in <span class="ver">[v1.1.09]</span> oder höher) oder <code>=</code> anfügen, gefolgt vom Standardwert des Parameters, der Folgendes sein kann: <code>True</code>, <code>False</code>, ein direkt geschriebener Integer, eine direkt geschriebene Floating-Point-Zahl oder eine direkt geschriebene, in Anführungszeichen gesetzte Zeichenkette wie "fox" oder "" (Zeichenketten unterstützen vor <span class="ver">[v1.0.46.13]</span> nur "").</p>
-<p>Die Verwendung von <code>=</code> (ohne Doppelpunkt) ist aus Gründen der Abwärtskompatibilität erlaubt, aber nicht empfohlen, da es in AutoHotkey v2 nicht mehr zugelassen ist. Unabhängig davon, welcher Operator verwendet wird, müssen Standardwerte, die Zeichenketten sind, immer in Anführungszeichen gesetzt werden.</p>
+<p>Beim Definieren einer Funktion können beliebig viele Parameter als optional gekennzeichnet werden. Fügen Sie einfach nach dem Parameter ein <code>:=</code> (in <span class="ver">[v1.1.09+]</span>) oder <code>=</code> an, gefolgt vom gewünschten Standardwert, der Folgendes sein kann: <code>True</code>, <code>False</code>, ein direkt geschriebener Integer, eine direkt geschriebene Floating-Point-Zahl oder eine direkt geschriebene, in Anführungszeichen gesetzte Zeichenkette wie "fox" oder "" (vor <span class="ver">[v1.0.46.13]</span> war nur "" möglich).</p>
+<p>Die Verwendung von <code>=</code> (ohne Doppelpunkt) ist aus Gründen der Abwärtskompatibilität erlaubt, wird aber nicht empfohlen, da es in AutoHotkey v2 nicht mehr zugelassen ist. Unabhängig vom verwendeten Operator müssen Standardwerte, die Zeichenketten sind, immer in Anführungszeichen gesetzt werden.</p>
 <p>Die folgende Funktion hat einen Z-Parameter, der als optional gekennzeichnet ist:</p>
 <pre>Addieren(X, Y, Z:=0) {
     return X + Y + Z
 }</pre>
-<p>Ruft man die Funktion mit <strong>drei</strong> Parametern auf, wird der Standardwert von Z ignoriert. Ruft man aber die Funktion nur mit <strong>zwei</strong> Parametern auf, bekommt die Z-Variable automatisch eine 0 zugewiesen.</p>
-<p id="missing">Es ist nicht möglich, optionale Parameter in der Mitte der Parameterliste zu platzieren. Mit anderen Worten: Alle Parameter auf der rechten Seite des ersten optionalen Parameters müssen auch als optional markiert sein. <span class="ver">[AHK_L 31+]:</span> Optionale Parameter können in der Mitte der Parameterliste weggelassen werden, wenn die Funktion aufgerufen wird (siehe unten). In <span class="ver">[v1.1.12+]</span> gilt das auch für dynamische Funktionen und Methoden.</p>
+<p>Ruft man die Funktion mit <strong>drei</strong> Parametern auf, wird der Standardwert von Z ignoriert. Ruft man die Funktion jedoch nur mit <strong>zwei</strong> Parametern auf, bekommt die Z-Variable automatisch den Wert 0 zugewiesen.</p>
+<p id="missing">Es ist nicht möglich, optionale Parameter isoliert in der Mitte der Parameterliste anzugeben. Mit anderen Worten: Alle Parameter rechts vom ersten optionalen Parameter müssen ebenfalls als optional gekennzeichnet sein. <span class="ver">[AHK_L 31+]</span>: Optionale Parameter können in der Mitte der Parameterliste weggelassen werden, wenn die Funktion aufgerufen wird (siehe unten). In <span class="ver">[v1.1.12+]</span> gilt das auch für dynamische Funktionsaufrufe und Methodenaufrufe.</p>
 <pre>MeineFunk(1,, 3)
-MeineFunk(X, Y:=2, Z:=0) {  <em>; Beachten Sie, dass Z in diesem Fall weiterhin optional sein muss.</em>
+MeineFunk(X, Y:=2, Z:=0) {  <em>; Beachten Sie, dass Z in diesem Fall optional bleiben muss.</em>
     MsgBox %X%, %Y%, %Z%
 }</pre>
-<p id="OptionalByRef"><span class="ver">[v1.0.46.13+]</span>: <a href="#ByRef">ByRef-Parameter</a> können auch einen Standardwert haben; zum Beispiel: <code>MeineFunk(ByRef p1 = "")</code>. Wenn die Funktion ohne diesen Parameter aufgerufen wird, wird eine lokale Variable mit dem angegebenen Standardwert erstellt; das heißt, dass die Funktion sich so verhalten wird, als wäre das Schlüsselwort "ByRef" nicht vorhanden.</p>
+<p id="OptionalByRef"><span class="ver">[v1.0.46.13+]</span>: <a href="#ByRef">ByRef-Parameter</a> können auch einen Standardwert haben, z.B. <code>MeineFunk(ByRef p1 = "")</code>. Wenn die Funktion ohne diesen Parameter aufgerufen wird, wird eine lokale Variable mit dem angegebenen Standardwert erstellt, d.h. die Funktion wird sich so verhalten, als würde das Schlüsselwort "ByRef" fehlen.</p>
 
 <h2 id="return">Werte an den Aufrufer zurückgeben</h2>
-<p>Wie in der <a href="#intro">Einführung</a> bereits erwähnt, kann eine Funktion einen Wert via <a href="lib/Return.htm">Return</a> an ihren Aufrufer zurückgeben.</p>
+<p>Wie bereits in der <a href="#intro">Einführung</a> erwähnt, kann eine Funktion einen Wert via <a href="lib/Return.htm">Return</a> an ihren Aufrufer zurückgeben.</p>
 <pre>
 Test := returnTest()
 MsgBox % Test
@@ -94,7 +94,7 @@ returnTest() {
     return 123
 }
 </pre>
-<p>Wenn Sie noch mehr Ergebnisse aus einer Funktion zurückgeben möchten, können Sie auch <a href="#ByRef">ByRef</a> nutzen:</p>
+<p>Wenn eine Funktion mehr als ein Ergebnis zurückgeben soll, können Sie auch <a href="#ByRef">ByRef</a> verwenden:</p>
 <pre>
 returnByRef(A,B,C)
 MsgBox % A "," B "," C
@@ -107,7 +107,7 @@ returnByRef(ByRef val1, ByRef val2, ByRef val3)
     return
 }
 </pre>
-<p><span class="ver">[v1.0.97+]:</span> Mithilfe von <a href="Objects.htm#Usage_Objects">Objekten</a> und <a href="Objects.htm#Usage_Simple_Arrays">Arrays</a> können mehrere Werte oder sogar benannte Werte zurückgegeben werden:</p>
+<p><span class="ver">[v1.0.97+]</span>: Sie können <a href="Objects.htm#Usage_Objects">Objekte</a> und <a href="Objects.htm#Usage_Simple_Arrays">Arrays</a> verwenden, um mehrere Werte oder sogar benannte Werte zurückzugeben:</p>
 <pre>
 Test1 := returnArray1()
 MsgBox % Test1[1] "," Test1[2]
@@ -135,31 +135,31 @@ returnObject() {
 }
 </pre>
 <h2 id="Variadic">Variadische Funktionen <span class="ver">[AHK_L 60+]</span></h2>
-<p>Es ist möglich, den letzten Parameter in einer Funktionsdefinition mit einem Sternchen zu versehen, um eine Funktion variadisch zu machen, oder anders gesagt, um sie eine variable Anzahl von Parametern akzeptieren zu lassen:</p>
+<p>Beim Definieren einer Funktion können Sie den letzten Parameter mit einem Sternchen versehen, um die Funktion als variadisch zu kennzeichnen, wodurch ihr eine variable Anzahl von Parametern übergeben werden kann:</p>
 <pre>Verbinden(sep, <b class="blue">params*</b>) {
     for index,param in params
         str .= param . sep
     return SubStr(str, 1, -StrLen(sep))
 }
 MsgBox % Verbinden("`n", "eins", "zwei", "drei")</pre>
-<p>Wenn man eine variadische Funktion aufruft, werden alle überschüssigen Parameter in ein Objekt gespeichert, das im letzten Parameter der Funktion enthalten ist. Der erste überschüssige Parameter ist <code><i>params</i>[1]</code>, der Zweite ist <code><i>params</i>[2]</code> und so weiter. Dieses Objekt kann wie alle normalen Objekte <code><i>params</i>.MaxIndex()</code> verwenden, um den höchsten numerischen Index zu ermitteln (in diesem Fall die Parameteranzahl). Wenn aber keine Parameter vorhanden sind, gibt MaxIndex eine leere Zeichenkette zurück.</p>
+<p>Beim Aufruf einer variadischen Funktion können überschüssige Parameter über ein Objekt abgerufen werden, das im letzten Parameter der Funktion gespeichert ist. Der erste überschüssige Parameter ist <code><i>params</i>[1]</code>, der zweite ist <code><i>params</i>[2]</code> und so weiter. Dieses Objekt kann wie alle normalen Objekte <code><i>params</i>.MaxIndex()</code> verwenden, um den höchsten numerischen Index zu ermitteln (in diesem Fall die Anzahl der Parameter). Wenn aber keine Parameter vorhanden sind, gibt MaxIndex eine leere Zeichenkette zurück.</p>
 <p>Hinweise:</p>
 <ul>
-  <li>Der "variadische" Parameter kann nur am Ende der formalen Parameterliste erfolgen.</li>
+  <li>Der "variadische" Parameter kann nur am Ende der formalen Parameterliste stehen.</li>
   <li><a href="misc/RegExCallout.htm">RegEx-Callouts</a> können nicht variadisch sein; der "variadische" Parameter wird zwar toleriert, aber bleibt leer.</li>
-  <li><a href="lib/RegisterCallback.htm">Callbacks</a> übergeben überschüssige Parameter nicht via Array, sondern <a href="lib/RegisterCallback.htm#Indirect">via Adresse</a>.</li>
+  <li><a href="lib/RegisterCallback.htm">Rückruffunktionen</a> übergeben überschüssige Parameter nicht via Array, sondern <a href="lib/RegisterCallback.htm#Indirect">via Adresse</a>.</li>
 </ul>
 <h3 id="VariadicCall">Variadische Funktionsaufrufe</h3>
-<p>Variadische Funktionen können mithilfe eines Arrays eine variable Anzahl von Parametern <i>akzeptieren</i>, während variadische Funktionsaufrufe verwendet werden können, um eine variable Anzahl von Parametern an eine <i>beliebige</i> Funktion mithilfe derselben Syntax zu übergeben:</p>
+<p>Während variadische Funktionen eine variable Anzahl von Parametern <i>akzeptieren</i>, kann ein Array von Parametern an eine <i>beliebige</i> Funktion übergeben werden, indem die gleiche Syntax auf einen Funktionsaufruf angewendet wird:</p>
 <pre>TeilZketten := ["eins", "zwei", "drei"]
 MsgBox % Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
 <p>Hinweise:</p>
 <ul>
-  <li>Die Nummerierung der Parameter innerhalb des Quellarrays beginnt bei 1.</li>
-  <li>Optionale Parameter können vollständig im Array weggelassen werden.</li>
-  <li>Das Array mit Parametern kann benannte Elemente enthalten, wenn eine benutzerdefinierte Funktion aufgerufen wird; in allen anderen Fällen werden benannte Elemente nicht unterstützt.</li>
+  <li>Die Nummerierung der Parameter innerhalb des ursprünglichen Arrays beginnt bei 1.</li>
+  <li>Optionale Parameter können im Array ganz weggelassen werden.</li>
+  <li>Das Array von Parametern kann benannte Elemente enthalten, wenn eine benutzerdefinierte Funktion aufgerufen wird; in allen anderen Fällen werden benannte Elemente nicht unterstützt.</li>
   <li>Die Zielfunktion kann auch variadisch sein - in diesem Fall werden benannte Elemente kopiert, selbst wenn sie keinen entsprechenden formalen Parameter haben.</li>
-  <li>Diese Syntax kann auch beim Aufrufen einer Methode oder beim Abrufen von Objekteigenschaften verwendet werden; zum Beispiel <code>Objekt.Eigenschaft[Params*]</code>. <span class="ver">[v1.1.12+]</span>: Diese Syntax kann auch zum Setzen von Eigenschaften verwendet werden.</li>
+  <li>Diese Syntax kann auch beim Aufrufen einer Methode oder beim Abrufen von Objekteigenschaften verwendet werden, z.B. <code>Objekt.Eigenschaft[Params*]</code>. <span class="ver">[v1.1.12+]</span>: Diese Syntax kann auch zum Setzen von Eigenschaften verwendet werden.</li>
 </ul>
 <p>Bekannte Einschränkungen:</p>
 <ul>
@@ -168,57 +168,57 @@ MsgBox % Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
 </ul>
 <h2 id="Locals">Lokale und globale Variablen</h2>
 <h3 id="Local">Lokale Variablen</h3>
-<p>Lokale Variablen sind funktionsspezifisch und nur innerhalb dieser Funktion sichtbar. Folglich kann eine lokale Variable, die denselben Namen hat wie eine globale Variable, etwas anderes als die globale Variable enthalten. Verschiedene Funktionen können bedenkenlos die gleichen Variablennamen benutzen.</p>
-<p>Alle lokalen Variablen, die nicht <a href="#static">statisch</a> sind, werden automatisch freigegeben (leer gemacht), wenn die Funktion ihr Ende erreicht hat.</p>
-<p>Interne Variablen wie <a href="misc/Clipboard.htm">Clipboard</a>, <a href="misc/ErrorLevel.htm">ErrorLevel</a> und <a href="Variables.htm#TimeIdle">A_TimeIdle</a> sind nie lokal (sie sind von überall aus erreichbar) und können nicht neu deklariert werden.</p>
-<p id="AssumeLocal">Funktionen sind standardmäßig im <strong>Assume-Local</strong>-Modus. Variablen, die innerhalb einer Assume-Local-Funktion zugegriffen oder erstellt werden, sind standardmäßig lokal, aber es gibt folgende Ausnahmen:</p>
+<p>Lokale Variablen sind funktionsspezifisch und nur innerhalb dieser Funktion sichtbar. Folglich kann eine lokale Variable, die denselben Namen wie eine globale Variable hat, etwas anderes enthalten als die globale Variable. Verschiedene Funktionen können ohne Bedenken die gleichen Variablennamen benutzen.</p>
+<p>Alle lokalen Variablen, die nicht <a href="#static">statisch</a> sind, werden nach Abschluss der Funktion automatisch freigegeben (leer gemacht).</p>
+<p>Interne Variablen wie <a href="misc/Clipboard.htm">Clipboard</a>, <a href="misc/ErrorLevel.htm">ErrorLevel</a> und <a href="Variables.htm#TimeIdle">A_TimeIdle</a> sind nie lokal (sie sind von überall zugänglich) und können nicht neu deklariert werden.</p>
+<p id="AssumeLocal">Funktionen sind standardmäßig im <strong>Assume-Local</strong>-Modus. Variablen, die innerhalb einer Assume-Local-Funktion verwendet oder erstellt werden, sind standardmäßig lokal, aber es gibt folgende Ausnahmen:</p>
 <ul>
   <li><a href="#SuperGlobal">Superglobale</a> Variablen, inklusive <a href="Objects.htm#Custom_Classes">Klassen</a>.</li>
   <li>Eine <a href="#DynVar">dynamische Variablenreferenz</a> kann in eine existierende globale Variable aufgelöst werden, wenn keine lokale Variable mit diesem Namen vorhanden ist.</li>
   <li><a href="#PseudoArrays">Befehle, die Pseudo-Arrays erzeugen</a>, erstellen alle Elemente eventuell als globale Elemente, selbst wenn nur das erste Element deklariert ist.</li>
 </ul>
 <p>Siehe unten, wie das Standardverhalten überschrieben werden kann (indem man die Variable deklariert oder den Modus der Funktion ändert).</p>
-<p id="ForceLocal"><strong>Force-Local-Modus</strong> <span class="ver">[v1.1.27+]</span>: Wenn die erste Zeile der Funktion das Wort "local" ist, werden alle Variablenreferenzen (auch dynamische) als lokal angesehen, es sei denn, sie werden <em>innerhalb</em> der Funktion als global deklariert. Im Gegensatz zum Standardmodus verhält sich der Force-Local-Modus wie folgt:</p>
+<p id="ForceLocal"><strong>Force-Local-Modus</strong> <span class="ver">[v1.1.27+]</span>: Wenn die erste Zeile der Funktion das Wort "local" ist, werden alle Variablenreferenzen (auch dynamische) als lokal vermutet, es sei denn, sie werden <em>innerhalb</em> der Funktion als global deklariert. Im Gegensatz zum Standardmodus verhält sich der Force-Local-Modus wie folgt:</p>
 <ul>
-  <li>Superglobale Variablen (einschließlich Klassen) sind nur zugänglich, wenn sie innerhalb der Funktion deklariert werden.</li>
-  <li>Dynamische Variablenreferenzen folgen den gleichen Regeln wie nicht-dynamische Variablenreferenzen. Globale Variablen sind nur zugänglich, wenn sie innerhalb der Funktion deklariert werden.</li>
-  <li>StringSplit und andere Befehle, die Pseudo-Arrays erzeugen, folgen den gleichen Regeln wie nicht-dynamische Variablenreferenzen (wodurch ein häufiger Anlass zu Verwirrung vermieden wird).</li>
-  <li>Innerhalb einer Force-Local-Funktion kann nie die <em>LocalSameAsGlobal</em>-<a href="lib/_Warn.htm">Warnung</a> für Variablen ausgelöst wird.</li>
+  <li>Der Zugriff auf superglobale Variablen (inklusive Klassen) ist nur möglich, wenn sie innerhalb der Funktion deklariert werden.</li>
+  <li>Für dynamische Variablenreferenzen gelten dieselben Regeln wie für nicht-dynamische Variablenreferenzen. Der Zugriff auf globale Variablen ist nur möglich, wenn sie innerhalb der Funktion deklariert werden.</li>
+  <li>StringSplit und andere Befehle, die Pseudo-Arrays erzeugen, folgen denselben Regeln wie nicht-dynamische Variablenreferenzen (wodurch ein häufiger Anlass zu Verwirrung vermieden wird).</li>
+  <li>Die <em>LocalSameAsGlobal</em>-<a href="lib/_Warn.htm">Warnung</a> für Variablen wird niemals innerhalb einer Force-Local-Funktion ausgelöst.</li>
 </ul>
 
 <h3 id="Global">Globale Variablen</h3>
-<p>Um innerhalb einer Funktion auf eine vorhandene globale Variable zu verweisen (oder eine neue zu erstellen), deklarieren Sie die Variable als globale Variable, bevor Sie sie verwenden. Zum Beispiel:</p>
+<p>Um innerhalb einer Funktion auf eine bestehende globale Variable zu verweisen (oder eine neue zu erstellen), muss die Variable vor ihrer Verwendung als global deklariert werden. Zum Beispiel:</p>
 <pre>InDateiLoggen(ZuLoggenderText)
 {
-    global LogDateiName  <em>; Diese globale Variable bekam bereits einen Wert außerhalb dieser Funktion zugewiesen.</em>
+    global LogDateiName  <em>; Diese globale Variable bekam bereits außerhalb dieser Funktion einen Wert zugewiesen.</em>
     FileAppend, %ZuLoggenderText%`n, %LogDateiName%
 }</pre>
-<p id="AssumeGlobal"><strong>Assume-Global-Modus</strong>: Muss eine Funktion viele globale Variablen erstellen oder auf sie zugreifen, kann die Funktion so definiert werden, dass sie all ihre Variablen (außer ihre Parameter) global behandelt. Dazu muss in der ersten Zeile entweder das Wort "global" stehen oder eine lokale Variable deklariert sein. Zum Beispiel:</p>
+<p id="AssumeGlobal"><strong>Assume-Global-Modus:</strong> Wenn eine Funktion viele globale Variablen verwenden oder erstellen muss, kann die Funktion so definiert werden, dass sie alle ihre Variablen (außer ihren Parametern) global behandelt. Dazu muss in ihrer ersten Zeile entweder das Wort "global" oder die Deklaration einer lokalen Variable stehen. Zum Beispiel:</p>
 <pre>StandardwerteSetzen()
 {
     global  <em>; Kann weggelassen werden, wenn die erste Zeile so etwas wie "local MeineVar" ist.</em>
-    GlobaleVar := 33  <em>; Speichert 33 in eine globale Variable und erstellt sie, falls notwendig.</em>
-    local x, y:=0, z  <em>; Lokale Variablen müssen in diesem Modus deklariert werden, weil sie sonst global behandelt werden.</em>
+    GlobaleVar := 33  <em>; Speichert 33 in eine globale Variable und erstellt vorher sie bei Bedarf.</em>
+    local x, y:=0, z  <em>; Lokale Variablen müssen in diesem Modus deklariert werden, sonst werden sie global behandelt.</em>
 }</pre>
-<p>Dieser Assume-Global-Modus kann auch von einer Funktion verwendet werden, um ein globales <a href="misc/Arrays.htm">Array</a> zu erstellen - z. B. eine Schleife, die Werte in <code>Array%A_Index%</code> speichert.</p>
-<p id="SuperGlobal"><strong>Superglobale Variablen</strong> <span class="ver">[v1.1.05+]:</span> Geschieht eine globale Deklaration außerhalb einer Funktion, gilt sie standardmäßig für alle Funktionen (außer <a href="#ForceLocal">Force-Local</a>-Funktionen). Dadurch wird verhindert, dass die Variablen in jeder Funktion neu deklariert werden müssen. Allerdings haben Funktionsparameter oder lokale Variablen, die denselben Namen haben wie globale Variablen, Vorrang vor globale Variablen. Variablen, die mit dem Schlüsselwort <a href="Objects.htm#Custom_Classes">class</a> erzeugt wurden, sind ebenfalls superglobal.</p>
+<p>Dieser Assume-Global-Modus kann auch von einer Funktion verwendet werden, um ein globales <a href="misc/Arrays.htm">Array</a> zu erstellen - z.B. eine Schleife, die Werte in <code>Array%A_Index%</code> speichert.</p>
+<p id="SuperGlobal"><strong>Superglobale Variablen</strong> <span class="ver">[v1.1.05+]:</span> Wenn eine globale Deklaration außerhalb einer Funktion erfolgt, wird sie standardmäßig für alle Funktionen (außer <a href="#ForceLocal">Force-Local</a>-Funktionen) wirksam. Dadurch entfällt die Notwendigkeit, die Variable in jeder Funktion neu zu deklarieren. Beachten Sie aber, dass ein Funktionsparameter oder eine lokale Variable mit demselben Namen Vorrang vor der globalen Variable hat. Variablen, die mit dem Schlüsselwort <a href="Objects.htm#Custom_Classes">class</a> erzeugt wurden, sind ebenfalls superglobal.</p>
 <h3 id="static">Statische Variablen</h3>
-<p>Obwohl statische Variablen immer indirekt lokal sind, unterscheiden sie sich von lokalen Variablen, weil ihre Werte zwischen den Funktionsaufrufen erhalten bleiben. Zum Beispiel:</p>
+<p>Statische Variablen sind immer implizit lokal, unterscheiden sich aber von lokalen Variablen, da ihre Werte zwischen den Aufrufen gespeichert werden. Zum Beispiel:</p>
 <pre>InDateiLoggen(ZuLoggenderText)
 {
     <strong>static</strong> GeloggteZeilen := 0
-    GeloggteZeilen += 1  <em>; Behandelt einen Zähler lokal (der Wert bleibt zwischen den Funktionsaufrufen erhalten).</em>
+    GeloggteZeilen += 1  <em>; Behält einen Zähler lokal aufrecht (sein Wert wird zwischen den Aufrufen gespeichert).</em>
     global LogDateiName
     FileAppend, %GeloggteZeilen%: %ZuLoggenderText%`n, %LogDateiName%
 }</pre>
-<p id="InitStatic"><strong>Statische Initialisierungen</strong>: In den Versionen vor v1.0.46 enthielten alle statischen Variablen vorerst einen leeren Wert; um also zu erkennen, ob statische Variablen zum ersten Mal verwendet wurden, musste man überprüfen, ob sie leer waren. <span class="ver">[v1.0.46+]</span>: Es ist möglich, eine statische Variable bei ihrer Deklaration mit etwas anderes als <code>""</code> zu initialisieren. Fügen Sie einfach auf der rechten Seite des Variablennamens den Operator <code>:=</code> oder <code>=</code> und einen der folgenden Werte an: <code>True</code>, <code>False</code>, ein direkt geschriebener Integer, eine direkt geschriebene Floating-Point-Zahl oder eine direkt geschriebene, in Anführungszeichen gesetzte Zeichenkette wie <code>"fox"</code>. Zum Beispiel: <code>static X:=0, Y:="fox"</code>. Jede statische Variable wird nur einmal initialisiert (bevor das Skript seine Ausführung beginnt).</p>
-<p><span class="ver">[AHK_L 58+]:</span> <code>Static Var := Ausdruck</code> wird unterstützt. Alle derartigen Ausdrücke werden unmittelbar vor dem automatischen Ausführungsbereich ausgewertet - in der Reihenfolge, wie sie im Skript vorkommen.</p>
-<p id="AssumeStatic"><strong>Assume-Static-Modus</strong> <span class="ver">[v1.0.48+]:</span> Eine Funktion kann so definiert werden, dass sie all ihre Variablen (außer ihre Parameter) statisch behandelt. Dazu muss in der ersten Zeile das Wort "static" stehen. Zum Beispiel:</p>
+<p id="InitStatic"><strong>Statische Initialisierungen:</strong> In den Versionen vor v1.0.46 starteten alle statischen Variablen mit einem leeren Wert; um also zu erkennen, ob statische Variablen zum ersten Mal verwendet wurden, musste man überprüfen, ob sie leer waren. <span class="ver">[v1.0.46+]</span>: Es ist möglich, eine statische Variable bei ihrer Deklaration mit etwas anderem als <code>""</code> zu initialisieren. Fügen Sie einfach nach dem Variablennamen den Operator <code>:=</code> oder <code>=</code> an, gefolgt von einem der folgenden Werte: <code>True</code>, <code>False</code>, ein direkt geschriebener Integer, eine direkt geschriebene Floating-Point-Zahl oder eine direkt geschriebene, in Anführungszeichen gesetzte Zeichenkette wie <code>"fox"</code>. Zum Beispiel: <code>static X:=0, Y:="fox"</code>. Jede statische Variable wird nur einmal initialisiert (bevor das Skript mit der Ausführung beginnt).</p>
+<p><span class="ver">[AHK_L 58+]</span>: <code>static Var := Ausdruck</code> wird unterstützt. Alle Ausdrücke dieser Art werden unmittelbar vor dem <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a> des Skripts ausgewertet - in der Reihenfolge, wie sie im Skript vorkommen.</p>
+<p id="AssumeStatic"><strong>Assume-Static-Modus</strong> <span class="ver">[v1.0.48+]</span>: Eine Funktion kann so definiert werden, dass sie alle ihre Variablen (außer ihren Parametern) statisch behandelt. Dazu muss in ihrer ersten Zeile das Wort "static" stehen. Zum Beispiel:</p>
 <pre>VomStatischenArrayAbrufen(ElementNummer)
 {
     <strong>static</strong>
     static ErsterAufruf := true  <em>; Die Initialisierung einer statischen Deklaration wird nur einmal ausgeführt (beim Start).</em>
-    if ErsterAufruf  <em>; Erstellt ein statisches Array beim ersten Aufruf, aber nicht mehr danach.</em>
+    if ErsterAufruf  <em>; Erstellt ein statisches Array beim ersten Aufruf, danach nicht mehr.</em>
     {
         ErsterAufruf := false
         Loop 10
@@ -226,8 +226,8 @@ MsgBox % Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
     }
     return StatischesArray%ElementNummer%
 }</pre>
-<p>Im Assume-Static-Modus muss jede Variable, die nicht statisch sein soll, als lokal oder global deklariert werden (mit den gleichen Ausnahmen wie beim <a href="#AssumeLocal">Assume-Local-Modus</a>, sofern der <a href="#ForceLocal">Force-Local-Modus</a> nicht auch noch aktiv ist).</p>
-<p><span class="ver">[v1.1.27+]:</span> Der <a href="#ForceLocal">Force-Local-Modus</a> kann mit dem Assume-Static-Modus kombiniert werden, indem man <code>local</code> und dann <code>static</code> angibt, wie unten gezeigt. Dies ermöglicht es der Funktion, Force-Local-Regeln zu verwenden, aber standardmäßig Variablen als statische Variablen zu erstellen.</p>
+<p>Im Assume-Static-Modus muss jede Variable, die nicht statisch sein soll, als lokal oder global deklariert werden (mit den gleichen Ausnahmen wie im <a href="#AssumeLocal">Assume-Local-Modus</a>, es sei denn, der <a href="#ForceLocal">Force-Local-Modus</a> ist ebenfalls aktiv).</p>
+<p><span class="ver">[v1.1.27+]</span>: Der <a href="#ForceLocal">Force-Local-Modus</a> kann mit dem Assume-Static-Modus kombiniert werden, indem man <code>local</code> und dann <code>static</code> angibt, wie unten gezeigt. Die Funktion verwendet dadurch Force-Local-Regeln, erstellt aber standardmäßig statische Variablen.</p>
 <pre>global MeineVar := "Das ist global"
 ForceStaticDemonstrieren()
 
@@ -240,81 +240,81 @@ ForceStaticDemonstrieren()
     MsgBox
 }
 </pre>
-<h3 id="More_about_locals_and_globals">Mehr über lokale und globale Variablen</h3>
-<p>Mehrere Variablen können mithilfe eines Kommas auf derselben Zeile deklariert werden. Zum Beispiel:</p>
+<h3 id="More_about_locals_and_globals">Mehr zu lokalen und globalen Deklarationen</h3>
+<p>Es ist möglich, mehrere Variablen in derselben Zeile zu deklarieren. Trennen Sie sie wie folgt durch Kommas:</p>
 <pre>global LogDateiName, MaxVersuche := 5
 static GesamtVersuche := 0, VorherErgebnis</pre>
-<p id="DeclareInit"><span class="ver">[v1.0.46+]</span>: Es ist möglich, eine lokale oder globale Variable bei ihrer Deklaration zu initialisieren. Fügen Sie einfach auf der rechten Seite des Variablennamens den Operator <code>:=</code> oder <code>=</code> und einen beliebigen <a href="Variables.htm#Expressions">Ausdruck</a> an (der <code>=</code>-Operator verhält sich in Deklarationen genauso wie <code>:=</code>). Im Gegensatz zu <a href="#InitStatic">statischen Initialisierungen</a> werden die Initialisierungen von lokalen oder globalen Variablen bei jedem Funktionsaufruf ausgeführt, aber nur, wenn der Kontrollfluss sie tatsächlich erreicht. Eine Zeile wie <code>local x := 0</code> hätte also den gleichen Effekt wie, als würde man zwei einzelne Zeilen schreiben: <code>local x</code>, gefolgt von <code>x := 0</code>.</p>
-<p>Da die Wörter <em>local</em>, <em>global</em> und <em>static</em> unmittelbar beim Starten des Skripts verarbeitet werden, kann eine Variable nicht mithilfe einer <a href="lib/IfExpression.htm">IF-Anweisung</a> deklariert werden. Mit anderen Worten: Eine Deklaration innerhalb eines IF- oder ELSE-<a href="lib/Block.htm">Blocks</a> wirkt sich auf alle Zeilen zwischen der Deklaration und der geschweiften Endklammer der Funktion aus. Beachten Sie zudem, dass es zurzeit nicht möglich ist, eine dynamische Variable zu deklarieren, wie z. B. <code>global Array%i%</code>.</p>
-<p id="PseudoArrays">Befehle, die <a href="misc/Arrays.htm">Pseudo-Arrays</a> erzeugen (z. B. <a href="lib/StringSplit.htm">StringSplit</a>), erstellen standardmäßig lokale Variablen, solange der <a href="#AssumeGlobal">Assume-Global-Modus</a> nicht aktiv ist oder das erste Pseudo-Array-Element als lokale Variable deklariert wurde (dies trifft auch zu, wenn einer der Funktionsparameter übergeben wurde -- sogar wenn es ein <a href="#ByRef">ByRef</a>-Parameter ist -- weil Parameter immer lokal sind). Umgekehrt wird ein globales Array erzeugt, wenn das erste Element <a href="#Global">global deklariert</a> wurde. Beachten Sie, dass hierbei der unten erwähnte <i>Häufige Anlass zu Verwirrung</i> berücksichtigt werden muss. Das erste erzeugte Element von <a href="lib/StringSplit.htm">StringSplit</a> ist ArrayName0. Das erste erzeugte Element von anderen array-erstellenden Befehlen wie <a href="lib/WinGet.htm">WinGet List</a> ist ArrayName (also ohne Nummer). <span class="ver">[v1.1.27+]:</span> Wenn der <a href="#ForceLocal">Force-Local-Modus</a> aktiv ist, folgen diese Befehle den gleichen Regeln wie normale Variablenreferenzen; das heißt, dass jedes Pseudo-Array-Element, das nicht als global deklariert ist, lokal sein wird, auch wenn andere Elemente als global deklariert sind.</p>
-<p id="DynVar"><span id="Dynamic"></span>Innerhalb einer Funktion (sofern der <a href="#ForceLocal">Force-Local-Modus</a> nicht aktiv ist) wird jede dynamische Variablenreferenz wie <code>Array%i%</code> in eine lokale Variable aufgelöst, es sei denn, es existiert keine Variable mit diesem Namen, dann wird eine globale Variable verwendet, sofern vorhanden. Wenn weder eine lokale noch globale Variable vorhanden ist und die Nutzung erfordert, dass die Variable erstellt sein muss, wird sie als lokale Variable erstellt, solange der <a href="#AssumeGlobal">Assume-Global-Modus</a> nicht aktiv ist. Eine Funktion kann ein globales <a href="misc/Arrays.htm">Array</a> demzufolge nur erstellen (z. B. via <code>Array%i% := A_Index</code>), wenn der <a href="#AssumeGlobal">Assume-Global-Modus</a> aktiv ist.</p>
-<p id="ArrayConfusion"><strong>Häufiger Anlass zu Verwirrung</strong>: Jede <em>nicht</em>-dynamische Referenz zu einer Variable bewirkt, dass diese Variable beim Starten des Skripts erstellt wird. Außerhalb einer Funktion bewirkt eine Anweisung wie <code>MsgBox %Array1%</code> beispielsweise, dass eine globale Variable namens Array1 beim Starten des Skripts erstellt wird. Innerhalb einer Funktion bewirkt eine Anweisung wie <code>MsgBox %Array1%</code> hingegen, dass eine funktionsspezifische lokale Variable namens Array1 beim Starten des Skripts erstellt wird (solange der <a href="#AssumeGlobal">Assume-Global-Modus</a> nicht aktiv ist), auch dann, wenn Array und Array0 als global deklariert sind.</p>
+<p id="DeclareInit"><span class="ver">[v1.0.46+]</span>: Es ist möglich, eine lokale oder globale Variable bei ihrer Deklaration zu initialisieren. Fügen Sie einfach nach dem Variablennamen den Operator <code>:=</code> oder <code>=</code> an, gefolgt von einem beliebigen <a href="Variables.htm#Expressions">Ausdruck</a> (der <code>=</code>-Operator verhält sich in Deklarationen wie <code>:=</code>). Im Gegensatz zu <a href="#InitStatic">statischen Initialisierungen</a> werden lokale und globale Initialisierungen bei jedem Funktionsaufruf ausgeführt, sofern der Kontrollfluss sie tatsächlich erreicht. Mit anderen Worten, eine Zeile wie <code>local x := 0</code> hat den gleichen Effekt wie, als würde man zwei einzelne Zeilen schreiben: <code>local x</code>, gefolgt von <code>x := 0</code>.</p>
+<p>Da die Wörter <em>local</em>, <em>global</em> und <em>static</em> sofort beim Start des Skripts verarbeitet werden, kann eine Variable nicht bedingt unter Nutzung einer <a href="lib/IfExpression.htm">IF-Anweisung</a> deklariert werden. Mit anderen Worten, eine Deklaration innerhalb eines IF- oder ELSE-<a href="lib/Block.htm">Blocks</a> wirkt sich auf alle Zeilen zwischen der Deklaration und der geschweiften Endklammer der Funktion aus. Beachten Sie auch, dass es zur Zeit nicht möglich ist, eine dynamische Variable zu deklarieren, wie z.B. <code>global Array%i%</code>.</p>
+<p id="PseudoArrays">Bei Befehlen, die <a href="misc/Arrays.htm">Pseudo-Arrays</a> erzeugen (z.B. <a href="lib/StringSplit.htm">StringSplit</a>), ist jede Variable im resultierenden Pseudo-Array lokal, wenn der <a href="#AssumeGlobal">Assume-Global-Modus</a> nicht aktiv ist oder wenn das erste Pseudo-Array-Element als lokale Variable deklariert wurde (dies gilt auch, wenn einer der Funktionsparameter übergeben wurde - selbst wenn dieser Parameter <a href="#ByRef">ByRef</a> ist - da Parameter ähnlich wie lokale Variablen sind). Umgekehrt wird ein globales Array erzeugt, wenn das erste Element <a href="#Global">global deklariert</a> wurde. Beachten Sie, dass hierbei der unten erwähnte <i>Häufige Anlass zu Verwirrung</i> berücksichtigt werden muss. Das erste erzeugte Element von <a href="lib/StringSplit.htm">StringSplit</a> ist ArrayName0. Das erste erzeugte Element von anderen array-erstellenden Befehlen wie <a href="lib/WinGet.htm">WinGet List</a> ist ArrayName (also ohne Nummer). <span class="ver">[v1.1.27+]</span>: Wenn der <a href="#ForceLocal">Force-Local-Modus</a> aktiv ist, folgen diese Befehle den gleichen Regeln wie normale Variablenreferenzen, d.h. jedes Pseudo-Array-Element, das nicht als global deklariert ist, wird lokal sein, auch wenn andere Elemente als global deklariert sind.</p>
+<p id="DynVar"><span id="Dynamic"></span>Innerhalb einer Funktion (sofern der <a href="#ForceLocal">Force-Local-Modus</a> nicht aktiv ist) wird jede dynamische Variablenreferenz wie <code>Array%i%</code> in eine lokale Variable aufgelöst, es sei denn, es existiert keine Variable mit diesem Namen, dann wird eine globale Variable verwendet, sofern vorhanden. Wenn weder eine lokale noch globale Variable vorhanden ist und die Nutzung erfordert, dass die Variable erstellt sein muss, wird sie als lokale Variable erstellt, solange der <a href="#AssumeGlobal">Assume-Global-Modus</a> nicht aktiv ist. Eine Funktion kann also nur dann ein globales <a href="misc/Arrays.htm">Array</a> erstellen (z.B. via <code>Array%i% := A_Index</code>), wenn der <a href="#AssumeGlobal">Assume-Global-Modus</a> aktiv ist.</p>
+<p id="ArrayConfusion"><strong>Häufiger Anlass zu Verwirrung:</strong> Jede <em>nicht</em>-dynamische Referenz zu einer Variable bewirkt, dass diese Variable beim Start des Skripts erstellt wird. Außerhalb einer Funktion bewirkt bspw. eine Anweisung wie <code>MsgBox %Array1%</code>, dass beim Start des Skripts eine globale Variable namens Array1 erstellt wird. Innerhalb einer Funktion hingegen bewirkt eine Anweisung wie <code>MsgBox %Array1%</code>, dass beim Start des Skripts eine funktionsspezifische lokale Variable mit dem Namen Array1 erstellt wird (sofern der <a href="#AssumeGlobal">Assume-Global-Modus</a> nicht aktiv ist), auch dann, wenn Array und Array0 als global deklariert sind.</p>
 <h2 id="DynCall">Funktionen dynamisch aufrufen</h2>
-<p><span class="ver">[v1.0.47.06+]</span>: Eine Funktion (auch eine <a href="#BuiltIn">interne Funktion</a>) kann dynamisch via Prozentzeichen aufgerufen werden. <code>%Var%(x, "Fuchs")</code> beispielsweise wird aufgerufen, wenn <em>Var</em> den Namen einer gültigen Funktion enthält. <code>Funk%A_Index%()</code> kann hingegen Funk1(), Funk2() und so weiter aufrufen, je nachdem, welcher Wert in A_Index aktuell enthalten ist.</p>
+<p><span class="ver">[v1.0.47.06+]</span>: Eine Funktion (auch eine <a href="#BuiltIn">interne Funktion</a>) kann dynamisch via Prozentzeichen aufgerufen werden. Zum Beispiel würde <code>%Var%(x, "Fuchs")</code> die Funktion aufrufen, deren Name in <em>Var</em> enthalten ist. <code>Funk%A_Index%()</code> wiederum würde Funk1(), Funk2() usw. aufrufen, je nachdem, welcher Wert gerade in A_Index enthalten ist.</p>
 <p><span class="ver">[v1.1.07.00+]</span>: <em>Var</em> in <code>%Var%()</code> kann einen Funktionsnamen oder ein <a href="misc/Functor.htm">Funktionsobjekt</a> enthalten. Falls die Funktion nicht existiert, wird stattdessen die __Call-Metafunktion des <a href="Objects.htm#Default_Base_Object">Standardbasisobjekts</a> aufgerufen.</p>
-<p>Wenn die Funktion aus einem der folgenden Gründe nicht aufgerufen werden kann, stoppt die Auswertung des Ausdrucks, der den Aufruf enthält, vorzeitig ohne Fehlermeldung, was zu inkonsistenten Ergebnissen führen kann:</p>
+<p>Wenn die Funktion aus einem der folgenden Gründe nicht aufgerufen werden kann, wird die Auswertung des Ausdrucks, der den Aufruf enthält, ohne Fehlermeldung vorzeitig gestoppt, was zu inkonsistenten Ergebnissen führen kann:</p>
 <ul>
-  <li>Es wurde eine nicht-existierende Funktion aufgerufen. Um das zu verhindern, verwenden Sie <code>if <a href="#IsFunc">IsFunc</a>(VarMitFunkName)</code>. Die <a href="#define">Definition</a> der aufgerufenen Funktion (außer <a href="#BuiltIn">interne Funktionen</a>) muss explizit im Skript angegeben sein (zum Beispiel über <a href="lib/_Include.htm">#Include</a> oder einem nicht-dynamischen Aufruf einer <a href="#lib">Bibliotheksfunktion</a>).</li>
-  <li>Es wurden zu wenig Parameter übergeben. Um das zu verhindern, prüfen Sie den Rückgabewert von <a href="#IsFunc">IsFunc()</a> (das ist die Anzahl der Pflichtparameter plus 1). <span class="ver">[v1.0.48+]</span>: Zu viel übergebene Parameter werden toleriert; jeder zusätzliche Parameter wird vollständig ausgewertet (einschließlich aller Funktionsaufrufe) und dann verworfen.</li>
+  <li>Es wurde eine nicht-existierende Funktion aufgerufen, was mit <code>if <a href="#IsFunc">IsFunc</a>(VarMitFunkName)</code> verhindert werden kann. Mit Ausnahme von <a href="#BuiltIn">internen Funktionen</a> muss die <a href="#define">Definition</a> der aufgerufenen Funktion explizit im Skript vorhanden sein, z.B. mittels <a href="lib/_Include.htm">#Include</a> oder einem nicht-dynamischen Aufruf einer <a href="#lib">Bibliotheksfunktion</a>.</li>
+  <li>Es wurden zu wenig Parameter übergeben, was durch Überprüfung des Rückgabewerts von <a href="#IsFunc">IsFunc()</a> (also die Anzahl der Pflichtparameter plus 1) verhindert werden kann. <span class="ver">[v1.0.48+]</span>: Die Übergabe von zu vielen Parametern wird toleriert; jeder zusätzliche Parameter wird vollständig ausgewertet (einschließlich aller Funktionsaufrufe) und dann verworfen.</li>
 </ul>
-<p>Beachten Sie, dass ein dynamischer Aufruf etwas langsamer ist als ein normaler Aufruf, weil normale Aufrufe aufgelöst (nachgeschlagen) werden, bevor das Skript seine Ausführung beginnt.</p>
+<p>Beachten Sie, dass ein dynamischer Aufruf etwas langsamer ist als ein normaler Aufruf, weil normale Aufrufe aufgelöst (nachgeschlagen) werden, bevor das Skript mit der Ausführung beginnt.</p>
 <h2 id="ShortCircuit">Boolesche Kurzschlussauswertung</h2>
-<p><em>AND, OR</em> und der <a href="Variables.htm#ternary">ternäre Operator</a> innerhalb eines <a href="Variables.htm#Expressions">Ausdrucks</a> reduzieren die Auswertung auf ein Minimum, um die Leistung zu erhöhen (egal ob Funktionsaufrufe vorhanden sind oder nicht). Beim Kurzschließen werden nur Bereiche des Ausdrucks ausgewertet, die Einfluss auf das Endergebnis haben. Im folgenden Beispiel wird gezeigt, wie genau das abläuft:</p>
+<p><em>AND, OR</em> und der <a href="Variables.htm#ternary">ternäre Operator</a> innerhalb eines <a href="Variables.htm#Expressions">Ausdrucks</a> reduzieren die Auswertung auf ein Minimum, um die Performanz zu erhöhen (egal ob Funktionsaufrufe vorhanden sind oder nicht). Beim Kurzschließen werden nur Bereiche des Ausdrucks ausgewertet, die Einfluss auf das Endergebnis haben. Das folgende Beispiel zeigt, wie das genau funktioniert:</p>
 <pre>if (FarbeName != "" AND not FindeFarbe(FarbeName))
     MsgBox %FarbeName% konnte nicht gefunden werden.</pre>
-<p>Wenn die <em>FarbeName</em>-Variable leer sein sollte, wird die FindeFarbe()-Funktion nie aufgerufen, weil die linke Seite von <em>AND</em> als <em>falsch</em> gewertet wird, wodurch die rechte Seite nicht mehr in der Lage wäre, das Endergebnis auf <em>wahr</em> zu bringen.</p>
-<p>Dieses Verhalten führt dazu, dass die Nebeneffekte einer Funktion (wie das Ändern des Inhalts einer globalen Variable) nie auftreten werden, wenn diese Funktion auf der rechten Seite von <em>AND</em> oder <em>OR</em> aufgerufen wird.</p>
-<p>Beachten Sie außerdem, dass die Kurzschlussauswertung verschachtelte <em>AND</em>s und <em>OR</em>s stufenweise abarbeitet. Wenn <em>FarbeName</em> z. B. im folgenden Ausdruck leer ist, wird nur der Vergleich ganz links durchgeführt, weil die linke Seite dann ausreichen würde, um das Endergebnis zweifelsfrei zu bestimmen:</p>
+<p>Im Beispiel oben wird die FindeFarbe()-Funktion nie aufgerufen, wenn die <em>FarbeName</em>-Variable leer ist, weil die linke Seite von <em>AND</em> als <em>falsch</em> gewertet wird, wodurch die rechte Seite nicht mehr in der Lage wäre, das Endergebnis auf <em>wahr</em> zu bringen.</p>
+<p>Dieses Verhalten führt dazu, dass die Nebeneffekte einer Funktion (wie z.B. die Änderung des Inhalts einer globalen Variable) nie auftreten werden, wenn diese Funktion auf der rechten Seite von <em>AND</em> oder <em>OR</em> aufgerufen wird.</p>
+<p>Beachten Sie auch, dass die Kurzschlussauswertung verschachtelte <em>AND</em>s und <em>OR</em>s stufenweise abarbeitet. Wenn z.B. <em>FarbeName</em> im folgenden Ausdruck leer ist, wird nur der Vergleich ganz links durchgeführt, weil die linke Seite dann ausreichen würde, um das Endergebnis zweifelsfrei zu bestimmen:</p>
 <pre>if (FarbeName = "" <u>OR</u> FindeFarbe(FarbeName, Region1) <u>OR</u> FindeFarbe(FarbeName, Region2))
-    break   <em>; Nichts zu durchsuchen oder Übereinstimmung gefunden.</em></pre>
-<p>Wie die Beispiele oben zeigen, sollten umfangreiche (zeitaufwendige) Funktionen in der Regel auf der rechten Seite von <em>AND</em> oder <em>OR</em> aufgerufen werden, um die Leistung zu erhöhen. Diese Technik kann auch genutzt werden, um das Aufrufen einer Funktion zu verhindern, wenn ihr ein Wert übergeben wurde, den sie für unpassend hält (z. B. eine leere Zeichenkette).</p>
+    break   <em>; Nichts zu suchen oder Übereinstimmung gefunden.</em></pre>
+<p>Wie die Beispiele oben zeigen, sollten umfangreiche (zeitaufwendige) Funktionen in der Regel auf der rechten Seite von <em>AND</em> oder <em>OR</em> aufgerufen werden, um die Performanz zu erhöhen. Diese Technik kann auch genutzt werden, um den Aufruf einer Funktion zu verhindern, wenn ihr ein Wert übergeben wurde, den sie für unpassend hält (z.B. eine leere Zeichenkette).</p>
 <p><span class="ver">[v1.0.46+]</span>: Der <a href="Variables.htm#ternary">ternäre Bedingungsoperator (?:)</a> wendet auch die Kurzschlussauswertung an, indem er nur die gewinnende Abzweigung auswertet.</p>
-<h2 id="gosub">Subroutinen in einer Funktion nutzen</h2>
-<p>Eine Funktion kann Subroutinen, aber keine <a href="#define">Definitionen</a> von anderen Funktionen enthalten. Sie können wie alle Subroutinen via <a href="lib/Gosub.htm">GoSub</a> gestartet und via <a href="lib/Return.htm">Return</a> beendet werden (in diesem Fall gilt das Return nicht für die Funktion, sondern für das GoSub).</p>
-<p>Bekannte Einschränkung: Momentan darf der Name jeder Subroutine (Label) nur einmal im ganzen Skript vorkommen. Das Programm wird Sie benachrichtigen, wenn ein Label doppelt vorhanden ist.</p>
-<p id="GosubPublic">Wenn eine Funktion <a href="lib/Gosub.htm">GoSub</a> verwendet, um zu einer öffentlichen Subroutine zu springen (also eine, die außerhalb der geschweiften Funktionsklammern zu finden ist), sind alle externen Variablen global und die <a href="#Local">lokalen Variablen</a> der Funktion erst wieder zugänglich, wenn die Subroutine ihr Ende erreicht hat. Allerdings wird A_ThisFunc weiterhin den Namen der Funktion enthalten.</p>
+<h2 id="gosub">Subroutinen innerhalb von Funktionen</h2>
+<p>Eine Funktion kann Subroutinen enthalten, aber keine <a href="#define">Definitionen</a> anderer Funktionen. Sie können wie alle Subroutinen via <a href="lib/Gosub.htm">GoSub</a> gestartet und via <a href="lib/Return.htm">Return</a> beendet werden (in diesem Fall gilt das Return nicht für die Funktion, sondern für das GoSub).</p>
+<p>Bekannte Einschränkung: Momentan darf der Name jeder Subroutine (Label) nur einmal im gesamten Skript vorkommen. Das Programm wird Sie darauf hinweisen, wenn ein Label doppelt vorhanden ist.</p>
+<p id="GosubPublic">Wenn eine Funktion <a href="lib/Gosub.htm">GoSub</a> verwendet, um zu einer öffentlichen Subroutine zu springen (also zu einer, die sich außerhalb der geschweiften Klammern der Funktion befindet), sind alle externen Variablen global und die <a href="#Local">lokalen Variablen</a> der Funktion erst wieder zugänglich, wenn die Subroutine ihr Ende erreicht hat. Allerdings wird A_ThisFunc weiterhin den Namen der Funktion enthalten.</p>
 <p>Ein <a href="lib/Goto.htm">Goto</a> kann nicht verwendet werden, um innerhalb einer Funktion zu einer externen Subroutine zu springen, allerdings kann eine Funktion via <a href="lib/Gosub.htm">Gosub</a> zu einer externen Subroutine springen und von dort aus ein Goto durchführen.</p>
-<p>Ein <a href="lib/Goto.htm">Goto</a> ist trotz seines schlechten Rufes zum Beispiel nützlich, um innerhalb einer Funktion auf eine andere Position zu springen. Dies kann dazu beitragen, komplexe Funktionen zu vereinfachen, die mehrere Returns haben und vor einem Return aufgeräumt werden müssen.</p>
-<p>Eine Funktion kann Subroutinen enthalten, die extern aufgerufen werden, wie z. B. <a href="lib/SetTimer.htm">Timer</a>, <a href="lib/Gui.htm#label">g-Labels</a> und <a href="lib/Menu.htm">Menüpunkte</a>. Dies ist eine übliche Vorgehensweise, um die Subroutinen in einer separaten Datei für <a href="lib/_Include.htm">#Include</a> zusammenzufassen. Dadurch wird verhindert, dass der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> des Skripts gestört wird. Allerdings gelten folgende Einschränkungen:</p>
+<p>Trotz seines schlechten Rufs ist ein <a href="lib/Goto.htm">Goto</a> nützlich, um z.B. innerhalb einer Funktion auf eine andere Position zu springen. Dies kann zur Vereinfachung komplexer Funktionen beitragen, die mehrere Returns haben und vor einem Return aufgeräumt werden müssen.</p>
+<p>Eine Funktion kann Subroutinen enthalten, die extern aufgerufen werden, wie z.B. <a href="lib/SetTimer.htm">Timer</a>, <a href="lib/Gui.htm#label">g-Labels</a> und <a href="lib/Menu.htm">Menüpunkte</a>. Das wird in der Regel getan, um sie gesondert in einer separaten Datei unterzubringen, für die Verwendung mit <a href="lib/_Include.htm">#Include</a>. Auf diese Weise kann verhindert werden, dass sie den <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a> des Skripts stören. Allerdings gelten folgende Einschränkungen:</p>
 <ul>
-  <li>Solche Subroutinen sollten nur <a href="#static">statische</a> und <a href="#Global">globale</a> Variablen verwenden (keine <a href="#Local">lokalen</a> Variablen), wenn ihre Funktion jemals normal aufgerufen wird. Sonst könnte ein Subroutinen-<a href="misc/Threads.htm">Thread</a>, der den Thread eines Funktionsaufrufs unterbricht (oder umgekehrt), die lokalen Variablen des unterbrochenen Threads ändern. Jedes Mal, wenn eine Funktion ihr Ende erreicht hat, werden alle lokalen Variablen leer gemacht, um ihren Speicher freizugeben.</li>
+  <li>Solche Subroutinen sollten nur <a href="#static">statische</a> und <a href="#Global">globale</a> Variablen verwenden (keine <a href="#Local">lokalen</a> Variablen), wenn ihre Funktion jemals normal aufgerufen wird. Andernfalls könnte ein Subroutinen-<a href="misc/Threads.htm">Thread</a>, der den Thread eines Funktionsaufrufs unterbricht (oder umgekehrt), die Werte lokaler Variablen ändern, die der unterbrochene Thread sieht. Jedes Mal, wenn eine Funktion ihr Ende erreicht hat, werden alle lokalen Variablen leer gemacht, um ihren Speicher freizugeben.</li>
   <li>Solche Subroutinen sollten nur <a href="#Global">globale Variablen</a> (keine <a href="#static">statischen Variablen</a>) als <a href="lib/Gui.htm#var">GUI-Steuerelement-Variablen</a> verwenden.</li>
-  <li>Wenn ein Subroutinen-<a href="misc/Threads.htm">Thread</a> in eine Funktion eindringt, werden alle mit diesem Thread erstellte Referenzen zu <a href="misc/Arrays.htm">dynamischen Variablen</a> als <a href="#Global">globale Variablen</a> behandelt (einschließlich Befehle, die Arrays erzeugen).</li>
+  <li>Wenn eine Funktion von einem Subroutinen-<a href="misc/Threads.htm">Thread</a> betreten wird, werden jegliche Referenzen zu <a href="misc/Arrays.htm">dynamischen Variablen</a>, die von diesem Thread erstellt wurden, als <a href="#Global">globale Variablen</a> behandelt (einschließlich Befehle, die Arrays erzeugen).</li>
 </ul>
 <h2 id="remarks">Return, Exit und allgemeine Bemerkungen</h2>
-<p>Wenn der Ausführungsablauf die geschweifte Endklammer der Funktion vor einem <a href="lib/Return.htm">Return</a> erreicht hat, endet die Funktion und gibt eine leere Zeichenkette zurück. Es wird auch ein leerer Wert zurückgegeben, wenn die Funktion den Parameter von <a href="lib/Return.htm">Return</a> explizit weglässt.</p>
-<p>Wenn eine Funktion den <a href="lib/Exit.htm">Exit</a>-Befehl zum Terminieren des <a href="misc/Threads.htm">aktuellen Threads</a> verwendet, erhält ihr Aufrufer überhaupt keinen Rückgabewert. Das <code>Var</code> in <code>Var := Addieren(2, 3)</code> bliebe beispielsweise unverändert, wenn <code>Addieren()</code> via Exit beendet wird. Das gleiche passiert, wenn die Funktion einen Laufzeitfehler verursacht, wie z. B. das <a href="lib/Run.htm">Ausführen</a> einer nicht-existierenden Datei (nur wenn <a href="lib/Run.htm#UseErrorLevel">UseErrorLevel</a> nicht aktiv ist).</p>
-<p>Eine Funktion kann den Wert von <a href="misc/ErrorLevel.htm">ErrorLevel</a> verändern, um einen leicht zu merkenden zusätzlichen Wert zurückzugeben.</p>
+<p>Wenn die Ausführung die geschweifte Endklammer der Funktion vor einem <a href="lib/Return.htm">Return</a> erreicht, endet die Funktion und gibt einen leeren Wert (eine leere Zeichenkette) zurück. Ein leerer Wert wird auch zurückgegeben, wenn die Funktion den Parameter von <a href="lib/Return.htm">Return</a> explizit weglässt.</p>
+<p>Wenn eine Funktion den <a href="lib/Exit.htm">Exit</a>-Befehl zum Terminieren des <a href="misc/Threads.htm">aktuellen Threads</a> verwendet, erhält ihr Aufrufer überhaupt keinen Rückgabewert. Das <code>Var</code> in <code>Var := Addieren(2, 3)</code> bliebe beispielsweise unverändert, wenn <code>Addieren()</code> via Exit beendet wird. Das gleiche passiert, wenn die Funktion einen Laufzeitfehler verursacht, wie z.B. das <a href="lib/Run.htm">Ausführen</a> einer nicht-existierenden Datei (nur wenn <a href="lib/Run.htm#UseErrorLevel">UseErrorLevel</a> nicht aktiv ist).</p>
+<p>Eine Funktion kann den Wert von <a href="misc/ErrorLevel.htm">ErrorLevel</a> ändern, um einen zusätzlichen Wert zurückzugeben, der leicht zu merken ist.</p>
 <p>Um eine Funktion mit einem oder mehreren leeren Werten (leeren Zeichenketten) aufzurufen, verwenden Sie zwei aufeinanderfolgende Anführungszeichen. Zum Beispiel: <code>FindeFarbe(FarbeName, "")</code>.</p>
-<p>Da das Aufrufen einer Funktion keinen neuen <a href="misc/Threads.htm">Thread</a> startet, werden Änderungen an Einstellungen wie <a href="lib/SendMode.htm">SendMode</a> und <a href="lib/SetTitleMatchMode.htm">SetTitleMatchMode</a> auch für den Aufrufer wirksam.</p>
-<p>Der Aufrufer kann nicht-existierende Variablen oder <a href="misc/Arrays.htm">Array</a>-Elemente an eine Funktion übergeben. Dies ist nützlich, wenn die Funktion den entsprechenden Parameter als <a href="#ByRef">ByRef</a> erwartet. Ruft man beispielsweise <code>ErmittleNächsteZeile(LeeresArray%i%)</code> auf, wird die Variable <code>LeeresArray%i%</code> automatisch als <a href="#Local">lokale</a> oder globale Variable erstellt (abhängig davon, ob der Aufrufer sich in einer Funktion befindet und ob der <a href="#AssumeGlobal">Assume-Global-Modus</a> wirksam ist).</p>
-<p><a href="lib/ListVars.htm">ListVars</a> kann, wenn es in einer Funktion verwendet wird, die Namen und Inhalte von <a href="#Local">lokalen Variablen</a> anzeigen. Solche Informationen können helfen, ein Skript zu debuggen (Fehler zu finden und zu beseitigen).</p>
+<p>Da der Aufruf einer Funktion keinen neuen <a href="misc/Threads.htm">Thread</a> startet, wirken sich Änderungen an Einstellungen wie <a href="lib/SendMode.htm">SendMode</a> und <a href="lib/SetTitleMatchMode.htm">SetTitleMatchMode</a> auch auf den Aufrufer aus.</p>
+<p>Der Aufrufer einer Funktion kann ihr eine nicht-existierende Variable oder einen nicht-existierenden <a href="misc/Arrays.htm">Array</a>-Element übergeben, was nützlich ist, wenn die Funktion erwartet, dass der entsprechende Parameter <a href="#ByRef">ByRef</a> ist. Zum Beispiel würde der Aufruf von <code>ErmittleNächsteZeile(LeeresArray%i%)</code> automatisch die Variable <code>LeeresArray%i%</code> als <a href="#Local">lokale</a> oder globale Variable erstellen (abhängig davon, ob sich der Aufrufer in einer Funktion befindet und ob der <a href="#AssumeGlobal">Assume-Global-Modus</a> aktiv ist).</p>
+<p><a href="lib/ListVars.htm">ListVars</a> kann, wenn es in einer Funktion verwendet wird, die Namen und Inhalte von <a href="#Local">lokalen Variablen</a> anzeigen. Dies kann helfen, <a href="Scripts.htm#debug">ein Skript zu debuggen</a>.</p>
 <h2 id="Style_and_Naming_Conventions">Stil- und Namenskonventionen</h2>
-<p>Bei komplexen Funktionen kann es hilfreich sein, die speziellen Variablen mit eindeutigen Präfixen zu versehen, um die Übersichtlichkeit und Wartbarkeit des Skripts zu erhöhen. Die Namen der Parameter einer Funktion können beispielsweise mit "p" oder "p_" beginnen, damit die Parameter auf den ersten Blick leicht zu erkennen sind, besonders um die Übersicht zu bewahren, wenn eine Funktion mehrere Dutzend <a href="#Local">lokale Variablen</a> enthält. Ebenso kann das Präfix "r" oder "r_" für <a href="#ByRef">ByRef-Parameter</a> und "s" oder "s_" für <a href="#static">statische Variablen</a> verwendet werden.</p>
-<p>Der <a href="lib/Block.htm#otb">One True Brace Style</a> (OTB) kann je nach Bedarf angewendet werden, um Funktionen zu definieren. Zum Beispiel:</p>
+<p>Bei komplexen Funktionen kann es hilfreich sein, spezielle Variablen mit eindeutigen Präfixen zu versehen, um die Übersichtlichkeit und Wartbarkeit des Skripts zu verbessern. Zum Beispiel können die Namen der Parameter einer Funktion mit "p" oder "p_" beginnen, damit die Parameter auf den ersten Blick leichter zu erkennen sind, insbesondere dann, wenn eine Funktion mehrere Dutzend <a href="#Local">lokale Variablen</a> enthält. Ebenso kann das Präfix "r" oder "r_" für <a href="#ByRef">ByRef-Parameter</a> und "s" oder "s_" für <a href="#static">statische Variablen</a> verwendet werden.</p>
+<p>Je nach Bedarf kann der <a href="lib/Block.htm#otb">One True Brace (OTB) Style</a> zum Definieren von Funktionen verwendet werden. Zum Beispiel:</p>
 <pre>Addieren(x, y) {
     return x + y
 }</pre>
-<h2 id="include">Skripte mittels #Include auf die gleichen Funktionen zugreifen lassen</h2>
+<h2 id="include">Skripte mittels #Include auf dieselben Funktionen zugreifen lassen</h2>
 <p>Die <a href="lib/_Include.htm">#Include</a>-Direktive kann verwendet werden (<em>auch am Anfang eines Skripts</em>), um Funktionen aus einer externen Datei zu laden.</p>
-<p>Erklärung: Wenn der Ausführungsablauf des Skripts eine Funktionsdefinition erreicht, wird sie übersprungen (dies passiert sofort) und die Ausführung bei der Zeile nach der geschweiften Endklammer fortgesetzt. Die Ausführung kann demzufolge nie in eine Funktionsdefinition geraten. Außerdem haben eine oder mehrere Funktionsdefinitionen ganz oben in einem Skript keinen Einfluss auf den <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a>.</p>
+<p>Erklärung: Wenn die Ausführung des Skripts eine Funktionsdefinition erreicht, wird diese übersprungen (was sofort passiert) und die Ausführung bei der Zeile nach der geschweiften Endklammer fortgesetzt. Folglich kann die Ausführung nie in eine Funktionsdefinition geraten. Außerdem haben eine oder mehrere Funktionsdefinitionen am Anfang eines Skripts keinen Einfluss auf den <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a>.</p>
 <h2 id="lib">Funktionsbibliotheken: Standard- und Benutzerbibliothek <span class="ver">[v1.0.47+]</span></h2>
-<p>Ein Skript kann eine Funktion in einer externen Datei aufrufen, ohne <a href="lib/_Include.htm">#Include</a> verwenden zu müssen. Damit dies funktioniert, muss eine Datei, die den gleichen Namen hat wie die Funktion, in einem der folgenden Bibliotheksverzeichnisse vorkommen:</p>
+<p>Ein Skript kann eine Funktion in einer externen Datei aufrufen, ohne <a href="lib/_Include.htm">#Include</a> verwenden zu müssen. Damit dies funktioniert, muss eine Datei mit dem gleichen Namen wie die Funktion in einem der folgenden Bibliotheksverzeichnisse vorhanden sein:</p>
 <pre><a href="Variables.htm#ScriptDir">%A_ScriptDir%</a>\Lib\  <em>; Lokale Bibliothek - benötigt <span class="ver">[AHK_L 42+]</span>.</em>
 <a href="Variables.htm#MyDocuments">%A_MyDocuments%</a>\AutoHotkey\Lib\  <em>; Benutzerbibliothek.</em>
 Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.</em></pre>
-<p>Wenn ein Skript beispielsweise die nicht-existierende Funktion <code>MeineFunk()</code> aufruft, durchsucht das Programm die Benutzerbibliothek nach einer Datei namens "MeineFunk.ahk". Wenn sie dort nicht ist, wird die Standardbibliothek durchsucht. Wenn sie dort auch nicht gefunden wurde und enthält der Funktionsname einen Unterstrich (z. B. <code>MeinPräfix_MeineFunk</code>), durchsucht das Programm beide Bibliotheken nach einer Datei namens <code>MeinPräfix.ahk</code> und lädt sie, falls sie existiert. Wenn <code>MeinPräfix.ahk</code> geladen wurde, sind sowohl die Funktion <code>MeinPräfix_MeineFunk</code> als auch andere verwandte Funktionen, deren Namen mit <code>MeinPräfix_</code> beginnen, zugänglich.</p>
-<p><span class="ver">[AHK_L 42+]:</span> Die lokale Bibliothek wurde implementiert. Sie wird zuerst durchsucht, um eine Funktion zu finden.</p>
-<p>Nur ein direkter Funktionsaufruf wie <code>MeineFunk()</code> bewirkt, dass eine Bibliothek automatisch eingebunden wird. Wenn die Funktion nur dynamisch oder indirekt aufgerufen wird, z. B. via Timer oder GUI-Ereignis, muss die Bibliothek explizit in das Skript eingebunden werden. Zum Beispiel: <code><a href="lib/_Include.htm">#Include</a> &lt;MeineFunk&gt;</code></p>
-<p>Obwohl eine Bibliotheksdatei in der Regel nur eine einzelne Funktion mit demselben Namen wie die Datei enthält, kann sie auch private Funktionen und Subroutinen enthalten, die nur von ihr aufgerufen werden. Allerdings sollten solche Funktionen eindeutige Namen haben, weil sie im globalen Namensraum sind; das heißt, dass sie von überall im Skript aufgerufen werden können.</p>
-<p>Wenn eine Bibliotheksdatei <a href="lib/_Include.htm">#Include</a> ausführt, verwendet #Include als Arbeitsverzeichnis das Verzeichnis der Bibliotheksdatei. Dies kann genutzt werden, um eine Weiterleitung zu einer größeren Bibliotheksdatei zu erschaffen, die diese Funktion und andere damit verbundene Funktionen enthält.</p>
-<p>Der <a href="Scripts.htm#ahk2exe">Skript-Compiler (ahk2exe)</a> unterstützt auch Bibliotheksfunktionen. Der Compiler setzt aber voraus, dass eine Kopie von AutoHotkey.exe im übergeordneten Verzeichnis des Compiler-Verzeichnisses vorhanden ist (was normalerweise der Fall ist). Wenn der Compiler dort keine AutoHotkey.exe findet, funktioniert er immer noch, aber die Bibliotheksfunktionen werden nicht mehr automatisch eingebunden.</p>
-<p>Funktionen, die aus einer Bibliothek eingebunden werden, sind genauso leistungsfähig wie normale Funktionen, weil sie geladen werden, bevor das Skript seine Ausführung beginnt.</p>
+<p>Wenn ein Skript beispielsweise die nicht-existierende Funktion <code>MeineFunk()</code> aufruft, sucht das Programm in der Benutzerbibliothek nach einer Datei mit dem Namen "MeineFunk.ahk". Wenn sie dort nicht ist, wird die Standardbibliothek durchsucht. Wenn sie auch dort nicht gefunden wird und enthält der Funktionsname einen Unterstrich (z.B. <code>MeinPräfix_MeineFunk</code>), sucht das Programm in beiden Bibliotheken nach einer Datei mit dem Namen <code>MeinPräfix.ahk</code> und lädt diese, falls vorhanden. Dadurch kann <code>MeinPräfix.ahk</code> sowohl die Funktion <code>MeinPräfix_MeineFunk</code> als auch andere verwandte Funktionen enthalten, deren Namen mit <code>MeinPräfix_</code> beginnen.</p>
+<p><span class="ver">[AHK_L 42+]</span>: Unterstützung für die lokale Bibliothek hinzugefügt, die vor der Benutzer- und Standardbibliothek durchsucht wird.</p>
+<p>Nur ein direkter Funktionsaufruf wie <code>MeineFunk()</code> bewirkt, dass eine Bibliothek automatisch inkludiert wird. Wenn die Funktion nur dynamisch oder indirekt aufgerufen wird, z.B. via Timer oder GUI-Ereignis, muss die Bibliothek explizit in das Skript inkludiert werden. Zum Beispiel: <code><a href="lib/_Include.htm">#Include</a> &lt;MeineFunk&gt;</code></p>
+<p>Obwohl eine Bibliotheksdatei in der Regel nur eine einzelne Funktion mit demselben Namen wie die Datei enthält, kann sie auch private Funktionen und Subroutinen enthalten, die nur von ihr aufgerufen werden. Allerdings sollten solche Funktionen eindeutige Namen haben, da sie sich im globalen Namensraum befinden, d.h. sie können von überall im Skript aufgerufen werden.</p>
+<p>Wenn eine Bibliotheksdatei <a href="lib/_Include.htm">#Include</a> verwendet, ist das Arbeitsverzeichnis für #Include das Verzeichnis der Bibliotheksdatei. Dies kann genutzt werden, um eine Weiterleitung zu einer größeren Bibliotheksdatei zu schaffen, die diese Funktion und andere verwandte Funktionen enthält.</p>
+<p>Der <a href="Scripts.htm#ahk2exe">Skript-Compiler (ahk2exe)</a> unterstützt ebenfalls Bibliotheksfunktionen. Der Compiler setzt aber voraus, dass eine Kopie von AutoHotkey.exe im übergeordneten Verzeichnis des Compiler-Verzeichnisses vorhanden ist (was normalerweise der Fall ist). Wenn der Compiler dort keine AutoHotkey.exe findet, funktioniert er zwar trotzdem, aber die Bibliotheksfunktionen werden nicht mehr automatisch inkludiert.</p>
+<p>Funktionen, die aus einer Bibliothek inkludiert werden, sind genauso performant wie normale Funktionen, weil sie geladen werden, bevor das Skript mit der Ausführung beginnt.</p>
 <h2 id="BuiltIn">Interne Funktionen</h2>
-<p>Alle optionalen Parameter am Ende der Parameterliste einer internen Funktion können komplett weggelassen werden. <code>WinExist("Unbenannt - Editor")</code> ist zum Beispiel gültig, weil die anderen drei Parameter als leere Werte behandelt werden.</p>
-<p>Eine interne Funktion gilt als überschrieben, wenn im Skript eine Funktion mit demselben Namen definiert ist. Zum Beispiel könnte man anstelle der normalen WinExist()-Funktion eine selbstdefinierte Funktion verwenden. Allerdings kann danach die originale Funktion nicht mehr aufgerufen werden.</p>
+<p>Alle optionalen Parameter am Ende der Parameterliste einer internen Funktion können komplett weggelassen werden. Zum Beispiel ist <code>WinExist("Unbenannt - Editor")</code> gültig, weil die anderen drei Parameter als leere Werte behandelt werden.</p>
+<p>Eine interne Funktion gilt als überschrieben, wenn im Skript eine Funktion gleichen Namens definiert ist. Zum Beispiel könnte man anstelle der normalen WinExist()-Funktion eine selbstdefinierte Funktion verwenden. Allerdings kann danach die originale Funktion nicht mehr aufgerufen werden.</p>
 <p>Externe Funktionen, die sich in DLL-Dateien befinden, können via <a href="lib/DllCall.htm">DllCall()</a> aufgerufen werden.</p>
-<p>Um weitere Informationen über eine bestimmte interne Funktion zu erfahren, klicken Sie einfach auf den entsprechenden Namen.</p>
+<p>Um mehr über eine bestimmte interne Funktion zu erfahren, klicken Sie einfach auf den entsprechenden Namen.</p>
 <h3 id="Frequently-used_Functions">Häufig verwendete Funktionen</h3>
 <table class="info">
   <tr>
@@ -323,11 +323,11 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="FileExist">
     <td><a href="lib/FileExist.htm">FileExist</a></td>
-    <td>Überprüft, ob eine Datei oder ein Ordner vorhanden ist, und gibt ihre/seine Attribute zurück.</td>
+    <td>Prüft, ob eine Datei oder ein Ordner existiert, und gibt ihre/seine Attribute zurück.</td>
   </tr>
   <tr id="GetKeyState">
     <td><a href="lib/GetKeyState.htm#function">GetKeyState</a></td>
-    <td>Gibt True (1) zurück, wenn eine bestimmte Taste unten ist, und False (0), wenn sie oben ist.</td>
+    <td>Gibt 1 (true) oder 0 (false) zurück, je nachdem, ob die angegebene Tastatur-, Maus- oder Controller-Taste unten oder oben ist.</td>
   </tr>
   <tr id="InStr">
     <td><a href="lib/InStr.htm">InStr</a></td>
@@ -335,35 +335,35 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="RegExMatch">
     <td><a href="lib/RegExMatch.htm">RegExMatch</a></td>
-    <td>Überprüft, ob ein Suchmuster (regulärer Ausdruck) in einer Zeichenkette vorkommt.</td>
+    <td>Prüft, ob ein Suchmuster (regulärer Ausdruck) in einer Zeichenkette vorkommt.</td>
   </tr>
   <tr id="RegExReplace">
     <td><a href="lib/RegExReplace.htm">RegExReplace</a></td>
-    <td>Ersetzt ein oder mehr Vorkommen eines Suchmusters (regulärer Ausdruck) innerhalb einer Zeichenkette.</td>
+    <td>Ersetzt ein oder mehrere Vorkommen eines Suchmusters (regulären Ausdrucks) in einer Zeichenkette.</td>
   </tr>
   <tr id="StrLen">
     <td><a href="lib/StrLen.htm">StrLen</a></td>
-    <td>Ermittelt die Anzahl der Zeichen, die in einer Zeichenkette enthalten sind.</td>
+    <td>Ruft die Anzahl von Zeichen ab, die in einer Zeichenkette enthalten sind.</td>
   </tr>
   <tr id="StrReplace">
     <td><a href="lib/StrReplace.htm">StrReplace</a></td>
-    <td>Ersetzt Vorkommen einer bestimmten Teilzeichenkette mit einer neuen Zeichenkette.</td>
+    <td>Ersetzt eine bestimmte Teilzeichenkette mit einer neuen Zeichenkette.</td>
   </tr>
   <tr id="StrSplit">
     <td><a href="lib/StrSplit.htm">StrSplit</a></td>
-    <td>Teilt anhand bestimmter Trennzeichen eine Zeichenkette in mehrere Teilzeichenketten auf.</td>
+    <td>Teilt eine Zeichenkette unter Nutzung bestimmter Trennzeichen in mehrere Teilzeichenketten auf.</td>
   </tr>
   <tr id="SubStr">
     <td><a href="lib/SubStr.htm">SubStr</a></td>
-    <td>Ermittelt ein oder mehrere Zeichen von einer bestimmten Stelle innerhalb einer Zeichenkette.</td>
+    <td>Ruft ein oder mehrere Zeichen ab, die an einer bestimmten Position in einer Zeichenkette stehen.</td>
   </tr>
   <tr id="WinActive">
     <td><a href="lib/WinActive.htm">WinActive</a></td>
-    <td>Überprüft, ob ein bestimmtes Fenster aktiv ist, und gibt dessen HWND-Nummer (eindeutige ID) zurück.</td>
+    <td>Prüft, ob ein bestimmtes Fenster aktiv ist, und gibt dessen HWND-Nummer (eindeutige ID) zurück.</td>
   </tr>
   <tr id="WinExist">
     <td><a href="lib/WinExist.htm">WinExist</a></td>
-    <td>Überprüft, ob ein bestimmtes Fenster existiert, und gibt die HWND-Nummer (eindeutige ID) des ersten gefundenen Fensters zurück.</td>
+    <td>Prüft, ob ein bestimmtes Fenster existiert, und gibt die HWND-Nummer (eindeutige ID) des ersten gefundenen Fensters zurück.</td>
   </tr>
 </table>
 <h3 id="Miscellaneous_Functions">Verschiedene Funktionen</h3>
@@ -374,7 +374,7 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="Asc">
     <td><a href="lib/Asc.htm">Asc</a></td>
-    <td>Gibt einen numerischen Wert zurück, der den ersten Byte oder die erste UTF-16-Codeeinheit einer bestimmten Zeichenkette repräsentiert.</td>
+    <td>Gibt einen numerischen Wert zurück, der das erste Byte oder die erste UTF-16-Codeeinheit einer bestimmten Zeichenkette repräsentiert.</td>
   </tr>
   <tr id="Chr">
     <td><a href="lib/Chr.htm">Chr</a></td>
@@ -382,11 +382,11 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="DllCall">
     <td><a href="lib/DllCall.htm">DllCall</a></td>
-    <td>Ruft eine Funktion aus einer DLL-Datei auf, wie z. B. eine API-Funktion von Windows.</td>
+    <td>Ruft eine Funktion aus einer DLL-Datei auf, z.B. eine API-Funktion von Windows.</td>
   </tr>
   <tr id="Exception">
     <td><a href="lib/Throw.htm#Exception">Exception</a></td>
-    <td>Erstellt ein Objekt, das genutzt werden kann, um eine benutzerdefinierte Ausnahme auszulösen.</td>
+    <td>Erstellt ein Objekt, das zum Auslösen einer benutzerdefinierten Ausnahme verwendet werden kann.</td>
   </tr>
   <tr id="FileOpen">
     <td><a href="lib/FileOpen.htm">FileOpen</a></td>
@@ -394,7 +394,7 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="Format">
     <td><a href="lib/Format.htm">Format</a></td>
-    <td>Formatiert eine beliebige Anzahl von Eingabewerten auf Basis einer Formatzeichenkette.</td>
+    <td>Formatiert eine beliebige Anzahl von Eingabewerten gemäß einer Formatzeichenkette.</td>
   </tr>
   <tr id="Func">
     <td><a href="lib/Func.htm#Func">Func</a></td>
@@ -402,39 +402,39 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="GetKeyName">
     <td><a href="lib/GetKey.htm">GetKeyName/VK/SC</a></td>
-    <td>Ermittelt den Namen/Text, virtuellen Tastencode oder Scancode einer Taste.</td>
+    <td>Ruft den Namen/Text, virtuellen Tastencode oder Scancode einer Taste ab.</td>
   </tr>
   <tr id="Hotstring">
     <td><a href="lib/Hotstring.htm">Hotstring</a></td>
-    <td>Erstellt, bearbeitet, aktiviert oder deaktiviert einen Hotstring, während das Skript läuft.</td>
+    <td>Erstellt, modifiziert, aktiviert oder deaktiviert einen Hotstring, während das Skript läuft.</td>
   </tr>
   <tr id="ImageList">
     <td><a href="lib/ListView.htm#IL">IL_XXX</a></td>
-    <td>Funktionen zum Erstellen oder Löschen von ImageLists, oder um Symbole/Bilder in ImageLists einzufügen (für ListView- oder TreeView-Steuerelemente).</td>
+    <td>Funktionen zum Erstellen oder Löschen von ImageLists oder zum Einfügen von Symbolen/Bildern in ImageLists (für ListView- oder TreeView-Steuerelemente).</td>
   </tr>
   <tr id="InputHook">
     <td><a href="lib/InputHook.htm">InputHook</a></td>
-    <td>Erstellt ein Objekt, das zum Erfassen oder Abfangen von Tastatureingaben genutzt werden kann.</td>
+    <td>Erstellt ein Objekt, das zum Erfassen oder Abfangen von Tastatureingaben verwendet werden kann.</td>
   </tr>
   <tr id="IsByRef">
     <td><a href="lib/IsByRef.htm">IsByRef</a></td>
-    <td>Gibt eine Nummer ungleich 0 zurück, wenn ein bestimmter <a href="#ByRef">ByRef-Parameter</a> eine Variable übergeben bekommen hat.</td>
+    <td>Gibt eine Zahl ungleich 0 zurück, wenn einem bestimmten <a href="#ByRef">ByRef-Parameter</a> eine Variable übergeben wurde.</td>
   </tr>
   <tr id="IsFunc">
     <td><a href="lib/IsFunc.htm">IsFunc</a></td>
-    <td>Gibt eine Nummer ungleich 0 zurück, wenn eine bestimmte Funktion im Skript vorkommt.</td>
+    <td>Gibt eine Zahl ungleich 0 zurück, wenn eine bestimmte Funktion im Skript existiert.</td>
   </tr>
   <tr id="IsLabel">
     <td><a href="lib/IsLabel.htm">IsLabel</a></td>
-    <td>Gibt eine Nummer ungleich 0 zurück, wenn ein bestimmtes Label im Skript vorkommt.</td>
+    <td>Gibt eine Zahl ungleich 0 zurück, wenn ein bestimmtes Label im Skript existiert.</td>
   </tr>
   <tr id="IsObject">
     <td><a href="lib/IsObject.htm">IsObject</a></td>
-    <td>Gibt eine Nummer ungleich 0 zurück, wenn ein bestimmter Wert ein Objekt ist.</td>
+    <td>Gibt eine Zahl ungleich 0 zurück, wenn ein bestimmter Wert ein Objekt ist.</td>
   </tr>
   <tr id="IsSet">
     <td><a href="lib/IsSet.htm">IsSet</a></td>
-    <td>Gibt eine Nummer ungleich 0 zurück, wenn eine bestimmte Variable einen Wert zugewiesen bekommen hat.</td>
+    <td>Gibt eine Zahl ungleich 0 zurück, wenn einer bestimmten Variable ein Wert zugewiesen wurde.</td>
   </tr>
   <tr id="LoadPicture">
     <td><a href="lib/LoadPicture.htm">LoadPicture</a></td>
@@ -442,23 +442,23 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="ListView">
     <td><a href="lib/ListView.htm#BuiltIn">LV_XXX</a></td>
-    <td>Funktion zum Hinzufügen, Einfügen, Modifizieren oder Löschen von ListView-Zeilen/Spalten, oder zum Abrufen ihrer Daten.</td>
+    <td>Funktion zum Hinzufügen, Einfügen, Modifizieren oder Löschen von ListView-Zeilen/Spalten oder zum Abrufen ihrer Daten.</td>
   </tr>
   <tr id="MenuGetHandle">
     <td><a href="lib/MenuGetHandle.htm">MenuGetHandle</a></td>
-    <td>Ermittelt den <a href="lib/Menu.htm#Win32_Menus">Win32-Menü</a>-Handle eines Menüs.</td>
+    <td>Ruft das <a href="lib/Menu.htm#Win32_Menus">Win32-Menü</a>-Handle eines Menüs ab.</td>
   </tr>
   <tr id="MenuGetName">
     <td><a href="lib/MenuGetName.htm">MenuGetName</a></td>
-    <td>Ermittelt den Namen eines <a href="lib/Menu.htm#Win32_Menus">Win32-Menüs</a> mithilfe seines Handles.</td>
+    <td>Ruft den Namen eines <a href="lib/Menu.htm#Win32_Menus">Win32-Menüs</a> über dessen Handle ab.</td>
   </tr>
   <tr id="NumGet">
     <td><a href="lib/NumGet.htm">NumGet</a></td>
-    <td>Gibt eine binäre Nummer zurück, die auf einer bestimmten Adresse + Offset zu finden ist.</td>
+    <td>Gibt die Binärzahl an einer bestimmten Adresse+Offset zurück.</td>
   </tr>
   <tr id="NumPut">
     <td><a href="lib/NumPut.htm">NumPut</a></td>
-    <td>Speichert eine binäre Nummer auf eine bestimmte Adresse + Offset.</td>
+    <td>Speichert eine Binärzahl an einer bestimmten Adresse+Offset.</td>
   </tr>
   <tr id="ObjAddRef">
     <td><a href="lib/ObjAddRef.htm">ObjAddRef / ObjRelease</a></td>
@@ -470,11 +470,11 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="ObjGetBase">
     <td><a href="lib/Object.htm#GetBase">ObjGetBase</a></td>
-    <td>Ermittelt das <a href="Objects.htm#Custom_Objects">Basisobjekt</a> des Objekts.</td>
+    <td>Ruft das <a href="Objects.htm#Custom_Objects">Basisobjekt</a> eines Objekts ab.</td>
   </tr>
   <tr>
     <td><a href="lib/Object.htm#RawGet">ObjRawGet</a></td>
-    <td>Ermittelt ein Schlüssel-Wert-Paar eines Objekts und umgeht dabei die <a href="Objects.htm#Meta_Functions">Metafunktionen</a> des Objekts.</td>
+    <td>Ruft ein Schlüssel-Wert-Paar eines Objekts ab und umgeht dabei die <a href="Objects.htm#Meta_Functions">Metafunktionen</a> des Objekts.</td>
   </tr>
   <tr>
     <td><a href="lib/Object.htm#RawSet">ObjRawSet</a></td>
@@ -486,23 +486,23 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="ObjMethod">
     <td><a href="lib/Object.htm">ObjXXX</a></td>
-    <td>Funktionen, die äquivalent zu den internen Methoden eines Objekts sind, wie z. B. <a href="lib/Object.htm#InsertAt">ObjInsertAt</a>. In der Regel ist es besser, anstelle der Funktion die entsprechende Methode zu benutzen.</td>
+    <td>Funktionen, äquivalent zu den internen Methoden eines Objekts, wie z.B. <a href="lib/Object.htm#InsertAt">ObjInsertAt</a>. In der Regel ist es besser, die entsprechende Methode zu verwenden.</td>
   </tr>
   <tr id="OnClipboardChange">
     <td><a href="lib/OnClipboardChange.htm#function">OnClipboardChange</a></td>
-    <td>Registriert eine Funktion oder ein <a href="misc/Functor.htm">Funktionsobjekt</a>, die bzw. das jedes Mal ausgeführt wird, wenn sich der Inhalt der Zwischenablage ändert.</td>
+    <td>Registriert eine Funktion, die jedes Mal automatisch aufgerufen wird, wenn sich der Inhalt der Zwischenablage ändert.</td>
   </tr>
   <tr id="OnError">
     <td><a href="lib/OnError.htm">OnError</a></td>
-    <td>Bestimmt eine Funktion, die automatisch gestartet werden soll, wenn ein unbehandelter Fehler auftritt.</td>
+    <td>Registriert eine Funktion, die jedes Mal automatisch aufgerufen wird, wenn ein unbehandelter Fehler auftritt.</td>
   </tr>
   <tr id="OnExit">
     <td><a href="lib/OnExit.htm#function">OnExit</a></td>
-    <td>Bestimmt eine Funktion, die automatisch ausgeführt werden soll, wenn das Skript beendet wird.</td>
+    <td>Registriert eine Funktion, die jedes Mal automatisch aufgerufen wird, wenn das Skript beendet wird.</td>
   </tr>
   <tr id="OnMessage">
     <td><a href="lib/OnMessage.htm">OnMessage</a></td>
-    <td>Überwacht eine Meldung/ein Ereignis.</td>
+    <td>Registriert eine Funktion, die jedes Mal automatisch aufgerufen wird, wenn das Skript eine bestimmte Meldung empfängt.</td>
   </tr>
   <tr id="Ord">
     <td><a href="lib/Ord.htm">Ord</a></td>
@@ -510,15 +510,15 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="StatusBar">
     <td><a href="lib/GuiControls.htm#StatusBar_Functions">SB_XXX</a></td>
-    <td>Funktionen, mit denen Text/Symbolen in die Leiste eines StatusBar-Steuerelements eingefügt werden oder die Leiste in mehrere Segmente aufgeteilt werden.</td>
+    <td>Funktionen zum Einfügen von Text/Symbolen in die Leiste eines StatusBar-Steuerelements oder zum Aufteilen der Leiste in mehrere Segmente.</td>
   </tr>
   <tr id="StrGet">
     <td><a href="lib/StrGet.htm">StrGet</a></td>
-    <td>Liest eine Zeichenkette auf einer Speicheradresse unter Beachtung des angegebenen Zeichensatzes.</td>
+    <td>Kopiert eine Zeichenkette von einer Speicheradresse (optional mit Codepage-Umwandlung).</td>
   </tr>
   <tr id="StrPut">
     <td><a href="lib/StrPut.htm">StrPut</a></td>
-    <td>Schreibt eine Zeichenkette auf eine Speicheradresse unter Beachtung des angegebenen Zeichensatzes.</td>
+    <td>Kopiert eine Zeichenkette auf eine Speicheradresse (optional mit Codepage-Umwandlung).</td>
   </tr>
   <tr id="RegisterCallback">
     <td><a href="lib/RegisterCallback.htm">RegisterCallback</a></td>
@@ -530,11 +530,11 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="TreeView">
     <td><a href="lib/TreeView.htm#BuiltIn">TV_XXX</a></td>
-    <td>Funktionen zum Hinzufügen, Modifizieren oder Löschen von TreeView-Elementen, oder zum Abrufen ihrer Daten.</td>
+    <td>Funktionen zum Hinzufügen, Modifizieren oder Löschen von TreeView-Elementen oder zum Abrufen ihrer Daten.</td>
   </tr>
   <tr id="VarSetCapacity">
     <td><a href="lib/VarSetCapacity.htm">VarSetCapacity</a></td>
-    <td>Vergrößert die Aufnahmekapazität einer Variable oder gibt deren Speicher frei.</td>
+    <td>Erhöht die Speicherkapazität einer Variable oder gibt ihren Speicher frei.</td>
   </tr>
   <tr id="VerCompare">
     <td><a href="lib/VerCompare.htm">VerCompare</a></td>
@@ -573,7 +573,7 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr>
     <td><span id="Max"></span><span id="Min"></span><a href="lib/Math.htm#Max">Max</a> / <a href="lib/Math.htm#Min">Min</a></td>
-    <td>Gibt den höchsten/niedrigsten Wert von einer oder mehreren Zahlen zurück.</td>
+    <td>Gibt die höchste/niedrigste Zahl aus einer Reihe von Zahlen zurück.</td>
   </tr>
   <tr id="Mod">
     <td><a href="lib/Math.htm#Mod">Mod</a></td>
@@ -593,7 +593,7 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr>
     <td><span id="ASin"></span><span id="ACos"></span><span id="ATan"></span><a href="lib/Math.htm#ASin">ASin</a> / <a href="lib/Math.htm#ACos">ACos</a> / <a href="lib/Math.htm#ATan">ATan</a></td>
-    <td>Gibt den Arkussinus/Arkuskosinus/Arkustangens als Bogenmaß zurück.</td>
+    <td>Gibt den Arkussinus/Arkuskosinus/Arkustangens (die Zahl, deren Sinus/Kosinus/Tangens die angegebene Zahl ist) zurück (in Radiant).</td>
   </tr>
 </table>
 
@@ -605,11 +605,11 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="ComObjActive">
     <td><a href="lib/ComObjActive.htm">ComObjActive</a></td>
-    <td>Ermittelt ein registriertes COM-Objekt.</td>
+    <td>Ruft ein registriertes COM-Objekt ab.</td>
   </tr>
   <tr id="ComObjArray">
     <td><a href="lib/ComObjArray.htm">ComObjArray</a></td>
-    <td>Erstellt einen SafeArray, das für COM genutzt werden kann.</td>
+    <td>Erstellt ein SafeArray, das für COM verwendet werden kann.</td>
   </tr>
   <tr id="ComObjConnect">
     <td><a href="lib/ComObjConnect.htm">ComObjConnect</a></td>
@@ -620,11 +620,11 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
     <td>Erstellt ein COM-Objekt.</td>
   </tr>
   <tr id="ComObject">
-    <td><a href="lib/ComObjActive.htm">ComObject</a></td>
+    <td><a href="lib/ComObjActive.htm#ComObject">ComObject</a></td>
     <td>Erstellt ein Objekt, das in typisierter Form als Parameter oder Rückgabewert übergeben werden kann.</td>
   </tr>
   <tr id="ComObjEnwrap">
-    <td><a href="lib/ComObjActive.htm">ComObjEnwrap / ComObjUnwrap</a></td>
+    <td><a href="lib/ComObjActive.htm#ComObjEnwrap">ComObjEnwrap</a> / <a href="lib/ComObjActive.htm#ComObjUnwrap">ComObjUnwrap</a></td>
     <td>Wrappt/entwrappt ein COM-Objekt.</td>
   </tr>
   <tr id="ComObjError">
@@ -637,19 +637,19 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="ComObjGet">
     <td><a href="lib/ComObjGet.htm">ComObjGet</a></td>
-    <td>Gibt eine Referenz zu einem Objekt zurück, das von einer COM-Komponente zur Verfügung gestellt wurde.</td>
+    <td>Gibt eine Referenz zu einem Objekt zurück, das von einer COM-Komponente bereitgestellt wird.</td>
   </tr>
   <tr id="ComObjMissing">
-    <td><a href="lib/ComObjActive.htm">ComObjMissing</a></td>
-    <td>Erstellt ein Objekt für "fehlende Parameter", das an eine COM-Methode übergeben werden kann.</td>
+    <td><a href="lib/ComObjActive.htm#ComObjMissing">ComObjMissing</a></td>
+    <td>Erstellt ein Objekt für "fehlende Parameter" zur Übergabe an eine COM-Methode.</td>
   </tr>
   <tr id="ComObjParameter">
-    <td><a href="lib/ComObjActive.htm">ComObjParameter</a></td>
+    <td><a href="lib/ComObjActive.htm#ComObjParameter">ComObjParameter</a></td>
     <td>Wrappt einen Wert und Typ zu einem Objekt, das einer COM-Methode als Parameter übergeben werden kann.</td>
   </tr>
   <tr id="ComObjQuery">
     <td><a href="lib/ComObjQuery.htm">ComObjQuery</a></td>
-    <td>Fordert ein Interface oder Service eines COM-Objekts an.</td>
+    <td>Fragt ein COM-Objekt nach einem Interface oder Service ab.</td>
   </tr>
   <tr id="ComObjType">
     <td><a href="lib/ComObjType.htm">ComObjType</a></td>
@@ -657,11 +657,11 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="ComObjValue">
     <td><a href="lib/ComObjValue.htm">ComObjValue</a></td>
-    <td>Ermittelt den Wert oder Pointer, der in einem COM-Wrapper-Objekt hinterlegt ist.</td>
+    <td>Ruft den Wert oder Pointer ab, der in einem COM-Wrapper-Objekt hinterlegt ist.</td>
   </tr>
 </table>
 
 <h3 id="Other_Functions">Sonstige Funktionen</h3>
-<p><a href="https://github.com/polyethene/AutoHotkey-Scripts/blob/master/Functions.ahk">Befehlsfunktionen von Polyethene</a>: Bietet für jeden AutoHotkey-Befehl, der eine Ausgabevariable hat, eine aufrufbare Funktion. Diese Bibliothek kann via <a href="lib/_Include.htm">#Include</a> in einem beliebigen Skript eingebunden werden.</p>
+<p><a href="https://github.com/polyethene/AutoHotkey-Scripts/blob/master/Functions.ahk">Befehlsfunktionen von Polyethene</a>: Bietet eine aufrufbare Funktion für jeden AutoHotkey-Befehl, der eine Ausgabevariable hat. Diese Bibliothek kann via <a href="lib/_Include.htm">#Include</a> in ein beliebiges Skript inkludiert werden.</p>
 </body>
 </html>

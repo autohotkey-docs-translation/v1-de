@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>NumGet() - Syntax &amp; Verwendung | AutoHotkey</title>
-<meta name="description" content="Die NumGet-Funktion gibt eine binäre Nummer zurück, die auf einer bestimmten Adresse + Offset zu finden ist." />
+<meta name="description" content="Die NumGet-Funktion gibt die Binärzahl an einer bestimmten Adresse+Offset zurück." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -12,37 +12,37 @@
 <body>
 
 <h1>NumGet()</h1>
-<p>Gibt eine binäre Nummer zurück, die auf einer bestimmten Adresse + Offset zu finden ist.</p>
-<pre class="Syntax">Nummer := <span class="func">NumGet</span>(VarOderAdresse <span class="optional">, Offset := 0</span><span class="optional">, Typ := "UPtr"</span>)</pre>
+<p>Gibt die Binärzahl an einer bestimmten Adresse+Offset zurück.</p>
+<pre class="Syntax">Zahl := <span class="func">NumGet</span>(VarOderAdresse <span class="optional">, Offset</span><span class="optional">, Typ</span>)</pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>VarOderAdresse</dt>
   <dd>
-		<p>Eine Speicheradresse oder Variable. Wenn <em>VarOderAdresse</em> eine Variable wie <code>MeineVar</code> ist, wird die Adresse des Zeichenkettenpuffers der Variable verwendet. Im Prinzip ist dies das gleiche wie, als würde man <code>&amp;MeineVar</code> übergeben, allerdings wird durch Weglassen von "&amp;" eine bessere Leistung erzielt und sichergestellt, dass die Zieladresse + Offset <a href="VarSetCapacity.htm">gültig</a> ist.</p>
+		<p>Eine Speicheradresse oder Variable. Wenn <em>VarOderAdresse</em> eine Variable wie <code>MeineVar</code> ist, wird die Adresse des Zeichenkettenpuffers der Variable verwendet. Im Prinzip ist dies dasselbe wie, als würde man <code>&amp;MeineVar</code> übergeben, allerdings wird durch Weglassen von "&amp;" eine bessere Performanz erzielt und sichergestellt, dass die Zieladresse + Offset <a href="VarSetCapacity.htm">gültig</a> ist.</p>
 		<p><strong>Übergeben Sie keine Variablenreferenz</strong>, wenn die Variable die Zieladresse <em>enthält</em>; übergeben Sie in diesem Fall einen Ausdruck wie <code>MeineVar+0</code>.</p>
 	</dd>
 
   <dt>Offset</dt>
-  <dd><p>Eine Zahl (in Bytes), die mit <em>VarOderAdresse</em> addiert wird, um die Zieladresse zu bestimmen.</p></dd>
+  <dd><p>Wenn leer oder weggelassen, wird standardmäßig 0 verwendet. Andernfalls geben Sie eine Zahl (in Bytes) an, die zur <em>VarOderAdresse</em> addiert wird, um die Zieladresse zu bestimmen.</p></dd>
 
-  <dt>Typ</dt>
+  <dt>Type</dt>
   <dd>
-    <p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig UPtr verwendet. Ansonsten können Sie UInt, Int, Int64, Short, UShort, Char, UChar, Double, Float, Ptr oder UPtr angeben.</p>
-    <p><em>Vorzeichenlose</em> 64-Bit-Integer werden nicht unterstützt, da der native Integer-Typ von AutoHotkey "Int64" ist. Um mit Zahlen größer gleich 0x8000000000000000 umzugehen, sollten Sie auf das U-Präfix verzichten und negative Werte als große Integer (Int64) behandeln. Ein als UInt64 gedachter Int64-Wert von -1 ist in Wirklichkeit 0xFFFFFFFFFFFFFFFF. Bei 64-Bit-Versionen ist UPtr äquivalent zu Int64.</p>
-    <p>Diese Typen müssen, im Gegensatz zu den Typen von DllCall(), in Anführungszeichen gesetzt werden, wenn sie direkt geschriebene Zeichenketten sein sollen.</p>
-    <p>Um mehr darüber zu erfahren, siehe <a href="DllCall.htm#types">DllCall-Typen</a>.</p>
+    <p>Wenn leer oder weggelassen, wird standardmäßig UPtr verwendet. Andernfalls geben Sie UInt, Int, Int64, Short, UShort, Char, UChar, Double, Float, Ptr oder UPtr an.</p>
+    <p><em>Vorzeichenlose</em> 64-Bit-Integer werden nicht unterstützt, da der native Integer-Typ von AutoHotkey "Int64" ist. Um also mit Zahlen größer gleich 0x8000000000000000 zu arbeiten, lassen Sie das U-Präfix weg und interpretieren Sie alle negativen Werte als große Integer (Int64). Zum Beispiel ist ein Int64-Wert von -1 eigentlich 0xFFFFFFFFFFFFFFFF, wenn er als UInt64 gedacht ist. In 64-Bit-Builds ist UPtr äquivalent zu Int64.</p>
+    <p>Im Gegensatz zu DllCall() müssen diese in Anführungszeichen gesetzt werden, wenn sie direkt angegeben werden.</p>
+    <p>Weitere Informationen finden Sie unter <a href="DllCall.htm#types">DllCall-Typen</a>.</p>
   </dd>
 
 </dl>
 
 <h2 id="Return_Value">Rückgabewert</h2>
-<p>Ist die Zieladresse ungültig, wird eine leere Zeichenkette zurückgegeben. Allerdings ist es möglich, dass einige ungültige Adressen nicht als solches erkannt werden, was zu unvorhersehbaren Verhalten führen könnte.</p>
-<p>Ansonsten wird eine Nummer zurückgegeben, die auf der angegebenen Adresse + Offset zu finden ist.</p>
+<p>Wenn die Zieladresse ungültig ist, wird eine leere Zeichenkette zurückgegeben. Es ist jedoch möglich, dass einige ungültige Adressen nicht als solche erkannt werden, was zu unvorhersehbarem Verhalten führen kann.</p>
+<p>Andernfalls wird die Zahl an der angegebenen Adresse+Offset zurückgegeben.</p>
 
 <h2 id="General_Remarks">Allgemeine Bemerkungen</h2>
-<p>Sind nur zwei Parameter vorhanden, kann der zweite Parameter entweder <em>Offset</em> oder <em>Typ</em> sein. Zum Beispiel wäre <code>NumGet(var, "int")</code> zulässig.</p>
+<p>Wenn nur zwei Parameter vorhanden sind, kann der zweite Parameter entweder <em>Offset</em> oder <em>Typ</em> sein. Zum Beispiel wäre <code>NumGet(var, "int")</code> zulässig.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="NumPut.htm">NumPut()</a>, <a href="DllCall.htm">DllCall()</a>, <a href="VarSetCapacity.htm">VarSetCapacity()</a></p>

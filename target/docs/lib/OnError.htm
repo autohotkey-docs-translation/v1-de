@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>OnError() - Syntax &amp; Verwendung | AutoHotkey</title>
-<meta name="description" content="Die OnError-Funktion bestimmt eine Funktion, die automatisch gestartet werden soll, wenn ein unbehandelter Fehler auftritt." />
+<meta name="description" content="Die OnError-Funktion registriert eine Funktion, die jedes Mal automatisch aufgerufen wird, wenn ein unbehandelter Fehler auftritt." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -12,49 +12,66 @@
 <body>
 
 <h1>OnError() <span class="ver">[v1.1.29+]</span></h1>
-<p>Bestimmt eine <a href="../Functions.htm">Funktion</a>, die automatisch gestartet werden soll, wenn ein unbehandelter Fehler auftritt.</p>
+<p>Registriert eine <a href="../Functions.htm">Funktion</a>, die jedes Mal automatisch aufgerufen wird, wenn ein unbehandelter Fehler auftritt.</p>
 
-<pre class="Syntax"><span class="func">OnError</span>(Func <span class="optional">, HinzufügenEntfernen</span>)</pre>
+<pre class="Syntax"><span class="func">OnError</span>(Rückruf <span class="optional">, HinzufügenEntfernen</span>)</pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>Func</dt>
-  <dd><p>Ein Funktionsname oder <a href="../misc/Functor.htm">Funktionsobjekt</a>, die aufgerufen werden sollen, wenn ein unbehandelter Fehler auftritt. Die Funktion erhält das Exception-Objekt als Parameter. Sie kann via Return einen Integer ungleich Null zurückgeben, um das voreingestellte Fehlerdialogfenster zu unterdrücken.</p></dd>
+  <dt>Rückruf</dt>
+  <dd>
+    <p>Ein Funktionsname oder <a href="../misc/Functor.htm">Funktionsobjekt</a>, der/das aufgerufen werden soll. Um einen Funktionsnamen zu übergeben, setzen Sie ihn in Anführungszeichen.</p>
+    <p>Die Rückruffunktion akzeptiert einen Parameter und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
+    <pre class="NoIndent">MeinRückruf(Ausnahme) { ...</pre>
+    <p>Obwohl der Name, den Sie dem Parameter geben, nicht wichtig ist, wird ihm der via Thrown geworfene Wert oder das <a href="Throw.htm#Exception">Exception</a>-Objekt zugewiesen. Wenn es sich um ein Objekt handelt, kann es modifiziert werden, um den angezeigten Inhalt des standardmäßig erscheinenden Fehlerdialogfensters zu ändern.</p>
+    <p>Sie können den Parameter der Rückruffunktion weglassen, wenn Sie die entsprechende Information nicht benötigen.</p>
+    <p>Die Rückruffunktion kann einen Integer ungleich 0 zurückgeben, um das standardmäßig erscheinende Fehlerdialogfenster zu unterdrücken.</p>
+  </dd>
   
   <dt>HinzufügenEntfernen</dt>
-  <dd><p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig 1 (die Funktion nach anderen zuvor registrierten Funktionen aufrufen) verwendet. Ansonsten können Sie eine der folgenden Zahlen angeben:</p>
+  <dd><p>Wenn leer oder weggelassen, wird standardmäßig 1 verwendet (die Rückruffunktion nach anderen zuvor registrierten Rückruffunktionen aufrufen). Andernfalls geben Sie eine der folgenden Zahlen an:</p>
     <ul>
-      <li>1 = Die Funktion nach anderen zuvor registrierten Funktionen aufrufen.</li>
-      <li>-1 = Die Funktion vor anderen zuvor registrierten Funktionen aufrufen.</li>
-      <li>0 = Die Funktion nicht aufrufen.</li>
+      <li>1 = Die Rückruffunktion nach anderen zuvor registrierten Rückruffunktionen aufrufen.</li>
+      <li>-1 = Die Rückruffunktion vor anderen zuvor registrierten Rückruffunktionen aufrufen.</li>
+      <li>0 = Die Rückruffunktion nicht aufrufen.</li>
     </ul>
   </dd>
 
 </dl>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p><em>Func</em> wird nur bei Fehlern oder Ausnahmen aufgerufen, die normalerweise zu einer Fehlermeldung führen würden. Ladezeitfehler gehören nicht dazu, da OnError erst nach dem Laden des Skripts aufgerufen werden kann.</p>
-<p>Wenn eine Fehlerfunktion einen Integer ungleich Null via Return zurückgibt, wird der Thread beendet. Wenn innerhalb einer Fehlerfunktion ein Fehler auftritt (oder eine Ausnahme ausgelöst wird), wird eine Fehlermeldung für den neuen Fehler angezeigt und der Thread beendet. Ansonsten werden alle Fehlerfunktionen aufgerufen, eine Fehlermeldung angezeigt und der Thread beendet.</p>
-<p>Der erste Parameter von <em>Func</em> erhält den Wert oder das <a href="Throw.htm#Exception">Exception</a>-Objekt der ausgelösten Ausnahme. Wenn es sich um ein Objekt handelt, kann es modifiziert werden, um zu bestimmen, was das voreingestellte Fehlerdialogfenster anzeigen soll.</p>
-<p><em>Func</em> wird während des aktuellen <a href="../misc/Threads.htm">Threads</a> aufgerufen, bevor er beendet wird (also bevor der Aufrufstapel abgearbeitet wurde).</p>
+<p><em>Rückruf</em> wird nur bei Fehlern oder Ausnahmen aufgerufen, die normalerweise zu einer Fehlermeldung führen würden. Ladezeitfehler gehören nicht dazu, da OnError erst nach dem Laden des Skripts aufgerufen werden kann.</p>
+<p>Wenn eine Rückruffunktion einen Integer ungleich 0 via Return zurückgibt, wird der Thread beendet. Wenn innerhalb einer Rückruffunktion ein Fehler auftritt (oder eine Ausnahme ausgelöst wird), wird eine Fehlermeldung für den neuen Fehler angezeigt und der Thread beendet. Andernfalls werden alle Rückruffunktionen aufgerufen, eine Fehlermeldung angezeigt und der Thread beendet.</p>
+<p><em>Rückruf</em> wird im aktuellen <a href="../misc/Threads.htm">Thread</a> vor seiner Beendigung aufgerufen (also bevor der Aufrufstapel abgearbeitet wurde).</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="Try.htm">Try</a>, <a href="Catch.htm">Catch</a>, <a href="Throw.htm">Throw</a>, <a href="OnExit.htm#function">OnExit()</a>, <a href="OnExit.htm#command">OnExit</a></p>
+<p><a href="Try.htm">Try</a>, <a href="Catch.htm">Catch</a>, <a href="Throw.htm">Throw</a>, <a href="OnExit.htm">OnExit</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a class="ex_number" href="#ExBasic"></a> Protokolliert Fehler, die vom Skript verursacht werden, in eine Textdatei, anstatt sie dem Benutzer anzuzeigen.</p>
-<pre>
-OnError("FehlerProtokollieren")
+<p><a class="ex_number" href="#ExBasic"></a> Protokolliert vom Skript verursachte Fehler in einer Textdatei, anstatt sie dem Benutzer anzuzeigen.</p>
+<pre>OnError("FehlerProtokollieren")
 %Fehler% := auslösen
 
-FehlerProtokollieren(Exception) {
-    FileAppend % "Fehler bei Zeile " Exception.Line ": " Exception.Message "`n"
+FehlerProtokollieren(Exc) {
+    FileAppend % "Fehler bei Zeile " Exc.Line ": " Exc.Message "`n"
         , Fehlerprotokoll.txt
     return true
-}
-</pre>
+}</pre>
+</div>
+<div class="ex" id="ExObj">
+<p><a class="ex_number" href="#ExObj"></a> Dasselbe wie oben, aber mit einem Funktionsobjekt.</p>
+<pre>OnError(FehlerProtokollieren)
+%Fehler% := auslösen
+
+class FehlerProtokollieren {
+    Call(Exc) {
+        FileAppend % "Fehler bei Zeile " Exc.Line ": " Exc.Message "`n"
+            , Fehlerprotokoll.txt
+        return true
+    }
+}</pre>
 </div>
 
 </body>

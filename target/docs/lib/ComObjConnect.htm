@@ -21,53 +21,53 @@
   <dt>ComObject</dt>
   <dd>
     <p>Ein Objekt, das Ereignisse auslöst.</p>
-    <p>Wenn das Objekt das IConnectionPointContainer-Interface nicht unterstützt oder wenn die Typinformationen zur Klasse des Objekts nicht abgerufen werden kann, wird eine Fehlermeldung angezeigt. Mit <a href="ComObjError.htm">ComObjError()</a> oder <a href="Try.htm">Try</a>/<a href="Catch.htm">Catch</a> kann dies unterdrückt oder kontrolliert werden.</p>
-    <p><span class="ver">[v1.1.22+]</span>: Das IProvideClassInfo-Interface wird genutzt, um die Typinformationen zur Klasse des Objekts abzurufen, sofern es vom Objekt unterstützt wird. Ansonsten versucht ComObjConnect, die Typinformationen via IDispatch-Interface des Objekts abzurufen, was unzuverlässig sein kann.</p>
+    <p>Wenn das Objekt das IConnectionPointContainer-Interface nicht unterstützt oder wenn Typinformationen über die Klasse des Objekts nicht abgerufen werden können, wird eine Fehlermeldung angezeigt. Diese Fehlermeldung kann mit <a href="ComObjError.htm">ComObjError()</a> oder <a href="Try.htm">Try</a>/<a href="Catch.htm">Catch</a> unterdrückt oder behandelt werden.</p>
+    <p><span class="ver">[v1.1.22+]</span>: Das IProvideClassInfo-Interface wird verwendet, um Typinformationen über die Klasse des Objekts abzurufen, sofern es vom Objekt unterstützt wird. Andernfalls versucht ComObjConnect, die Typinformationen via IDispatch-Interface des Objekts abzurufen, was unzuverlässig sein kann.</p>
   </dd>
 
   <dt>PräfixOderSink</dt>
   <dd>
-      <p>Eine Zeichenkette, die dem Ereignisnamen vorangestellt wird, um zu bestimmen, welche Funktion aufgerufen werden soll, wenn ein Ereignis stattfindet, oder <span class="ver">[in v1.1.01+]</span> ein <a href="#event-sink">Event-Sink-Objekt</a>, das eine Methode für jedes zu behandelnde Ereignis definiert.</p>
-      <p>Lässt man diesen Parameter weg, wird die Verbindung zu diesem Objekt getrennt; das heißt, dass das Skript nicht länger Benachrichtigungen von seinen Ereignissen erhält.</p>
+      <p>Eine Zeichenkette, die dem Ereignisnamen vorangestellt wird, um zu bestimmen, welche Funktion aufgerufen werden soll, wenn ein Ereignis stattfindet, oder in <span class="ver">[v1.1.01+]</span> ein <a href="#event-sink">Event-Sink-Objekt</a>, das eine Methode für jedes zu behandelnde Ereignis definiert.</p>
+      <p>Lässt man diesen Parameter weg, wird die Verbindung zu diesem Objekt getrennt, d.h. das Skript erhält keine Benachrichtigungen von seinen Ereignissen mehr.</p>
     </dd>
 
 </dl>
 
 <h2 id="Usage">Verwendung</h2>
-<p>Um ComObjConnect effektiv zu nutzen, müssen Sie zunächst Funktionen in das Skript schreiben, die die entsprechenden Ereignisse behandeln können. Solche Funktionen, auch "Eventhandler" genannt, haben die folgende Struktur:</p>
+<p>Um ComObjConnect effektiv nutzen zu können, müssen Sie zunächst Funktionen in das Skript schreiben, die die entsprechenden Ereignisse behandeln können. Solche Funktionen, auch "Ereignishandler" genannt, haben die folgende Struktur:</p>
 <pre class="Syntax Short NoIndent"><i>Präfix</i><b>EreignisName</b>([<i>Params...</i>, ComObject])
 {
     <i class="dull">... ereignisbehandelnder Code ...</i>
     return <i>RückgabeWert</i>
 }</pre>
-<p><i>Präfix</i> sollte identisch mit dem <em>PräfixOderSink</em>-Parameter sein, wenn es eine Zeichenkette ist; ansonsten sollte es weggelassen werden. <b>EreignisName</b> sollte mit dem Namen des Ereignisses ersetzt werden, das von der Funktion behandelt werden soll.</p>
-<p><i>Params</i> entspricht den Parametern, die das Ereignis hat. Wenn das Ereignis keine Parameter hat, sollte <i>Params</i> ganz weggelassen werden. <i>ComObject</i> ist optional und kann nur genutzt werden, wenn die korrekte Anzahl von <i>Params</i> definiert ist; es enthält eine Referenz zum originalen Wrapper-Objekt, das an ComObjConnect übergeben wurde. "ComObject" sollte mit einem Namen ersetzt werden, der eher dem Kontext Ihres Skripts entspricht.</p>
-<p>Beachten Sie, dass Eventhandler Rückgabewerte haben können. Mit <a href="ComObjActive.htm#param">ComObject(Typ, Wert)</a> kann ein COM-spezifischer Wertetyp zurückgegeben werden. <code>return ComObject(0,0)</code> beispielsweise gibt eine Variante des Typs VT_EMPTY zurück, was das gleiche ist wie, als würde eine JavaScript-Funktion <code>undefined</code> (oder überhaupt nichts) zurückgeben.</p>
+<p><i>Präfix</i> sollte identisch mit dem <em>PräfixOderSink</em>-Parameter sein, wenn es eine Zeichenkette ist, andernfalls sollte es weggelassen werden. <b>EreignisName</b> sollte mit dem Namen des Ereignisses ersetzt werden, das von der Funktion behandelt werden soll.</p>
+<p><i>Params</i> entspricht den Parametern, die das Ereignis hat. Wenn das Ereignis keine Parameter hat, sollte <i>Params</i> ganz weggelassen werden. <i>ComObject</i> ist optional und kann nur verwendet werden, wenn die korrekte Anzahl von <i>Params</i> definiert ist; es enthält eine Referenz zum originalen Wrapper-Objekt, das an ComObjConnect übergeben wurde. "ComObject" sollte mit einem Namen ersetzt werden, der besser zum Kontext Ihres Skripts passt.</p>
+<p>Beachten Sie, dass Ereignishandler Rückgabewerte haben können. Mit <a href="ComObjActive.htm#ComObject">ComObject()</a> kann ein COM-spezifischer Wertetyp zurückgegeben werden. Zum Beispiel gibt <code>return ComObject(0,0)</code> eine Variante des Typs VT_EMPTY zurück, was dasselbe ist wie, als würde eine JavaScript-Funktion <code>undefined</code> (oder gar nichts) zurückgeben.</p>
 <p>Mit <code>ComObjConnect(MeinObjekt, "<i>Präfix</i>")</code> kann die Ereignisbehandlung aktiviert werden.</p>
-<p>Mit <code>ComObjConnect(MeinObjekt)</code> kann die Verbindung zum Objekt getrennt werden (um die Ereignisbehandlung zu stoppen).</p>
-<p>Ist die Anzahl der Parameter unbekannt, kann eine <a href="../Functions.htm#Variadic">variadische Funktion</a> verwendet werden.</p>
+<p>Rufen Sie <code>ComObjConnect(MeinObjekt)</code> auf, um die Verbindung zum Objekt zu trennen (Ereignisbehandlungen zu stoppen).</p>
+<p>Wenn die Anzahl der Parameter unbekannt ist, kann eine <a href="../Functions.htm#Variadic">variadische Funktion</a> verwendet werden.</p>
 
 <h3 id="event-sink">Event-Sink <span class="ver">[v1.1.01+]</span></h3>
-<p>Wenn <em>PräfixOderSink</em> ein Objekt ist, wird bei jedem ausgelösten Ereignis die entsprechende Methode dieses Objekts aufgerufen. Obwohl das Objekt dynamisch konstruiert werden kann, ist es für <em>PräfixOderSink</em> typischer, auf eine Klasse oder eine Instanz einer Klasse zu verweisen. In diesem Fall werden die Methoden wie oben gezeigt definiert, aber ohne <em>Präfix</em>.</p>
+<p>Wenn <em>PräfixOderSink</em> ein Objekt ist, wird jedes Mal, wenn ein Ereignis ausgelöst wird, die entsprechende Methode dieses Objekts aufgerufen. Obwohl das Objekt dynamisch konstruiert werden kann, ist es für <em>PräfixOderSink</em> typischer, auf eine Klasse oder eine Instanz einer Klasse zu verweisen. In diesem Fall werden die Methoden wie oben definiert, jedoch ohne <em>Präfix</em>.</p>
 <p>Wie bei jedem Methodenaufruf enthält der (normalerweise versteckte) <code>this</code>-Parameter der Methode eine Referenz zum Objekt, über das die Methode aufgerufen wurde; also das Event-Sink-Objekt, nicht das COM-Objekt. Dies kann verwendet werden, um den Ereignishandlern Kontext bereitzustellen oder um Werte zwischen ihnen auszutauschen.</p>
-<p>Mit einer <a href="../Objects.htm#Meta_Functions">__Call-Metafunktion</a> können alle Ereignisse abgefangen werden, ohne dass für jedes Ereignis eine Methode definiert werden muss.</p>
-<p><em>ComObject</em> behält eine Referenz zu <em>PräfixOderSink</em>, daher kann es nicht vor dem Trennen des Objekts gelöscht werden.</p>
-<p><span class="ver">[v1.1.36.02+]:</span> <em>ComObject</em> gibt seine Referenz zu <em>PräfixOderSink</em> automatisch frei, wenn das COM-Objekt die Verbindung freigibt. Das passiert zum Beispiel, wenn der Internet Explorer beendet wird. Wenn das Skript seine eigene Referenz zu <em>PräfixOderSink</em> nicht beibehält, kann es <a href="../Objects.htm#Custom_NewDelete">__Delete</a> nutzen, um zu erkennen, wann dies geschieht. Wenn das Objekt von einem Remote-Prozess gehostet wird und der Prozess unerwartet terminiert wird, kann es mehrere Minuten dauern, bis das System die Verbindung freigibt.</p>
+<p>Um alle Ereignisse abzufangen, ohne für jedes einzelne eine Methode zu definieren, definieren Sie eine <a href="../Objects.htm#Meta_Functions">__Call-Metafunktion</a>.</p>
+<p><em>ComObject</em> behält eine Referenz zu <em>PräfixOderSink</em>, d.h. es kann erst gelöscht werden, wenn die Verbindung zum Objekt getrennt wird.</p>
+<p><span class="ver">[v1.1.36.02+]</span>: <em>ComObject</em> gibt seine Referenz zu <em>PräfixOderSink</em> automatisch frei, wenn das COM-Objekt die Verbindung freigibt. Das passiert zum Beispiel, wenn der Internet Explorer beendet wird. Wenn das Skript seine eigene Referenz zu <em>PräfixOderSink</em> nicht beibehält, kann es <a href="../Objects.htm#Custom_NewDelete">__Delete</a> verwenden, um zu erkennen, wann dies geschieht. Wenn das Objekt von einem Remote-Prozess gehostet wird und der Prozess unerwartet terminiert wird, kann es mehrere Minuten dauern, bis das System die Verbindung freigibt.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Das Skript muss eine Referenz zu <em>ComObject</em> behalten, da ComObject sonst automatisch freigegeben und von dessen COM-Objekt getrennt werden würde, wodurch die Erkennung weiterer Ereignisse verhindert wird. Es gibt keine Standardmethode, um zu erkennen, wann die Verbindung überflüssig ist, daher muss das Skript die Verbindung manuell trennen, indem es ComObjConnect aufruft.</p>
-<p>Die <a href="_Persistent.htm">#Persistent</a>-Direktive ist eventuell vonnöten, um das Skript am Laufen zu halten, während es auf Ereignisse wartet.</p>
-<p>Bei Misserfolg wird die Funktion je nach aktueller <a href="ComObjError.htm">ComObjError()</a>-Einstellung und <a href="ComObjError.htm#factors">anderen Faktoren</a> eventuell eine Ausnahme auslösen, das Skript beenden oder einfach ihren Wert zurückgeben.</p>
+<p>Das Skript muss eine Referenz zu <em>ComObject</em> beibehalten, andernfalls würde es automatisch freigegeben und die Verbindung zu seinem COM-Objekt trennen, was verhindert, dass weitere Ereignisse erkannt werden. Es gibt keine Standardmethode, um zu erkennen, wann die Verbindung nicht mehr benötigt wird, daher muss das Skript die Verbindung manuell trennen, indem es ComObjConnect aufruft.</p>
+<p>Möglicherweise ist die <a href="_Persistent.htm">#Persistent</a>-Direktive erforderlich, um das Skript am Laufen zu halten, während es auf Ereignisse wartet.</p>
+<p>Bei Misserfolg kann die Funktion eine Ausnahme auslösen, das Skript beenden oder einfach ihren Wert zurückgeben, abhängig von der aktuellen <a href="ComObjError.htm">ComObjError()</a>-Einstellung und <a href="ComObjError.htm#factors">anderen Faktoren</a>.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="ComObjCreate.htm">ComObjCreate()</a>, <a href="ComObjGet.htm">ComObjGet()</a>, <a href="ComObjActive.htm">ComObjActive()</a>, <a href="ComObjError.htm">ComObjError()</a>, <a href="https://learn.microsoft.com/previous-versions/ccxe1xe6(v=vs.85)">WScript.ConnectObject (Microsoft Docs)</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExIE">
-<p><a class="ex_number" href="#ExIE"></a> Startet eine Instanz des Internet Explorers und verbindet Ereignisse mit entsprechenden Skript-Funktionen, die das Präfix "IE_" haben. Einzelheiten über das hier verwendete COM-Objekt und DocumentComplete-Ereignis finden Sie unter <a href="https://learn.microsoft.com/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752084(v=vs.85)">InternetExplorer object (Microsoft Docs)</a>.</p>
+<p><a class="ex_number" href="#ExIE"></a> Startet eine Instanz des Internet Explorers und verbindet Ereignisse mit entsprechenden Skriptfunktionen, die das Präfix "IE_" haben. Details zum hier verwendeten COM-Objekt und zum DocumentComplete-Ereignis finden Sie unter <a href="https://learn.microsoft.com/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752084(v=vs.85)">InternetExplorer object (Microsoft Docs)</a>.</p>
 <pre>ie := ComObjCreate("InternetExplorer.Application")
 
-<em>; Verbindet Ereignisse mit entsprechenden Skript-Funktionen, die das Präfix "IE_" haben.</em>
+<em>; Verbindet Ereignisse mit entsprechenden Skriptfunktionen, die das Präfix "IE_" haben.</em>
 ComObjConnect(ie, "IE_")
 
 ie.Visible := true  <em>; Funktioniert nicht korrekt unter IE7.</em>
@@ -80,8 +80,8 @@ IE_DocumentComplete(ieEventParam, url, ieFinalParam) {
         s .= "Erster Parameter ist ein neues Wrapper-Objekt.`n"
     if (ie == ieFinalParam)
         s .= "Letzter Parameter ist das originale Wrapper-Objekt.`n"
-    if ((disp1:=<a href="ComObjActive.htm#enwrap">ComObjUnwrap</a>(ieEventParam)) == (disp2:=ComObjUnwrap(ieFinalParam)))
-        s .= "Beide Wrapper-Objekte verweisen auf die gleiche IDispatch-Instanz.`n"
+    if ((disp1:=<a href="ComObjActive.htm#ComObjUnwrap">ComObjUnwrap</a>(ieEventParam)) == (disp2:=ComObjUnwrap(ieFinalParam)))
+        s .= "Beide Wrapper-Objekte verweisen auf dieselbe IDispatch-Instanz.`n"
     <a href="ObjAddRef.htm">ObjRelease</a>(disp1), ObjRelease(disp2)
     MsgBox % s . "Das Laden von " ie.Document.title " @ " url " wurde abgeschlossen."
     ie.Quit()

@@ -27,25 +27,25 @@
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Diese Direktive <strong>muss nicht</strong> verwendet werden, wenn:</p>
 <ul>
-  <li>Hotkeys ihre Tastendrücke mit den Methoden <a href="Send.htm#SendInput">SendInput</a> oder <a href="Send.htm#SendPlay">SendPlay</a> senden. Solche Methoden zögern das physische Drücken und Loslassen der Tasten solange hinaus, bis das Ende der Send-Aktion erreicht ist.</li>
-  <li>das Skript den Tastatur-Hook installiert hat (mit dem Hauptfenster-Menüpunkt "View-&gt;Key history" oder dem <a href="KeyHistory.htm">KeyHistory</a>-Befehl können Sie prüfen, ob Ihr Skript den Hook nutzt). Der Hook behält den Überblick darüber, welche Modifikatortasten (<kbd>Alt</kbd>/<kbd>Strg</kbd>/<kbd>Win</kbd>/<kbd>Umschalt</kbd>) der Benutzer physisch gedrückt hält, und kann deshalb auf das Zeitlimit verzichten.</li>
+  <li>Hotkeys ihre Tastendrücke mit der <a href="Send.htm#SendInput">SendInput</a>- oder <a href="Send.htm#SendPlay">SendPlay</a>-Methode senden. Solche Methoden zögern das physische Drücken und Loslassen der Tasten solange hinaus, bis das Ende der Send-Aktion erreicht ist.</li>
+  <li>das Skript den Tastatur-Hook installiert hat (mit dem Menüpunkt "View-&gt;Key history" im <a href="../Program.htm#main-window">Hauptfenster</a> oder dem <a href="KeyHistory.htm">KeyHistory</a>-Befehl können Sie prüfen, ob Ihr Skript den Hook verwendet). Der Hook behält den Überblick darüber, welche Modifikatortasten (<kbd>Alt</kbd>/<kbd>Strg</kbd>/<kbd>Win</kbd>/<kbd>Umschalt</kbd>) der Benutzer physisch gedrückt hält, und kann daher auf das Zeitlimit verzichten.</li>
 </ul>
 <p>Am folgenden Beispiel wird gezeigt, wie diese Direktive funktioniert: <code>^!a::Send, abc</code>.</p>
-<p>Bevor der <a href="Send.htm">Send</a>-Befehl seine Ausführung beginnt, lässt er <kbd>Strg</kbd> und <kbd>Alt</kbd> los, damit die Zeichen richtig gesendet werden. Nachdem der Befehl die Tasten gesendet hat, weiß er nicht, ob er <kbd>Strg</kbd> und <kbd>Alt</kbd> sicher wieder in den gedrückten Zustand versetzen kann (falls der Benutzer diese Tasten weiterhin gedrückt hält). Wenn die aktuell verstrichene Zeit unterhalb des Zeitlimits liegt, geht Send davon aus, dass der Benutzer noch nicht die Gelegenheit hatte, die Modifikatortasten loszulassen, und wird sie deshalb passend zu ihrem physischen Status wieder in den gedrückten Zustand versetzen. Ansonsten bleiben die Modifikatortasten im losgelassenen Zustand; das heißt, dass der Benutzer die Modifikatortasten loslassen und wieder drücken muss, damit sie eine andere Taste modifizieren können.</p>
-<p>Das Zeitlimit sollte kleiner sein als die Zeit, die der Benutzer üblicherweise zum Gedrückthalten der Modifikatoren eines Hotkeys benötigt, bevor er sie wieder loslässt. Ansonsten könnte es passieren, dass die Modifikatoren wieder in den gedrückten Zustand versetzt werden (hängen bleiben), auch dann, wenn der Benutzer sie nicht physisch gedrückt hält.</p>
-<p>Greifen Sie auf eine der folgenden Möglichkeiten zurück, um die Notwendigkeit dieser Direktive auf ein Minimum zu reduzieren oder vollständig zu entfernen:</p>
+<p>Bevor der <a href="Send.htm">Send</a>-Befehl seine Ausführung beginnt, lässt er <kbd>Strg</kbd> und <kbd>Alt</kbd> los, damit die Zeichen richtig gesendet werden. Nachdem der Befehl die Tasten gesendet hat, weiß er nicht, ob er <kbd>Strg</kbd> und <kbd>Alt</kbd> sicher wieder in den gedrückten Zustand versetzen kann (falls der Benutzer diese Tasten weiterhin gedrückt hält). Wenn die aktuell verstrichene Zeit unter dem Zeitlimit liegt, geht Send davon aus, dass der Benutzer noch keine Gelegenheit hatte, die Modifikatortasten loszulassen, und drückt sie wieder nach unten, entsprechend ihrem physischen Status. Andernfalls werden die Modifikatortasten nicht wieder nach unten gedrückt, d.h. der Benutzer muss die Modifikatortasten loslassen und erneut drücken, um dieselbe oder eine andere Taste zu modifizieren.</p>
+<p>Das Zeitlimit sollte kürzer sein als die Zeit, die der Benutzer üblicherweise zum Gedrückthalten der Modifikatoren eines Hotkeys benötigt, bevor er sie wieder loslässt. Andernfalls könnte es passieren, dass die Modifikatoren wieder in den gedrückten Zustand versetzt werden (hängen bleiben), auch dann, wenn der Benutzer sie nicht physisch gedrückt hält.</p>
+<p>Sie können die Notwendigkeit dieser Direktive mit einer der folgenden Maßnahmen verringern oder eliminieren:</p>
 <ul>
-  <li>Installieren Sie den Tastatur-Hook, indem Sie irgendwo im Skript die Zeile <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> einfügen.</li>
+  <li>Installieren Sie den Tastatur-Hook, indem Sie die Zeile <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> irgendwo im Skript einfügen.</li>
   <li>Verwenden Sie <a href="Send.htm#SendInput">SendInput</a> oder <a href="Send.htm#SendPlay">SendPlay</a> anstelle von <a href="Send.htm#SendEvent">SendEvent</a>.</li>
-  <li>Setzen Sie, wenn Sie den traditionellen <a href="Send.htm#SendEvent">SendEvent</a>-Methode verwenden, den ersten Parameter von <a href="SetKeyDelay.htm">SetKeyDelay</a> auf 0 oder -1, um die Tastendrücke schneller zu senden.</li>
+  <li>Wenn Sie die traditionelle <a href="Send.htm#SendEvent">SendEvent</a>-Methode verwenden, setzen Sie den ersten Parameter von <a href="SetKeyDelay.htm">SetKeyDelay</a> auf 0 oder -1, um die Tastendrücke schneller zu senden.</li>
 </ul>
-<p>Wenn diese Direktive im Skript nicht angegeben ist, wird sie sich so verhalten, als wäre sie auf 50 gesetzt.</p>
+<p>Wenn diese Direktive im Skript nicht angegeben ist, verhält sie sich so, als wäre sie auf 50 gesetzt.</p>
 <p>#HotkeyModifierTimeout kann wie alle anderen Direktiven nicht bedingt ausgeführt werden.</p>
 <h2 id="Related">Siehe auch</h2>
-<p><a href="GetKeyState.htm#function">GetKeyState()</a></p>
+<p><a href="GetKeyState.htm">GetKeyState</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a class="ex_number" href="#ExBasic"></a> Setzt das Hotkey-Modifikator-Zeitlimit auf 100 ms anstelle von 50 ms.</p>
+<p><a class="ex_number" href="#ExBasic"></a> Setzt das Hotkey-Modifikator-Zeitlimit auf 100&nbsp;ms statt 50&nbsp;ms.</p>
 <pre>#HotkeyModifierTimeout 100</pre>
 </div>
 

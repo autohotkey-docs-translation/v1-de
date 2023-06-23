@@ -15,37 +15,42 @@
 
 <p>Wartet, bis die <a href="../misc/Clipboard.htm">Zwischenablage</a> Daten enthält.</p>
 
-<pre class="Syntax"><span class="func">ClipWait</span> <span class="optional">, Zeitlimit, AufAlleDatenWarten</span></pre>
+<pre class="Syntax"><span class="func">ClipWait</span> <span class="optional">, Zeitlimit, WartenAuf</span></pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>Zeitlimit</dt>
-  <dd><p>Lässt man diesen Parameter weg, wird der Befehl unendlich lang warten. Ansonsten kann die maximale Wartezeit in Sekunden angegeben werden (dieser Parameter kann einen Dezimalpunkt enthalten oder ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein). Die Angabe von 0 ist das gleiche wie, als würde man 0.5 angeben.</p></dd>
+  <dd><p>Lässt man diesen Parameter weg, wird der Befehl unendlich lang warten. Andernfalls geben Sie die maximale Wartezeit in Sekunden an (dieser Parameter kann einen Dezimalpunkt enthalten oder ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein). Die Angabe von 0 ist das gleiche wie, als würde man 0.5 angeben.</p></dd>
 
-  <dt>AufAlleDatenWarten</dt>
-  <dd><p>Wenn dieser Parameter weggelassen wird oder 0 (false) ist, arbeitet der Befehl selektiver; das heißt, dass der Befehl gezielt auf Text oder Dateien in der Zwischenablage wartet ("Text" bezieht sich auf Daten, die beim Einfügen in den Texteditor tatsächlich Text erzeugen). Wenn dieser Parameter 1 (true) ist (kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein), wartet der Befehl auf Daten beliebiger Art in der Zwischenablage.</p></dd>
+  <dt>WartenAuf</dt>
+  <dd>
+    <p>Dieser Parameter gibt an, worauf gewartet werden soll. Wenn weggelassen, wird standardmäßig 0 verwendet (nur auf Text oder Dateien warten). Andernfalls geben Sie eine der folgenden Zahlen an:</p>
+    <p><strong>0:</strong> Der Befehl ist selektiver und wartet gezielt auf das Erscheinen von Text oder Dateien ("Text" schließt alles ein, was Text erzeugen würde, wenn Sie es in Notepad einfügen).</p>
+    <p><strong>1:</strong> Der Befehl wartet darauf, dass Daten beliebiger Art in der Zwischenablage erscheinen.</p>
+    <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein, auch einer, der 1, 0 oder eine leere Zeichenkette ergibt.</p>
+  </dd>
 
 </dl>
 
 <h2 id="ErrorLevel">ErrorLevel</h2>
-<p>Nach Ablauf der Wartezeit wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt. Ansonsten (also wenn die Zwischenablage Daten enthält) wird ErrorLevel auf 0 gesetzt.</p>
+<p>Nach Ablauf der Wartezeit wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt. Andernfalls (also wenn die Zwischenablage Daten enthält) wird ErrorLevel auf 0 gesetzt.</p>
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Es ist besser, diesen Befehl zu nutzen, anstatt auf eine selbstgemachte Schleife zurückzugreifen, die überprüft, ob die Zwischenablage leer ist. Der Vorteil dieses Befehls ist, dass er nie die Zwischenablage öffnet, was ihn performanter macht und die Möglichkeit ausschließt, mit anderen Anwendungen in Konflikt zu geraten, die ebenfalls auf die Zwischenablage zugreifen.</p>
-<p>Dieser Befehl behandelt alles, was in Text umgewandelt werden kann (z. B. HTML), als Text. Dateien, die man zum Beispiel in einem Explorerfenster via <kbd>Strg</kbd>+<kbd>C</kbd> kopiert, werden ebenfalls als Text behandelt. Solche Dateien werden jedes Mal, wenn die Clipboard-Variable (%clipboard%) im Skript abgerufen wird, in ihre Dateinamen umgewandelt (mit vollständigem Pfad). Weitere Informationen finden Sie unter <a href="../misc/Clipboard.htm">Clipboard</a>.</p>
-<p>Wenn der letzte Parameter 1 (true) ist, wird der Befehl bereits zufriedengestellt, wenn Daten beliebiger Art in der Zwischenablage erscheinen. Dieser Sachverhalt kann in Verbindung mit <a href="../misc/Clipboard.htm#ClipboardAll">ClipboardAll</a> genutzt werden, um textlose Elemente wie z. B. Bilder zu speichern.</p>
-<p>Während der Befehl im Wartezustand ist, können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
-<p>Um auf den Bruchteil einer Sekunde zu warten, geben Sie einen Floating-Point-Wert für den ersten Parameter an; zum Beispiel 0.25, um maximal 250 Millisekunden zu warten.</p>
+<p>Es ist besser, diesen Befehl zu verwenden, als mit einer eigenen Schleife zu prüfen, ob die Zwischenablage leer ist. Der Befehl hat den Vorteil, dass die Zwischenablage nie geöffnet wird, was die Performanz verbessert und das Risiko von Konflikten mit anderen Anwendungen, die ebenfalls auf die Zwischenablage zugreifen, verringert.</p>
+<p>Dieser Befehl behandelt alles, was in Text umgewandelt werden kann (z.B. HTML), als Text. Dateien, die z.B. mit <kbd>Strg</kbd>+<kbd>C</kbd> innerhalb eines Explorer-Fensters kopiert werden, werden ebenfalls als Text behandelt. Solche Dateien werden automatisch in ihre Dateinamen (mit vollständigem Pfad) umgewandelt, wann immer im Skript auf die Clipboard-Variable (%clipboard%) zugegriffen wird. Weitere Informationen finden Sie unter <a href="../misc/Clipboard.htm">Clipboard</a>.</p>
+<p>Wenn der letzte Parameter 1 ist, wird der Befehl bereits zufriedengestellt, wenn irgendetwas in der Zwischenablage erscheint. Das ist in Verbindung mit <a href="../misc/Clipboard.htm#ClipboardAll">ClipboardAll</a> nützlich, um textlose Elemente wie z.B. Bilder zu speichern.</p>
+<p>Während der Befehl wartet, können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
+<p>Um auf einen Bruchteil einer Sekunde zu warten, geben Sie für den ersten Parameter einen Floating-Point-Wert an, z.B. 0.25, um maximal 250 Millisekunden zu warten.</p>
 <h2 id="Related">Siehe auch</h2>
 <p><a href="../misc/Clipboard.htm">Clipboard</a>, <a href="WinWait.htm">WinWait</a>, <a href="KeyWait.htm">KeyWait</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a class="ex_number" href="#ExBasic"></a> Leert die Zwischenablage, kopiert die aktuelle Auswahl in die Zwischenablage und wartet maximal 2 Sekunden, bis die Zwischenablage Daten enthält. Wenn ClipWait das Zeitlimit überschreitet, wird eine Fehlermeldung angezeigt, ansonsten wird der Inhalt der Zwischenablage angezeigt.</p>
+<p><a class="ex_number" href="#ExBasic"></a> Leert die Zwischenablage, kopiert die aktuelle Auswahl in die Zwischenablage und wartet maximal 2 Sekunden, bis die Zwischenablage Daten enthält. Wenn ClipWait das Zeitlimit überschreitet, wird eine Fehlermeldung angezeigt, andernfalls wird der Inhalt der Zwischenablage angezeigt.</p>
 <pre>Clipboard := "" <em>; Leert die Zwischenablage</em>
 Send, ^c
 ClipWait, 2
 if ErrorLevel
 {
-    MsgBox, Der Versuch`, Text in die Zwischenablage zu kopieren`, ist fehlgeschlagen.
+    MsgBox, Der Versuch, Text in die Zwischenablage zu kopieren, ist fehlgeschlagen.
     return
 }
 MsgBox, Zwischenablage = %Clipboard%

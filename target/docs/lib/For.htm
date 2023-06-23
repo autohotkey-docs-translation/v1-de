@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>For Loop - Syntax &amp; Verwendung | AutoHotkey</title>
-<meta name="description" content="Die For-Schleifenanweisung führt für jedes Schlüssel-Wert-Paar eines Objekts eine Reihe von Codezeilen wiederholt aus." />
+<meta name="description" content="Die For-Schleifenanweisung führt für jedes Schlüssel-Wert-Paar eines Objekts wiederholt eine oder mehrere Anweisungen aus." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,7 +13,7 @@
 
 <h1>For-Schleife <span class="ver">[AHK_L 59+]</span></h1>
 
-<p>Führt für jedes Schlüssel-Wert-Paar eines Objekts eine Reihe von Befehlen wiederholt aus.</p>
+<p>Führt für jedes Schlüssel-Wert-Paar eines Objekts wiederholt eine oder mehrere Anweisungen aus.</p>
 
 <pre class="Syntax"><span class="func">For</span> Schlüssel <span class="optional">, Wert</span> in Ausdruck</pre>
 <h2 id="Parameters">Parameter</h2>
@@ -31,8 +31,8 @@
 </dl>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p><i>Ausdruck</i> wird nur einmal ausgewertet, bevor die Schleife beginnt. Wenn das Ergebnis des angegebenen Ausdrucks kein Objekt ist, wird der Schleifenkörper übersprungen und die nächste ausführbare Zeile angesteuert; ansonsten wird die <code>NewEnum()</code>-Methode des Objekts aufgerufen, um an dessen <a href="Enumerator.htm"><i>Enumerator</i></a>-Objekt zu gelangen. Zu Beginn jeder Iteration wird die <a href="Enumerator.htm#Next">Next()</a>-Methode des Enumerators aufgerufen, um das nächste Schlüssel-Wert-Paar zu ermitteln. Wenn Next() eine 0 oder eine leere Zeichenkette zurückgibt, wird die Schleife beendet.</p>
-<p>Das folgende Beispiel zeigt, wie eine For-Schleife ungefähr abläuft:</p>
+<p><i>Ausdruck</i> wird nur einmal vor Beginn der Schleife ausgewertet. Wenn das Ergebnis kein Objekt ist, springt die Ausführung sofort auf die Zeile nach dem Schleifenkörper; andernfalls wird die <code>NewEnum()</code>-Methode des Objekts zum Abrufen eines <a href="Enumerator.htm"><i>Enumerator</i></a>-Objekts aufgerufen. Zu Beginn jeder Iteration wird die <a href="Enumerator.htm#Next">Next()</a>-Methode des Enumerators zum Abrufen des nächsten Schlüssel-Wert-Paares verwendet. Wenn Next() eine leere Zeichenkette oder 0 zurückgibt, wird die Schleife terminiert.</p>
+<p>Das folgende Beispiel zeigt die ungefähre Funktionsweise einer For-Schleife:</p>
 <pre>_enum := (<i>Ausdruck</i>)._NewEnum()
 if IsObject(_enum)
     while _enum.Next(Schlüssel, Wert)
@@ -40,13 +40,13 @@ if IsObject(_enum)
         ...
     }
 </pre>
-<p>Bestehende Schlüssel-Wert-Paare können während der Schleife geändert werden. Allerdings kann das Einfügen oder Entfernen von Schlüsseln dazu führen, dass einige Elemente mehrfach übersprungen oder enumeriert werden. Eine Möglichkeit, dies zu umgehen, wäre es, eine Liste mit Schlüsseln zu erstellen, die entfernt werden sollen, und danach eine zweite Schleife zu verwenden, um die Schlüssel nach dem ersten Schleifendurchlauf zu entfernen. Mit <code><a href="Object.htm#Remove">Objekt.Remove</a>(<i>ErsterSchlüssel</i>, <i>LetzterSchlüssel</i>)</code> kann ein bestimmter Bereich von Schlüsseln entfernt werden, ohne dass eine Schleife notwendig ist.</p>
-<p>Nach einer For-Schleife erfolgt üblicherweise ein <a href="Block.htm">Block</a> (eine Sammlung von Anweisungen), der den <em>Schleifenkörper</em> definiert. Eine Schleife mit nur einer einzigen Anweisung benötigt keinen Block (ein "if" und das dazugehörige "else" werden hierbei als Einzelanweisung angesehen). Optional kann der "One True Brace Style" (OTB) angewendet werden, um die geschweifte Startklammer auf dieselbe Zeile statt darunter zu setzen. Zum Beispiel: <code>for x, y in z {</code>.</p>
-<p>Diese und jede andere Schleife in AutoHotkey kann auf Hilfsmittel wie <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und <a href="../Variables.htm#Index">A_Index</a> zurückgreifen.</p>
+<p>Existierende Schlüssel-Wert-Paare können während der Schleife geändert werden, aber das Einfügen oder Entfernen von Schlüsseln kann dazu führen, dass einige Elemente übersprungen oder mehrfach enumeriert werden. Um das zu umgehen, können Sie z.B. eine Liste der zu entfernenden Schlüssel erstellen und dann nach Abschluss der ersten Schleife eine zweite Schleife verwenden, um die Schlüssel zu entfernen. Beachten Sie, dass Sie mit <code><a href="Object.htm#Remove">Objekt.Remove</a>(<i>ErsterSchlüssel</i>, <i>LetzterSchlüssel</i>)</code> einen Bereich von Schlüsseln entfernen können, ohne dass eine Schleife notwendig ist.</p>
+<p>Nach einer For-Schleife folgt üblicherweise ein <a href="Block.htm">Block</a>, eine Sammlung von Anweisungen, die den <em>Körper</em> der Schleife bilden. Für eine Schleife mit nur einer einzigen Anweisung ist jedoch kein Block erforderlich (ein "if" und dessen "else" werden in diesem Fall als Einzelanweisung behandelt). Der One True Brace (OTB) Style wird unterstützt; d.h. Sie können je nach Bedarf die geschweifte Startklammer am Zeilenende positionieren. Zum Beispiel: <code>for x, y in z {</code>.</p>
+<p>Wie bei allen Schleifen können <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und <a href="../Variables.htm#Index">A_Index</a> verwendet werden.</p>
 
 <h2 id="COM_Objects">COM-Objekte</h2>
-<p>Da <i>Schlüssel</i> und <i>Wert</i> direkt an die Next()-Methode des Enumerators übergeben werden, hängen die zugewiesenen Werte davon ab, welche Art von Objekt enumeriert wird. Handelt es sich um ein COM-Objekt, enthält <i>Schlüssel</i> den Rückgabewert von <a href="https://learn.microsoft.com/windows/win32/api/oaidl/nf-oaidl-ienumvariant-next">IEnumVARIANT::Next()</a> und <i>Wert</i> eine Zahl, die seinen <a href="https://learn.microsoft.com/openspecs/windows_protocols/ms-oaut/3fe7db9f-5803-4dc4-9d14-5425d3f5461f">Variantentyp</a> repräsentiert. Wenn es zum Beispiel mit einem <a href="https://learn.microsoft.com/previous-versions/x4k5wbx4(v=vs.85)">Scripting.Dictionary</a>-Objekt genutzt wird, enthält <i>Schlüssel</i> einen Schlüssel aus dem Dictionary und <i>Wert</i> eine 8 für Zeichenketten und eine 3 für Integer. Eine Auflistung aller Typennummern finden Sie unter <a href="ComObjType.htm">ComObjType()</a>.</p>
-<p><span class="ver">[v1.0.96.00+]:</span> Beim Enumerieren eines <a href="ComObjArray.htm">SafeArrays</a> enthält <i>Schlüssel</i> das aktuelle Element und <i>Wert</i> seinen Variantentyp.</p>
+<p>Da <i>Schlüssel</i> und <i>Wert</i> direkt an die Next()-Methode des Enumerators übergeben werden, hängen die zugewiesenen Werte davon ab, welche Art von Objekt enumeriert wird. Handelt es sich um ein COM-Objekt, enthält <i>Schlüssel</i> den Rückgabewert von <a href="https://learn.microsoft.com/windows/win32/api/oaidl/nf-oaidl-ienumvariant-next">IEnumVARIANT::Next()</a> und <i>Wert</i> eine Zahl, die seinen <a href="https://learn.microsoft.com/openspecs/windows_protocols/ms-oaut/3fe7db9f-5803-4dc4-9d14-5425d3f5461f">Variantentyp</a> repräsentiert. Zum Beispiel wird bei Verwendung eines <a href="https://learn.microsoft.com/previous-versions/x4k5wbx4(v=vs.85)">Scripting.Dictionary</a>-Objekts jeder <i>Schlüssel</i> einen Schlüssel aus dem Dictionary enthalten und <i>Wert</i> typischerweise 8 für Zeichenketten und 3 für Integer sein. Eine Auflistung aller Typennummern finden Sie unter <a href="ComObjType.htm">ComObjType()</a>.</p>
+<p><span class="ver">[v1.0.96.00+]</span>: Beim Enumerieren eines <a href="ComObjArray.htm">SafeArrays</a> enthält <i>Schlüssel</i> das aktuelle Element und <i>Wert</i> seinen Variantentyp.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="Enumerator.htm">Enumerator-Objekt</a>, <a href="Object.htm#NewEnum">Objekt._NewEnum()</a>, <a href="While.htm">While-Schleife</a>, <a href="Loop.htm">Loop</a>, <a href="Until.htm">Until</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a></p>
@@ -63,7 +63,7 @@ MsgBox % s
 </div>
 
 <div class="ex" id="ExCOM">
-<p><a class="ex_number" href="#ExCOM"></a> Listet alle offenen Explorer- und Internet-Explorer-Fenster auf, unter Verwendung des <a href="https://learn.microsoft.com/windows/win32/shell/shell">Shell</a>-Objekts.</p>
+<p><a class="ex_number" href="#ExCOM"></a> Listet alle geöffneten Explorer- und Internet-Explorer-Fenster unter Nutzung des <a href="https://learn.microsoft.com/windows/win32/shell/shell">Shell</a>-Objekts auf.</p>
 <pre>for window in ComObjCreate("Shell.Application").Windows
     windows .= window.LocationName " :: " window.LocationURL "`n"
 MsgBox % windows</pre>
@@ -71,7 +71,7 @@ MsgBox % windows</pre>
 
 <div class="ex" id="ExCEnumerator">
 <p><a class="ex_number" href="#ExCEnumerator"></a> Klasse: CEnumerator</p>
-<p>Stellt ein generisches Enumerator-Objekt bereit, mit dem numerische Schlüssel iteriert werden können. Das Array darf beim Iterieren nicht verändert werden, weil der iterierte Bereich ansonsten ungültig wäre. Es ist möglich, benutzerdefinierte MaxIndex()-Funktionen für die Array-Grenzen zu definieren. Befinden sich fehlende Array-Elemente zwischen 1 und Max-Index, werden sie iteriert, aber einen Wert von "" haben. Das bedeutet, dass dieser Enumerator keine realen lückenhaften Arrays unterstützt. Quelle: <a href="https://www.autohotkey.com/board/topic/2667-suggestions-on-documentation-improvements/?p=531509">Suggestions on documentation improvements</a></p>
+<p>Stellt ein generisches Enumerator-Objekt bereit, mit dem numerische Schlüssel iteriert werden können. Das Array darf beim Iterieren nicht verändert werden, da sonst der iterierte Bereich ungültig wäre. Es ist möglich, benutzerdefinierte MaxIndex()-Funktionen für die Array-Grenzen zu definieren. Befinden sich fehlende Array-Elemente zwischen 1 und Max-Index, werden sie iteriert, aber einen Wert von "" haben. Das bedeutet, dass dieser Enumerator keine echten lückenhaften Arrays unterstützt. Quelle: <a href="https://www.autohotkey.com/board/topic/2667-suggestions-on-documentation-improvements/?p=531509">Suggestions on documentation improvements</a></p>
 <pre><em>/*
 Klasse: CEnumerator
 
@@ -87,7 +87,7 @@ Damit ein Objekt diesen Iterator verwenden kann, fügen Sie diese Funktion in di
 For k, v in Test
     MsgBox %k%=%v%
 
-<em>; Test-Klasse, um die Verwendung zu demonstrieren</em>
+<em>; Testklasse zur Demonstration der Verwendung</em>
 class Test
 {
     static Data := ["abc", "def", "ghi"]
@@ -104,8 +104,8 @@ class CEnumerator
     {
         this.Object := Object
         this.first := true
-        <em>; Für die Geschwindigkeit zwischenspeichern. Nützlich, falls benutzerdefinierte MaxIndex()-Funktionen schlechte Leistung haben.</em>
-        <em>; Das bedeutet aber auch, dass keine Schlüssel-Wert-Paare beim Iterieren eingefügt werden können, weil der Bereich ansonsten ungültig wäre.</em>
+        <em>; Für die Geschwindigkeit zwischenspeichern. Nützlich, falls benutzerdefinierte MaxIndex()-Funktionen schlechte Performanz haben.</em>
+        <em>; Das bedeutet aber auch, dass beim Iterieren keine Schlüssel-Wert-Paare eingefügt werden können, da sonst der Bereich ungültig wäre.</em>
         this.ObjMaxIndex := Object.MaxIndex()
     }
 

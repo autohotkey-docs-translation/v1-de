@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>FileMove - Syntax &amp; Verwendung | AutoHotkey</title>
-<meta name="description" content="Der FileMove-Befehl verschiebt eine oder mehrere Dateien, oder benennt sie um." />
+<meta name="description" content="Der FileMove-Befehl verschiebt oder benennt eine oder mehrere Dateien um." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,42 +13,44 @@
 
 <h1>FileMove</h1>
 
-<p>Verschiebt eine oder mehrere Dateien, oder benennt sie um.</p>
+<p>Verschiebt oder benennt eine oder mehrere Dateien um.</p>
 
 <pre class="Syntax"><span class="func">FileMove</span>, QuelleMuster, ZielMuster <span class="optional">, Überschreiben</span></pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>QuelleMuster</dt>
-  <dd><p>Name einer Datei oder ein Platzhaltermuster wie C:\Temp\*.tmp. Wenn kein absoluter Pfad angegeben ist, wird <em>QuelleMuster</em> im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p></dd>
+  <dd><p>Name einer Datei oder ein Platzhaltermuster wie z.B. <code>C:\Temp\*.tmp</code>. Wenn kein absoluter Pfad angegeben ist, wird <em>QuelleMuster</em> im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p></dd>
 
   <dt>ZielMuster</dt>
   <dd><p>Name oder Suchmuster des Ziels. Wenn kein absoluter Pfad angegeben ist, wird das Ziel im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
-      <p>Wenn vorhanden, wird das erste Sternchen (<code>*</code>) im Dateinamen mit dem Quelldateinamen ohne Dateiendung ersetzt, während das erste Sternchen nach dem letzten Punkt (<code>.</code>) mit der Dateiendung der Quelldatei ersetzt wird. Wenn ein Sternchen vorhanden ist, aber die Dateiendung weggelassen wird, wird die Dateiendung der Quelldatei verwendet.</p>
-      <p>Die folgenden nahezu identischen Beispiele zeigen, wie man eine einfache Verschiebung durchführen kann (unter Beibehaltung der vorhandenen Dateinamen), indem man nur den Ordnernamen angibt:</p>
+      <p>Sofern vorhanden, wird das erste Sternchen (<code>*</code>) im Dateinamen mit dem Quelldateinamen ohne Dateiendung ersetzt, während das erste Sternchen nach dem letzten Punkt (<code>.</code>) mit der Dateiendung der Quelldatei ersetzt wird. Wenn ein Sternchen vorhanden ist, aber die Dateiendung weggelassen wird, wird die Dateiendung der Quelldatei verwendet.</p>
+      <p>Die folgenden nahezu identischen Beispiele zeigen, wie eine einfache Verschiebung (unter Beibehaltung der vorhandenen Dateinamen) nur durch Angabe des Ordnernamens durchgeführt werden kann:</p>
 <pre>FileMove, C:\*.txt, C:\Mein Ordner</pre>
 <pre>FileMove, C:\*.txt, C:\Mein Ordner\*.*</pre>
-      <p>Das Zielverzeichnis muss bereits vorhanden sein. Wenn <em>Mein Ordner</em> nicht existiert, verwendet das erste Beispiel oben "Mein Ordner" als Zieldateinamen, während das zweite Beispiel keine Dateien verschiebt.</p>
+      <p>Das Zielverzeichnis muss bereits existieren. Wenn <em>Mein Ordner</em> nicht existiert, verwendet das erste Beispiel oben "Mein Ordner" als Zieldateinamen, während das zweite Beispiel keine Dateien verschiebt.</p>
     </dd>
 
   <dt>Überschreiben</dt>
   <dd>
-    <p>Dieser Parameter bestimmt, ob bereits vorhandene Dateien überschrieben werden dürfen. Wenn dieser Parameter 1 (true) ist, wird der Befehl vorhandene Dateien überschreiben. Wenn dieser Parameter weggelassen wird oder 0 (false) ist, wird der Befehl vorhandene Dateien nicht überschreiben.</p>
-    <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein. Es können auch Ausdrücke angegeben werden, die True oder False zurückgeben (weil True und False intern in 1 und 0 aufgelöst werden).</p>
+      <p>Dieser Parameter gibt an, ob bereits vorhandene Dateien überschrieben werden dürfen. Wenn weggelassen, wird standardmäßig 0 verwendet (kein Überschreiben). Andernfalls geben Sie eine der folgenden Zahlen an:</p>
+      <p><strong>0:</strong> Vorhandene Dateien werden nicht überschrieben. Die Operation wird fehlschlagen und keinen Effekt haben, wenn <em>ZielMuster</em> bereits als Datei oder Verzeichnis existiert.</p>
+      <p><strong>1:</strong> Vorhandene Dateien werden überschrieben. Allerdings werden Dateien oder Unterordner innerhalb von <em>ZielMuster</em>, die kein Gegenstück in <em>QuelleMuster</em> haben, nicht gelöscht.</p>
+      <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein, auch einer, der 1, 0 oder eine leere Zeichenkette ergibt.</p>
   </dd>
 
 </dl>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
-<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf die Anzahl der Dateien gesetzt, die nicht verschoben werden konnten, und bei Erfolg auf 0. Wenn die Quelldatei eine einzelne nicht vorhandene Datei (ohne Platzhalter) ist, wird ErrorLevel auch auf 0 gesetzt. Um diesen Zustand zu erkennen, können Sie <a href="FileExist.htm">FileExist()</a> oder <a href="IfExist.htm">IfExist</a> auf die Quelldatei anwenden, bevor Sie sie verschieben.</p>
-<p>Im Gegensatz zu <a href="FileCopy.htm">FileCopy</a> wird das Verschieben einer Datei auf sich selbst immer als Erfolg angesehen, selbst wenn der Überschreibmodus nicht aktiv ist.</p>
-<p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> entweder auf Null (0) oder unmittelbar nach dem letzten Fehler auf das Ergebnis der Systemfunktion GetLastError() gesetzt. Ansonsten enthält A_LastError einen Fehlercode, der eventuell kenntlich macht, warum keine Dateien gefunden wurden.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf die Anzahl der Dateien gesetzt, die nicht verschoben werden konnten, und bei Erfolg auf 0. Allerdings wird ErrorLevel auch auf 0 gesetzt, wenn die Quelldatei eine einzelne Datei ist (ohne Platzhalter) und nicht existiert. Um diesen Zustand zu erkennen, prüfen Sie mit <a href="FileExist.htm">FileExist()</a> oder <a href="IfExist.htm">IfExist</a>, ob die Quelldatei vorhanden ist, bevor Sie diese verschieben.</p>
+<p>Im Gegensatz zu <a href="FileCopy.htm">FileCopy</a> wird das Verschieben einer Datei auf sich selbst immer als Erfolg gewertet, auch dann, wenn der Überschreibmodus nicht aktiv ist.</p>
+<p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> auf 0 oder das Ergebnis der Systemfunktion GetLastError() unmittelbar nach dem letzten Misserfolg gesetzt. Andernfalls enthält A_LastError einen Fehlercode, der eventuell kenntlich macht, warum keine Dateien gefunden wurden.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>FileMove verschiebt nur Dateien. Wenn Sie stattdessen den kompletten Inhalt eines Ordners (also alle Dateien und Unterordner) verschieben wollen, können Sie das Beispiel ganz unten verwenden. Mit <a href="FileMoveDir.htm">FileMoveDir</a> kann ein einzelner Ordner verschoben oder umbenannt werden.</p>
-<p>Die Operation wird auch dann fortgesetzt, wenn Fehler auftreten.</p>
-<p>Dieser Befehl ist zwar in der Lage, Dateien auf einen anderen Datenträger zu verschieben, aber die Operation dauert wesentlich länger als das Verschieben von Dateien auf denselben Datenträger. Das liegt daran, dass das Verschieben von Dateien auf denselben Datenträger quasi dem Umbenennen von Dateien entspricht, was bedeutend schneller ist.</p>
+<p>FileMove verschiebt nur Dateien. Um stattdessen den kompletten Inhalt eines Ordners (all seine Dateien und Unterordner) zu verschieben, verwenden Sie das Beispiel ganz unten. Mit <a href="FileMoveDir.htm">FileMoveDir</a> kann ein einzelner Ordner verschoben oder umbenannt werden.</p>
+<p>Die Operation wird nicht gestoppt, wenn Fehler auftreten.</p>
+<p>Obwohl dieser Befehl in der Lage ist, Dateien auf einen anderen Datenträger zu verschieben, dauert dies wesentlich länger als eine Verschiebung innerhalb desselben Datenträgers. Der Grund dafür ist, dass eine Verschiebung innerhalb desselben Datenträgers einer Umbenennung entspricht, was wesentlich schneller ist.</p>
 <h2 id="Related">Siehe auch</h2>
 <p><a href="FileCopy.htm">FileCopy</a>, <a href="FileCopyDir.htm">FileCopyDir</a>, <a href="FileMoveDir.htm">FileMoveDir</a>, <a href="FileDelete.htm">FileDelete</a></p>
 <h2 id="Examples">Beispiele</h2>
@@ -74,12 +76,12 @@ if (FehlerAnzahl != 0)
     MsgBox %FehlerAnzahl% Dateien/Ordner konnten nicht verschoben werden.
 
 VerschiebeDateienUndOrdner(QuelleMuster, ZielOrdner, Überschreiben = false)
-<em>; Verschiebt alle Dateien und Ordner von QuelleMuster in dem ZielOrdner und
-; gibt die Anzahl an Dateien/Ordnern zurück, die nicht verschoben werden konnten. Diese Funktion benötigt <span class="ver">[v1.0.38+]</span>,
+<em>; Verschiebt alle Dateien und Ordner gemäß QuelleMuster in den ZielOrdner und
+; gibt die Anzahl der Dateien/Ordner zurück, die nicht verschoben werden konnten. Diese Funktion benötigt <span class="ver">[v1.0.38+]</span>,
 ; weil sie Modus 2 von FileMoveDir verwendet.</em>
 {
     if (Überschreiben = 1)
-        Überschreiben := 2  <em>; Siehe <a href="FileMoveDir.htm">FileMoveDir</a> zum Thema Modus 1 vs 2.</em>
+        Überschreiben := 2  <em>; Siehe <a href="FileMoveDir.htm">FileMoveDir</a> für Modus 2 statt 1.</em>
     <em>; Zuerst alle Dateien verschieben (aber nicht die Ordner):</em>
     FileMove, %QuelleMuster%, %ZielOrdner%, %Überschreiben%
     FehlerAnzahl := ErrorLevel
@@ -88,7 +90,7 @@ VerschiebeDateienUndOrdner(QuelleMuster, ZielOrdner, Überschreiben = false)
     {
         FileMoveDir, %A_LoopFileFullPath%, %ZielOrdner%\%A_LoopFileName%, %Überschreiben%
         FehlerAnzahl += ErrorLevel
-        if ErrorLevel  <em>; Jeden Problemordner mit Namen anzeigen.</em>
+        if ErrorLevel  <em>; Jeden Problemordner namentlich anzeigen.</em>
             MsgBox %A_LoopFileFullPath% kann nicht nach %ZielOrdner% verschoben werden.
     }
     return FehlerAnzahl

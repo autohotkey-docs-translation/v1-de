@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>GetKeyState() / GetKeyState - Syntax &amp; Verwendung | AutoHotkey</title>
-<meta name="description" content="Die GetKeyState-Funktion und der entsprechende Befehl überprüfen, ob eine Taste oben oder unten ist. Kann auch den Status eines Joysticks abrufen." />
+<title>GetKeyState - Syntax &amp; Verwendung | AutoHotkey</title>
+<meta name="description" content="Die GetKeyState-Funktion oder der gleichnamige Befehl prüft, ob eine Tastatur-, Maus- oder Controller-Taste oben oder unten ist. Ruft auch Controller-Werte ab." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -11,67 +11,66 @@
 </head>
 <body>
 
-<h1>GetKeyState() / GetKeyState</h1>
-<p>Überprüft, ob eine Taste oben oder unten ist. Kann auch den Status eines Joysticks abrufen.</p>
+<h1>GetKeyState</h1>
+<p>GetKeyState kann als <a href="#function">Funktion</a> oder <a href="#command">Befehl</a> verwendet werden, wobei Ersteres für neue Skripte empfohlen ist. Beide prüfen, ob eine Tastatur-, Maus- oder Controller-Taste oben oder unten ist, und rufen auch Controller-Werte ab. Der Unterschied besteht darin, dass die Funktion in einem <a href="../Variables.htm#Expressions">Ausdruck</a> verwendet werden kann und 1 (true) für unten oder 0 (false) für oben zurückgibt, während der Befehl D für unten oder U für oben in eine Variable speichert.</p>
 
-<h2 id="function">GetKeyState()</h2>
-
-<pre class="Syntax">
-TasteIstUnten := <span class="func">GetKeyState</span>(TasteName <span class="optional">, Modus</span>)
-</pre>
+<h2 id="function">GetKeyState-Funktion</h2>
+<p>Gibt 1 (true) oder 0 (false) zurück, je nachdem, ob die angegebene Tastatur-, Maus- oder Controller-Taste unten oder oben ist. Ruft auch Controller-Werte ab.</p>
+<pre class="Syntax">TasteIstUnten := <span class="func">GetKeyState</span>(TasteName <span class="optional">, Modus</span>)</pre>
 <h3 id="Function_Parameters">Parameter</h3>
 <dl>
 
   <dt>TasteName</dt>
-  <dd><p>Nahezu jedes Zeichen, das mit der Tastatur erzeugt werden kann, oder einer der Tastennamen aus der <a href="../KeyList.htm">Tastenliste</a>, darunter auch Maus- und Joystick-Tasten. Beispiele: B, 5, LWin, RControl, Alt, Enter, Escape, LButton, MButton, Joy1.</p>
-      <p>Alternativ kann ein eindeutiger virtueller Tastencode wie vkFF angegeben werden. Virtuelle Tastencodes sind nützlich, um auf Tasten zu verweisen, die keine Namen haben (was aber selten vorkommt). Schauen Sie sich die Instruktion am unteren Ende der <a href="../KeyList.htm#SpecialKeys">Tastenliste</a> an, um zu erfahren, wie der virtuelle Tastencode einer solchen Taste ermittelt werden kann.</p>
-      <p><b>Bekannte Einschränkung</b>: Diese Funktion kann nicht zwischen zwei Tasten unterscheiden, die den gleichen virtuellen Tastencode haben, wie z. B. Left und NumpadLeft.</p></dd>
+  <dd><p>Nahezu jedes Zeichen, das mit der Tastatur erzeugt werden kann, oder einer der Tastennamen aus der <a href="../KeyList.htm">Tastenliste</a>, einschließlich Maus- und Controller-Tasten. Beispiele: B, 5, LWin, RControl, Alt, Enter, Escape, LButton, MButton, Joy1.</p>
+      <p>Alternativ kann explizit ein eindeutiger virtueller Tastencode wie vkFF angegeben werden. Tastencodes sind nützlich, um auf Tasten zu verweisen, die keinen Namen haben (selten). Schauen Sie sich die Anleitung am Ende der <a href="../KeyList.htm#SpecialKeys">Tastenliste</a> an, um zu erfahren, wie der virtuelle Tastencode einer solchen Taste ermittelt werden kann.</p>
+      <p><b>Bekannte Einschränkung:</b> Diese Funktion kann nicht zwischen zwei Tasten unterscheiden, die den gleichen virtuellen Tastencode haben, wie z.B. Left und NumpadLeft.</p></dd>
 
   <dt>Modus</dt>
-  <dd><p>Dieser Parameter wird ignoriert, wenn der Status des Joysticks abgerufen wird.</p>
-      <p>Lässt man diesen Parameter weg, wird standardmäßig der logische Zustand der Taste ermittelt. Das ist der Zustand, den das Betriebssystem oder aktive Fenster für diese Taste vermutet, aber nicht unbedingt dem physischen Zustand entsprechen muss.</p>
-	  <p>Ansonsten können Sie einen der folgenden Buchstaben angeben:</p>
-      <p><strong>P</strong>: Ruft den physischen Zustand ab (z. B. ob der Benutzer eine Taste physisch gedrückt hält). Der physische Zustand einer Tastatur- oder Maustaste ist in der Regel derselbe wie der logische Zustand, es sei denn, der Tastatur- und/oder Maus-Hook ist installiert, dann spiegelt dieser genau wider, ob der Benutzer die Taste physisch gedrückt hält oder nicht (vorausgesetzt, dass sie während der Ausführung des Skripts gedrückt gehalten wurde). Mit dem <a href="KeyHistory.htm">KeyHistory</a>-Befehl oder -Menüpunkt können Sie überprüfen, ob Ihr Skript ein Hook benutzt. Fügen Sie die Direktiven <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> und/oder <a href="_InstallMouseHook.htm">#InstallMouseHook</a> in Ihr Skript ein, um die Installation eines Hooks zu erzwingen.</p>
-      <p><strong>T</strong>: Ruft den Umschaltzustand ab. Bei Tasten außer <kbd>Feststell</kbd>, <kbd>Num</kbd> und <kbd>Rollen</kbd> ist der Umschaltzustand grundsätzlich 0, wenn das Skript gestartet wird, und wird nicht zwischen Prozessen synchronisiert.</p>
+  <dd><p>Dieser Parameter wird ignoriert, wenn Controller-Werte abgerufen werden.</p>
+      <p>Wenn leer oder weggelassen, wird standardmäßig der logische Status der Taste ermittelt. Das ist der Status, den das Betriebssystem und das aktive Fenster für diese Taste vermuten, der aber nicht unbedingt dem physischen Status entspricht.</p>
+	  <p>Andernfalls geben Sie einen der folgenden Buchstaben an:</p>
+      <p><strong>P:</strong> Ruft den physischen Status ab (d.h. ob der Benutzer eine Taste physisch gedrückt hält). Der physische Status einer Tastatur- oder Maustaste ist in der Regel derselbe wie der logische Status, es sei denn, der Tastatur- und/oder Maus-Hook ist installiert, dann spiegelt dieser genau wider, ob der Benutzer die Taste physisch gedrückt hält oder nicht (vorausgesetzt, die Taste wurde während der Ausführung des Skripts nach unten gedrückt). Mit dem <a href="KeyHistory.htm">KeyHistory</a>-Befehl oder -Menüpunkt können Sie prüfen, ob Ihr Skript die Hooks verwendet. Um die Installation eines Hooks zu erzwingen, fügen Sie die Direktiven <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> und/oder <a href="_InstallMouseHook.htm">#InstallMouseHook</a> in Ihr Skript ein.</p>
+      <p><strong>T:</strong> Ruft den Schaltstatus ab. Bei allen Tasten außer <kbd>Feststell</kbd>, <kbd>Num</kbd> und <kbd>Rollen</kbd> ist der Schaltstatus beim Start des Skripts grundsätzlich immer 0 und wird nicht zwischen Prozessen synchronisiert.</p>
     </dd>
 
 </dl>
 
 <h3 id="Function_Return_Value">Rückgabewert</h3>
-<p>Diese Funktion gibt 1 zurück, wenn die Taste unten ist (oder eingeschaltet ist), oder 0, wenn sie oben ist (oder ausgeschaltet ist). Für die speziellen Tasten des Joysticks wie Achsen und POV-Schalter <a href="#joystick">werden andere Werte abgerufen</a>.</p>
-<p>Wenn <em>TasteName</em> ungültig ist oder der Zustand der Taste nicht ermittelt werden konnte, wird eine leere Zeichenkette zurückgegeben.</p>
+<p>Diese Funktion gibt 1 (true) zurück, wenn die Taste unten ist (oder eingeschaltet ist), oder 0 (false), wenn sie oben ist (oder ausgeschaltet ist). Für spezielle Controller-Bedienelemente wie Achsen und POV-Schalter <a href="#controller">werden andere Werte abgerufen</a>.</p>
+<p>Wenn <em>TasteName</em> ungültig ist oder der Status der Taste nicht ermittelt werden konnte, wird eine leere Zeichenkette zurückgegeben.</p>
 
-<h2 id="command">GetKeyState</h2>
-<p class="warning"><strong>Veraltet:</strong> Dieser Befehl ist nicht für neue Skripte empfohlen. Verwenden Sie stattdessen die <a href="#function">GetKeyState</a>-Funktion.</p>
+<h2 id="command">GetKeyState-Befehl</h2>
+<!-- <p>Stores the letter D in a variable if a keyboard key or mouse/controller button is down or U if it is up. Also retrieves controller status.</p> -->
+<p>Speichert den Buchstaben D oder U in eine Variable, je nachdem, ob die angegebene Tastatur-, Maus- oder Controller-Taste unten oder oben ist. Ruft auch Controller-Werte ab.</p>
+<p class="warning"><strong>Veraltet:</strong> Dieser Befehl ist nicht für neue Skripte empfohlen. Verwenden Sie stattdessen die oben beschriebene <a href="#function">GetKeyState</a>-Funktion.</p>
+<pre class="Syntax"><span class="func">GetKeyState</span>, AusgabeVar, TasteName <span class="optional">, Modus</span></pre>
 
-<pre class="Syntax">
-<span class="func">GetKeyState</span>, AusgabeVar, TasteName <span class="optional">, Modus</span>
-</pre>
 <h3 id="Command_Parameters">Parameter</h3>
 <dl>
 
   <dt>AusgabeVar</dt>
-  <dd><p>Name der Ausgabevariable, in der der Zustand der Taste gespeichert werden soll, was entweder D für Unten (Down) oder U für Oben (Up) ist. Die Variable wird leer gemacht, wenn der Zustand der Taste nicht ermittelt werden konnte. Für die speziellen Tasten des Joysticks wie Achsen und POV-Schalter <a href="#joystick">werden andere Werte abgerufen</a>.</p>
+  <dd><p>Name der Ausgabevariable, in der der Status der Taste gespeichert werden soll, entweder D für unten (down) oder U für oben (up). Die Variable wird leer gemacht, wenn der Status der Taste nicht ermittelt werden konnte. Für spezielle Controller-Bedienelemente wie Achsen und POV-Schalter <a href="#controller">werden andere Werte abgerufen</a>.</p>
       </dd>
 
   <dt>TasteName</dt>
-  <dd><p>Nahezu jedes Zeichen, das mit der Tastatur erzeugt werden kann, oder einer der Tastennamen aus der <a href="../KeyList.htm">Tastenliste</a>, darunter auch Maus- und Joystick-Tasten. Beispiele: B, 5, LWin, RControl, Alt, Enter, Escape, LButton, MButton, Joy1.</p>
-      <p>Alternativ kann ein eindeutiger virtueller Tastencode wie vkFF angegeben werden. Virtuelle Tastencodes sind nützlich, um auf Tasten zu verweisen, die keine Namen haben (was aber selten vorkommt). Schauen Sie sich die Instruktion am unteren Ende der <a href="../KeyList.htm#SpecialKeys">Tastenliste</a> an, um zu erfahren, wie der virtuelle Tastencode einer solchen Taste ermittelt werden kann.</p>
-      <p><b>Bekannte Einschränkung</b>: Dieser Befehl kann nicht zwischen zwei Tasten unterscheiden, die den gleichen virtuellen Tastencode haben, wie z. B. Left und NumpadLeft.</p></dd>
+  <dd><p>Nahezu jedes Zeichen, das mit der Tastatur erzeugt werden kann, oder einer der Tastennamen aus der <a href="../KeyList.htm">Tastenliste</a>, einschließlich Maus- und Controller-Tasten. Beispiele: B, 5, LWin, RControl, Alt, Enter, Escape, LButton, MButton, Joy1.</p>
+      <p>Alternativ kann explizit ein eindeutiger virtueller Tastencode wie vkFF angegeben werden. Tastencodes sind nützlich, um auf Tasten zu verweisen, die keinen Namen haben (selten). Schauen Sie sich die Anleitung am Ende der <a href="../KeyList.htm#SpecialKeys">Tastenliste</a> an, um zu erfahren, wie der virtuelle Tastencode einer solchen Taste ermittelt werden kann.</p>
+      <p><b>Bekannte Einschränkung:</b> Dieser Befehl kann nicht zwischen zwei Tasten unterscheiden, die den gleichen virtuellen Tastencode haben, wie z.B. Left und NumpadLeft.</p></dd>
 
   <dt>Modus</dt>
-  <dd><p>Dieser Parameter wird ignoriert, wenn der Status des Joysticks abgerufen wird.</p>
-      <p>Lässt man diesen Parameter weg, wird standardmäßig der logische Zustand der Taste ermittelt. Das ist der Zustand, den das Betriebssystem oder aktive Fenster für diese Taste vermutet, aber nicht unbedingt dem physischen Zustand entsprechen muss.</p>
-	  <p>Ansonsten können Sie einen der folgenden Buchstaben angeben:</p>
-      <p><strong>P</strong>: Ruft den physischen Zustand ab (z. B. ob der Benutzer eine Taste physisch gedrückt hält). Der physische Zustand einer Tastatur- oder Maustaste ist in der Regel derselbe wie der logische Zustand, es sei denn, der Tastatur- und/oder Maus-Hook ist installiert, dann spiegelt dieser genau wider, ob der Benutzer die Taste physisch gedrückt hält oder nicht (vorausgesetzt, dass sie während der Ausführung des Skripts gedrückt gehalten wurde). Mit dem <a href="KeyHistory.htm">KeyHistory</a>-Befehl oder -Menüpunkt können Sie überprüfen, ob Ihr Skript ein Hook benutzt. Fügen Sie die Direktiven <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> und/oder <a href="_InstallMouseHook.htm">#InstallMouseHook</a> in Ihr Skript ein, um die Installation eines Hooks zu erzwingen.</p>
-      <p><strong>T</strong>: Ruft den Umschaltzustand ab. D bedeutet, dass die Taste "An" ist, und U bedeutet, dass sie "Aus" ist. Bei Tasten außer <kbd>Feststell</kbd>, <kbd>Num</kbd> und <kbd>Rollen</kbd> ist der Umschaltzustand grundsätzlich U, wenn das Skript gestartet wird, und wird nicht zwischen Prozessen synchronisiert.</p>
+  <dd><p>Dieser Parameter wird ignoriert, wenn Controller-Werte abgerufen werden.</p>
+      <p>Wenn leer oder weggelassen, wird standardmäßig der logische Status der Taste ermittelt. Das ist der Status, den das Betriebssystem und das aktive Fenster für diese Taste vermuten, der aber nicht unbedingt dem physischen Status entspricht.</p>
+	  <p>Andernfalls geben Sie einen der folgenden Buchstaben an:</p>
+      <p><strong>P:</strong> Ruft den physischen Status ab (d.h. ob der Benutzer eine Taste physisch gedrückt hält). Der physische Status einer Tastatur- oder Maustaste ist in der Regel derselbe wie der logische Status, es sei denn, der Tastatur- und/oder Maus-Hook ist installiert, dann spiegelt dieser genau wider, ob der Benutzer die Taste physisch gedrückt hält oder nicht (vorausgesetzt, die Taste wurde während der Ausführung des Skripts nach unten gedrückt). Mit dem <a href="KeyHistory.htm">KeyHistory</a>-Befehl oder -Menüpunkt können Sie prüfen, ob Ihr Skript die Hooks verwendet. Um die Installation eines Hooks zu erzwingen, fügen Sie die Direktiven <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> und/oder <a href="_InstallMouseHook.htm">#InstallMouseHook</a> in Ihr Skript ein.</p>
+      <p><strong>T:</strong> Ruft den Schaltstatus ab. D bedeutet, dass die Taste "an" ist, und U bedeutet, dass sie "aus" ist. Bei allen Tasten außer <kbd>Feststell</kbd>, <kbd>Num</kbd> und <kbd>Rollen</kbd> ist der Schaltstatus beim Start des Skripts grundsätzlich immer U und wird nicht zwischen Prozessen synchronisiert.</p>
     </dd>
 
 </dl>
 
-<h2 id="joystick">Spezielle Tasten des Joysticks</h2>
-<p>Wenn <em>TasteName</em> eine Joystick-Achse wie JoyX ist, wird eine Floating-Point-Zahl zwischen 0 und 100 zurückgegeben, die die Position des Joysticks als Prozentwert des Bewegungsbereichs dieser Achse repräsentiert. Das Format der Zahl kann via <a href="Format.htm">Format()</a> oder <a href="SetFormat.htm">SetFormat</a> geändert werden. Mit dem <a href="../scripts/index.htm#JoystickTest">Test-Skript</a> können Sie einen oder mehrere Joysticks analysieren.</p>
-<p>Wenn <em>TasteName</em> JoyPOV ist, wird ein Wert zwischen 0 und 35900 zurückgegeben. Die folgenden ungefähren POV-Werte werden von den meisten Joysticks verwendet:</p>
+<a id="joystick"></a>
+<h2 id="controller">Spezielle Controller-Bedienelemente</h2>
+<p>Wenn <em>TasteName</em> eine Controller-Achse wie JoyX ist, wird eine Floating-Point-Zahl zwischen 0 und 100 zurückgegeben, die die Position des Controllers als Prozentsatz des Bewegungsbereichs dieser Achse repräsentiert. Das Format der Zahl kann via <a href="Format.htm">Format()</a> oder <a href="SetFormat.htm">SetFormat</a> geändert werden. Mit dem <a href="../scripts/index.htm#ControllerTest">Testskript</a> können Sie Ihren Controller analysieren.</p>
+<p>Wenn <em>TasteName</em> JoyPOV ist, wird ein Wert zwischen 0 und 35900 zurückgegeben. Die folgenden ungefähren POV-Werte werden von den meisten Controllern verwendet:</p>
 <ul>
   <li>-1: keinen Winkel erkannt</li>
   <li>0: nach vorne gerichtet</li>
@@ -79,20 +78,31 @@ TasteIstUnten := <span class="func">GetKeyState</span>(TasteName <span class="op
   <li>27000 (270 Grad): nach links gerichtet</li>
   <li>18000 (180 Grad): nach hinten gerichtet</li>
 </ul>
+<p>Wenn <em>TasteName</em> JoyName, JoyButtons, JoyAxes oder JoyInfo ist, wird der Name, die Anzahl der Tasten, die Anzahl der Achsen bzw. die Fähigkeiten des Controllers abgerufen. Weitere Informationen finden Sie unter <a href="../KeyList.htm#Controller">Gamecontroller</a>.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Wenn es darum geht, auf eine Änderung des Tastenzustands zu warten, ist <a href="KeyWait.htm">KeyWait</a> besser geeignet als eine GetKeyState-Schleife.</p>
-<p>Es kann vorkommen, dass Betriebssysteme mit ungewöhnlichen Tastaturtreibern den Zustand ihrer Tasten, insbesondere der Umschaltzustand von Tasten wie <kbd>Feststell</kbd>, nur langsam aktualisieren. Wenn Sie also vorhaben, direkt danach den Zustand von so einer Taste zu überprüfen, wäre es ratsam, ein <a href="Sleep.htm">Sleep</a> davorzusetzen, um dem Betriebssystem genug Zeit zum Aktualisieren des Tastenzustands zu verschaffen.</p>
-<p>Beispiele zur Verwendung von GetKeyState mit einem Joystick finden Sie unter <a href="../misc/RemapJoystick.htm">Joystick-Neubelegung</a> und <a href="../scripts/index.htm#JoystickMouse">Joystick-Zu-Maus-Skript</a>.</p>
+<p><a href="KeyWait.htm">KeyWait</a> ist besser geeignet als eine GetKeyState-Schleife, wenn es darum geht, auf die Statusänderung einer Tastatur-, Maus- oder Controller-Taste zu warten.</p>
+<p>Es kann vorkommen, dass Betriebssysteme mit ungewöhnlichen Tastaturtreibern den Status von Tasten, insbesondere den Schaltstatus von Tasten wie <kbd>Feststell</kbd>, nur langsam aktualisieren. Wenn Sie also vorhaben, den geänderten Status einer solchen Taste zu prüfen, ist es ratsam, ein <a href="Sleep.htm">Sleep</a> vor der Überprüfung zu setzen, um dem Betriebssystem genügend Zeit zu geben, den Status der Taste zu aktualisieren.</p>
+<p>Beispiele für die Verwendung von GetKeyState mit einem Controller finden Sie unter <a href="../misc/RemapController.htm">Controller-Neubelegung</a> und <a href="../scripts/index.htm#ControllerMouse">Controller-Zu-Maus-Skript</a>.</p>
 <h2 id="Related">Siehe auch</h2>
-<p><a href="KeyWait.htm">KeyWait</a>, <a href="../KeyList.htm">Tastenliste</a>, <a href="../misc/RemapJoystick.htm">Joystick-Neubelegung</a>, <a href="KeyHistory.htm">KeyHistory</a>, <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="_InstallMouseHook.htm">#InstallMouseHook</a></p>
+<p><a href="KeyWait.htm">KeyWait</a>, <a href="../KeyList.htm">Tastenliste</a>, <a href="../misc/RemapController.htm">Controller-Neubelegung</a>, <a href="KeyHistory.htm">KeyHistory</a>, <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="_InstallMouseHook.htm">#InstallMouseHook</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 
-<div class="ex" id="ExCmdVsFn">
-<p><a class="ex_number" href="#ExCmdVsFn"></a> Befehl vs. Funktion. Obwohl der erste Codeblock den Befehl und der zweite die Funktion verwendet, sind diese beiden Blöcke funktional identisch.</p>
+<a id="ExCmdVsFn"></a>
+<div class="ex" id="ExFnVsCmd">
+<p><a class="ex_number" href="#ExFnVsCmd"></a> Funktion vs. Befehl. Obwohl der erste Codeblock die Funktion und der zweite den Befehl verwendet, sind beide Codeblöcke funktionsgleich.</p>
+<pre>Status := GetKeyState("RButton")  <em>; Rechte Maustaste.</em>
+Status := GetKeyState("Joy2")  <em>; Die zweite Taste des ersten Controllers.</em>
+
+if GetKeyState("Shift")
+    MsgBox Mindestens eine UMSCHALT-Taste ist unten.
+else
+    MsgBox Keine UMSCHALT-Taste unten.
+
+Status := GetKeyState("CapsLock", "T") <em>; True, wenn FESTSTELL-Taste AN ist, andernfalls False.</em></pre>
 <pre>GetKeyState, Status, RButton  <em>; Rechte Maustaste.</em>
-GetKeyState, Status, Joy2  <em>; Die zweite Taste des ersten Joysticks.</em>
+GetKeyState, Status, Joy2  <em>; Die zweite Taste des ersten Controllers.</em>
 
 GetKeyState, Status, Shift
 if (Status = "D")
@@ -100,22 +110,11 @@ if (Status = "D")
 else
     MsgBox Keine UMSCHALT-Taste unten.
 
-GetKeyState, Status, CapsLock, T <em>;  D, wenn FESTSTELL-Taste AN ist, ansonsten U.</em>
-</pre>
-<pre>Status := GetKeyState("RButton")  <em>; Rechte Maustaste.</em>
-Status := GetKeyState("Joy2")  <em>; Die zweite Taste des ersten Joysticks.</em>
-
-if GetKeyState("Shift")
-    MsgBox Mindestens eine UMSCHALT-Taste ist unten.
-else
-    MsgBox Keine UMSCHALT-Taste unten.
-
-Status := GetKeyState("CapsLock", "T") <em>; True, wenn FESTSTELL-Taste AN ist, ansonsten False.</em>
-</pre>
+GetKeyState, Status, CapsLock, T <em>;  D, wenn FESTSTELL-Taste AN ist, andernfalls U.</em></pre>
 </div>
 
 <div class="ex" id="ExRemap">
-<p><a class="ex_number" href="#ExRemap"></a> Neubelegung. (Dieses Beispiel dient nur zur Veranschaulichung, da es einfacher wäre, auf das <a href="../misc/Remap.htm">interne Neubelegungs-Feature</a> zurückzugreifen.) Im folgenden Hotkey wird die Maustaste gedrückt gehalten, während NumpadAdd unten ist, was NumpadAdd effektiv zu einer Maustaste macht. Diese Methode kann auch genutzt werden, um eine Aktion zu wiederholen, während der Benutzer eine Taste gedrückt hält.</p>
+<p><a class="ex_number" href="#ExRemap"></a> Neubelegung. (Dieses Beispiel dient nur zur Illustration, da es einfacher wäre, die <a href="../misc/Remap.htm">interne Neubelegung</a> zu verwenden.) Im folgenden Hotkey wird die Maustaste gedrückt gehalten, während NumpadAdd unten ist, was NumpadAdd effektiv zu einer Maustaste macht. Diese Methode kann auch verwendet werden, um eine Aktion zu wiederholen, während der Benutzer eine Taste gedrückt hält.</p>
 <pre>*NumpadAdd::
 MouseClick, left,,, 1, 0, D  <em>; Hält die linke Maustaste gedrückt.</em>
 Loop
@@ -129,21 +128,22 @@ MouseClick, left,,, 1, 0, U  <em>; Lässt die Maustaste los.</em>
 return</pre>
 </div>
 
-<div class="ex" id="ExJoystick">
-<p><a class="ex_number" href="#ExJoystick"></a> Macht das Verhalten einer Joystick-Taste abhängig von der Achsenposition des Joysticks.</p>
+<a id="ExJoystick"></a>
+<div class="ex" id="ExController">
+<p><a class="ex_number" href="#ExController"></a> Macht das Verhalten einer Controller-Taste abhängig von der Achsenposition des Sticks.</p>
 <pre>joy2:: 
 JoyX := GetKeyState("JoyX")
 if (JoyX &gt; 75)
-    MsgBox Aktion #1 (Taste gedrückt, während Joystick nach rechts gedrückt wurde).
+    MsgBox Aktion #1 (Taste gedrückt, während Stick nach rechts gedrückt wurde).
 else if (JoyX &lt; 25)
-    MsgBox Aktion #2 (Taste gedrückt, während Joystick nach links gedrückt wurde).
+    MsgBox Aktion #2 (Taste gedrückt, während Stick nach links gedrückt wurde).
 else
-    MsgBox Aktion #3 (Taste gedrückt, während Joystick horizontal zentriert wurde).
+    MsgBox Aktion #3 (Taste gedrückt, während Stick horizontal zentriert wurde).
 return
 </pre>
 </div>
 
-<p>Weitere Beispiele finden Sie unter <a href="../misc/RemapJoystick.htm">Joystick-Neubelegung</a> und <a href="../scripts/index.htm#JoystickMouse">Joystick-Zu-Maus-Skript</a>.</p>
+<p>Weitere Beispiele finden Sie unter <a href="../misc/RemapController.htm">Controller-Neubelegung</a> und <a href="../scripts/index.htm#ControllerMouse">Controller-Zu-Maus-Skript</a>.</p>
 
 </body>
 </html>

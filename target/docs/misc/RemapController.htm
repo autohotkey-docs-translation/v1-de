@@ -1,0 +1,211 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>Tastendrücke oder Mausklicks via Controller senden | AutoHotkey</title>
+<meta name="description" content="Erfahren Sie, wie man mit Controller-Tasten oder anderen Bedienelementen Tastendrücke oder Mausklicks sendet." />
+<meta name="keywords" content="tastatur,tasten,taste,tastendrücke,klicks,maus,controller,gamepad,joystick,hotkeys,hotkey,makro">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga4.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>Tastendrücke oder Mausklicks via Controller senden</h1>
+
+<h2 id="toc">Inhaltsverzeichnis</h2>
+<ul>
+  <li><a href="#imp">Wichtige Hinweise</a></li>
+  <li><a href="#button">Tastendrücke oder Mausklicks via Controller-Tasten senden</a>
+  <ul>
+      <li><a href="#different-approaches">Unterschiedliche Ansätze</a></li>
+      <li><a href="#auto-repeating-controller-buttons">Tastendrücke wiederholt senden</a></li>
+      <li><a href="#context-sensitive-controller-buttons">Kontextabhängige Controller-Tasten</a></li>
+      <li><a href="#using-a-controller-as-a-mouse">Controller als Maus verwenden</a></li>
+  </ul></li>
+  <li><a href="#axis">Tastendrücke oder Mausklicks via Bedienelemente senden</a>
+  <ul>
+      <li><a href="#controller-axes">Controller-Achsen</a></li>
+      <li><a href="#controller-pov-hat">Controller-Rundblickschalter</a></li>
+      <li><a href="#auto-repeating-other">Tastendrücke wiederholt senden</a></li>
+  </ul></li>
+  <li><a href="#Remarks">Bemerkungen</a></li>
+  <li><a href="#related">Siehe auch</a></li>
+</ul>
+
+<h2 id="imp">Wichtige Hinweise</h2>
+<ul>
+  <li>Aus historischen Gründen beginnen die folgenden Namen der Tasten und Bedienelemente mit <code>Joy</code>, was für Joystick steht. In der Regel funktionieren sie aber auch für andere Gamecontroller wie Gamepads oder Lenkräder.</li>
+  <li>Eine Controller-Taste oder -Achse kann zu einer Taste oder Maustaste neubelegt werden, aber nicht zu einer anderen Controller-Taste oder -Achse. Das wäre nur mithilfe eines Controller-Emulators wie <a href="https://sourceforge.net/projects/vjoystick/">vJoy</a> möglich.</li>
+  <li>AutoHotkey identifiziert jede Taste auf einem Controller mit einer eindeutigen Nummer zwischen 1 und 32. Mit dem <a href="../scripts/index.htm#ControllerTest">Controller-Testskript</a> können diese Nummern ermittelt werden.</li>
+  <li>Bei Xbox-Controllern 2013 und neuer (jeder neuer als der Xbox 360-Controller) funktionieren Joy1- bis Joy32-Hotkeys nur, wenn ein zum Skript gehörendes Fenster aktiv ist, z.B. ein <a href="../lib/MsgBox.htm">Mitteilungsfenster</a>, eine <a href="../lib/Gui.htm">GUI</a> oder das <a href="../Program.htm#main-window">Hauptfenster des Skripts</a>. Diese Einschränkung gilt auch für <a href="../lib/GetKeyState.htm">GetKeyState</a> bzgl. Joy1 bis Joy32 und JoyX, JoyY, JoyZ, JoyR, JoyU, JoyPOV (und möglicherweise JoyV), aber nicht für JoyName, JoyButtons, JoyAxes und JoyInfo. Um diese Controller-Eingaben für andere aktive Fenster zu erkennen, verwenden Sie die <a href="https://www.autohotkey.com/boards/viewtopic.php?f=6&t=29659">XInput.ahk-Bibliothek</a>.</li>
+</ul>
+
+<h2 id="button">Tastendrücke oder Mausklicks via Controller-Tasten senden</h2>
+
+<h3 id="different-approaches">Unterschiedliche Ansätze</h3>
+<p>Nachfolgend werden drei Methoden beschrieben, in der Reihenfolge von einfach bis komplex. Die komplexeste Methode eignet sich für die meisten Situationen (z.B. wenn in einem Videospiel eine Tastatur- oder Maustaste gedrückt gehalten werden muss).</p>
+
+<h4 id="Method_1">Methode #1</h4>
+<p>Diese Methode sendet einfache Tastendrücke und Mausklicks. Zum Beispiel:</p>
+<pre>Joy1::<a href="../lib/Send.htm">Send</a> {Left}  <em>; Mit Taste #1 einen NACH-LINKS-Tastendruck senden.</em>
+Joy2::<a href="../lib/Click.htm">Click</a>  <em>; Mit Taste #2 einen Linksklick senden.</em>
+Joy3::Send a{Esc}{Space}{Enter}  <em>; Mit Taste #3 den Buchstaben "a", gefolgt von Escape, Leerzeichen und Enter, senden.</em>
+Joy4::Send Mit freundlichen Grüßen,{Enter}Max Mustermann  <em>; Mit Taste #4 eine zweizeilige Signatur senden.</em></pre>
+<p>Um mit einer Taste mehr als einen Befehl zu senden, setzen Sie den ersten Befehl <em>unterhalb</em> des Tastennamens und machen Sie den letzten Befehl zu einem <a href="../lib/Return.htm">Return</a>. Zum Beispiel:</p>
+<pre>Joy5::
+Run Notepad
+WinWait Unbenannt - Editor
+WinActivate
+Send Dieser Text wird in Notepad erscheinen.{Enter}
+return</pre>
+<p>In der <a href="../KeyList.htm">Tastenliste</a> finden Sie alle Tastatur-, Maus- und Controller-Tasten.</p>
+
+<h4 id="Method_2">Methode #2</h4>
+<p>Diese Methode ist notwendig, wenn eine Tastatur- oder Maustaste während der gesamten Zeit, in der Sie eine Controller-Taste gedrückt halten, gedrückt gehalten werden muss. Das folgende Beispiel sorgt dafür, dass sich die zweite Taste des Controllers wie die linke Pfeiltaste verhält:</p>
+<pre>Joy2::
+Send {Left down}  <em>; Hält die linke Pfeiltaste gedrückt.</em>
+<a href="../lib/KeyWait.htm">KeyWait</a> Joy2  <em>; Wartet, bis der Benutzer die Controller-Taste loslässt.</em>
+Send {Left up}  <em>; Lässt die linke Pfeiltaste los.</em>
+return</pre>
+
+<h4 id="Method_3">Methode #3</h4>
+<p>Diese Methode ist notwendig, wenn Sie mehr als einen Controller-Hotkey wie den von Methode #2 haben und Sie diese Hotkeys manchmal gleichzeitig drücken und loslassen. Das folgende Beispiel sorgt dafür, dass sich die dritte Taste des Controllers wie die linke Maustaste verhält:</p>
+<pre>Joy3::
+Send {LButton down}   <em>; Hält die linke Maustaste gedrückt.</em>
+SetTimer, AufDritteTasteWarten, 10
+return
+
+AufDritteTasteWarten:
+if <a href="../lib/GetKeyState.htm#function">GetKeyState</a>("Joy3")  <em>; Die Taste ist noch unten, also weiter warten.</em>
+    return
+<em>; Andernfalls wurde die Taste losgelassen.</em>
+Send {LButton up}  <em>; Lässt die linke Maustaste los.</em>
+SetTimer, AufDritteTasteWarten, Off
+return
+</pre>
+
+<a id="auto-repeating-joystick-buttons"></a>
+<h3 id="auto-repeating-controller-buttons">Tastendrücke wiederholt senden</h3>
+<p>Bei einigen Programmen oder Videospielen kann es erforderlich sein, dass eine Taste wiederholt gesendet werden muss (als würden Sie die Taste auf der Tastatur gedrückt halten). Das folgende Beispiel macht das möglich, indem es wiederholt Leertastendrücke sendet, während Sie die zweite Taste des Controllers gedrückt halten:</p>
+<pre>Joy2::
+Send {Space down}   <em>; Drückt die Leertaste nach unten.</em>
+SetTimer, AufJoy2Warten, <strong>30</strong>  <em>; Verringern Sie die Zahl <strong>30</strong> auf 20 oder 10, um Tasten schneller zu senden. Erhöhen Sie sie, um Tasten langsamer zu senden.</em>
+return
+
+AufJoy2Warten:
+if not GetKeyState("Joy2")  <em>; Die Taste wurde losgelassen.</em>
+{
+    Send {Space up}  <em>; Lässt die Leertaste los.</em>
+    SetTimer, AufJoy2Warten, Off  <em>; Stoppt die Überwachung der Taste.</em>
+    return
+}
+<em>; Da oben kein "Return" erfolgt ist, wird die Taste weiter gedrückt gehalten.</em>
+Send {Space down}  <em>; Sendet einen weiteren Leertastendruck.</em>
+return</pre>
+
+<a id="context-sensitive-joystick-buttons"></a>
+<h3 id="context-sensitive-controller-buttons">Kontextabhängige Controller-Tasten</h3>
+<p>Die Direktiven <a href="../lib/_IfWinActive.htm">#IfWinActive/Exist</a> können verwendet werden, um bestimmte Controller-Tasten je nach aktivem oder existierendem Fenster eine andere (oder gar keine) Aktion ausführen zu lassen.</p>
+
+<a id="using-a-joystick-as-a-mouse"></a>
+<h3 id="using-a-controller-as-a-mouse">Controller als Maus verwenden</h3>
+<p>Das <a href="../scripts/index.htm#ControllerMouse">Controller-zu-Maus-Skript</a> wandelt einen Controller durch Neubelegung der Tasten und Achsen-Steuerung in eine Maus um.</p>
+
+<h2 id="axis">Tastendrücke oder Mausklicks via Bedienelemente senden</h2>
+<p>Um ein Skript auf die Bewegung einer Controller-Achse oder des Rundblickschalters reagieren zu lassen, verwenden Sie <a href="../lib/SetTimer.htm">SetTimer</a> in Verbindung mit <a href="../lib/GetKeyState.htm">GetKeyState()</a>.</p>
+
+<a id="joystick-axes"></a>
+<h3 id="controller-axes">Controller-Achsen</h3>
+<p>Das folgende Beispiel sorgt dafür, dass sich die X- und Y-Achsen des Controllers wie die Pfeiltasten auf der Tastatur verhalten:</p>
+<pre>#Persistent  <em>; Skript laufen lassen, bis der Benutzer es explizit beendet.</em>
+<a href="../lib/SetTimer.htm">SetTimer</a>, Achsenüberwachung, 5
+return
+
+Achsenüberwachung:
+JoyX := <a href="../lib/GetKeyState.htm#function">GetKeyState</a>("JoyX")  <em>; Ruft die Position der X-Achse ab.</em>
+JoyY := GetKeyState("JoyY")  <em>; Ruft die Position der Y-Achse ab.</em>
+VorherGedrückteTaste := GedrückteTaste  <em>; VorherGedrückteTaste enthält nun die Taste, die vorher unten war (falls vorhanden).</em>
+
+if (JoyX &gt; 70)
+    GedrückteTaste := "Right"
+else if (JoyX &lt; 30)
+    GedrückteTaste := "Left"
+else if (JoyY &gt; 70)
+    GedrückteTaste := "Down"
+else if (JoyY &lt; 30)
+    GedrückteTaste := "Up"
+else
+    GedrückteTaste := ""
+
+if (GedrückteTaste = VorherGedrückteTaste)  <em>; Die korrekte Taste ist bereits unten (oder keine Taste notwendig).</em>
+    return  <em>; Nichts tun.</em>
+
+<em>; Andernfalls vorherige Taste loslassen und neue Taste drücken:</em>
+SetKeyDelay -1  <em>; Verhindert Verzögerungen zwischen den Tastendrücken.</em>
+if VorherGedrückteTaste   <em>; Es gibt eine vorherige Taste zum Loslassen.</em>
+    Send, {%VorherGedrückteTaste% up}  <em>; Lässt sie los.</em>
+if GedrückteTaste   <em>; Es gibt eine Taste zum Nach-Unten-Drücken.</em>
+    Send, {%GedrückteTaste% down}  <em>; Drückt sie nach unten.</em>
+return</pre>
+
+<a id="joystick-pov-hat"></a>
+<h3 id="controller-pov-hat">Controller-Rundblickschalter</h3>
+<p>Das folgende Beispiel sorgt dafür, dass sich der Rundblickschalter des Controllers wie die Pfeiltasten auf der Tastatur verhält:</p>
+<pre>#Persistent  <em>; Skript laufen lassen, bis der Benutzer es explizit beendet.</em>
+SetTimer, POVÜberwachung, 5
+return
+
+POVÜberwachung:
+POV := GetKeyState("JoyPOV")  <em>; Ruft die Position des Rundblickschalters ab.</em>
+VorherGedrückteTaste := GedrückteTaste  <em>; VorherGedrückteTaste enthält nun die Taste, die vorher unten war (falls vorhanden).</em>
+
+<em>; Einige Controller haben eventuell einen Rundblickschalter, der keine vordefinierten Richtungen aufweist.
+; In diesem Fall können Bereiche verwendet werden:</em>
+if (POV &lt; 0)   <em>; Kein Winkel zu melden</em>
+    GedrückteTaste := ""
+else if (POV &gt; 31500)               <em>; 315 bis 360 Grad: Nach vorne gerichtet</em>
+    GedrückteTaste := "Up"
+else if POV between 0 and 4500      <em>; 0 bis 45 Grad: Nach vorne gerichtet</em>
+    GedrückteTaste := "Up"
+else if POV between 4501 and 13500  <em>; 45 bis 135 Grad: Nach rechts gerichtet</em>
+    GedrückteTaste := "Right"
+else if POV between 13501 and 22500 <em>; 135 bis 225 Grad: Nach hinten gerichtet</em>
+    GedrückteTaste := "Down"
+else                                <em>; 225 bis 315 Grad: Nach links gerichtet</em>
+    GedrückteTaste := "Left"
+
+if (GedrückteTaste = VorherGedrückteTaste)  <em>; Die korrekte Taste ist bereits unten (oder keine Taste notwendig).</em>
+    return  <em>; Nichts tun.</em>
+
+<em>; Andernfalls vorherige Taste loslassen und neue Taste drücken:</em>
+SetKeyDelay -1  <em>; Verhindert Verzögerungen zwischen den Tastendrücken.</em>
+if VorherGedrückteTaste   <em>; Es gibt eine vorherige Taste zum Loslassen.</em>
+    Send, {%VorherGedrückteTaste% up}  <em>; Lässt sie los.</em>
+if GedrückteTaste   <em>; Es gibt eine Taste zum Nach-Unten-Drücken.</em>
+    Send, {%GedrückteTaste% down}  <em>; Drückt sie nach unten.</em>
+return</pre>
+
+<h3 id="auto-repeating-other">Tastendrücke wiederholt senden</h3>
+<p>Beide Beispiele oben können so modifiziert werden, dass sie die Taste wiederholt senden, anstatt sie nur gedrückt zu halten, oder anders gesagt, um das physische Gedrückthalten einer Tastaturtaste zu imitieren. Ersetzen Sie dazu die folgende Zeile:</p>
+<pre>return  <em>; Nichts tun.</em></pre>
+<p>Mit Folgendem:</p>
+<pre>{
+    if GedrückteTaste
+        Send, {%GedrückteTaste% down}  <em>; Tastendrücke wiederholt senden.</em>
+    return
+}</pre>
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Um anstelle des ersten Controllers einen anderen Controller zu verwenden, schreiben Sie vor dem Tasten- oder Achsennamen die Nummer des Controllers. Zum Beispiel wäre <code>2Joy1</code> die erste Taste des zweiten Controllers.</p>
+<p>Im <a href="https://www.autohotkey.com/forum/">AutoHotkey-Forum</a> können Sie weitere nützliche Controller-Skripte finden. Geben Sie Schlüsselwörter wie <em>Controller and GetKeyState and Send</em> an, um relevante Themen zu finden.</p>
+<h2 id="related">Siehe auch</h2>
+<ul>
+    <li><a href="../scripts/index.htm#ControllerMouse">Controller-zu-Maus-Skript (Controller als Maus verwenden)</a></li>
+    <li><a href="../KeyList.htm#Controller">Liste von Controller-Tasten, -Achsen und -Bedienelementen</a></li>
+    <li><a href="../lib/GetKeyState.htm">GetKeyState</a></li>
+    <li><a href="Remap.htm">Neubelegung von Tastatur und Maus</a></li>
+</ul>
+
+</body>
+</html>

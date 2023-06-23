@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>#If - Syntax &amp; Verwendung | AutoHotkey</title>
-<meta name="description" content="Die #If-Direktive erstellt kontextabhängige Hotkeys und Hotstrings. Solche Hotkeys führen je nach Ergebnis des Ausdrucks unterschiedliche (oder gar keine) Aktionen durch." />
+<meta name="description" content="Die #If-Direktive erstellt kontextabhängige Hotkeys und Hotstrings. Solche Hotkeys führen je nach Ergebnis des Ausdrucks eine andere (oder gar keine) Aktion aus." />
 <meta name="ahk:equiv-v2" content="lib/_HotIf.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,49 +15,49 @@
 
 <h1>#If <span class="ver">[AHK_L 4+]</span></h1>
 
-<p>Erstellt kontextabhängige <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a>. Solche Hotkeys führen je nach Ergebnis des Ausdrucks unterschiedliche (oder gar keine) Aktionen durch.</p>
+<p>Erstellt kontextabhängige <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a>. Solche Hotkeys führen je nach Ergebnis des Ausdrucks eine andere (oder gar keine) Aktion aus.</p>
 
 <pre class="Syntax"><span class="func">#If</span> <span class="optional">Ausdruck</span></pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>Ausdruck</dt>
-  <dd><p>Beliebiger gültiger <a href="../Variables.htm#Expressions">Ausdruck</a>.</p></dd>
+  <dd><p>Ein gültiger <a href="../Variables.htm#Expressions">Ausdruck</a>.</p></dd>
 
 </dl>
 
-<h2 id="Basic_Operation">Grundlagen zur Bedienung</h2>
+<h2 id="Basic_Operation">Grundlegende Bedienung</h2>
 <p>Es kann ein beliebiger gültiger Ausdruck verwendet werden, um den Kontext zu definieren, bei dem ein Hotkey aktiv sein soll. Zum Beispiel:</p>
 <pre>#If WinActive("ahk_class Notepad") or WinActive(MeinFensterTitel)
-#Space::MsgBox Sie haben WIN+LEERTASTE im Texteditor oder %MeinFensterTitel% gedrückt.</pre>
-<p>Die #If-Direktive ist wie die #IfWin-Direktive von der Position abhängig: sie beeinflusst nur Hotkeys und Hotstrings, die sich im Skript physisch darunter befinden. Zudem schließen sich #If und #IfWin gegenseitig aus; das heißt, dass nur das aktuellste #If oder #IfWin wirksam sein wird.</p>
-<p>Um die Kontextabhängigkeit zu deaktivieren, geben Sie #If oder eine beliebige #IfWin-Direktive an und lassen Sie alle Parameter weg. Zum Beispiel:</p>
+#Space::MsgBox Sie haben WIN+LEERTASTE in Notepad oder %MeinFensterTitel% gedrückt.</pre>
+<p>Die #If-Direktive ist wie die #IfWin-Direktive von der Position abhängig: sie beeinflusst nur Hotkeys und Hotstrings, die sich im Skript physisch darunter befinden. Außerdem schließen sich #If und #IfWin gegenseitig aus, d.h. nur das aktuellste #If oder #IfWin ist wirksam.</p>
+<p>Um die Kontextabhängigkeit auszuschalten, geben Sie #If oder eine beliebige #IfWin-Direktive ohne Parameter an. Zum Beispiel:</p>
 <pre>#If</pre>
 <p>#If kann wie alle anderen Direktiven nicht bedingt ausgeführt werden.</p>
 
 <h2 id="General_Remarks">Allgemeine Bemerkungen</h2>
-<p>Sobald die Tastatur-, Maus- oder Joystick-Tastenkombination eines Hotkeys gedrückt wird, wird der #If-Ausdruck ausgewertet, um zu überprüfen, ob der Hotkey aktiviert werden darf.</p>
-<p class="warning"><strong>Hinweis:</strong> Ein Skript sollte nicht davon ausgehen, dass der Ausdruck nur ausgewertet wird, wenn die Taste gedrückt wird (siehe unten).</p>
-<p>Der Ausdruck wird eventuell auch ausgewertet, wenn das Programm feststellen muss, ob der Hotkey aktiv ist. Der #If-Ausdruck einer benutzerdefinierten Kombination wie <code>a &amp; b::</code> beispielsweise wird eventuell ausgewertet, wenn die Präfixtaste (<code>a</code> in diesem Fall) gedrückt wird, um festzustellen, ob sie als benutzerdefinierte Modifikatortaste fungieren soll.</p>
-<p class="warning"><strong>Hinweis:</strong> Das Verwenden von #If in einem Skript, das nicht reagiert, kann Eingabeverzögerungen verursachen oder Hotkeys unbrauchbar machen (siehe unten).</p>
-<p>Der #If-Direktive sind noch einige weitere Einschränkungen auferlegt:</p>
+<p>Sobald die Tastatur-, Maus- oder Controller-Tastenkombination eines Hotkeys gedrückt wird, wird der #If-Ausdruck ausgewertet, um zu prüfen, ob der Hotkey aktiviert werden soll.</p>
+<p class="warning"><strong>Hinweis:</strong> Ein Skript sollte nicht davon ausgehen, dass der Ausdruck nur beim Drücken der Taste ausgewertet wird (siehe unten).</p>
+<p>Der Ausdruck kann auch ausgewertet werden, wenn das Programm wissen muss, ob der Hotkey aktiv ist. Zum Beispiel könnte der #If-Ausdruck einer benutzerdefinierten Kombination wie <code>a &amp; b::</code> auch ausgewertet werden, wenn die Präfixtaste (<code>a</code> in diesem Fall) gedrückt wird, um zu prüfen, ob sie als benutzerdefinierte Modifikatortaste fungieren soll.</p>
+<p class="warning"><strong>Hinweis:</strong> Die Nutzung von #If in einem nicht reagierenden Skript kann eine Eingabeverzögerung verursachen oder Hotkeys stören (siehe unten).</p>
+<p>Für die #If-Direktive gibt es noch einige weitere Vorbehalte:</p>
 <ul>
-  <li>Tastatur- oder Mauseingaben werden gepuffert (verzögert), bis die Auswertung des Ausdrucks abgeschlossen ist oder das <a href="_IfTimeout.htm">Zeitlimit überschritten ist</a>.</li>
-  <li>Die Auswertung von Ausdrücken wird nicht vom Tastatur-/Maus-Hook, sondern vom Haupt-Thread des Skripts (auf Betriebssystemebene, nicht vom <a href="../misc/Threads.htm">Pseudo-Thread</a>) durchgeführt. Wenn das Skript beschäftigt oder auf nichts reagiert, z. B. wenn FileCopy gerade eine Datei kopiert, wird die Auswertung des Ausdrucks verzögert oder im schlimmsten Fall verworfen, weil das Zeitlimit überschritten wurde.</li>
-  <li>Wenn das <a href="_IfTimeout.htm#LowLevelHooksTimeout">systemdefinierte Zeitlimit</a> überschritten wurde, kann es vorkommen, dass das System aufhört, dem Skript Tastatur- oder Mauseingaben mitzuteilen (siehe #IfTimeout, um mehr zu erfahren).</li>
-  <li>Das Senden von Tastendrücken oder Mausklicks während der Auswertung des Ausdrucks (z. B. mit einer Funktion, die sie selbst aufruft) kann zu Komplikationen führen und sollte vermieden werden.</li>
+  <li>Tastatur- oder Mauseingaben werden üblicherweise gepuffert (verzögert), bis die Auswertung des Ausdrucks abgeschlossen ist oder das <a href="_IfTimeout.htm">Zeitlimit überschritten ist</a>.</li>
+  <li>Die Auswertung von Ausdrücken kann nur durch den Hauptthread des Skripts (auf OS-Ebene, kein <a href="../misc/Threads.htm">Pseudo-Thread</a>) erfolgen, nicht direkt durch den Tastatur-/Maus-Hook. Wenn das Skript beschäftigt ist oder auf nichts reagiert, z.B. wenn FileCopy gerade eine Datei kopiert, wird die Auswertung des Ausdrucks verzögert oder im schlimmsten Fall verworfen, weil das Zeitlimit überschritten wurde.</li>
+  <li>Wenn das <a href="_IfTimeout.htm#LowLevelHooksTimeout">systemdefinierte Zeitlimit</a> überschritten wurde, kann es sein, dass das System dem Skript keine Tastatur- oder Mauseingaben mehr meldet (Einzelheiten finden Sie unter #IfTimeout).</li>
+  <li>Das Senden von Tastendrücken oder Mausklicks während der Auswertung des Ausdrucks (z.B. mit einer Funktion, die sie selbst aufruft) kann zu Komplikationen führen und sollte vermieden werden.</li>
 </ul>
-<p><span class="ver">[AHK_L 53+]:</span> Das Setzen von <a href="../Variables.htm#ThisHotkey">A_ThisHotkey</a> und <a href="../Variables.htm#TimeSinceThisHotkey">A_TimeSinceThisHotkey</a> basiert auf den Hotkey, den der aktuelle #If-Ausdruck ausgewertet hat.</p>
-<p><span class="ver">[v1.0.95.00+]:</span> <a href="../Variables.htm#PriorHotkey">A_PriorHotkey</a> und <a href="../Variables.htm#TimeSincePriorHotkey">A_TimeSincePriorHotkey</a> enthalten vorübergehend die vorherigen Werte der entsprechenden "This"-Variablen.</p>
+<p><span class="ver">[AHK_L 53+]</span>: <a href="../Variables.htm#ThisHotkey">A_ThisHotkey</a> und <a href="../Variables.htm#TimeSinceThisHotkey">A_TimeSinceThisHotkey</a> werden auf Basis des Hotkeys gesetzt, den der aktuelle #If-Ausdruck gerade auswertet.</p>
+<p><span class="ver">[v1.0.95.00+]</span>: <a href="../Variables.htm#PriorHotkey">A_PriorHotkey</a> und <a href="../Variables.htm#TimeSincePriorHotkey">A_TimeSincePriorHotkey</a> enthalten temporär die vorherigen Werte der entsprechenden "This"-Variablen.</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p>Die meisten Verhaltensmuster der <a href="_IfWinActive.htm">#IfWin</a>-Direktiven gelten auch für #If.</p>
-<p>Mit <a href="_IfTimeout.htm">#IfTimeout</a> kann der Standardwert des Zeitlimits überschrieben werden.</p>
+<p>Die meisten Verhaltensmerkmale der <a href="_IfWinActive.htm">#IfWin</a>-Direktiven gelten auch für #If.</p>
+<p>Mit <a href="_IfTimeout.htm">#IfTimeout</a> kann das Zeitlimit geändert werden.</p>
 
 <h2 id="Examples">Beispiele</h2>
 
 <div class="ex" id="ExVolume">
-<p><a class="ex_number" href="#ExVolume"></a> Ermöglicht das Anpassen der Lautstärke durch Drehen des Mausrads über der Taskleiste.</p>
+<p><a class="ex_number" href="#ExVolume"></a> Ermöglicht das Einstellen der Lautstärke durch Drehen des Mausrads über der Taskleiste.</p>
 <pre>
 #If MausIstÜber("ahk_class Shell_TrayWnd")
 WheelUp::Send {Volume_Up}
@@ -95,7 +95,7 @@ Esc::ExitApp
 </div>
 
 <div class="ex" id="ExDynamic">
-<p><a class="ex_number" href="#ExDynamic"></a> Dynamische Hotkeys. Dieses Beispiel muss vor dem Ausführen mit <a href="#ExVolume">Beispiel #1</a> kombiniert werden.</p>
+<p><a class="ex_number" href="#ExDynamic"></a> Dynamische Hotkeys. Dieses Beispiel muss mit <a href="#ExVolume">Beispiel #1</a> kombiniert werden, bevor es ausgeführt wird.</p>
 <pre>
 NumpadAdd::
 Hotkey, If, MausIstÜber("ahk_class Shell_TrayWnd")
