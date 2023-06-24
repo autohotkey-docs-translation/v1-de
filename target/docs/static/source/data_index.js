@@ -865,7 +865,7 @@ indexData = [
   ["mouse speed","lib/SetDefaultMouseSpeed.htm"],["Mausgeschwindigkeit","lib/SetDefaultMouseSpeed.htm"],
   ["mouse wheel","lib/Click.htm"],["Mausrad","lib/Click.htm"],
   ["MouseClick","lib/MouseClick.htm",6,"SEEEESS"],
-  ["MouseClickDrag","commands/MouseClickDrag.htm",6,"SEEEEES"],
+  ["MouseClickDrag","lib/MouseClickDrag.htm",6,"SEEEEES"],
   ["MouseGetPos","lib/MouseGetPos.htm",6,"OOOOE"],
   ["MouseMove","lib/MouseMove.htm",6,"EEES"],
   ["Move (GuiControl)","lib/GuiControl.htm#Move",7],
