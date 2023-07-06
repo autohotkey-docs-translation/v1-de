@@ -12,7 +12,7 @@ Loop, target\docs\*.htm,, 1
     FileGetTime, ModifyTime, % A_LoopFileLongPath
     DiffTime := LastSaveTime
     EnvSub, DiffTime, %ModifyTime%, seconds
-    if (DiffTime < 0)
+    if (DiffTime <= 0)
         TotalProcessedFiles++
     
     ; read content
