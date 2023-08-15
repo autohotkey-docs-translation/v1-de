@@ -13,7 +13,7 @@
 
 <h1>Try <span class="ver">[v1.1.04+]</span></h1>
 
-<p>Schützt eine oder mehrere Anweisungen vor Laufzeitfehlern und via <a href="Throw.htm">Throw</a> ausgelöste Ausnahmen.</p>
+<p>Schützt eine oder mehrere <a href="../Concepts.htm#statement">Anweisungen</a> vor Laufzeitfehlern und via <a href="Throw.htm">Throw</a> ausgelöste Ausnahmen.</p>
 
 <pre class="Syntax"><span class="func">Try</span> <i>Anweisung</i></pre>
 <pre class="Syntax" style="line-height: 100%">
@@ -23,14 +23,14 @@
 }
 </pre>
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Nach einem <em>Try</em> erfolgt üblicherweise ein <a href="Block.htm">Block</a> - das sind eine oder mehrere Anweisungen (Befehle oder Ausdrücke), die von geschweiften Klammern umschlossen sind. Verwendet man nur eine Anweisung, kann sie direkt neben <em>Try</em> gesetzt werden, oder darunter ohne geschweifte Klammern. Der <a href="Catch.htm">Catch</a>-Befehl kann genutzt werden, um Zeilen auszuführen, wenn <em>Try</em> einen Fehler erfasst.</p>
-<p>Eine Ausnahme kann ausgelöst werden, wenn <a href="Throw.htm">Throw</a> verwendet wird oder wenn das Programm einen Laufzeitfehler verursachen sollte. Wenn eine Ausnahme vom Inneren eines <em>Try</em>-Blocks ausgelöst oder wenn eine Funktion von so einem aufgerufen wird, passiert folgendes:</p>
+<p>Nach einem <em>Try</em> erfolgt üblicherweise ein <a href="Block.htm">Block</a> (eine oder mehrere <a href="../Concepts.htm#statement">Anweisungen</a>, die von geschweiften Klammern umschlossen sind). Wenn nur eine Anweisung verwendet wird, kann diese direkt neben <em>Try</em> gesetzt werden, oder darunter ohne geschweifte Klammern. Um Code anzugeben, der nur ausgeführt wird, wenn <em>Try</em> einen Fehler abfängt, verwenden Sie <a href="Catch.htm">Catch</a>.</p>
+<p>Eine Ausnahme kann entweder mit <a href="Throw.htm">Throw</a> oder durch das Programm beim Auftreten eines Laufzeitfehlers ausgelöst werden. Wenn eine Ausnahme innerhalb eines <em>Try</em>-Blocks oder einer Funktion, die von einem solchen Block aufgerufen wird, ausgelöst wird, geschieht Folgendes:</p>
 <ul>
-  <li>Gibt es ein entsprechendes <a href="Catch.htm">Catch</a>, wird die Ausführung dort fortgesetzt.</li>
-  <li>Wenn kein <em>Catch</em>, aber ein <a href="Finally.htm">Finally</a> vorhanden ist, wird es ausgeführt, bis es dessen Ende erreicht hat, danach wird die Ausnahme wieder automatisch ausgelöst.</li>
-  <li>Gibt es weder ein <em>Catch</em> noch ein <em>Finally</em>, wird die Ausführung bei der nächsten Zeile außerhalb des <em>Try</em>-Blocks fortgesetzt.</li>
+  <li>Wenn ein zugehöriges <a href="Catch.htm">Catch</a> vorhanden ist, wird die Ausführung dort fortgesetzt.</li>
+  <li>Wenn kein <em>Catch</em>, aber ein <a href="Finally.htm">Finally</a> vorhanden ist, wird dieses ausgeführt, aber danach wird die Ausnahme automatisch erneut ausgelöst.</li>
+  <li>Wenn weder ein <em>Catch</em> noch ein <em>Finally</em> vorhanden ist, wird die Ausführung bei der nächsten Zeile außerhalb des <em>Try</em>-Blocks fortgesetzt.</li>
 </ul>
-<p>Laufen beim Auslösen einer Ausnahme gerade keine <em>Try</em>-Blöcke, wird eine Fehlermeldung angezeigt und der aktuelle Thread beendet.</p>
+<p>Wenn eine Ausnahme ausgelöst wird, während keine <em>Try</em>-Blöcke ausgeführt werden, wird eine Fehlermeldung angezeigt und der aktuelle Thread beendet.</p>
 <p>Je nach Bedarf kann der <a href="Block.htm#otb">One True Brace (OTB) Style</a> bei einem <em>Try</em> verwendet werden. Zum Beispiel:</p>
 <pre>try {
     ...
@@ -44,12 +44,12 @@
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ex_basic">
 <p><a class="ex_number" href="#ex_basic"></a> Zeigt das Grundkonzept von <em>Try-Catch</em> und <em>Throw</em>.</p>
-<pre>try  <em>; Versucht, den Code auszuführen.</em>
+<pre>try  <em>; Versucht den Code auszuführen.</em>
 {
     HalloWelt()
     MacheToast()
 }
-<a href="Catch.htm">catch</a> e  <em>; Verarbeitet den ersten Fehler/Ausnahme, ausgelöst durch den vorherigen Block.</em>
+<a href="Catch.htm">catch</a> e  <em>; Behandelt den ersten Fehler, ausgelöst durch den vorherigen Block.</em>
 {
     MsgBox, Eine Ausnahme wurde ausgelöst!`nSpeziell: %e%
     <a href="Exit.htm">Exit</a>
@@ -62,7 +62,7 @@ HalloWelt()  <em>; Ist immer erfolgreich.</em>
 
 MacheToast()  <em>; Schlägt immer fehl.</em>
 {
-    <em>; Springt sofort zur Fehlerbehandlung des Try-Blocks:</em>
+    <em>; Sofort zur Fehlerbehandlung des Try-Blocks springen:</em>
     <a href="Throw.htm">throw</a> A_ThisFunc " ist nicht implementiert, sorry"
 }
 </pre>
@@ -72,30 +72,30 @@ MacheToast()  <em>; Schlägt immer fehl.</em>
 <p><a class="ex_number" href="#ex_el"></a> Zeigt die Verwendung von <em>Try-Catch</em> anstelle von <a href="../misc/ErrorLevel.htm">ErrorLevel</a>.</p>
 <pre>try
 {
-    <em>; Nachfolgend wird versucht, bestimmte Dateitypen abzusichern:</em>
+    <em>; Nachfolgend wird versucht, bestimmte Dateitypen zu sichern:</em>
     FileCopy, %A_MyDocuments%\*.txt, D:\Backup\Textdokumente
     FileCopy, %A_MyDocuments%\*.doc, D:\Backup\Textdokumente
     FileCopy, %A_MyDocuments%\*.jpg, D:\Backup\Fotos
 }
 catch
 {
-    MsgBox, 16,, Es trat ein Fehler beim Absichern der Dateien auf!
+    MsgBox, 16,, Beim Sichern der Dateien ist ein Fehler aufgetreten!
     ExitApp
 }
 </pre>
 </div>
 
 <div class="ex" id="ex_com">
-<p><a class="ex_number" href="#ex_com"></a> Zeigt die Verwendung von <em>Try-Catch</em> im Umgang mit COM-Fehlern. Einzelheiten über das hier verwendete COM-Objekt finden Sie unter <a href="https://learn.microsoft.com/previous-versions/visualstudio/visual-studio-6.0/aa227633(v=vs.60)">Using the ScriptControl (Microsoft Docs)</a>.</p>
+<p><a class="ex_number" href="#ex_com"></a> Zeigt die Verwendung von <em>Try-Catch</em> bei COM-Fehlern. Einzelheiten über das hier verwendete COM-Objekt finden Sie unter <a href="https://learn.microsoft.com/previous-versions/visualstudio/visual-studio-6.0/aa227633(v=vs.60)">Using the ScriptControl (Microsoft Docs)</a>.</p>
 <pre>try
 {
     obj := <a href="ComObjCreate.htm">ComObjCreate</a>("ScriptControl")
-    obj.ExecuteStatement("MsgBox ""Das ist ein eingebettetes VBScript""")
+    obj.ExecuteStatement("MsgBox ""Dies ist ein eingebettetes VBScript""")
     obj.InvalidMethod() <em>; Diese Zeile erzeugt einen Laufzeitfehler.</em>
 }
 catch e
 {
-    <em>; Um mehr über das Objekt zu erfahren, das in e enthalten ist, siehe <a href="Throw.htm#Exception">Exception()</a>.</em>
+    <em>; Um mehr über das in e enthaltene Objekt zu erfahren, siehe <a href="Throw.htm#Exception">Exception()</a>.</em>
     MsgBox, 16,, % "Ausnahme ausgelöst!`n`nWas: " e.what "`nDatei: " e.file
         . "`nZeile: " e.line "`nNachricht: " e.message "`nZusatz: " e.extra
 }
@@ -104,7 +104,7 @@ catch e
 
 <div class="ex" id="ex_nesting">
 <p><a class="ex_number" href="#ex_nesting"></a> Zeigt verschachtelte <em>Try-Catch</em>-Anweisungen.</p>
-<pre>try Beispiel1() <em>; Jede Einzelanweisung kann auf derselben Zeile des Try-Befehls stehen.</em>
+<pre>try Beispiel1() <em>; Einzelanweisungen können neben dem Try stehen.</em>
 catch e
     MsgBox, Beispiel1() hat "%e%" ausgelöst.
 
@@ -114,7 +114,7 @@ Beispiel1()
     catch e
     {
         if (e = 1)
-            throw e <em>; Ausnahme wird nochmals ausgelöst, so dass der Aufrufer sie abfangen kann.</em>
+            throw e <em>; Ausnahme erneut auslösen, damit der Aufrufer sie abfangen kann.</em>
         else
             MsgBox, Beispiel2() hat "%e%" ausgelöst.
     }

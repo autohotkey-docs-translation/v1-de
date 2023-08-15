@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>Skript-Performanz | AutoHotkey</title>
-<meta name="description" content="Erfahren Sie, wie man die Performanz eines Skripts maximiert und welche internen Optimierungen zugunsten der Performanz durchgeführt werden." />
+<meta name="description" content="Erfahren Sie, wie die Performanz eines Skripts maximiert werden kann und welche internen Optimierungen zugunsten der Performanz vorgenommen werden." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,24 +13,24 @@
 <body>
 <h1>Skript-Performanz</h1>
 
-<p>Um die Performanz zu maximieren, vermeiden Sie die Nutzung von SetFormat (außer im <a href="../lib/SetFormat.htm#Fast">Fast-Modus</a>) und fügen Sie folgende Zeilen in den obersten Bereich des Skripts ein:</p>
+<p>Um die Performanz zu maximieren, vermeiden Sie die Verwendung von SetFormat (außer im <a href="../lib/SetFormat.htm#Fast">schnellen Modus</a>) und fügen Sie die folgenden Zeilen am Anfang des Skripts ein:</p>
 <pre><a href="../lib/_NoEnv.htm">#NoEnv</a>
 <a href="../lib/SetBatchLines.htm">SetBatchLines -1</a>
 <a href="../lib/ListLines.htm">ListLines Off</a></pre>
-<p>Die folgenden Befehle könnten auch Einfluss auf die Performanz haben, je nachdem, welche Funktion das Skript erfüllen soll: <a href="../lib/SendMode.htm">SendMode</a>, <a href="../lib/SetKeyDelay.htm">SetKeyDelay</a>, <a href="../lib/SetMouseDelay.htm">SetMouseDelay</a>, <a href="../lib/SetWinDelay.htm">SetWinDelay</a>, <a href="../lib/SetControlDelay.htm">SetControlDelay</a> und <a href="../lib/SetDefaultMouseSpeed.htm">SetDefaultMouseSpeed</a>.</p>
-<h2 id="Built-in_Performance_Features">Interne Performanzmerkmale</h2>
-<p>Jedes Skript wird teilweise kompiliert, während es geladen und seine Syntax überprüft wird. Dies reduziert nicht nur den Speicherverbrauch des Skripts, sondern sorgt auch für eine deutliche Verbesserung der Laufzeitperformanz.</p>
-<p>Hier die technischen Details des Optimierungsprozesses (Semi-Kompilierung):</p>
+<p>Außerdem können die folgenden Befehle je nach Art des Skripts die Performanz beeinträchtigen: <a href="../lib/SendMode.htm">SendMode</a>, <a href="../lib/SetKeyDelay.htm">SetKeyDelay</a>, <a href="../lib/SetMouseDelay.htm">SetMouseDelay</a>, <a href="../lib/SetWinDelay.htm">SetWinDelay</a>, <a href="../lib/SetControlDelay.htm">SetControlDelay</a> und <a href="../lib/SetDefaultMouseSpeed.htm">SetDefaultMouseSpeed</a>.</p>
+<h2 id="Built-in_Performance_Features">Interne Performanzoptimierungen</h2>
+<p>Jedes Skript wird beim Laden semikompiliert und auf seine Syntax überprüft. Dadurch wird nicht nur der Speicherverbrauch des Skripts reduziert, sondern auch die Laufzeitperformanz deutlich verbessert.</p>
+<p>Hier die technischen Details des Optimierungsprozesses (Semikompilierung):</p>
 <ul>
-  <li>Eingabe- und Ausgabevariablen (wenn deren Namen keine Referenzen zu anderen Variablen enthalten) und <a href="../lib/GroupAdd.htm">Gruppennamen</a> werden in Speicheradressen aufgelöst.</li>
-  <li><a href="../lib/Loop.htm">Schleifen</a>, <a href="../lib/Block.htm">Blöcke</a>, <a href="../lib/IfExpression.htm">IFs (Ausdruck)</a>, <a href="../lib/IfEqual.htm">IFs (altmodisch)</a> und <a href="../lib/Else.htm">ELSEs</a> bekommen die Speicheradressen von ihren Sprungpunkten im Skript.</li>
-  <li>Das Ziel von <a href="../Hotkeys.htm">Hotkey</a>, <a href="../lib/Gosub.htm">Gosub</a> und <a href="../lib/Goto.htm">Goto</a> wird in eine Speicheradresse aufgelöst, sofern es keine Variable ist.</li>
-  <li>Jeder Befehlsname wird durch eine Adresse aus der Sprungtabelle ersetzt.</li>
-  <li>Jede Zeile wird vorab in Parameterlisten aufgeteilt, und jeder Parameter wird vorab in <a href="../Variables.htm">Variablen</a>listen aufgeteilt (falls vorhanden).</li>
+  <li>Ein- und Ausgabevariablen (sofern deren Namen keine Referenzen zu anderen Variablen enthalten) und <a href="../lib/GroupAdd.htm">Gruppennamen</a> werden in Speicheradressen aufgelöst.</li>
+  <li><a href="../lib/Loop.htm">Schleifen</a>, <a href="../lib/Block.htm">Blöcke</a>, <a href="../lib/IfExpression.htm">IFs (Ausdruck)</a>, <a href="../lib/IfEqual.htm">IFs (altmodisch)</a> und <a href="../lib/Else.htm">ELSEs</a> bekommen die Speicheradressen von ihren Sprungpunkten im Skript zugewiesen.</li>
+  <li>Das Ziel von <a href="../Hotkeys.htm">Hotkey</a>, <a href="../lib/Gosub.htm">Gosub</a> und <a href="../lib/Goto.htm">Goto</a> wird in eine Speicheradresse aufgelöst, es sei denn, es handelt sich um eine Variable.</li>
+  <li>Jeder Befehlsname wird mit einer Adresse aus der Sprungtabelle ersetzt.</li>
+  <li>Jede Zeile wird vorab in eine Liste von Parametern und jeder Parameter wird vorab in eine Liste von <a href="../Variables.htm">Variablen</a> (falls vorhanden) aufgeteilt.</li>
   <li>Jeder <a href="../Variables.htm#Expressions">Ausdruck</a> wird tokenisiert und von Infix in Postfix konvertiert.</li>
   <li>Jede Referenz zu einer <a href="../Variables.htm">Variable</a> oder <a href="../Functions.htm">Funktion</a> wird in eine Speicheradresse aufgelöst.</li>
   <li>Direkt geschriebene Integer in Ausdrücken und Mathematik-/Vergleichsbefehlen werden mit binären Integern ersetzt.</li>
 </ul>
-<p>Während das Skript ausgeführt wird, werden binäre Zahlen in Variablen zwischengespeichert, um Umwandlungen zu/von Zeichenketten zu vermeiden. Einzelheiten finden Sie unter <a href="../lib/SetFormat.htm#Fast">SetFormat</a>.</p>
+<p>Während der Skriptausführung werden Binärzahlen in Variablen zwischengespeichert, um Konvertierungen von/zu Zeichenketten zu vermeiden. Einzelheiten finden Sie unter <a href="../lib/SetFormat.htm#Fast">SetFormat</a>.</p>
 </body>
 </html>

@@ -76,7 +76,7 @@ SucheFortsetzen := true</pre>
 
 <h2 id="Operators">Operatoren in Ausdrücken</h2>
 <p class="note">Allgemeine Informationen über Operatoren finden Sie unter <a href="Language.htm#operators">Operatoren</a>.</p>
-<p>Sofern nicht anders unten angegeben, werden leere Werte (leere Zeichenketten) oder nicht-numerische Werte innerhalb einer mathematischen Operation <strong>nicht</strong> als 0 interpretiert. Stattdessen werden sie als Fehler behandelt, was dazu führt, dass dieser Teil des Ausdrucks als leere Zeichenkette gewertet wird. Wenn die Variable X zum Beispiel leer ist, wird der Ausdruck X+1 einen leeren Wert statt 1 zurückgeben.</p>
+<p>Sofern nicht anders unten angegeben, werden leere Werte (leere Zeichenketten) oder nicht-numerische Werte innerhalb einer mathematischen Operation <strong>nicht</strong> als 0 interpretiert. Stattdessen werden sie als Fehler behandelt, was dazu führt, dass die Auswertung dieses Teils des Ausdrucks eine leere Zeichenkette ergibt. Wenn die Variable X zum Beispiel leer ist, wird der Ausdruck X+1 einen leeren Wert statt 1 zurückgeben.</p>
 <p>Aus historischen Gründen werden <em>in Anführungszeichen gesetzte</em> numerische Zeichenketten wie <code>"123"</code> immer als nicht-numerisch angesehen, wenn sie direkt in einem Ausdruck verwendet werden (aber nicht, wenn sie in eine Variable gespeichert oder von einer Funktion zurückgegeben werden). Dieser nicht-numerische Attribut kann mit einer <a href="#concat">Verkettung</a> erzwungen werden, um Ausdrücke wie <code>"0x" n</code> einen nicht-numerischen Wert erzeugen zu lassen (auch wenn n gültige hexadezimale Ziffern enthalten sollte). Dieses Problem kann man umgehen, indem man den Wert in eine Variable speichert oder ihn via Funktion, wie z.B. <a href="Functions.htm#Round">Round()</a>, übergibt. Generell sollte man vermeiden, direkt geschriebene Zahlen in Anführungszeichen zu setzen, weil dieses Verhalten eventuell in einer zukünftigen Version geändert wird.</p>
 
 <h3 id="operators">Ausdrucksoperatoren (in absteigender Priorität)</h3>
@@ -141,18 +141,18 @@ SucheFortsetzen := true</pre>
     <td><p><strong>Addieren (+)</strong> und <strong>Subtrahieren (-)</strong>. Die <a href="#AssignOp">Operatoren += und -=</a> sind Kurzschreibweisen zum Erhöhen oder Verringern eines Variablenwertes um einen beliebigen Wert. <code>Var += 2</code> liefert zum Beispiel das gleiche Ergebnis wie <code>Var := Var + 2</code> (allerdings ist die erste Schreibweise performanter). Des Weiteren gibt es die Möglichkeit, eine Variable mit <a href="#IncDec">Var++, Var--, ++Var oder --Var</a> schrittweise um 1 zu erhöhen oder zu verringern.</p>
     </td>
   </tr>
-  <tr id="bitwise">
+  <tr id="bitshift">
     <td class="center bold">&lt;&lt;<br>
     &gt;&gt;<br>
     &gt;&gt;&gt;</td>
     <td>
-      <p><strong>Bitweise Verschiebung nach links (&lt;&lt;)</strong>. Anwendungsbeispiel: <code>Wert1 &lt;&lt; Wert2</code>. Das ist das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" multiplizieren.</p>
-      <p><strong>Arithmetische bitweise Verschiebung nach rechts (&gt;&gt;)</strong>. Anwendungsbeispiel: <code>Wert1 &gt;&gt; Wert2</code>. Das ist das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" dividieren und dann das Ergebnis auf den am nächsten links befindlichen Integer runden. Zum Beispiel wäre <code>-3&gt;&gt;1</code> gleich -2.</p>
+      <p><strong>Bitweise Verschiebung nach links (&lt;&lt;)</strong>. Anwendungsbeispiel: <code>Wert1 &lt;&lt; Wert2</code>. Entspricht der Multiplikation von <em>Wert1</em> mit "2 hoch <em>Wert2</em>".</p>
+      <p><strong>Arithmetische bitweise Verschiebung nach rechts (&gt;&gt;)</strong>. Anwendungsbeispiel: <code>Wert1 &gt;&gt; Wert2</code>. Entspricht der Division von <em>Wert1</em> durch "2 hoch <em>Wert2</em>" und der Rundung des Ergebnisses auf den am nächsten links befindlichen Integer. Zum Beispiel wäre <code>-3&gt;&gt;1</code> gleich -2.</p>
       <p><strong>Logische bitweise Verschiebung nach rechts (&gt;&gt;&gt;)</strong> <span class="ver">[v1.1.35+]</span>. Anwendungsbeispiel: <code>Wert1 &gt;&gt;&gt; Wert2</code>. Im Gegensatz zur arithmetischen bitweisen Verschiebung nach rechts wird bei dieser Verschiebung das Vorzeichen der Zahl nicht beibehalten. Zum Beispiel hat -1 die gleiche Bitdarstellung wie der vorzeichenlose 64-Bit-Integer 0xffffffffffffffffff, daher ist <code>-1 &gt;&gt;&gt; 1</code> 0x7fffffffffffffffff.</p>
       <p>Bei allen drei Operatoren werden Floating-Point-Eingabewerte vor der Berechnung auf einen Integer gekürzt. Die Ergebnisse sind undefiniert, wenn <em>Wert2</em> kleiner als 0 oder größer als 63 ist.</p>
     </td>
   </tr>
-  <tr>
+  <tr id="bitwise">
     <td class="center bold">&amp;<br>
     ^<br>
     |
@@ -1027,7 +1027,7 @@ return
   <li>Wenn man einer Variable eine neue Zeichenkette zuweist, die länger als der aktuelle Inhalt der Variable ist, wird der reservierte Systemspeicher automatisch erweitert.</li>
   <li>Um den reservierten Speicher einer großen Variable wieder freizugeben, weisen Sie ihr einen leeren Wert zu (z.B. <code>Var := ""</code>).</li>
   <li>Es können beliebig viele Variablen erstellt werden. Das Programm unterstützt mehrere Millionen Variablen, ohne dass es signifikant an Performanz einbüßt.</li>
-  <li>Befehle, Funktionen und Ausdrücke, die numerische Eingaben akzeptieren, unterstützen in der Regel Floating-Point-Werte mit einer Genauigkeit von 15 Nachkommastellen. Integer können vorzeichenfähige 64-Bit-Werte sein, die einen Bereich von -9223372036854775808 (-0x8000000000000000) bis 9223372036854775807 (0x7FFFFFFFFFFFFFFF) abdecken. Integer-Konstanten oder numerische Zeichenketten außerhalb dieses Bereichs werden nicht unterstützt, und können zu inkonsistenten Ergebnissen führen, wenn sie als Zahlen verwendet werden. Arithmetische Operationen mit Integern werden bei Überlauf umgekehrt (z.B. 0x7FFFFFFFFFFFFFFF + 1 = -0x8000000000000000).</li>
+  <li>Befehle, Funktionen und Ausdrücke, die numerische Eingaben akzeptieren, unterstützen in der Regel Floating-Point-Werte mit einer Genauigkeit von 15 Dezimalstellen. Integer können vorzeichenfähige 64-Bit-Werte sein, die einen Bereich von -9223372036854775808 (-0x8000000000000000) bis 9223372036854775807 (0x7FFFFFFFFFFFFFFF) abdecken. Integer-Konstanten oder numerische Zeichenketten außerhalb dieses Bereichs werden nicht unterstützt, und können zu inkonsistenten Ergebnissen führen, wenn sie als Zahlen verwendet werden. Arithmetische Operationen mit Integern werden bei Überlauf umgekehrt (z.B. 0x7FFFFFFFFFFFFFFF + 1 = -0x8000000000000000).</li>
 </ul>
 </body>
 </html>

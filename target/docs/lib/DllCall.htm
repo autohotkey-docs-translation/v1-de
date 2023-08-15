@@ -50,7 +50,7 @@
 <td>Str</td>
 <td><p>Eine Zeichenkette wie "Blau" oder MeineVar. Wenn die aufgerufene Funktion die Zeichenkette ändert und das Argument eine reine Variable ist, wird der Inhalt der Variable aktualisiert. Zum Beispiel würde der folgende Aufruf den Inhalt von <em>MeineVar</em> in Großbuchstaben umwandeln: <code>DllCall("CharUpper", "Str", <i>MeineVar</i>)</code>.</p>
   <p>Wenn die Funktion jedoch eine Zeichenkette zurückgibt, die größer ist als die aktuelle Kapazität einer Variable, sollten Sie vor dem Funktionsaufruf sicherstellen, dass die Variable groß genug ist. Rufen Sie hierfür <code><a href="VarSetCapacity.htm">VarSetCapacity</a>(MeineVar, 123)</code> auf, wobei 123 die gewünschte Kapazität für <em>MeineVar</em> ist.</p>
-  <p>Ein <em>Str</em>-Argument darf kein <a href="../Variables.htm#Expressions">Ausdruck</a> sein, der zu einer Zahl ausgewertet wird (z.B. <code>i+1</code>). Ist dies der Fall, wird die Funktion nicht aufgerufen und ErrorLevel auf -2 gesetzt.</p>
+  <p>Ein <em>Str</em>-Argument darf kein <a href="../Variables.htm#Expressions">Ausdruck</a> sein, der nach der Auswertung eine Zahl ergibt (z.B. <code>i+1</code>). Ist dies der Fall, wird die Funktion nicht aufgerufen und ErrorLevel auf -2 gesetzt.</p>
   <p>Die <a href="#asterisk">Sternchenvariable</a> "Str*" wird unterstützt, aber selten verwendet. Sie kann für Funktionen verwendet werden, die so etwas wie "TCHAR **" oder "LPTSTR *" erwarten.</p>
   <p class="note"><strong>Hinweis:</strong> Wenn Sie eine Zeichenkette an eine Funktion übergeben, müssen Sie darauf achten, welchen <a href="../Compat.htm#DllCall"><i>Typ</i> von Zeichenkette</a> die Funktion erwartet.</p></td>
 </tr>
@@ -78,11 +78,11 @@
 </tr>
 <tr>
   <td>Float</td>
-  <td>Eine 32-Bit-Floating-Point-Zahl mit einer Genauigkeit von 6 Nachkommastellen.</td>
+  <td>Eine 32-Bit-Floating-Point-Zahl mit einer Genauigkeit von 6 Dezimalstellen.</td>
 </tr>
 <tr>
   <td>Double</td>
-  <td>Eine 64-Bit-Floating-Point-Zahl mit einer Genauigkeit von 15 Nachkommastellen.</td>
+  <td>Eine 64-Bit-Floating-Point-Zahl mit einer Genauigkeit von 15 Dezimalstellen.</td>
 </tr>
 <tr id="ptr">
   <td>Ptr</td>
@@ -118,7 +118,7 @@ DllCall("DeleteFile", Ptr, &amp;DateiName) <em>; Anführungszeichen bei Ptr wegl
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf einen der folgenden Werte gesetzt, um den Erfolg oder Misserfolg des Aufrufs zu kennzeichnen.</p>
 <p><strong>0:</strong> Erfolgreich.</p>
 <p><strong>-1</strong>: Der <em>[DllDatei\]Funktion</em>-Parameter ist eine Floating-Point-Zahl. Es wird eine Zeichenkette oder ein positiver Integer benötigt.</p>
-<p><strong>-2:</strong> Der <a href="#types">Rückgabetyp</a> oder einer der angegebenen <a href="#types">Argumenttypen</a> ist ungültig. Dieser Fehler kann auch auftreten, wenn ein <a href="../Variables.htm#Expressions">Ausdruck</a>, der zu einer Zahl ausgewertet wird, an ein Zeichenkettenargument (<a href="#str">Str</a>) übergeben wird.</p>
+<p><strong>-2:</strong> Der <a href="#types">Rückgabetyp</a> oder einer der angegebenen <a href="#types">Argumenttypen</a> ist ungültig. Dieser Fehler kann auch auftreten, wenn ein <a href="../Variables.htm#Expressions">Ausdruck</a>, der nach der Auswertung eine Zahl ergibt, an ein Zeichenkettenargument (<a href="#str">Str</a>) übergeben wird.</p>
 <p><strong>-3:</strong> Die angegebene <em>DllDatei</em> konnte nicht gelesen oder geladen werden. Wenn kein expliziter Pfad für <em>DllDatei</em> angegeben wurde, muss die Datei in einem der Pfade aus der PATH-Umgebungsvariable oder im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vorhanden sein. Dieser Fehler kann auch auftreten, wenn der Benutzer keine Zugriffsrechte auf die Datei hat, oder wenn man mit einem 32-Bit-Build von AutoHotkey auf eine 64-Bit-DLL zugreift (oder umgekehrt).</p>
 <p><strong>-4:</strong> Die angegebene Funktion konnte in der DLL nicht gefunden werden.</p>
 <p><strong>N</strong> (beliebige positive Nummer): Die Funktion wurde aufgerufen, aber mit der fatalen Ausnahme Nummer <strong>N</strong> abgebrochen (z.B. 0xC0000005 bedeutet "Zugriffsverletzung"). In solchen Fällen gibt die Funktion einen leeren Wert (leere Zeichenkette) zurück, während alle <a href="#asterisk">Sternchenvariablen</a> weiter aktualisiert werden. Eine fatale Ausnahme ist zum Beispiel die Dereferenzierung eines ungültigen Pointers wie NULL. Da eine <a href="#cdecl">Cdecl</a>-Funktion niemals den im nächsten Absatz beschriebenen <em>"An"</em>-Fehler erzeugt, löst die Funktion stattdessen eine Ausnahme aus, wenn ihr zu wenig Argumente übergeben werden.</p>

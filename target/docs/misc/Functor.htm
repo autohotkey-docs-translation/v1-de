@@ -15,11 +15,11 @@
 
 <p>"Funktionsobjekt" bedeutet in der Regel folgendes:</p>
 <ul>
-  <li>Eine Referenz zu einem <a href="../lib/Func.htm">Func-Objekt</a>, das eine tatsächliche <a href="../Functions.htm">Funktion</a> repräsentiert; entweder eine interne oder im Skript definierte Funktion.</li>
-  <li>Ein benutzerdefiniertes Objekt, das wie eine Funktion aufgerufen werden kann. Dies bezeichnet man manchmal auch als "Funktor".</li>
+  <li>Eine Referenz zu einem <a href="../lib/Func.htm">Func-Objekt</a>, das eine tatsächliche <a href="../Functions.htm">Funktion</a> repräsentiert; entweder eine interne Funktion oder eine im Skript definierte Funktion.</li>
+  <li>Ein benutzerdefiniertes Objekt, das wie eine Funktion aufgerufen werden kann. Dies wird manchmal als "Funktor" bezeichnet.</li>
   <li>Jedes andere Objekt, das wie eine Funktion aufgerufen werden kann, wie z.B. ein <a href="#BoundFunc">BoundFunc-Objekt</a> oder ein JavaScript-Funktionsobjekt, zurückgegeben von einer COM-Methode.</li>
 </ul>
-<p>Funktionsobjekte können in Verbindung mit folgenden Dingen verwendet werden:</p>
+<p>Funktionsobjekte können mit folgenden Dingen verwendet werden:</p>
 <ul>
   <li><a href="../lib/Gui.htm#label">Gui-Steuerelement-Ereignisse</a> (g-Labels)</li>
   <li><a href="../lib/Hotkey.htm#Functor">Hotkey</a></li>
@@ -34,7 +34,7 @@
 <!-- TODO: Explain how a user-defined object could be useful -->
 <p>Benutzerdefinierte Funktionsobjekte sollten diesem allgemeinen Muster folgen:</p>
 <pre>class MeineKlasseName {
-    Call(a, b) {  <em>; Deklariere Parameter je nach Bedarf, oder ein <a href="../Functions.htm#Variadic">Array*</a>.</em>
+    Call(a, b) {  <em>; Parameter je nach Bedarf deklarieren, oder ein <a href="../Functions.htm#Variadic">Array*</a>.</em>
         <em>;...</em>
     }
     __Call(Methode, args*) {
@@ -46,15 +46,15 @@
     <em>;...</em>
 }
 </pre>
-<p>Welche Teile genau benötigt werden, hängt von der Nutzung ab:</p>
+<p>Welche Teile genau benötigt werden, hängt von der Verwendung ab:</p>
 <ul>
   <li><code>Methode</code> ist eine leere Zeichenkette, wenn das Skript <code><a href="../Functions.htm#DynCall">%this%()</a></code> oder <code>this.()</code> verwendet.</li>
-  <li>Verwendet man das Objekt als eine Methode, wird <code>IsObject(Methode)</code> einen Wert ungleich 0 zurückgeben und <code>Methode</code> eine Referenz zum Zielobjekt enthalten. Wenn <code>x.y</code> sich beispielsweise auf das Funktionsobjekt <code>this</code> bezieht, <code>x.y()</code> → <code>this[x]()</code> → <code>this.__Call(x)</code> → <code>this.Call(x)</code>.</li>
-  <li><span class="ver">[v1.1.20+]</span>: Wenn das Objekt von einem der internen Funktionen verwendet wird, die eine Rückruffunktion akzeptieren, wie z.B. OnMessage() oder SetTimer, dann ist nur die Call-Methode erforderlich.</li>
+  <li>Wenn das Objekt als Methode verwendet wird, gibt <code>IsObject(Methode)</code> einen Wert ungleich 0 zurück und <code>Methode</code> enthält eine Referenz zum Zielobjekt. Wenn z.B. <code>x.y</code> auf das Funktionsobjekt <code>this</code> verweist, dann gilt <code>x.y()</code> → <code>this[x]()</code> → <code>this.__Call(x)</code> → <code>this.Call(x)</code>.</li>
+  <li><span class="ver">[v1.1.20+]</span>: Wenn das Objekt von einer der internen Funktionen verwendet wird, die eine Rückruffunktion akzeptieren, wie z.B. OnMessage() oder SetTimer, dann wird nur die Call-Methode benötigt.</li>
 </ul>
-<p>Die Arbeit kann auch direkt in __Call erfolgen. Allerdings wird das Weiterleiten von __Call nach Call empfohlen, um den Übergang zu <a href="https://www.autohotkey.com/v2/">AutoHotkey v2</a> zu erleichtern, weil in dieser Version das Verhalten von <code>%this%()</code> und Methodenaufrufen geändert wird, um die Call-Methode direkt aufzurufen.</p>
+<p>Die Arbeit kann auch direkt in __Call erledigt werden. Es wird jedoch empfohlen, __Call auf Call umzuleiten, um den Umstieg auf <a href="https://www.autohotkey.com/v2/">AutoHotkey v2</a> zu erleichtern, da dort <code>%this%()</code> und Methodenaufrufe die Call-Methode direkt aufrufen.</p>
 <h3 id="User-Defined-Examples">Beispiele</h3>
-<p>Wenn Sie mehrere Funktionsobjekttypen definieren, sollte der Standardcode auf eine Basisklasse übertragen werden (aber sollten Sie jemals Ihren Code mit einem fremden Code kombinieren, müssen Sie eventuell mit Konflikten rechnen). Zum Beispiel:</p>
+<p>Wenn Sie mehrere Funktionsobjekttypen definieren, sollte Boilerplate-Code an eine Basisklasse delegiert werden (aber wenn Sie Ihren Code jemals mit dem eines anderen kombinieren, sollten Sie auf Konflikte achten). Zum Beispiel:</p>
 <pre id="class_FunctionObject">class FunktionObjekt {
     __Call(Methode, args*) {
         if (Methode = "")
@@ -63,24 +63,24 @@
             return this.Call(Methode, args*)
     }
 }</pre>
-<p>Das folgende Beispiel definiert ein Funktions-Array, das aufgerufen werden kann; wenn man das Array aufruft, wird es jedes seiner Elemente nacheinander aufrufen.</p>
+<p>Das folgende Beispiel definiert ein aufrufbares Funktionsarray, das beim Aufruf jedes seiner Elemente der Reihe nach aufruft.</p>
 <pre><em>; Dieses Beispiel benötigt die <a href="#class_FunctionObject">FunktionObjekt-Klasse</a> von oben, um zu funktionieren.</em>
 class FunkArrayTyp extends FunktionObjekt {
     Call(obj, params*) {
-        <em>; Ruft eine Liste von Funktionen auf.</em>
+        <em>; Eine Liste von Funktionen aufrufen.</em>
         Loop % this.Length()
             this[A_Index].Call(params*)
     }
 }
 
-<em>; Erstellt ein Array mit Funktionen.</em>
+<em>; Ein Array von Funktionen erstellen.</em>
 FunkArray := new FunkArrayTyp
-<em>; Fügt einige Funktionen in das Array ein (kann jederzeit gemacht werden).</em>
+<em>; Einige Funktionen in das Array einfügen (kann jederzeit gemacht werden).</em>
 FunkArray.Push(Func("Eins"))
 FunkArray.Push(Func("Zwei"))
-<em>; Erstellt ein Objekt, das das Array als Methode benutzt.</em>
+<em>; Ein Objekt erstellen, das das Array als Methode verwendet.</em>
 obj := {Methode: FunkArray}
-<em>; Ruft die Methode auf.</em>
+<em>; Die Methode aufrufen.</em>
 obj.Methode("foo", "bar")
 
 Eins(param1, param2) {
@@ -93,13 +93,13 @@ Zwei(param1, param2) {
 }</pre>
 
 <h2 id="BoundFunc">BoundFunc-Objekt <span class="ver">[v1.1.20+]</span></h2>
-<p>Verhält sich wie eine Funktion, aber übergibt nur vordefinierte Parameter an eine andere Funktion.</p>
-<p>Es gibt zwei Möglichkeiten, wie BoundFunc-Objekte erstellt werden können:</p>
+<p>Verhält sich wie eine Funktion, übergibt aber nur vordefinierte Parameter an eine andere Funktion.</p>
+<p>BoundFunc-Objekte können auf zwei Arten erzeugt werden:</p>
 <ul>
-  <li>Durch Aufrufen der <a href="../lib/Func.htm#Bind">Func.Bind()</a>-Methode, die Parameterwerte an eine Funktion bindet.</li>
-  <li>Durch Aufrufen der <a href="../lib/ObjBindMethod.htm">ObjBindMethod()</a>-Funktion, die Parameterwerte und Methodennamen an ein Zielobjekt bindet.</li>
+  <li>Durch Aufruf der <a href="../lib/Func.htm#Bind">Func.Bind()</a>-Methode, die Parameterwerte an eine Funktion bindet.</li>
+  <li>Durch Aufruf der <a href="../lib/ObjBindMethod.htm">ObjBindMethod()</a>-Funktion, die Parameterwerte und einen Methodennamen an ein Zielobjekt bindet.</li>
 </ul>
-<p>Im unteren Beispiel wird gezeigt, wie BoundFunc-Objekte aufgerufen werden können. Anderen Methoden werden nicht unterstützt. Wenn das BoundFunc-Objekt aufgerufen wird, ruft es die Funktion oder Methode auf, an der es gebunden wurde, und übergibt alle gebundenen Parameter, gefolgt von denen, die vom Aufrufer übergeben wurden. Zum Beispiel:</p>
+<p>Das folgende Beispiel zeigt, wie BoundFunc-Objekte aufgerufen werden können. Es werden keine anderen Methoden unterstützt. Wenn das BoundFunc-Objekt aufgerufen wird, ruft es die Funktion oder Methode auf, an die es gebunden wurde, und übergibt alle gebundenen Parameter, gefolgt von den vom Aufrufer übergebenen Parametern. Zum Beispiel:</p>
 <pre>fn := Func("EchteFn").Bind(1)
 
 %fn%(2)    <em>; Zeigt "1, 2"</em>
@@ -108,11 +108,11 @@ fn.Call(3) <em>; Zeigt "1, 3"</em>
 EchteFn(a, b) {
     MsgBox %a%, %b%
 }</pre>
-<p>Mit <a href="../lib/ObjBindMethod.htm">ObjBindMethod()</a> kann eine Methode mit einem Objekt verbunden werden, wenn eine Referenz zu der Methode selbst nicht abgerufen werden kann. Zum Beispiel:</p>
+<p>Mit <a href="../lib/ObjBindMethod.htm">ObjBindMethod()</a> kann eine Methode gebunden werden, wenn der Abruf einer Referenz zur Methode selbst nicht möglich ist. Zum Beispiel:</p>
 <pre>File := FileOpen(A_ScriptFullPath, "r")
 ZeileAbrufen := ObjBindMethod(File, "ReadLine")
 MsgBox % %ZeileAbrufen%()  <em>; Zeigt die erste Zeile dieser Datei.</em></pre>
-<p>Ein komplexeres Beispiel finden Sie bei <a href="../lib/SetTimer.htm#ExampleClass">SetTimer</a>.</p>
+<p>Ein komplexeres Beispiel finden Sie unter <a href="../lib/SetTimer.htm#ExampleClass">SetTimer</a>.</p>
 
 </body>
 </html>

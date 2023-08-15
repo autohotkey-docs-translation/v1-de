@@ -21,11 +21,11 @@
 <dl>
 
   <dt>URL</dt>
-  <dd><p>URL der Datei, die heruntergeladen werden soll. Zum Beispiel könnte mit "https://someorg.org" die Willkommensseite dieser Organisation abgerufen werden.</p></dd>
+  <dd><p>URL der Datei, die heruntergeladen werden soll. Zum Beispiel bewirkt <code>https://someorg.org</code>, dass die Willkommensseite dieser Organisation abgerufen wird.</p></dd>
 
   <dt>DateiName</dt>
-  <dd><p><strong>Inhalt in eine Datei herunterladen:</strong> Geben Sie den Namen der Datei an, die lokal erstellt werden soll. Wenn kein absoluter Pfad angegeben ist, wird die Datei im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Jede vorhandene Datei wird mit der neuen Datei <strong>überschrieben</strong>.</p>
-    <p><strong>Inhalt in eine Variable herunterladen:</strong> Siehe die <a href="#WHR">Beispiele</a> unten.</p></dd>
+  <dd><p>Geben Sie den Namen der Datei an, die lokal erstellt werden soll. Wenn kein absoluter Pfad angegeben ist, wird die Datei im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Eine bereits vorhandene Datei wird mit der neuen Datei <u>überschrieben</u>.</p>
+    <p>Dieser Befehl lädt eine Datei herunter. Um stattdessen in eine Variable herunterzuladen, siehe das <a href="#WHR">Beispiel</a> unten.</p></dd>
 
 </dl>
 
@@ -33,14 +33,14 @@
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Der Download wird möglicherweise auch dann als erfolgreich angesehen, wenn die Remote-Datei nicht vorhanden ist. Das liegt daran, dass viele Webserver anstelle der fehlenden Datei eine Fehlerseite senden. Das heißt, dass in <em>DateiName</em> die Fehlerseite gespeichert wird.</p>
-<p>Internet Explorer 3 oder höher muss installiert sein, damit diese Funktion richtig funktionieren kann. Firewalls oder das Vorhandensein mehrerer Netzwerkadapter können dazu führen, dass die Funktion fehlschlägt. Zudem ist es möglich, dass einige Webseiten solche Downloads blockieren.</p>
+<p>Der Download könnte auch dann als Erfolg gewertet werden, wenn die Remote-Datei nicht existiert. Der Grund dafür ist, dass viele Webserver anstelle der fehlenden Datei eine Fehlerseite senden. Und genau diese Fehlerseite wird anstelle von <em>DateiName</em> gespeichert.</p>
+<p>Es muss Internet Explorer 3 oder höher installiert sein, damit dieser Befehl richtig funktioniert. Firewalls oder das Vorhandensein mehrerer Netzwerkadapter können dazu führen, dass der Befehl fehlschlägt. Zudem ist es möglich, dass einige Webseiten solche Downloads blockieren.</p>
 <p><strong>Caching:</strong></p>
 <ul>
-  <li><span class="ver">[v1.0.44.07+]</span>: Die URL wird direkt vom Remote-Server abgerufen (also nie vom Cache des Internet Explorers). Um das Caching zuzulassen, fügen Sie vor der URL ein *0 gefolgt von einem Leerzeichen ein, z.B. <code>*0 https://someorg.org</code>. Die 0 nach dem Sternchen kann mit einer beliebigen gültigen dwFlags-Nummer ersetzt werden; suchen Sie nach InternetOpenUrl auf <a href="https://www.microsoft.com">www.microsoft.com</a> für weitere Details.</li>
-  <li>In den Versionen vor v1.0.44.07 wird die Datei vom Cache abgerufen, wann immer dies möglich ist. Um das zu verhindern, geben Sie am Ende der URL eine Abfragezeichenkette an. Zum Beispiel: <code>https://www.someorg.org/doc.html?fakeParam=42</code>. Hinweis: Soll die Datei mehrmals heruntergeladen werden, muss die Abfragezeichenkette variieren.</li>
+  <li><span class="ver">[v1.0.44.07+]</span>: Die URL wird direkt vom Remote-Server abgerufen (also nie aus dem Cache des Internet Explorers). Um das Caching zu erlauben, stellen Sie der URL ein *0 gefolgt von einem Leerzeichen voran, z.B. <code class="no-highlight">*0 https://someorg.org</code>. Die 0 nach dem Sternchen kann mit einer gültigen dwFlags-Nummer ersetzt werden; suchen Sie nach InternetOpenUrl auf <a href="https://www.microsoft.com">www.microsoft.com</a> für weitere Details.</li>
+  <li>In den Versionen vor v1.0.44.07 wird die Datei nach Möglichkeit aus dem Cache abgerufen. Um das zu verhindern, fügen Sie eine Abfragezeichenkette an das Ende der URL an. Zum Beispiel: <code class="no-highlight">https://www.someorg.org/doc.html?fakeParam=42</code>. Hinweis: Wenn Sie dieselbe Datei häufig herunterladen, muss die Abfragezeichenkette variieren.</li>
 </ul>
-<p><strong>Proxies:</strong> UrlDownloadToFile wird einen Proxy-Server für den Internetzugriff verwenden, falls so ein Proxy in den Einstellungen des Internet Explorers konfiguriert wurde.</p>
+<p><strong>Proxies:</strong> UrlDownloadToFile verwendet einen Proxy-Server für den Internetzugriff, wenn ein solcher in den Einstellungen des Internet Explorers konfiguriert ist.</p>
 <p><strong>FTP und Gopher:</strong> <span class="ver">[v1.0.48.04+]</span> unterstützt FTP- und Gopher-URLs. Zum Beispiel:</p>
 <pre>UrlDownloadToFile, ftp://example.com/home/Meine Datei.zip, C:\Mein Ordner\Meine Datei.zip  <em>; Anonym anmelden.</em>
 UrlDownloadToFile, ftp://user:pass@example.com:21/home/Meine Datei.zip, C:\Mein Ordner\Meine Datei.zip  <em>; Als bestimmter Benutzer anmelden.</em>
@@ -63,7 +63,7 @@ UrlDownloadToFile, ftp://benutzer:passwort@beispiel.com/Mein Verzeichnis, C:\Ver
 <pre>whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 whr.Open("GET", "https://www.autohotkey.com/download/1.1/version.txt", true)
 whr.Send()
-<em>; Durch das 'true' oben und dem Aufruf unten bleibt das Skript ansprechbar.</em>
+<em>; Durch das 'true' oben und den Aufruf unten bleibt das Skript responsiv.</em>
 whr.WaitForResponse()
 version := whr.ResponseText
 MsgBox % version
@@ -73,17 +73,17 @@ MsgBox % version
 <div class="ex" id="XHR">
 <p><a class="ex_number" href="#XHR"></a> Macht einen asynchronen HTTP-Request.</p>
 <pre>req := ComObjCreate("Msxml2.XMLHTTP")
-<em>; Öffnet einen Request mit aktivierter async.</em>
+<em>; Request mit aktiviertem async öffnen.</em>
 req.open("GET", "https://www.autohotkey.com/download/1.1/version.txt", true)
-<em>; Setzt unsere Rückruffunktion, benötigt <span class="ver">[v1.1.17+]</span>.</em>
+<em>; Unsere Rückruffunktion setzen, benötigt <span class="ver">[v1.1.17+]</span>.</em>
 req.onreadystatechange := Func("Ready")
-<em>; Sendet den Request.  Ready() wird aufgerufen, wenn es fertig ist.</em>
+<em>; Sendet den Request.  Ready() wird bei Abschluss aufgerufen.</em>
 req.send()
 <em>/*
 ; Wenn Sie warten wollen, brauchen Sie kein onreadystatechange.
-; Durch Setzen von async=true und Warten auf diese Weise bleibt das Skript
-; ansprechbar, während der Download läuft, dagegen macht async=false
-; das Skript unansprechbar.
+; Wenn Sie async=true setzen und auf diese Weise warten, bleibt das Skript
+; responsiv, während der Download läuft, wogegen async=false
+; das Skript unresponsiv macht.
 while req.readyState != 4
     sleep 100
 */</em>
