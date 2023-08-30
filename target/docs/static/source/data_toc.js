@@ -15,14 +15,14 @@ tocData = [
     ["Labels","misc/Labels.htm"],
     ["Threads","misc/Threads.htm"],
     ["Debugging-Clients","AHKL_DBGPClients.htm"],
-    ["Compiler-Direktiven","misc/Ahk2ExeDirectives.htm"],
+    ["Compilerdirektiven","misc/Ahk2ExeDirectives.htm"],
     ["Objekte","Objects.htm"]
   ]],
   ["Häufig gestellte Fragen","FAQ.htm"],
   ["Tutorial (Schnellstart)","Tutorial.htm"],
   ["Aktuelle Änderungen","AHKL_ChangeLog.htm"],
-  ["Skript-Beispiele","scripts/index.htm"],
-  ["Skript-Kompatibilität","Compat.htm"],
+  ["Skriptbeispiele","scripts/index.htm"],
+  ["Skriptkompatibilität","Compat.htm"],
   ["Befehls- und Funktionsliste","lib/index.htm"],
   ["Umgebung","",
   [
@@ -120,7 +120,7 @@ tocData = [
     ["If-Anweisungen","Language.htm#if-statement",
     [
       ["If (Ausdruck)","lib/IfExpression.htm"],
-      ["If (traditionell)","lib/IfEqual.htm"],
+      ["If (Legacy)","lib/IfEqual.htm"],
       ["If Var [not] between Min and Max","lib/IfBetween.htm"],
       ["If Var is [not] Typ","lib/IfIs.htm"],
       ["If Var [not] in/contains VergleichListe","lib/IfIn.htm"],

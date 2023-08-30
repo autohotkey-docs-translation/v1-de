@@ -16,13 +16,13 @@
 <p>Sendet eine Meldung an ein Fenster oder Steuerelement (SendMessage wartet zusätzlich auf eine Bestätigung).</p>
 
 <pre class="Syntax">
-<span class="func">PostMessage</span>, Mld <span class="optional">, wParam, lParam, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>
-<span class="func">SendMessage</span>, Mld <span class="optional">, wParam, lParam, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText, Zeitlimit</span>
+<span class="func">PostMessage</span>, MldNummer <span class="optional">, wParam, lParam, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>
+<span class="func">SendMessage</span>, MldNummer <span class="optional">, wParam, lParam, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText, Zeitlimit</span>
 </pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>Mld</dt>
+  <dt>MldNummer</dt>
   <dd><p>Die zu sendende Meldungsnummer. Kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein. Einige solcher Nummern finden Sie unter <a href="../misc/SendMessageList.htm">Liste von Fenstermeldungen</a>.</p></dd>
 
   <dt>wParam</dt>
@@ -38,7 +38,7 @@
 
   <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
   <dd>
-    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" aufgedeckt werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
+    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
   </dd>
 
   <dt>Zeitlimit <span class="ver">[AHK_L 42+]</span></dt>
@@ -58,7 +58,7 @@
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Seien Sie vorsichtig bei der Verwendung dieser Befehle - das Senden einer Meldung an das falsche Fenster (oder das Senden einer ungültigen Meldung) kann dazu führen, dass die Zielanwendung falsch reagiert oder abstürzt. Die meisten Anwendungen sind nicht dafür ausgelegt, bestimmte Arten von Meldungen aus externen Quellen zu empfangen.</p>
 <p>PostMessage platziert die Meldung in die Meldungswarteschlange des Zielfensters und wartet nicht auf eine Bestätigung oder Antwort. SendMessage hingegen wartet, bis das Zielfenster die Meldung verarbeitet hat oder bis das Zeitlimit überschritten wurde.</p>
-<p>Die <em>wParam</em>- und <em>lParam</em>-Parameter müssen Integer sein. Wenn AutoHotkey oder das Zielfenster 32-Bit ist, werden nur die unteren 32 Bits verwendet, d.h. der Wert muss zwischen -2147483648 und 4294967295 (0xFFFFFFFF) liegen. Wenn sowohl AutoHotkey als auch das Zielfenster 64-Bit sind, kann ein beliebiger <a href="../Variables.htm#cap">von AutoHotkey unterstützter Integer</a> verwendet werden. Wie bei allen Integer-Werten in AutoHotkey kennzeichnet ein 0x-Präfix einen hexadezimalen Wert. Zum Beispiel ist 0xFF dasselbe wie 255.</p>
+<p>Die <em>wParam</em>- und <em>lParam</em>-Parameter müssen Integer sein. Wenn AutoHotkey oder das Zielfenster 32-Bit ist, werden nur die unteren 32 Bits verwendet, d.h. der Wert muss zwischen -2147483648 und 4294967295 (0xFFFFFFFF) liegen. Wenn sowohl AutoHotkey als auch das Zielfenster 64-Bit sind, kann ein beliebiger <a href="../Variables.htm#cap">von AutoHotkey unterstützter</a> Integerwert verwendet werden. Wie bei allen Integerwerten in AutoHotkey kennzeichnet ein 0x-Präfix einen hexadezimalen Wert. Zum Beispiel ist 0xFF äquivalent zu 255.</p>
 <p>Es ist möglich, eine Zeichenkette via <em>wParam</em> oder <em>lParam</em> zu senden, indem die Adresse einer Variable angegeben wird. Verwenden Sie dafür den <a href="../Variables.htm#amp">Adressoperator (&amp;)</a>. Zum Beispiel:</p>
 <pre>SendMessage, 0x000C, 0, <strong>&amp;MeineVar</strong>, ClassNN, FensterTitel  <em>; 0x000C ist WM_SETTEXT</em></pre>
 <p><span class="ver">[v1.0.43.06+]</span>: Eine Zeichenkette in <em>MeineVar</em>, die vom Empfänger der Meldung eingefügt wurde, wird korrekt erkannt, ohne dass zusätzliche Schritte erforderlich sind. Diese Erkennung funktioniert allerdings nur, wenn das erste Zeichen des Parameters ein Und-Zeichen (&amp;) ist; z.B. würde <code>&amp;MeineVar</code> oder <code>&amp;MeineVar+5</code> funktionieren, aber nicht <code>5+&amp;MeineVar</code>.</p>
@@ -110,13 +110,13 @@ SendMessage, 0x0115, 1, 0, %Steuerelement%, A</pre>
 </div>
 
 <div class="ex" id="ExWinamp">
-<p><a class="ex_number" href="#ExWinamp"></a> Fragt Winamp, welche Tracknummer gerade aktiv ist (weitere Informationen finden Sie unter <a href="../misc/Winamp.htm">Winamp automatisieren</a>).</p>
+<p><a class="ex_number" href="#ExWinamp"></a> Fragt Winamp, welche Titelnummer gerade aktiv ist (weitere Informationen finden Sie unter <a href="../misc/Winamp.htm">Winamp automatisieren</a>).</p>
 <pre>SetTitleMatchMode, 2
 SendMessage, 0x0400, 0, 120,, - Winamp
 if (ErrorLevel != "FAIL")
 {
     ErrorLevel++  <em>; Die Zählung von Winamp beginnt bei "0", also um 1 erhöhen.</em>
-    MsgBox, Track #%ErrorLevel% ist aktiv oder wird abgespielt.
+    MsgBox, Titel #%ErrorLevel% ist aktiv oder wird gerade abgespielt.
 }</pre>
 </div>
 

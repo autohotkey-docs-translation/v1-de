@@ -14,36 +14,38 @@
 <h1>LoadPicture() <span class="ver">[v1.1.23+]</span></h1>
 
 <p>Lädt ein Bild aus einer Datei und gibt ein Bitmap- oder Symbol-Handle zurück.</p>
-<pre class="Syntax">Handle := <span class="func">LoadPicture</span>(DateiName <span class="optional">, Optionen, ByRef BildTyp</span>)</pre>
+<pre class="Syntax">Handle := <span class="func">LoadPicture</span>(DateiName <span class="optional">, Optionen, AusBildTyp</span>)</pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>DateiName</dt>
-  <dd><p>Der Dateiname des Bildes. Wenn kein absoluter Pfad angegeben ist, wird das Bild im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Wenn der Name einer DLL- oder EXE-Datei ohne Pfad angegeben ist, wird diese eventuell aus dem Verzeichnis der aktuellen Programmdatei (AutoHotkey.exe oder ein kompiliertes Skript) oder aus einem Systemverzeichnis geladen.</p></dd>
+  <dd><p>Der Dateiname des Bildes. Wenn kein absoluter Pfad angegeben ist, wird das Bild im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Wenn der Name einer DLL- oder EXE-Datei ohne Pfad angegeben ist, wird diese eventuell aus dem Verzeichnis der aktuellen Ausführungsdatei (AutoHotkey.exe oder ein kompiliertes Skript) oder aus einem Systemverzeichnis geladen.</p></dd>
   
   <dt>Optionen</dt>
   <dd>
-    <p>Eine Zeichenkette aus beliebig vielen der folgenden Optionen, jeweils getrennt durch ein Leer- oder Tabulatorzeichen:</p>
+    <p>Wenn leer oder weggelassen, werden standardmäßig keine Optionen verwendet. Andernfalls geben Sie eine Zeichenkette an, die aus einer oder mehreren der folgenden Optionen besteht, jeweils getrennt durch ein Leer- oder Tabulatorzeichen:</p>
     <p><strong>W</strong><em>n</em> und <strong>H</strong><em>n</em>: Die Breite und Höhe, mit der das Bild geladen werden soll, wobei <em>n</em> ein Integer ist. Wenn eine Dimension weggelassen wird oder -1 ist, wird sie unter Beibehaltung des Seitenverhältnisses automatisch auf Basis der anderen Dimension berechnet. Wenn beide Dimensionen weggelassen werden, wird die Originalgröße des Bildes verwendet. Wenn eine der Dimensionen 0 ist, wird für diese Dimension die Originalgröße verwendet. Zum Beispiel: <code>"w80 h50"</code>, <code>"w48 h-1"</code> oder <code>"w48"</code> (Seitenverhältnis beibehalten), <code>"h0 w100"</code> (Originalhöhe verwenden, aber Breite überschreiben).</p>
-    <p><strong>Icon</strong><em>n</em>: Gibt an, welches Symbol aus einer Datei mit mehreren Symbolen (meist eine EXE- oder DLL-Datei) geladen werden soll. Zum Beispiel bewirkt <code>"Icon2"</code>, dass das zweite Symbol aus der Datei geladen wird. <span class="ver">[v1.1.27+]</span>: Jedes unterstützte Bildformat kann durch Angabe von <code>"Icon1"</code> in ein Symbol umgewandelt werden. Allerdings wird das Symbol wieder in eine Bitmap umgewandelt, wenn der <em>BildTyp</em>-Parameter weggelassen wird.</p>
+    <p><strong>Icon</strong><em>n</em>: Gibt an, welches Symbol aus einer Datei mit mehreren Symbolen (meist eine EXE- oder DLL-Datei) geladen werden soll. Zum Beispiel bewirkt <code>"Icon2"</code>, dass das zweite Symbol aus der Datei geladen wird. <span class="ver">[v1.1.27+]</span>: Jedes unterstützte Bildformat kann durch Angabe von <code>"Icon1"</code> in ein Symbol umgewandelt werden. Allerdings wird das Symbol wieder in eine Bitmap umgewandelt, wenn der <em>AusBildTyp</em>-Parameter weggelassen wird.</p>
     <p><strong>GDI+:</strong> GDI+ zum Laden eines Bildes verwenden, falls verfügbar. Zum Beispiel <code>"GDI+ w100"</code>.</p>
   </dd>
   
-  <dt>BildTyp</dt>
-  <dd><p>Wenn eine Variable angegeben ist, bekommt sie eine Nummer zugewiesen, die den Typ des zurückgegebenen Handles kennzeichnet: 0 (IMAGE_BITMAP), 1 (IMAGE_ICON) oder 2 (IMAGE_CURSOR).</p>
-  <p>Wenn dieser Parameter weggelassen wird oder keine Variable ist, wird immer ein Bitmap-Handle zurückgegeben (Symbole/Cursor werden ggf. umgewandelt). Der Grund: Um ein Symbol/Cursor/Bitmap-Handle zuverlässig verwenden oder löschen zu können, muss man wissen, um welchen Typ es sich handelt.</p></dd>
+  <dt>AusBildTyp</dt>
+  <dd><p>Wenn weggelassen, wird der zugehörige Wert nicht gespeichert, und der Rückgabewert immer ein Bitmap-Handle sein (Symbole/Cursor werden ggf. umgewandelt), da für eine zuverlässige Verwendung oder Löschung eines Symbol/Cursor/Bitmap-Handles bekannt sein muss, um welchen Typ es sich handelt. Andernfalls geben Sie eine Ausgabevariable an, in der eine Nummer gespeichert werden soll, die den Typ des zurückgegebenen Handles identifiziert: 0 (IMAGE_BITMAP), 1 (IMAGE_ICON) oder 2 (IMAGE_CURSOR).</p></dd>
 
 </dl>
 
+<h2 id="Return_Value">Rückgabewert</h2>
+<p>Diese Funktion gibt ein <a href="../misc/ImageHandles.htm">Bitmap- oder Symbol-Handle</a> zurück, je nachdem, ob ein Bild oder Symbol angegeben ist und ob der <em>AusBildTyp</em>-Parameter vorhanden ist oder nicht.</p>
+
 <h2 id="Remarks">Bemerkungen</h2>
-<p>LoadPicture unterstützt auch <a href="../misc/ImageHandles.htm">die Handle-Syntax</a>, z.B. um ein skaliertes Bild auf Basis einer bereits in den Speicher geladenen Symbol- oder Bitmap-Ressource zu erstellen, oder um ein Symbol in eine Bitmap durch Weglassen von <em>BildTyp</em> umzuwandeln.</p>
+<p>LoadPicture unterstützt auch <a href="../misc/ImageHandles.htm">die Handle-Syntax</a>, z.B. um ein skaliertes Bild auf Basis einer bereits in den Speicher geladenen Symbol- oder Bitmap-Ressource zu erstellen, oder um ein Symbol in eine Bitmap durch Weglassen von <em>AusBildTyp</em> umzuwandeln.</p>
 <p>Wenn das Bild aus dem Speicher freigegeben werden muss, rufen Sie je nach Typ des Handles eine passende Funktion auf.</p>
-<pre>if (not BildTyp)  <em>; IMAGE_BITMAP (0) oder BildTyp-Parameter wurde weggelassen.</em>
+<pre>if (not AusBildTyp)  <em>; IMAGE_BITMAP (0) oder AusBildTyp-Parameter wurde weggelassen.</em>
     DllCall("DeleteObject", "ptr", Handle)
-else if (BildTyp = 1)  <em>; IMAGE_ICON</em>
+else if (AusBildTyp = 1)  <em>; IMAGE_ICON</em>
     DllCall("DestroyIcon", "ptr", Handle)
-else if (BildTyp = 2)  <em>; IMAGE_CURSOR</em>
+else if (AusBildTyp = 2)  <em>; IMAGE_CURSOR</em>
     DllCall("DestroyCursor", "ptr", Handle)</pre>
 
 <h2 id="Related">Siehe auch</h2>

@@ -15,17 +15,19 @@
 
 <p>Schreibt Text an das Ende einer Datei (und erstellt sie vorher, wenn nötig).</p>
 
-<pre class="Syntax"><span class="func">FileAppend</span> <span class="optional">, Text, DateiName, Codierung</span></pre>
+<pre class="Syntax"><span class="func">FileAppend</span> <span class="optional">, Text, DateiName, Kodierung</span></pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>Text</dt>
-  <dd><p>Der Text, der an das Ende der Datei angefügt werden soll. Dieser Text kann LF-Zeichen (`n) enthalten, um neue Zeilen zu beginnen. Außerdem kann via <a href="../Scripts.htm#continuation">Fortsetzungsbereich</a> eine lange Zeile in mehrere kurze Zeilen aufgeteilt werden.</p>
-      <p>Wenn <em>Text</em> leer ist, wird <em>DateiName</em> als leere Datei erstellt (wenn die Datei bereits existiert, wird nur ihr Änderungsdatum aktualisiert).</p>
-    <p>Handelt es sich bei <em>Text</em> um <a href="../misc/Clipboard.htm#ClipboardAll">%ClipboardAll%</a> oder um eine Variable, der zuvor der Wert von ClipboardAll zugewiesen wurde, wird <em>DateiName</em> bedingungslos mit dem kompletten Inhalt des Zwischenspeichers überschrieben (d.h. <a href="FileDelete.htm">FileDelete</a> ist nicht notwendig).</p></dd>
+  <dd>
+    <p>Wenn leer oder weggelassen, wird <em>DateiName</em> als leere Datei erstellt (wenn die Datei bereits existiert, wird nur ihr Änderungsdatum aktualisiert). Andernfalls geben Sie den Text an, der an das Ende der Datei angefügt werden soll. Dieser Text kann LF-Zeichen (`n) enthalten, um neue Zeilen zu beginnen. Außerdem kann via <a href="../Scripts.htm#continuation">Fortsetzungsbereich</a> eine lange Zeile in mehrere kurze Zeilen aufgeteilt werden.</p>
+    <p>Handelt es sich bei <em>Text</em> um <a href="../misc/Clipboard.htm#ClipboardAll">%ClipboardAll%</a> oder um eine Variable, der zuvor der Wert von ClipboardAll zugewiesen wurde, wird <em>DateiName</em> bedingungslos mit dem kompletten Inhalt des Zwischenspeichers überschrieben (d.h. <a href="FileDelete.htm">FileDelete</a> ist nicht notwendig).</p>
+  </dd>
 
   <dt>DateiName</dt>
-  <dd><p>Name der Datei, an die der Text angefügt werden soll. Wenn kein absoluter Pfad angegeben ist, wird die Datei im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Das Zielverzeichnis muss bereits existieren.</p>
+  <dd>
+    <p>Wenn dieser und der <em>Kodierung</em>-Parameter weggelassen werden, wird die Ausgabedatei der innersten umschlossenen <a href="LoopReadFile.htm">dateilesenden Schleife</a> verwendet (falls vorhanden). Andernfalls geben Sie den Namen der Datei an, an die der Text angefügt werden soll. Wenn kein absoluter Pfad angegeben ist, wird die Datei im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Das Zielverzeichnis muss bereits existieren.</p>
     <p><strong>End-of-Line-Übersetzung (EOL):</strong> Um die EOL-Übersetzung zu deaktivieren, setzen Sie ein Sternchen vor den Dateinamen. Dies führt dazu, dass jedes LF-Zeichen (`n) als einzelnes LF-Zeichen geschrieben wird und nicht wie in Windows üblich als CR-LF-Paar (`r`n). Zum Beispiel: <code>*C:\Meine Unix-Datei.txt</code>.</p>
     <p>Wenn die Datei nicht bereits offen ist (weil sie sich in einer <a href="LoopReadFile.htm">dateilesenden Schleife</a> befindet), wird die EOL-Übersetzung automatisch deaktiviert, wenn <em>Text</em> CR-LF-Paare (`r`n) enthält. Mit anderen Worten, die im vorherigen Absatz beschriebene Sternchenoption wird automatisch aktiviert. Die Angabe des Sternchens, wenn <em>Text</em> `r`n enthält, erhöht jedoch die Performanz, da das Programm nicht nach `r`n in <em>Text</em> suchen muss.</p>
     <p id="stdout"><strong>Standardausgabe (stdout):</strong> Geben Sie ein Sternchen (*) für <em>DateiName</em> an, um <em>Text</em> zur Standardausgabe (stdout) zu senden. Diese Art von Text kann auf eine Datei umgeleitet, an eine EXE-Datei weitergeleitet oder von <a href="_ErrorStdOut.htm">umfangreichen Texteditoren</a> abgefangen werden. Zum Beispiel könnte man folgendes in der Eingabeaufforderung schreiben:</p>
@@ -36,8 +38,11 @@
     <p><span class="ver">[v1.1.20+]</span>: Geben Sie zwei Sternchen (**) für <em>DateiName</em> an, um <em>Text</em> zur Standardfehlerausgabe (stderr) zu senden.</p>
     </dd>
 
-  <dt>Codierung</dt>
-  <dd><p><span class="ver">[AHK_L 42+]</span>: Überschreibt die Standardcodierung von <a href="FileEncoding.htm">FileEncoding</a> mit einer benutzerdefinierten <em>Codierung</em>.</p></dd>
+  <dt>Kodierung <span class="ver">[AHK_L 42+]</span></dt>
+  <dd>
+    <p>Wenn leer oder weggelassen, wird die Standardkodierung verwendet (definiert durch <a href="FileEncoding.htm">FileEncoding</a> oder standardmäßig CP0). Andernfalls geben Sie die Kodierung oder Codepage an, z.B. <code class="no-highlight">UTF-8</code>, <code class="no-highlight">UTF-16</code> oder <code class="no-highlight">CP936</code>.</p>
+    <p>Wenn die Datei eine UTF-8- oder UTF-16-Byte-Order-Markierung (BOM) enthält, werden dieser Parameter und die Standardkodierung ignoriert.</p>
+  </dd>
 
 </dl>
 
@@ -51,7 +56,7 @@
 <p>Die Zieldatei wird automatisch geschlossen, nachdem der Text angefügt wurde (außer wenn FileAppend im Einzelparameter-Modus innerhalb einer <a href="LoopReadFile.htm">dateilesenden/-schreibenden Schleife</a> verwendet wird).</p>
 <p><span class="ver">[AHK_L 42+]</span>: <a href="FileOpen.htm">FileOpen()</a> im Anfügemodus bietet mehr Kontrolle als FileAppend und lässt die Datei geöffnet, anstatt sie jedes Mal neu zu öffnen und zu schließen. Sobald eine Datei im Anfügemodus geöffnet ist, können Sie die Zeichenkette mit <code>File.<a href="File.htm#Write">Write</a>(Zeichenkette)</code> anfügen. File-Objekte unterstützen auch binäre Eingaben/Ausgaben via <a href="File.htm#RawWrite">RawWrite</a>/<a href="File.htm#RawRead">RawRead</a> oder <a href="File.htm#WriteNum">Write<i>Num</i></a>/<a href="File.htm#ReadNum">Read<i>Num</i></a>, während FileAppend nur Text unterstützt.</p>
 <h2 id="Related">Siehe auch</h2>
-<p><a href="FileOpen.htm">FileOpen()</a>/<a href="File.htm">File-Objekt</a>, <a href="FileRead.htm">FileRead</a>, <a href="LoopReadFile.htm">dateilesende Schleife</a>, <a href="FileReadLine.htm">FileReadLine</a>, <a href="IniWrite.htm">IniWrite</a>, <a href="FileDelete.htm">FileDelete</a>, <a href="OutputDebug.htm">OutputDebug</a>, <a href="../Scripts.htm#continuation">Fortsetzungsbereiche</a></p>
+<p><a href="FileEncoding.htm">FileEncoding</a>, <a href="FileOpen.htm">FileOpen()</a> / <a href="File.htm">File-Objekt</a>, <a href="FileRead.htm">FileRead</a>, <a href="LoopReadFile.htm">dateilesende Schleife</a>, <a href="FileReadLine.htm">FileReadLine</a>, <a href="IniWrite.htm">IniWrite</a>, <a href="FileDelete.htm">FileDelete</a>, <a href="OutputDebug.htm">OutputDebug</a>, <a href="../Scripts.htm#continuation">Fortsetzungsbereiche</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
 <p><a class="ex_number" href="#ExBasic"></a> Erstellt eine Datei, falls erforderlich, und fügt eine Zeile an.</p>

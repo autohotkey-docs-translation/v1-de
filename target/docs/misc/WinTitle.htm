@@ -2,107 +2,100 @@
 <html lang="de">
 <head>
 <title>FensterTitel &amp; Zuletzt Gefundenes Fenster | AutoHotkey</title>
-<meta name="description" content="Auf dieser Seite sind Kriterien aufgeführt, die im FensterTitel-Parameter von Befehlen usw. verwendet werden können, um das/die Zielfenster zu bestimmen." />
+<meta name="description" content="Diese Seite listet Kriterien auf, die im FensterTitel-Parameter von Befehlen, Funktionen usw. verwendet werden können, um das/die Zielfenster zu bestimmen." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="../static/theme.css" rel="stylesheet" type="text/css" />
 <script src="../static/content.js" type="text/javascript"></script>
 <script src="../static/ga4.js" type="text/javascript"></script>
-<style type="text/css">
-#QuickRef {
-  border: 1px solid #ccc;
-  margin: 1em;
-  border-spacing: 0;
-}
-#QuickRef a {
-  padding-left: 1em;
-}
-#QuickRef td {
-  padding: .2em .5em;
-}
-#QuickRef tr:nth-child(even) {
-  background: rgba(150, 150, 150, 0.1);
-}
-</style>
 </head>
 <body>
+
 <h1><var>FensterTitel</var>-Parameter &amp; Zuletzt Gefundenes Fenster</h1>
+<p>Verschiedene Befehle, Funktionen, Direktiven und Kontrollanweisungen haben einen <var>FensterTitel</var>-Parameter, der verwendet wird, um das/die Fenster zu identifizieren, mit dem/denen gearbeitet werden soll. Dieser Parameter kann der Titel des Fensters (teilweise oder vollständig) und/oder andere Kriterien sein, die auf dieser Seite beschrieben werden.</p>
 
-<p>Verschiedene Befehle, Funktionen, Direktiven und Kontrollanweisungen haben einen <var>FensterTitel</var>-Parameter, mit dem bestimmt werden kann, welche Fenster einbezogen werden. Dieser Parameter kann der Titel des Fensters (teilweise oder vollständig) sein, und/oder sonstige Kriterien, die auf dieser Seite beschrieben werden.</p>
+<h2 id="toc">Inhaltsverzeichnis</h2>
+<ul>
+  <li><a href="#WinTitle">Fenstertitel &amp; Übereinstimmungsverhalten</a></li>
+  <li><a href="#ActiveWindow">A (Aktives Fenster)</a></li>
+  <li><a href="#ahk_">ahk_-Kriterien</a>
+    <ul>
+      <li><a href="#ahk_class">ahk_class (Fensterklasse)</a></li>
+      <li><a href="#ahk_id">ahk_id (Eindeutige ID / HWND)</a></li>
+      <li><a href="#ahk_pid">ahk_pid (Prozess-ID)</a></li>
+      <li><a href="#ahk_exe">ahk_exe (Prozessname/-pfad)</a> <span class="ver">[v1.1.01+]</span></li>
+      <li><a href="#ahk_group">ahk_group (Fenstergruppe)</a></li>
+    </ul>
+  </li>
+  <li><a href="#multi">Mehrere Kriterien</a></li>
+  <li><a href="#LastFoundWindow">Zuletzt Gefundenes Fenster</a></li>
+</ul>
 
-<strong>Kurzübersicht:</strong>
-<table id="QuickRef">
-  <tr><td><em>Titel</em></td><td><a href="#Matching">Übereinstimmungsverhalten</a></td></tr>
-  <tr><td>A</td><td><a href="#ActiveWindow">Das aktive Fenster</a></td></tr>
-  <tr><td>ahk_class</td><td><a href="#ahk_class">Fensterklasse</a></td></tr>
-  <tr><td>ahk_id</td><td><a href="#ahk_id">Eindeutige ID/HWND</a></td></tr>
-  <tr><td>ahk_pid</td><td><a href="#ahk_pid">Prozess-ID</a></td></tr>
-  <tr><td>ahk_exe</td><td><a href="#ahk_exe">Prozessname/-pfad</a></td></tr>
-  <tr><td>ahk_group</td><td><a href="#ahk_group">Fenstergruppe</a></td></tr>
-  <tr><td>&nbsp;</td><td><a href="#multi">Mehrere Kriterien</a></td></tr>
-  <tr><td>(Alles leer)</td><td><a href="#LastFoundWindow">Zuletzt Gefundenes Fenster</a></td></tr>
-</table>
-
-<h2 id="Matching">Übereinstimmungsverhalten</h2>
-<p><a href="../lib/SetTitleMatchMode.htm">SetTitleMatchMode</a> bestimmt, wie der angegebene Titel (teilweise oder vollständig) mit den Titeln anderer Fenster verglichen wird. Je nach Einstellung kann <var>FensterTitel</var> ein exakter Titel sein, ein Präfix enthalten, eine im Titel vorkommende Zeichenkette sein oder ein <a href="RegEx-QuickRef.htm">RegEx-Suchmuster</a> sein. Diese Einstellung bestimmt auch, ob das <a href="#ahk_class">ahk_class</a>- und <a href="#ahk_exe">ahk_exe</a>-Kriterium als RegEx-Suchmuster interpretiert werden soll.</p>
-<p>Fenstertitel sind Groß-/Kleinschreibung-sensitiv, es sei denn, man verwendet den <a href="RegEx-QuickRef.htm#opt_i">i)-Modifikator</a> in einem RegEx-Suchmuster.</p>
-<p>Versteckte Fenster werden nur erkannt, wenn <a href="../lib/DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist; mit Ausnahme von <a href="../lib/WinShow.htm">WinShow</a>, das versteckte Fenster immer erkennen kann.</p>
-<p>Falls mehrere Fenster mit <var>FensterTitel</var> und sonstigen Kriterien übereinstimmen, wird das oberste übereinstimmende Fenster verwendet. Wenn das aktive Fenster mit den Kriterien übereinstimmt, wird es üblicherweise bevorzugt, weil sich dieses Fenster für gewöhnlich über allen anderen Fenstern befindet. Gibt es neben dem aktiven Fenster auch eine Übereinstimmung mit einem <a href="../lib/WinSet.htm#AlwaysOnTop">Immer-Im-Vordergrund</a>-Fenster, wird dieses stattdessen verwendet.</p>
+<a id="Matching"></a>
+<h2 id="WinTitle">Fenstertitel &amp; Übereinstimmungsverhalten</h2>
+<p>Geben Sie eine beliebige Zeichenkette für <var>FensterTitel</var> an, um ein Fenster anhand seines Titels zu identifizieren. Der Titel eines Fensters befindet sich oft in einer Titelleiste ganz oben im Fenster. Wenn er versteckt oder nur teilweise sichtbar ist, kann der vollständige Fenstertitel via <a href="../lib/WinGetTitle.htm">WinGetTitle</a> oder mit dem internen Tool "Window Spy" in Erfahrung gebracht werden.</p>
+<p>Das folgende Beispiel aktiviert den Taschenrechner:</p>
+<pre>WinActivate, Rechner</pre>
+<p><a href="../lib/SetTitleMatchMode.htm">SetTitleMatchMode</a> bestimmt, wie der angegebene Titel (teilweise oder vollständig) mit den Titeln anderer Fenster verglichen wird. Je nach Einstellung kann <var>FensterTitel</var> ein exakter Titel sein, ein Präfix enthalten, eine im Titel vorkommende Zeichenkette sein oder ein <a href="RegEx-QuickRef.htm">RegEx-Suchmuster</a> sein. Diese Einstellung bestimmt auch, ob die Kriterien <a href="#ahk_class">ahk_class</a> und <a href="#ahk_exe">ahk_exe</a> als RegEx-Suchmuster interpretiert werden.</p>
+<p>Fenstertitel sind Groß-/Kleinschreibung-sensitiv, außer bei Verwendung des <a href="RegEx-QuickRef.htm#opt_i">i)-Modifikators</a> in einem RegEx-Suchmuster.</p>
+<p>Versteckte Fenster werden nur erkannt, wenn <a href="../lib/DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist, mit Ausnahme von <a href="../lib/WinShow.htm">WinShow</a>, das versteckte Fenster immer erkennt.</p>
+<p>Wenn mehrere Fenster mit <var>FensterTitel</var> und anderen Kriterien übereinstimmen, wird das oberste gefundene Fenster verwendet. Wenn das aktive Fenster mit den Kriterien übereinstimmt, wird es üblicherweise bevorzugt, da dieses Fenster in der Regel über allen anderen Fenstern liegt. Wenn jedoch ein <a href="../lib/WinSet.htm#AlwaysOnTop">Immer-Im-Vordergrund</a>-Fenster ebenfalls übereinstimmt (und das aktive Fenster nicht immer im Vordergrund ist), kann dieses stattdessen verwendet werden.</p>
+<p id="CharLimit">Nur die ersten 1023 Zeichen des angegebenen Fenstertitels, des <a href="#ahk_class">ahk_class</a>-Kriteriumwerts und des <a href="#ahk_exe">ahk_exe</a>-Kriteriumwerts werden zum Finden einer Übereinstimmung berücksichtigt. Eine Überschreitung der Länge kann zu unerwarteten Ergebnissen führen, was selten vorkommt, aber häufiger vorkommen kann, wenn ein sehr langes RegEx-Suchmuster verwendet wird.</p>
 
 <h2 id="ActiveWindow">A (Aktives Fenster)</h2>
-<p>Verwenden Sie den Buchstaben <code>A</code> für <var>FensterTitel</var> und lassen Sie die anderen drei Fensterparameter (<em>FensterText</em>, <em>AusnahmeTitel</em> und <em>AusnahmeText</em>) weg, um mit dem aktiven Fenster zu agieren.</p>
+<p>Verwenden Sie den Buchstaben <code>A</code> für <var>FensterTitel</var> und lassen Sie die anderen drei Fensterparameter (<em>FensterText</em>, <em>AusnahmeTitel</em> und <em>AusnahmeText</em>) weg, um mit dem aktiven Fenster zu arbeiten.</p>
 <p>Das folgende Beispiel ermittelt und meldet die HWND-Nummer (eindeutige ID) des aktiven Fensters:</p>
 <pre>MsgBox % WinExist("A")</pre>
 <p>Das folgende Beispiel erstellt einen Hotkey, der gedrückt werden kann, um das aktive Fenster zu maximieren:</p>
 <pre>#Up::WinMaximize, A  <em>; WIN+NACH-OBEN</em></pre>
 
 <h2 id="ahk_">ahk_-Kriterien</h2>
-<p>Geben Sie eines oder mehrere der folgenden ahk_-Kriterien an (optional zusätzlich zum Titel eines Fensters), die jeweils durch genau <u>ein</u> Leer- oder Tabulatorzeichen voneinander getrennt sind (alle anderen Leer- oder Tabulatorzeichen werden als Teil des vorherigen Kriteriums angesehen). Ein ahk_-Kriterium besteht immer aus einem ahk_-Schlüsselwort und seinem Kriteriumwert, getrennt durch beliebig viele Leer- oder Tabulatorzeichen. Zum Beispiel repräsentiert <code>ahk_class Notepad</code> ein Texteditor-Fenster.</p>
-<p>Das ahk_-Schlüsselwort und sein Kriteriumwert müssen nicht zwingend mit Leer- oder Tabulatorzeichen voneinander getrennt sein. Dies ist vorwiegend nützlich, wenn ahk_-Kriterien als Ausdrücke in Kombination mit Variablen angegeben werden. Sie könnten z.B. <code>"ahk_pid" PID</code> anstelle von <code>"ahk_pid " PID</code> angeben. In allen anderen Fällen wird jedoch empfohlen, mindestens ein Leer- oder Tabulatorzeichen als Trennung zu verwenden, um die Lesbarkeit zu verbessern.</p>
+<p>Geben Sie eines oder mehrere der folgenden ahk_-Kriterien an (optional zusätzlich zum Titel eines Fensters), die jeweils durch genau <u>ein</u> Leer- oder Tabulatorzeichen voneinander getrennt sind (alle anderen Leer- oder Tabulatorzeichen werden als Teil des vorherigen Kriteriums angesehen). Ein ahk_-Kriterium besteht immer aus einem ahk_-Schlüsselwort und seinem Kriteriumwert, getrennt durch beliebig viele Leer- oder Tabulatorzeichen. Zum Beispiel identifiziert <code>ahk_class Notepad</code> ein Notepad-Fenster.</p>
+<p>Das ahk_-Schlüsselwort und sein Kriteriumwert müssen nicht zwingend durch Leer- oder Tabulatorzeichen voneinander getrennt werden. Dies ist hauptsächlich nützlich, wenn ahk_-Kriterien als Ausdrücke in Kombination mit Variablen angegeben werden. Zum Beispiel können Sie <code>"ahk_pid" PID</code> statt <code>"ahk_pid " PID</code> angeben. In allen anderen Fällen wird jedoch empfohlen, mindestens ein Leer- oder Tabulatorzeichen als Trennung zu verwenden, um die Lesbarkeit zu verbessern.</p>
 
 <h3 id="ahk_class">ahk_class (Fensterklasse)</h3>
-<p>Verwenden Sie <code>ahk_class <var>Klassenname</var></code> in <var>FensterTitel</var>, um ein Fenster anhand seiner Fensterklasse zu identifizieren.</p>
-<p>Eine Fensterklasse ist eine Reihe von Attributen, die das System als Vorlage zum Erstellen eines Fensters verwendet. Mit anderen Worten kennzeichnet der Klassenname des Fensters, welche <em>Art</em> von Fenster es ist. Eine Fensterklasse kann via Window Spy aufgedeckt oder über <a href="../lib/WinGetClass.htm">WinGetClass</a> abgerufen werden. Falls der RegEx-<a href="../lib/SetTitleMatchMode.htm">Titelübereinstimmungsmodus</a> aktiv ist, akzeptiert <var>Klassenname</var> einen <a href="RegEx-QuickRef.htm">regulären Ausdruck</a>.</p>
+<p>Verwenden Sie <code>ahk_class <var>Klassenname</var></code> in <var>FensterTitel</var>, um ein Fenster anhand seiner Fensterklasse zu identifizieren. Nur die ersten 1023 Zeichen von <var>Klassenname</var> werden zum Finden einer Übereinstimmung berücksichtigt.</p>
+<p>Eine Fensterklasse ist eine Reihe von Attributen, die das System als Vorlage für die Erstellung eines Fensters verwendet. Mit anderen Worten, der Klassenname des Fensters gibt an, um welche <em>Art</em> von Fenster es sich handelt. Eine Fensterklasse kann mit Window Spy in Erfahrung gebracht oder mit <a href="../lib/WinGetClass.htm">WinGetClass</a> abgerufen werden. Wenn der RegEx-<a href="../lib/SetTitleMatchMode.htm">Titelübereinstimmungsmodus</a> aktiv ist, akzeptiert <var>Klassenname</var> einen <a href="RegEx-QuickRef.htm">regulären Ausdruck</a>.</p>
 <p>Das folgende Beispiel aktiviert ein Konsolenfenster (z.B. cmd.exe):</p>
 <pre>WinActivate, ahk_class ConsoleWindowClass</pre>
-<p>Das folgende Beispiel macht dasselbe wie oben, verwendet aber einen <a href="RegEx-QuickRef.htm">regulären Ausdruck</a> (beachten Sie, dass der RegEx-<a href="../lib/SetTitleMatchMode.htm">Titelübereinstimmungsmodus</a> vorher eingeschaltet werden muss, damit es funktioniert):</p>
+<p>Das folgende Beispiel macht dasselbe wie oben, verwendet aber einen <a href="RegEx-QuickRef.htm">regulären Ausdruck</a> (beachten Sie, dass dafür der RegEx-<a href="../lib/SetTitleMatchMode.htm">Titelübereinstimmungsmodus</a> vorher eingeschaltet werden muss):</p>
 <pre>WinActivate, ahk_class i)^ConsoleWindowClass$</pre>
 
 <h3 id="ahk_id">ahk_id (Eindeutige ID / HWND)</h3>
-<p>Verwenden Sie <code>ahk_id <var>HWND</var></code> in <var>FensterTitel</var>, um ein Fenster oder ein Steuerelement anhand seiner eindeutigen ID zu identifizieren.</p>
-<p>Jedes Fenster oder Steuerelement hat eine eindeutige ID, auch bekannt als HWND (Abkürzung für "Handle to Window"). Diese ID kann zur Identifizierung des Fensters oder Steuerelements verwendet werden, selbst wenn sich dessen Titel ändert. Die ID eines Fensters wird üblicherweise via <a href="../lib/WinExist.htm">WinExist()</a> oder <a href="../lib/WinGet.htm">WinGet</a> abgerufen. Die ID eines Steuerelements wird üblicherweise via <a href="../lib/ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="../lib/MouseGetPos.htm">MouseGetPos</a> oder <a href="../lib/DllCall.htm">DllCall()</a> abgerufen. Außerdem funktioniert das ahk_id-Kriterium auch bei Steuerelementen, die versteckt sind, d.h. die Einstellung von <a href="../lib/DetectHiddenWindows.htm">DetectHiddenWindows</a> hat keinen Einfluss auf Steuerelemente.</p>
-<p>Das folgende Beispiel aktiviert ein Fenster anhand einer eindeutigen ID, die in <var>VarMitID</var> gespeichert ist:</p>
+<p>Verwenden Sie <code>ahk_id <var>HWND</var></code> in <var>FensterTitel</var>, um ein Fenster oder ein Steuerelement über dessen eindeutige ID zu identifizieren.</p>
+<p>Jedes Fenster oder Steuerelement hat eine eindeutige ID, auch bekannt als HWND (kurz für "Handle to Window"). Diese ID kann zur Identifizierung des Fensters oder Steuerelements verwendet werden, selbst wenn sich dessen Titel oder Text ändert. Die ID eines Fensters wird üblicherweise via <a href="../lib/WinExist.htm">WinExist()</a> oder <a href="../lib/WinGet.htm">WinGet</a> abgerufen. Die ID eines Steuerelements wird üblicherweise via <a href="../lib/ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="../lib/MouseGetPos.htm">MouseGetPos</a> oder <a href="../lib/DllCall.htm">DllCall()</a> abgerufen. Außerdem funktioniert das ahk_id-Kriterium auch für versteckte Steuerelemente, d.h. die Einstellung von <a href="../lib/DetectHiddenWindows.htm">DetectHiddenWindows</a> hat keinen Einfluss auf Steuerelemente.</p>
+<p>Das folgende Beispiel aktiviert ein Fenster mit einer eindeutigen ID, die in <var>VarMitID</var> gespeichert ist:</p>
 <pre>WinActivate, ahk_id %VarMitID%</pre>
 
 <h3 id="ahk_pid">ahk_pid (Prozess-ID)</h3>
-<p>Verwenden Sie <code>ahk_pid <var>PID</var></code> in <var>FensterTitel</var>, um ein Fenster zu identifizieren, das zu einem bestimmten Prozess gehört. Der Prozessidentifikator (PID) wird üblicherweise per <a href="../lib/WinGet.htm">WinGet</a>, <a href="../lib/Run.htm">Run</a> oder <a href="../lib/Process.htm">Process</a> ermittelt. Die ID des Prozesses eines Fensters kann via Window Spy aufgedeckt werden.</p>
-<p>Das folgende Beispiel aktiviert ein Fenster anhand einer Prozess-ID, die in <var>VarMitPID</var> gespeichert ist:</p>
+<p>Verwenden Sie <code>ahk_pid <var>PID</var></code> in <var>FensterTitel</var>, um ein Fenster zu identifizieren, das zu einem bestimmten Prozess gehört. Der Prozessidentifikator (PID) wird üblicherweise via <a href="../lib/WinGet.htm">WinGet</a>, <a href="../lib/Run.htm">Run</a> oder <a href="../lib/Process.htm">Process</a> abgerufen. Die ID des Prozesses eines Fensters kann via Window Spy in Erfahrung gebracht werden.</p>
+<p>Das folgende Beispiel aktiviert ein Fenster mit einer Prozess-ID, die in <var>VarMitPID</var> gespeichert ist:</p>
 <pre>WinActivate, ahk_pid %VarMitPID%</pre>
 
 <h3 id="ahk_exe">ahk_exe (Prozessname/-pfad) <span class="ver">[v1.1.01+]</span></h3>
-<p>Verwenden Sie <code>ahk_exe <var>ProzessNameOderPfad</var></code> in <var>FensterTitel</var>, um ein Fenster zu identifizieren, das zu einem beliebigen Prozess mit dem angegebenen Namen oder Pfad gehört.</p>
-<p>Während das <a href="#ahk_pid">ahk_pid-Kriterium</a> auf einen bestimmten Prozess beschränkt ist, berücksichtigt das ahk_exe-Kriterium alle Prozesse, deren Namen oder vollständigen Pfade mit einer bestimmten Zeichenkette übereinstimmen. Falls der RegEx-<a href="../lib/SetTitleMatchMode.htm">Titelübereinstimmungsmodus</a> aktiv ist, akzeptiert <var>ProzessNameOderPfad</var> einen <a href="RegEx-QuickRef.htm">regulären Ausdruck</a>, der mit dem vollständigen Pfad des Prozesses übereinstimmen muss. Andernfalls akzeptiert es einen nicht-Groß-/Kleinschreibung-sensitiven Namen oder vollständigen Pfad. Zum Beispiel bezieht sich <code>ahk_exe notepad.exe</code> auf <code>ahk_exe C:\Windows\Notepad.exe</code>, <code>ahk_exe C:\Windows\System32\Notepad.exe</code> und andere Variationen. Der Name des Prozesses eines Fensters kann via Window Spy aufgedeckt werden.</p>
-<p>Das folgende Beispiel aktiviert ein Notepad-Fenster anhand seines Prozessnamens:</p>
+<p>Verwenden Sie <code>ahk_exe <var>ProzessNameOderPfad</var></code> in <var>FensterTitel</var>, um ein Fenster zu identifizieren, das zu einem Prozess mit dem angegebenen Namen oder Pfad gehört. Nur die ersten 1023 Zeichen von <var>ProzessNameOderPfad</var> werden zum Finden einer Übereinstimmung berücksichtigt.</p>
+<p>Während das <a href="#ahk_pid">ahk_pid-Kriterium</a> auf einen bestimmten Prozess beschränkt ist, berücksichtigt das ahk_exe-Kriterium alle Prozesse, deren Name oder vollständiger Pfad mit einer bestimmten Zeichenkette übereinstimmt. Wenn der RegEx-<a href="../lib/SetTitleMatchMode.htm">Titelübereinstimmungsmodus</a> aktiv ist, akzeptiert <var>ProzessNameOderPfad</var> einen <a href="RegEx-QuickRef.htm">regulären Ausdruck</a>, der mit dem vollständigen Pfad des Prozesses übereinstimmen muss. Andernfalls akzeptiert es einen nicht-Groß-/Kleinschreibung-sensitiven Namen oder vollständigen Pfad. Zum Beispiel bewirkt <code>ahk_exe notepad.exe</code>, dass <code>ahk_exe C:\Windows\Notepad.exe</code>, <code>ahk_exe C:\Windows\System32\Notepad.exe</code> und andere Variationen gefunden werden. Der Name des Prozesses eines Fensters kann via Window Spy in Erfahrung gebracht werden.</p>
+<p>Das folgende Beispiel aktiviert ein Notepad-Fenster über dessen Prozessnamen:</p>
 <pre>WinActivate, ahk_exe notepad.exe</pre>
-<p>Das folgende Beispiel macht dasselbe wie oben, verwendet aber einen <a href="RegEx-QuickRef.htm">regulären Ausdruck</a> (beachten Sie, dass der RegEx-<a href="../lib/SetTitleMatchMode.htm">Titelübereinstimmungsmodus</a> vorher eingeschaltet werden muss, damit es funktioniert):</p>
-<pre>WinActivate, ahk_exe i)\\notepad\.exe$  <em>; Stimmt mit den Namensteil des vollständigen Pfads überein.</em></pre>
+<p>Das folgende Beispiel macht dasselbe wie oben, verwendet aber einen <a href="RegEx-QuickRef.htm">regulären Ausdruck</a> (beachten Sie, dass dafür der RegEx-<a href="../lib/SetTitleMatchMode.htm">Titelübereinstimmungsmodus</a> vorher eingeschaltet werden muss):</p>
+<pre>WinActivate, ahk_exe i)\\notepad\.exe$  <em>; Stimmt mit dem Namensteil des vollständigen Pfads überein.</em></pre>
 
 <h3 id="ahk_group">ahk_group (Fenstergruppe)</h3>
 <p>Verwenden Sie <code>ahk_group <var>GruppeName</var></code> in <var>FensterTitel</var>, um ein oder mehrere Fenster zu identifizieren, die den Regeln einer zuvor definierten <a href="../lib/GroupAdd.htm">Fenstergruppe</a> entsprechen.</p>
-<p><a href="../lib/WinMinimize.htm">WinMinimize</a>, <a href="../lib/WinMaximize.htm">WinMaximize</a>, <a href="../lib/WinRestore.htm">WinRestore</a>, <a href="../lib/WinHide.htm">WinHide</a>, <a href="../lib/WinShow.htm">WinShow</a>, <a href="../lib/WinClose.htm">WinClose</a> und <a href="../lib/WinKill.htm">WinKill</a> beeinflussen <strong>alle</strong> Fenster der Gruppe. Andere fensterspezifische Befehle wie <a href="../lib/WinActivate.htm">WinActivate</a>, <a href="../lib/WinExist.htm">WinExist()</a> und <a href="../lib/IfWinExist.htm">IfWinExist</a> arbeiten hingegen nur mit dem obersten Fenster der Gruppe.</p>
-<p>Das folgende Beispiel aktiviert jedes Fenster, das den Kriterien einer Fenstergruppe entspricht:</p>
-<pre><em>; Definiert die Gruppe: Windows-Explorer-Fenster</em>
+<p><a href="../lib/WinMinimize.htm">WinMinimize</a>, <a href="../lib/WinMaximize.htm">WinMaximize</a>, <a href="../lib/WinRestore.htm">WinRestore</a>, <a href="../lib/WinHide.htm">WinHide</a>, <a href="../lib/WinShow.htm">WinShow</a>, <a href="../lib/WinClose.htm">WinClose</a> und <a href="../lib/WinKill.htm">WinKill</a> arbeiten mit <u>allen</u> Fenstern der Gruppe. Andere fensterspezifische Befehle wie <a href="../lib/WinActivate.htm">WinActivate</a>, <a href="../lib/WinExist.htm">WinExist()</a> und <a href="../lib/IfWinExist.htm">IfWinExist</a> arbeiten hingegen nur mit dem obersten Fenster der Gruppe.</p>
+<p>Das folgende Beispiel aktiviert alle Fenster, die den Kriterien einer Fenstergruppe entsprechen:</p>
+<pre><em>; Die Gruppe definieren: Windows-Explorer-Fenster</em>
 GroupAdd, Explorer, ahk_class ExploreWClass <em>; Unbenutzt in Vista und höher</em>
 GroupAdd, Explorer, ahk_class CabinetWClass
 
-<em>; Aktiviert jedes Fenster, das mit den obigen Kriterien übereinstimmt</em>
+<em>; Alle Fenster aktivieren, die den obigen Kriterien entsprechen</em>
 WinActivate, ahk_group Explorer</pre>
 
 <h2 id="multi">Mehrere Kriterien</h2>
-<p>Im Gegensatz zum <a href="#ahk_group">ahk_group-Kriterium</a> (das die Suche erweitert) kann die Suche durch Angabe von mehr als ein Kriterium innerhalb des <var>FensterTitel</var>-Parameters eingeschränkt werden. Im folgenden Beispiel wartet das Skript auf ein Fenster, dessen Titel <em>Meine Datei.txt</em> enthält <strong>und</strong> dessen Klasse <em>Notepad</em> ist:</p>
+<p>Im Gegensatz zum <a href="#ahk_group">ahk_group-Kriterium</a> (das die Suche erweitert) kann die Suche durch Angabe von mehr als einem Kriterium im <var>FensterTitel</var>-Parameter eingeschränkt werden. Im folgenden Beispiel wartet das Skript auf ein Fenster, dessen Titel <em>Meine Datei.txt</em> enthält <u>und</u> dessen Klasse <em>Notepad</em> ist:</p>
 <pre>WinWait <strong>Meine Datei.txt</strong> ahk_class <strong>Notepad</strong>
-WinActivate  <em>; Aktiviert das zuvor gefundene Fenster.</em></pre>
-<p>Beim Verwenden dieser Methode sollte der Text des Titels (falls gewünscht) zuerst aufgelistet werden, gefolgt von einem oder mehreren zusätzlichen Kriterien. Die Kriterien müssen jeweils mit genau <u>einem</u> Leer- oder Tabulatorzeichen voneinander getrennt werden (jedes weitere Leer- oder Tabulatorzeichen wird als Teil des vorherigen Kriteriums angesehen).</p>
+WinActivate  <em>; Das zuvor gefundene Fenster aktivieren.</em></pre>
+<p>Bei Verwendung dieser Methode sollte der Text des Titels (falls gewünscht) zuerst aufgelistet werden, gefolgt von einem oder mehreren zusätzlichen Kriterien. Die Kriterien müssen jeweils mit genau <u>einem</u> Leer- oder Tabulatorzeichen voneinander getrennt werden (jedes weitere Leer- oder Tabulatorzeichen wird als Teil des vorherigen Kriteriums betrachtet).</p>
 <p>Das <a href="#ahk_id">ahk_id-Kriterium</a> kann mit anderen Kriterien kombiniert werden, um den Titel, die Klasse oder andere Attribute des Fensters zu testen:</p>
 <pre>
 MouseGetPos,,, id
@@ -113,11 +106,11 @@ if WinExist("ahk_class Notepad ahk_id " id)
 
 <h2 id="LastFoundWindow">Zuletzt Gefundenes Fenster</h2>
 
-<p>Das zuletzt gefundene Fenster ist das Fenster, das zuletzt von <a href="../lib/IfWinExist.htm">IfWinExist</a>, <a href="../lib/IfWinExist.htm">IfWinNotExist</a>, <a href="../lib/WinExist.htm">WinExist()</a>, <a href="../lib/IfWinActive.htm">IfWinActive</a>, <a href="../lib/IfWinActive.htm">IfWinNotActive</a>, <a href="../lib/WinActive.htm">WinActive()</a>, <a href="../lib/WinWaitActive.htm">WinWaitActive</a>, <a href="../lib/WinWaitActive.htm">WinWaitNotActive</a> oder <a href="../lib/WinWait.htm">WinWait</a> gefunden wurde. Dieses Fenster kann die Erstellung und Pflege von Skripten erleichtern, da es verhindert, für jeden fensterspezifischen Befehl den <var>FensterTitel</var> und <var>FensterText</var> des Zielfensters angeben zu müssen. Zudem verbessert das die Performanz von Skripten, weil das Zielfenster, nachdem es gefunden wurde, nicht nochmal gesucht werden muss.</p>
-<p>Das zuletzt gefundene Fenster kann von allen fensterspezifischen Befehlen außer <a href="../lib/WinWait.htm">WinWait</a>, <a href="../lib/WinActivateBottom.htm">WinActivateBottom</a>, <a href="../lib/GroupAdd.htm">GroupAdd</a>, <a href="../lib/WinGet.htm#Count">WinGet Count</a> und <a href="../lib/WinGet.htm#List">WinGet List</a> verwendet werden. Um es zu nutzen, lassen Sie einfach alle vier Fensterparameter weg (<var>FensterTitel</var>, <var>FensterText</var>, <var>AusnahmeTitel</var> und <var>AusnahmeText</var>).</p>
-<p>Jeder <a href="Threads.htm">Thread</a> behält seinen eigenen Wert des zuletzt gefundenen Fensters. Soll heißen: Wenn der <a href="Threads.htm">aktuelle Thread</a> von einem anderen unterbrochen wird, hat der ursprüngliche Thread bei Wiederaufnahme immer noch seinen originalen Wert des zuletzt gefundenen Fensters, nicht den des unterbrechenden Threads.</p>
-<p>Wenn das zuletzt gefundene Fenster ein verstecktes <a href="../lib/Gui.htm">GUI-Fenster</a> ist, kann es auch bei ausgeschaltetem <a href="../lib/DetectHiddenWindows.htm">DetectHiddenWindows</a> verwendet werden. Das wird oft in Verbindung mit <a href="../lib/Gui.htm#LastFound">Gui +LastFound</a> benutzt.</p>
-<p>Das folgende Beispiel öffnet Notepad, wartet, bis es existiert, und aktiviert es:</p>
+<p>Das Fenster, das zuletzt von <a href="../lib/IfWinExist.htm">IfWinExist</a>, <a href="../lib/IfWinExist.htm">IfWinNotExist</a>, <a href="../lib/WinExist.htm">WinExist()</a>, <a href="../lib/IfWinActive.htm">IfWinActive</a>, <a href="../lib/IfWinActive.htm">IfWinNotActive</a>, <a href="../lib/WinActive.htm">WinActive()</a>, <a href="../lib/WinWaitActive.htm">WinWaitActive</a>, <a href="../lib/WinWaitActive.htm">WinWaitNotActive</a> oder <a href="../lib/WinWait.htm">WinWait</a> gefunden wurde. Dieses Fenster kann die Erstellung und Pflege von Skripten erleichtern, da nicht für jeden fensterspezifischen Befehl die Parameter <var>FensterTitel</var> und <var>FensterText</var> zum Identifizieren des Zielfensters angegeben werden müssen. Außerdem wird dadurch die Performanz von Skripten verbessert, da das Zielfenster, wenn es einmal gefunden wurde, nicht erneut gesucht werden muss.</p>
+<p>Das zuletzt gefundene Fenster kann von allen fensterspezifischen Befehlen außer <a href="../lib/WinWait.htm">WinWait</a>, <a href="../lib/WinActivateBottom.htm">WinActivateBottom</a>, <a href="../lib/GroupAdd.htm">GroupAdd</a>, <a href="../lib/WinGet.htm#Count">WinGet Count</a> und <a href="../lib/WinGet.htm#List">WinGet List</a> verwendet werden. Um es zu verwenden, lassen Sie einfach alle vier Fensterparameter (<var>FensterTitel</var>, <var>FensterText</var>, <var>AusnahmeTitel</var> und <var>AusnahmeText</var>) weg.</p>
+<p>Jeder <a href="Threads.htm">Thread</a> behält seinen eigenen Wert des zuletzt gefundenen Fensters, d.h. wenn der <a href="Threads.htm">aktuelle Thread</a> von einem anderen unterbrochen wird, hat der ursprüngliche Thread bei Wiederaufnahme immer noch seinen originalen Wert des zuletzt gefundenen Fensters, nicht den des unterbrechenden Threads.</p>
+<p>Wenn das zuletzt gefundene Fenster ein verstecktes <a href="../lib/Gui.htm">GUI-Fenster</a> ist, kann es auch verwendet werden, wenn <a href="../lib/DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist. Dies wird oft in Verbindung mit <a href="../lib/Gui.htm#LastFound">Gui +LastFound</a> verwendet.</p>
+<p>Das folgende Beispiel öffnet Notepad, wartet bis es existiert und aktiviert es:</p>
 <pre>Run Notepad
 WinWait Unbenannt - Editor
 WinActivate <em>; Verwendet das von WinWait gefundene Fenster.</em></pre>

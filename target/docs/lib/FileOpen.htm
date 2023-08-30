@@ -19,7 +19,7 @@
 <h1>FileOpen() <span class="ver">[AHK_L 42+]</span></h1>
 
 <p>Öffnet eine Datei, um bestimmte Inhalte aus ihr zu lesen und/oder in diese zu schreiben.</p>
-<pre class="Syntax">File := <span class="func">FileOpen</span>(DateiName, Flags <span class="optional">, Codierung</span>)</pre>
+<pre class="Syntax">File := <span class="func">FileOpen</span>(DateiName, Flags <span class="optional">, Kodierung</span>)</pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
@@ -37,8 +37,11 @@ FileOpen("**", "w")  <em>; für stderr</em></pre>
   <dt>Flags</dt>
   <dd><p>In <span class="ver">[AHK_L 54+]</span> eine Zeichenkette aus Buchstaben für den gewünschten Zugriffsmodus, gefolgt von anderen Optionen (optional getrennt durch Leer- oder Tabulatorzeichen); oder in <span class="ver">[AHK_L 42+]</span> eine Kombination (Summe) von numerischen Flags. Mögliche Werte finden Sie in den Tabellen unten.</p></dd>
 
-  <dt>Codierung</dt>
-  <dd><p>Die zu verwendende Codepage für die Eingabe/Ausgabe von Text, wenn die Datei keine UTF-8- oder UTF-16-<a href="https://en.wikipedia.org/wiki/Byte_order_mark">Byte-Order-Markierung</a> enthält oder wenn das Flag <code>h</code> (Handle) verwendet wird. Wenn weggelassen, wird der aktuelle Wert von <a href="../Variables.htm#FileEncoding">A_FileEncoding</a> verwendet.</p></dd>
+  <dt>Kodierung</dt>
+  <dd>
+    <p>Wenn weggelassen, wird die Standardkodierung verwendet (definiert durch <a href="FileEncoding.htm">FileEncoding</a> oder standardmäßig CP0). Wenn leer, wird standardmäßig CP0 (die Standard-ANSI-Codepage des Systems) verwendet. Andernfalls geben Sie die Kodierung oder Codepage für die Texteingabe und -ausgabe an, z.B. <code>"UTF-8"</code>, <code>"UTF-16"</code>, <code>CP936</code> oder <code>936</code>.</p>
+    <p>Wenn die Datei eine UTF-8- oder UTF-16-Byte-Order-Markierung (BOM) enthält oder wenn das <code>h</code>-Flag (Handle) verwendet wird, werden dieser Parameter und die Standardkodierung ignoriert, es sei denn, die Datei wird nur mit Schreibzugriff geöffnet (d.h. der vorherige Inhalt der Datei wird verworfen).</p>
+  </dd>
 
 </dl>
 
@@ -80,7 +83,7 @@ FileOpen("**", "w")  <em>; für stderr</em></pre>
     <td class="center">h</td>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
-    <td>Kennzeichnet, dass <i>DateiName</i> ein Datei-Handle ist, das in ein Objekt gewrappt werden soll. Freigabemodusflags werden ignoriert. Die Datei oder der Stream des Handles wird nicht auf eine Byte-Order-Markierung (BOM) hin überprüft. Das Datei-Handle wird <b>nicht</b> automatisch geschlossen, wenn das File-Objekt zerstört wird. Der Aufruf von <a href="File.htm#Close">Close</a> hat keine Wirkung. Beachten Sie, dass <a href="File.htm#Seek">Seek</a>, <a href="File.htm#Tell">Tell</a> und <a href="File.htm#Length">Length</a> nicht verwendet werden sollten, wenn <i>DateiName</i> ein Handle ist, das auf ein nicht-suchendes Device (z.B. ein Pipe oder ein Kommunikations-Device) verweist.</td>
+    <td>Kennzeichnet, dass <i>DateiName</i> ein Datei-Handle ist, das in ein Objekt gewrappt werden soll. Freigabemodusflags werden ignoriert. Die Datei oder der Stream des Handles wird nicht auf eine Byte-Order-Markierung (BOM) hin überprüft. Das Datei-Handle wird <u>nicht</u> automatisch geschlossen, wenn das File-Objekt zerstört wird. Der Aufruf von <a href="File.htm#Close">Close</a> hat keine Wirkung. Beachten Sie, dass <a href="File.htm#Seek">Seek</a>, <a href="File.htm#Tell">Tell</a> und <a href="File.htm#Length">Length</a> nicht verwendet werden sollten, wenn <i>DateiName</i> ein Handle ist, das auf ein nicht-suchendes Device (z.B. ein Pipe oder ein Kommunikations-Device) verweist.</td>
   </tr>
 </table>
 
@@ -152,8 +155,8 @@ FileOpen("**", "w")  <em>; für stderr</em></pre>
 <p>Mit <code>if File</code> oder <code>IsObject(File)</code> können Sie prüfen, ob die Funktion erfolgreich war.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Beim Erstellen einer UTF-8- oder UTF-16-Datei wird eine Byte-Order-Markierung (BOM) in die Datei geschrieben, <b>es sei denn</b>, <i>Codierung</i> (oder <a href="FileEncoding.htm">A_FileEncoding</a>, falls <i>Codierung</i> weggelassen wird) enthält <code>UTF-8-RAW</code> oder <code>UTF-16-RAW</code>.</p>
-<p>Wenn eine Datei mit einer UTF-8- oder UTF-16-Byte-Order-Markierung (BOM) via Lesezugriff geöffnet wird, wird der Dateizeiger hinter die BOM gesetzt, um sie von der Ausgabe auszuschließen. Folglich kann <code>File.Position</code> unmittelbar nach dem Öffnen der Datei 3 oder 2 zurückgeben.</p>
+<p>Beim Erstellen einer UTF-8- oder UTF-16-Datei wird eine Byte-Order-Markierung (BOM) in die Datei geschrieben, <u>es sei denn</u>, <em>Kodierung</em> oder die Standardkodierung (definiert durch <a href="FileEncoding.htm">FileEncoding</a>) ist <code class="no-highlight">UTF-8-RAW</code> oder <code class="no-highlight">UTF-16-RAW</code>.</p>
+<p>Wenn eine Datei mit einer UTF-8- oder UTF-16-Byte-Order-Markierung (BOM) via Lesezugriff geöffnet wird, wird der Dateizeiger hinter die BOM gesetzt, um sie von der Ausgabe auszuschließen. Folglich kann <a href="File.htm#Tell">File.Pos</a> unmittelbar nach dem Öffnen der Datei 3 oder 2 zurückgeben.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="FileEncoding.htm">FileEncoding</a>, <a href="File.htm">File-Objekt</a>, <a href="FileRead.htm">FileRead</a></p>

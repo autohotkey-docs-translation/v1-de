@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>PostMessage / SendMessage Tutorial | AutoHotkey</title>
-<meta name="description" content="Erfahren Sie, wie man den PostMessage- oder SendMessage-Befehl nutzen kann, um Meldungen an ein Fenster oder an den darin enthaltenen Steuerelementen zu senden." />
+<meta name="description" content="Erfahren Sie, wie mit den Befehlen PostMessage oder SendMessage Meldungen an ein Fenster oder Steuerelement gesendet werden können." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,37 +13,37 @@
 <body>
 <h1>PostMessage / SendMessage Tutorial <span class="headnote">von Rajat</span></h1>
 
-<p>Diese Seite beschreibt, wie man <a href="../lib/PostMessage.htm">PostMessage</a> oder <a href="../lib/PostMessage.htm">SendMessage</a> nutzen kann, um Meldungen an ein Fenster oder an den darin enthaltenen Steuerelementen zu senden, und beantwortet einige Fragen wie:</p>
+<p>Diese Seite beschreibt, wie mit den Befehlen <a href="../lib/PostMessage.htm">PostMessage</a> oder <a href="../lib/PostMessage.htm">SendMessage</a> Meldungen an ein Fenster oder Steuerelement gesendet werden können, und beantwortet einige Fragen wie:</p>
 <ul>
   <li>"Wie kann ich eine Schaltfläche auf einem minimierten Fenster drücken?"</li>
-  <li>"Wie kann ich einen Menüpunkt auswählen, falls <a href="../lib/WinMenuSelectItem.htm">WinMenuSelectItem</a> nicht funktioniert?!"</li>
-  <li>"Dies ist ein Fenster mit anpassbarem Look ... wie sende ich einen Befehl, der immer funktioniert?"</li>
+  <li>"Wie kann ich einen Menüpunkt auswählen, wenn <a href="../lib/WinMenuSelectItem.htm">WinMenuSelectItem</a> nicht funktioniert?!"</li>
+  <li>"Das Aussehen dieses Fensters kann vom Benutzer geändert werden ... wie sende ich einen Befehl, der immer funktioniert?"</li>
   <li>"und was ist mit <strong>versteckten</strong> Fenstern?!"</li>
 </ul>
 <p>Anforderungen: <span class="ver">[AutoHotkey v1.0.09+]</span> und Winspector Spy (<a href="https://www.softpedia.com/get/Security/Security-Related/Winspector.shtml">kann hier gefunden werden</a>)</p>
-<p>Gehen wir das erste Beispiel an: <a href="../lib/WinMenuSelectItem.htm">WinMenuSelectItem</a> funktioniert nicht mit der Menüleiste innerhalb des Outlook-Fensters "Neue Nachricht". Das heißt, dass dieser Code nicht funktionieren wird:</p>
+<p>Beginnen wir mit dem ersten Beispiel: <a href="../lib/WinMenuSelectItem.htm">WinMenuSelectItem</a> funktioniert nicht mit der Menüleiste innerhalb des Outlook-Fensters "Neue Nachricht". Das heißt, dass dieser Code nicht funktionieren wird:</p>
 <pre>WinMenuSelectItem, Neue Nachricht,, E&amp;infügen, &amp;Bild...</pre>
 <p>Aber <a href="../lib/PostMessage.htm">PostMessage</a> könnte diese Aufgabe erledigen:</p>
 <pre>PostMessage, 0x0111, 40239, 0, , Neue Nachricht</pre>
-<p>Das klappt hervorragend! Aber was zum Teufel ist das? 0x0111 ist der hexadezimale Code für die Meldung <a href="SendMessageList.htm">WM_COMMAND</a>. 40239 ist der Code, den dieses bestimmte Fenster als Menüpunkt 'Einfügen Bild' versteht. Nun lassen Sie mich Ihnen sagen, wie so ein Wert gefunden werden kann:</p>
+<p>Das klappt hervorragend! Aber was zum Teufel ist das? 0x0111 ist der hexadezimale Code für die Meldung <a href="SendMessageList.htm">WM_COMMAND</a>. 40239 ist der Code, den dieses bestimmte Fenster als Menüpunkt 'Bild einfügen' versteht. Lassen Sie mich Ihnen nun erklären, wie man den Code 40239 findet:</p>
 <ol>
-  <li>Öffnen Sie 'Winspector Spy' und das Fenster "Neue Nachricht".</li>
-  <li>Ziehen Sie das Fadenkreuz aus dem Fenster 'Winspector Spy' auf die Titelleiste des Fensters 'Neue Nachricht'.</li>
-  <li>Klicken Sie mit der rechten Maustaste auf das ausgewählte Fenster in der linken Liste und wählen Sie 'Messages' aus.</li>
-  <li>Klicken Sie mit der rechten Maustaste auf das leere Fenster und wählen Sie 'Edit message filter' aus.</li>
-  <li>Drücken Sie die Schaltfläche 'filter all' und klicken Sie zweimal auf 'WM_COMMAND' in der linken Liste. Auf diese Weise werden Sie nur diese Meldung überwachen.</li>
-  <li>Gehen Sie nun zum Fenster 'Neue Nachricht' und wählen Sie den folgenden Menüpunkt aus: Einfügen -&gt; Bild.</li>
-  <li>Kehren Sie zum 'Winspector Spy' zurück und drücken Sie die Ampel, um die Überwachung zu pausieren.</li>
-  <li>Klappen Sie die angesammelten WM_COMMAND-Meldungen auf (alle anderen ignorieren, falls vorhanden).</li>
-  <li>Das, was Sie (üblicherweise) suchen sollten, ist eine Code-0-Meldung. Manchmal gibt es WM_COMMAND-Meldungen wie 'win activated' oder 'win destroyed', die Sie getrost ignorieren können. Irgendwo finden Sie eine Meldung, die 'Control ID: 40239' enthält ... Das war's!</li>
-  <li>Fügen Sie den Wert nun in den obigen Befehl ein. So einfach ist das! Es ist der wParam-Wert.</li>
+  <li>Öffnen Sie Winspector Spy und das Fenster "Neue Nachricht".</li>
+  <li>Klicken Sie auf das Fadenkreuz im Winspector Spy-Fenster und ziehen Sie es auf die Titelleiste des Fensters "Neue Nachricht".</li>
+  <li>Rechtsklicken Sie auf das ausgewählte Fenster in der linken Liste und wählen Sie 'Messages' aus.</li>
+  <li>Rechtsklicken Sie auf das leere Fenster und wählen Sie 'Edit message filter' aus.</li>
+  <li>Drücken Sie die Schaltfläche 'filter all' und doppelklicken Sie auf 'WM_COMMAND' in der linken Liste. Auf diese Weise wird nur diese Meldung überwacht.</li>
+  <li>Wählen Sie nun im Fenster "Neue Nachricht" den folgenden Menüpunkt aus: Einfügen -&gt; Bild.</li>
+  <li>Kehren Sie zum Winspector Spy-Fenster zurück und drücken Sie die Ampel-Schaltfläche, um die Überwachung zu pausieren.</li>
+  <li>Klappen Sie die angesammelten WM_COMMAND-Meldungen auf (andere ignorieren, falls vorhanden).</li>
+  <li>Gesucht ist (üblicherweise) eine Code-0-Meldung. Manchmal gibt es WM_COMMAND-Meldungen wie 'win activated' oder 'win destroyed', die Sie getrost ignorieren können. Irgendwo werden Sie eine Meldung finden, die 'Control ID: 40239' enthält ... Das war's!</li>
+  <li>Fügen Sie nun diesen Wert in den obigen Befehl ein. So einfach ist das! Das ist der wParam-Wert.</li>
 </ol>
-<p>Für das nächste Beispiel habe ich Paint genommen, weil das wahrscheinlich jeder haben wird. Nehmen wir mal an, dass Sie in dieser Anwendung ein Symbol in der Symbolleiste per AutoHotkey auswählen müssen, wie z.B. die Farbauswahl.</p>
-<p>Was werden Sie tun? Höchstwahrscheinlich per Mausklick auf die Symbolleistenschaltfläche, richtig? Aber Symbolleisten können verschoben und versteckt werden! Das trifft auch auf Paint zu. Wenn der Zielbenutzer so etwas getan hat, wird Ihr Skript an dieser Stelle fehlschlagen. Der folgende Befehl würde weiterhin funktionieren:</p>
+<p>Für das nächste Beispiel habe ich Paint genommen, weil das wahrscheinlich jeder hat. Nehmen wir mal an, dass Sie in dieser Anwendung ein Symbol in der Symbolleiste per AutoHotkey auswählen müssen, wie z.B. die Farbauswahl.</p>
+<p>Was werden Sie tun? Wahrscheinlich auf die Symbolleistenschaltfläche klicken, oder? Aber Symbolleisten können verschoben und versteckt werden! Das gilt auch für Paint. Wenn der Zielbenutzer dies getan hat, wird Ihr Skript an dieser Stelle fehlschlagen. Aber der folgende Befehl wird immer funktionieren:</p>
 <pre>PostMessage, 0x0111, 639,,, Unbenannt - Paint</pre>
-<p>Ein weiterer Vorteil von <a href="../lib/PostMessage.htm">PostMessage</a> ist, dass das Fenster im Hintergrund sein kann; dagegen müsste beim Senden von Mausklicks das Fenster aktiv sein.</p>
-<p>Hier ein paar weitere Beispiele. Hinweis: Ich verwende WinXP Pro (SP1) ... Falls sich Ihr Betriebssystem von meinem unterscheidet, könnten Ihre Parameter anders sein (gilt nur für Windows-Anwendungen wie Wordpad und Notepad, bei anderen Anwendungen sollten die Parameter nicht abweichen):</p>
-<pre><em>; Macht die Schreibfarbe in Wordpad türkis</em>
+<p><a href="../lib/PostMessage.htm">PostMessage</a> hat auch den Vorteil, dass das Fenster im Hintergrund sein kann, während beim Senden von Mausklicks das Fenster aktiv sein muss.</p>
+<p>Hier einige weitere Beispiele. Hinweis: Ich benutze WinXP Pro (SP1) ... Wenn Sie ein anderes System verwenden, können Ihre Parameter abweichen (gilt nur für Windows-Anwendungen wie Wordpad und Notepad, bei anderen sollten sich die Parameter nicht ändern):</p>
+<pre><em>; Macht die Schriftfarbe in Wordpad türkis</em>
 <a href="../lib/PostMessage.htm">PostMessage</a>, 0x0111, 32788, 0, , Dokument - WordPad</pre>
 <pre><em>; Öffnet das Info-Fenster in Notepad</em>
 <a href="../lib/PostMessage.htm">PostMessage</a>, 0x0111, 65, 0, , Unbenannt - Editor</pre>
@@ -65,7 +65,7 @@ AlleAhkSkripteNeuladen() {
     WinGet, allAhkExe, List, ahk_class AutoHotkey
     Loop, % allAhkExe {
         hwnd := allAhkExe%A_Index%
-        if (hwnd = A_ScriptHwnd)  <em>; Verhindert das Neuladen des aktuellen Fensters</em>
+        if (hwnd = A_ScriptHwnd)  <em>; Ignoriert das aktuelle Fenster bzgl. Neuladen</em>
         {
             continue
         }
@@ -74,18 +74,18 @@ AlleAhkSkripteNeuladen() {
     Reload
 }
 </pre>
-<p>Das oben war für PostMessage. <a href="../lib/PostMessage.htm">SendMessage</a> funktioniert genauso und wartet zusätzlich auf einen Rückgabewert, mit dem beispielsweise der aktuelle Track von Winamp abgerufen werden kann (siehe <a href="Winamp.htm">Winamp automatisieren</a> als Beispiel).</p>
-<p>Hier ein paar weitere Hinweise:</p>
+<p>Die obigen Angaben beziehen sich auf PostMessage. <a href="../lib/PostMessage.htm">SendMessage</a> funktioniert auf die gleiche Weise, wartet aber zusätzlich auf einen Rückgabewert, der z.B. dazu verwendet werden kann, den aktuell gespielten Titel in Winamp abzurufen (siehe <a href="Winamp.htm">Winamp automatisieren</a> für ein Beispiel).</p>
+<p>Hier noch einige Hinweise:</p>
 <ul>
-  <li>Der oben genannte Hinweis in Bezug auf Windows XP und das Ändern der Meldungswerte dient nur als reine Vorsichtsmaßnahme. Finden Sie eine Meldung, die auf Ihrem Betriebssystem funktioniert, können Sie sich sicher sein, dass diese Meldung auch auf anderen Betriebssystemen funktionieren wird, sofern die Software-Versionen identisch sind. Die meisten Anwendungen behalten ihre Meldungswerte auch über verschiedene Versionen hinweg (z.B. Windows Media Player und Winamp).</li>
-  <li>Falls Sie den Filter im 'Winspector Spy' so eingestellt haben, dass er nur WM_COMMAND anzeigen soll, aber weiterhin mit Meldungen überflutet werden, dann klicken Sie mit der rechten Maustaste auf diese Meldung und wählen Sie hide (msg name) aus. Sie möchten bestimmt nicht eine Meldung sehen, die ohne Ihr Zutun mit der Zielsoftware interagiert.</li>
-  <li>Der nach rechts gerichtete Pfeil im Winspector Spy zeigt die Meldungswerte und der verschwommene nach links gerichtete Pfeil die Rückgabewerte. Standardmäßig kann ein 0-Wert als 'kein Fehler' angesehen werden (bei SendMessage wird der Rückgabewert in <a href="ErrorLevel.htm">ErrorLevel</a> sein).</li>
-  <li>Fügen Sie folgende Zeile ein, wenn Sie ein Fenstertitel angegeben haben, der nur teilweise mit dem Titel des gesuchten Fensters übereinstimmt: <code>SetTitleMatchMode, 2</code></li>
-  <li>Um eine Meldung an ein verstecktes Fenster zu senden, ist die folgende Zeile notwendig: <code>DetectHiddenWindows, On</code></li>
+  <li>Der obige Hinweis, dass es sich bei dem System um XP handelt und dass die Meldungswerte je nach System variieren, dient nur als Warnung. Wenn Sie eine Meldung finden, die auf Ihrem System funktioniert, können Sie davon ausgehen, dass diese Meldung auch auf anderen Systemen funktioniert, sofern die Softwareversion identisch ist. Außerdem behalten die meisten Anwendungen ihre Meldungswerte, auch wenn sich ihre Version ändert (z.B. Windows Media Player und Winamp).</li>
+  <li>Wenn Sie den Filter in Winspector Spy so eingestellt haben, dass nur WM_COMMAND angezeigt wird, Sie aber weiterhin mit Meldungen überschwemmt werden, rechtsklicken Sie auf diese Meldung und wählen Sie hide (msg name) aus. Sie möchten sicher keine Meldungen sehen, die ohne Ihr Zutun mit der Zielsoftware interagieren.</li>
+  <li>Der nach rechts gerichtete Pfeil in Winspector Spy zeigt die Meldungswerte und der nach links gerichtete, unscharfe Pfeil die Rückgabewerte an. Standardmäßig kann ein 0-Wert als 'kein Fehler' verstanden werden (bei SendMessage ist der Rückgabewert in <a href="ErrorLevel.htm">ErrorLevel</a>).</li>
+  <li>Fügen Sie folgendes in Ihr Skript ein, wenn Sie einen Fenstertitel angegeben haben, der nur teilweise mit dem Titel des gesuchten Fensters übereinstimmt: <code>SetTitleMatchMode, 2</code></li>
+  <li>Um eine Meldung an ein verstecktes Fenster zu senden, müssen Sie folgendes in Ihr Skript einfügen: <code>DetectHiddenWindows, On</code></li>
 </ul>
-<p>Hinweis: Es gibt Anwendungen, bei denen diese Technik nicht funktioniert. Ich hatte gemischtes Glück bei VB- und Delphi-Anwendungen. Diese Technik sollte am besten bei Anwendungen benutzt werden, die mit C oder C++ programmiert wurden. Bei VB-Anwendungen ist der "LParam" des gleichnamigen Befehls jedes Mal ein anderer. Bei einigen Delphi-Anwendungen verwendet die GUI einiger Anwendungen überhaupt kein WM_COMMAND. Die GUI greift vermutlich auf Positionen und Klicks der Maus zurück.</p>
-<p>Gehen Sie auf Entdeckungsreise.... und teilen Sie Ihre Erfahrungen mit der AutoHotkey-Community. Feedbacks sind erwünscht!</p>
-<p>Diese Einführung ist nicht für totale Anfänger gedacht (nichts für ungut), da diese Befehle als erweiterte Features betrachtet werden. Also, wenn Sie daraus nicht schlau werden, vergessen Sie es.</p>
+<p>Hinweis: Es gibt Anwendungen, bei denen diese Technik nicht funktioniert. Ich hatte gemischte Erfahrungen mit VB- und Delphi-Anwendungen. Diese Technik sollte am besten für Anwendungen verwendet werden, die mit C oder C++ programmiert wurden. Bei VB-Anwendungen ist der "LParam" des gleichnamigen Befehls jedes Mal ein anderer. Bei einigen Delphi-Anwendungen kann es vorkommen, dass die GUI überhaupt kein WM_COMMAND verwendet. Die GUI verwendet wahrscheinlich Mauspositionen und Mausklicks.</p>
+<p>Finden Sie es selbst heraus.... und teilen Sie Ihre Erfahrungen mit der AutoHotkey-Community. Feedback ist willkommen!</p>
+<p>Diese Einführung ist nicht für blutige Anfänger gedacht (nichts für ungut), da es sich bei diesen Befehlen um fortgeschrittene Features handelt. Wenn Sie also nach dem Lesen nichts verstanden haben, vergessen Sie es bitte.</p>
 <p>-Rajat</p>
 </body>
 </html>
