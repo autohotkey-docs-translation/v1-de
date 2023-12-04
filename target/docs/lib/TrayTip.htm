@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>TrayTip - Syntax &amp; Verwendung | AutoHotkey</title>
+<title>TrayTip - Syntax &amp; Verwendung | AutoHotkey v1</title>
 <meta name="description" content="Der TrayTip-Befehl zeigt eine Sprechblase oder in Windows 10 und höher eine Popupbenachrichtigung in der Nähe des Tray-Symbols an." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -27,8 +27,8 @@
 
   <dt>Text</dt>
   <dd>
-    <p>Wenn leer oder weggelassen, werden alle aktuell angezeigten Traytips entfernt. Andernfalls geben Sie die Meldung an, die angezeigt werden soll. Es werden nur die ersten 265 Zeichen angezeigt.</p>
-    <p>Um allerdings eine Popupbenachrichtigung in Windows 10 und höher zu verstecken, kann es jedoch erforderlich sein, <a href="#Windows10">das Tray-Symbol vorübergehend zu entfernen</a>.</p>
+    <p>Wenn leer oder weggelassen, werden alle aktuell angezeigten Traytips versteckt. Andernfalls geben Sie die Meldung an, die angezeigt werden soll. Es werden nur die ersten 265 Zeichen angezeigt.</p>
+    <p>Um in Windows 10 eine Popupbenachrichtigung zu verstecken, kann es jedoch erforderlich sein, <a href="#Windows10">das Tray-Symbol vorübergehend zu entfernen</a>.</p>
     <p>CR- (`r) oder LF-Zeichen (` n) können verwendet werden, um mehrere Textzeilen zu erstellen. Zum Beispiel: <code>Zeile1`nZeile2</code>.</p>
     <p>Wenn <em>Text</em> relativ lang ist, kann es via <a href="../Scripts.htm#continuation">Fortsetzungsbereich</a> in mehrere kurze Zeilen aufgeteilt werden, um die Übersichtlichkeit und Wartbarkeit des Skripts zu verbessern.</p>
   </dd>
@@ -40,9 +40,10 @@
     </dd>
 
   <dt>Optionen</dt>
-  <dd><p>Wenn leer oder weggelassen, wird standardmäßig 0 verwendet (kein Symbol). Andernfalls geben Sie eine Kombination (Summe) aus einer oder mehreren der folgenden Optionen an:</p>
+  <dd><p>Wenn leer oder weggelassen, wird standardmäßig 0 verwendet. Andernfalls geben Sie eine Kombination (Summe) aus einer oder mehreren der folgenden Optionen an:</p>
     <table class="info">
       <tr><th>Funktion</th><th abbr="Dez">Dezimal</th><th abbr="Hex">Hexadezimal</th></tr>
+      <tr><td>Kein Symbol</td><td>0</td><td>0x0</td></tr>
       <tr><td>Infosymbol</td><td>1</td><td>0x1</td></tr>
       <tr><td>Warnungssymbol</td><td>2</td><td>0x2</td></tr>
       <tr><td>Fehlersymbol</td><td>3</td><td>0x3</td></tr>
@@ -54,10 +55,11 @@
     </dd>
 
 </dl>
-<h2 id="Remarks">Bemerkungen</h2>
-<p>In Windows 10 sieht ein typischer Traytip wie folgt aus:</p>
-<img src="../static/dlg_traytip.png" alt="TrayTip" />
-<p id="Windows10"><strong>Windows 10 und höher</strong> ersetzen standardmäßig alle Sprechblasenfenster mit Popupbenachrichtigungen (was aber mit einer Gruppenrichtlinie überschrieben werden kann). Wenn TrayTip mehrmals aufgerufen wird, werden die Benachrichtigungen in eine "Warteschlange" eingereiht und nacheinander abgearbeitet, anstatt sich gegenseitig zu ersetzen. Um eine Benachrichtigung zu verstecken, kann es hilfreich sein, das <a href="../Program.htm#tray-icon">Tray-Symbol</a> vorübergehend zu entfernen. Zum Beispiel:</p>
+
+<h2 id="Hiding_the_Traytip">Traytip verstecken</h2>
+<p>Um den Traytip zu verstecken, lassen Sie alle Parameter weg (oder zumindest den <em>Text</em>-Parameter). Zum Beispiel:</p>
+<pre>TrayTip</pre>
+<p>Um den Traytip in Windows 10 zu verstecken, entfernen Sie vorübergehend das <a href="../Program.htm#tray-icon">Tray-Symbol</a> (was nicht immer funktioniert, zumindest einem Bericht zufolge). Zum Beispiel:</p>
 <pre>TrayTip #1, Der erste Traytip
 Sleep 3000   <em>; 3 Sekunden lang anzeigen lassen.</em>
 TrayTipVerstecken()
@@ -74,6 +76,12 @@ TrayTipVerstecken() {
     }
 }
 </pre>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>In Windows 10 sieht ein typischer Traytip wie folgt aus:</p>
+<img src="../static/dlg_traytip.png" alt="TrayTip" />
+<p id="Windows10"><strong>Windows 10 und höher</strong> ersetzen standardmäßig alle Sprechblasenfenster mit Popupbenachrichtigungen (was aber mit einer Gruppenrichtlinie überschrieben werden kann). Wenn TrayTip mehrmals aufgerufen wird, werden die Benachrichtigungen in eine "Warteschlange" eingereiht und nacheinander abgearbeitet, anstatt sich gegenseitig zu ersetzen.</p>
+
 <p>TrayTip funktioniert nicht, wenn das Skript kein <a href="../Program.htm#tray-icon">Tray-Symbol</a> hat (via <a href="_NoTrayIcon.htm">#NoTrayIcon</a> oder <code><a href="Menu.htm">Menu</a>, Tray, NoIcon</code>). TrayTip funktioniert auch nicht, wenn der folgende REG_DWORD-Wert existiert und auf 0 gesetzt wurde:</p>
 <pre>HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced &gt;&gt; EnableBalloonTips</pre>
 <p>Erwähnenswert ist noch, dass ein Tooltip angezeigt wird, wenn der Mauszeiger über das <a href="../Program.htm#tray-icon">Tray-Symbol</a> des Skripts bewegt wird. Der Inhalt des Tooltips kann wie folgt geändert werden: <code><a href="Menu.htm">Menu</a>, Tray, Tip, Neuer Text</code>.</p>
@@ -88,7 +96,7 @@ TrayTipVerstecken() {
 </div>
 
 <div class="ex" id="ExDisplayTime">
-<p><a class="ex_number" href="#ExDisplayTime"></a> Ermöglicht eine genauere Kontrolle der Anzeigedauer, ohne Sleep verwenden zu müssen (was den aktuellen Thread anhalten würde). Für Windows 10 und höher kann die TrayTipVerstecken-Funktion mit der <a href="#Hide">oben</a> definierten ersetzt werden.</p>
+<p><a class="ex_number" href="#ExDisplayTime"></a> Ermöglicht eine genauere Kontrolle der Anzeigedauer, ohne Sleep verwenden zu müssen (was den aktuellen Thread anhalten würde). Für Windows 10 kann die TrayTipVerstecken-Funktion mit der <a href="#Hide">oben</a> definierten ersetzt werden.</p>
 <pre>#Persistent
 TrayTip, Zeitgesteuerter Traytip, Wird 5 Sekunden lang angezeigt.
 SetTimer, TrayTipVerstecken, -5000
@@ -107,7 +115,7 @@ Gosub, TrayTipErneuern  <em>; Direkt aufrufen, um sofortigen Start zu erzwingen.
 return
 
 TrayTipErneuern:
-TrayTip, Erneuerter Traytip, Dies ist ein permanenter TrayTip., , 16
+TrayTip, Erneuerter Traytip, Dies ist ein permanenter Traytip., , 16
 return</pre>
 </div>
 

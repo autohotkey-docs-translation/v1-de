@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>Reguläres Objekt - Methoden &amp; Eigenschaften | AutoHotkey</title>
+<title>Reguläres Objekt - Methoden &amp; Eigenschaften | AutoHotkey v1</title>
 <meta name="description" content="Das reguläre Objekt bietet eine Schnittstelle für Aktionen wie z.B. Schlüssel einfügen oder entfernen, Anzahl der Schlüssel abrufen, Objekt klonen, etc." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,7 +18,7 @@
 <ul class="indent">
   <li><a href="#Methods">Methoden</a>:
     <ul>
-      <li><a href="#InsertAt">InsertAt</a>: Fügt einen oder mehrere Werte an einer Position innerhalb eines linearen Arrays ein.</li>
+      <li><a href="#InsertAt">InsertAt</a>: Fügt einen oder mehrere Werte auf einer Position innerhalb eines linearen Arrays ein.</li>
       <li><a href="#RemoveAt">RemoveAt</a>: Entfernt Elemente an einer Position innerhalb eines linearen Arrays.</li>
       <li><a href="#Push">Push</a>: Fügt Werte am Ende eines Arrays an.</li>
       <li><a href="#Pop">Pop</a>: Entfernt das letzte Array-Element und gibt es zurück.</li>
@@ -54,16 +54,18 @@
 
 <h2 id="Methods">Methoden</h2>
 <div class="methodShort" id="InsertAt"><h3>InsertAt <span class="ver">[v1.1.21+]</span></h3>
-<p>Fügt einen oder mehrere Werte an einer Position innerhalb eines linearen Arrays ein.</p>
+<p>Fügt einen oder mehrere Werte auf einer Position innerhalb eines linearen Arrays ein.</p>
 <pre class="Syntax">Objekt.<span class="func">InsertAt</span>(Pos, Wert1 <span class="optional">, Wert2, ... Wert<i>N</i></span>)</pre>
+<h4 id="InsertAt_Parameters">Parameter</h4>
 <dl>
   <dt>Pos</dt>
-  <dd><p>Die Position, an der <em>Wert1</em> eingefügt werden soll. Nachfolgende Werte werden an Pos+1, Pos+2 usw. eingefügt.</p></dd>
+  <dd><p>Die Position, auf der <em>Wert1</em> eingefügt werden soll. Nachfolgende Werte werden auf Pos+1, Pos+2 usw. eingefügt.</p></dd>
   <dt>Wert1 ...</dt>
   <dd><p>Ein oder mehrere Werte, die eingefügt werden sollen. Um ein Array von Werten einzufügen, übergeben Sie <code><a href="../Functions.htm#VariadicCall">dasArray*</a></code> als letzten Parameter.</p></dd>
 </dl>
+<h4 id="InsertAt_Remarks">Bemerkungen</h4>
 <p>InsertAt ist das Gegenstück zu <a href="#RemoveAt">RemoveAt</a>.</p>
-<p>Da Objekte assoziative Arrays sind, ist <em>Pos</em> außerdem der Integerschlüssel, der <em>Wert1</em> zugeordnet wird. Alle Elemente, die sich an oder rechts von <em>Pos</em> befinden, werden um genau die Anzahl der Wertparameter nach rechts verschoben, selbst wenn einige Werte fehlen (d.h. wenn das Objekt ein lückenhaftes Array ist). Zum Beispiel:</p>
+<p>Da Objekte assoziative Arrays sind, ist <em>Pos</em> außerdem der Integerschlüssel, der <em>Wert1</em> zugeordnet wird. Alle Elemente, die sich auf oder rechts von <em>Pos</em> befinden, werden um genau die Anzahl der Wertparameter nach rechts verschoben, selbst wenn einige Werte fehlen (d.h. wenn das Objekt ein lückenhaftes Array ist). Zum Beispiel:</p>
 <pre>x := []
 x.InsertAt(1, "A", "B") <em>; =&gt;  ["A", "B"]</em>
 x.InsertAt(2, "C")      <em>; =&gt;  ["A", "C", "B"]</em>
@@ -86,15 +88,19 @@ MsgBox % x[handleX+1]  <em>; Dies ist die neue "Position" von "A"</em></pre>
 
 <div class="methodShort" id="RemoveAt"><h3>RemoveAt <span class="ver">[v1.1.21+]</span></h3>
 <p>Entfernt Elemente an einer Position innerhalb eines linearen Arrays.</p>
-<pre class="Syntax">Objekt.<span class="func">RemoveAt</span>(Pos <span class="optional">, Länge</span>)</pre>
+<pre class="Syntax">EntfernterWert := Objekt.<span class="func">RemoveAt</span>(Pos)
+EntfernteElementeAnzahl := Objekt.<span class="func">RemoveAt</span>(Pos, Länge)</pre>
+<h4 id="RemoveAt_Parameters">Parameter</h4>
 <dl>
   <dt>Pos</dt>
   <dd><p>Die Position eines oder mehrerer Werte, die entfernt werden sollen.</p></dd>
   
   <dt>Länge</dt>
-  <dd><p>Die Länge des Wertebereichs, der entfernt werden soll. Es werden die Elemente von <code>Pos</code> bis <code>Pos+Länge-1</code> entfernt. Wenn weggelassen, wird nur ein Element entfernt.</p></dd>
+  <dd><p>Wenn weggelassen, wird nur ein Element entfernt. Andernfalls geben Sie die Länge des Wertebereichs an, der entfernt werden soll. Es werden die Elemente von <code>Pos</code> bis <code>Pos+Länge-1</code> entfernt.</p></dd>
 </dl>
+<h4 id="RemoveAt_Return_Value">Rückgabewert</h4>
 <p>Wenn <em>Länge</em> weggelassen wird, wird der an <em>Pos</em> entfernte Wert zurückgegeben (leer, wenn es keinen gibt). Andernfalls ist der Rückgabewert die Anzahl der entfernten Elemente, die Werte enthielten. Die Anzahl kann bei einem lückenhaften Array von <em>Länge</em> abweichen, liegt aber immer im Bereich von 0 bis <em>Länge</em>.</p>
+<h4 id="RemoveAt_Remarks">Bemerkungen</h4>
 <p>RemoveAt ist das Gegenstück zu <a href="#InsertAt">InsertAt</a>.</p>
 <p>Die restlichen Elemente rechts von <em>Pos</em> werden um den via <em>Länge</em> definierten Wert (oder standardmäßig um 1) nach links verschoben, selbst wenn einige Elemente im entfernten Bereich keine Werte haben. Zum Beispiel:</p>
 <pre>x := ["A", "B"]
@@ -114,36 +120,40 @@ MsgBox % x[0x4321-1]        <em>; A</em></pre>
 
 <div class="methodShort" id="Push"><h3>Push <span class="ver">[v1.1.21+]</span></h3>
 <p>Fügt Werte am Ende eines Arrays an.</p>
-<pre class="Syntax">Objekt.<span class="func">Push</span>(<span class="optional"> Wert, Wert2, ..., Wert<i>N</i> </span>)</pre>
+<pre class="Syntax">Index := Objekt.<span class="func">Push</span>(<span class="optional">Wert, Wert2, ..., Wert<i>N</i></span>)</pre>
+<h4 id="Push_Parameters">Parameter</h4>
 <dl>
   <dt>Wert ...</dt>
   <dd><p>Ein oder mehrere Werte, die eingefügt werden sollen. Um ein Array von Werten einzufügen, übergeben Sie <code><a href="../Functions.htm#VariadicCall">dasArray*</a></code> als letzten Parameter.</p></dd>
 </dl>
-<p>Der Rückgabewert ist die Position des zuletzt eingefügten Wertes. Kann negativ sein, wenn das Array nur Elemente mit negativem Index enthält.</p>
-<p>Der erste Wert wird an Position 1 eingefügt, wenn das Array leer ist oder nur Zeichenketten- oder Objektschlüssel enthält.</p>
-<p>Andernfalls wird der erste Wert an <code>Objekt.MaxIndex() + 1</code> eingefügt, selbst wenn diese Position negativ oder Null ist. Wenn dies nicht erwünscht ist und das Objekt negative Schlüssel enthält, kann stattdessen <code>Objekt.InsertAt(Objekt.Length() + 1, ...)</code> verwendet werden.</p>
+<h4 id="Push_Return_Value">Rückgabewert</h4>
+<p>Diese Methode gibt die Positionsnummer des zuletzt eingefügten Wertes zurück. Diese Nummer kann negativ sein, wenn das Array nur Elemente mit negativem Index enthält.</p>
+<h4 id="Push_Remarks">Bemerkungen</h4>
+<p>Der erste Wert wird auf Position 1 eingefügt, wenn das Array leer ist oder nur Zeichenketten- oder Objektschlüssel enthält.</p>
+<p>Andernfalls wird der erste Wert auf <code>Objekt.MaxIndex() + 1</code> eingefügt, selbst wenn diese Position negativ oder Null ist. Wenn dies nicht erwünscht ist und das Objekt negative Schlüssel enthält, kann stattdessen <code>Objekt.InsertAt(Objekt.Length() + 1, ...)</code> verwendet werden.</p>
 </div>
 
 <div class="methodShort" id="Pop"><h3>Pop <span class="ver">[v1.1.21+]</span></h3>
 <p>Entfernt das letzte Array-Element und gibt es zurück.</p>
-<pre class="Syntax">Wert := Objekt.<span class="func">Pop</span>()</pre>
+<pre class="Syntax">EntfernterWert := Objekt.<span class="func">Pop</span>()</pre>
 <p>Wenn es keine Array-Elemente gibt, ist der Rückgabewert eine leere Zeichenkette. Andernfalls ist es äquivalent zu:</p>
-<pre>Wert := Objekt.RemoveAt(Objekt.Length())</pre>
+<pre>EntfernterWert := Objekt.RemoveAt(Objekt.Length())</pre>
 </div>
 
 <div class="methodShort" id="Delete"><h3>Delete <span class="ver">[v1.1.21+]</span></h3>
 <p>Entfernt Schlüssel-Wert-Paare aus einem Objekt.</p>
-<pre class="Syntax">
-Objekt.<span class="func">Delete</span>(Schlüssel)
-Objekt.<span class="func">Delete</span>(ErsterSchlüssel, LetzterSchlüssel)
-</pre>
+<pre class="Syntax">EntfernterWert := Objekt.<span class="func">Delete</span>(Schlüssel)
+EntfernteElementeAnzahl := Objekt.<span class="func">Delete</span>(ErsterSchlüssel, LetzterSchlüssel)</pre>
+<h4 id="Delete_Parameters">Parameter</h4>
 <dl>
   <dt>Schlüssel</dt>
   <dd><p>Ein beliebiger Schlüssel.</p></dd>
   <dt>ErsterSchlüssel, LetzterSchlüssel</dt>
   <dd><p>Ein gültiger Bereich von Integer- oder Zeichenkettenschlüsseln, wobei <em>ErsterSchlüssel</em> &lt;= <em>LetzterSchlüssel</em> ist. Beide Schlüssel müssen vom selben Typ sein.</p></dd>
 </dl>
+<h4 id="Delete_Return_Value">Rückgabewert</h4>
 <p>Bei nur einem Parameter wird der entfernte Wert zurückgegeben (leer, wenn es keinen gibt). Andernfalls ist der Rückgabewert die Anzahl der gefundenen und entfernten Schlüssel.</p>
+<h4 id="Delete_Remarks">Bemerkungen</h4>
 <p>Im Gegensatz zu <a href="#RemoveAt">RemoveAt</a> hat Delete keinen Effekt auf Schlüssel-Wert-Paare, die es nicht entfernt. Zum Beispiel:</p>
 <pre>x := ["A", "B"]
 MsgBox % x.RemoveAt(1)  <em>; A</em>
@@ -186,19 +196,19 @@ MsgBox % ["A",    , "C"].Count()  <em>;  2</em>
 
 <div class="methodShort" id="SetCapacity"><h3>SetCapacity <span class="ver">[AHK_L 31+]</span></h3>
 <p>Passt die Kapazität eines Objekts oder eines seiner Felder an.</p>
-<pre class="Syntax">
-Objekt.<span class="func">SetCapacity</span>(MaxElemente)
-Objekt.<span class="func">SetCapacity</span>(Schlüssel, ByteGröße)
-</pre>
+<pre class="Syntax">MaxElemente := Objekt.<span class="func">SetCapacity</span>(MaxElemente)
+ByteGröße := Objekt.<span class="func">SetCapacity</span>(Schlüssel, ByteGröße)</pre>
+<h4 id="SetCapacity_Parameters">Parameter</h4>
 <dl>
 	<dt>MaxElemente</dt>
 	<dd><p>Die maximale Anzahl von Schlüssel-Wert-Paaren, die das Objekt enthalten kann, bevor es automatisch erweitert werden muss. Wenn diese Anzahl kleiner als die aktuelle Anzahl von Schlüssel-Wert-Paaren ist, wird stattdessen dieser Wert verwendet und ungenutzter Speicher freigegeben.</p></dd>
 	<dt>Schlüssel</dt>
 	<dd><p>Ein gültiger Schlüssel.</p></dd>
 	<dt>ByteGröße</dt>
-	<dd><p>Die neue Größe in Bytes für den Zeichenkettenpuffer des Feldes, ohne den Null-Terminator. Wenn das Feld nicht existiert, wird es erstellt. Wenn <i>ByteGröße</i> 0 ist, wird der Pufferspeicher freigegeben, aber das leere Feld nicht entfernt. Wenn <i>ByteGröße</i> kleiner als die aktuelle Größe ist, werden überschüssige Daten abgeschnitten; andernfalls werden alle vorhandenen Daten beibehalten.</p></dd>
+	<dd><p>Die neue Größe in Bytes für den Zeichenkettenpuffer des Feldes, ohne den Nullterminator. Wenn das Feld nicht existiert, wird es erstellt. Wenn <i>ByteGröße</i> 0 ist, wird der Pufferspeicher freigegeben, aber das leere Feld nicht entfernt. Wenn <i>ByteGröße</i> kleiner als die aktuelle Größe ist, werden überschüssige Daten abgeschnitten; andernfalls werden alle vorhandenen Daten beibehalten.</p></dd>
 </dl>
-<p>Der Rückgabewert ist bei Erfolg die neue Kapazität, andernfalls eine leere Zeichenkette.</p>
+<h4 id="SetCapacity_Return_Value">Rückgabewert</h4>
+<p>Diese Methode gibt bei Erfolg die neue Kapazität zurück, andernfalls eine leere Zeichenkette.</p>
 </div>
 
 <div class="methodShort" id="GetCapacity"><h3>GetCapacity <span class="ver">[AHK_L 31+]</span></h3>
@@ -220,7 +230,7 @@ ByteGröße := Objekt.<span class="func">GetCapacity</span>(Schlüssel)
 
 <div class="methodShort" id="HasKey"><h3>HasKey <span class="ver">[AHK_L 53+]</span></h3>
 <p>Gibt 1 (true) zurück, wenn einem Schlüssel ein Wert (auch "") innerhalb eines Objekts zugeordnet ist, andernfalls 0 (false).</p>
-<pre class="Syntax">Objekt.<span class="func">HasKey</span>(Schlüssel)</pre></div>
+<pre class="Syntax">HatSchlüssel := Objekt.<span class="func">HasKey</span>(Schlüssel)</pre></div>
 
 <div class="methodShort" id="Clone"><h3>Clone <span class="ver">[AHK_L 60+]</span></h3>
 <p>Gibt eine flache Kopie eines Objekts zurück.</p>
@@ -260,8 +270,8 @@ Objekt.<span class="func">Insert</span>(ZketteOderObjektSchlüssel, Wert)
 <h2 id="Properties">Eigenschaften</h2>
 <div class="methodShort" id="Base"><h3>Base</h3>
 <p>Ermittelt oder setzt das <a href="../Objects.htm#Custom_Objects">Basisobjekt</a> eines Objekts.</p>
-<pre class="Syntax">Basisobjekt := Objekt.Base</pre>
-<pre class="Syntax">Objekt.Base := Basisobjekt</pre>
+<pre class="Syntax">Basisobjekt := Objekt.<span class="func">Base</span></pre>
+<pre class="Syntax">Objekt.<span class="func">Base</span> := Basisobjekt</pre>
 <p><em>Basisobjekt</em> muss ein Objekt oder eine leere Zeichenkette sein.</p>
 <p>Eigenschaften und Methoden, die via Basisobjekt definiert werden, sind nur während der Nutzung dieses Basisobjekts zugänglich. Eine Änderung der Basis von <em>Objekt</em> verändert daher auch die verfügbaren Eigenschaften und Methoden.</p>
 <p>Siehe auch: <a href="#GetBase">ObjGetBase()</a>, <a href="#SetBase">ObjSetBase()</a></p>

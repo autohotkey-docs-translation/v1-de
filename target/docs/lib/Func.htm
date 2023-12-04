@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>Func-Objekt - Methoden &amp; Eigenschaften | AutoHotkey</title>
-<meta name="description" content="Das Func-Objekt bietet eine Schnittstelle für eine Funktion zum Abrufen von Werten wie die Parameteranzahl oder zum Ausführen von Aktionen wie das Aufrufen der Funktion." />
+<title>Func-Objekt - Methoden &amp; Eigenschaften | AutoHotkey v1</title>
+<meta name="description" content="Das Func-Objekt repräsentiert eine benutzerdefinierte oder interne Funktion und bietet eine Schnittstelle, um sie aufzurufen, Parameter an sie zu binden und Informationen über sie oder ihre Parameter abzurufen." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,7 +13,7 @@
 
 <h1>Func-Objekt <span class="ver">[v1.1.00+]</span></h1>
 
-<p>Repräsentiert eine benutzerdefinierte oder interne Funktion, die vom Skript aufgerufen werden kann. <a href="#Func">Func()</a> gibt ein Objekt dieses Typs zurück.</p>
+<p>Repräsentiert eine benutzerdefinierte oder interne Funktion und bietet eine Schnittstelle, um sie aufzurufen, Parameter an sie zu binden und Informationen über sie oder ihre Parameter abzurufen. <a href="#Func">Func()</a> gibt ein Objekt dieses Typs zurück.</p>
 
 <p>Informationen über andere Objekte, die wie Funktionen aufgerufen werden können, finden Sie unter <a href="../misc/Functor.htm">Funktionsobjekte</a>.</p>
 
@@ -21,7 +21,7 @@
 <pre><em>; Ruft eine Referenz zu der Funktion "StrLen" ab.</em>
 fn := Func("StrLen")
 
-<em>; Zeigt Informationen über die Funktion an.</em>
+<em>; Informationen über die Funktion anzeigen.</em>
 MsgBox % fn.Name "() ist eine " (fn.IsBuiltIn ? "interne" : "benutzerdefinierte") " Funktion."</pre>
 
 <h2 id="toc">Inhaltsverzeichnis</h2>
@@ -29,7 +29,7 @@ MsgBox % fn.Name "() ist eine " (fn.IsBuiltIn ? "interne" : "benutzerdefinierte"
   <li><a href="#Methods">Methoden</a>:
     <ul>
       <li><a href="#Call">Call</a>: Ruft die Funktion auf.</li>
-      <li><a href="#Bind">Bind</a>: Bindet Parameter an die Funktion und gibt ein BoundFunc-Objekt zurück.</li>
+      <li><a href="#Bind">Bind</a>: Bindet Parameter an die Funktion.</li>
       <li><a href="#IsByRef">IsByRef</a>: Ermittelt, ob der Parameter ein ByRef-Parameter ist.</li>
       <li><a href="#IsOptional">IsOptional</a>: Ermittelt, ob der Parameter ein optionaler Parameter ist.</li>
     </ul>
@@ -53,80 +53,103 @@ MsgBox % fn.Name "() ist eine " (fn.IsBuiltIn ? "interne" : "benutzerdefinierte"
 <h2 id="Methods">Methoden</h2>
 <div class="methodShort" id="Call"><h3>Call</h3>
 <p>Ruft die Funktion auf.</p>
-<pre class="Syntax">
-Func.<span class="func">Call</span>(Param1, Param2, ...)  <em>; Benötigt <span class="ver">[v1.1.19+]</span></em>
-Func.(Param1, Param2, ...)  <em>; Alte Form - veraltet</em>
-</pre>
+<pre class="Syntax">Func.<span class="func">Call</span>(Param1, Param2, ...)  <em>; Benötigt <span class="ver">[v1.1.19+]</span></em>
+Func.(Param1, Param2, ...)  <em>; Alte Form - veraltet</em></pre>
+<h4 id="Call_Parameters">Parameter</h4>
 <dl>
   <dt>Param1, Param2, ...</dt>
-  <dd>Parameter und Rückgabewerte werden durch die Funktion definiert.</dd>
+  <dd>
+    <p>Parameter und Rückgabewerte werden durch die Funktion definiert.</p>
+  </dd>
 </dl>
+<h4 id="Call_Remarks">Bemerkungen</h4>
 <p><span class="ver">[v1.1.07+]</span>: <code><a href="../Functions.htm#DynCall">%Func%()</a></code> kann verwendet werden, um eine Funktion via Name oder Referenz aufzurufen, oder um ein Objekt aufzurufen, das die __Call-<a href="../Objects.htm#Meta_Functions">Metafunktion</a> implementiert. Dies sollte anstelle von <code>Func.()</code> verwendet werden, wo immer das möglich ist.</p>
 </div>
 
 <div class="methodShort" id="Bind"><h3>Bind <span class="ver">[v1.1.20+]</span></h3>
-<p>Bindet Parameter an die Funktion und gibt ein <a href="../misc/Functor.htm#BoundFunc">BoundFunc-Objekt</a> zurück.</p>
+<p>Bindet Parameter an die Funktion.</p>
 <pre class="Syntax">BoundFunc := Func.<span class="func">Bind</span>(Param1, Param2, ...)</pre>
+<h4 id="Bind_Parameters">Parameter</h4>
 <dl>
   <dt>Param1, Param2, ...</dt>
-  <dd>Beliebig viele Parameter.</dd>
+  <dd>
+    <p>Beliebig viele Parameter.</p>
+  </dd>
 </dl>
-<p>Informationen und Beispiele finden Sie unter <a href="../misc/Functor.htm#BoundFunc">BoundFunc-Objekt</a>.</p>
+<h4 id="Bind_Return_Value">Rückgabewert</h4>
+<p>Diese Methode gibt ein <a href="../misc/Functor.htm#BoundFunc">BoundFunc-Objekt</a> zurück.</p>
 </div>
 
 <div class="methodShort" id="IsByRef"><h3>IsByRef</h3>
 <p>Ermittelt, ob der Parameter ein ByRef-Parameter ist.</p>
 <pre class="Syntax">Boolesch := Func.<span class="func">IsByRef</span>(<span class="optional">ParamIndex</span>)</pre>
+<h4 id="IsByRef_Parameters">Parameter</h4>
 <dl>
   <dt>ParamIndex</dt>
-  <dd>Optional: Die 1-basierte Indexnummer eines Parameters. Wenn weggelassen, gibt <em>Boolesch</em> an, ob die Funktion irgendwelche ByRef-Parameter hat.</dd>
+  <dd>
+    <p>Wenn weggelassen, gibt <em>Boolesch</em> an, ob die Funktion irgendwelche ByRef-Parameter hat. Andernfalls geben Sie die 1-basierte Indexnummer eines Parameters an.</p>
+  </dd>
 </dl>
-<p>Gibt eine leere Zeichenkette zurück, wenn die Funktion eine interne Funktion ist oder <i>ParamIndex</i> ungültig ist; andernfalls einen booleschen Wert, der angibt, ob der Parameter ein ByRef-Parameter ist.</p>
+<h4 id="IsByRef_Return_Value">Rückgabewert</h4>
+<p>Diese Methode gibt eine leere Zeichenkette zurück, wenn die Funktion eine interne Funktion ist oder <i>ParamIndex</i> ungültig ist; andernfalls einen booleschen Wert, der angibt, ob der Parameter ein ByRef-Parameter ist.</p>
 </div>
 
 <div class="methodShort" id="IsOptional"><h3>IsOptional</h3>
 <p>Ermittelt, ob der Parameter ein optionaler Parameter ist.</p>
 <pre class="Syntax">Boolesch := Func.<span class="func">IsOptional</span>(<span class="optional">ParamIndex</span>)</pre>
+<h4 id="IsOptional_Parameters">Parameter</h4>
 <dl>
   <dt>ParamIndex</dt>
-  <dd>Optional: Die 1-basierte Indexnummer eines Parameters. Wenn weggelassen, gibt <em>Boolesch</em> an, ob die Funktion optionale Parameter hat.</dd>
+  <dd>
+    <p>Wenn weggelassen, gibt <em>Boolesch</em> an, ob die Funktion optionale Parameter hat. Andernfalls geben Sie die 1-basierte Indexnummer eines Parameters an.</p>
+  </dd>
 </dl>
-<p>Gibt eine leere Zeichenkette zurück, wenn <i>ParamIndex</i> ungültig ist; andernfalls einen booleschen Wert, der angibt, ob der Parameter ein optionaler Parameter ist.</p>
+<h4 id="IsOptional_Return_Value">Rückgabewert</h4>
+<p>Diese Methode gibt eine leere Zeichenkette zurück, wenn <i>ParamIndex</i> ungültig ist; andernfalls einen booleschen Wert, der angibt, ob der Parameter ein optionaler Parameter ist.</p>
+<h4 id="IsOptional_Remarks">Bemerkungen</h4>
 <p>Parameter müssen nicht formal deklariert werden, wenn die Funktion variadisch ist. Interne Funktionen werden unterstützt.</p></div>
 
 <h2 id="Properties">Eigenschaften</h2>
 <div class="methodShort" id="Name"><h3>Name</h3>
 <p>Gibt den Namen der Funktion zurück.</p>
-<pre class="Syntax">FunktionName := Func.Name</pre>
+<pre class="Syntax">FunktionName := Func.<span class="func">Name</span></pre>
 </div>
 
 <div class="methodShort" id="IsBuiltIn"><h3>IsBuiltIn</h3>
 <p>Gibt 1 (true) zurück, wenn die Funktion eine <a href="../Functions.htm#BuiltIn">interne Funktion</a> ist, andernfalls 0 (false).</p>
-<pre class="Syntax">Boolesch := Func.IsBuiltIn</pre>
+<pre class="Syntax">Boolesch := Func.<span class="func">IsBuiltIn</span></pre>
 </div>
 
 <div class="methodShort" id="IsVariadic"><h3>IsVariadic</h3>
 <p>Gibt 1 (true) zurück, wenn die Funktion <a href="../Functions.htm#Variadic">variadisch</a> ist, andernfalls 0 (false).</p>
-<pre class="Syntax">Boolesch := Func.IsVariadic</pre>
+<pre class="Syntax">Boolesch := Func.<span class="func">IsVariadic</span></pre>
 </div>
 
 <div class="methodShort" id="MinParams"><h3>MinParams</h3>
 <p>Gibt die Anzahl der Pflichtparameter zurück.</p>
-<pre class="Syntax">ParamAnzahl := Func.MinParams</pre>
+<pre class="Syntax">ParamAnzahl := Func.<span class="func">MinParams</span></pre>
 </div>
 
 <div class="methodShort" id="MaxParams"><h3>MaxParams</h3>
 <p>Gibt die Anzahl der formal deklarierten Parameter einer benutzerdefinierten Funktion oder die maximale Anzahl der Parameter einer internen Funktion zurück.</p>
-<pre class="Syntax">ParamAnzahl := Func.MaxParams</pre>
+<pre class="Syntax">ParamAnzahl := Func.<span class="func">MaxParams</span></pre>
 <p>Wenn die Funktion <a href="../Functions.htm#Variadic">variadisch</a> ist, ist <em>ParamAnzahl</em> die Anzahl von Parametern, die die Funktion maximal akzeptieren kann, ohne in den "variadischen*" Parameter überzulaufen.</p></div>
 
 <h2 id="Functions">Funktionen</h2>
 <h3 id="Func">Func <span class="ver">[v1.1.00+]</span></h3>
 <p>Ruft eine Funktionsreferenz ab.</p>
 <pre class="Syntax">Referenz := <span class="func">Func</span>(FunktionName)</pre>
-<p><em>FunktionName</em> ist der Name der Funktion, deren Referenz abgerufen werden soll. Die Funktion muss im Skript explizit existieren.</p>
-<p>Diese Funktion gibt eine <a href="../Objects.htm#Function_References">Referenz zu <em>FunktionName</em></a> zurück. Wenn <em>FunktionName</em> nicht explizit im Skript existiert (durch Mittel wie <a href="_Include.htm">#Include</a> oder einen nicht-dynamischen Aufruf einer <a href="../Functions.htm#lib">Bibliotheksfunktion</a>), wird 0 zurückgegeben.</p>
-<p>Diese Funktion kann verwendet werden, um die Funktion aufzurufen oder um Informationen wie die minimale und maximale Anzahl von Parametern abzurufen.</p>
+<h4 class="func_section" id="Func_Parameters">Parameter</h4>
+<dl>
+  <dt>FunktionName</dt>
+  <dd>
+    <p>Name der Funktion, deren Referenz abgerufen werden soll. Die Funktion muss im Skript explizit existieren.</p>
+  </dd>
+</dl>
+<h4 class="func_section" id="Func_Return_Value">Rückgabewert</h4>
+<p>Func gibt eine <a href="../Objects.htm#Function_References">Referenz zu <em>FunktionName</em></a> zurück. Wenn <em>FunktionName</em> nicht explizit im Skript existiert (durch Mittel wie <a href="_Include.htm">#Include</a> oder einen nicht-dynamischen Aufruf einer <a href="../Functions.htm#lib">Bibliotheksfunktion</a>), wird 0 zurückgegeben.</p>
+<h4 class="func_section" id="Func_Remarks">Bemerkungen</h4>
+<p>Func kann verwendet werden, um die Funktion aufzurufen oder um Informationen wie die minimale und maximale Anzahl von Parametern abzurufen.</p>
 <p>Die folgende Funktion ruft eine Funktionsreferenz ab und zeigt Informationen über diese Funktion an:</p>
 <pre>fn := Func("StrLen")
 MsgBox % fn.Name "() ist eine " (fn.IsBuiltIn ? "interne" : "benutzerdefinierte") " Funktion."</pre>

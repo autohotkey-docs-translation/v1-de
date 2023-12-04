@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>Funktionen - Definition &amp; Verwendung | AutoHotkey</title>
+<title>Funktionen - Definition &amp; Verwendung | AutoHotkey v1</title>
 <meta name="description" content="Erfahren Sie mehr über Funktionen im Allgemeinen, Parameter, Rückgabewerte, interne Funktionen, variadische Funktionen, etc." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -19,15 +19,35 @@
   <li><a href="#param">Parameter</a></li>
   <li><a href="#optional">Optionale Parameter</a></li>
   <li><a href="#return">Werte an den Aufrufer zurückgeben</a></li>
-  <li><a href="#Variadic">Variadische Funktionen</a></li>
-  <li><a href="#Local">Lokale Variablen</a></li>
+  <li><a href="#Variadic">Variadische Funktionen</a> <span class="ver">[AHK_L 60+]</span>
+    <ul>
+      <li><a href="#VariadicCall">Variadische Funktionsaufrufe</a></li>
+    </ul>
+  </li>
+  <li><a href="#Locals">Lokale und globale Variablen</a>
+    <ul>
+      <li><a href="#Local">Lokale Variablen</a></li>
+      <li><a href="#Global">Globale Variablen</a></li>
+      <li><a href="#static">Statische Variablen</a></li>
+      <li><a href="#More_about_locals_and_globals">Mehr zu lokalen und globalen Deklarationen</a></li>
+    </ul>
+  </li>
   <li><a href="#DynCall">Funktionen dynamisch aufrufen</a></li>
   <li><a href="#ShortCircuit">Boolesche Kurzschlussauswertung</a></li>
   <li><a href="#gosub">Subroutinen innerhalb von Funktionen</a></li>
   <li><a href="#remarks">Return, Exit und allgemeine Bemerkungen</a></li>
+  <li><a href="#Style_and_Naming_Conventions">Stil- und Namenskonventionen</a></li>
   <li><a href="#include">Skripte mittels #Include auf dieselben Funktionen zugreifen lassen</a></li>
-  <li><a href="#lib">Funktionsbibliotheken: Standard- und Benutzerbibliothek</a></li>
-  <li><a href="#BuiltIn">Interne Funktionen</a></li>
+  <li><a href="#lib">Funktionsbibliotheken: Standard- und Benutzerbibliothek</a> <span class="ver">[v1.0.47+]</span></li>
+  <li><a href="#BuiltIn">Interne Funktionen</a>
+    <ul>
+      <li><a href="#Frequently-used_Functions">Häufig verwendete Funktionen</a></li>
+      <li><a href="#Miscellaneous_Functions">Verschiedene Funktionen</a></li>
+      <li><a href="#Math">Mathematik</a></li>
+      <li><a href="#COM">COM</a></li>
+      <li><a href="#Other_Functions">Sonstige Funktionen</a></li>
+    </ul>
+  </li>
 </ul>
 <h2 id="intro">Einführung und einfache Beispiele</h2>
 <p id="define">Eine Funktion ist so etwas Ähnliches wie eine Subroutine (<a href="lib/Gosub.htm">GoSub</a>), allerdings mit dem Unterschied, dass eine Funktion zusätzlich mit Parametern (Eingabewerten) aufgerufen werden kann. Eine Funktion kann auch direkt einen Wert an ihren Aufrufer zurückgeben. Das folgende Beispiel ist eine einfache Funktion, die zwei Zahlen akzeptiert und deren Summe zurückgibt:</p>
@@ -35,9 +55,9 @@
 {
     return x + y   <em>; "<a href="lib/Return.htm">Return</a>" erwartet einen <a href="Variables.htm#Expressions">Ausdruck</a>.</em>
 }</pre>
-<p>So etwas nennt man auch eine <em>Funktionsdefinition</em>, weil es eine Funktion mit dem Namen "Addieren" erstellt (nicht Groß-/Kleinschreibung-sensitiv) und festlegt, dass jeder, der die Funktion aufruft, genau zwei Parameter (x und y) bereitstellen muss. Um die Funktion aufzurufen, können Sie das Ergebnis der Funktion einer Variable mithilfe des <a href="lib/SetExpression.htm">Doppelpunkt-Gleich-Operators</a> (<strong><a href="lib/SetExpression.htm">:=</a></strong>) zuweisen. Zum Beispiel:</p>
+<p>So etwas nennt man auch eine <em>Funktionsdefinition</em>, weil es eine Funktion mit dem Namen "Addieren" erstellt (nicht Groß-/Kleinschreibung-sensitiv) und festlegt, dass jeder, der die Funktion aufruft, genau zwei Parameter (x und y) bereitstellen muss. Um die Funktion aufzurufen, weisen Sie ihr Ergebnis einer Variable mit dem <a href="lib/SetExpression.htm">Doppelpunkt-Gleich-Operator</a> (<strong><a href="lib/SetExpression.htm">:=</a></strong>) zu. Zum Beispiel:</p>
 <pre>Var := Addieren(2, 3)  <em>; Speichert die Zahl 5 in Var.</em></pre>
-<p>Man kann eine Funktion auch aufrufen, ohne ihren Rückgabewert speichern zu müssen:</p>
+<p>Eine Funktion kann auch aufgerufen werden, ohne ihren Rückgabewert zu speichern:</p>
 <pre>Addieren(2, 3)</pre>
 <p>In diesem Fall wird jedoch der Rückgabewert der Funktion verworfen; diese Art des Aufrufs ist nur dann sinnvoll, wenn die Funktion einen anderen Effekt als ihren Rückgabewert hat.</p>
 <p>Da ein Funktionsaufruf ein <a href="Variables.htm#Expressions">Ausdruck</a> ist, sollten die Variablennamen in der Parameterliste nicht mit Prozentzeichen umschlossen werden. Außerdem müssen direkt geschriebene Zeichenketten in doppelte Anführungszeichen gesetzt werden. Zum Beispiel:</p>
@@ -211,7 +231,7 @@ MsgBox % Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
     global LogDateiName
     FileAppend, %GeloggteZeilen%: %ZuLoggenderText%`n, %LogDateiName%
 }</pre>
-<p id="InitStatic"><strong>Statische Initialisierungen:</strong> In den Versionen vor v1.0.46 starteten alle statischen Variablen mit einem leeren Wert; um also zu erkennen, ob statische Variablen zum ersten Mal verwendet wurden, musste man überprüfen, ob sie leer waren. <span class="ver">[v1.0.46+]</span>: Es ist möglich, eine statische Variable bei ihrer Deklaration mit etwas anderem als <code>""</code> zu initialisieren. Fügen Sie einfach nach dem Variablennamen den Operator <code>:=</code> oder <code>=</code> an, gefolgt von einem der folgenden Werte: <code>True</code>, <code>False</code>, ein direkt geschriebener Integer, eine direkt geschriebene Floating-Point-Zahl oder eine direkt geschriebene, in Anführungszeichen gesetzte Zeichenkette wie <code>"fox"</code>. Zum Beispiel: <code>static X:=0, Y:="fox"</code>. Jede statische Variable wird nur einmal initialisiert (bevor das Skript mit der Ausführung beginnt).</p>
+<p id="InitStatic"><strong>Statische Initialisierungen:</strong> In den Versionen vor v1.0.46 starteten alle statischen Variablen mit einem leeren Wert; um also zu erkennen, ob statische Variablen zum ersten Mal verwendet wurden, musste man überprüfen, ob sie leer waren. <span class="ver">[v1.0.46+]</span>: Es ist möglich, eine statische Variable bei ihrer Deklaration mit etwas anderem als <code>""</code> zu initialisieren. Fügen Sie einfach nach dem Variablennamen den Operator <code>:=</code> oder <code>=</code> an, gefolgt von einem der folgenden Werte: <code>True</code>, <code>False</code>, ein direkt geschriebener Integer, eine direkt geschriebene Floating-Point-Zahl oder eine direkt geschriebene, in Anführungszeichen gesetzte Zeichenkette wie <code>"fox"</code>. Zum Beispiel: <code>static X:=0, Y:="fox"</code>. Jede statische Variable wird nur einmal initialisiert (vor Beginn der Skriptausführung).</p>
 <p><span class="ver">[AHK_L 58+]</span>: <code>static Var := Ausdruck</code> wird unterstützt. Alle Ausdrücke dieser Art werden unmittelbar vor dem <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a> des Skripts ausgewertet - in der Reihenfolge, wie sie im Skript vorkommen.</p>
 <p id="AssumeStatic"><strong>Assume-Static-Modus</strong> <span class="ver">[v1.0.48+]</span>: Eine Funktion kann so definiert werden, dass sie alle ihre Variablen (außer ihren Parametern) statisch behandelt. Dazu muss in ihrer ersten Zeile das Wort "static" stehen. Zum Beispiel:</p>
 <pre>VomStatischenArrayAbrufen(ElementNummer)
@@ -222,7 +242,7 @@ MsgBox % Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
     {
         ErsterAufruf := false
         Loop 10
-            StatischesArray%A_Index% := "Wert #" . A_Index
+            StatischesArray%A_Index% := "Wert Nr. " . A_Index
     }
     return StatischesArray%ElementNummer%
 }</pre>
@@ -251,7 +271,7 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p id="ArrayConfusion"><strong>Häufiger Anlass zu Verwirrung:</strong> Jede <em>nicht</em>-dynamische Referenz zu einer Variable bewirkt, dass diese Variable beim Start des Skripts erstellt wird. Außerhalb einer Funktion bewirkt bspw. eine Anweisung wie <code>MsgBox %Array1%</code>, dass beim Start des Skripts eine globale Variable namens Array1 erstellt wird. Innerhalb einer Funktion hingegen bewirkt eine Anweisung wie <code>MsgBox %Array1%</code>, dass beim Start des Skripts eine funktionsspezifische lokale Variable mit dem Namen Array1 erstellt wird (sofern der <a href="#AssumeGlobal">Assume-Global-Modus</a> nicht aktiv ist), auch dann, wenn Array und Array0 als global deklariert sind.</p>
 <h2 id="DynCall">Funktionen dynamisch aufrufen</h2>
 <p><span class="ver">[v1.0.47.06+]</span>: Eine Funktion (auch eine <a href="#BuiltIn">interne Funktion</a>) kann dynamisch via Prozentzeichen aufgerufen werden. Zum Beispiel würde <code>%Var%(x, "Fuchs")</code> die Funktion aufrufen, deren Name in <em>Var</em> enthalten ist. <code>Funk%A_Index%()</code> wiederum würde Funk1(), Funk2() usw. aufrufen, je nachdem, welcher Wert gerade in A_Index enthalten ist.</p>
-<p><span class="ver">[v1.1.07.00+]</span>: <em>Var</em> in <code>%Var%()</code> kann einen Funktionsnamen oder ein <a href="misc/Functor.htm">Funktionsobjekt</a> enthalten. Falls die Funktion nicht existiert, wird stattdessen die __Call-Metafunktion des <a href="Objects.htm#Default_Base_Object">Standardbasisobjekts</a> automatisch aufgerufen.</p>
+<p><span class="ver">[v1.1.07.00+]</span>: <em>Var</em> in <code>%Var%()</code> kann einen Funktionsnamen oder ein <a href="misc/Functor.htm">Funktionsobjekt</a> enthalten. Falls die Funktion nicht existiert, wird stattdessen die __Call-Metafunktion des <a href="Objects.htm#Default_Base_Object">Standardbasisobjekts</a> indirekt aufgerufen.</p>
 <p>Wenn die Funktion aus einem der folgenden Gründe nicht aufgerufen werden kann, wird die Auswertung des Ausdrucks, der den Aufruf enthält, ohne Fehlermeldung vorzeitig gestoppt, was zu inkonsistenten Ergebnissen führen kann:</p>
 <ul>
   <li>Es wurde eine nicht-existierende Funktion aufgerufen, was mit <code>if <a href="#IsFunc">IsFunc</a>(VarMitFunkName)</code> verhindert werden kann. Mit Ausnahme von <a href="#BuiltIn">internen Funktionen</a> muss die <a href="#define">Definition</a> der aufgerufenen Funktion explizit im Skript vorhanden sein, z.B. mittels <a href="lib/_Include.htm">#Include</a> oder einem nicht-dynamischen Aufruf einer <a href="#lib">Bibliotheksfunktion</a>.</li>
@@ -297,7 +317,7 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 }</pre>
 <h2 id="include">Skripte mittels #Include auf dieselben Funktionen zugreifen lassen</h2>
 <p>Die <a href="lib/_Include.htm">#Include</a>-Direktive kann verwendet werden (<em>auch am Anfang eines Skripts</em>), um Funktionen aus einer externen Datei zu laden.</p>
-<p>Erklärung: Wenn die Ausführung des Skripts eine Funktionsdefinition erreicht, wird diese übersprungen (was sofort passiert) und die Ausführung bei der Zeile nach der geschweiften Endklammer fortgesetzt. Folglich kann die Ausführung nie in eine Funktionsdefinition geraten. Außerdem haben eine oder mehrere Funktionsdefinitionen am Anfang eines Skripts keinen Einfluss auf den <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a>.</p>
+<p>Erklärung: Wenn die Skriptausführung eine Funktionsdefinition erreicht, wird diese übersprungen (was sofort passiert) und die Ausführung bei der Zeile nach der geschweiften Endklammer fortgesetzt. Folglich kann die Ausführung nie in eine Funktionsdefinition geraten. Außerdem haben eine oder mehrere Funktionsdefinitionen am Anfang eines Skripts keinen Einfluss auf den <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a>.</p>
 <h2 id="lib">Funktionsbibliotheken: Standard- und Benutzerbibliothek <span class="ver">[v1.0.47+]</span></h2>
 <p>Ein Skript kann eine Funktion in einer externen Datei aufrufen, ohne <a href="lib/_Include.htm">#Include</a> verwenden zu müssen. Damit dies funktioniert, muss eine Datei mit dem gleichen Namen wie die Funktion in einem der folgenden Bibliotheksverzeichnisse vorhanden sein:</p>
 <pre><a href="Variables.htm#ScriptDir">%A_ScriptDir%</a>\Lib\  <em>; Lokale Bibliothek - benötigt <span class="ver">[AHK_L 42+]</span>.</em>
@@ -309,7 +329,7 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
 <p>Obwohl eine Bibliotheksdatei in der Regel nur eine einzelne Funktion mit demselben Namen wie die Datei enthält, kann sie auch private Funktionen und Subroutinen enthalten, die nur von ihr aufgerufen werden. Allerdings sollten solche Funktionen eindeutige Namen haben, da sie sich im globalen Namensraum befinden, d.h. sie können von überall im Skript aufgerufen werden.</p>
 <p>Wenn eine Bibliotheksdatei <a href="lib/_Include.htm">#Include</a> verwendet, ist das Arbeitsverzeichnis für #Include das Verzeichnis der Bibliotheksdatei. Dies kann verwendet werden, um eine Weiterleitung zu einer größeren Bibliotheksdatei zu schaffen, die diese Funktion und andere verwandte Funktionen enthält.</p>
 <p>Der <a href="Scripts.htm#ahk2exe">Skriptcompiler (ahk2exe)</a> unterstützt ebenfalls Bibliotheksfunktionen. Der Compiler setzt aber voraus, dass eine Kopie von AutoHotkey.exe im Elternverzeichnis des Compiler-Verzeichnisses vorhanden ist (was normalerweise der Fall ist). Wenn der Compiler dort keine AutoHotkey.exe findet, funktioniert er zwar trotzdem, aber die Bibliotheksfunktionen werden nicht mehr automatisch inkludiert.</p>
-<p>Funktionen, die aus einer Bibliothek inkludiert werden, sind genauso performant wie normale Funktionen, weil sie geladen werden, bevor das Skript mit der Ausführung beginnt.</p>
+<p>Funktionen, die aus einer Bibliothek inkludiert werden, sind genauso performant wie normale Funktionen, weil sie vor Beginn der Skriptausführung geladen werden.</p>
 <h2 id="BuiltIn">Interne Funktionen</h2>
 <p>Alle optionalen Parameter am Ende der Parameterliste einer internen Funktion können komplett weggelassen werden. Zum Beispiel ist <code>WinExist("Unbenannt - Editor")</code> gültig, weil die anderen drei Parameter als leere Werte behandelt werden.</p>
 <p>Eine interne Funktion gilt als überschrieben, wenn im Skript eine Funktion gleichen Namens definiert ist. Zum Beispiel könnte man anstelle der normalen WinExist()-Funktion eine selbstdefinierte Funktion verwenden. Allerdings kann danach die originale Funktion nicht mehr aufgerufen werden.</p>
@@ -327,7 +347,7 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="GetKeyState">
     <td><a href="lib/GetKeyState.htm#function">GetKeyState</a></td>
-    <td>Gibt 1 (true) oder 0 (false) zurück, je nachdem, ob die angegebene Tastatur-, Maus- oder Controller-Taste unten oder oben ist.</td>
+    <td>Gibt 1 (true) oder 0 (false) zurück, je nachdem, ob die angegebene Tastatur-, Maus- oder Controllertaste unten oder oben ist.</td>
   </tr>
   <tr id="InStr">
     <td><a href="lib/InStr.htm">InStr</a></td>
@@ -414,7 +434,7 @@ Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.
   </tr>
   <tr id="InputHook">
     <td><a href="lib/InputHook.htm">InputHook</a></td>
-    <td>Erstellt ein Objekt, das zum Sammeln oder Abfangen von Tastatureingaben verwendet werden kann.</td>
+    <td>Erstellt ein Objekt, mit dem Tastatureingaben gesammelt oder abgefangen werden können.</td>
   </tr>
   <tr id="IsByRef">
     <td><a href="lib/IsByRef.htm">IsByRef</a></td>

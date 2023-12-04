@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>InputHook() - Syntax &amp; Verwendung | AutoHotkey</title>
-<meta name="description" content="Die InputHook-Funktion erstellt ein Objekt, das zum Sammeln oder Abfangen von Tastatureingaben verwendet werden kann." />
+<title>InputHook() - Syntax &amp; Verwendung | AutoHotkey v1</title>
+<meta name="description" content="Die InputHook-Funktion erstellt ein Objekt, mit dem Tastatureingaben gesammelt oder abgefangen werden können." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,7 +13,7 @@
 
 <h1>InputHook() <span class="ver">[v1.1.31+]</span></h1>
 
-<p>Erstellt ein Objekt, das zum Sammeln oder Abfangen von Tastatureingaben verwendet werden kann.</p>
+<p>Erstellt ein Objekt, mit dem Tastatureingaben gesammelt oder abgefangen werden können.</p>
 
 <pre class="Syntax">InputHook := <span class="func">InputHook</span>(<span class="optional">Optionen, EndTasten, VergleichListe</span>)</pre>
 <h2 id="Parameters">Parameter</h2>
@@ -22,11 +22,11 @@
   <dt>Optionen</dt>
   <dd>
     <p>Eine Zeichenkette, die aus beliebig vielen der folgenden Optionen besteht (in beliebiger Reihenfolge, optional durch Leerzeichen getrennt):</p>
-    <p id="option-b"><strong>B:</strong> Setzt <a href="#BackspaceIsUndo">BackspaceIsUndo</a> auf False, damit <kbd>Backspace</kbd> ignoriert wird.</p>
-    <p id="option-c"><strong>C:</strong> Setzt <a href="#CaseSensitive">CaseSensitive</a> auf True, um <em>VergleichListe</em> Groß-Kleinschreibung-sensitiv zu machen.</p>
+    <p id="option-b"><strong>B:</strong> Setzt <a href="#BackspaceIsUndo">BackspaceIsUndo</a> auf 0 (false), damit <kbd>Backspace</kbd> ignoriert wird.</p>
+    <p id="option-c"><strong>C:</strong> Setzt <a href="#CaseSensitive">CaseSensitive</a> auf 1 (true), um <em>VergleichListe</em> Groß-Kleinschreibung-sensitiv zu machen.</p>
     <p id="option-i"><strong>I:</strong> Setzt <a href="#MinSendLevel">MinSendLevel</a> auf 1 oder den angegebenen Wert, um Eingaben mit einem <a href="SendLevel.htm">Sendlevel</a> kleiner als dieser Wert zu ignorieren. Zum Beispiel bewirkt <code>I2</code>, dass Eingaben mit Level 0 (Standardwert) oder 1 ignoriert werden, aber Eingaben ab Level 2 erfasst werden.</p>
-    <p id="option-l"><strong>L:</strong> Längenlimit (z.B. <code>L5</code>). Die maximal erlaubte Länge der Eingabe. Wenn der Text diese Länge erreicht, wird die Eingabeerfassung beendet und EndReason auf das Wort Max gesetzt (es sei denn, der Text stimmt mit einem der Schlüsselwörter in <em>VergleichListe</em> überein, dann wird EndReason auf das Wort Match gesetzt). Wenn diese Option nicht angegeben ist, gilt standardmäßig ein Längenlimit von 1023 Zeichen.</p>
-    <p>Die Angabe von <code>L0</code> deaktiviert das Sammeln von Text und das Längenlimit, hat aber keinen Einfluss darauf, welche Tasten als Texterzeuger eingestuft werden (siehe <a href="#VisibleText">VisibleText</a>). Dies kann in Zusammenhang mit <a href="#OnChar">OnChar</a>, <a href="#OnKeyDown">OnKeyDown</a>, <a href="#KeyOpt">KeyOpt</a> oder <em><a href="#EndKeys">EndTasten</a></em> nützlich sein.</p>
+    <p id="option-l"><strong>L:</strong> Längenlimit (z.B. <code>L5</code>). Die maximal erlaubte Länge der Eingabe. Wenn der Text diese Länge erreicht, wird die Eingabeerfassung beendet und <a href="#EndReason">EndReason</a> auf das Wort Max gesetzt (es sei denn, der Text stimmt mit einem der Schlüsselwörter in <em>VergleichListe</em> überein, dann wird <a href="#EndReason">EndReason</a> auf das Wort Match gesetzt). Wenn diese Option nicht angegeben ist, gilt standardmäßig ein Längenlimit von 1023 Zeichen.</p>
+    <p>Die Angabe von <code>L0</code> deaktiviert das Sammeln von Text und das Längenlimit, hat aber keinen Einfluss darauf, welche Tasten als Texterzeuger eingestuft werden (siehe <a href="#VisibleText">VisibleText</a>). Dies kann in Zusammenhang mit <a href="#OnChar">OnChar</a>, <a href="#OnKeyDown">OnKeyDown</a>, <a href="#KeyOpt">KeyOpt</a> oder dem <em>EndTasten</em>-Parameter nützlich sein.</p>
     <p id="option-m"><strong>M:</strong> Modifizierte Tastendrücke wie <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> werden erkannt und in echte ASCII-Zeichen umgewandelt, falls möglich. Das folgende Beispiel zeigt, wie <kbd>Strg</kbd>+<kbd>C</kbd> erkannt werden kann:</p>
     <pre>StrgC := Chr(3) <em>; Speichert das Zeichen für STRG+C in die Variable StrgC.</em>
 ih := InputHook("L1 M")
@@ -36,23 +36,23 @@ if (ih.Input = StrgC)
     MsgBox, Sie haben STRG+C gedrückt.</pre>
     <p class="note"><strong>Hinweis:</strong> <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> sind die Zeichen von <a href="Chr.htm">Chr(1)</a> bis <a href="Chr.htm">Chr(26)</a>. Durch die M-Option kann es passieren, dass sich einige Tastaturkurzbefehle, wie z.B. <kbd>Strg</kbd>+<kbd>←</kbd>, während einer aktiven Eingabeerfassung falsch verhalten.</p>
     <p id="option-t"><strong>T:</strong> Setzt <a href="#Timeout">Timeout</a> (z.B. <code>T3</code> oder <code class="no-highlight">T2.5</code>).</p>
-    <p id="vis"><strong>V:</strong> Setzt <a href="#VisibleText">VisibleText</a> und <a href="#VisibleNonText">VisibleNonText</a> auf True. Normalerweise wird die Eingabe des Benutzers blockiert (unsichtbar für das Betriebssystem gemacht). Verwenden Sie diese Option, damit die Tastendrücke des Benutzers direkt an das aktive Fenster gesendet werden.</p>
-    <p id="asterisk"><strong>*:</strong> Platzhalter. Setzt <a href="#FindAnywhere">FindAnywhere</a> auf True, damit überall Übereinstimmungen innerhalb dessen, was der Benutzer eingibt, gefunden werden können.</p>
-    <p id="E"><strong>E:</strong> Einzelzeichen-Endungstasten werden als Zeichencode statt als Tastencode behandelt. Dies ermöglicht konsistentere Ergebnisse, wenn die Tastaturbelegung des aktiven Fensters von der des Skripts abweicht. Dies verhindert auch, dass Tastenkombinationen, die die angegebenen Endungszeichen nicht erzeugen, die Eingabeerfassung beenden; z.B. wird @ als Endungstaste in einer US-Belegung durch <kbd>Umschalt</kbd>+<kbd>2</kbd> ausgelöst, aber nicht durch <kbd>Strg</kbd>+<kbd>Umschalt</kbd>+<kbd>2</kbd> (wenn die E-Option verwendet wird). Wenn zusätzlich noch die C-Option angegeben ist, ist das Endungszeichen Groß-/Kleinschreibung-sensitiv.</p>
+    <p id="vis"><strong>V:</strong> Setzt <a href="#VisibleText">VisibleText</a> und <a href="#VisibleNonText">VisibleNonText</a> auf 1 (true). Normalerweise wird die Eingabe des Benutzers blockiert (unsichtbar für das Betriebssystem gemacht). Verwenden Sie diese Option, damit die Tastendrücke des Benutzers direkt an das aktive Fenster gesendet werden.</p>
+    <p id="asterisk"><strong>*:</strong> Platzhalter. Setzt <a href="#FindAnywhere">FindAnywhere</a> auf 1 (true), damit überall Übereinstimmungen innerhalb dessen, was der Benutzer eingibt, gefunden werden können.</p>
+    <p id="E"><strong>E:</strong> Einzelzeichen-Endungstasten werden als Zeichencode statt als Tastencode behandelt. Dies ermöglicht konsistentere Ergebnisse, wenn die Tastaturbelegung des aktiven Fensters von der des Skripts abweicht. Dies verhindert auch, dass Tastenkombinationen, die die angegebenen Endungszeichen nicht erzeugen, die Eingabeerfassung beenden; z.B. wird @ als Endungstaste in einer US-Belegung durch <kbd>Umschalt</kbd>+<kbd>2</kbd> ausgelöst, aber nicht durch <kbd>Strg</kbd>+<kbd>Umschalt</kbd>+<kbd>2</kbd> (wenn die <a href="#E">E-Option</a> verwendet wird). Wenn zusätzlich noch die <a href="#option-c">C-Option</a> angegeben ist, ist das Endungszeichen Groß-/Kleinschreibung-sensitiv.</p>
   </dd>
 
   <dt id="EndKeys">EndTasten</dt>
   <dd>
-    <p>Eine Liste beliebig vieler Tasten, von denen jede, wenn gedrückt, zur Beendigung der Eingabeerfassung führt (die Endungstaste selbst wird nicht in den Eingabepuffer geschrieben). Bei einer auf diese Weise beendeten Eingabeerfassung wird EndReason auf das Wort EndKey und die <a href="#EndKey">EndKey</a>-Eigenschaft auf den Namen der Taste gesetzt.</p>
+    <p>Eine Liste beliebig vieler Tasten, von denen jede, wenn gedrückt, zur Beendigung der Eingabeerfassung führt (die Endungstaste selbst wird nicht in den Eingabepuffer geschrieben). Bei einer auf diese Weise beendeten Eingabeerfassung wird <a href="#EndReason">EndReason</a> auf das Wort EndKey und <a href="#EndKey">EndKey</a> auf den Namen der Taste gesetzt.</p>
     <p><em>EndTasten</em> verwendet ein ähnliches Format wie der <a href="Send.htm">Send</a>-Befehl. Zum Beispiel würde die Angabe von <code>{Enter}.{Esc}</code> bewirken, dass die Eingabeerfassung durch <kbd>Enter</kbd>, <kbd>.</kbd> oder <kbd>Esc</kbd> beendet wird. Um die geschweiften Klammern als Endungstasten zu verwenden, geben Sie <code>{{}</code> und/oder <code>{}}</code> an.</p>
     <p>Um <kbd>Strg</kbd>, <kbd>Alt</kbd> oder <kbd>Umschalt</kbd> als Endungstasten zu verwenden, geben Sie die linke und/oder rechte Version der Taste an, nicht die neutrale Version. Zum Beispiel müssen Sie <code>{LControl}{RControl}</code> anstelle von <code>{Control}</code> angeben.</p>
-    <p>Obwohl modifizierte Tasten wie <kbd>Alt</kbd>+<kbd>C</kbd> (!c) nicht unterstützt werden, müssen für nicht-alphanumerische Zeichen wie z.B. <code>?!:@&amp;{}</code> standardmäßig <kbd>Umschalt</kbd> oder <kbd>AltGr</kbd> gedrückt oder nicht gedrückt werden, je nachdem, wie das Zeichen normalerweise eingegeben wird. Wenn die E-Option vorhanden ist, werden die Namen von Einzelzeichentasten stattdessen als Zeichen interpretiert - in diesem Fall müssen die Modifikatortasten im richtigen Status sein, um dieses Zeichen zu erzeugen. Verwendet man sowohl die E- als auch M-Option, werden die modifizierten Tasten von <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> durch Einfügen der entsprechenden ASCII-Steuerzeichen in <em>EndTasten</em> unterstützt.</p>
+    <p>Obwohl modifizierte Tasten wie <kbd>Alt</kbd>+<kbd>C</kbd> (!c) nicht unterstützt werden, müssen für nicht-alphanumerische Zeichen wie z.B. <code>?!:@&amp;{}</code> standardmäßig <kbd>Umschalt</kbd> oder <kbd>AltGr</kbd> gedrückt oder nicht gedrückt werden, je nachdem, wie das Zeichen normalerweise eingegeben wird. Wenn die <a href="#E">E-Option</a> vorhanden ist, werden die Namen von Einzelzeichentasten stattdessen als Zeichen interpretiert - in diesem Fall müssen die Modifikatortasten im richtigen Status sein, um dieses Zeichen zu erzeugen. Verwendet man sowohl die <a href="#E">E-Option</a> als auch die <a href="#option-m">M-Option</a>, werden die modifizierten Tasten von <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> durch Einfügen der entsprechenden ASCII-Steuerzeichen in <em>EndTasten</em> unterstützt.</p>
     <p>Es kann auch explizit ein Tastencode wie <code>{vkFF}</code> oder <code>{sc001}</code> angegeben werden. Tastencodes sind nützlich, um auf Tasten zu verweisen, die keinen Namen haben und beim Drücken kein sichtbares Zeichen erzeugen (selten). Schauen Sie sich die Anleitung am Ende der <a href="../KeyList.htm#SpecialKeys">Tastenliste</a> an, um zu erfahren, wie der virtuelle Tastencode einer solchen Taste ermittelt werden kann.</p>
   </dd>
 
   <dt id="MatchList">VergleichListe</dt>
   <dd>
-    <p>Eine kommagetrennte Liste von Schlüsselwörtern, von denen jedes zur Beendigung der Eingabeerfassung führt (in diesem Fall wird EndReason auf das Wort Match gesetzt). Alles, was der Benutzer eingibt, muss exakt mit einem der Schlüsselwörter in der Liste übereinstimmen, um eine Übereinstimmung zu bewirken (es sei denn, die <a href="#asterisk">*-Option</a> wird verwendet). <strong>Alle Leer- und Tabulatorzeichen neben den Kommas sind relevant</strong>, d.h. sie sind Teil der Vergleichszeichenkette. Wenn <em>VergleichListe</em> z.B. <code>ABC , XYZ</code> ist, muss der Benutzer ein Leerzeichen nach ABC oder vor XYZ eingeben, damit eine Übereinstimmung erfolgt.</p>
+    <p>Eine kommagetrennte Liste von Schlüsselwörtern, von denen jedes zur Beendigung der Eingabeerfassung führt (in diesem Fall wird <a href="#EndReason">EndReason</a> auf das Wort Match gesetzt). Alles, was der Benutzer eingibt, muss exakt mit einem der Schlüsselwörter in der Liste übereinstimmen, um eine Übereinstimmung zu bewirken (es sei denn, die <a href="#asterisk">*-Option</a> wird verwendet). <strong>Alle Leer- und Tabulatorzeichen neben den Kommas sind relevant</strong>, d.h. sie sind Teil der Vergleichszeichenkette. Wenn <em>VergleichListe</em> z.B. <code>ABC , XYZ</code> ist, muss der Benutzer ein Leerzeichen nach ABC oder vor XYZ eingeben, damit eine Übereinstimmung erfolgt.</p>
     <p>Zwei aufeinanderfolgende Kommas ergeben ein direkt geschriebenes Komma. Zum Beispiel würde das Folgende ein direkt geschriebenes Komma nach dem Wort Zkette1 erzeugen: <code>Zkette1,,,Zkette2</code>. Entsprechend enthält die folgende Liste nur ein einzelnes Element mit einem direkt geschriebenen Komma dazwischen: <code>einzelnes,,Element</code>.</p>
     <p>Da die Elemente in <em>VergleichListe</em> nicht als einzelne Parameter behandelt werden, kann die Liste komplett in einer Variable enthalten sein. Tatsächlich muss sie ganz oder teilweise in einer Variable enthalten sein, wenn ihre Länge 16383 Zeichen überschreitet, da dies die maximale Länge einer Skriptzeile ist. Zum Beispiel könnte <em>VergleichListe</em> aus <code>%Liste1%,%Liste2%,%Liste3%</code> bestehen, wobei jede der Variablen eine lange Unterliste von Schlüsselwörtern enthält.</p>
   </dd>
@@ -109,6 +109,7 @@ if (ih.Input = StrgC)
 <div class="methodShort" id="KeyOpt"><h3>KeyOpt</h3>
 <p>Setzt Optionen für eine Taste oder eine Liste von Tasten.</p>
 <pre class="Syntax">InputHook.<span class="func">KeyOpt</span>(Tasten, Tastenoptionen)</pre>
+<h4 id="KeyOpt_Parameters">Parameter</h4>
 <dl>
   <dt>Tasten</dt>
   <dd><p>Eine Liste von Tasten. Mit geschweiften Klammern werden Tastennamen, virtuelle Tastencodes oder Scancodes umschlossen, ähnlich dem <a href="Send.htm">Send</a>-Befehl. Zum Beispiel kann <code>{Enter}.{{}</code> für <kbd>Enter</kbd>, <kbd>.</kbd> und <kbd>{</kbd> verwendet werden. Die Angabe einer Taste via Name, <code>{vkNN}</code> oder <code>{scNNN}</code> kann zu drei verschiedenen Ergebnissen führen; Einzelheiten finden Sie unten.</p>
@@ -117,14 +118,15 @@ if (ih.Input = StrgC)
   <dd><p>Eine oder mehrere der folgenden Einzelzeichenoptionen (Leer- und Tabulatorzeichen werden ignoriert).</p>
   <p id="KeyOpt-minus"><strong>-</strong> (minus): Entfernt alle Optionen nach dem <code>-</code>, bis zum nächsten <code>+</code>.</p>
   <p id="KeyOpt-plus"><strong>+</strong> (plus): Bricht alle vorherigen <code>-</code> ab, andernfalls ohne Wirkung.</p>
-  <p id="KeyOpt-e"><strong>E:</strong> Endungstaste. Wenn diese Option aktiviert ist, wird beim Drücken der Taste die Eingabeerfassung beendet, <a href="#EndReason">EndReason</a> auf das Wort EndKey gesetzt und die <a href="#EndKey">EndKey</a>-Eigenschaft auf den normalisierten Namen der Taste gesetzt. Im Gegensatz zum <em>EndTasten</em>-Parameter wird der Status von <kbd>Umschalt</kbd> oder <kbd>AltGr</kbd> ignoriert. Zum Beispiel sind <code>"</code> und <code class="no-highlight">2</code> in der deutschen Tastaturbelegung äquivalent zu <code>{vk32}</code>.</p>
+  <p id="KeyOpt-e"><strong>E:</strong> Endungstaste. Wenn diese Option aktiviert ist, wird beim Drücken der Taste die Eingabeerfassung beendet, <a href="#EndReason">EndReason</a> auf das Wort EndKey gesetzt und <a href="#EndKey">EndKey</a> auf den normalisierten Namen der Taste gesetzt. Im Gegensatz zum <em>EndTasten</em>-Parameter wird der Status von <kbd>Umschalt</kbd> oder <kbd>AltGr</kbd> ignoriert. Zum Beispiel sind <code>"</code> und <code class="no-highlight">2</code> in der deutschen Tastaturbelegung äquivalent zu <code>{vk32}</code>.</p>
   <p id="KeyOpt-i"><strong>I:</strong> Text ignorieren. Jeglicher Text, den diese Taste normalerweise erzeugt, wird ignoriert, außerdem wird die Taste als Nicht-Text-Taste behandelt (siehe <a href="#VisibleNonText">VisibleNonText</a>). Hat keine Wirkung, wenn die Taste normalerweise keinen Text erzeugt.</p>
   <p id="KeyOpt-n"><strong>N:</strong> Benachrichtigen. Bewirkt, dass jedes Mal die <a href="#OnKeyDown">OnKeyDown</a>- und <a href="#OnKeyUp">OnKeyUp</a>-Rückruffunktionen aufgerufen werden, wenn die Taste gedrückt wird.</p>
   <p id="KeyOpt-s"><strong>S:</strong> Unterdrückt (blockiert) die Taste, nachdem sie verarbeitet wurde. Dies überschreibt <a href="#VisibleText">VisibleText</a> oder <a href="#VisibleNonText">VisibleNonText</a>, bis <code>-S</code> verwendet wird. <code>+S</code> beinhaltet <code>-V</code>.</p>
   <p id="KeyOpt-v"><strong>V:</strong> Sichtbar. Verhindert, dass die Taste unterdrückt (blockiert) wird. Dies überschreibt <a href="#VisibleText">VisibleText</a> oder <a href="#VisibleNonText">VisibleNonText</a>, bis <code>-V</code> verwendet wird. <code>+V</code> beinhaltet <code>-S</code>.</p>
   </dd>
 </dl>
-<p id="KeyOpt-remarks">Optionen können sowohl via virtuellen Tastencode als auch Scancode gesetzt werden und sind kumulativ.</p>
+<h4 id="KeyOpt_Remarks">Bemerkungen</h4>
+<p>Optionen können sowohl via virtuellen Tastencode (VK) als auch Scancode (SC) gesetzt werden und sind kumulativ.</p>
 <p>Wenn eine Taste via Name angegeben wurde, werden die Optionen entweder via VK oder SC gesetzt. Wenn zwei physische Tasten dieselbe VK, aber unterschiedliche SCs haben (z.B. <kbd>Up</kbd> und <kbd>NumpadUp</kbd>), werden sie via SC behandelt. Wenn dagegen eine VK-Nummer verwendet wird, gilt sie für alle physischen Tasten, die diese VK erzeugen (aber das kann mit der Zeit variieren, da es von der aktiven Tastaturbelegung abhängt).</p>
 <p>Das Entfernen einer Option via VK-Nummer hat keinen Einfluss auf Optionen, die via SC gesetzt wurden, und umgekehrt. Wenn allerdings eine Option via Tastenname entfernt wird und dieser Name via VK behandelt wird, wird die Option auch für den entsprechenden SC entfernt (gemäß der Tastaturbelegung des Skripts). Dies ermöglicht es, Tasten via Name auszuschließen, nachdem eine Option auf <a href="#all-keys">alle Tasten</a> angewendet wurde.</p>
 <p>Wenn <code>+V</code> via VK und <code>+S</code> via SC gesetzt ist (oder umgekehrt), hat <code>+V</code> Vorrang.</p>
@@ -134,7 +136,7 @@ if (ih.Input = StrgC)
 <p>Startet die Eingabeerfassung.</p>
 <pre class="Syntax">InputHook.<span class="func">Start</span>()</pre>
 <p>Hat keine Wirkung, wenn die Eingabeerfassung bereits aktiv ist.</p>
-<p>Die neu gestartete Eingabeerfassung wird an die Spitze des <a href="#stack">InputHook-Stapels</a> platziert, so dass sie jede zuvor gestartete Eingabeerfassung überschreiben kann.</p>
+<p>Die neue Eingabeerfassung wird an die Spitze des <a href="#stack">InputHook-Stapels</a> platziert, so dass sie jede zuvor gestartete Eingabeerfassung überschreiben kann.</p>
 <p>Diese Methode installiert den <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> (falls noch nicht geschehen).</p>
 </div>
 
@@ -146,26 +148,28 @@ if (ih.Input = StrgC)
 
 <div class="methodShort" id="Wait"><h3>Wait</h3>
 <p>Wartet auf die Beendigung der Eingabeerfassung, also wenn <a href="#InProgress">InProgress</a> False ist.</p>
-<pre class="Syntax">InputHook.<span class="func">Wait</span>(<span class="optional">MaxZeit</span>)</pre>
+<pre class="Syntax">EndReason := InputHook.<span class="func">Wait</span>(<span class="optional">MaxZeit</span>)</pre>
+<h4 id="Wait_Parameters">Parameter</h4>
 <dl>
   <dt>MaxZeit</dt>
-  <dd><p>Die maximale Wartezeit in Sekunden. Wenn die Eingabeerfassung nach <em>MaxZeit</em> Sekunden immer noch aktiv ist, wird die Methode aufhören zu warten und die Eingabeerfassung nicht beenden.</p></dd>
+  <dd><p>Wenn weggelassen, wird unendlich lang gewartet. Andernfalls geben Sie die maximale Wartezeit in Sekunden an. Wenn die Eingabeerfassung nach <em>MaxZeit</em> Sekunden immer noch aktiv ist, wird die Methode aufhören zu warten und die Eingabeerfassung nicht beenden.</p></dd>
 </dl>
-<p>Gibt <a href="#EndReason">EndReason</a> zurück.</p>
+<h4 id="Wait_Return_Value">Rückgabewert</h4>
+<p>Diese Methode gibt <a href="#EndReason">EndReason</a> zurück.</p>
 </div>
 
 <h3 id="General_Properties">Allgemeine Eigenschaften</h3>
 <div class="methodShort" id="EndKey"><h3>EndKey</h3>
 <p>Gibt den Namen der <a href="#EndKeys">Endungstaste</a> zurück, die gedrückt wurde, um die Eingabeerfassung zu beenden.</p>
-<pre class="Syntax">TasteName := InputHook.EndKey</pre>
-<p>Beachten Sie, dass EndKey den "normalisierten" Namen der Taste zurückgibt, unabhängig von der Schreibweise in <em>EndTasten</em>. Zum Beispiel bewirkt sowohl <code>{Esc}</code> als auch <code>{vk1B}</code>, dass <code>Escape</code> erzeugt wird. Mit <a href="GetKey.htm">GetKeyName()</a> kann der normalisierte Name abgerufen werden.</p>
+<pre class="Syntax">TasteName := InputHook.<span class="func">EndKey</span></pre>
+<p>Beachten Sie, dass EndKey immer den "normalisierten" Namen der Taste zurückgibt, unabhängig von der Schreibweise im <em>EndTasten</em>-Parameter. Zum Beispiel bewirkt sowohl <code>{Esc}</code> als auch <code>{vk1B}</code>, dass <code>Escape</code> erzeugt wird. Mit <a href="GetKey.htm">GetKeyName()</a> kann der normalisierte Name abgerufen werden.</p>
 <p>Wenn die <a href="#E">E-Option</a> verwendet wurde, gibt EndKey das tatsächlich eingegebene Zeichen zurück (sofern vorhanden). Andernfalls wird der Tastenname gemäß der aktiven Tastaturbelegung des Skripts ermittelt.</p>
 <p>EndKey gibt eine leere Zeichenkette zurück, wenn <a href="#EndReason">EndReason</a> nicht "EndKey" ist.</p>
 </div>
 
 <div class="methodShort" id="EndMods"><h3>EndMods</h3>
 <p>Gibt eine Zeichenkette von Modifikatoren zurück, die logisch unten waren, als die Eingabeerfassung beendet wurde.</p>
-<pre class="Syntax">Mods := InputHook.EndMods</pre>
+<pre class="Syntax">Mods := InputHook.<span class="func">EndMods</span></pre>
 <p>Wenn alle Modifikatoren logisch unten (gedrückt) waren, ist die komplette Zeichenkette:</p>
 <pre>&lt;^&gt;^&lt;!&gt;!&lt;+&gt;+&lt;#&gt;#</pre>
 <p>Diese Modifikatoren haben dieselbe Bedeutung wie die der <a href="../Hotkeys.htm">Hotkeys</a>. Jeder Modifikator ist immer mit &lt; (links) oder &gt; (rechts) gekennzeichnet. Die entsprechenden Tastennamen sind: LCtrl, RCtrl, LAlt, RAlt, LShift, RShift, LWin, RWin.</p>
@@ -176,135 +180,170 @@ if (ih.Input = StrgC)
 
 <div class="methodShort" id="EndReason"><h3>EndReason</h3>
 <p>Gibt eine <a href="#EndReasons">EndReason-Zeichenkette</a> zurück, die angibt, wie die Eingabeerfassung beendet wurde.</p>
-<pre class="Syntax">Grund := InputHook.EndReason</pre>
-<p>Gibt eine leere Zeichenkette zurück, wenn die Eingabeerfassung noch aktiv ist.</p>
+<pre class="Syntax">Grund := InputHook.<span class="func">EndReason</span></pre>
+<p>Wenn die Eingabeerfassung noch aktiv ist, wird eine leere Zeichenkette zurückgegeben.</p>
 </div>
 
 <div class="methodShort" id="InProgress"><h3>InProgress</h3>
 <p>Gibt 1 (true) zurück, wenn die Eingabeerfassung aktiv ist, andernfalls 0 (false).</p>
-<pre class="Syntax">Boolesch := InputHook.InProgress</pre>
+<pre class="Syntax">Boolesch := InputHook.<span class="func">InProgress</span></pre>
 </div>
 
 <div class="methodShort" id="Input"><h3>Input</h3>
 <p>Gibt den Text zurück, der seit dem letzten Start der Eingabeerfassung gesammelt wurde.</p>
-<pre class="Syntax">Zkette := InputHook.Input</pre>
+<pre class="Syntax">Zkette := InputHook.<span class="func">Input</span></pre>
 <p>Diese Eigenschaft kann verwendet werden, während die Eingabeerfassung aktiv ist oder nachdem sie beendet wurde.</p>
 </div>
 
 <div class="methodShort" id="Match"><h3>Match</h3>
 <p>Gibt eines der Schlüsselwörter in <em><a href="#MatchList">VergleichListe</a></em> zurück, das zur Beendigung der Eingabeerfassung geführt hat.</p>
-<pre class="Syntax">Zkette := InputHook.Match</pre>
-<p>Gibt das gefundene Schlüsselwort mit originaler Groß-/Kleinschreibung zurück, kann aber von dem abweichen, was der Benutzer eingegeben hat, wenn die C-Option weggelassen wurde. Gibt eine leere Zeichenkette zurück, wenn <a href="#EndReason">EndReason</a> nicht "Match" ist.</p>
+<pre class="Syntax">Zkette := InputHook.<span class="func">Match</span></pre>
+<p>Diese Eigenschaft gibt das gefundene Schlüsselwort mit originaler Groß-/Kleinschreibung zurück, die von dem abweichen kann, was der Benutzer eingegeben hat, wenn die <a href="#option-c">C-Option</a> weggelassen wurde, oder eine leere Zeichenkette, wenn <a href="#EndReason">EndReason</a> nicht "Match" ist.</p>
 </div>
 
 <div class="methodShort" id="OnEnd"><h3>OnEnd</h3>
 <p>Ermittelt oder setzt das <a href="../misc/Functor.htm">Funktionsobjekt</a>, das bei Beendigung der Eingabeerfassung aufgerufen wird.</p>
-<pre class="Syntax">MeineFunk := InputHook.OnEnd</pre>
-<pre class="Syntax">InputHook.OnEnd := MeineFunk</pre>
-<p>Typ: <a href="../misc/Functor.htm">Funktionsobjekt</a> oder <a href="../Concepts.htm#nothing">leere Zeichenkette</a>. Standard: Leere Zeichenkette.</p>
-<p>Der Funktion wird ein Parameter übergeben: Eine Referenz zum InputHook-Objekt.</p>
-<p>Die Funktion wird als neuer <a href="../misc/Threads.htm">Thread</a> aufgerufen, demzufolge verwendet sie vorerst die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>.</p>
+<pre class="Syntax">AktuelleFunk := InputHook.<span class="func">OnEnd</span></pre>
+<pre class="Syntax">InputHook.<span class="func">OnEnd</span> := NeueFunk</pre>
+<p><em>AktuelleFunk</em> ist <em>NeueFunk</em>, falls zugewiesen, andernfalls eine leere Zeichenkette.</p>
+<p><em>NeueFunk</em> ist ein <a href="../misc/Functor.htm">Funktionsobjekt</a>, das aufgerufen werden soll, z. B. <code>Func("MeinRückruf")</code>. Eine leere Zeichenkette bedeutet kein Funktionsobjekt.</p>
+<p>Die Rückruffunktion akzeptiert einen Parameter und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
+<pre class="NoIndent">MeinRückruf(InputHook) { ...</pre>
+<p>Es spielt keine Rolle, welchen Namen Sie dem Parameter geben, allerdings wird ihm als Wert die Referenz zum InputHook-Objekt zugewiesen.</p>
+<p>Der Parameter der Rückruffunktion kann weggelassen werden, wenn die entsprechende Information nicht benötigt wird.</p>
+<p>Die Funktion wird als neuer <a href="../misc/Threads.htm">Thread</a> aufgerufen und verwendet daher vorerst die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>.</p>
 </div>
 
 <div class="methodShort" id="OnChar"><h3>OnChar</h3>
 <p>Ermittelt oder setzt das <a href="../misc/Functor.htm">Funktionsobjekt</a>, das nach dem Hinzufügen eines Zeichens zum Eingabepuffer aufgerufen wird.</p>
-<pre class="Syntax">MeineFunk := InputHook.OnChar</pre>
-<pre class="Syntax">InputHook.OnChar := MeineFunk</pre>
-<p>Typ: <a href="../misc/Functor.htm">Funktionsobjekt</a> oder <a href="../Concepts.htm#nothing">leere Zeichenkette</a>. Standard: Leere Zeichenkette.</p>
-<p>Der Funktion werden folgende Parameter übergeben: <code>InputHook, Char</code>. <em>Char</em> ist eine Zeichenkette, die ein oder mehrere Zeichen enthält.</p>
+<pre class="Syntax">AktuelleFunk := InputHook.<span class="func">OnChar</span></pre>
+<pre class="Syntax">InputHook.<span class="func">OnChar</span> := NeueFunk</pre>
+<p><em>AktuelleFunk</em> ist <em>NeueFunk</em>, falls zugewiesen, andernfalls eine leere Zeichenkette.</p>
+<p><em>NeueFunk</em> ist ein <a href="../misc/Functor.htm">Funktionsobjekt</a>, das aufgerufen werden soll, z. B. <code>Func("MeinRückruf")</code>. Eine leere Zeichenkette bedeutet kein Funktionsobjekt.</p>
+<p>Die Rückruffunktion akzeptiert zwei Parameter und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
+<pre class="NoIndent">MeinRückruf(InputHook, Zeichen) { ...</pre>
+<p>Es spielt keine Rolle, welche Namen Sie den Parametern geben, allerdings werden ihnen die folgenden Werte nacheinander zugewiesen:</p>
+<ol>
+  <li>Eine Referenz zum InputHook-Objekt.</li>
+  <li>Eine Zeichenkette, die das Zeichen enthält (oder mehrere Zeichen, siehe unten für Details).</li>
+</ol>
+<p>Es können beliebig viele Parameter am Ende der Parameterliste der Rückruffunktion weggelassen werden, wenn die entsprechenden Informationen nicht benötigt werden.</p>
 <p>Mehrere Zeichen bedeuten, dass vor dem letzten Tastendruck eine tote Taste gedrückt wurde, die beiden Tasten aber nicht in ein einziges Zeichen transliteriert (umgewandelt) werden konnten. Zum Beispiel erzeugt <kbd>`</kbd><kbd>e</kbd> und <kbd>`</kbd><kbd>z</kbd> bei manchen Tastaturbelegungen <code>è</code> und <code>`z</code>.</p>
 <p>Die Funktion wird nie aufgerufen, wenn eine Endungstaste gedrückt wird.</p>
 </div>
 
 <div class="methodShort" id="OnKeyDown"><h3>OnKeyDown</h3>
 <p>Ermittelt oder setzt das <a href="../misc/Functor.htm">Funktionsobjekt</a>, das beim Drücken einer benachrichtigungsfähigen Taste aufgerufen wird.</p>
-<pre class="Syntax">MeineFunk := InputHook.OnKeyDown</pre>
-<pre class="Syntax">InputHook.OnKeyDown := MeineFunk</pre>
-<p>Typ: <a href="../misc/Functor.htm">Funktionsobjekt</a> oder <a href="../Concepts.htm#nothing">leere Zeichenkette</a>. Standard: Leere Zeichenkette.</p>
+<pre class="Syntax">AktuelleFunk := InputHook.<span class="func">OnKeyDown</span></pre>
+<pre class="Syntax">InputHook.<span class="func">OnKeyDown</span> := NeueFunk</pre>
 <p>Taste-Unten-Benachrichtigungen müssen zuerst via <a href="#KeyOpt">KeyOpt</a> oder <a href="#NotifyNonText">NotifyNonText</a> aktiviert werden.</p>
-<p>Der Funktion werden folgende Parameter übergeben: <code>InputHook, VK, SC</code>. <em>VK</em> und <em>SC</em> sind Integer. Um den Tastennamen abzurufen (falls vorhanden), verwenden Sie <code>GetKeyName(Format("vk{:x}sc{:x}", VK, SC))</code>.</p>
-<p>Die Funktion wird als neuer <a href="../misc/Threads.htm">Thread</a> aufgerufen, demzufolge verwendet sie vorerst die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>.</p>
+<p><em>AktuelleFunk</em> ist <em>NeueFunk</em>, falls zugewiesen, andernfalls eine leere Zeichenkette.</p>
+<p><em>NeueFunk</em> ist ein <a href="../misc/Functor.htm">Funktionsobjekt</a>, das aufgerufen werden soll, z. B. <code>Func("MeinRückruf")</code>. Eine leere Zeichenkette bedeutet kein Funktionsobjekt.</p>
+<p>Die Rückruffunktion akzeptiert drei Parameter und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
+<pre class="NoIndent">MeinRückruf(InputHook, VK, SC) { ...</pre>
+<p>Es spielt keine Rolle, welche Namen Sie den Parametern geben, allerdings werden ihnen die folgenden Werte nacheinander zugewiesen:</p>
+<ol>
+  <li>Eine Referenz zum InputHook-Objekt.</li>
+  <li>Ein Integer, der den virtuellen Tastencode der Taste repräsentiert.</li>
+  <li>Ein Integer, der den Scancode der Taste repräsentiert.</li>
+</ol>
+<p>Es können beliebig viele Parameter am Ende der Parameterliste der Rückruffunktion weggelassen werden, wenn die entsprechenden Informationen nicht benötigt werden.</p>
+<p>Um den Tastennamen abzurufen (falls vorhanden), verwenden Sie <code>GetKeyName(Format("vk{:x}sc{:x}", VK, SC))</code>.</p>
+<p>Die Funktion wird als neuer <a href="../misc/Threads.htm">Thread</a> aufgerufen und verwendet daher vorerst die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>.</p>
 <p>Die Funktion wird nie aufgerufen, wenn eine Endungstaste gedrückt wird.</p>
 </div>
 
 <div class="methodShort" id="OnKeyUp"><h3>OnKeyUp <span class="ver">[v1.1.32+]</span></h3>
 <p>Ermittelt oder setzt das <a href="../misc/Functor.htm">Funktionsobjekt</a>, das beim Loslassen einer benachrichtigungsfähigen Taste aufgerufen wird.</p>
-<pre class="Syntax">MeineFunk := InputHook.OnKeyUp</pre>
-<pre class="Syntax">InputHook.OnKeyUp := MeineFunk</pre>
-<p>Typ: <a href="../misc/Functor.htm">Funktionsobjekt</a> oder <a href="../Concepts.htm#nothing">leere Zeichenkette</a>. Standard: Leere Zeichenkette.</p>
+<pre class="Syntax">AktuelleFunk := InputHook.<span class="func">OnKeyUp</span></pre>
+<pre class="Syntax">InputHook.<span class="func">OnKeyUp</span> := NeueFunk</pre>
 <p>Taste-Oben-Benachrichtigungen müssen zuerst via <a href="#KeyOpt">KeyOpt</a> oder <a href="#NotifyNonText">NotifyNonText</a> aktiviert werden. Ob eine Taste als Text oder Nicht-Text behandelt wird, wird beim Drücken der Taste ermittelt. Wenn ein InputHook ein Taste-Oben-Ereignis erkennt, ohne vorher Taste-Unten erkannt zu haben, wird die Taste als Nicht-Text behandelt.</p>
-<p>Der Funktion werden folgende Parameter übergeben: <code>InputHook, VK, SC</code>. <em>VK</em> und <em>SC</em> sind Integer. Um den Tastennamen abzurufen (falls vorhanden), verwenden Sie <code>GetKeyName(Format("vk{:x}sc{:x}", VK, SC))</code>.</p>
-<p>Die Funktion wird als neuer <a href="../misc/Threads.htm">Thread</a> aufgerufen, demzufolge verwendet sie vorerst die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>.</p>
+<p><em>AktuelleFunk</em> ist <em>NeueFunk</em>, falls zugewiesen, andernfalls eine leere Zeichenkette.</p>
+<p><em>NeueFunk</em> ist ein <a href="../misc/Functor.htm">Funktionsobjekt</a>, das aufgerufen werden soll, z. B. <code>Func("MeinRückruf")</code>. Eine leere Zeichenkette bedeutet kein Funktionsobjekt.</p>
+<p>Die Rückruffunktion akzeptiert drei Parameter und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
+<pre class="NoIndent">MeinRückruf(InputHook, VK, SC) { ...</pre>
+<p>Es spielt keine Rolle, welche Namen Sie den Parametern geben, allerdings werden ihnen die folgenden Werte nacheinander zugewiesen:</p>
+<ol>
+  <li>Eine Referenz zum InputHook-Objekt.</li>
+  <li>Ein Integer, der den virtuellen Tastencode der Taste repräsentiert.</li>
+  <li>Ein Integer, der den Scancode der Taste repräsentiert.</li>
+</ol>
+<p>Es können beliebig viele Parameter am Ende der Parameterliste der Rückruffunktion weggelassen werden, wenn die entsprechenden Informationen nicht benötigt werden.</p>
+<p>Um den Tastennamen abzurufen (falls vorhanden), verwenden Sie <code>GetKeyName(Format("vk{:x}sc{:x}", VK, SC))</code>.</p>
+<p>Die Funktion wird als neuer <a href="../misc/Threads.htm">Thread</a> aufgerufen und verwendet daher vorerst die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>.</p>
 </div>
 
 <h3 id="Option_Properties">Optionseigenschaften</h3>
 <div class="methodShort" id="BackspaceIsUndo"><h3>BackspaceIsUndo</h3>
 <p>Bestimmt, ob <kbd>Backspace</kbd> das zuletzt gedrückte Zeichen vom Ende des Eingabepuffers entfernt.</p>
-<pre class="Syntax">Boolesch := InputHook.BackspaceIsUndo</pre>
-<pre class="Syntax">InputHook.BackspaceIsUndo := Boolesch</pre>
-<p>Typ: <a href="../Concepts.htm#boolean">Integer (boolesch)</a>. Standard: True. Die B-Option setzt den Wert auf False.</p>
+<pre class="Syntax">AktuelleEinstellung := InputHook.<span class="func">BackspaceIsUndo</span></pre>
+<pre class="Syntax">InputHook.<span class="func">BackspaceIsUndo</span> := NeueEinstellung</pre>
+<p><em>AktuelleEinstellung</em> ist <em>NeueEinstellung</em>, falls zugewiesen, andernfalls standardmäßig 1 (true), es sei denn, es wurde mit der <a href="#option-b">B-Option</a> überschrieben.</p>
+<p><em>NeueEinstellung</em> ist ein <a href="../Concepts.htm#boolean">boolescher Wert</a>, der diese Einstellung aktiviert oder deaktiviert.</p>
 <p>Wenn <kbd>Backspace</kbd> als "rückgängig machen" agiert, wird die Taste als Texteingabetaste behandelt. Ob die Taste unterdrückt wird, hängt insbesondere von <a href="#VisibleText">VisibleText</a> ab, nicht von <a href="#VisibleNonText">VisibleNonText</a>.</p>
 <p><kbd>Backspace</kbd> wird immer ignoriert, wenn die Taste in Kombination mit einer Modifikatortaste wie <kbd>Strg</kbd> gedrückt wird (es wird der logische Modifikatorstatus geprüft, nicht der physische).</p>
 <p class="warning"><strong>Hinweis:</strong> Wenn der Eingabetext sichtbar ist (z.B. in einem Texteditor) und die Pfeiltasten oder andere Mittel zur Navigation innerhalb des Textes verwendet werden, entfernt <kbd>Backspace</kbd> weiterhin das letzte Zeichen, nicht das Zeichen nach dem Textcursor (Einfügemarke).</p>
 </div>
 
 <div class="methodShort" id="CaseSensitive"><h3>CaseSensitive</h3>
-<p>Bestimmt, ob <em>VergleichListe</em> Groß-/Kleinschreibung-sensitiv ist.</p>
-<pre class="Syntax">Boolesch := InputHook.CaseSensitive</pre>
-<pre class="Syntax">InputHook.CaseSensitive := Boolesch</pre>
-<p>Typ: <a href="../Concepts.htm#boolean">Integer (boolesch)</a>. Standard: False. Die C-Option setzt den Wert auf True.</p>
+<p>Bestimmt, ob <a href="#MatchList"><em>VergleichListe</em></a> Groß-/Kleinschreibung-sensitiv ist.</p>
+<pre class="Syntax">AktuelleEinstellung := InputHook.<span class="func">CaseSensitive</span></pre>
+<pre class="Syntax">InputHook.<span class="func">CaseSensitive</span> := NeueEinstellung</pre>
+<p><em>AktuelleEinstellung</em> ist <em>NeueEinstellung</em>, falls zugewiesen, andernfalls standardmäßig 0 (false), es sei denn, es wurde mit der <a href="#option-c">C-Option</a> überschrieben.</p>
+<p><em>NeueEinstellung</em> ist ein <a href="../Concepts.htm#boolean">boolescher Wert</a>, der diese Einstellung aktiviert oder deaktiviert.</p>
 </div>
 
 <div class="methodShort" id="FindAnywhere"><h3>FindAnywhere</h3>
 <p>Bestimmt, ob jede Übereinstimmung eine Teilzeichenkette des Eingabetextes sein kann.</p>
-<pre class="Syntax">Boolesch := InputHook.FindAnywhere</pre>
-<pre class="Syntax">InputHook.FindAnywhere := Boolesch</pre>
-<p>Typ: <a href="../Concepts.htm#boolean">Integer (boolesch)</a>. Standard: False. Die *-Option setzt den Wert auf True.</p>
-<p>Wenn dies True ist, kann eine Übereinstimmung überall innerhalb dessen, was der Benutzer eingibt, gefunden werden (die Übereinstimmung kann eine Teilzeichenkette des Eingabetextes sein). Wenn dies False ist, muss alles, was der Benutzer eingibt, mit einem der Schlüsselwörter in <em>VergleichListe</em> übereinstimmen. In beiden Fällen muss eines der Schlüsselwörter in <em>VergleichListe</em> vollständig eingegeben werden.</p>
+<pre class="Syntax">AktuelleEinstellung := InputHook.<span class="func">FindAnywhere</span></pre>
+<pre class="Syntax">InputHook.<span class="func">FindAnywhere</span> := NeueEinstellung</pre>
+<p><em>AktuelleEinstellung</em> ist <em>NeueEinstellung</em>, falls zugewiesen, andernfalls standardmäßig 0 (false), es sei denn, es wurde mit der <a href="#asterisk">*-Option</a> überschrieben.</p>
+<p><em>NeueEinstellung</em> ist ein <a href="../Concepts.htm#boolean">boolescher Wert</a>, der diese Einstellung aktiviert oder deaktiviert. Wenn dies True ist, kann eine Übereinstimmung überall innerhalb dessen, was der Benutzer eingibt, gefunden werden (die Übereinstimmung kann eine Teilzeichenkette des Eingabetextes sein). Wenn dies False ist, muss alles, was der Benutzer eingibt, mit einem der Schlüsselwörter in <em>VergleichListe</em> übereinstimmen. In beiden Fällen muss eines der Schlüsselwörter in <em>VergleichListe</em> vollständig eingegeben werden.</p>
 </div>
 
 <div class="methodShort" id="MinSendLevel"><h3>MinSendLevel</h3>
 <p>Ermittelt oder setzt den minimalen <a href="SendLevel.htm">Sendlevel</a> der zu sammelnden Eingabe.</p>
-<pre class="Syntax">Level := InputHook.MinSendLevel</pre>
-<pre class="Syntax">InputHook.MinSendLevel := Level</pre>
-<p>Typ: <a href="../Concepts.htm#numbers">Integer</a>. Standard: 0. Die I-Option setzt den Wert auf 1 (oder den angegebenen Wert).</p>
-<p><em>Level</em> muss ein Integer im Bereich von 0 bis 101 sein. Ereignisse mit einem Sendlevel <em>kleiner</em> als dieser Wert werden ignoriert. Zum Beispiel bewirkt ein Wert von 101, dass alle via <a href="Send.htm">SendEvent</a> erzeugten Eingaben ignoriert werden, während ein Wert von 1 nur Eingaben mit dem Standardsendlevel (0) ignoriert.</p>
+<pre class="Syntax">AktuellerLevel := InputHook.<span class="func">MinSendLevel</span></pre>
+<pre class="Syntax">InputHook.<span class="func">MinSendLevel</span> := NeuerLevel</pre>
+<p><em>AktuellerLevel</em> ist <em>NeuerLevel</em>, falls zugewiesen, andernfalls standardmäßig 0, es sei denn, es wurde mit der <a href="#option-i">I-Option</a> überschrieben.</p>
+<p><em>NeuerLevel</em> muss ein <a href="../Concepts.htm#numbers">Integer</a> im Bereich von 0 bis 101 sein. Ereignisse mit einem Sendlevel <u>kleiner</u> als dieser Wert werden ignoriert. Zum Beispiel bewirkt ein Wert von 101, dass alle via <a href="Send.htm">SendEvent</a> erzeugten Eingaben ignoriert werden, während ein Wert von 1 nur Eingaben mit dem Standardsendlevel (0) ignoriert.</p>
 <p><a href="Send.htm#SendInput">SendInput</a> und <a href="Send.htm#SendPlay">SendPlay</a> werden immer ignoriert, egal ob diese Einstellung aktiv ist oder nicht. Eingaben, die von einer anderen Quelle als AutoHotkey stammen, können niemals über diese Einstellung ignoriert werden.</p>
 </div>
 
 <div class="methodShort" id="NotifyNonText"><h3>NotifyNonText</h3>
 <p>Bestimmt, ob die <a href="#OnKeyDown">OnKeyDown</a>- und <a href="#OnKeyUp">OnKeyUp</a>-Rückruffunktionen jedes Mal aufgerufen werden, wenn eine Nicht-Text-Taste gedrückt wird.</p>
-<pre class="Syntax">Boolesch := InputHook.NotifyNonText</pre>
-<pre class="Syntax">InputHook.NotifyNonText := Boolesch</pre>
-<p>Typ: <a href="../Concepts.htm#boolean">Integer (boolesch)</a>. Standard: False.</p>
-<p>Wenn dies True ist, werden Benachrichtigungen für alle Tastendrücke aktiviert, die keinen Text erzeugen, wie z.B. <kbd>←</kbd> oder <kbd>Alt</kbd>+<kbd>F</kbd>. Das Setzen dieser Eigenschaft hat keinen Einfluss auf die <a href="#KeyOpt">Optionen</a> einer Taste, da die Texterzeugung von der Tastaturbelegung des aktiven Fensters zum Zeitpunkt des Tastendrucks abhängt. </p>
+<pre class="Syntax">AktuelleEinstellung := InputHook.<span class="func">NotifyNonText</span></pre>
+<pre class="Syntax">InputHook.<span class="func">NotifyNonText</span> := NeueEinstellung</pre>
+<p><em>AktuelleEinstellung</em> ist <em>NeueEinstellung</em>, falls zugewiesen, andernfalls standardmäßig 0 (false).</p>
+<p><em>NeueEinstellung</em> ist ein <a href="../Concepts.htm#boolean">boolescher Wert</a>, der diese Einstellung aktiviert oder deaktiviert. Wenn dies True ist, werden Benachrichtigungen für alle Tastendrücke aktiviert, die keinen Text erzeugen, wie z.B. <kbd>←</kbd> oder <kbd>Alt</kbd>+<kbd>F</kbd>. Das Setzen dieser Eigenschaft hat keinen Einfluss auf die <a href="#KeyOpt">Optionen</a> einer Taste, da die Texterzeugung von der Tastaturbelegung des aktiven Fensters zum Zeitpunkt des Tastendrucks abhängt.</p>
 <p>Beim Anwenden von NotifyNonText auf Taste-Oben-Ereignisse wird geprüft, ob ein vorheriges Taste-Unten-Ereignis mit einem passenden VK-Code als Text oder Nicht-Text klassifiziert wurde. Wenn NotifyNonText True ist, bewirkt z.B. das Drücken von <kbd>Strg</kbd>+<kbd>A</kbd>, dass <a href="#OnKeyDown">OnKeyDown</a> und <a href="#OnKeyUp">OnKeyUp</a> sowohl für <kbd>Strg</kbd> als auch für <kbd>A</kbd> aufgerufen werden, während das Drücken von nur <kbd>A</kbd> bewirkt, dass weder OnKeyDown noch OnKeyUp aufgerufen wird, es sei denn, <a href="#KeyOpt">KeyOpt</a> wurde verwendet, um Benachrichtigungen für diese Taste zu aktivieren.</p>
 <p>Informationen darüber, welche Tasten als Texterzeuger eingestuft werden, finden Sie unter <a href="#VisibleText">VisibleText</a>.</p>
 </div>
 
 <div class="methodShort" id="Timeout"><h3>Timeout</h3>
 <p>Ermittelt oder setzt den Timeout-Wert in Sekunden.</p>
-<pre class="Syntax">Sekunden := InputHook.Timeout</pre>
-<pre class="Syntax">InputHook.Timeout := Sekunden</pre>
-<p>Typ: <a href="../Concepts.htm#numbers">Float</a>. Standard: 0.0 (kein Timeout). Die T-Option setzt auch den Timeout-Wert.</p>
+<pre class="Syntax">AktuelleSekunden := InputHook.<span class="func">Timeout</span></pre>
+<pre class="Syntax">InputHook.<span class="func">Timeout</span> := NeueSekunden</pre>
+<p><em>AktuelleSekunden</em> ist <em>NeueSekunden</em>, falls zugewiesen, andernfalls standardmäßig 0, es sei denn, es wurde mit der <a href="#option-t">T-Option</a> überschrieben.</p>
+<p><em>NeueSekunden</em> ist eine <a href="../Concepts.htm#numbers">Floating-Point-Zahl</a>, die das Zeitlimit repräsentiert. 0 bedeutet kein Zeitlimit.</p>
 <p>Die Timeout-Periode startet normalerweise mit dem Aufruf von <a href="#Start">Start</a>, wird aber neu gestartet, wenn dieser Eigenschaft ein Wert zugewiesen wird, während die Eingabeerfassung aktiv ist. Wenn die Eingabeerfassung nach Ablauf der Timeout-Periode immer noch aktiv ist, wird die Eingabeerfassung beendet und <a href="#EndReason">EndReason</a> auf das Wort Timeout gesetzt.</p>
 </div>
 
 <div class="methodShort" id="VisibleNonText"><h3>VisibleNonText</h3>
 <p>Bestimmt, ob Tasten oder Tastenkombinationen, die keinen Text erzeugen, sichtbar sind (blockiert werden).</p>
-<pre class="Syntax">Boolesch := InputHook.VisibleNonText</pre>
-<pre class="Syntax">InputHook.VisibleNonText := Boolesch</pre>
-<p>Typ: <a href="../Concepts.htm#boolean">Integer (boolesch)</a>. Standard: True. Die V-Option setzt den Wert auf True.</p>
-<p>Wenn dies True ist, können Tasten und Tastenkombinationen, die keinen Text erzeugen, Hotkeys auslösen oder an das aktive Fenster übergeben werden. Wenn dies False ist, werden diese blockiert.</p>
+<pre class="Syntax">AktuelleEinstellung := InputHook.<span class="func">VisibleNonText</span></pre>
+<pre class="Syntax">InputHook.<span class="func">VisibleNonText</span> := NeueEinstellung</pre>
+<p><em>AktuelleEinstellung</em> ist <em>NeueEinstellung</em>, falls zugewiesen, andernfalls standardmäßig 1 (true). Die <a href="#vis">V-Option</a> setzt dies auf 1 (true).</p>
+<p><em>NeueEinstellung</em> ist ein <a href="../Concepts.htm#boolean">boolescher Wert</a>, der diese Einstellung aktiviert oder deaktiviert. Wenn dies True ist, können Tasten und Tastenkombinationen, die keinen Text erzeugen, Hotkeys auslösen oder an das aktive Fenster übergeben werden. Wenn dies False ist, werden diese blockiert.</p>
 <p>Informationen darüber, welche Tasten als Texterzeuger eingestuft werden, finden Sie unter <a href="#VisibleText">VisibleText</a>.</p>
 </div>
 
 <div class="methodShort" id="VisibleText"><h3>VisibleText</h3>
 <p>Bestimmt, ob Tasten oder Tastenkombinationen, die Text erzeugen, sichtbar sind (blockiert werden).</p>
-<pre class="Syntax">Boolesch := InputHook.VisibleText</pre>
-<pre class="Syntax">InputHook.VisibleText := Boolesch</pre>
-<p>Typ: <a href="../Concepts.htm#boolean">Integer (boolesch)</a>. Standard: False. Die V-Option setzt den Wert auf True.</p>
-<p>Wenn dies True ist, können Tasten und Tastenkombinationen, die Text erzeugen, Hotkeys auslösen oder an das aktive Fenster übergeben werden. Wenn dies False ist, werden diese blockiert.</p>
+<pre class="Syntax">AktuelleEinstellung := InputHook.<span class="func">VisibleText</span></pre>
+<pre class="Syntax">InputHook.<span class="func">VisibleText</span> := NeueEinstellung</pre>
+<p><em>AktuelleEinstellung</em> ist <em>NeueEinstellung</em>, falls zugewiesen, andernfalls standardmäßig 0 (false), es sei denn, es wurde mit der <a href="#vis">V-Option</a> überschrieben.</p>
+<p><em>NeueEinstellung</em> ist ein <a href="../Concepts.htm#boolean">boolescher Wert</a>, der diese Einstellung aktiviert oder deaktiviert. Wenn dies True ist, können Tasten und Tastenkombinationen, die Text erzeugen, Hotkeys auslösen oder an das aktive Fenster übergeben werden. Wenn dies False ist, werden diese blockiert.</p>
 <p>Alle Tastendrücke, die Text an den Eingabepuffer anhängen, werden als Texterzeuger eingestuft, auch wenn sie das in anderen Anwendungen vielleicht nicht tun. Zum Beispiel würde <kbd>Strg</kbd>+<kbd>A</kbd> Text erzeugen, wenn die <a href="#option-m">M-Option</a> verwendet wird, und <kbd>Esc</kbd> das Steuerzeichen <code>Chr(27)</code> erzeugen.</p>
 <p>Tote Tasten werden als Texterzeuger eingestuft, obwohl sie in der Regel keinen unmittelbaren Effekt haben. Das Drücken einer toten Taste kann auch dazu führen, dass die darauffolgende Taste Text erzeugt (wenn auch nur das Zeichen der toten Taste).</p>
 <p><kbd>Backspace</kbd> wird nur als Texterzeuger eingestuft, wenn es <a href="#BackspaceIsUndo">als "rückgängig machen"</a> fungiert.</p>
@@ -312,7 +351,7 @@ if (ih.Input = StrgC)
 </div>
 
 <h2 id="EndReasons">EndReason</h2>
-<p>Die EndReason-Eigenschaft gibt eine der folgenden Zeichenketten zurück:</p>
+<p>Die <a href="#EndReason">EndReason</a>-Eigenschaft gibt eine der folgenden Zeichenketten zurück:</p>
 <table class="info">
   <tr>
     <th>Zkette</th>
@@ -320,11 +359,11 @@ if (ih.Input = StrgC)
   </tr>
   <tr>
     <td>Stopped</td>
-    <td>Die Stop-Methode wurde aufgerufen oder Start wurde bisher noch nicht aufgerufen.</td>
+    <td>Die <a href="#Stop">Stop</a>-Methode wurde aufgerufen oder die <a href="#Start">Start</a>-Methode wurde bisher noch nicht aufgerufen.</td>
   </tr>
   <tr>
     <td>Max</td>
-    <td>Die Eingabeerfassung hat die maximal erlaubte Länge erreicht und stimmt mit keinem der Schlüsselwörter in <em>VergleichListe</em> überein.</td>
+    <td>Die Eingabeerfassung hat die maximal erlaubte Länge erreicht und stimmt mit keinem der Schlüsselwörter in <a href="#MatchList"><em>VergleichListe</em></a> überein.</td>
   </tr>
   <tr>
     <td>Timeout</td>
@@ -332,7 +371,7 @@ if (ih.Input = StrgC)
   </tr>
   <tr>
     <td>Match</td>
-    <td>Die Eingabeerfassung stimmt mit einem der Schlüsselwörter in <em>VergleichListe</em> überein. Die <a href="#Match">Match</a>-Eigenschaft enthält das gefundene Schlüsselwort.</td>
+    <td>Die Eingabeerfassung stimmt mit einem der Schlüsselwörter in <a href="#MatchList"><em>VergleichListe</em></a> überein. Die <a href="#Match">Match</a>-Eigenschaft enthält das gefundene Schlüsselwort.</td>
   </tr>
   <tr>
     <td>EndKey</td>
@@ -355,7 +394,7 @@ if (ih.Input = StrgC)
   <li>Wenn die <a href="#KeyOpt-v">V-Option</a> für diese VK oder SC wirksam ist, wird sie nicht unterdrückt.</li>
   <li>Wenn die <a href="#KeyOpt-s">S-Option</a> für diese VK oder SC wirksam ist, wird sie unterdrückt.</li>
   <li>Wenn die Taste eine <a href="../KeyList.htm#modifier">reguläre Modifikatortaste</a> oder <kbd>Feststell</kbd>, <kbd>Num</kbd> oder <kbd>Rollen</kbd> ist, wird sie nicht unterdrückt.</li>
-  <li><a href="#VisibleText">VisibleText</a> oder <a href="#VisibleNonText">VisibleNonText</a> wird verwendet, je nachdem, ob die Taste Text erzeugt oder nicht. Wenn die Eigenschaft False ist, wird die Taste unterdrückt. Informationen darüber, welche Tasten als Texterzeuger eingestuft werden, finden Sie unter <a href="#VisibleText">VisibleText</a>.</li>
+  <li><a href="#VisibleText">VisibleText</a> oder <a href="#VisibleNonText">VisibleNonText</a> wird verwendet, je nachdem, ob die Taste Text erzeugt oder nicht. Wenn die Eigenschaft 0 (false) ist, wird die Taste unterdrückt. Informationen darüber, welche Tasten als Texterzeuger eingestuft werden, finden Sie unter <a href="#VisibleText">VisibleText</a>.</li>
 </ul>
 <p>Der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> wird benötigt, während eine Eingabeerfassung aktiv ist, wird aber automatisch deinstalliert, wenn er nach Beendigung der Eingabeerfassung nicht mehr benötigt wird. Der Tastatur-Hook (falls installiert) macht das Skript temporär <a href="_Persistent.htm">persistent</a>; das heißt, dass zum Beenden des Skripts möglicherweise <a href="ExitApp.htm">ExitApp</a> anstelle von <a href="Exit.htm">Exit</a> erforderlich ist.</p>
 <p>AutoHotkey unterstützt keine Input Method Editors (IME). Der Tastatur-Hook fängt Tastaturereignisse ab und übersetzt sie mittels <a href="https://learn.microsoft.com/windows/win32/api/winuser/nf-winuser-tounicodeex">ToUnicodeEx</a> oder ToAsciiEx in Text (außer im Falle von <a href="https://learn.microsoft.com/windows/win32/inputdev/virtual-key-codes#vk_packet">VK_PACKET</a>-Ereignissen, die ein einzelnes Zeichen kapseln).</p>

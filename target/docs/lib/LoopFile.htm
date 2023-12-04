@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>Loop (Dateien &amp; Ordner) - Syntax &amp; Verwendung | AutoHotkey</title>
+<title>Loop (Dateien &amp; Ordner) - Syntax &amp; Verwendung | AutoHotkey v1</title>
 <meta name="description" content="Die Loop-Files-Anweisung ruft bestimmte Dateien oder Ordner nacheinander ab." />
 <meta name="ahk:equiv-v2" content="lib/LoopFiles.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -187,7 +187,7 @@ OrdnerGrößeKB := 0
 FileSelectFolder, WelcherOrdner  <em>; Benutzer einen Ordner auswählen lassen.</em>
 Loop, Files, %WelcherOrdner%\*.*, R
     OrdnerGrößeKB += A_LoopFileSizeKB
-MsgBox Der Ordner %WelcherOrdner% hat die Größe %OrdnerGrößeKB% KB.</pre>
+MsgBox %WelcherOrdner% ist %OrdnerGrößeKB% KB groß.</pre>
 </div>
 
 <div class="ex" id="ExSortName">
@@ -200,7 +200,7 @@ Loop, parse, DateiListe, `n
 {
     if (A_LoopField = "")  <em>; Das leere Element am Ende der Liste ignorieren.</em>
         continue
-    MsgBox, 4,, Dateinummer %A_Index% ist %A_LoopField%.  Weiter?
+    MsgBox, 4,, Datei Nr. %A_Index% ist %A_LoopField%.  Weiter?
     IfMsgBox, No
         break
 }</pre>
@@ -225,21 +225,21 @@ Loop, Parse, DateiListe, `n
 
 <div class="ex" id="ExFileCopy">
 <p><a class="ex_number" href="#ExFileCopy"></a> Kopiert nur Quelldateien ins Ziel, die neuer sind als ihr Gegenstück.</p>
-<pre>KopiereWennNeuer:
+<pre>KopierenWennNeuer:
 <em>; Der Aufrufer hat die Variablen KopieQuelleMuster und KopieZiel für uns gesetzt.</em>
 Loop, Files, %KopieQuelleMuster%
 {
-    kopiere_es := false
+    Kopieren := false
     if not FileExist(KopieZiel "\" A_LoopFileName)  <em>; Immer kopieren, wenn Zieldatei noch nicht existiert.</em>
-        kopiere_es := true
+        Kopieren := true
     else
     {
-        FileGetTime, Zeitstempel, %KopieZiel%\%A_LoopFileName%
-        EnvSub, Zeitstempel, %A_LoopFileTimeModified%, seconds  <em>; Zeit der Quelldatei von der Zeit der Zieldatei subtrahieren.</em>
-        if (Zeitstempel &lt; 0)  <em>; Quelldatei ist neuer als Zieldatei.</em>
-            kopiere_es := true
+        FileGetTime, Zeit, %KopieZiel%\%A_LoopFileName%
+        EnvSub, Zeit, %A_LoopFileTimeModified%, seconds  <em>; Zeit der Quelldatei von der Zeit der Zieldatei subtrahieren.</em>
+        if (Zeit &lt; 0)  <em>; Quelldatei ist neuer als Zieldatei.</em>
+            Kopieren := true
     }
-    if kopiere_es
+    if Kopieren
     {
         FileCopy, %A_LoopFileFullPath%, %KopieZiel%\%A_LoopFileName%, 1   <em>; Kopieren und bei Bedarf überschreiben</em>
         if ErrorLevel

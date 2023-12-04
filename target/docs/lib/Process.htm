@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>Process - Syntax &amp; Verwendung | AutoHotkey</title>
+<title>Process - Syntax &amp; Verwendung | AutoHotkey v1</title>
 <meta name="description" content="Der Process-Befehl führt verschiedene Operationen an einem Prozess durch: Prüft, ob er existiert; ändert seine Priorität; schließt ihn; wartet, bis er geschlossen wird." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,7 +24,7 @@
   <dt>PIDOderName</dt>
   <dd>
     <p>Eine Nummer (die PID) oder ein Prozessname, wie unten beschrieben. Dieser Parameter kann je nach verwendetem Unterbefehl leer sein oder weggelassen werden.</p>
-    <p><strong>PID (Prozess-ID):</strong> Eine Nummer zur eindeutigen Identifizierung eines Prozesses (die Gültigkeit dieser Nummer ist an die Lebensdauer des Prozesses gebunden). Mit dem <a href="Run.htm">Run</a>-Befehl kann die PID eines neu gestarteten Prozesses ermittelt werden. Mit <a href="WinGet.htm#PID">WinGet</a> kann die PID eines Fensters ermittelt werden. Der Process-Befehl selbst kann auch zum Abrufen einer PID verwendet werden.</p>
+    <p><strong>PID (Prozess-ID):</strong> Eine Nummer zur eindeutigen Identifizierung eines Prozesses (die Gültigkeit dieser Nummer ist an die Lebensdauer des Prozesses gebunden). Mit <a href="Run.htm">Run</a> kann die PID eines neuen Prozesses, der gestartet wurde, ermittelt werden. Mit <a href="WinGet.htm#PID">WinGet</a> kann die PID eines Fensters ermittelt werden. Der Process-Befehl selbst kann auch zum Abrufen einer PID verwendet werden.</p>
     <p><strong>Name:</strong> Der Name eines Prozesses (ohne Pfad), den üblicherweise auch seine EXE-Datei hat, z.B. notepad.exe oder winword.exe. Da ein Name mit mehreren laufenden Prozessen übereinstimmen kann, wird nur der erste Prozess berücksichtigt. Der Name ist nicht Groß-/Kleinschreibung-sensitiv.</p>
   </dd>
 </dl>
@@ -49,6 +49,7 @@
 <p>Erzwingt die Schließung des ersten gefundenen Prozesses.</p>
 <pre class="Syntax"><span class="func">Process</span>, Close, PIDOderName</pre>
 <p>Wenn ein Prozess gefunden und erfolgreich terminiert wurde, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf seine ehemalige Prozess-ID (PID) gesetzt. Andernfalls (also wenn kein Prozess gefunden wurde oder der Prozess nicht terminiert werden konnte) wird ErrorLevel auf 0 gesetzt. Da der Prozess abrupt terminiert wird - mit der Gefahr, dass seine Ausführung an einem kritischen Punkt unterbrochen wird oder dass ungespeicherte Daten in seinen Fenstern (falls vorhanden) verloren gehen - sollte dieser Unterbefehl nur verwendet werden, wenn das Schließen seiner Fenster via <a href="WinClose.htm">WinClose</a> nicht ausreicht, um den Prozess normal zu beenden.</p>
+<p>Um die Schließung <u>aller</u> gefundenen Prozesse zu erzwingen, siehe <a href="#ExCloseAll">Beispiel #6</a>.</p>
 
 <h3 id="List">List</h3>
 <p>Obwohl dieser Unterbefehl noch nicht unterstützt wird, zeigt <a href="#ListEx">Beispiel #4</a>, wie eine Liste von Prozessen via <a href="DllCall.htm">DllCall()</a> abgerufen werden kann.</p>
@@ -56,20 +57,20 @@
 <h3 id="Priority">Priority</h3>
 <p>Ändert die Prioritätsstufe des ersten gefundenen Prozesses.</p>
 <pre class="Syntax"><span class="func">Process</span>, Priority, PIDOderName, Stufe</pre>
-<p>Ändert die Priorität (wie im Windows-Task-Manager angezeigt) des ersten gefundenen Prozesses auf <em>Stufe</em> und setzt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf seine Prozess-ID (PID). Wenn <em>PIDOderName</em> leer ist, wird die Priorität des Skripts geändert. Wenn ein Prozess nicht gefunden wurde oder ein Problem beim Ändern seiner Priorität aufgetreten ist, wird ErrorLevel auf 0 gesetzt.</p>
+<p>Ändert die Priorität (wie im Windows-Task-Manager angezeigt) des ersten gefundenen Prozesses auf <em>Stufe</em> und setzt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf seine Prozess-ID (PID). Wenn <em>PIDOderName</em> leer ist, wird die Priorität des Skripts geändert. Wenn kein Prozess gefunden wurde oder ein Problem beim Ändern seiner Priorität aufgetreten ist, wird ErrorLevel auf 0 gesetzt.</p>
 <p><em>Stufe</em> muss einer der folgenden Buchstaben oder Wörter sein: L (oder Low), B (oder BelowNormal), N (oder Normal), A (oder AboveNormal), H (oder High), R (oder Realtime). Hinweis: Jeder Prozess, der nicht für eine Ausführung in Echtzeit (Realtime) ausgelegt ist, kann die Systemstabilität beeinträchtigen, wenn er auf diese Prioritätsstufe gesetzt wird.</p>
 
 <h3 id="Wait">Wait</h3>
 <p>Wartet, bis ein bestimmter Prozess existiert.</p>
 <pre class="Syntax"><span class="func">Process</span>, Wait, PIDOderName <span class="optional">, Zeitlimit</span></pre>
 <p>Geben Sie für <em>Zeitlimit</em> die maximale Wartezeit in Sekunden an (kann einen Dezimalpunkt enthalten). Wenn <em>Zeitlimit</em> leer ist oder weggelassen wird, wird der Unterbefehl unendlich lang warten. Wenn ein Prozess gefunden wurde, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf seine Prozess-ID (PID) gesetzt. Wenn der Unterbefehl das Zeitlimit überschreitet, wird ErrorLevel auf 0 gesetzt.</p>
-<p>Prozesse werden alle 100 Millisekunden überprüft; sobald die Bedingung erfüllt ist, hört der Unterbefehl auf zu warten. Mit anderen Worten, der Unterbefehl wartet nicht, bis das Zeitlimit abgelaufen ist, sondern setzt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> sofort auf einen der oben beschriebenen Werte und fährt mit der Ausführung des Skripts fort. Während der Unterbefehl wartet, können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
+<p>Prozesse werden alle 100 Millisekunden überprüft; sobald die Bedingung erfüllt ist, hört der Unterbefehl auf zu warten. Mit anderen Worten, der Unterbefehl wartet nicht, bis das Zeitlimit abgelaufen ist, sondern setzt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> sofort auf einen der oben beschriebenen Werte und fährt mit der Skriptausführung fort. Während der Unterbefehl wartet, können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
 
 <h3 id="WaitClose">WaitClose</h3>
 <p>Wartet, bis <u>alle</u> gefundenen Prozesse geschlossen sind.</p>
 <pre class="Syntax"><span class="func">Process</span>, WaitClose, PIDOderName <span class="optional">, Zeitlimit</span></pre>
 <p>Geben Sie für <em>Zeitlimit</em> die maximale Wartezeit in Sekunden an (kann einen Dezimalpunkt enthalten). Wenn <em>Zeitlimit</em> leer ist oder weggelassen wird, wird der Unterbefehl unendlich lang warten. Wenn alle gefundenen Prozesse geschlossen sind, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 0 gesetzt. Wenn der Unterbefehl das Zeitlimit überschreitet, wird ErrorLevel auf die Prozess-ID (PID) des ersten gefundenen, noch existierenden Prozesses gesetzt.</p>
-<p>Prozesse werden alle 100 Millisekunden überprüft; sobald die Bedingung erfüllt ist, hört der Unterbefehl auf zu warten. Mit anderen Worten, der Unterbefehl wartet nicht, bis das Zeitlimit abgelaufen ist, sondern setzt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> sofort auf einen der oben beschriebenen Werte und fährt mit der Ausführung des Skripts fort. Während der Unterbefehl wartet, können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
+<p>Prozesse werden alle 100 Millisekunden überprüft; sobald die Bedingung erfüllt ist, hört der Unterbefehl auf zu warten. Mit anderen Worten, der Unterbefehl wartet nicht, bis das Zeitlimit abgelaufen ist, sondern setzt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> sofort auf einen der oben beschriebenen Werte und fährt mit der Skriptausführung fort. Während der Unterbefehl wartet, können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
 
 <h2 id="ErrorLevel">ErrorLevel</h2>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn ein Unterbefehl fehlgeschlagen ist oder das Zeitlimit überschritten hat. Andernfalls wird es auf eine Prozess-ID (PID) gesetzt. Schauen Sie sich die obigen Unterbefehle an, um mehr zu erfahren.</p>
@@ -83,22 +84,22 @@
 <p><a class="ex_number" href="#ExBasic"></a> Startet Notepad, setzt seine Priorität auf Hoch und meldet seine aktuelle PID.</p>
 <pre>Run notepad.exe,,, NeuePID
 Process, Priority, %NeuePID%, High
-MsgBox Die neu gestartete Notepad-PID ist %NeuePID%.</pre>
+MsgBox Die neue Notepad-PID ist %NeuePID%.</pre>
 </div>
 
 <div class="ex" id="ExAdvanced">
-<p><a class="ex_number" href="#ExAdvanced"></a> Wartet, bis ein Notepad-Prozess erscheint. Wenn einer innerhalb von 5,5 Sekunden erscheint, wird seine Priorität auf Niedrig und die Priorität des Skripts auf Hoch gesetzt.</p>
+<p><a class="ex_number" href="#ExAdvanced"></a> Wartet, bis ein Notepad-Prozess erscheint. Wenn einer innerhalb von 5,5 Sekunden erscheint, wird seine Priorität auf Niedrig und die Priorität des Skripts auf Hoch gesetzt. Danach wird versucht, den Prozess innerhalb von 5 Sekunden zu beenden.</p>
 <pre>Process, Wait, notepad.exe, 5.5
 NeuePID := ErrorLevel  <em>; Den Wert sofort speichern, da ErrorLevel ständig geändert wird.</em>
 if not NeuePID
 {
-    MsgBox Der angegebene Prozess ist innerhalb der 5.5 Sekunden nicht erschienen.
+    MsgBox Der Prozess ist nicht innerhalb von 5.5 Sekunden erschienen.
     return
 }
 <em>; Andernfalls:</em>
 MsgBox Es ist ein passender Prozess erschienen (Prozess-ID ist %NeuePID%).
 Process, Priority, %NeuePID%, Low
-Process, Priority,, High  <em>; Das Skript sich selbst auf hohe Priorität setzen lassen.</em>
+Process, Priority,, High  <em>; Das Skript selbst auf hohe Priorität setzen.</em>
 WinClose Unbenannt - Editor
 Process, WaitClose, %NeuePID%, 5
 if ErrorLevel <em>; Die PID existiert noch.</em>
@@ -188,6 +189,23 @@ MsgBox, 0, %c% Prozesse, %l%</pre>
 for Prozess in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process")
     LV_Add("", Prozess.Name, Prozess.CommandLine)
 Gui, Show,, Prozessliste</pre>
+</div>
+
+<div class="ex" id="ExCloseAll">
+<p><a class="ex_number" href="#ExCloseAll"></a> Erzwingt die Schließung <u>aller</u> gefundenen Prozesse.</p>
+<pre>ProcessCloseAll(PIDOderName)
+{
+    Loop {
+        Process, Close, % PIDOderName
+        Process, Exist, % PIDOderName  <em>; Verbessert in einigen Fällen die Zuverlässigkeit.</em>
+    } Until not ErrorLevel
+}
+
+<em>; Beispiel:</em>
+Loop 3
+    Run, notepad.exe
+Sleep 3000
+ProcessCloseAll("notepad.exe")</pre>
 </div>
 
 </body>

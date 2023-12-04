@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>Send - Syntax &amp; Verwendung | AutoHotkey</title>
+<title>Send - Syntax &amp; Verwendung | AutoHotkey v1</title>
 <meta name="description" content="Die Befehle Send, SendRaw, SendInput, SendPlay und SendEvent senden simulierte Tastendrücke und Mausklicks an das aktive Fenster." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -97,14 +97,14 @@
 <h3 id="Text">Text-Modus <span class="ver">[v1.1.27+]</span></h3>
 <p id="SendText">Der Text-Modus kann mit <code>{Text}</code> aktiviert werden und bewirkt dasselbe wie der Raw-Modus, allerdings ohne den Versuch, Zeichen (außer <code>`r</code>, <code>`n</code>, <code>`t</code> und <code>`b</code>) in Tastencodes umzuwandeln; stattdessen wird für alle übrigen Zeichen die <a href="#fallback">Fallback-Methode</a> angewendet. Dies verbessert die Zuverlässigkeit von SendEvent, SendInput und <a href="ControlSend.htm">ControlSend</a>, da die Zeichen kaum noch vom korrekten Modifikatorstatus abhängig sind. Dieser Modus kann mit dem Blind-Modus kombiniert werden, um das Loslassen von Modifikatortasten zu vermeiden: <code>Send {Blind}{Text}Ihr Text</code>. Einige Anwendungen erfordern jedoch, dass Modifikatortasten losgelassen werden.</p>
 <p><code>`n</code>, <code>`r</code> und <code>`r`n</code> werden in einen einzelnen <kbd>Enter</kbd>-Tastendruck übersetzt, im Gegensatz zum Standardverhalten und dem Raw-Modus, wo <code>`r`n</code> in zwei <kbd>Enter</kbd>-Tastendrücke übersetzt wird. <code>`t</code> wird in <kbd>Tab</kbd> und <code>`b</code> in <kbd>Backspace</kbd> übersetzt, während alle anderen Zeichen ohne Übersetzung gesendet werden.</p>
-<p><span class="ver">[v1.1.29+]</span>: Der Text-Modus ignoriert, wie der Blind-Modus auch, <a href="SetStoreCapslockMode.htm">SetStoreCapsLockMode</a> (d.h. der Status der <kbd>Feststell</kbd>-Taste wird nicht geändert) und wartet nicht auf <a href="../Hotkeys.htm#win-l">das Loslassen von <kbd>Win</kbd></a>. Der Grund dafür ist, dass der Text-Modus in der Regel nicht vom Status der <kbd>Feststell</kbd>-Taste abhängig ist und nicht den systeminternen <kbd>Win</kbd>+<kbd>L</kbd>-Hotkey auslösen kann. Dies gilt jedoch nur, wenn <em>Tasten</em> mit <code>{Text}</code> oder <code>{Blind}{Text}</code> beginnt.</p>
+<p><span class="ver">[v1.1.29+]</span>: Wie der Blind-Modus ignoriert auch der Text-Modus <a href="SetStoreCapsLockMode.htm">SetStoreCapsLockMode</a> (d.h. der Status von <kbd>Feststell</kbd> bleibt unverändert) und wartet nicht auf <a href="../Hotkeys.htm#win-l">das Loslassen von <kbd>Win</kbd></a>. Der Grund dafür ist, dass der Text-Modus in der Regel nicht vom Status von <kbd>Feststell</kbd> abhängig ist und nicht den systeminternen <kbd>Win</kbd>+<kbd>L</kbd>-Hotkey auslösen kann. Dies gilt jedoch nur, wenn <em>Tasten</em> mit <code>{Text}</code> oder <code>{Blind}{Text}</code> beginnt.</p>
 
 <h3 id="Blind">Blind-Modus</h3>
 <p id="blind">Der Blind-Modus kann mit <code>{Blind}</code> aktiviert werden und gibt dem Skript mehr Kontrolle, indem eine Reihe von Dingen deaktiviert werden, die normalerweise automatisch vorgenommen werden, damit die Dinge wie erwartet funktionieren. <code>{Blind}</code> muss das erste Element in der Zeichenkette sein, um den Blind-Modus zu aktivieren. Dieser Modus hat die folgenden Auswirkungen:</p>
 <ul>
   <li>Der Blind-Modus verhindert, dass nach unten gedrückte Modifikatortasten (Alt, Strg, Umschalt und Win) wieder automatisch losgelassen werden. Zum Beispiel würde der Hotkey <code>+s::Send {Blind}abc</code> ABC statt abc senden, wenn der Benutzer <kbd>Umschalt</kbd> gedrückt hält.</li>
   <li>Modifikatortasten werden auf andere Weise wiederhergestellt, damit ein Send die Modifikatoren eines Hotkeys ausschalten kann, auch dann, wenn der Benutzer sie physisch noch gedrückt hält. Zum Beispiel bewirkt <code>^space::Send {Ctrl up}</code>, dass <kbd>Strg</kbd> automatisch wieder nach unten gedrückt wird, wenn der Benutzer <kbd>Strg</kbd> noch physisch gedrückt hält, während <code>^space::Send {Blind}{Ctrl up}</code> zulässt, dass <kbd>Strg</kbd> logisch oben ist, obwohl es physisch unten ist.</li>
-  <li><a href="SetStoreCapslockMode.htm">SetStoreCapslockMode</a> wird ignoriert, d.h. der Status von <kbd>Feststell</kbd> bleibt unverändert.</li>
+  <li><a href="SetStoreCapsLockMode.htm">SetStoreCapsLockMode</a> wird ignoriert, d.h. der Status von <kbd>Feststell</kbd> bleibt unverändert.</li>
   <li><a href="_MenuMaskKey.htm">Menü-Maskierung</a> ist deaktiviert. Das bedeutet, dass Send die zusätzlichen Tastendrücke ignoriert, die sonst gesendet werden würden, um Folgendes zu verhindern: 1) Öffnen des Startmenüs beim Drücken einer Win-Taste (LWin/RWin); 2) Aktivierung der Menüleiste beim Drücken einer Alt-Taste. Der Blind-Modus verhindert jedoch nicht die Maskierung durch den Tastatur-Hook nach Aktivierung einer Hook-Taste.</li>
   <li>Send wartet nicht auf das Loslassen von <kbd>Win</kbd>, auch dann nicht, wenn der Text einen <kbd>L</kbd>-Tastendruck enthält. Dies geschieht normalerweise, um zu verhindern, dass Send den System-Hotkey "Arbeitsplatz sperren" (<kbd>Win</kbd>+<kbd>L</kbd>) auslöst. Weitere Informationen finden Sie unter <a href="../Hotkeys.htm#win-l">Hotkeys</a>.</li>
 </ul>
@@ -209,7 +209,7 @@
   </tr>
   <tr>
     <td>{CapsLock}</td>
-    <td><kbd>Feststell</kbd> (in Win 2k/XP ist <a href="SetNumScrollCapsLockState.htm">SetCapsLockState</a> zuverlässiger). Zum Senden von {CapsLock} ist möglicherweise vorher <code><a href="SetStoreCapslockMode.htm">SetStoreCapsLockMode</a> Off</code> erforderlich.</td>
+    <td><kbd>Feststell</kbd> (in Win 2k/XP ist <a href="SetNumScrollCapsLockState.htm">SetCapsLockState</a> zuverlässiger). Zum Senden von {CapsLock} ist möglicherweise vorher <code><a href="SetStoreCapsLockMode.htm">SetStoreCapsLockMode</a> Off</code> erforderlich.</td>
   </tr>
   <tr>
     <td>{ScrollLock}</td>
@@ -558,7 +558,7 @@ Send {Tab up}  <em>; Taste loslassen.</em></pre>
 <p>Obwohl SendPlay LWin- und RWin-Ereignisse senden kann, werden diese direkt an das aktive Fenster gesendet, anstatt ihre native Systemfunktion auszuführen. Um das zu umgehen, verwenden Sie <a href="#SendEvent">SendEvent</a>. Zum Beispiel bewirkt <code>SendEvent #r</code>, dass das Ausführen-Dialogfenster des Startmenüs angezeigt wird.</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="SendMode.htm">SendMode</a>, <a href="SetKeyDelay.htm">SetKeyDelay</a>, <a href="SetStoreCapslockMode.htm">SetStoreCapsLockMode</a>, <a href="../misc/EscapeChar.htm">Escapesequenzen (z.B. `%)</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="BlockInput.htm">BlockInput</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="WinActivate.htm">WinActivate</a></p>
+<p><a href="SendMode.htm">SendMode</a>, <a href="SetKeyDelay.htm">SetKeyDelay</a>, <a href="SetStoreCapsLockMode.htm">SetStoreCapsLockMode</a>, <a href="../misc/EscapeChar.htm">Escapesequenzen (z.B. `%)</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="BlockInput.htm">BlockInput</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="WinActivate.htm">WinActivate</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">

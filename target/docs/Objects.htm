@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>Objekte - Definition &amp; Verwendung | AutoHotkey</title>
+<title>Objekte - Definition &amp; Verwendung | AutoHotkey v1</title>
 <meta name="description" content="Erfahren Sie mehr über die grundlegende Verwendung von Objekten, die erweiterte Verwendung von Objekten, benutzerdefinierte Objekte, Standardbasisobjekte und die Implementierung von Objekten." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -42,7 +42,7 @@ ul.list_of_p li { margin: 1em 0; }
 
 <h2 id="toc">Inhaltsverzeichnis</h2>
 <ul>
-  <li><a href="#Usage">Grundlegende Verwendung</a> - <a href="#Usage_Simple_Arrays">Einfache Arrays</a>, <a href="#Usage_Associative_Arrays">Assoziative Arrays</a>, <a href="#Usage_Objects">Objekte</a>, <a href="#Usage_Freeing_Objects">Freigeben von Objekten</a>, <a href="#Usage_Remarks">Bemerkungen</a></li>
+  <li><a href="#Usage">Grundlegende Verwendung</a> - <a href="#Usage_Simple_Arrays">Einfache Arrays</a>, <a href="#Usage_Associative_Arrays">Assoziative Arrays</a>, <a href="#Usage_Objects">Objekte</a>, <a href="#Usage_Freeing_Objects">Objekte freigeben</a>, <a href="#Usage_Remarks">Bemerkungen</a></li>
   <li><a href="#Extended_Usage">Erweiterte Verwendung</a> - <a href="#Function_References">Funktionsreferenzen</a>, <a href="#Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</a>, <a href="#Usage_Arrays_of_Functions">Arrays mit Funktionen</a></li>
   <li><a href="#Custom_Objects">Benutzerdefinierte Objekte</a> - <a href="#Custom_Prototypes">Prototypen</a>, <a href="#Custom_Classes">Klassen</a>, <a href="#Custom_NewDelete">Konstruktion und Destruktion</a>, <a href="#Meta_Functions">Metafunktionen</a></li>
   <li><a href="#Default_Base_Object">Standardbasisobjekt</a> - <a href="#Automatic_Var_Init">Automatische Variableninitialisierung</a>, <a href="#Pseudo_Properties">Pseudo-Eigenschaften</a>, <a href="#Default__Warn">Debugging</a></li>
@@ -114,7 +114,7 @@ Objekt.Eigenschaft[Params] := Wert</pre>
 <p><b>Bekannte Einschränkung:</b></p>
 <ul><li>Derzeit wird <code><span class="dull">x</span>.y[z]<span class="dull">()</span></code> wie <code><span class="dull">x</span>["y", z]<span class="dull">()</span></code> behandelt, aber nicht unterstützt. Als Workaround kann <code><span class="red">(</span><span class="dull">x.y</span><span class="red">)</span>[z]()</code> verwendet werden, um zuerst <code>x.y</code> auswerten zu lassen und dann das Ergebnis als Ziel des Methodenaufrufs zu verwenden. Beachten Sie, dass <code>x.y[z].Call()</code> diese Einschränkung nicht hat, da es genauso wie <code>(x.y[z]).Call()</code> ausgewertet wird.</li></ul>
 
-<h3 id="Usage_Freeing_Objects">Freigeben von Objekten</h3>
+<h3 id="Usage_Freeing_Objects">Objekte freigeben</h3>
 <p>Skripte geben Objekte nicht explizit frei. Sobald die letzte Referenz zu einem Objekt freigegeben ist, wird das Objekt automatisch freigegeben. Eine Referenz, die in einer Variable gespeichert ist, wird automatisch freigegeben, sobald dieser Variable ein anderer Wert zugewiesen wird. Zum Beispiel:</p>
 <pre>obj := {}  <em>; Erstellt ein Objekt.</em>
 obj := ""  <em>; Gibt die letzte Referenz frei, wodurch das Objekt freigegeben wird.</em></pre>
@@ -139,7 +139,7 @@ x := "", y := ""             <em>; Ohne die obige Zeile würde dies die Objekte 
 <p>Außerdem können Objektreferenzen selbst in Ausdrücken verwendet werden:</p>
 <ul>
   <li>Beim Vergleich einer Objektreferenz mit einem anderen Wert via <code>=</code>, <code>==</code>, <code>!=</code> oder <code>&lt;&gt;</code> werden diese nur dann als gleich gewertet, wenn beide Werte auf dasselbe Objekt verweisen.</li>
-  <li>Objekte werden immer als <i>True</i> behandelt, wenn ein boolescher Wert erforderlich ist, wie z. B. in <code>if obj</code>, <code>!obj</code> oder <code>obj ? x : y</code>.</li>
+  <li>Objekte werden immer als <i>True</i> behandelt, wenn ein boolescher Wert erforderlich ist, wie z.B. in <code>if obj</code>, <code>!obj</code> oder <code>obj ? x : y</code>.</li>
   <li>Eine Objektadresse kann mit dem <code>&amp;</code>-Operator abgerufen werden. Dies identifiziert eindeutig das Objekt, vom Zeitpunkt seiner Erstellung bis zum Zeitpunkt der <a href="#Refs">Freigabe</a> seiner letzten Referenz.</li>
 </ul>
 <p>Wenn ein Objekt in einem Kontext verwendet wird, wo kein Objekt erwartet wird, wird es als leere Zeichenkette behandelt. Zum Beispiel bewirkt <code>MsgBox %Objekt%</code>, dass ein leeres Mitteilungsfenster angezeigt wird, und <code>Objekt + 1</code>, dass eine leere Zeichenkette zurückgegeben wird. Verlassen Sie sich nicht auf dieses Verhalten, da es sich in einer zukünftigen Version ändern kann.</p>
@@ -147,7 +147,7 @@ x := "", y := ""             <em>; Ohne die obige Zeile würde dies die Objekte 
 <pre>obj.item(x) := y
 obj.item[x] := y</pre>
 <p id="cassign">Verbundzuweisungen wie <code>x.y += 1</code> und <code>--arr[1]</code> werden unterstützt.</p>
-<p><span class="ver">[v1.1.20+]</span>: Parameter können beim Abrufen oder Setzen von Eigenschaften weggelassen werden. Zum Beispiel <code>x[,2]</code>. Skripte können damit Standardwerte für Parameter in <a href="#Custom_Classes_property">Eigenschaften</a> und <a href="#Meta_Functions">Metafunktionen</a> definieren. Der Methodenname kann zudem komplett weggelassen werden, wie z.B. in <code>x[](a)</code>. Skripte können damit einen Standardwert für den ersten Parameter der __Call-<a href="#Meta_Functions">Metafunktion</a> definieren, um zu verhindern, dass dieser ohne Wert übergeben wird. Beachten Sie, dass sich dies von <code>x.(a)</code> unterscheidet, das äquivalent zu <code>x[""](a)</code> ist. Wenn beim Aufruf eines COM-Objekts der Eigenschafts- oder Methodenname weggelassen wird, wird dessen "Standardelement" automatisch aufgerufen.</p>
+<p><span class="ver">[v1.1.20+]</span>: Parameter können beim Abrufen oder Setzen von Eigenschaften weggelassen werden. Zum Beispiel <code>x[,2]</code>. Skripte können damit Standardwerte für Parameter in <a href="#Custom_Classes_property">Eigenschaften</a> und <a href="#Meta_Functions">Metafunktionen</a> definieren. Der Methodenname kann zudem komplett weggelassen werden, wie z.B. in <code>x[](a)</code>. Skripte können damit einen Standardwert für den ersten Parameter der __Call-<a href="#Meta_Functions">Metafunktion</a> definieren, um zu verhindern, dass dieser ohne Wert übergeben wird. Beachten Sie, dass sich dies von <code>x.(a)</code> unterscheidet, das äquivalent zu <code>x[""](a)</code> ist. Wenn beim Aufruf eines COM-Objekts der Eigenschafts- oder Methodenname weggelassen wird, wird dessen "Standardelement" indirekt aufgerufen.</p>
 
 <h4 id="Keys">Schlüssel (Keys)</h4>
 <p>Es gibt einige Einschränkungen, welche Werte als Schlüssel innerhalb von Objekten, die mit <code>[]</code>, <code>{}</code> oder dem <code>new</code>-Operator erstellt wurden, verwendet werden können:</p>
@@ -180,7 +180,7 @@ Tabelle[x, y] := Inhalt  <em>; B</em></pre>
 <p>Wenn <code>Tabelle[x]</code> nicht existiert, unterscheiden sich <span class="Code"><em>A</em></span> und <span class="Code"><em>B</em></span> wie folgt:</p>
 <ul>
   <li><span class="Code"><em>A</em></span> schlägt fehl, während <span class="Code"><em>B</em></span> automatisch ein Objekt erstellt und in <code>Tabelle[x]</code> speichert.</li>
-  <li>Wenn die <a href="#Custom_Objects">Basis</a> von <code>Tabelle</code> <a href="#Meta_Functions">Metafunktionen</a> definiert, werden diese wie folgt automatisch aufgerufen:
+  <li>Wenn die <a href="#Custom_Objects">Basis</a> von <code>Tabelle</code> <a href="#Meta_Functions">Metafunktionen</a> definiert, werden diese wie folgt indirekt aufgerufen:
   <pre>Tabelle.base.__Get(Tabelle, x)<span class="dull">[y] := Inhalt</span>   <em>; A</em>
 Tabelle.base.__Set(Tabelle, x, y, Inhalt)     <em>; B</em></pre>
   Folglich erlaubt <span class="Code"><em>B</em></span> dem Objekt, ein benutzerdefiniertes Verhalten für die gesamte Zuweisung zu definieren.</li>
@@ -191,7 +191,7 @@ Tabelle.base.__Set(Tabelle, x, y, Inhalt)     <em>; B</em></pre>
   <li>Im Objekt nach dem ersten Schlüssel in der Liste suchen.</li>
   <li>Wenn ein Nicht-Objekt gefunden wird, fehlschlagen.</li>
   <li>Wenn kein Objekt gefunden wird, eines erstellen und speichern.</li>
-  <li>Das Unterobjekt rekursiv automatisch aufrufen und dabei die restlichen Schlüssel und den Wert übergeben - von vorne beginnen.</li>
+  <li>Das Unterobjekt rekursiv indirekt aufrufen und dabei die restlichen Schlüssel und den Wert übergeben - von vorne beginnen.</li>
 </ul>
 <p>Dieses Verhalten gilt nur für Objekte, die per Skript erstellt wurden, nicht für spezielle Objekttypen wie COM-Objekte oder COM-Arrays.</p>
 
@@ -244,7 +244,7 @@ obj.test()
 obj_test(this) {
     MsgBox % this.foo
 }</pre>
-<p>Beim Aufruf von <code>obj.test()</code> wird <i>obj</i> automatisch an den Anfang der Parameterliste gesetzt. Allerdings geschieht dies aus Gründen der Abwärtskompatibilität nicht, wenn eine Funktion direkt per Name (statt per Referenz) in das Objekt gespeichert wird (statt von einem Basisobjekt geerbt zu werden). Konventionsgemäß setzt sich der Name der Funktion aus folgenden Komponenten zusammen: dem "Typ" des Objekts und dem Namen der Methode.</p>
+<p>Beim Aufruf von <code>obj.test()</code> wird <i>obj</i> automatisch an den Anfang der Parameterliste gesetzt. Allerdings geschieht dies aus Gründen der Abwärtskompatibilität nicht, wenn eine Funktion direkt per Name (statt per Referenz) in das Objekt gespeichert wird (statt von einem Basisobjekt geerbt zu werden). Konventionsgemäß setzt sich der Name der Funktion aus dem "Typ" des Objekts und dem Namen der Methode zusammen.</p>
 <p>Ein Objekt gilt als <i>Prototyp</i> oder <i>Basis</i>, wenn ein anderes Objekt von ihm ableitet:</p>
 <pre>anderesObj := {}
 anderesObj.base := obj
@@ -316,9 +316,9 @@ Methode()
 }
 </pre>
 
-<p id="Custom_Classes_base">Innerhalb einer Methode kann das Pseudoschlüsselwort <code>base</code> verwendet werden, um auf Superklassenversionen von Methoden oder Eigenschaften zuzugreifen, die in einer abgeleiteten Klasse überschrieben werden. Zum Beispiel würde <code>base.Methode()</code> in der oben definierten Klasse bewirken, dass eine Version von <em>Methode</em> aufgerufen wird, die durch <em>BasisklasseName</em> definiert ist. <a href="#Meta_Functions">Metafunktionen</a> werden nicht aufgerufen; andernfalls verhält sich <code>base.Methode()</code> wie <code>BaseKlasseName.Methode.Call(this)</code>. Das heißt,</p>
+<p id="Custom_Classes_base">Innerhalb einer Methode kann das Pseudoschlüsselwort <code>base</code> verwendet werden, um auf Superklassenversionen von Methoden oder Eigenschaften zuzugreifen, die in einer abgeleiteten Klasse überschrieben werden. Zum Beispiel würde <code>base.Methode()</code> in der oben definierten Klasse eine Version von <em>Methode</em> aufrufen, die durch <em>BasisklasseName</em> definiert ist. <a href="#Meta_Functions">Metafunktionen</a> werden nicht aufgerufen; andernfalls verhält sich <code>base.Methode()</code> wie <code>BaseKlasseName.Methode.Call(this)</code>. Das heißt,</p>
 <ul>
-  <li>dass <code>base.Methode()</code> immer dort die Basis der Klasse automatisch aufruft, wo die aktuelle Methode definiert wurde, auch dann, wenn <code>this</code> von einer <em>Unterklasse</em> dieser Klasse oder von einer ganz anderen Klasse abgeleitet wurde.</li>
+  <li>dass <code>base.Methode()</code> immer dort die Basis der Klasse indirekt aufruft, wo die aktuelle Methode definiert wurde, auch dann, wenn <code>this</code> von einer <em>Unterklasse</em> dieser Klasse oder von einer ganz anderen Klasse abgeleitet wurde.</li>
   <li>dass <code>base.Methode()</code> implizit <code>this</code> als ersten (versteckten) Parameter übergibt.</li>
 </ul>
 <p><code>base</code> hat nur eine besondere Bedeutung, wenn dahinter ein Punkt <code>.</code> oder eine eckige Klammer <code>[]</code> steht, daher wird so etwas wie <code>obj := base, obj.Methode()</code> nicht funktionieren. Skripte können das spezielle Verhalten von <i>base</i> deaktivieren, indem sie diesem einen nicht-leeren Wert zuweisen; dies wird jedoch nicht empfohlen. Da die Variable <i>base</i> leer sein muss, kann die Leistung beeinträchtigt sein, wenn das Skript ohne <a href="lib/_NoEnv.htm">#NoEnv</a> verwendet wird.</p>
@@ -334,9 +334,9 @@ Methode()
         return ... := value
     }
 }</pre>
-<p><em>Eigenschaft</em> ist der Name der Eigenschaft, der für ihren automatischen Aufruf verwendet wird. Zum Beispiel bewirkt <code>obj.Eigenschaft</code>, dass <em>get</em> aufgerufen wird, und <code>obj.Eigenschaft := Wert</code>, dass <em>set</em> aufgerufen wird. Innerhalb von <em>get</em> oder <em>set</em> bezieht sich <code>this</code> auf das Objekt, das gerade automatisch aufgerufen wird. Innerhalb von <em>set</em> enthält <code>value</code> den Wert, der gerade zugewiesen wird.</p>
+<p><em>Eigenschaft</em> ist der Name der Eigenschaft, der für ihren indirekten Aufruf verwendet wird. Zum Beispiel bewirkt <code>obj.Eigenschaft</code>, dass <em>get</em> aufgerufen wird, und <code>obj.Eigenschaft := Wert</code>, dass <em>set</em> aufgerufen wird. Innerhalb von <em>get</em> oder <em>set</em> bezieht sich <code>this</code> auf das Objekt, das gerade indirekt aufgerufen wird. Innerhalb von <em>set</em> enthält <code>value</code> den Wert, der gerade zugewiesen wird.</p>
 <p>Parameter können übergeben werden, indem sie in eckige Klammern rechts vom Eigenschaftsnamen gesetzt werden, sowohl bei der Definition der Eigenschaft als auch bei ihrem Aufruf. Abgesehen von der Verwendung eckiger Klammern werden die Parameter von Eigenschaften genauso definiert wie die Parameter von Methoden - optionale, variadische und ByRef-Parameter werden unterstützt.</p>
-<p>Der Rückgabewert von <em>get</em> oder <em>set</em> ist das Ergebnis eines Teilausdrucks, der die Eigenschaft automatisch aufgerufen hat. Zum Beispiel speichert <code>Wert := obj.Eigenschaft := 42</code> den Rückgabewert von <em>set</em> in <code>Wert</code>.</p>
+<p>Der Rückgabewert von <em>get</em> oder <em>set</em> ist das Ergebnis eines Teilausdrucks, der die Eigenschaft indirekt aufgerufen hat. Zum Beispiel speichert <code>Wert := obj.Eigenschaft := 42</code> den Rückgabewert von <em>set</em> in <code>Wert</code>.</p>
 <p>Jede Klasse kann eine oder beide Hälften einer Eigenschaft definieren. Wenn eine Klasse eine Eigenschaft überschreibt, kann sie <code><a href="#Custom_Classes_base">base.Eigenschaft</a></code> verwenden, um auf die von ihrer Basisklasse definierte Eigenschaft zuzugreifen. Wenn <em>get</em> oder <em>set</em> nicht definiert ist, kann es von einer Basisklasse behandelt werden. Wenn <em>set</em> nicht definiert ist und nicht von einer Metafunktion oder Basisklasse behandelt wird, speichert die Zuweisung eines Wertes diesen in das Objekt, wodurch die Eigenschaft effektiv deaktiviert wird.</p>
 <p>Intern sind <em>get</em> und <em>set</em> zwei separate Methoden, die keine Variablen gemeinsam nutzen können (es sei denn, sie werden in <code>this</code> gespeichert).</p>
 <p><a href="#Meta_Functions">Metafunktionen</a> bieten eine größere Auswahl an Möglichkeiten für den kontrollierten Zugriff auf Eigenschaften und Methoden eines Objekts, sind jedoch komplizierter und fehleranfälliger.</p>
@@ -353,13 +353,13 @@ class GMem
         this.ptr := DllCall("GlobalAlloc", "UInt", aFlags, "Ptr", aGröße, "Ptr")
         if !this.ptr
             return ""
-        MsgBox % "Neues GMem mit einer Größe von " aGröße " Bytes auf der Adresse " this.ptr "."
+        MsgBox % "Neues GMem von " aGröße " Bytes auf Adresse " this.ptr "."
         return this  <em>; Diese Zeile kann weggelassen werden, wenn der Operator 'new' verwendet wird.</em>
     }
 
     __Delete()
     {
-        MsgBox % "GMem auf der Adresse " this.ptr " gelöscht."
+        MsgBox % "GMem auf Adresse " this.ptr " löschen."
         DllCall("GlobalFree", "Ptr", this.ptr)
     }
 }</pre>
@@ -385,18 +385,18 @@ class <i>KlasseName</i> {
 
 <i>KlasseName</i> := { __Get: Func("<i>MeinGet</i>"), __Set: Func("<i>MeinSet</i>"), __Call: Func("<i>MeinCall</i>") }
 </pre>
-<p>Metafunktionen definieren, was passieren soll, wenn ein Schlüssel angefordert, aber nicht im Zielobjekt gefunden wird. Wenn z.B. <code>obj.Schlüssel</code> keinen Wert zugewiesen bekommen hat, ruft es automatisch die <i>__Get</i>-Metafunktion auf. <code>obj.Schlüssel := Wert</code> bewirkt dagegen den automatischen Aufruf von <i>__Set</i> und <code>obj.Schlüssel()</code> den automatischen Aufruf von <i>__Call</i>. Diese Metafunktionen (oder Methoden) müssten in <code>obj.base</code>, <code>obj.base.base</code> oder ähnlichem definiert werden.</p>
+<p>Metafunktionen definieren, was passieren soll, wenn ein Schlüssel angefordert, aber nicht im Zielobjekt gefunden wird. Wenn z.B. <code>obj.Schlüssel</code> keinen Wert zugewiesen bekommen hat, ruft es indirekt die <i>__Get</i>-Metafunktion auf. <code>obj.Schlüssel := Wert</code> bewirkt dagegen den indirekten Aufruf von <i>__Set</i> und <code>obj.Schlüssel()</code> den indirekten Aufruf von <i>__Call</i>. Diese Metafunktionen (oder Methoden) müssten in <code>obj.base</code>, <code>obj.base.base</code> oder ähnlichem definiert werden.</p>
 <p>Metafunktionen werden in der Regel wie Methoden definiert, folgen aber nicht den gleichen Regeln (es sei denn, sie werden explizit vom Skript aufgerufen). Sie müssen in einem Basisobjekt definiert werden; eine Definition im Zielobjekt selbst wird ignoriert. Jede auf das Zielobjekt anwendbare Definition von __Get, __Set und __Call wird automatisch gemäß den folgenden Regeln aufgerufen und sollte nicht <code>base.__Get(Schlüssel)</code> oder ähnlich aufrufen. <a href="#Custom_NewDelete">__New</a> und <a href="#Custom_NewDelete">__Delete</a> müssen in einem Basisobjekt definiert werden, verhalten sich aber ansonsten wie Methoden.</p>
 <p class="note"><strong>Hinweis:</strong> AutoHotkey v2 ersetzt Metafunktionen mit konventionelleren Methoden.</p>
-<p>Wenn das Skript einen nicht vorhandenen Schlüssel im Zielobjekt abruft (get), setzt (set) oder aufruft (call), wird das Basisobjekt wie folgt automatisch aufgerufen:</p>
+<p>Wenn das Skript einen nicht vorhandenen Schlüssel im Zielobjekt abruft (get), setzt (set) oder aufruft (call), wird das Basisobjekt wie folgt indirekt aufgerufen:</p>
 <ul class="list_of_p">
   <li>Wenn dieses Basisobjekt die entsprechende Metafunktion definiert, diese aufrufen. Wenn die Metafunktion etwas explizit via <code>return</code> zurückgibt, den Rückgabewert als Ergebnis der Operation verwenden (was auch immer den Aufruf der Metafunktion verursacht hat) und die Kontrolle an das Skript zurückgeben. Andernfalls wie unten beschrieben fortfahren.
     <p><i>Set</i>: Wenn die Metafunktion eine Zuweisung behandelt hat, sollte sie den zugewiesenen Wert zurückgeben. Auf diese Weise können Zuweisungen verkettet werden, wie in <code>a.x := b.y := z</code>. Der Rückgabewert kann vom ursprünglichen Wert <code>z</code> abweichen (z.B. wenn Einschränkungen auferlegt wurden, welche Werte zugewiesen werden können).</p></li>
   <li>Nach einem passenden Schlüssel in den Feldern des Basisobjekts suchen.</li>
-  <li><span class="ver">[v1.1.16+]</span>: Wenn ein Schlüssel, der zu einer Eigenschaft gehört, gefunden wurde und <em>get</em> oder <em>set</em> implementiert (falls zutreffend), die Eigenschaft automatisch aufrufen und zurückkehren. Wenn dies ein Methodenaufruf ist, <em>get</em> automatisch aufrufen.</li>
-  <li>Wenn kein Schlüssel gefunden wurde, die Basis dieses Basisobjekts automatisch und rekursiv aufrufen (dabei jeden dieser Schritte anwenden, beginnend am Anfang der Liste). Wenn wir noch nicht fertig sind, erneut nach einem passenden Schlüssel in diesem Basisobjekt suchen, falls einer via Metafunktion hinzugefügt wurde.
+  <li><span class="ver">[v1.1.16+]</span>: Wenn ein Schlüssel, der zu einer Eigenschaft gehört, gefunden wurde und <em>get</em> oder <em>set</em> implementiert (falls zutreffend), die Eigenschaft indirekt aufrufen und zurückkehren. Wenn dies ein Methodenaufruf ist, <em>get</em> indirekt aufrufen.</li>
+  <li>Wenn kein Schlüssel gefunden wurde, die Basis dieses Basisobjekts indirekt und rekursiv aufrufen (dabei jeden dieser Schritte anwenden, beginnend am Anfang der Liste). Wenn wir noch nicht fertig sind, erneut nach einem passenden Schlüssel in diesem Basisobjekt suchen, falls einer via Metafunktion hinzugefügt wurde.
     <p>Aus Gründen der Abwärtskompatibilität wird dieser Schritt für <em>set</em>-Operationen durchgeführt, selbst wenn ein Schlüssel gefunden wurde (es sei denn, es definiert eine Eigenschaft, die <em>set</em> implementiert).</p></li>
-  <li>Wenn mehrere Parameter für <i>get</i> oder <i>set</i> angegeben wurden und ein Schlüssel gefunden wurde, seinen Wert prüfen. Wenn dieser Wert ein Objekt ist, die restlichen Parameter durch automatischen Aufruf behandeln und nichts weiter unternehmen.</li>
+  <li>Wenn mehrere Parameter für <i>get</i> oder <i>set</i> angegeben wurden und ein Schlüssel gefunden wurde, seinen Wert prüfen. Wenn dieser Wert ein Objekt ist, die restlichen Parameter durch indirekten Aufruf behandeln und nichts weiter unternehmen.</li>
   <li>Wenn ein Schlüssel gefunden wurde,<br>
     <i>Get</i>: Den Wert zurückgeben.<br>
     <i>Call</i>: Den Wert versuchsweise aufrufen und dabei das Zielobjekt als ersten Parameter (<code>this</code>) übergeben. Der Wert sollte ein Funktionsname oder <a href="misc/Functor.htm">Funktionsobjekt</a> sein.</li>
@@ -411,7 +411,7 @@ class <i>KlasseName</i> {
 <p>Wenn die Operation immer noch nicht behandelt wurde,</p>
 <ul>
   <li><i>Get</i> und <i>Call</i>: Eine leere Zeichenkette zurückgeben.</li>
-  <li><i>Set</i>: Wenn nur ein Schlüsselparameter angegeben wurde, den Schlüssel und Wert in das Zielobjekt speichern und den zugewiesenen Wert zurückgeben. Wenn mehrere Parameter angegeben wurden, ein neues Objekt erstellen und speichern, wobei der erste Parameter als Schlüssel verwendet wird, und dann die restlichen Parameter durch automatisches Aufrufen des neuen Objekts behandeln. (Siehe <a href="#Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</a>.)</li>
+  <li><i>Set</i>: Wenn nur ein Schlüsselparameter angegeben wurde, den Schlüssel und Wert in das Zielobjekt speichern und den zugewiesenen Wert zurückgeben. Wenn mehrere Parameter angegeben wurden, ein neues Objekt erstellen und speichern, wobei der erste Parameter als Schlüssel verwendet wird, und dann die restlichen Parameter durch indirekten Aufruf des neuen Objekts behandeln. (Siehe <a href="#Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</a>.)</li>
 
 </ul>
 
@@ -548,7 +548,7 @@ x_Addr(x) {
 </ul>
 
 <h2 id="Default_Base_Object">Standardbasisobjekt</h2>
-<p>Wenn ein Nicht-Objekt-Wert mit der Objektsyntax verwendet wird, wird automatisch das <i>Standardbasisobjekt</i> aufgerufen. Dies kann verwendet werden, um das Skript zu debuggen oder um global objektähnliche Verhaltensweisen für Zeichenketten, Zahlen und/oder Variablen zu definieren. Um auf die Standardbasis zuzugreifen, verwenden Sie <code>.base</code> mit einem Nicht-Objekt-Wert, z.B. <code>"".base</code>. Obwohl die Standardbasis nicht <i>gesetzt</i> werden kann, wie in <code>"".base := Object()</code>, kann die Standardbasis selbst eine Basis haben, wie in <code>"".base.base := Object()</code>.</p>
+<p>Wenn ein Nicht-Objekt-Wert mit der Objektsyntax verwendet wird, wird indirekt das <i>Standardbasisobjekt</i> aufgerufen. Dies kann verwendet werden, um das Skript zu debuggen oder um global objektähnliche Verhaltensweisen für Zeichenketten, Zahlen und/oder Variablen zu definieren. Um auf die Standardbasis zuzugreifen, verwenden Sie <code>.base</code> mit einem Nicht-Objekt-Wert, z.B. <code>"".base</code>. Obwohl die Standardbasis nicht <i>gesetzt</i> werden kann, wie in <code>"".base := Object()</code>, kann die Standardbasis selbst eine Basis haben, wie in <code>"".base.base := Object()</code>.</p>
 
 <h3 id="Automatic_Var_Init">Automatische Variableninitialisierung</h3>
 <p>Wenn eine leere Variable als Ziel einer <i>Set</i>-Operation verwendet wird, wird sie direkt an die __Set-Metafunktion übergeben, was ihr die Möglichkeit gibt, ein neues Objekt in die Variable einzufügen. Aus Platzgründen unterstützt dieses Beispiel nicht mehr als einen Parameter, was aber mit einer <a href="Functions.htm#Variadic">variadischen Funktion</a> möglich wäre.</p>
@@ -588,7 +588,7 @@ Default_is(nonobj, type)
 MsgBox % A_AhkPath.length() " == " StrLen(A_AhkPath)</pre>
 
 <h3 id="Default__Warn">Debugging</h3>
-<p>Wenn es unerwünscht ist, die Behandlung eines Wertes als Objekt zu erlauben, kann eine Warnung angezeigt werden, wann immer ein Nicht-Objekt-Wert automatisch aufgerufen wird:</p>
+<p>Wenn es unerwünscht ist, die Behandlung eines Wertes als Objekt zu erlauben, kann eine Warnung angezeigt werden, wann immer ein Nicht-Objekt-Wert indirekt aufgerufen wird:</p>
 <pre>"".base.__Get := "".base.__Set := "".base.__Call := Func("Default__Warn")
 
 empty_var.foo := "bar"
@@ -597,7 +597,7 @@ x := (1 + 1).is("integer")
 Default__Warn(nonobj, p1="", p2="", p3="", p4="")
 {
     ListLines
-    MsgBox Ein Nicht-Objekt-Wert wurde unsachgemäß automatisch aufgerufen.`n`nSpeziell: %nonobj%
+    MsgBox Ein Nicht-Objekt-Wert wurde unsachgemäß indirekt aufgerufen.`n`nSpeziell: %nonobj%
 }</pre>
 
 <h2 id="Implementation">Implementierung</h2>
@@ -607,7 +607,7 @@ Default__Warn(nonobj, p1="", p2="", p3="", p4="")
 <p>Um Code beim Freigeben der letzten Referenz zu einem Objekt auszuführen, implementieren Sie die <a href="#Custom_NewDelete">__Delete</a>-Metafunktion.</p>
 <p><b>Bekannte Einschränkungen:</b></p>
 <ul>
-  <li>Zirkelbezüge müssen unterbrochen werden, bevor ein Objekt freigegeben werden kann. Weitere Informationen und ein Beispiel finden Sie unter <a href="#Circular_References">Freigeben von Objekten</a>.</li>
+  <li>Zirkelbezüge müssen unterbrochen werden, bevor ein Objekt freigegeben werden kann. Weitere Informationen und ein Beispiel finden Sie unter <a href="#Circular_References">Objekte freigeben</a>.</li>
   <li>Referenzen in statischen und globalen Variablen werden bei Beendigung des Programms automatisch freigegeben. Dies gilt jedoch nicht für Referenzen in nicht-statischen lokalen Variablen oder im Ausdrucksauswertungsstapel. Solche Referenzen werden erst freigegeben, wenn die Funktion oder der Ausdruck regulär beendet werden kann.</li>
 </ul>
 <p>Obwohl das Betriebssystem den vom Objekt belegten Speicher bei Beendigung des Programms zurückfordern wird, wird <a href="#Custom_NewDelete">__Delete</a> erst aufgerufen, wenn alle Referenzen zum Objekt freigegeben wurden. Dies kann wichtig sein, wenn es andere Ressourcen freigibt, die nicht automatisch vom Betriebssystem zurückgefordert werden, wie z.B. temporäre Dateien.</p>

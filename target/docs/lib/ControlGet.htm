@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>ControlGet - Syntax &amp; Verwendung | AutoHotkey</title>
+<title>ControlGet - Syntax &amp; Verwendung | AutoHotkey v1</title>
 <meta name="description" content="Der ControlGet-Befehl ruft verschiedene Arten von Informationen über ein Steuerelement ab." />
 <meta name="ahk:equiv-v2" content="lib/Control.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -28,12 +28,14 @@
   <dt>Steuerelement</dt>
   <dd>
     <p>Wenn leer oder weggelassen, wird das oberste Steuerelement des Zielfensters verwendet. Andernfalls geben Sie entweder die ClassNN-Bezeichnung (Klassenname und Instanznummer des Steuerelements) oder den Text des Steuerelements an, die beide mit dem internen Tool "Window Spy" ermittelt werden können. Wenn Text verwendet wird, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>.</p>
-    <p>Um mit der HWND-Nummer (eindeutigen ID) eines Steuerelements zu arbeiten, lassen Sie den <em>Steuerelement</em>-Parameter leer und übergeben Sie <code>ahk_id %StrlmntHwnd%</code> als <em>FensterTitel</em>-Parameter (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist). Die HWND-Nummer eines Steuerelements kann üblicherweise via <a href="#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall()</a> abgerufen werden.</p>
+    <p>Um mit dem Fensterhandle (HWND) eines Steuerelements zu arbeiten, lassen Sie den <em>Steuerelement</em>-Parameter leer und übergeben Sie <code>ahk_id %StrlmntHwnd%</code> als <em>FensterTitel</em>-Parameter (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist). Die HWND-Nummer eines Steuerelements kann üblicherweise via <a href="#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall()</a> abgerufen werden.</p>
   </dd>
 
   <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
   <dd>
-    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
+    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden).</p>
+    <p><em>AusnahmeTitel</em> und <em>AusnahmeText</em> können verwendet werden, um ein oder mehrere Fenster anhand ihres Titels oder Textes auszuschließen. Ihre Angabe ähnelt der von <em>FensterTitel</em> und <em>FensterText</em>, außer dass <em>AusnahmeTitel</em> keine anderen Kriterien als den Fenstertitel erkennt.</p>
+    <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> und <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig muss ein Fenstertitel mit dem angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> beginnen, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
   </dd>
 </dl>
 
@@ -54,7 +56,7 @@
   <li><a href="#Selected">Selected</a>: Ruft den markierten Text in einem Edit-Steuerelement ab.</li>
   <li><a href="#Style">Style</a>: Ruft den Style des Steuerelements als 8-stellige Hexadezimalzahl ab.</li>
   <li><a href="#ExStyle">ExStyle</a>: Ruft den erweiterten Style des Steuerelements als 8-stellige Hexadezimalzahl ab.</li>
-  <li><a href="#Hwnd">Hwnd</a> <span class="ver">[v1.1.04+]</span>: Ruft die HWND-Nummer (eindeutige ID) des Steuerelements ab.</li>
+  <li><a href="#Hwnd">Hwnd</a> <span class="ver">[v1.1.04+]</span>: Ruft das Fensterhandle (HWND) des Steuerelements ab.</li>
 </ul>
 
 <h3 id="List">List</h3>
@@ -99,15 +101,15 @@
   </tr>
 
 </table>
-<p class="note"><strong>Hinweis:</strong> Einige Anwendungen verhindern absichtlich, dass ihr ListView-Text nicht abgerufen werden kann. In solchen Fällen wird ErrorLevel normalerweise auf 0 gesetzt (was auf Erfolg hinweist), allerdings werden alle Felder abgerufen, als wären sie leer. Beachten Sie auch, dass <a href="_MaxMem.htm">#MaxMem</a> keinen Einfluss darauf hat, wie viel Text aus einer ListView abgerufen werden kann.</p>
-<p>Bei Erfolg wird ErrorLevel auf 0 gesetzt. Bei Misserfolg wird ErrorLevel auf 1 gesetzt und <em>AusgabeVar</em> leer gemacht. Misserfolg tritt auf, wenn: 1) das Zielfenster oder Zielsteuerelement nicht existiert; 2) das Zielsteuerelement nicht vom Typ SysListView32 ist; 3) der Prozess, der die ListView enthält, nicht geöffnet werden konnte, weil er gesperrt ist oder Benutzerrechte fehlen; 4) die <a href="#ColN">Col<em>N</em>-Option</a> auf eine nicht-existierende Spalte verweist.</p>
+<p class="note"><strong>Hinweis:</strong> Einige Anwendungen behandeln die Daten ihrer ListView vertraulich, so dass ihr Text nicht abgerufen werden kann. In solchen Fällen wird ErrorLevel normalerweise auf 0 gesetzt (was auf Erfolg hinweist), aber alle abgerufenen Felder sind leer. Beachten Sie auch, dass <a href="_MaxMem.htm">#MaxMem</a> keinen Einfluss darauf hat, wie viel Text aus einer ListView abgerufen werden kann.</p>
+<p>Bei Erfolg wird ErrorLevel auf 0 gesetzt. Bei Misserfolg wird ErrorLevel auf 1 gesetzt und <em>AusgabeVar</em> leer gemacht. Misserfolg tritt auf, wenn: 1) das Zielfenster oder Zielsteuerelement nicht existiert; 2) das Zielsteuerelement nicht vom Typ SysListView32 ist; 3) der Prozess, der die ListView besitzt, nicht geöffnet werden konnte, z.B. weil Benutzerrechte fehlen oder der Prozess gesperrt ist; 4) die <a href="#ColN">Col<em>N</em>-Option</a> eine nicht-existierende Spalte angibt.</p>
 <p>Das folgende Beispiel zeigt, wie man mit einer <a href="LoopParse.htm">parsenden Schleife</a> einzelne Zeilen und Felder aus einer ListView extrahieren kann:</p>
 <pre>ControlGet, AusgewählteZeilen, List, Selected, SysListView321, <i>FensterTitel</i>
 Loop, Parse, AusgewählteZeilen, `n  <em>; Die Zeilen sind mit LF-Zeichen (`n) getrennt.</em>
 {
     ZeileNummer := A_Index
     Loop, Parse, A_LoopField, %A_Tab%  <em>; Die Felder (Spalten) jeder Zeile sind mit Tabulatorzeichen (A_Tab) getrennt.</em>
-        MsgBox Zeile #%ZeileNummer% Spalte #%A_Index% enthält %A_LoopField%.
+        MsgBox Zeile Nr. %ZeileNummer% Spalte Nr. %A_Index% enthält %A_LoopField%.
 }</pre>
 <p>Es ist auch möglich, mit <a href="PostMessage.htm">SendMessage</a> die Spalten einer ListView kleiner/größer zu machen. Zum Beispiel:</p>
 <pre>SendMessage, 0x101E, 0, 80, SysListView321, <i>FensterTitel</i>  <em>; 0x101E ist LVM_SETCOLUMNWIDTH.</em></pre>
@@ -188,7 +190,7 @@ AuswahlPos += 1  <em>; Konvertiert 0-basiert in 1-basiert, d.h. der erste Eintra
 <p>Einige Styles finden Sie unter <a href="../misc/Styles.htm">Fenster- und Steuerelement-Styles</a>.</p>
 
 <h3 id="Hwnd">Hwnd <span class="ver">[v1.0.43.06+]</span></h3>
-<p>Ruft die HWND-Nummer (eindeutige ID) des Steuerelements ab.</p>
+<p>Ruft das Fensterhandle (HWND) des Steuerelements ab.</p>
 <pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Hwnd <span class="optional">,, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <p>Zum Beispiel: <code>ControlGet, AusgabeVar, Hwnd,, Edit1, <i>FensterTitel</i></code>. Die HWND-Nummer (eindeutige ID) eines Steuerelements wird oft in Verbindung mit <a href="PostMessage.htm">PostMessage</a>, <a href="PostMessage.htm">SendMessage</a> und <a href="DllCall.htm">DllCall()</a> verwendet. Die HWND-Nummer eines Steuerelements kann auch mit <a href="MouseGetPos.htm">MouseGetPos</a> abgerufen werden. So eine HWND-Nummer kann direkt als <a href="../misc/WinTitle.htm#ahk_id">ahk_id-Fenstertitel</a> verwendet werden (das auch mit versteckten Steuerelementen funktioniert, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist).</p>
 
@@ -198,8 +200,7 @@ AuswahlPos += 1  <em>; Konvertiert 0-basiert in 1-basiert, d.h. der erste Eintra
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Im Gegensatz zu Befehlen, die ein Steuerelement ändern, erfolgt nach ControlGet keine automatische Verzögerung, d.h. <a href="SetControlDelay.htm">SetControlDelay</a> hat keinen Einfluss auf ControlGet.</p>
-<p>Mit <a href="MouseGetPos.htm">MouseGetPos</a> kann die ClassNN-Bezeichnung oder HWND-Nummer (eindeutige ID) des Steuerelements unter dem Mauszeiger abgerufen werden. Mit <a href="WinGet.htm#ControlList">WinGet ControlList</a> kann eine Liste von Steuerelementen abgerufen werden, die in einem Fenster enthalten sind.</p>
-<p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
+<p>Mit <a href="MouseGetPos.htm">MouseGetPos</a> kann die ClassNN-Bezeichnung oder HWND-Nummer (eindeutige ID) des Steuerelements unter dem Mauszeiger abgerufen werden. Mit <a href="WinGet.htm#ControlList">WinGet ControlList</a> kann eine Liste von Steuerelementen in einem Fenster abgerufen werden.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="Control.htm">Control</a>, <a href="GuiControlGet.htm">GuiControlGet</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlGetText.htm">ControlGetText</a>, <a href="ControlSetText.htm">ControlSetText</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="WinGet.htm">WinGet</a></p>
@@ -217,7 +218,7 @@ AuswahlPos += 1  <em>; Konvertiert 0-basiert in 1-basiert, d.h. der erste Eintra
 if ErrorLevel
     MsgBox Es wurde ein Problem festgestellt.
 else
-    MsgBox Tab #%WelcherTab% ist aktiv.</pre>
+    MsgBox Tab Nr. %WelcherTab% ist aktiv.</pre>
 </div>
 
 </body>

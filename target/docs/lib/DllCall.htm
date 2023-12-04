@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>DllCall() - Syntax &amp; Verwendung | AutoHotkey</title>
+<title>DllCall() - Syntax &amp; Verwendung | AutoHotkey v1</title>
 <meta name="description" content="Die DllCall-Funktion ruft eine Funktion aus einer DLL-Datei auf, z.B. eine API-Funktion von Windows." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,10 +20,10 @@
 <dl>
 
   <dt>[DllDatei\]Funktion</dt>
-  <dd><p>Der Name einer DLL- oder EXE-Datei, gefolgt von einem umgekehrten Schrägstrich und dem Namen der Funktion. Zum Beispiel: <code>"MeineDLL\MeineFunktion"</code> (wenn die Dateiendung weggelassen wird, wird standardmäßig ".dll" verwendet). Wenn kein absoluter Pfad angegeben ist, wird <em>DllDatei</em> in einem der Pfade aus der PATH-Umgebungsvariable oder im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Beachten Sie, dass DllCall() einen Pfad mit umgekehrten Schrägstrichen (\) erwartet. Schrägstriche (/) werden nicht unterstützt.</p>
-      <p id="std"><em>DllDatei</em> kann weggelassen werden, wenn eine Funktion aus den Systemdateien User32.dll, Kernel32.dll, ComCtl32.dll oder Gdi32.dll aufgerufen wird. Zum Beispiel liefert <code>"User32\IsWindowVisible"</code> das gleiche Ergebnis wie <code>"IsWindowVisible"</code>.</p>
+  <dd><p>Der Name einer DLL- oder EXE-Datei, gefolgt von einem umgekehrten Schrägstrich und dem Namen der Funktion. Zum Beispiel: <code>"MeineDLL\MeineFunktion"</code> (wenn die Dateiendung weggelassen wird, wird standardmäßig ".dll" verwendet). Wenn kein absoluter Pfad angegeben ist, wird <em>DllDatei</em> in einem der Pfade aus der PATH-Umgebungsvariable oder im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Beachten Sie, dass DllCall() einen Pfad mit umgekehrten Schrägstrichen (\) erwartet. Nach rechts gerichtete Schrägstriche (/) werden nicht unterstützt.</p>
+      <p id="std"><em>DllDatei</em> kann weggelassen werden, wenn eine Funktion aus den Systemdateien User32.dll, Kernel32.dll, ComCtl32.dll oder Gdi32.dll aufgerufen wird. Zum Beispiel liefert <code>"User32\IsWindowVisible"</code> dasselbe Ergebnis wie <code>"IsWindowVisible"</code>.</p>
       <p>Wenn unter dem angegebenen Namen keine Funktion gefunden wird, wird automatisch ein A (ANSI) oder W (Unicode) angefügt, je nachdem, mit welcher AutoHotkey-Version das Skript ausgeführt wird. Zum Beispiel ist <code>"MessageBox"</code> dasselbe wie <code>"MessageBoxA"</code> in ANSI-Versionen und dasselbe wie <code>"MessageBoxW"</code> in Unicode-Versionen.</p>
-      <p>Wenn die DLL <em>wiederholt</em> aufgerufen wird, ist es ratsam, <a href="#load">sie vorher zu laden</a>, um die Performanz dramatisch zu erhöhen.</p>
+      <p>Wenn die DLL <em>wiederholt</em> aufgerufen wird, ist es ratsam, <a href="#load">sie vorher zu laden</a>, um die Performanz drastisch zu erhöhen.</p>
     <p><span class="ver">[v1.0.46.08+]</span>: Dieser Parameter kann auch ein reiner Integer sein, der als Adresse einer Funktion zum Aufrufen interpretiert wird. Quellen für solche Adressen sind u.a. <a href="#COM">COM</a> und <a href="RegisterCallback.htm">RegisterCallback()</a>.</p></dd>
 
   <dt>Typ1, Arg1</dt>
@@ -38,7 +38,7 @@
 </dl>
 
 <h2 id="Return_Value">Rückgabewert</h2>
-<p>DllCall gibt den Rückgabewert von <em>Funktion</em> zurück. Wenn <em>Funktion</em> keinen Rückgabewert hat, ist das Ergebnis ein undefinierter Integer. Wenn <em>Funktion</em> aufgrund eines <a href="#error">Fehlers</a> nicht aufgerufen werden kann, ist das Ergebnis eine leere Zeichenkette.</p>
+<p>DllCall gibt den Rückgabewert von <em>Funktion</em> zurück. Wenn <em>Funktion</em> keinen Rückgabewert hat, ist das Ergebnis ein undefinierter Integer. Wenn <em>Funktion</em> aufgrund eines <a href="#error">Fehlers</a> nicht aufgerufen werden kann, ist der Rückgabewert eine leere Zeichenkette.</p>
 
 <h2 id="types">Typen von Argumenten und Rückgabewerten</h2>
 <table class="info">
@@ -97,7 +97,7 @@ DllCall("DeleteFile", Ptr, &amp;DateiName) <em>; Anführungszeichen bei Ptr wegl
 <tr id="asterisk">
   <td>* oder P<br>
     (Suffix)</td>
-  <td><p>Fügen Sie ein Sternchen (optional mit einem Leerzeichen davor) an einen der obigen Typen an, um nicht den Wert selbst, sondern die Adresse des Arguments zu übergeben (die aufgerufene Funktion muss dafür ausgelegt sein, so etwas zu akzeptieren). Der Wert eines solchen Arguments kann von der Funktion geändert werden; d.h. jedes Mal, wenn eine reine Variable als Argument übergeben wird, wird der Inhalt dieser Variable aktualisiert. Zum Beispiel würde der folgende Aufruf den Inhalt von MeineVar an MeineFunktion via Adresse übergeben, aber auch den Inhalt von MeineVar aktualisieren, um alle Änderungen widerzuspiegeln, die MeineFunktion an MeineVar vorgenommen hat: <code>DllCall("MeineDLL\MeineFunktion", "Int*", MeineVar)</code>.</p>
+  <td><p>Fügen Sie ein Sternchen (optional mit einem Leerzeichen davor) an einen der obigen Typen an, um nicht den Wert selbst, sondern die Adresse des Arguments zu übergeben (die aufgerufene Funktion muss dafür ausgelegt sein, so etwas zu akzeptieren). Da der Wert eines solchen Arguments von der Funktion geändert werden kann, wird jedes Mal, wenn eine reine Variable als Argument übergeben wird, der Inhalt dieser Variable aktualisiert. Zum Beispiel würde der folgende Aufruf den Inhalt von MeineVar an MeineFunktion via Adresse übergeben, aber auch den Inhalt von MeineVar aktualisieren, um alle Änderungen widerzuspiegeln, die MeineFunktion an MeineVar vorgenommen hat: <code>DllCall("MeineDLL\MeineFunktion", "Int*", MeineVar)</code>.</p>
     <p>In der Regel wird ein Sternchen verwendet, wenn eine Funktion einen Argument- oder Rückgabetyp hat, der mit "LP" beginnt. Das bekannteste Beispiel dafür ist LPDWORD (ein Pointer, der auf ein DWORD verweist). Da DWORD ein vorzeichenloser 32-Bit-Integer ist, können Sie "UInt*" oder "UIntP" für LPDWORD verwenden. Das Sternchen sollte nicht für Zeichenkettentypen wie LPTSTR, auf Strukturen verweisende Pointer wie LPRECT, oder Arrays verwendet werden; für solche Typen ist <a href="#str">"Str"</a> oder "Ptr" besser geeignet, je nachdem, ob Sie eine Variable oder ihre Adresse übergeben.</p>
     <p class="note"><strong>Hinweis:</strong> "Char*" ist nicht dasselbe wie <a href="#str">"Str"</a>, weil "Char*" die Adresse einer 8-Bit-Zahl übergibt, während <a href="#str">"Str"</a> die Adresse einer Zeichenkette übergibt, die je nach AutoHotkey-Version 8-Bit (ANSI) oder 16-Bit (Unicode) ist. Ähnlich verhält es sich mit "UInt*": Da dieser Typ die Adresse einer 32-Bit-Zahl übergibt, ist er nicht für Funktionen geeignet, die ein Array mit Werten oder eine Struktur größer als 32 Bit erwarten.</p>
     <p>Da Variablen in AutoHotkey keinen festen Typ haben, verweist eine an die Funktion übergebene Adresse auf einen temporären Speicher, nicht auf die Variable selbst. Es ist nicht notwendig, <a href="VarSetCapacity.htm">VarSetCapacity()</a> für die Variable aufzurufen, da DllCall diese Variable nach dem Funktionsaufruf korrekt aktualisieren wird.</p>
@@ -129,7 +129,7 @@ DllCall("DeleteFile", Ptr, &amp;DateiName) <em>; Anführungszeichen bei Ptr wegl
 <p id="LastError">Die interne Variable <strong>A_LastError</strong> enthält den Rückgabewert der Systemfunktion GetLastError(), die unmittelbar nach dem Aufruf der Funktion aufgerufen wird (dies hat keinen messbaren Einfluss auf die Performanz). A_LastError ist eine Zahl zwischen 0 und 4294967295 (immer dezimal, nicht hexadezimal). A_LastError ist wie <a href="../misc/ErrorLevel.htm">ErrorLevel</a> eine threadspezifische Einstellung, d.h. es kann nicht durch Unterbrechungen anderer <a href="../misc/Threads.htm">Threads</a> geändert werden. Allerdings wird A_LastError auch von <a href="Run.htm#LastError">Run/RunWait</a> gesetzt.</p>
 
 <h2 id="load">Performanz</h2>
-<p>Wenn die DLL wiederholt aufgerufen wird, ist es ratsam, sie vorher zu laden, um die Performanz dramatisch zu erhöhen (<em>das ist für eine <a href="#std">Standard-DLL</a> wie User32 nicht notwendig, da sie immer allgegenwärtig ist</em>). Dadurch wird vermieden, dass DllCall jedes Mal LoadLibrary und FreeLibrary intern aufrufen muss. Zum Beispiel:</p>
+<p>Wenn die DLL wiederholt aufgerufen wird, ist es ratsam, sie vorher zu laden, um die Performanz drastisch zu erhöhen (<em>das ist für eine <a href="#std">Standard-DLL</a> wie User32 nicht notwendig, da sie immer allgegenwärtig ist</em>). Dadurch wird vermieden, dass DllCall jedes Mal LoadLibrary und FreeLibrary intern aufrufen muss. Zum Beispiel:</p>
 <pre>hModule := DllCall("<strong>LoadLibrary</strong>", "Str", "MeineFunktionen.dll", "Ptr")  <em>; Verhindert, dass DllCall() die Bibliothek in der Schleife laden muss.</em>
 Loop, C:\Meine Dokumente\*.*, , 1
     Ergebnis := DllCall("MeineFunktionen\DateiSichern", "Str", A_LoopFileFullPath)
@@ -173,7 +173,7 @@ Ergebnis := DllCall("CharLower", "<strong><u>Str</u></strong>", DllCall("CharUpp
 <div class="ex" id="ExMessageBox">
 <p><a class="ex_number" href="#ExMessageBox"></a> Ruft die Windows-API-Funktion "MessageBox" auf und meldet, welche Schaltfläche der Benutzer gedrückt hat.</p>
 <pre>WelcheSchaltfl := DllCall("MessageBox", "Int", 0, "Str", "Ja oder Nein drücken", "Str", "Titel der Box", "Int", 4)
-MsgBox Sie haben die Schaltfläche #%WelcheSchaltfl% gedrückt.</pre>
+MsgBox Sie haben die Schaltfläche Nr. %WelcheSchaltfl% gedrückt.</pre>
 </div>
 
 <div class="ex" id="ExWallpaper">
@@ -236,7 +236,7 @@ if not AktivesFenster  <em>; Kein Fenster aktiv.</em>
 ControlGetFocus, FokussiertesStrlmnt, ahk_id %AktivesFenster%
 if not FokussiertesStrlmnt  <em>; Kein Steuerelement fokussiert.</em>
     return
-<em>; Zeigt die vertikale oder horizontale Position des Scrollbalkens in einem Tooltip an:</em>
+<em>; Vertikale oder horizontale Position des Scrollbalkens in einem Tooltip anzeigen:</em>
 ControlGet, UnterelementHWND, Hwnd,, %FokussiertesStrlmnt%, ahk_id %AktivesFenster%
 ToolTip % DllCall("GetScrollPos", "Ptr", UnterelementHWND, "Int", 1)  <em>;  Letzter Parameter kann 1 für SB_VERT und 0 für SB_HORZ sein.</em>
 return</pre>
@@ -353,9 +353,9 @@ DllCall("DeleteObject", "Ptr", hBrush)  <em>; Gibt Speicher frei.</em></pre>
 SetzeSystemuhr(YYYYMMDDHHMISS)
 <em>; Setzt die Systemuhr auf ein bestimmtes Datum und eine bestimmte Uhrzeit.
 ; Der Aufrufer muss sicherstellen, dass der eingehende Parameter ein gültiger Zeitstempel ist
-; (lokale Zeit, nicht UTC). Gibt bei Erfolg ungleich 0 zurück.</em>
+; (Ortszeit, nicht UTC). Gibt bei Erfolg ungleich 0 zurück.</em>
 {
-    <em>; Konvertiert die im Parameter angegebene lokale Zeit in UTC für SetSystemTime().</em>
+    <em>; Konvertiert die im Parameter angegebene Ortszeit in UTC für SetSystemTime().</em>
     UTC_Delta -= A_NowUTC, Seconds  <em>; Sekunden sind genauer, um Rundungsfehler zu vermeiden.</em>
     UTC_Delta := Round(-UTC_Delta/60)  <em>; Rundet auf die nächste Minute für höhere Genauigkeit.</em>
     YYYYMMDDHHMISS += UTC_Delta, Minutes  <em>; Wendet den Offset für die Konvertierung zu UTC an.</em>
@@ -379,8 +379,8 @@ SetzeSystemuhr(YYYYMMDDHHMISS)
 }</pre>
 <p>Weitere Strukturbeispiele:</p>
 <ul>
-  <li>Das <a href="../scripts/index.htm#WinLIRC">WinLIRC-Client-Skript</a> zeigt, wie mit DllCall() eine Netzwerkverbindung zu einem TCP/IP-Server aufgebaut kann und Daten von diesem empfangen werden können.</li>
-  <li>Das Betriebssystem stellt Standard-Dialogfenster bereit, die der Benutzer zum Auswählen einer Farbe, einer Schrift oder eines Symbols verwenden kann. Solche Dialogfenster verwenden Strukturen und werden auf <a href="https://github.com/majkinetor/mm-autohotkey/tree/master/Dlg">GitHub</a> vorgestellt.</li>
+  <li>Das <a href="../scripts/index.htm#WinLIRC">WinLIRC-Client-Skript</a> zeigt, wie mit DllCall() eine Netzwerkverbindung zu einem TCP/IP-Server aufgebaut werden kann und Daten von diesem empfangen werden können.</li>
+  <li>Das Betriebssystem stellt Standarddialogfenster bereit, die der Benutzer zum Auswählen einer Farbe, einer Schrift oder eines Symbols verwenden kann. Solche Dialogfenster verwenden Strukturen und werden auf <a href="https://github.com/majkinetor/mm-autohotkey/tree/master/Dlg">GitHub</a> vorgestellt.</li>
 </ul>
 </div>
 

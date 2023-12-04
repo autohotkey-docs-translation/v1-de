@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>Menu - Syntax &amp; Verwendung | AutoHotkey</title>
+<title>Menu - Syntax &amp; Verwendung | AutoHotkey v1</title>
 <meta name="description" content="Der Menu-Befehl erstellt, löscht, ändert und zeigt Menüs und Menüpunkte an, ändert das Tray-Symbol und dessen Tooltip, oder bestimmt, ob das versteckte Hauptfenster eines kompilierten Skripts geöffnet werden kann." />
 <meta name="ahk:equiv-v2" content="lib/Menu.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -61,7 +61,7 @@
 <h3 id="Add">Add</h3>
 <p>Fügt einen Menüpunkt hinzu, aktualisiert einen Menüpunkt mit einem neuen Untermenü oder Label, oder wandelt einen normalen Menüpunkt in ein Untermenü um (oder umgekehrt).</p>
 <pre class="Syntax"><span class="func">Menu</span>, MenüName, Add <span class="optional">, MenüpunktName, LabelOderUntermenü, Optionen</span></pre>
-<p>Dieser Unterbefehl ist für mehrere Zwecke gedacht. <em>MenüpunktName</em> ist der Name oder die Position eines Menüpunkts (siehe <a href="#MenuItemName">MenüpunktName</a>, um mehr zu erfahren). Wenn <em>MenüpunktName</em> noch nicht existiert, wird er zum Menü hinzugefügt. Andernfalls wird <em>MenüpunktName</em> mit dem neu angegebenen <em>LabelOderUntermenü</em> aktualisiert.</p>
+<p>Dieser Unterbefehl ist für mehrere Zwecke gedacht. <em>MenüpunktName</em> ist der Name oder die Position eines Menüpunkts (siehe <a href="#MenuItemName">MenüpunktName</a>, um mehr zu erfahren). Wenn <em>MenüpunktName</em> noch nicht existiert, wird er zum Menü hinzugefügt. Andernfalls wird <em>MenüpunktName</em> mit dem neuen <em>LabelOderUntermenü</em> aktualisiert.</p>
 <p>Um eine Trennlinie zum Menü hinzuzufügen, lassen Sie alle drei Parameter weg.</p>
 <p>Die Label-Subroutine wird als neuer <a href="../misc/Threads.htm">Thread</a> ausgeführt, wenn der Benutzer den Menüpunkt auswählt (vergleichbar mit <a href="Gosub.htm">Gosub</a> und <a href="../Hotkeys.htm">Hotkey-Subroutinen</a>). Wenn <em>LabelOderUntermenü</em> weggelassen wird, wird <em>MenüpunktName</em> sowohl als Labelname als auch als Menüpunktname verwendet.</p>
 <p id="Functor"><span class="ver">[v1.1.20+]</span>: Für <em>LabelOderUntermenü</em> kann auch der Name einer Funktion, sofern dieser Name nicht als Label existiert, oder eine einzelne Variablenreferenz mit einem <a href="../misc/Functor.htm">Funktionsobjekt</a> angegeben werden. Zum Beispiel <code>%FunkObj%</code> oder <code>% FunkObj</code>. Ein voll funktionsfähiges Beispiel finden Sie unter <a href="#ExBoundFunc">Beispiel #5</a>. Andere Ausdrücke, die Objekte zurückgeben, werden zurzeit nicht unterstützt. Für die Funktion können optional die folgenden Parameter definiert werden:</p>
@@ -107,7 +107,7 @@ Menu, Tray, Add, Dieser Menüpunkt ist ein Untermenü, :MeinUntermenü</pre>
 <h3 id="Delete">Delete</h3>
 <p>Löscht einen bestimmten Menüpunkt aus dem Menü.</p>
 <pre class="Syntax"><span class="func">Menu</span>, MenüName, Delete <span class="optional">, MenüpunktName</span></pre>
-<p><em>MenüpunktName</em> ist der Name oder die Position eines Menüpunkts (siehe <a href="#MenuItemName">MenüpunktName</a>, um mehr zu erfahren). Vordefinierte Menüpunkte wie "Exit" (siehe unten) können nicht einzeln gelöscht werden. Die Löschung des <em>Standard</em>-Menüpunkts hat denselben Effekt wie, als hätte man den <a href="#NoDefault">NoDefault</a>-Unterbefehl verwendet.</p>
+<p><em>MenüpunktName</em> ist der Name oder die Position eines Menüpunkts (siehe <a href="#MenuItemName">MenüpunktName</a>, um mehr zu erfahren). Vordefinierte Menüpunkte wie "Exit" (siehe unten) können nicht einzeln gelöscht werden. Die Löschung des <em>Standardmenüpunkts</em> hat denselben Effekt wie, als hätte man den <a href="#NoDefault">NoDefault</a>-Unterbefehl verwendet.</p>
 <p>Wenn <em>MenüpunktName</em> weggelassen wird, wird das gesamte <em>MenüName</em>-Menü gelöscht, sowie alle Menüpunkte in anderen Menüs, die <em>MenüName</em> als Untermenü verwenden. Die Löschung eines Menüs bewirkt zudem, dass das aktuelle <a href="#Win32_Menus">Win32-Menü</a> von jedem seiner Untermenüs zerstört wird, damit es später bei Bedarf neu erstellt werden kann. Andere Menüs, die solche Untermenüs enthalten, könnten ebenfalls betroffen sein. Dies lässt sich vermeiden, indem man vor dem Löschen des Menüs die Menüpunkte mit <a href="#DeleteAll">DeleteAll</a> löscht.</p>
 
 <h3 id="DeleteAll">DeleteAll</h3>
@@ -218,12 +218,12 @@ Menu, Tray, Add, Dieser Menüpunkt ist ein Untermenü, :MeinUntermenü</pre>
 <h3 id="Show">Show</h3>
 <p>Zeigt <em>MenüName</em> an.</p>
 <pre class="Syntax"><span class="func">Menu</span>, MenüName, Show <span class="optional">, X, Y</span></pre>
-<p>Der Benutzer kann ein Menüpunkt mit Pfeiltasten, Tastaturkurzbefehlen (unterstrichene Buchstaben) oder mit dem Mauszeiger auswählen. Mit Ausnahme von <a href="Gui.htm">GUI</a>-Menüleisten kann jedes Menü, einschließlich des Tray-Menüs, angezeigt werden. Wenn sowohl X als auch Y weggelassen werden, wird das Menü an der aktuellen Position des Mauszeigers angezeigt. Wenn nur eine der beiden Koordinaten angegeben ist, wird für die jeweils andere die aktuelle Position des Mauszeigers verwendet. Die Koordinaten sind relativ zum aktiven Fenster. Geben Sie davor <code><a href="CoordMode.htm">CoordMode</a>, Menu</code> an, um sie relativ zum gesamten Bildschirm zu machen.</p>
+<p>Der Benutzer kann einen Menüpunkt mit Pfeiltasten, Tastaturkurzbefehlen (unterstrichene Buchstaben) oder mit dem Mauszeiger auswählen. Mit Ausnahme von <a href="Gui.htm">GUI</a>-Menüleisten kann jedes Menü, einschließlich des Tray-Menüs, angezeigt werden. Wenn sowohl X als auch Y weggelassen werden, wird das Menü an der aktuellen Position des Mauszeigers angezeigt. Wenn nur eine der beiden Koordinaten angegeben ist, wird für die jeweils andere die aktuelle Position des Mauszeigers verwendet. Die Koordinaten sind relativ zum aktiven Fenster. Geben Sie davor <code><a href="CoordMode.htm">CoordMode</a>, Menu</code> an, um sie relativ zum gesamten Bildschirm zu machen.</p>
 
 <h3 id="Color">Color</h3>
 <p>Setzt die Hintergrundfarbe des Menüs auf den angegebenen <em>FarbeWert</em>.</p>
 <pre class="Syntax"><span class="func">Menu</span>, MenüName, Color, FarbeWert <span class="optional">, Single</span></pre>
-<p><em>FarbeWert</em> ist entweder einer der 16 HTML-Primärfarben oder ein 6-stelliger RGB-Wert (siehe <a href="Progress.htm#colors">Farbentabelle</a>). Lassen Sie den <em>FarbeWert</em>-Parameter leer (oder verwenden Sie das Wort Default), um die Standardfarbe des Menüs wiederherzustellen. Fehlt das Wort Single im nächsten Parameter, werden auch die Hintergrundfarben der Untermenüs geändert.</p>
+<p><em>FarbeWert</em> ist einer der 16 primären HTML-Farbnamen oder ein 6-stelliger RGB-Farbwert (siehe <a href="Progress.htm#colors">Farbentabelle</a>). Lassen Sie den <em>FarbeWert</em>-Parameter leer (oder verwenden Sie das Wort Default), um die Standardfarbe des Menüs wiederherzustellen. Fehlt das Wort Single im nächsten Parameter, werden auch die Hintergrundfarben der Untermenüs geändert.</p>
 
 <h3 id="Click">Click</h3>
 <p>Wie oft das <a href="../Program.htm#tray-icon">Tray-Symbol</a> geklickt werden muss, um den Standardmenüpunkt auszuwählen.</p>
@@ -239,7 +239,7 @@ Menu, Tray, Add, Dieser Menüpunkt ist ein Untermenü, :MeinUntermenü</pre>
 <h3 id="NoMainWindow">NoMainWindow</h3>
 <p>Verhindert, dass das <a href="../Program.htm#main-window">Hauptfenster</a> über das <a href="../Program.htm#tray-icon">Tray-Symbol</a> geöffnet werden kann.</p>
 <pre class="Syntax"><span class="func">Menu</span>, Tray, NoMainWindow</pre>
-<p>Dieser Unterbefehl entfernt den vordefinierten Menüpunkt "Open" aus dem Tray-Menü. Er deaktiviert außerdem die Menüpunkte im View-Menü des versteckten Hauptfensters des Skripts, wie z.B. "Lines most recently executed". Die folgenden Befehle sind jedoch weiterhin in der Lage, das Hauptfenster zu öffnen und die entsprechenden View-Optionen auszuwählen, wenn sie während der Ausführung des Skripts erreicht werden: <a href="ListLines.htm">ListLines</a>, <a href="ListVars.htm">ListVars</a>, <a href="ListHotkeys.htm">ListHotkeys</a> und <a href="KeyHistory.htm">KeyHistory</a>.</p>
+<p>Dieser Unterbefehl entfernt den vordefinierten Menüpunkt "Open" aus dem Tray-Menü. Er deaktiviert außerdem die Menüpunkte im View-Menü des versteckten Hauptfensters des Skripts, wie z.B. "Lines most recently executed". Die folgenden Befehle sind jedoch weiterhin in der Lage, das Hauptfenster zu öffnen und die entsprechenden View-Optionen auszuwählen, wenn sie während der Skriptausführung erreicht werden: <a href="ListLines.htm">ListLines</a>, <a href="ListVars.htm">ListVars</a>, <a href="ListHotkeys.htm">ListHotkeys</a> und <a href="KeyHistory.htm">KeyHistory</a>.</p>
 <p>Dieser Unterbefehl verhindert nicht, dass das Hauptfenster mit <a href="WinShow.htm">WinShow</a> sichtbar gemacht oder mit <a href="ControlGetText.htm">ControlGetText</a> oder ähnlichem inspiziert werden kann, aber er verhindert, dass der Quellcode des Skripts und andere Informationen via Hauptfenster preisgegeben werden, außer wenn einer der oben aufgeführten Befehle vom Skript aufgerufen wird.</p>
 <p>Dieser Modus wird standardmäßig für Skripte verwendet, die <a href="../Scripts.htm#ahk2exe">kompiliert</a> oder <a href="../Program.htm#embedded-scripts">eingebettet</a> sind.</p>
 <p><span class="ver">[v1.1.34+]</span>: Dieser Unterbefehl kann auch in einem unkompilierten Skript verwendet werden.</p>
@@ -407,13 +407,13 @@ return</pre>
 
 <div class="ex" id="ExIcon">
 <p><a class="ex_number" href="#ExIcon"></a> Zeigt, wie man Symbole zu Menüpunkten hinzufügt.</p>
-<pre>Menu, Dateimenü, Add, Skript-Symbol, MenuHandler
-Menu, Dateimenü, Add, Suspend-Symbol, MenuHandler
-Menu, Dateimenü, Add, Pause-Symbol, MenuHandler
-Menu, Dateimenü, Icon, Skript-Symbol, %A_AhkPath%, 2 <em>; 2. Symbolgruppe aus der Datei</em>
-Menu, Dateimenü, Icon, Suspend-Symbol, %A_AhkPath%, -206 <em>; Symbol mit Ressourcen-ID 206</em>
-Menu, Dateimenü, Icon, Pause-Symbol, %A_AhkPath%, -207 <em>; Symbol mit Ressourcen-ID 207</em>
-Menu, MeineMenüleiste, Add, &amp;Datei, :Dateimenü
+<pre>Menu, DateiMenü, Add, Skript-Symbol, MenuHandler
+Menu, DateiMenü, Add, Suspend-Symbol, MenuHandler
+Menu, DateiMenü, Add, Pause-Symbol, MenuHandler
+Menu, DateiMenü, Icon, Skript-Symbol, %A_AhkPath%, 2 <em>; 2. Symbolgruppe aus der Datei</em>
+Menu, DateiMenü, Icon, Suspend-Symbol, %A_AhkPath%, -206 <em>; Symbol mit Ressourcen-ID 206</em>
+Menu, DateiMenü, Icon, Pause-Symbol, %A_AhkPath%, -207 <em>; Symbol mit Ressourcen-ID 207</em>
+Menu, MeineMenüleiste, Add, &amp;Datei, :DateiMenü
 Gui, Menu, MeineMenüleiste
 Gui, Add, Button, gExit, Beendet dieses Beispiel
 Gui, Show

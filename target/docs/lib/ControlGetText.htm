@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>ControlGetText - Syntax &amp; Verwendung | AutoHotkey</title>
+<title>ControlGetText - Syntax &amp; Verwendung | AutoHotkey v1</title>
 <meta name="description" content="Der ControlGetText-Befehl ruft den Text eines Steuerelements ab." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,11 +24,13 @@
 
   <dt>Steuerelement</dt>
   <dd><p>Wenn leer oder weggelassen, wird das oberste Steuerelement des Zielfensters verwendet. Andernfalls geben Sie entweder die ClassNN-Bezeichnung (Klassenname und Instanznummer des Steuerelements) oder den Text des Steuerelements an, die beide mit dem internen Tool "Window Spy" ermittelt werden können. Wenn Text verwendet wird, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>.</p>
-    <p>Um mit der HWND-Nummer (eindeutigen ID) eines Steuerelements zu arbeiten, lassen Sie den <em>Steuerelement</em>-Parameter leer und übergeben Sie <code>ahk_id %StrlmntHwnd%</code> als <em>FensterTitel</em>-Parameter (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist). Die HWND-Nummer eines Steuerelements kann üblicherweise via <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall()</a> abgerufen werden.</p></dd>
+    <p>Um mit dem Fensterhandle (HWND) eines Steuerelements zu arbeiten, lassen Sie den <em>Steuerelement</em>-Parameter leer und übergeben Sie <code>ahk_id %StrlmntHwnd%</code> als <em>FensterTitel</em>-Parameter (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist). Die HWND-Nummer eines Steuerelements kann üblicherweise via <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall()</a> abgerufen werden.</p></dd>
 
   <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
   <dd>
-    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
+    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden).</p>
+    <p><em>AusnahmeTitel</em> und <em>AusnahmeText</em> können verwendet werden, um ein oder mehrere Fenster anhand ihres Titels oder Textes auszuschließen. Ihre Angabe ähnelt der von <em>FensterTitel</em> und <em>FensterText</em>, außer dass <em>AusnahmeTitel</em> keine anderen Kriterien als den Fenstertitel erkennt.</p>
+    <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> und <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig muss ein Fenstertitel mit dem angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> beginnen, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
   </dd>
 
 </dl>
@@ -39,11 +41,11 @@
 <h2 id="Remarks">Bemerkungen</h2>
 <p class="note"><strong>Hinweis:</strong> Mit <a href="ControlGet.htm#List">ControlGet List</a> können stattdessen Texte aus einer ListView, ListBox oder ComboBox abgerufen werden.</p>
 <p>Wenn der abgerufene Text gekürzt (unvollständig) ist, versuchen Sie es mit <code><a href="VarSetCapacity.htm">VarSetCapacity</a>(AusgabeVar, 55)</code> vor ControlGetText (ersetzen Sie 55 mit einer Zahl, die wesentlich größer ist als die Länge des gekürzten Textes). Dies ist in der Regel erforderlich, wenn AutoHotkey die Ausgabevariable für den Text zu klein macht, weil die Anwendung, deren Text abgerufen werden soll, nur sporadisch oder gar nicht auf die WM_GETTEXTLENGTH-Meldung reagiert.</p>
-<p>Die Menge des abgerufenen Textes ist auf die maximale Kapazität einer Variable beschränkt (was mit der <a href="_MaxMem.htm">#MaxMem</a>-Direktive geändert werden kann). Dieser Befehl kann daher sehr viel Arbeitsspeicher beanspruchen, wenn das Zielsteuerelement eine große Menge an Text beinhaltet (z.B. wenn ein großes Dokument im Texteditor geöffnet wurde). Allerdings kann der Speicher einer Variable nach ihrer Verwendung wieder freigegeben werden, indem ihr ein leerer Wert zugewiesen wird, d.h. <code>AusgabeVar := ""</code>.</p>
+<p>Die Menge des abgerufenen Textes ist auf die maximale Kapazität einer Variable beschränkt (was mit der <a href="_MaxMem.htm">#MaxMem</a>-Direktive geändert werden kann). Dieser Befehl kann daher sehr viel Arbeitsspeicher beanspruchen, wenn das Zielsteuerelement eine große Menge an Text enthält (z.B. wenn ein großes Dokument in einem Texteditor geöffnet wurde). Allerdings kann der Speicher einer Variable nach ihrer Verwendung wieder freigegeben werden, indem ihr ein leerer Wert zugewiesen wird, d.h. <code>AusgabeVar := ""</code>.</p>
 <p>Die meisten Steuerelemente markieren das Ende einer Zeile mit einem CR-LF-Paar (`r`n) anstelle eines einzelnen LF-Zeichens (`n).</p>
-<p><code>SetTitleMatchMode Slow</code> muss nicht verwendet werden, weil ControlGetText den Text immer mit der Slow-Methode abruft (diese Methode funktioniert mit viel mehr Steuerelementen).</p>
-<p>Mit <a href="WinGet.htm#ControlList">WinGet ControlList</a> kann eine Liste von Steuerelementen abgerufen werden, die in einem Fenster enthalten sind.</p>
-<p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
+<p><code>SetTitleMatchMode Slow</code> muss nicht verwendet werden, da ControlGetText den Text immer im langsamen Modus abruft (dieser Modus funktioniert mit viel mehr Steuerelementen).</p>
+<p>Mit <a href="WinGet.htm#ControlList">WinGet ControlList</a> kann eine Liste von Steuerelementen in einem Fenster abgerufen werden.</p>
+
 <h2 id="Related">Siehe auch</h2>
 <p><a href="ControlSetText.htm">ControlSetText</a>, <a href="WinGetText.htm">WinGetText</a>, <a href="Control.htm">Control</a>, <a href="ControlGet.htm">ControlGet</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="_MaxMem.htm">#MaxMem</a></p>
 <h2 id="Examples">Beispiele</h2>

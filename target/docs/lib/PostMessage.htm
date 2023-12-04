@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>PostMessage / SendMessage - Syntax &amp; Verwendung | AutoHotkey</title>
+<title>PostMessage / SendMessage - Syntax &amp; Verwendung | AutoHotkey v1</title>
 <meta name="description" content="Die Befehle PostMessage und SendMessage senden eine Meldung an ein Fenster oder Steuerelement (SendMessage wartet zusätzlich auf eine Bestätigung)." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -23,7 +23,7 @@
 <dl>
 
   <dt>MldNummer</dt>
-  <dd><p>Die zu sendende Meldungsnummer. Kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein. Einige solcher Nummern finden Sie unter <a href="../misc/SendMessageList.htm">Liste von Fenstermeldungen</a>.</p></dd>
+  <dd><p>Die zu sendende Meldungsnummer. Kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein. Einige solcher Nummern finden Sie unter <a href="../misc/SendMessageList.htm">Windows-Meldungen</a>.</p></dd>
 
   <dt>wParam</dt>
   <dd><p>Wenn leer oder weggelassen, wird 0 gesendet. Andernfalls geben Sie die erste Komponente der Meldung an. Kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p></dd>
@@ -33,12 +33,14 @@
 
   <dt>Steuerelement</dt>
   <dd><p>Wenn leer oder weggelassen, wird die Meldung direkt an das Zielfenster gesendet, nicht an eines seiner Steuerelemente. Andernfalls geben Sie entweder die ClassNN-Bezeichnung (Klassenname und Instanznummer des Steuerelements) oder den Text des Steuerelements an, die beide mit dem internen Tool "Window Spy" ermittelt werden können. Wenn Text verwendet wird, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>.</p>
-    <p>Um mit der HWND-Nummer (eindeutigen ID) eines Steuerelements zu arbeiten, lassen Sie den <em>Steuerelement</em>-Parameter leer und übergeben Sie <code>ahk_id %StrlmntHwnd%</code> als <em>FensterTitel</em>-Parameter (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist). Die HWND-Nummer eines Steuerelements kann üblicherweise via <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall()</a> abgerufen werden.</p>
+    <p>Um mit dem Fensterhandle (HWND) eines Steuerelements zu arbeiten, lassen Sie den <em>Steuerelement</em>-Parameter leer und übergeben Sie <code>ahk_id %StrlmntHwnd%</code> als <em>FensterTitel</em>-Parameter (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist). Die HWND-Nummer eines Steuerelements kann üblicherweise via <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall()</a> abgerufen werden.</p>
     </dd>
 
   <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
   <dd>
-    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
+    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden).</p>
+    <p><em>AusnahmeTitel</em> und <em>AusnahmeText</em> können verwendet werden, um ein oder mehrere Fenster anhand ihres Titels oder Textes auszuschließen. Ihre Angabe ähnelt der von <em>FensterTitel</em> und <em>FensterText</em>, außer dass <em>AusnahmeTitel</em> keine anderen Kriterien als den Fenstertitel erkennt.</p>
+    <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> und <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig muss ein Fenstertitel mit dem angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> beginnen, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
   </dd>
 
   <dt>Zeitlimit <span class="ver">[AHK_L 42+]</span></dt>
@@ -57,7 +59,7 @@
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Seien Sie vorsichtig bei der Verwendung dieser Befehle - das Senden einer Meldung an das falsche Fenster (oder das Senden einer ungültigen Meldung) kann dazu führen, dass die Zielanwendung falsch reagiert oder abstürzt. Die meisten Anwendungen sind nicht dafür ausgelegt, bestimmte Arten von Meldungen aus externen Quellen zu empfangen.</p>
-<p>PostMessage platziert die Meldung in die Meldungswarteschlange des Zielfensters und wartet nicht auf eine Bestätigung oder Antwort. SendMessage hingegen wartet, bis das Zielfenster die Meldung verarbeitet hat oder bis das Zeitlimit überschritten wurde.</p>
+<p>PostMessage platziert die Meldung in die Meldungswarteschlange des Zielfensters, ohne auf eine Bestätigung oder Antwort zu warten. SendMessage hingegen wartet, bis das Zielfenster die Meldung verarbeitet hat oder bis das Zeitlimit überschritten wurde.</p>
 <p>Die <em>wParam</em>- und <em>lParam</em>-Parameter müssen Integer sein. Wenn AutoHotkey oder das Zielfenster 32-Bit ist, werden nur die unteren 32 Bits verwendet, d.h. der Wert muss zwischen -2147483648 und 4294967295 (0xFFFFFFFF) liegen. Wenn sowohl AutoHotkey als auch das Zielfenster 64-Bit sind, kann ein beliebiger <a href="../Variables.htm#cap">von AutoHotkey unterstützter</a> Integerwert verwendet werden. Wie bei allen Integerwerten in AutoHotkey kennzeichnet ein 0x-Präfix einen hexadezimalen Wert. Zum Beispiel ist 0xFF äquivalent zu 255.</p>
 <p>Es ist möglich, eine Zeichenkette via <em>wParam</em> oder <em>lParam</em> zu senden, indem die Adresse einer Variable angegeben wird. Verwenden Sie dafür den <a href="../Variables.htm#amp">Adressoperator (&amp;)</a>. Zum Beispiel:</p>
 <pre>SendMessage, 0x000C, 0, <strong>&amp;MeineVar</strong>, ClassNN, FensterTitel  <em>; 0x000C ist WM_SETTEXT</em></pre>
@@ -71,19 +73,16 @@ SendMessage, 0x000C, 0, "<strong>Neuer Titel</strong>"  <em>; 0x000C ist WM_SETT
 <pre>SendMessage, 0x001A,,,, ahk_id 0xFFFF  <em>; 0x001A ist WM_SETTINGCHANGE</em></pre>
 <p>Mit <a href="OnMessage.htm">OnMessage()</a> kann ein Skript eine Meldung abfangen.</p>
 <p>Eine Erklärung zur Verwendung dieser Befehle finden Sie unter <a href="../misc/SendMessage.htm">PostMessage / SendMessage Tutorial</a>.</p>
-<p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="../misc/SendMessageList.htm">Meldungsliste</a>, <a href="../misc/SendMessage.htm">PostMessage / SendMessage Tutorial</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="../misc/Winamp.htm">Winamp automatisieren</a>, <a href="DllCall.htm">DllCall()</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="WinMenuSelectItem.htm">WinMenuSelectItem</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExMonitorPower">
-<p><a class="ex_number" href="#ExMonitorPower"></a> Drücken Sie einen Hotkey, um den Bildschirm auszuschalten.</p>
+<p><a class="ex_number" href="#ExMonitorPower"></a> Schaltet den Bildschirm via Hotkey aus. Ersetzen Sie in der SendMessage-Zeile die Zahl 2 mit -1, um den Bildschirm einzuschalten, oder ersetzen Sie sie mit 1, um den Energiesparmodus des Bildschirms zu aktivieren.</p>
 <pre>#o:: <em>; WIN+O</em>
 Sleep 1000  <em>; Dem Benutzer die Chance geben, die Tasten loszulassen (falls ihr Loslassen den Bildschirm wieder aufweckt).
 ; Bildschirm ausschalten:</em>
-SendMessage, 0x0112, 0xF170, 2,, Program Manager  <em>; 0x0112 ist WM_SYSCOMMAND, 0xF170 ist SC_MONITORPOWER.
-; Die obige 2 kann mit -1 ersetzt werden, um den Bildschirm einzuschalten,
-; oder mit 1, um den Energiesparmodus des Bildschirms zu aktivieren.</em>
+SendMessage, 0x0112, 0xF170, 2,, Program Manager  <em>; 0x0112 ist WM_SYSCOMMAND, 0xF170 ist SC_MONITORPOWER.</em>
 return</pre>
 </div>
 
@@ -105,7 +104,7 @@ SendMessage, 0x0115, 1, 0, %Steuerelement%, A</pre>
 </div>
 
 <div class="ex" id="ExSwitchKeybLang">
-<p><a class="ex_number" href="#ExSwitchKeybLang"></a> Schaltet die Tastaturbelegung/Sprache des aktiven Fensters auf Englisch um.</p>
+<p><a class="ex_number" href="#ExSwitchKeybLang"></a> Schaltet die Tastaturbelegung/Sprache des aktiven Fensters auf Englisch (US) um.</p>
 <pre>PostMessage, 0x0050, 0, 0x4090409,, A  <em>; 0x0050 ist WM_INPUTLANGCHANGEREQUEST.</em></pre>
 </div>
 
@@ -116,7 +115,7 @@ SendMessage, 0x0400, 0, 120,, - Winamp
 if (ErrorLevel != "FAIL")
 {
     ErrorLevel++  <em>; Die Zählung von Winamp beginnt bei "0", also um 1 erhöhen.</em>
-    MsgBox, Titel #%ErrorLevel% ist aktiv oder wird gerade abgespielt.
+    MsgBox, Titel Nr. %ErrorLevel% ist aktiv oder wird gerade abgespielt.
 }</pre>
 </div>
 

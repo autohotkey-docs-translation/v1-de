@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>Run / RunWait - Syntax &amp; Verwendung | AutoHotkey</title>
+<title>Run / RunWait - Syntax &amp; Verwendung | AutoHotkey v1</title>
 <meta name="description" content="Die Befehle Run und RunWait starten ein externes Programm. RunWait wartet zusätzlich auf dessen Beendigung." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -26,14 +26,14 @@
 <dl>
 
   <dt>Ziel</dt>
-  <dd><p>Ein Dokument, eine URL, eine ausführbare Datei (.exe, .com, .bat usw.), eine Verknüpfung (.lnk), eine <a href="#CLSID">CLSID</a> oder ein <a href="#verbs">Systemverb</a> (siehe Bemerkungen). Wenn <em>Ziel</em> eine lokale Datei ohne Pfadangabe ist, wird zuerst <a href="../Variables.htm#WorkingDir">A_WorkingDir</a> durchsucht. Wenn die Datei dort nicht gefunden wird, wird das System nach ihr suchen und sie gegebenenfalls starten, wenn sie integriert ("bekannt") ist, z.B. weil sie in einem der PATH-Ordner enthalten ist.</p>
+  <dd><p>Ein Dokument, eine URL, eine ausführbare Datei (.exe, .com, .bat usw.), eine Verknüpfung (.lnk), eine <a href="#CLSID">CLSID</a> oder ein <a href="#verbs">Systemverb</a> (siehe Bemerkungen). Wenn <em>Ziel</em> eine lokale Datei ohne Pfadangabe ist, hängt die Ortsbestimmung der Datei normalerweise vom Dateityp und anderen Bedingungen ab. Weitere Informationen finden Sie unter <a href="#Interpretation_of_Target">Interpretation von Ziel</a>.</p>
       <p>Um Parameter zu übergeben, fügen Sie diese wie folgt direkt nach dem Programm- oder Dokumentnamen hinzu:</p>
-      <pre>Run, MeinProgram.exe Param1 Param2</pre>
+      <pre>Run, MeinProgramm.exe Param1 Param2</pre>
       <p>Wenn der Programm-/Dokumentname oder ein Parameter Leerzeichen enthält, ist es am sichersten, ihn wie folgt in doppelte Anführungszeichen zu setzen (obwohl es in einigen Fällen auch ohne geht):</p>
       <pre>Run, "Mein Programm.exe" "Param mit Leerzeichen"</pre></dd>
 
   <dt>ArbeitVerz</dt>
-  <dd><p>Wenn leer oder weggelassen, wird das Arbeitsverzeichnis des Skripts verwendet (<a href="../Variables.htm#WorkingDir">A_WorkingDir</a>). Andernfalls geben Sie das Arbeitsverzeichnis für <em>Ziel</em> an. Umschließen Sie den Namen nicht mit doppelten Anführungszeichen, selbst wenn er Leerzeichen enthält.</p></dd>
+  <dd><p>Wenn leer oder weggelassen, wird das Arbeitsverzeichnis des Skripts verwendet (<a href="../Variables.htm#WorkingDir">A_WorkingDir</a>). Andernfalls geben Sie das anfängliche Arbeitsverzeichnis an, das vom neuen Prozess verwendet werden soll. Dies betrifft in der Regel auch relative Pfade in <em>Ziel</em>, aber die Interpretation von Befehlszeilenparametern hängt vom Zielprogramm ab. Umschließen Sie den Namen nicht mit doppelten Anführungszeichen, selbst wenn er Leerzeichen enthält.</p></dd>
 
   <dt>Optionen</dt>
   <dd><p>Wenn leer oder weggelassen, wird <em>Ziel</em> normal gestartet und ein Warndialogfenster angezeigt, wenn <em>Ziel</em> nicht gestartet werden konnte. Andernfalls geben Sie eine oder mehrere der folgenden Optionen an:</p>
@@ -45,7 +45,7 @@
       <p id="LastError">Wenn UseErrorLevel angegeben ist, wird die interne Variable <strong>A_LastError</strong> auf den Rückgabewert der systeminternen GetLastError()-Funktion gesetzt. A_LastError ist eine Zahl zwischen 0 und 4294967295 (immer dezimal, nicht hexadezimal). Null (0) bedeutet Erfolg, während jede andere Zahl bedeutet, dass der Start fehlgeschlagen ist. Jede Nummer entspricht einem bestimmten Fehlerzustand (eine Liste finden Sie unter <a href="https://www.microsoft.com">www.microsoft.com</a> mit Suchbegriffen wie "system error codes"). A_LastError ist wie <a href="../misc/ErrorLevel.htm">ErrorLevel</a> eine threadspezifische Einstellung, d.h. es kann nicht durch Unterbrechungen anderer <a href="../misc/Threads.htm">Threads</a> geändert werden. Allerdings wird A_LastError auch von <a href="DllCall.htm#LastError">DllCall()</a> gesetzt.</p></dd>
 
   <dt>AusgabeVarPID</dt>
-  <dd><p>Wenn weggelassen, wird der zugehörige Wert nicht gespeichert. Andernfalls geben Sie den Namen der Ausgabevariable an, in der die eindeutige <a href="Process.htm">Prozess-ID (PID)</a> des neu gestarteten Programms gespeichert werden soll. Die Variable wird leer gemacht, wenn die PID nicht ermittelt werden konnte. Dies geschieht in der Regel, wenn ein Systemverb, ein Dokument oder eine Verknüpfung anstelle einer direkt ausführbaren Datei gestartet wird. RunWait unterstützt diesen Parameter auch, allerdings muss seine <em>AusgabeVarPID</em> in einem <a href="../misc/Threads.htm">anderen Thread</a> geprüft werden (andernfalls wäre die PID ungültig, weil der Prozess nach der Ausführung von RunWait nicht mehr existiert).</p>
+  <dd><p>Wenn weggelassen, wird der zugehörige Wert nicht gespeichert. Andernfalls geben Sie den Namen der Ausgabevariable an, in der die eindeutige <a href="Process.htm">Prozess-ID (PID)</a> des neuen Programms, das gestartet wurde, gespeichert werden soll. Die Variable wird leer gemacht, wenn die PID nicht ermittelt werden konnte. Dies geschieht in der Regel, wenn ein Systemverb, ein Dokument oder eine Verknüpfung anstelle einer direkt ausführbaren Datei gestartet wird. RunWait unterstützt diesen Parameter auch, allerdings muss seine <em>AusgabeVarPID</em> in einem <a href="../misc/Threads.htm">anderen Thread</a> geprüft werden (andernfalls wäre die PID ungültig, weil der Prozess nach der Ausführung von RunWait nicht mehr existiert).</p>
       <p>Nachdem der Run-Befehl eine PID abgerufen hat, ist es möglich, dass die vom Prozess zu erstellenden Fenster noch nicht existieren. Um auf mindestens eines dieser Fenster zu warten, verwenden Sie <code><a href="WinWait.htm">WinWait</a> ahk_pid %AusgabeVarPID%</code>.</p></dd>
 
 </dl>
@@ -53,6 +53,20 @@
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p>Run: Setzt kein <a href="../misc/ErrorLevel.htm">ErrorLevel</a>, es sei denn, UseErrorLevel (oben) ist wirksam, dann wird ErrorLevel bei Misserfolg auf das Wort ERROR und bei Erfolg auf 0 gesetzt.</p>
 <p>RunWait: Setzt ErrorLevel auf den Exitcode des Programms (ein vorzeichenfähiger 32-Bit-Integer). Wenn der Start fehlschlägt, während UseErrorLevel aktiv ist, wird das Wort ERROR gesetzt.</p>
+<h2 id="Interpretation_of_Target">Interpretation von Ziel</h2>
+<p>Run/RunWait selbst interpretiert keine Befehlszeilenparameter und sucht nicht die Zieldatei. Stattdessen wird versucht, das Ziel wie folgt auszuführen:</p>
+<ul>
+  <li>Wenn kein Verb angegeben ist, wird <em>Ziel</em> unverändert an den <em>lpCommandLine</em>-Parameter von <a href="https://learn.microsoft.com/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw">CreateProcess</a> übergeben.</li>
+  <li>Wenn ein Verb angegeben ist oder CreateProcess fehlschlägt, und <a href="RunAs.htm">RunAs</a> nicht aktiv ist, wird <a href="https://learn.microsoft.com/windows/win32/api/shellapi/nf-shellapi-shellexecuteexw">ShellExecuteEx</a> versucht.</li>
+</ul>
+<p>Wenn <em>Ziel</em> einen Namen, aber kein Verzeichnis angibt, wird das System die Datei suchen und ggf. starten, wenn sie integriert ("bekannt") ist, z.B. weil sie in einem der PATH-Ordner enthalten ist. Die genaue Suchreihenfolge hängt davon ab, ob CreateProcess und/oder ShellExecuteEx aufgerufen wird. Wenn CreateProcess aufgerufen wird, hat das Programmverzeichnis (das den AutoHotkey-Interpreter oder das kompilierte Skript enthält) Vorrang vor <em>ArbeitVerz</em>. Um das zu verhindern, geben Sie das Verzeichnis an, z.B. <code>.\Programm.exe</code>.</p>
+<p>Wenn ShellExecuteEx versucht wird, wird <em>Ziel</em> wie folgt interpretiert:</p>
+<ul>
+  <li>Die Teilzeichenkette von <em>Ziel</em>, die mit dem ersten Leer- oder Tabulatorzeichen endet, kann entweder ein <a href="#verbs">vordefinierter Verbname</a> oder ein Sternchen gefolgt von einem Verbnamen sein. Falls vorhanden, werden das optionale Sternchen, der Verbname und ein einzelnes separierendes Leer- oder Tabulatorzeichen von der weiteren Interpretation ausgeschlossen. Verbnamen, die Leer- oder Tabulatorzeichen enthalten, werden nicht unterstützt, aber Symbole wie Bindestriche sind erlaubt.</li>
+  <li>Wenn ein doppeltes Anführungszeichen am Anfang vorhanden ist, wird die Teilzeichenkette zwischen diesem und dem nächsten doppelten Anführungszeichen als Zieldatei oder Aktion interpretiert.</li>
+  <li>Andernfalls wird die erste Teilzeichenkette, die mit einem Leerzeichen endet und entweder eine vorhandene Datei ist (angegeben durch den absoluten Pfad oder relativ zu <em>ArbeitVerz</em>) oder auf .exe, .bat, .com, .cmd oder .hta endet, als Aktion interpretiert. Dadurch können Dateitypen wie beispielsweise .ahk, .vbs oder .lnk beliebige Parameter akzeptieren, während "bekannte" EXE-Dateien wie wordpad.exe weiterhin ohne absoluten Pfad gestartet werden können.</li>
+  <li>Ein einzelnes separierendes Leerzeichen wird ignoriert, falls vorhanden, und der Rest von <em>Ziel</em> wird unverändert an CreateProcess oder ShellExecuteEx als Befehlszeilenparameter übergeben.</li>
+</ul>
 <h2 id="Remarks">Bemerkungen</h2>
 <p>RunWait wartet im Gegensatz zu Run, bis <em>Ziel</em> geschlossen oder beendet wird und setzt dann <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf den Exitcode des Programms (ein vorzeichenfähiger 32-Bit-Integer). Einige Programme geben sofort einen Exitcode zurück, obwohl sie noch laufen; solche Programme erzeugen einen weiteren Prozess.</p>
 <p>Wenn <em>Ziel</em> Kommas enthält, müssen diese mit einem <a href="../misc/EscapeChar.htm">Escapezeichen</a> versehen werden, wie im folgenden Beispiel dreimal hervorgehoben:</p>
@@ -63,7 +77,7 @@
 <p>Die Performanz kann etwas verbessert werden, wenn <em>Ziel</em> ein genauer Pfad ist, z.B. <code>Run, C:\Windows\Notepad.exe "C:\Meine Dokumente\Test.txt"</code> anstelle von <code>Run, C:\Meine Dokumente\Test.txt</code>.</p>
 <p id="CLSID">Es können spezielle <a href="../misc/CLSID-List.htm">CLSIDs</a> via Run geöffnet werden. Die meisten von ihnen können mit dem Präfix shell: geöffnet werden. Einige können auch ohne dieses Präfix geöffnet werden. Zum Beispiel:</p>
 <pre>Run shell:::{D20EA4E1-3957-11D2-A40B-0C5020524153}  <em>; Windows-Tools.</em>
-Run ::{20D04FE0-3AEA-1069-A2D8-08002B30309D}  <em>; Arbeitsplatz/Computer.</em>
+Run ::{20D04FE0-3AEA-1069-A2D8-08002B30309D}  <em>; Dieser PC (ehemals Arbeitsplatz oder Computer).</em>
 Run ::{645FF040-5081-101B-9F08-00AA002F954E}  <em>; Papierkorb.</em></pre>
 <p id="verbs">Systemverben beziehen sich auf Aktionen, die im Rechtsklickmenü einer Datei innerhalb des Explorers verfügbar sind. Wenn eine Datei ohne Verb gestartet wird, wird das Standardverb (üblicherweise "open") für diesen bestimmten Dateityp verwendet. Andernfalls geben Sie das Verb vor dem Namen der Zieldatei an. Zurzeit werden folgende Verben unterstützt:</p>
 <table class="info">
@@ -171,7 +185,7 @@ Run, properties C:\DirTest.txt</pre>
 <p><a class="ex_number" href="#ExCLSID"></a> Run kann <a href="../misc/CLSID-List.htm">CLSIDs</a> starten:</p>
 <p>Folgendes öffnet den Papierkorb.</p>
 <pre>Run, ::{645FF040-5081-101B-9F08-00AA002F954E}</pre>
-<p>Folgendes öffnet das "Dieser PC"-Verzeichnis.</p>
+<p>Folgendes öffnet Dieser PC (ehemals Arbeitsplatz oder Computer).</p>
 <pre>Run, ::{20D04FE0-3AEA-1069-A2D8-08002B30309D}</pre>
 </div>
 
@@ -213,19 +227,19 @@ RunWaitViele(Befehle) {
 
 <div class="ex" id="ExecScript">
 <p><a class="ex_number" href="#ExecScript"></a> Führt den angegebenen Code als neuen AutoHotkey-Prozess aus.</p>
-<pre>ExecScript(Script, Warten:=true)
+<pre>SkriptAusführen(Skript, Warten:=true)
 {
     shell := ComObjCreate("WScript.Shell")
     exec := shell.Exec("AutoHotkey.exe /ErrorStdOut *")
-    exec.StdIn.Write(script)
+    exec.StdIn.Write(Skript)
     exec.StdIn.Close()
     if Warten
         return exec.StdOut.ReadAll()
 }
 
 <em>; Beispiel:</em>
-InputBox expr,, Tragen Sie einen Ausdruck ein`, der als neuer Skript ausgewertet werden soll.,,,,,,,, Asc("*")
-Ergebnis := ExecScript("FileAppend % (" expr "), *")
+InputBox Ausdruck,, Tragen Sie einen Ausdruck ein`, der als neuer Skript ausgewertet werden soll.,,,,,,,, Asc("*")
+Ergebnis := SkriptAusführen("FileAppend % (" Ausdruck "), *")
 MsgBox % "Ergebnis: " Ergebnis
 </pre>
 </div>
