@@ -632,6 +632,7 @@ indexData = [
   ["GroupClose","lib/GroupClose.htm",6,"SS"],
   ["GroupDeactivate","lib/GroupDeactivate.htm",6,"SS"],
   ["Gui","lib/Gui.htm",6,"SSSS"],
+  ["Gui-Steuerelement-Optionen","lib/Gui.htm#ControlOptions"],
   ["Gui-Steuerelemente","lib/GuiControls.htm"],
   ["Gui-Style-Liste","misc/Styles.htm"],
   ["GuiClose (label)","lib/Gui.htm#GuiClose"],
@@ -1304,5 +1305,6 @@ indexData = [
   ["WriteNumType-Methode (File)","lib/File.htm#WriteNum",8],
   ["WS_* (GUI-Styles)","misc/Styles.htm"],
   ["XButton","KeyList.htm#mouse-advanced"],
-  ["YYYYMMDDHH24MISS","lib/FileSetTime.htm#YYYYMMDD"]
+  ["YYYYMMDDHH24MISS","lib/FileSetTime.htm#YYYYMMDD"],
+  ["ZIP-Dateien (ihr Inhalt kopieren)","lib/FileCopyDir.htm"]
 ];

@@ -17,6 +17,20 @@
 <p>Ältere Änderungen finden Sie unter <a href="ChangeLogHelp.htm">Archivierte Änderungen</a>.</p>
 
 <!--new revisions go here-->
+<h2 id="v1.1.37.02">1.1.37.02 - 16. März 2024</h2>
+<p>Behoben: <code>LWin::Alt</code> konnte nicht zum Aktivieren einiger Alt-Kombinationen verwendet werden.</p>
+<p>Behoben: Maus-AltTab-Hotkeys unterdrückten nicht die Ausführung eines Präfix-Hotkeys, z.B. <code>1::</code> für <code>1 &amp; WheelDown::AltTab</code>. (Fehlerhaft seit v1.1.37.00)</p>
+<p>Behoben: Hook-Hotkeys erkannten keine Modifikatoren, die mit SendInput nach unten gedrückt wurden.</p>
+<p>Behoben: Einige Probleme mit unterdrückten Alt/Strg/Umschalt/Win-Hotkeys, wie zum Beispiel:</p>
+<ul>
+  <li><code>*LCtrl::</code> blockierte LCtrl vom aktiven Fenster, aber das Senden von Alt-Tastenkombinationen würde fehlschlagen, weil das System denkt, dass Ctrl unten ist, und daher WM_KEYDOWN statt WM_SYSKEYDOWN senden würde.</li>
+  <li><code>*LAlt::</code> hat das System dazu veranlasst, alle vorherigen <code>{LAlt DownR}</code> zu vergessen, sodass sich eine Neubelegung wie z.B. <code>LCtrl::LAlt</code> nicht korrekt verhält, wenn LAlt physisch unten ist, auch wenn LAlt unterdrückt wurde.</li>
+  <li>Andere potenzielle Probleme, bei denen das Low-Level-Tracking einer Modifikatortaste durch das System nicht mit dem logischen Zustand übereinstimmt.</li>
+</ul>
+<p>Behoben: A_Clipboard ignorierte die Zuweisung rein numerischer Werte.</p>
+<p>Behoben: SendInput konnte LCtrl nicht loslassen, nachdem RAlt losgelassen wurde (wenn es nicht AltGr ist).</p>
+<p>Behoben: Neue Threads konnten eine Meldungsüberprüfung mit Critical nicht verhindern.</p>
+
 <h2 id="v1.1.37.01">1.1.37.01 - 8. Juli 2023</h2>
 <p>Behoben: Hotkeys wurden aufgrund einer Race Condition nicht ausgelöst. Wenn ein Modifikator-Hotkey wie <code>~*RWin::</code> zu früh Send oder GetKeyState aufruft, kann das System melden, dass RWin nicht unten ist, wodurch der Modifikatorstatus des Hooks "korrigiert" wird und Hotkeys fälschlicherweise ausgelöst oder nicht ausgelöst werden. Dies trat wahrscheinlich nur auf, wenn ein anderer Tastatur-Hook vor dem Hook des Skripts installiert wurde, da in diesem Fall das System den Status der Tasten nicht aktualisiert, bis der Thread des anderen Hooks fortgesetzt wird und zurückkehrt.</p>
 <p>Behoben: Hotstrings verwenden nun das Zuletzt Gefundene Fenster von #If.</p>
