@@ -1,61 +1,59 @@
-﻿#NoEnv
-SetBatchLines, -1
-SetWorkingDir, % A_ScriptDir "\.."
+﻿#Requires AutoHotkey v2
+SetWorkingDir(A_ScriptDir "\..")
 
-SplitPath, A_WorkingDir, parentName
-FileGetTime, LastSaveTime, % parentName "-omegat.tmx"
+SplitPath(A_WorkingDir, &parentName)
+LastSaveTime := FileGetTime(parentName "-omegat.tmx")
 TotalProcessedFiles := 0
-Loop, target\docs\*.htm,, 1
+Loop Files, "target\docs\*.htm", "R"
 {
     ; Get number of processed files to determine whether only one or all documents was created:
     
-    FileGetTime, ModifyTime, % A_LoopFileLongPath
-    DiffTime := LastSaveTime
-    EnvSub, DiffTime, %ModifyTime%, seconds
+    ModifyTime := FileGetTime(A_LoopFileFullPath)
+    DiffTime := DateDiff(LastSaveTime, ModifyTime, "seconds")
     if (DiffTime <= 0)
         TotalProcessedFiles++
     
     ; read content
     
-    FileEncoding, UTF-8-RAW
-    FileRead, content_orig, % A_LoopFileLongPath
+    FileEncoding("UTF-8-RAW")
+    content_orig := FileRead(A_LoopFileFullPath)
     content := content_orig
     
     ; skip sites
     
-    if (A_LoopFileFullPath ~= "target\\docs\\search\.htm")
+    if (A_LoopFilePath ~= "target\\docs\\search\.htm")
       continue
 
     ; add more infos about the translation 
 
-    if (A_LoopFileFullPath = "target\docs\index.htm")
+    if (A_LoopFilePath = "target\docs\index.htm")
     {
-        content := RegExReplace(content, "<p><a.*?</a></p>", "<p>Eine deutsche &Uuml;bersetzung von <a href=""https://www.autohotkey.com/docs/v1/"">https://www.autohotkey.com/docs/v1/</a> (siehe <a href=""https://autohotkey.com/boards/viewtopic.php?f=9&amp;t=43"">hier</a> f&uuml;r mehr Details).</p>")
+        content := RegExReplace(content, '<p><a.*?</a></p>', '<p>Eine deutsche &Uuml;bersetzung von <a href="https://www.autohotkey.com/docs/v1/">https://www.autohotkey.com/docs/v1/</a> (siehe <a href="https://autohotkey.com/boards/viewtopic.php?f=9&amp;t=43">hier</a> f&uuml;r mehr Details).</p>')
     }
 
     ; add google analytics
 
-    If RegExMatch(content, "O)link href=""(.*)static/theme.css""", m)
+    If RegExMatch(content, 'link href="(.*)static/theme.css"', &m)
         pre := m[1]
 
-    replace  =
-    ( LTrim Join`r`n
-    <script src="%pre%static/content.js" type="text/javascript"></script>
-    <script src="%pre%static/ga4.js" type="text/javascript"></script>
+    replace  := 
+    ( Join`r`n
+    '<script src="' pre 'static/content.js" type="text/javascript"></script>
+    <script src="' pre 'static/ga4.js" type="text/javascript"></script>'
     )
 
-    if !InStr(content, replace)
+    if not InStr(content, replace)
         content := RegExReplace(content, "<script.*content.js.*?>.*</script>", replace)
 
     ; overwrite file if needed
 
     if (content != content_orig)
     {
-        file := FileOpen(A_LoopFileLongPath, "w")
-        if !file
-            msgbox % A_LoopFileLongPath
-        file.Write(content)
-        file.Close()
+        f := FileOpen(A_LoopFileFullPath, "w")
+        if !f
+            MsgBox(A_LoopFileFullPath)
+        f.Write(content)
+        f.Close()
     }
     
 }
@@ -69,7 +67,7 @@ if (TotalProcessedFiles = 1)
 
 ErrorCount := CopyFilesAndFolders(A_ScriptDir "\target\*.*", "target", true)
 if (ErrorCount != 0)
-    MsgBox % ErrorCount " files/folders could not be copied."
+    MsgBox(ErrorCount " files/folders could not be copied.")
 
 ; create search index
 
@@ -78,54 +76,54 @@ if (ErrorCount != 0)
 
 ; compile docs to chm
 
-RunWait, % "target\compile_chm.ahk"
+RunWait("target\compile_chm.ahk")
 
 ; compress chm into zip file
 
 SmartZip("target\AutoHotkey.chm", "temp.zip")
-FileMove, % "temp.zip", % "AutoHotkeyHelp_DE.zip", 1
+FileMove("temp.zip", "AutoHotkeyHelp_DE.zip", 1)
 
 ; delete chm files
 
-FileDelete, % "target\*.chm"
-FileDelete, % "target\*.hhk"
+FileDelete("target\*.chm")
+FileDelete("target\*.hhk")
 
 /*
 SmartZip()
    Smart ZIP/UnZIP files
 Parameters:
    s, o   When compressing, s is the dir/files of the source and o is ZIP filename of object. When unpressing, they are the reverse.
-   t      The options used by CopyHere method. For availble values, please refer to: http://msdn.microsoft.com/en-us/library/windows/desktop/bb787866
+   t      The options used by CopyHere method. For availble values, please refer to: https://learn.microsoft.com/en-us/windows/win32/shell/folder-copyhere
 Link:
-http://www.autohotkey.com/forum/viewtopic.php?p=523649#523649
+https://www.autohotkey.com/board/topic/60706-
 */
 
-SmartZip(s, o, t = 4)
+SmartZip(s, o, t := 4)
 {
-    IfNotExist, %s%
-        return, -1        ; The souce is not exist. There may be misspelling.
+    if !FileExist(s)
+        return -1        ; The souce is not exist. There may be misspelling.
     
-    oShell := ComObjCreate("Shell.Application")
+    oShell := ComObject("Shell.Application")
     
-    if (SubStr(o, -3) = ".zip") ; Zip
+    if (SubStr(o, -4) = ".zip") ; Zip
     {
-        IfNotExist, %o%        ; Create the object ZIP file if it's not exist.
+        if !FileExist(o)        ; Create the object ZIP file if it's not exist.
             CreateZip(o)
         
-        Loop, %o%, 1
-            sObjectLongName := A_LoopFileLongPath
+        Loop Files, o, "DF"
+            sObjectLongName := A_LoopFileFullPath
 
         oObject := oShell.NameSpace(sObjectLongName)
         
-        Loop, %s%, 1
+        Loop Files, s, "DF"
         {
-            if (sObjectLongName = A_LoopFileLongPath)
+            if (sObjectLongName = A_LoopFileFullPath)
             {
                 continue
             }
-            ToolTip, Zipping %A_LoopFileName% ..
-            oObject.CopyHere(A_LoopFileLongPath, t)
-            SplitPath, A_LoopFileLongPath, OutFileName
+            ToolTip("Zipping " A_LoopFileName " ..")
+            oObject.CopyHere(A_LoopFileFullPath, t)
+            SplitPath(A_LoopFileFullPath, &OutFileName)
             Loop
             {
                 oObject := "", oObject := oShell.NameSpace(sObjectLongName) ; This doesn't affect the copyhere above.
@@ -133,23 +131,23 @@ SmartZip(s, o, t = 4)
                     break
             }
         }
-        ToolTip
+        ToolTip()
     }
-    else if InStr(FileExist(o), "D") or (!FileExist(o) and (SubStr(s, -3) = ".zip"))    ; Unzip
+    else if InStr(FileExist(o), "D") or (!FileExist(o) and (SubStr(s, -4) = ".zip"))    ; Unzip
     {
         if !o
             o := A_ScriptDir        ; Use the working dir instead if the object is null.
-        else IfNotExist, %o%
-            FileCreateDir, %o%
+        else if not FileExist(o)
+            DirCreate(o)
         
-        Loop, %o%, 1
-            sObjectLongName := A_LoopFileLongPath
+        Loop Files, o, "DF"
+            sObjectLongName := A_LoopFileFullPath
         
         oObject := oShell.NameSpace(sObjectLongName)
         
-        Loop, %s%, 1
+        Loop Files, s, "DF"
         {
-            oSource := oShell.NameSpace(A_LoopFileLongPath)
+            oSource := oShell.NameSpace(A_LoopFileFullPath)
             oObject.CopyHere(oSource.Items, t)
         }
     }
@@ -158,27 +156,34 @@ SmartZip(s, o, t = 4)
 CreateZip(n)    ; Create empty Zip file
 {
     ZIPHeader1 := "PK" . Chr(5) . Chr(6)
-    VarSetCapacity(ZIPHeader2, 18, 0)
+    ZIPHeader2 := Buffer(18, 0)
     ZIPFile := FileOpen(n, "w")
     ZIPFile.Write(ZIPHeader1)
     ZIPFile.RawWrite(ZIPHeader2, 18)
     ZIPFile.close()
 }
 
-CopyFilesAndFolders(SourcePattern, DestinationFolder, DoOverwrite = false)
+CopyFilesAndFolders(SourcePattern, DestinationFolder, DoOverwrite := false)
 ; Copies all files and folders matching SourcePattern into the folder named DestinationFolder and
 ; returns the number of files/folders that could not be copied.
 {
+    ErrorCount := 0
     ; First copy all the files (but not the folders):
-    FileCopy, %SourcePattern%, %DestinationFolder%, %DoOverwrite%
-    ErrorCount := ErrorLevel
+    try
+        FileCopy SourcePattern, DestinationFolder, DoOverwrite
+    catch as Err
+        ErrorCount := Err.Extra
     ; Now copy all the folders:
-    Loop, %SourcePattern%, 2  ; 2 means "retrieve folders only".
+    Loop Files, SourcePattern, "D"  ; D means "retrieve folders only".
     {
-        FileCopyDir, %A_LoopFileFullPath%, %DestinationFolder%\%A_LoopFileName%, %DoOverwrite%
-        ErrorCount += ErrorLevel
-        if ErrorLevel  ; Report each problem folder by name.
-            MsgBox Could not copy %A_LoopFileFullPath% into %DestinationFolder%.
+        try
+            DirCopy A_LoopFilePath, DestinationFolder "\" A_LoopFileName, DoOverwrite
+        catch
+        {
+            ErrorCount += 1
+            ; Report each problem folder by name.
+            MsgBox "Could not copy " A_LoopFilePath " into " DestinationFolder
+        }
     }
     return ErrorCount
 }
