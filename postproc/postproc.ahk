@@ -74,9 +74,17 @@ if (ErrorCount != 0)
 ; FileAppend,, % "target\docs\static\source\data_search.js"
 ; RunWait, % A_AhkPath "\..\v2\AutoHotkey32.exe" " """ "target\docs\static\source\build_search.ahk"""
 
+; Temporarily exclude google analytics file as not needed for chm:
+
+FileMove("target\docs\static\ga4.js", "target\docs\static\ga4.excluded")
+
 ; compile docs to chm
 
 RunWait("target\compile_chm.ahk")
+
+; Restore google analytics file:
+
+FileMove("target\docs\static\ga4.excluded", "target\docs\static\ga4.js")
 
 ; compress chm into zip file
 
