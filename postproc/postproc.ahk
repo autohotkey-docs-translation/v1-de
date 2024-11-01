@@ -2,16 +2,20 @@
 SetWorkingDir(A_ScriptDir "\..")
 
 SplitPath(A_WorkingDir, &parentName)
-LastSaveTime := FileGetTime(parentName "-omegat.tmx")
+if FileExist(parentName "-omegat.tmx")
+    LastSaveTime := FileGetTime(parentName "-omegat.tmx")
 TotalProcessedFiles := 0
 Loop Files, "target\docs\*.htm", "R"
 {
     ; Get number of processed files to determine whether only one or all documents was created:
     
-    ModifyTime := FileGetTime(A_LoopFileFullPath)
-    DiffTime := DateDiff(LastSaveTime, ModifyTime, "seconds")
-    if (DiffTime <= 0)
-        TotalProcessedFiles++
+    if IsSet(LastSaveTime)
+    {
+        ModifyTime := FileGetTime(A_LoopFileFullPath)
+        DiffTime := DateDiff(LastSaveTime, ModifyTime, "seconds")
+        if (DiffTime <= 0)
+            TotalProcessedFiles++
+    }
     
     ; read content
     
@@ -68,6 +72,11 @@ if (TotalProcessedFiles = 1)
 ErrorCount := CopyFilesAndFolders(A_ScriptDir "\target\*.*", "target", true)
 if (ErrorCount != 0)
     MsgBox(ErrorCount " files/folders could not be copied.")
+
+; Skip the rest below if the working directory is not a real OmegaT project:
+
+if not IsSet(LastSaveTime)
+    ExitApp
 
 ; create search index
 
