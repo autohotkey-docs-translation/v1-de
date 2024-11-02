@@ -1,5 +1,6 @@
 ﻿#Requires AutoHotkey v2
 SetWorkingDir(A_ScriptDir "\..")
+FileEncoding("UTF-8-RAW")
 
 SplitPath(A_WorkingDir, &parentName)
 if FileExist(parentName "-omegat.tmx")
@@ -19,7 +20,6 @@ Loop Files, "target\docs\*.htm", "R"
     
     ; read content
     
-    FileEncoding("UTF-8-RAW")
     content_orig := FileRead(A_LoopFileFullPath)
     content := content_orig
     
