@@ -19,20 +19,31 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         ref: master
+        fetch-depth: 0
 
-    - name: Download and unzip AutoHotkey v1.1
+    - name: Download AutoHotkey v2 and run compile_chm.ahk
       run: |
-        $source = "https://www.autohotkey.com/download/ahk.zip"
-        $dest = "ahk.zip"
-        Invoke-WebRequest -Uri $source -OutFile $dest
-        Expand-Archive -Path $dest
-
-    - name: Run compile_chm.ahk
-      run: |
-        Start-Process -FilePath "ahk/AutoHotkeyU32.exe" -ArgumentList "/ErrorStdOut `"target\compile_chm.ahk`"" -NoNewWindow -Wait
+        try {
+          $source = "https://www.autohotkey.com/download/ahk-v2.zip"
+          $dest = "ahk-v2.zip"
+          echo "Downloading $source ..."
+          Invoke-WebRequest -Uri $source -OutFile $dest
+          echo "Extracting files from $dest ..."
+          Expand-Archive -Path $dest
+          $path = "ahk-v2/AutoHotkey32.exe"
+        }
+        catch {
+          echo "Download failed. Trying choco ..."
+          choco install autohotkey.portable --pre --x86
+          $path = "AutoHotkey.exe"
+        }
+        echo "Deleting Google Analytics file ..."
+        Remove-Item target\docs\static\ga4.js
+        echo "Running compile_chm.ahk ..."
+        Start-Process -FilePath $path -ArgumentList "/ErrorStdOut `"target\compile_chm.ahk`"" -NoNewWindow -Wait
 
     - name: Compress CHM file
       run: |
