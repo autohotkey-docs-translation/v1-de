@@ -144,7 +144,7 @@ SmartZip(s, o, t := 4)
             Loop
             {
                 oObject := "", oObject := oShell.NameSpace(sObjectLongName) ; This doesn't affect the copyhere above.
-                if oObject.ParseName(OutFileName)
+                try if oObject.ParseName(OutFileName)
                     break
             }
         }
