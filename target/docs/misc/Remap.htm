@@ -27,7 +27,7 @@
 <h2 id="intro">Einführung</h2>
 <p><strong>Einschränkung:</strong> Die unten beschriebene Neubelegungsmethode von AutoHotkey ist in der Regel nicht so eindeutig und effektiv wie die direkte Neubelegung via Windows-Registry. Die Vor- und Nachteile der einzelnen Ansätze finden Sie unter <a href="#registry">Neubelegung via Registry</a>.</p>
 <h2 id="Remap">Neubelegung von Tastatur und Maus</h2>
-<p>Die Syntax für die Neubelegung einer Taste lautet <code>Originaltaste::Zieltaste</code>. Ein <a href="../Scripts.htm">Skript</a>, das nur die folgende Zeile enthält, würde z.B. dafür sorgen, dass sich <kbd>A</kbd> wie <kbd>B</kbd> verhält:</p>
+<p>Die Syntax für die Neubelegung einer Taste lautet <code class="no-highlight">Originaltaste::Zieltaste</code>. Ein <a href="../Scripts.htm">Skript</a>, das nur die folgende Zeile enthält, würde z.B. dafür sorgen, dass sich <kbd>A</kbd> wie <kbd>B</kbd> verhält:</p>
 <pre>a::b</pre>
 <p>Das obige Beispiel ändert nichts an <kbd>B</kbd> selbst. <kbd>B</kbd> sendet weiterhin "b", es sei denn, Sie belegen die Taste mit etwas anderem, wie im folgenden Beispiel:</p>
 <pre>a::b
@@ -106,7 +106,7 @@ a::b  <em>; 'a' verhält sich in Notepad wie 'b'.</em>
   <li>Die Zieltaste bleibt so lange gedrückt, wie Sie die Originaltaste gedrückt halten. Allerdings unterstützen einige Spiele keine Neubelegungen; in diesem Fall verhalten sich Tastatur und Maus so, als ob sie nicht neubelegt wären.</li>
   <li>Neubelegte Tasten werden wiederholt gesendet, wenn sie gedrückt gehalten werden (außer Tasten, die zu Maustasten umbelegt wurden).</li>
 </ul>
-<p id="HookHotkeys">Eine neubelegte Taste kann normale Hotkeys auslösen, aber standardmäßig keine Maus- oder <a href="../lib/_UseHook.htm">Hook-Hotkeys</a> (mit <a href="../lib/ListHotkeys.htm">ListHotkeys</a> können Sie herausfinden, welche Hotkeys "gehookt" sind). Wenn Sie z.B. die Neubelegung <code>a::b</code> verwenden und <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd> drücken, wird der <code>^!b</code>-Hotkey nur ausgelöst, wenn <code>^!b</code> kein Hook-Hotkey ist. Wenn <code>^!b</code> ein Hook-Hotkey ist, können Sie <code>^!a</code> als Hotkey definieren, wenn <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd> die gleiche Aktion ausführen soll wie <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>B</kbd>. Zum Beispiel:</p>
+<p id="HookHotkeys">Eine neubelegte Taste kann normale Hotkeys auslösen, aber standardmäßig keine Maus- oder <a href="../lib/_UseHook.htm">Hook-Hotkeys</a> (mit <a href="../lib/ListHotkeys.htm">ListHotkeys</a> können Sie herausfinden, welche Hotkeys "gehookt" sind). Wenn Sie z.B. die Neubelegung <code>a::b</code> verwenden und <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd> drücken, wird der <code class="no-highlight">^!b</code>-Hotkey nur ausgelöst, wenn <code class="no-highlight">^!b</code> kein Hook-Hotkey ist. Wenn <code class="no-highlight">^!b</code> ein Hook-Hotkey ist, können Sie <code class="no-highlight">^!a</code> als Hotkey definieren, wenn <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd> die gleiche Aktion ausführen soll wie <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>B</kbd>. Zum Beispiel:</p>
 <pre>a::b
 ^!a::
 ^!b::
@@ -133,7 +133,7 @@ Send {Blind}{b up}
 return</pre>
 <p>Allerdings unterscheiden sich die obigen Hotkeys unter folgenden Umständen:</p>
 <ol>
-  <li>Wenn die Originaltaste die linke <kbd>Strg</kbd>-Taste und die Zieltaste <kbd>Alt</kbd> ist, wird die Zeile <code>Send {Blind}{LAlt DownR}</code> mit <code>Send {Blind}<strong>{LCtrl up}</strong>{LAlt DownR}</code> ersetzt. Dasselbe gilt, wenn die Originaltaste die rechte <kbd>Strg</kbd>-Taste ist, außer dass stattdessen <code>{RCtrl up}</code> verwendet wird.</li>
+  <li>Wenn die Originaltaste die linke <kbd>Strg</kbd>-Taste und die Zieltaste <kbd>Alt</kbd> ist, wird die Zeile <code>Send {Blind}{LAlt DownR}</code> mit <code>Send {Blind}<strong>{LCtrl up}</strong>{LAlt DownR}</code> ersetzt. Dasselbe gilt, wenn die Originaltaste die rechte <kbd>Strg</kbd>-Taste ist, außer dass stattdessen <code class="no-highlight">{RCtrl up}</code> verwendet wird.</li>
   <li>Beim Neubelegen einer Tastaturtaste in eine Maustaste (z.B. <code>RCtrl::RButton</code>) verwenden die obigen Hotkeys SetMouseDelay statt SetKeyDelay. Außerdem wird oben der erste Hotkey mit folgendem ersetzt, um zu verhindern, dass die Autowiederholungsfunktion der Tastatur wiederholte Mausklicks erzeugt:
     <pre>*RCtrl::
 SetMouseDelay -1
@@ -144,17 +144,17 @@ return</pre>
   <li>Wenn die Originaltaste eine <a href="../Hotkeys.htm#combo">benutzerdefinierte Kombination</a> in <span class="ver">[v1.1.27.01+]</span> ist, wird der Platzhaltermodifikator (*) weggelassen, damit der Hotkey funktioniert.</li>
 </ol>
 <p>Vor <span class="ver">[v1.1.27]</span> wurde <a href="../lib/Send.htm#DownTemp">DownTemp</a> statt <a href="../lib/Send.htm#DownR">DownR</a> verwendet.</p>
-<p>Beachten Sie, dass bei den obigen Hotkeys der zweite SetKeyDelay-Parameter (<a href="../lib/SetKeyDelay.htm#dur">Druckdauer</a>) weggelassen wurde, da eine Druckdauer nicht für Nur-Unten- oder Nur-Oben-Ereignisse wie <code>{b down}</code> und <code>{b up}</code> gilt. Allerdings gilt die Druckdauer für Statusänderungen bei Modifikatortasten (Umschalt, Strg, Alt und Win), was sich auf Neubelegungen wie <code>a::B</code> oder <code>a::^b</code> auswirkt. Folglich würde jede Druckdauer, die im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> in Kraft gesetzt wird, für alle Neubelegungen gelten.</p>
+<p>Beachten Sie, dass bei den obigen Hotkeys der zweite SetKeyDelay-Parameter (<a href="../lib/SetKeyDelay.htm#dur">Druckdauer</a>) weggelassen wurde, da eine Druckdauer nicht für Nur-Unten- oder Nur-Oben-Ereignisse wie <code class="no-highlight">{b down}</code> und <code class="no-highlight">{b up}</code> gilt. Allerdings gilt die Druckdauer für Statusänderungen bei Modifikatortasten (Umschalt, Strg, Alt und Win), was sich auf Neubelegungen wie <code>a::B</code> oder <code>a::^b</code> auswirkt. Folglich würde jede Druckdauer, die im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> in Kraft gesetzt wird, für alle Neubelegungen gelten.</p>
 <p>Da Neubelegungen, wie oben beschrieben, in Hotkeys übersetzt werden, können sie vom <a href="../lib/Suspend.htm">Suspend</a>-Befehl beeinflusst und mit dem <a href="../lib/Hotkey.htm">Hotkey</a>-Befehl deaktiviert oder modifiziert werden. Zum Beispiel würden die beiden folgenden Befehle die Neubelegung <code>a::b</code> deaktivieren.</p>
 <pre>Hotkey, *a, Off
 Hotkey, *a up, Off</pre>
 <p id="AltTab">Alt-Tab-Probleme: Wenn Sie eine Taste zu <kbd>Alt</kbd> umbelegen, können Sie mit dieser Taste wahrscheinlich keine vernünftigen Alt-Tab-Aktionen durchführen. Eine mögliche Übergangslösung ist es, den Hotkey <code>*Tab::Send {Blind}{Tab}</code> hinzuzufügen - aber seien Sie sich bewusst, dass dieser Hotkey wahrscheinlich die Verwendung der echten <kbd>Alt</kbd>-Taste bei Alt-Tab-Aktionen stören wird. Dieser Hotkey sollte daher nur verwendet werden, wenn Sie Alt-Tab-Aktionen ausschließlich mit neubelegten Tasten und/oder <a href="../Hotkeys.htm#alttab">Alt-Tab-Hotkeys</a> durchführen.</p>
-<p>Zusätzlich zu den Tasten aus der <a href="../KeyList.htm">Tastenliste</a> kann die Originaltaste auch eine virtuelle Taste (VKnn) oder ein Scancode (SCnnn) sein, wie im Abschnitt <a href="../KeyList.htm#SpecialKeys">Sondertasten</a> beschrieben. Dasselbe gilt für die Zieltaste, außer dass bei ihr optional ein Scancode nach der virtuellen Taste angegeben werden kann. Bei den meisten Tastaturbelegungen wäre z.B. <code>sc01e::vk42sc030</code> dasselbe wie <code>a::b</code>.</p>
+<p>Zusätzlich zu den Tasten aus der <a href="../KeyList.htm">Tastenliste</a> kann die Original- und Zieltaste auch eine virtuelle Taste (VKnn) oder ein Scancode (SCnnn) sein, wie im Abschnitt <a href="../KeyList.htm#SpecialKeys">Sondertasten</a> beschrieben. Bei den meisten Tastaturbelegungen wäre z.B. <code>sc01e::vk42</code> dasselbe wie <code>a::b</code>.</p>
 <p>Um eine Taste zu deaktivieren, anstatt sie neu zu belegen, verwenden Sie ein <a href="../lib/Return.htm">Return</a>. Zum Beispiel bewirkt <code>F1::Return</code>, dass <kbd>F1</kbd> deaktiviert wird.</p>
 <p>Die folgenden Tasten werden von der internen Neubelegungsmethode nicht unterstützt:</p>
 <ul>
   <li>Das Mausrad (WheelUp/Down/Left/Right).</li>
-  <li>Pause und Break als Zieltastennamen (da es gleichnamige Befehle gibt). <span class="ver">[v1.1.32+]</span>: Verwenden Sie stattdessen <code>vk13</code> oder den entsprechenden Scancode.</li>
+  <li>Pause und Break als Zieltastennamen (da es gleichnamige Befehle gibt). <span class="ver">[v1.1.32+]</span>: Verwenden Sie stattdessen <code class="no-highlight">vk13</code> oder den entsprechenden Scancode.</li>
   <li>Geschweifte Klammern {} als Zieltasten. Verwenden Sie stattdessen die <a href="../lib/Send.htm#vk">VK/SC-Methode</a>; z.B. <code>x::+sc01A</code> und <code>y::+sc01B</code>.</li>
   <li>Ein Prozentzeichen (%) als Zieltaste. Verwenden Sie stattdessen die <a href="../lib/Send.htm#vk">VK/SC-Methode</a>.</li>
   <li>"Return" als Zieltaste. Verwenden Sie stattdessen "Enter".</li>

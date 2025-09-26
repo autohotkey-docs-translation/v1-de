@@ -226,7 +226,7 @@ MsgBox % Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
 <p>Statische Variablen sind immer implizit lokal, unterscheiden sich aber von lokalen Variablen, da ihre Werte zwischen den Aufrufen gespeichert werden. Zum Beispiel:</p>
 <pre>InDateiLoggen(ZuLoggenderText)
 {
-    <strong>static</strong> GeloggteZeilen := 0
+    static GeloggteZeilen := 0
     GeloggteZeilen += 1  <em>; Behält einen Zähler lokal aufrecht (sein Wert wird zwischen den Aufrufen gespeichert).</em>
     global LogDateiName
     FileAppend, %GeloggteZeilen%: %ZuLoggenderText%`n, %LogDateiName%
@@ -236,7 +236,7 @@ MsgBox % Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
 <p id="AssumeStatic"><strong>Assume-Static-Modus</strong> <span class="ver">[v1.0.48+]</span>: Eine Funktion kann so definiert werden, dass sie alle ihre Variablen (außer ihren Parametern) statisch behandelt. Dazu muss in ihrer ersten Zeile das Wort "static" stehen. Zum Beispiel:</p>
 <pre>VomStatischenArrayAbrufen(ElementNummer)
 {
-    <strong>static</strong>
+    static
     static ErsterAufruf := true  <em>; Die Initialisierung einer statischen Deklaration wird nur einmal ausgeführt (beim Start).</em>
     if ErsterAufruf  <em>; Erstellt ein statisches Array beim ersten Aufruf, danach nicht mehr.</em>
     {
@@ -285,7 +285,7 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p>Im Beispiel oben wird die FindeFarbe()-Funktion nie aufgerufen, wenn die <em>FarbeName</em>-Variable leer ist, weil die Auswertung der linken Seite von <em>AND</em> <em>False</em> ergibt, wodurch die rechte Seite nicht mehr in der Lage wäre, das Endergebnis auf <em>True</em> zu bringen.</p>
 <p>Dieses Verhalten führt dazu, dass die Nebeneffekte einer Funktion (wie z.B. die Änderung des Inhalts einer globalen Variable) nie auftreten werden, wenn diese Funktion auf der rechten Seite von <em>AND</em> oder <em>OR</em> aufgerufen wird.</p>
 <p>Beachten Sie auch, dass die Kurzschlussauswertung verschachtelte <em>AND</em>s und <em>OR</em>s stufenweise abarbeitet. Wenn z.B. <em>FarbeName</em> im folgenden Ausdruck leer ist, wird nur der Vergleich ganz links durchgeführt, weil die linke Seite dann ausreichen würde, um das Endergebnis zweifelsfrei zu bestimmen:</p>
-<pre>if (FarbeName = "" <u>OR</u> FindeFarbe(FarbeName, Region1) <u>OR</u> FindeFarbe(FarbeName, Region2))
+<pre>if (FarbeName = "" OR FindeFarbe(FarbeName, Region1) OR FindeFarbe(FarbeName, Region2))
     break   <em>; Nichts zu suchen oder Übereinstimmung gefunden.</em></pre>
 <p>Wie die Beispiele oben zeigen, sollten umfangreiche (zeitaufwendige) Funktionen in der Regel auf der rechten Seite von <em>AND</em> oder <em>OR</em> aufgerufen werden, um die Performanz zu erhöhen. Diese Technik kann auch verwendet werden, um den Aufruf einer Funktion zu verhindern, wenn ihr ein Wert übergeben wurde, den sie für unpassend hält (z.B. eine leere Zeichenkette).</p>
 <p><span class="ver">[v1.0.46+]</span>: Der <a href="Variables.htm#ternary">ternäre Bedingungsoperator (?:)</a> wendet auch die Kurzschlussauswertung an, indem er nur die gewinnende Abzweigung auswertet.</p>
@@ -320,10 +320,10 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p>Erklärung: Wenn die Skriptausführung eine Funktionsdefinition erreicht, wird diese übersprungen (was sofort passiert) und die Ausführung bei der Zeile nach der geschweiften Endklammer fortgesetzt. Folglich kann die Ausführung nie in eine Funktionsdefinition geraten. Außerdem haben eine oder mehrere Funktionsdefinitionen am Anfang eines Skripts keinen Einfluss auf den <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a>.</p>
 <h2 id="lib">Funktionsbibliotheken: Standard- und Benutzerbibliothek <span class="ver">[v1.0.47+]</span></h2>
 <p>Ein Skript kann eine Funktion in einer externen Datei aufrufen, ohne <a href="lib/_Include.htm">#Include</a> verwenden zu müssen. Damit dies funktioniert, muss eine Datei mit dem gleichen Namen wie die Funktion in einem der folgenden Bibliotheksverzeichnisse vorhanden sein:</p>
-<pre><a href="Variables.htm#ScriptDir">%A_ScriptDir%</a>\Lib\  <em>; Lokale Bibliothek - benötigt <span class="ver">[AHK_L 42+]</span>.</em>
+<pre class="no-highlight"><a href="Variables.htm#ScriptDir">%A_ScriptDir%</a>\Lib\  <em>; Lokale Bibliothek - benötigt <span class="ver">[AHK_L 42+]</span>.</em>
 <a href="Variables.htm#MyDocuments">%A_MyDocuments%</a>\AutoHotkey\Lib\  <em>; Benutzerbibliothek.</em>
 Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.</em></pre>
-<p>Wenn ein Skript beispielsweise die nicht-existierende Funktion <code>MeineFunk()</code> aufruft, sucht das Programm in der Benutzerbibliothek nach einer Datei mit dem Namen "MeineFunk.ahk". Wenn sie dort nicht ist, wird die Standardbibliothek durchsucht. Wenn sie auch dort nicht gefunden wird und enthält der Funktionsname einen Unterstrich (z.B. <code>MeinPräfix_MeineFunk</code>), sucht das Programm in beiden Bibliotheken nach einer Datei mit dem Namen <code>MeinPräfix.ahk</code> und lädt diese, falls vorhanden. Dadurch kann <code>MeinPräfix.ahk</code> sowohl die Funktion <code>MeinPräfix_MeineFunk</code> als auch andere verwandte Funktionen enthalten, deren Namen mit <code>MeinPräfix_</code> beginnen.</p>
+<p>Wenn ein Skript beispielsweise die nicht-existierende Funktion <code>MeineFunk()</code> aufruft, sucht das Programm in der Benutzerbibliothek nach einer Datei mit dem Namen "MeineFunk.ahk". Wenn sie dort nicht ist, wird die Standardbibliothek durchsucht. Wenn sie auch dort nicht gefunden wird und enthält der Funktionsname einen Unterstrich (z.B. <code class="no-highlight">MeinPräfix_MeineFunk</code>), sucht das Programm in beiden Bibliotheken nach einer Datei mit dem Namen <code class="no-highlight">MeinPräfix.ahk</code> und lädt diese, falls vorhanden. Dadurch kann <code class="no-highlight">MeinPräfix.ahk</code> sowohl die Funktion <code class="no-highlight">MeinPräfix_MeineFunk</code> als auch andere verwandte Funktionen enthalten, deren Namen mit <code class="no-highlight">MeinPräfix_</code> beginnen.</p>
 <p><span class="ver">[AHK_L 42+]</span>: Unterstützung für die lokale Bibliothek hinzugefügt, die vor der Benutzer- und Standardbibliothek durchsucht wird.</p>
 <p>Nur ein direkter Funktionsaufruf wie <code>MeineFunk()</code> bewirkt, dass eine Bibliothek automatisch inkludiert wird. Wenn die Funktion nur dynamisch oder indirekt aufgerufen wird, z.B. via Timer oder GUI-Ereignis, muss die Bibliothek explizit in das Skript inkludiert werden. Zum Beispiel: <code><a href="lib/_Include.htm">#Include</a> &lt;MeineFunk&gt;</code></p>
 <p>Obwohl eine Bibliotheksdatei in der Regel nur eine einzelne Funktion mit demselben Namen wie die Datei enthält, kann sie auch private Funktionen und Subroutinen enthalten, die nur von ihr aufgerufen werden. Allerdings sollten solche Funktionen eindeutige Namen haben, da sie sich im globalen Namensraum befinden, d.h. sie können von überall im Skript aufgerufen werden.</p>

@@ -340,7 +340,7 @@ indexData = [
   ["Button-Steuerelemente (GUI)","lib/GuiControls.htm#Button"],
   ["Button-Liste (Maus und Controller)","KeyList.htm"],
   ["Button-Status","lib/GetKeyState.htm"],
-  ["ByRef","Functions.htm#ByRef",5,"",true],
+  ["ByRef","Functions.htm#ByRef",5],
   ["Caching (Konzepte)","Concepts.htm#caching"],
   ["Call-Methode (Func)","lib/Func.htm#Call",8],
   ["callbacks","lib/RegisterCallback.htm"],["Rückruffunktionen","lib/RegisterCallback.htm"],

@@ -48,7 +48,7 @@
 </tr>
 <tr id="str">
 <td>Str</td>
-<td><p>Eine Zeichenkette wie "Blau" oder MeineVar. Wenn die aufgerufene Funktion die Zeichenkette ändert und das Argument eine reine Variable ist, wird der Inhalt der Variable aktualisiert. Zum Beispiel würde der folgende Aufruf den Inhalt von <em>MeineVar</em> in Großbuchstaben umwandeln: <code>DllCall("CharUpper", "Str", <i>MeineVar</i>)</code>.</p>
+<td><p>Eine Zeichenkette wie "Blau" oder MeineVar. Wenn die aufgerufene Funktion die Zeichenkette ändert und das Argument eine reine Variable ist, wird der Inhalt der Variable aktualisiert. Zum Beispiel würde der folgende Aufruf den Inhalt von <em>MeineVar</em> in Großbuchstaben umwandeln: <code>DllCall("CharUpper", "Str", MeineVar)</code>.</p>
   <p>Wenn die Funktion jedoch eine Zeichenkette zurückgibt, die größer ist als die aktuelle Kapazität einer Variable, sollten Sie vor dem Funktionsaufruf sicherstellen, dass die Variable groß genug ist. Rufen Sie hierfür <code><a href="VarSetCapacity.htm">VarSetCapacity</a>(MeineVar, 123)</code> auf, wobei 123 die gewünschte Kapazität für <em>MeineVar</em> ist.</p>
   <p>Ein <em>Str</em>-Argument darf kein <a href="../Variables.htm#Expressions">Ausdruck</a> sein, der nach der Auswertung eine Zahl ergibt (z.B. <code>i+1</code>). Ist dies der Fall, wird die Funktion nicht aufgerufen und ErrorLevel auf -2 gesetzt.</p>
   <p>Die <a href="#asterisk">Sternchenvariable</a> "Str*" wird unterstützt, aber selten verwendet. Sie kann für Funktionen verwendet werden, die so etwas wie "TCHAR **" oder "LPTSTR *" erwarten.</p>
@@ -130,25 +130,25 @@ DllCall("DeleteFile", Ptr, &amp;DateiName) <em>; Anführungszeichen bei Ptr wegl
 
 <h2 id="load">Performanz</h2>
 <p>Wenn die DLL wiederholt aufgerufen wird, ist es ratsam, sie vorher zu laden, um die Performanz drastisch zu erhöhen (<em>das ist für eine <a href="#std">Standard-DLL</a> wie User32 nicht notwendig, da sie immer allgegenwärtig ist</em>). Dadurch wird vermieden, dass DllCall jedes Mal LoadLibrary und FreeLibrary intern aufrufen muss. Zum Beispiel:</p>
-<pre>hModule := DllCall("<strong>LoadLibrary</strong>", "Str", "MeineFunktionen.dll", "Ptr")  <em>; Verhindert, dass DllCall() die Bibliothek in der Schleife laden muss.</em>
+<pre>hModule := DllCall("LoadLibrary", "Str", "MeineFunktionen.dll", "Ptr")  <em>; Verhindert, dass DllCall() die Bibliothek in der Schleife laden muss.</em>
 Loop, C:\Meine Dokumente\*.*, , 1
     Ergebnis := DllCall("MeineFunktionen\DateiSichern", "Str", A_LoopFileFullPath)
-DllCall("<strong>FreeLibrary</strong>", "Ptr", hModule)  <em>; Um Speicherplatz zu sparen, kann die DLL nach Gebrauch wieder freigegeben werden.</em></pre>
+DllCall("FreeLibrary", "Ptr", hModule)  <em>; Um Speicherplatz zu sparen, kann die DLL nach Gebrauch wieder freigegeben werden.</em></pre>
 <p><span class="ver">[v1.0.46.08+]</span>: Um die Performanz noch weiter zu erhöhen, kann die Adresse der Funktion im Voraus ermittelt werden. Zum Beispiel:</p>
 <pre><em>; Verwenden Sie in der folgenden Zeile LoadLibrary anstelle von GetModuleHandle, wenn die DLL noch nicht geladen ist.</em>
-<strong>MulDivProc</strong> := DllCall("GetProcAddress", "Ptr", DllCall("GetModuleHandle", "Str", "<strong>kernel32</strong>", "Ptr"), "AStr", "<strong>MulDiv</strong>", "Ptr")
+MulDivProc := DllCall("GetProcAddress", "Ptr", DllCall("GetModuleHandle", "Str", "kernel32", "Ptr"), "AStr", "MulDiv", "Ptr")
 Loop 500
-    DllCall(<strong>MulDivProc</strong>, "Int", 3, "Int", 4, "Int", 3)</pre>
+    DllCall(MulDivProc, "Int", 3, "Int", 4, "Int", 3)</pre>
 <p><span class="ver">[AHK_L 31+]</span>: Wenn der erste Parameter von DllCall eine direkt geschriebene Zeichenkette wie <code>"MulDiv"</code> ist und die DLL der entsprechenden Funktion normal vor dem Start des Skripts geladen wird, wird die Zeichenkette automatisch in eine Funktionsadresse aufgelöst. Diese interne Optimierung ist effizienter als das obige Beispiel.</p>
 <p>Sie können auch <a href="_NoEnv.htm">#NoEnv</a> irgendwo im Skript einfügen, um die Performanz von DllCall zu erhöhen, wenn anführungszeichenlose Parametertypen verwendet werden (z.B. Int statt "Int").</p>
-<p>Übergibt man eine Zeichenkettenvariable an eine Funktion, die die Länge der Zeichenkette nicht ändert, kann die Performanz erhöht werden, indem man die Variable <a href="../Variables.htm#amp">per Adresse</a> (z.B. &amp;MeineVar) statt als "<a href="#str">str</a>" übergibt (insbesondere dann, wenn die Zeichenkette sehr lang ist). Das folgende Beispiel wandelt alle Buchstaben einer Zeichenkette in Großbuchstaben um: <code>DllCall("CharUpper", "<strong>Ptr</strong>", <strong>&amp;</strong>MeineVar, "Ptr")</code>.</p>
+<p>Übergibt man eine Zeichenkettenvariable an eine Funktion, die die Länge der Zeichenkette nicht ändert, kann die Performanz erhöht werden, indem man die Variable <a href="../Variables.htm#amp">per Adresse</a> (z.B. &amp;MeineVar) statt als "<a href="#str">str</a>" übergibt (insbesondere dann, wenn die Zeichenkette sehr lang ist). Das folgende Beispiel wandelt alle Buchstaben einer Zeichenkette in Großbuchstaben um: <code>DllCall("CharUpper", "Ptr", &amp;MeineVar, "Ptr")</code>.</p>
 
 <h2 id="struct">Strukturen und Arrays</h2>
 <p>Eine Struktur ist eine Sammlung von <em>Elementen</em> (Feldern), die nebeneinander im Speicher abgelegt sind. Die meisten Elemente sind für gewöhnlich Integer.</p>
 <p>Funktionen, die die Adresse einer Struktur (oder eines Speicherblock-Arrays) akzeptieren, können aufgerufen werden, indem man die rohen Binärdaten der Struktur in einer normalen Variable hinterlegt. In der Regel geht man wie folgt vor:</p>
 <p>1) Rufen Sie <code><a href="VarSetCapacity.htm">VarSetCapacity</a>(MeineStrukt, 123, 0)</code> auf, um sicherzustellen, dass die Kapazität der Zielvariable groß genug für die Struktur ist. Ersetzen Sie 123 mit einer Zahl, die mindestens der Größe der Struktur entspricht. Die 0 im letzten Parameter ist optional und bewirkt, dass alle Strukturelemente mit einer binären Null initialisiert werden, um häufige Aufrufe von NumPut() zu vermeiden, wie im nächsten Schritt beschrieben.</p>
 <p>2) Wenn die Zielfunktion bereits zu Beginn bestimmte Werte in der Struktur benötigt, rufen Sie <code><a href="NumPut.htm">NumPut</a>(123, MeineStrukt, 4, "UInt")</code> auf, um ein beliebiges Element auf einen Wert ungleich 0 zu setzen. Ersetzen Sie <code>123</code> mit einem Integer, auf dem das Zielelement gesetzt werden soll (oder geben Sie <code>&amp;Var</code> an, um die <a href="../Variables.htm#amp">Adresse</a> einer Variable zu hinterlegen). Ersetzen Sie <code>4</code> mit dem Offset des Zielelements (siehe Schritt #4, was ein "Offset" ist). Ersetzen Sie <code>"UInt"</code> mit dem entsprechenden Typ oder lassen Sie es weg, wenn das Element ein Pointer oder Handle ist.</p>
-<p>3) Rufen Sie die Zielfunktion auf und übergeben Sie die <a href="../Variables.htm#amp">Adresse</a> von <em>MeineStrukt</em> als UInt (oder als Ptr in <span class="ver">[AHK_L 42+]</span>). Zum Beispiel <code>DllCall("MeineDLL\MeineFunk", "Ptr", <strong>&amp;</strong>MeineStrukt)</code>. Die Funktion wird einige Elemente auswerten und/oder ändern.</p>
+<p>3) Rufen Sie die Zielfunktion auf und übergeben Sie die <a href="../Variables.htm#amp">Adresse</a> von <em>MeineStrukt</em> als UInt (oder als Ptr in <span class="ver">[AHK_L 42+]</span>). Zum Beispiel <code>DllCall("MeineDLL\MeineFunk", "Ptr", &amp;MeineStrukt)</code>. Die Funktion wird einige Elemente auswerten und/oder ändern.</p>
 <p>4) Verwenden Sie <code>MeinInteger := <a href="NumGet.htm">NumGet</a>(MeineStrukt, 4, "UInt")</code>, um einen beliebigen Integer aus der Struktur abzurufen. Ersetzen Sie <code>4</code> mit dem Offset des Zielelements in der Struktur. Das erste Element befindet sich immer auf Offset 0. Das zweite Element befindet sich auf Offset 0 plus der Größe des ersten Elements (typischerweise 4). Jedes nachfolgende Element befindet sich auf dem Offset des vorherigen Elements plus der Größe des vorherigen Elements. Die meisten Elemente -- wie z.B. DWORD, Int und <a href="#Int">andere Typen von 32-Bit-Integern</a> -- haben eine Größe von 4 Bytes. Ersetzen Sie <code>"UInt"</code> mit dem entsprechenden Typ oder lassen Sie es weg, wenn das Element ein Pointer oder Handle ist.</p>
 <p>Beispiele für Strukturen finden Sie im <a href="#ExStruct">Beispielabschnitt</a> weiter unten.</p>
 <h2 id="limits">Bekannte Einschränkungen</h2>
@@ -178,7 +178,7 @@ MsgBox Sie haben die Schaltfläche Nr. %WelcheSchaltfl% gedrückt.</pre>
 
 <div class="ex" id="ExWallpaper">
 <p><a class="ex_number" href="#ExWallpaper"></a> Ersetzt das Hintergrundbild des Desktops mit der angegebenen Bitmap-Datei (.bmp).</p>
-<pre>DllCall("SystemParametersInfo", "UInt", 0x14, "UInt", 0, "Str", A_WinDir <strong>.</strong> "\winnt.bmp", "UInt", 1)</pre>
+<pre>DllCall("SystemParametersInfo", "UInt", 0x14, "UInt", 0, "Str", A_WinDir . "\winnt.bmp", "UInt", 1)</pre>
 </div>
 
 <div class="ex" id="ExIsWindowVisible">

@@ -1693,12 +1693,12 @@ function ctor_features()
     for(var i = 0; i < spans.length; i++) {
       var span = spans[i], m, title, href;
       var text = span.textContent || span.innerText;
-      if (m = /AHK_L (\d+)\+/.exec(text)) {
-        title = T("Applies to:\nAutoHotkey_L Revision {0} and later\nAutoHotkey v1.0.90.00 and later").format(m[1]);
+      if (m = /AHK_L (\d+)(\+)?/.exec(text)) {
+        title = m[2] ? T("Applies to:\nAutoHotkey_L Revision {0} and later\nAutoHotkey v1.0.90.00 and later").format(m[1]) : "AutoHotkey_L Revision {0}\nAutoHotkey v1.0.90.00".format(m[1]);
         href = 'AHKL_ChangeLog.htm#L' + m[1];
-        text = text.replace(m[0], 'v1.0.90+'); // For users who don't know what AHK_L was.
+        text = text.replace(m[0], (m[2] ? 'v1.0.90+' : 'v1.0.90')); // For users who don't know what AHK_L was.
       } else if (m = /(v\d\.\d\.(\d+\.)?\d+)(\+)?/.exec(text)) {
-        title = m[3] ? T("Applies to AutoHotkey {0} and later").format(m[1]) : "";
+        title = m[3] ? T("Applies to AutoHotkey {0} and later").format(m[1]) : "AutoHotkey {0}".format(m[1]);
         if (!m[2])
           m[1] = m[1] + '.00';
         if (m[1] <= 'v1.0.48.05')
