@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>#IfWinActive / #IfWinNotActive / #IfWinExist / #IfWinNotExist - Syntax &amp; Verwendung | AutoHotkey v1</title>
-<meta name="description" content="Die Direktiven #IfWinActive, #IfWinNotActive, #IfWinExist und #IfWinNotExist erstellen je nach Typ des aktiven oder existierenden Fensters kontextabhängige Hotkeys und Hotstrings." />
+<meta name="description" content="Die Direktiven #IfWinActive, #IfWinNotActive, #IfWinExist und #IfWinNotExist erstellen kontextabhängige Hotkeys und Hotstrings. Diese führen je nach aktivem oder existierendem Fenster eine andere (oder gar keine) Aktion aus." />
 <meta name="ahk:equiv-v2" content="lib/_HotIf.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,7 +14,7 @@
 
 <h1>#IfWinActive / #IfWinNotActive / #IfWinExist / #IfWinNotExist</h1>
 
-<p>Erstellt kontextabhängige <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a>. Solche Hotkeys führen je nach aktivem oder existierendem Fenster eine andere (oder gar keine) Aktion aus.</p>
+<p>Erstellt kontextabhängige <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a>. Diese führen je nach aktivem oder existierendem Fenster eine andere (oder gar keine) Aktion aus.</p>
 
 <pre class="Syntax">
 <span class="func">#IfWinActive</span> <span class="optional">FensterTitel, FensterText</span>
@@ -39,19 +39,21 @@
 <h2 id="Basic_Operation">Grundlegende Bedienung</h2>
 <p>Die #IfWin-Direktiven machen es einfach, kontextabhängige <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a> zu erstellen. Zum Beispiel:</p>
 <pre>#IfWinActive ahk_class Notepad
-#space::MsgBox Sie haben WIN+LEERTASTE in Notepad gedrückt.</pre>
+#space::MsgBox Sie haben WIN+LEERTASTE in Notepad gedrückt.
+::bzw::Sie haben bzw in Notepad geschrieben.</pre>
 <p>Die #IfWin-Direktiven sind positionsabhängig, d.h. sie beeinflussen nur Hotkeys und Hotstrings, die sich im Skript physisch darunter befinden. Außerdem schließen sie sich gegenseitig aus, d.h. nur die aktuellste Direktive ist wirksam.</p>
+<p>Die #IfWin-Direktiven sind für Hotkeys und Hotstrings gedacht, die mit der Zweifach-Doppelpunkt-Syntax definiert werden, wie z.B. <code>#space::</code> oder <code>::bzw::</code>. Für Hotkeys und Hotstrings, die mit dem <a href="Hotkey.htm">Hotkey</a>-Befehl oder der <a href="Hotstring.htm">Hotstring</a>-Funktion erstellt werden, ist <a href="Hotkey.htm#IfWin">Hotkey If</a> die richtige Wahl. Wenn <em>Hotkey If</em> jedoch nie im Skript verwendet wird, wird die unterste im Skript angegebene #IfWin-Direktive (falls vorhanden) für den Hotkey-Befehl oder die Hotstring-Funktion wirksam.</p>
 <p>Um die Kontextabhängigkeit auszuschalten, geben Sie eine beliebige #IfWin-Direktive ohne Parameter an. Zum Beispiel:</p>
 <pre>#IfWinActive</pre>
-<p>Wenn #IfWin ausgeschaltet ist (oder nie im Skript verwendet wird), sind <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a> für alle Fenster wirksam (es sei denn, sie wurden via <a href="Suspend.htm">Suspend</a> oder dem <a href="Hotkey.htm">Hotkey</a>-Befehl deaktiviert).</p>
+<p>Wenn #IfWin ausgeschaltet ist (oder nie im Skript verwendet wird), sind <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a> für alle Fenster wirksam – es sei denn, sie wurden via <a href="Suspend.htm">Suspend</a>, <a href="Hotkey.htm">Hotkey</a> oder <a href="Hotstring.htm">Hotstring()</a> deaktiviert.</p>
 <p>Wenn ein Maus- oder Tastatur-Hotkey per #IfWin deaktiviert wurde, wird er seine ursprüngliche Funktion ausführen, d.h. der Hotkey wird an das aktive Fenster weitergereicht, als gäbe es ihn nicht. Es gibt eine Ausnahme: Controller-Hotkeys: Obwohl #IfWin mit diesen Hotkeys funktioniert, kann die Direktive nicht verhindern, dass andere Programme die Tastendrücke eines Controllers wahrnehmen.</p>
 <p>#IfWin kann auch verwendet werden, um das Verhalten einer gewöhnlichen Taste wie <kbd>Enter</kbd> oder <kbd>Leer</kbd> zu ändern. Das ist nützlich, wenn ein bestimmtes Fenster diese Taste ignoriert oder eine unerwünschte Aktion ausführt. Zum Beispiel:</p>
 <pre>#IfWinActive Erinnerung ahk_class #32770  <em>; Das Erinnerungsfenster von Outlook.</em>
 Enter::Send !o  <em>; ENTER soll die markierte Erinnerung öffnen statt snoozen.</em>
 #IfWinActive</pre>
 <p>#IfWin kann wie alle anderen Direktiven nicht bedingt ausgeführt werden.</p>
-<h2 id="variant">Hotkey-Varianten (-Duplikate)</h2>
-<p>Sie können einen bestimmten <a href="../Hotkeys.htm">Hotkey</a> oder <a href="../Hotstrings.htm">Hotstring</a> mehrmals im Skript definieren, indem Sie jeder Definition ein anderes IfWin-Kriterium zuweisen. Diese werden als <em>Hotkey-Varianten</em> bezeichnet. Zum Beispiel:</p>
+<h2 id="variant">Varianten (Duplikate)</h2>
+<p>Sie können einen bestimmten <a href="../Hotkeys.htm">Hotkey</a> oder <a href="../Hotstrings.htm">Hotstring</a> mehrmals im Skript definieren, indem Sie jeder Definition ein anderes IfWin-Kriterium zuweisen. Diese werden als <em>Hotkey-Varianten</em> oder <em>Hotstring-Varianten</em> bezeichnet. Zum Beispiel:</p>
 <pre>#IfWinActive ahk_class Notepad
 ^!c::MsgBox Sie haben STRG+ALT+C in Notepad gedrückt.
 #IfWinActive ahk_class WordPadClass
@@ -68,7 +70,7 @@ Enter::Send !o  <em>; ENTER soll die markierte Erinnerung öffnen statt snoozen.
 MsgBox Sie haben WIN+Z entweder in Notepad oder WordPad gedrückt.
 return</pre>
 <p>Alternativ kann auch eine <a href="GroupAdd.htm">Fenstergruppe</a> via <code>#IfWinActive ahk_group MeineGruppe</code> verwendet werden.</p>
-<p>Um Hotkey-Varianten dynamisch zu erstellen (während das Skript läuft), siehe <a href="Hotkey.htm#IfWin">"Hotkey IfWin"</a>.</p>
+<p>Um Hotkey-Varianten oder in <span class="ver">[v1.1.28+]</span> Hotstring-Varianten dynamisch zu erstellen (während das Skript läuft), siehe <a href="Hotkey.htm#IfWin">"Hotkey IfWin"</a>.</p>
 <h2 id="gen">Allgemeine Bemerkungen</h2>
 <p>#IfWin stellt auch bei Bedarf die ursprüngliche Funktion der Präfixtasten wieder her (eine <a href="../Hotkeys.htm#prefix">Präfixtaste</a> ist bspw. <kbd>A</kbd> bei einem Hotkey wie "a &amp; b"). Dies geschieht immer dann, wenn für ein bestimmtes Präfix keine aktivierten Hotkeys verfügbar sind.</p>
 <p>Nutzt man ein Gosub oder Goto, um zu einem Hotkey- oder Hotstring-Label zu springen, springt es zu der Variante, die dem Anfang des Skripts am nächsten ist.</p>
@@ -82,7 +84,7 @@ return</pre>
 <p>Die <a href="../misc/EscapeChar.htm">Escapesequenzen</a> `s und `t können verwendet werden, wenn Leer- bzw. Tabulatorzeichen am Anfang und Ende eines #IfWin-Parameters notwendig sind.</p>
 <p>Aus Performanzgründen überwacht #IfWin das angegebene Fenster nicht kontinuierlich, ob es aktiviert oder vorhanden ist. Erst wenn der Benutzer ein Hotkey oder Hotstring auslöst, sucht die Direktive nach einem passenden Fenster. Wenn die Direktive kein passendes Fenster findet, werden Tastendrücke oder Mausklicks des Benutzers unverändert an das aktive Fenster weitergegeben.</p>
 <h2 id="Related">Siehe auch</h2>
-<p><a href="_If.htm">#If <i>Ausdruck</i></a>, <a href="Hotkey.htm">Hotkey-Befehl</a>, <a href="../Hotkeys.htm">Hotkeys</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="Suspend.htm">Suspend</a>, <a href="WinActive.htm">WinActive()</a>, <a href="WinExist.htm">WinExist()</a>, <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>, <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a></p>
+<p><a href="_If.htm">#If <i>Ausdruck</i></a>, <a href="Hotkey.htm">Hotkey-Befehl</a>, <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Hotstring.htm">Hotstring-Funktion</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="Suspend.htm">Suspend</a>, <a href="WinActive.htm">WinActive()</a>, <a href="WinExist.htm">WinExist()</a>, <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>, <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
 <p><a class="ex_number" href="#ExBasic"></a> Erstellt zwei Hotkeys und einen Hotstring, die nur funktionieren, wenn Notepad aktiv ist, und einen Hotkey, der für alle Fenster außer Notepad funktioniert.</p>

@@ -99,7 +99,7 @@ Standardmäßig bleibt der Zeilenumbruch (Enter) zwischen der vorherigen und die
 )</pre>
 <p>Unter <a href="Scripts.htm#continuation">Fortsetzungsbereich</a> erfahren Sie, wie Sie dieses Standardverhalten ändern können. Beachten Sie auch, dass ein Fortsetzungsbereich dazu führt, dass der Hotstring standardmäßig den <a href="#raw">Raw-Modus</a> verwendet. Die einzige Möglichkeit, dies zu überschreiben, besteht darin, bei jedem Hotstring mit einem Fortsetzungsbereich die <a href="#raw">r0-Option</a> anzugeben (z.B. <code>:r0:text1::</code>).</p>
 <h2 id="variant">Kontextabhängige Hotstrings</h2>
-<p>Mit den Direktiven <a href="lib/_IfWinActive.htm">#IfWinActive/Exist</a> können bestimmte Hotstrings kontextabhängig gemacht werden. Solche Hotstrings können je nach aktivem oder existierendem Fenster einen anderen Ersatztext senden, eine andere Aktion ausführen oder gar nichts tun. Zum Beispiel:</p>
+<p>Mit den Direktiven <a href="lib/_IfWinActive.htm">#IfWinActive/Exist</a> und <a href="lib/_If.htm">#If</a> können bestimmte Hotstrings kontextabhängig gemacht werden. Solche Hotstrings senden einen anderen Ersatztext, führen eine andere Aktion aus oder tun gar nichts, abhängig von einer bestimmten Bedingung. Zum Beispiel:</p>
 <pre>#IfWinActive ahk_class Notepad
 ::bzw::Dieser Ersatztext erscheint nur in Notepad.
 #IfWinActive
@@ -126,6 +126,7 @@ Standardmäßig bleibt der Zeilenumbruch (Enter) zwischen der vorherigen und die
 <p id="label">Es ist möglich, mit <a href="lib/Gosub.htm">Gosub</a> oder <a href="lib/Goto.htm">Goto</a> zu einem Hotstring-Label zu springen. Fügen Sie einfach das erste Doppelpunktpaar (einschließlich der Optionssymbole) vor seinem Namen ein. Zum Beispiel: <code>Gosub ::xyz</code>. Wenn das Ziel allerdings ein <a href="#auto">einzeiliger (automatisch-ersetzender) Hotstring</a> ist, wird nur ein <a href="lib/Return.htm">Return</a> ausgeführt.</p>
 <p>Hotstrings werden weder überwacht noch während eines unsichtbaren <a href="lib/Input.htm">Input</a>-Befehls ausgelöst, können aber durch sichtbare Inputs ausgelöst werden.</p>
 <p id="InputLevel">Standardmäßig können Hotstrings nicht durch Tastendrücke ausgelöst werden, die von einem AutoHotkey-Skript erzeugt wurden. Dadurch wird vermieden, dass eine Endlosschleife entsteht, in der sich Hotstrings immer wieder gegenseitig auslösen. In <span class="ver">[v1.1.06+]</span> kann dieses Verhalten mit <a href="lib/_InputLevel.htm">#InputLevel</a> und <a href="lib/SendLevel.htm">SendLevel</a> kontrolliert werden. Allerdings verwenden automatisch-ersetzende Hotstrings immer Sendlevel 0 und können daher niemals <a href="lib/_UseHook.htm">Hook-Hotkeys</a> oder Hotstrings auslösen.</p>
+<p>Der <a href="lib/Suspend.htm">Suspend</a>-Befehl kann vorübergehend alle Hotstrings deaktivieren, außer denen, die Sie explizit ausgeschlossen haben. Für ein gezielteres Aktivieren/Deaktivieren sollten Sie <a href="lib/_IfWinActive.htm">#IfWinActive/Exist</a> verwenden.</p>
 <p><span class="ver">[v1.1.28+]</span>: Hotstrings können dynamisch erstellt werden, z.B. mit der <a href="lib/Hotstring.htm">Hotstring</a>-Funktion, die auch in der Lage ist, bestehende Hotstrings einzeln zu modifizieren, zu deaktivieren oder zu aktivieren.</p>
 <p>In bestimmten Fällen ist der <a href="lib/Input.htm">Input</a>-Befehl flexibler als Hotstrings. Zum Beispiel sind damit unsichtbare Tastendrücke im aktiven Fenster (z.B. eines Videospiels) möglich. Außerdem werden zeichenlose Endungstasten wie <kbd>Esc</kbd> unterstützt.</p>
 <p>Jedes Skript, das Hotstrings enthält, verwendet automatisch den <a href="lib/_InstallKeybdHook.htm">Tastatur-Hook</a>.</p>
@@ -154,7 +155,9 @@ Standardmäßig bleibt der Zeilenumbruch (Enter) zwischen der vorherigen und die
             Send beziehungsweise
     }
 </pre>
-<p>Zusätzliche Informationen finden Sie unter <a href="Hotkeys.htm#function-details">Funktions-Hotkeys</a>.</p>
+<p><a href="Hotkeys.htm">Hotkeys</a> können auch auf diese Weise definiert werden. Mehrere Hotkeys oder Hotstrings können vertikal gestapelt werden, um die gleiche Funktion aufzurufen.</p>
+<p>Zwischen den Hotkey/Hotstring-Labels oder dem Label und der Funktion dürfen nur Leerraumzeichen, Kommentare oder Direktiven stehen. Hotkey/Hotstring-Labels, die auf diese Weise definiert wurden, sind für <a href="lib/IsLabel.htm">IsLabel()</a>, <a href="lib/Gosub.htm">Gosub</a> oder anderen Befehlen nicht sichtbar; allerdings endet der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> immer beim ersten Hotkey/Hotstring, egal ob diesem eine Funktion zugewiesen ist.</p>
+<p>Die Nutzung einer Funktion hat den Vorteil, dass lokale Variablen verwendet werden können, um Konflikte zu vermeiden, wenn zwei oder mehr Hotstrings die gleichen Variablennamen für unterschiedliche Zwecke verwenden. Es begünstigt auch die Selbstdokumentation von Hotstrings, wie im obigen Code, wo der Funktionsname den Hotstring beschreibt.</p>
 <p>Mit der <a href="lib/Hotstring.htm">Hotstring</a>-Funktion kann einem Hotstring auch eine Funktion oder ein Funktionsobjekt zugewiesen werden.</p>
 
 <h2 id="Helper">Hotstring Helper</h2>
