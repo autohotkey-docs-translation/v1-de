@@ -6,6 +6,7 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<link href="../static/dark.css" rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" id="dark_css" />
 <script src="../static/content.js" type="text/javascript"></script>
 <script src="../static/ga4.js" type="text/javascript"></script>
 </head>
@@ -28,8 +29,7 @@
       <p>Andernfalls geben Sie eine Zeichenkette an, die aus einer oder mehreren der folgenden Optionen besteht (in beliebiger Reihenfolge, optional durch Leerzeichen getrennt):</p>
       <p><strong>D:</strong> Warten, bis die Taste nach unten gedrückt wird.</p>
       <p><strong>L:</strong> Prüft den logischen Status der Taste; das ist der Status, den das Betriebssystem und das aktive Fenster für diese Taste vermuten, der aber nicht unbedingt dem physischen Status entspricht. Diese Option wird bei Controllertasten ignoriert.</p>
-      <p><strong>T:</strong> Zeitlimit (z.B. <code class="no-highlight">T3</code>). Die zu wartenden Sekunden, bevor eine Zeitüberschreitung erfolgt und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt wird. Der Befehl hört bereits auf zu warten, wenn die Taste den angegebenen Status erreicht hat, und nicht erst, wenn das Zeitlimit abgelaufen ist. In diesem Fall wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> sofort auf 0 gesetzt und die Skriptausführung fortgesetzt.</p>
-      <p>Der Zeitlimit-Wert kann eine Floating-Point-Zahl wie 2.5 sein, aber kein Hexadezimalwert wie 0x03.</p></dd>
+      <p><strong>T:</strong> Zeitlimit (z.B. <code class="no-highlight">T3</code>). Die zu wartenden Sekunden, bevor eine Zeitüberschreitung erfolgt und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt wird. Der Befehl hört bereits auf zu warten, wenn die Taste den angegebenen Status erreicht hat, und nicht erst, wenn das Zeitlimit abgelaufen ist. In diesem Fall wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> sofort auf 0 gesetzt und die Skriptausführung fortgesetzt. Der Zeitlimit-Wert kann eine Floating-Point-Zahl wie 2.5 sein, aber kein Hexadezimalwert wie 0x03.</p></dd>
 
 </dl>
 
@@ -42,11 +42,21 @@
 <pre>KeyWait Control  <em>; Warten, bis STRG und ALT losgelassen werden.</em>
 KeyWait Alt</pre>
 <p>Um auf das Drücken einer beliebigen Taste aus einer Liste von Tasten zu warten, siehe <a href="Input.htm#ExAnyKey">Input-Beispiel #1</a>.</p>
+<p>Modifikatortasten-Hotkeys (<code>Ctrl::</code>, <code>Control::</code>, <code>Alt::</code> und <code>Shift::</code>), <a href="../Hotkeys.htm#prefix">Präfixtasten</a>-Hotkeys und <a href="../Hotkeys.htm#keyup">Taste-Oben</a>-Hotkeys werden beim Loslassen statt beim Drücken ausgelöst. Wenn man also innerhalb ihrer Definition auf die Auslösetaste wartet, kann das Ergebnis anders ausfallen als erwartet, insbesondere wenn die T-Option (Zeitlimit) verwendet wird. Zum Beispiel funktioniert der folgende Code nicht wie erwartet, weil KeyWait nur das Loslassen von <kbd>Alt</kbd> sieht und daher nie das Zeitlimit überschreitet:</p>
+<pre>Alt::  <em>; Dies mit ~Alt:: ersetzen, damit es wie vorgesehen funktioniert.</em>
+KeyWait Alt, T0.3
+if ErrorLevel
+    MsgBox Gehalten
+else
+    MsgBox Gedrückt
+return</pre>
+<p>Dieser Code meldet immer "Gedrückt", egal wie lange Sie die Taste gedrückt halten. Um das zu vermeiden, fügen Sie das <a href="../Hotkeys.htm#Tilde">Tilde-Präfix (~)</a> hinzu, damit die Modifikatortaste stattdessen beim Drücken ausgelöst wird. Mit anderen Worten, ersetzen Sie <code>Alt::</code> mit <code>~Alt::</code>, damit es wie vorgesehen funktioniert.</p>
+
 <h2 id="Related">Siehe auch</h2>
-<p><a href="GetKeyState.htm">GetKeyState</a>, <a href="../KeyList.htm">Tastenliste</a>, <a href="Input.htm">Input</a>, <a href="KeyHistory.htm">KeyHistory</a>, <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="_InstallMouseHook.htm">#InstallMouseHook</a>, <a href="ClipWait.htm">ClipWait</a>, <a href="WinWait.htm">WinWait</a></p>
+<p><a href="GetKeyState.htm">GetKeyState</a>, <a href="../KeyList.htm">Tastenliste</a>, <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Input.htm">Input</a>, <a href="KeyHistory.htm">KeyHistory</a>, <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="_InstallMouseHook.htm">#InstallMouseHook</a>, <a href="ClipWait.htm">ClipWait</a>, <a href="WinWait.htm">WinWait</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a class="ex_number" href="#ExBasic"></a> Wartet, bis die A-Taste losgelassen wird.</p>
+<p><a class="ex_number" href="#ExBasic"></a> Wartet, bis <kbd>A</kbd> losgelassen wird.</p>
 <pre>KeyWait, a</pre>
 </div>
 
@@ -61,12 +71,12 @@ KeyWait Alt</pre>
 </div>
 
 <div class="ex" id="ExLogical">
-<p><a class="ex_number" href="#ExLogical"></a> Wartet, bis die linke ALT-Taste logisch losgelassen wird.</p>
+<p><a class="ex_number" href="#ExLogical"></a> Wartet, bis die linke <kbd>Alt</kbd>-Taste logisch losgelassen wird.</p>
 <pre>KeyWait, LAlt, L</pre>
 </div>
 
 <div class="ex" id="ExHotkey">
-<p><a class="ex_number" href="#ExHotkey"></a> Wenn dieser Hotkey gedrückt wird, wartet KeyWait, bis die Feststelltaste physisch losgelassen wird. Dies hat zur Folge, dass nachfolgende Anweisungen beim Loslassen statt Drücken ausgeführt werden. Dieses Verhalten ähnelt <code>~CapsLock up::</code>.</p>
+<p><a class="ex_number" href="#ExHotkey"></a> Wenn dieser Hotkey gedrückt wird, wartet KeyWait, bis <kbd>Feststell</kbd> physisch losgelassen wird. Dies hat zur Folge, dass nachfolgende Anweisungen beim Loslassen statt Drücken ausgeführt werden. Dieses Verhalten ähnelt <code>~CapsLock up::</code>.</p>
 <pre>~CapsLock::
 KeyWait, CapsLock  <em>; Wartet auf das physische Loslassen.</em>
 MsgBox Sie haben die FESTSTELL-Taste gedrückt und losgelassen.
@@ -74,7 +84,7 @@ return</pre>
 </div>
 
 <div class="ex" id="ExRemap">
-<p><a class="ex_number" href="#ExRemap"></a> Belegt eine Tastatur- oder Maustaste neu. (Dieses Beispiel dient nur zur Illustration, da es einfacher wäre, die <a href="../misc/Remap.htm">interne Neubelegung</a> zu verwenden.) Im folgenden Hotkey wird die Maustaste gedrückt gehalten, während NumpadAdd unten ist, was NumpadAdd effektiv zu einer Maustaste macht.</p>
+<p><a class="ex_number" href="#ExRemap"></a> Belegt eine Tastatur- oder Maustaste neu. (Dieses Beispiel dient nur zur Illustration, da es einfacher wäre, die <a href="../misc/Remap.htm">interne Neubelegung</a> zu verwenden.) Im folgenden Hotkey wird die Maustaste gedrückt gehalten, während <kbd>NumpadAdd</kbd> unten ist, was <kbd>NumpadAdd</kbd> effektiv zu einer Maustaste macht.</p>
 <pre>*NumpadAdd::
 MouseClick, left,,, 1, 0, D  <em>; Die linke Maustaste gedrückt halten.</em>
 KeyWait, NumpadAdd  <em>; Wartet, bis die Taste losgelassen wird.</em>
@@ -83,7 +93,7 @@ return</pre>
 </div>
 
 <div class="ex" id="ExDouble">
-<p><a class="ex_number" href="#ExDouble"></a> Erkennt, ob eine Taste zweimal gedrückt wurde (ähnlich einem Doppelklick). KeyWait verhindert, dass die Autowiederholungsfunktion der Tastatur einen ungewollten Doppeldruck erzeugt, wenn die rechte STRG-Taste zum Modifizieren einer anderen Taste gedrückt gehalten wird. Hierzu wird der Thread des Hotkeys am Laufen gehalten, wodurch die Autowiederholung blockiert wird, solange #MaxThreadsPerHotkey standardmäßig 1 ist. Für ein ausführlicheres Skript, das zwischen einfachem, doppeltem und dreifachem Tastendruck unterscheidet, siehe <a href="SetTimer.htm#ExampleCount">SetTimer-Beispiel #3</a>.</p>
+<p><a class="ex_number" href="#ExDouble"></a> Erkennt, ob eine Taste zweimal gedrückt wurde (ähnlich einem Doppelklick). KeyWait verhindert, dass die Autowiederholungsfunktion der Tastatur einen ungewollten Doppeldruck erzeugt, wenn die rechte <kbd>Strg</kbd>-Taste zum Modifizieren einer anderen Taste gedrückt gehalten wird. Hierzu wird der Thread des Hotkeys am Laufen gehalten, wodurch die Autowiederholung blockiert wird, solange <a href="_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a> standardmäßig 1 ist. Für ein ausführlicheres Skript, das zwischen einfachem, doppeltem und dreifachem Tastendruck unterscheidet, siehe <a href="SetTimer.htm#ExampleCount">SetTimer-Beispiel #3</a>.</p>
 <pre>~RControl::
 if (A_PriorHotkey != "~RControl" or A_TimeSincePriorHotkey &gt; 400)
 {
