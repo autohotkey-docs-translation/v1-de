@@ -29,15 +29,17 @@ function ctor_highlighter()
     if (!-[1,]) // Exclude Internet Explorer 8 or below
       return;
     var syn = sort_syntax_by_type(index_data);
+    var r_op = '(&(?:amp|lt|gt);|[\\-=,:!?.*/^+|~%(){}\\[\\]])|\\b(' + syn[4].join('|') + ')\\b'; // operators
     var r_op_assign = '(?:&lt;&lt;|<<|&gt;&gt;|>>|\\/\\/|\\^|&amp;|&|\\||\\.|\\/|\\*|-|\\+|:|)='; // assignment operators
     var r_num = '(?:0(?:x|X)[0-9a-fA-F]*)|(?:(?:[0-9]+\\.?[0-9]*)|(?:\\.[0-9]+))(?:(?:e|E)(?:\\+|-)?[0-9]+)?'; // number
     var r_char = 'A-Za-z0-9_\\#@\\$\\u00A0-\\uFFFF'; // allowed chars
     var r_char_prop = 'A-Za-z0-9_\\u00A0-\\uFFFF'; // allowed chars for props/methods
-    var r_com = '<(?:em|sct)\\d+></(?:em|sct)\\d+>'; // comment
+    var r_sct = '<(?:em|sct)\\d+></(?:em|sct)\\d+>'; // single-line comment
+    var r_mct = '<mct\\d+></mct\\d+>'; // multi-line comment
     var r_cont = '<cont\\d+></cont\\d+>'; // continuation section
     var r_s = '(?: |\\t|&nbsp;)'; // space
     var r_pre = '(^' + r_s + '*(?:[{}]' + r_s + '*)*)'; // prefix
-    var r_suf = '(?=' + r_s + '*(?:$|' + r_com + '))'; // suffix
+    var r_suf = '(?=' + r_s + '*(?:$|' + r_sct + '))'; // suffix
     // Traverse pre elements:
     for (var i = 0; i < codes.length; i++)
     {
@@ -166,7 +168,7 @@ function ctor_highlighter()
       {
         OPTS = comments_single(OPTS);
         var opts = OPTS + (forced_opts ? ' ' + forced_opts : '');
-        opts = opts.replace(new RegExp('(^|' + r_s + '+)(join\\S*|(l|r)trim0?|' + r_com + ')|', 'gi'), '');
+        opts = opts.replace(new RegExp('(^|' + r_s + '+)(join\\S*|(l|r)trim0?|' + r_sct + ')|', 'gi'), '');
         if (opts.indexOf(')') != -1)
           return OPEN + OPTS + continuation_sections(CONT + CLOSE);
         var allow_comments = (opts.indexOf('c') != -1 || opts.indexOf('C') != -1);
@@ -226,7 +228,7 @@ function ctor_highlighter()
     /** Searches for control flow statements and commands, formats them and replaces them with placeholders. */
     function command_alikes(innerHTML)
     {
-      innerHTML = innerHTML.replace(new RegExp(r_pre + '\\b(?:(' + syn[3].join('|') + ')|(' + syn[6].join('|') + '))\\b(' + r_s + '*,|\\(|\\{|$|' + r_s + '(?!' + r_s + '*' + r_op_assign + ')|' + r_s + '*(?=' + r_cont + '))(.*?(?=' + r_s + '*' + r_com + '(?!' + r_cont + ')|$)(?:(?:.*[\\n\\r]' + r_s + '*?(?:,|' + r_com + '(?:\\s*,)?|' + r_cont + ').+?' + r_suf + '))*)', 'gim'), function(ASIS, PRE, CFS, CMD, SEP, PARAMS)
+      innerHTML = innerHTML.replace(new RegExp(r_pre + '\\b(?:(' + syn[3].join('|') + ')|(' + syn[6].join('|') + '))\\b(' + r_s + '*,|\\(|\\{|$|' + r_s + '(?!' + r_s + '*' + r_op_assign + ')|' + r_s + '*(?=' + r_cont + '))(.*?(?=' + r_s + '*' + r_sct + '(?!' + r_cont + ')|$)(?:(?:.*[\\n\\r]' + r_s + '*?(?:,|' + r_sct + '(?:\\s*,)?|' + r_cont + ').+?' + r_suf + '))*)', 'gim'), function(ASIS, PRE, CFS, CMD, SEP, PARAMS)
       {
         if (CFS) // control flow statements:
         {
@@ -335,7 +337,7 @@ function ctor_highlighter()
         }
       });
       // switch's case keyword:
-      innerHTML = innerHTML.replace(new RegExp(r_pre + '\\b(case)\\b(?:$|(' + r_s + '*,' + r_s + '*|' + r_s + '+)(.*?:(?!=).*?)' + r_suf + ')', 'gim'), function(ASIS, PRE, CFS, SEP, PARAMS)
+      innerHTML = innerHTML.replace(new RegExp(r_pre + '\\b(case)\\b(?:$|(' + r_s + '*,' + r_s + '*|' + r_s + '+|' + r_cont + ')(.*?(\\r?\\n' + r_s + '*(' + r_op + '|' + r_sct + '|' + r_mct + '|$))*.*?:(?!=).*?)' + r_suf + ')', 'gim'), function(ASIS, PRE, CFS, SEP, PARAMS)
       {
         if (!PARAMS)
           return PRE + ph('cfs', wrap(CFS, 'cfs', 3));
@@ -367,7 +369,7 @@ function ctor_highlighter()
     /** Searches for hotstrings, formats them and replaces them with placeholders. */
     function hotstrings(innerHTML)
     {
-      return innerHTML.replace(new RegExp('^(' + r_s + '*):(.*?):(.*)::(.*?(?=' + r_s + '+' + r_com + '(?!' + r_cont + ')|' + r_s + '*$)(?:(?:.*[\\n\\r]' + r_s + '*?(?:' + r_com + '|' + r_cont + ').*?' + r_suf + '))*)', 'mg'), function(ASIS, PRE, OPTS, ABBR, REPL)
+      return innerHTML.replace(new RegExp('^(' + r_s + '*):(.*?):(.*)::(.*?(?=' + r_s + '+' + r_sct + '(?!' + r_cont + ')|' + r_s + '*$)(?:(?:.*[\\n\\r]' + r_s + '*?(?:' + r_sct + '|' + r_cont + ').*?' + r_suf + '))*)', 'mg'), function(ASIS, PRE, OPTS, ABBR, REPL)
       {
         if (ASIS.indexOf('`::') != -1)
           return hotstrings(escape_sequences(ASIS, '`(::|.)'));
@@ -420,7 +422,7 @@ function ctor_highlighter()
     /** Searches for legacy assignments, formats them and replaces them with placeholders. */
     function legacy_assignments(innerHTML)
     {
-      return innerHTML.replace(new RegExp(r_pre + '([' + r_char + '%]+?' + r_s + '*([+-]?=)' + r_s + '*)(.*?(?=' + r_s + '*' + r_com + '(?!' + r_cont + ')|$)(?:(?:.*[\\n\\r]' + r_s + '*?(?:,|' + r_com + '(\\s*,)?|' + r_cont + ').+?' + r_suf + '))*)', 'gim'), function(_, PRE, VAR_OP, OP, PARAMS)
+      return innerHTML.replace(new RegExp(r_pre + '([' + r_char + '%]+?' + r_s + '*([+-]?=)' + r_s + '*)(.*?(?=' + r_s + '*' + r_sct + '(?!' + r_cont + ')|$)(?:(?:.*[\\n\\r]' + r_s + '*?(?:,|' + r_sct + '(\\s*,)?|' + r_cont + ').+?' + r_suf + '))*)', 'gim'), function(_, PRE, VAR_OP, OP, PARAMS)
       {
         var types = 'S', is_not_equal = (OP != '=');
         PARAMS = param_list_to_array(PARAMS, is_not_equal);
@@ -505,22 +507,15 @@ function ctor_highlighter()
     /** Searches for operators, formats them and replaces them with placeholders. */
     function operators(innerHTML)
     {
-      // forward slash operators without breaking end tags:
-      innerHTML = innerHTML.replace(new RegExp('(^|[^<])(//?)', 'g'), function(_, PRE, OPR)
+      return innerHTML.replace(new RegExp('(</)|' + r_op, 'gi'), function(ASIS, TAG, SYM, WORD)
       {
-        return PRE + ph('opr', wrap(OPR, 'opr', null));
+        if (TAG) // Prevents breaking end tags such as </span> due to /
+          return ASIS;
+        else if (SYM) // symbol operators
+          return ph('opr', wrap(SYM, 'opr', null));
+        else if (WORD) // word operators
+          return ph('opr', wrap(WORD, WORD.match(/new/i) ? 'dec' : 'opr', 4));
       });
-      // other operators:
-      innerHTML = innerHTML.replace(new RegExp('[\\-=,:!?.*^+|~%(){}\\[\\]]|&(amp|lt|gt);', 'gi'), function(OPR)
-      {
-        return ph('opr', wrap(OPR, 'opr', null));
-      });
-      // named operators:
-      innerHTML = innerHTML.replace(new RegExp('\\b(and|not|or|new)\\b', 'gi'), function(OPR)
-      {
-        return ph('opr', wrap(OPR, OPR.match(/new/i) ? 'dec' : 'opr', 4));
-      });
-      return innerHTML;
     }
     /** Searches for comments, formats them and replaces them with placeholders. */
     function comments(innerHTML)
