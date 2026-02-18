@@ -2,13 +2,22 @@
 <html lang="de">
 <head>
 <title>ListView (GUI) - Syntax &amp; Verwendung | AutoHotkey v1</title>
-<meta name="description" content="Eine ListView (auf Deutsch: Listenansicht) wird häufig verwendet, um eine Tabelle in Form von Zeilen und Spalten darzustellen. Diese Seite enthält die Funktionen, um sie zu modifizieren." />
+<meta name="description" content="Ein ListView-Steuerelement wird häufig verwendet, um eine Tabelle in Form von Zeilen und Spalten darzustellen. Diese Seite enthält die Funktionen, um es zu modifizieren." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
 <link href="../static/dark.css" rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" id="dark_css" />
 <script src="../static/content.js" type="text/javascript"></script>
 <script src="../static/ga4.js" type="text/javascript"></script>
+<style>
+  img {
+    margin: 0 1.5em;
+    border: 1px solid silver;
+  }
+  @media only screen and (max-width: 600px) {
+    img { margin: 0; }
+  }
+</style>
 </head>
 
 <body>
@@ -17,9 +26,9 @@
 <h2 id="toc">Inhaltsverzeichnis</h2>
 <ul>
   <li><a href="#Intro">Einführung und einfaches Beispiel</a></li>
-  <li><a href="#Options">Optionen und Styles für den Optionen-Parameter</a></li>
+  <li><a href="#Parameters">Parameter</a></li>
   <li><a href="#View">Ansichtsmodi</a>: Report (Standard), Icon, Tile, IconSmall und List.</li>
-  <li><a href="#BuiltIn">Interne ListView-Funktionen</a></li>
+  <li><a href="#BuiltIn">Interne Funktionen</a></li>
   <li><a href="#notify">G-Label-Benachrichtigungen</a></li>
   <li><a href="#IL">ImageLists</a> (Symbole zu einer ListView hinzufügen)</li>
   <li><a href="#Remarks">Bemerkungen</a></li>
@@ -27,11 +36,11 @@
 </ul>
 
 <h2 id="Intro">Einführung und einfaches Beispiel</h2>
-<p>Die ListView ist eines der umfangreichsten Steuerelemente, das vom Betriebssystem zur Verfügung gestellt wird. Eine ListView (auf Deutsch: Listenansicht) wird häufig verwendet, um eine Tabelle in Form von Zeilen und Spalten darzustellen. Das wohl bekannteste Beispiel dafür ist die detaillierte Auflistung von Dateien und Ordnern im Explorer.</p>
+<p>Eines der umfangreichsten Steuerelemente, das vom Betriebssystem zur Verfügung gestellt wird. Es wird häufig verwendet, um eine Tabelle in Form von Zeilen und Spalten darzustellen. Das wohl bekannteste Beispiel dafür ist die detaillierte Auflistung von Dateien und Ordnern im Explorer.</p>
 <p>Eine typische ListView sieht wie folgt aus:</p>
 <img src="../static/ctrl_listview.png" alt="ListView" />
 <p>Auch wenn es recht umfangreich erscheinen mag, sind die grundlegenden Features einer ListView relativ einfach zu bedienen. Die Syntax zum Erstellen einer ListView ist:</p>
-<pre class="Syntax" id="GuiAdd"><span class="func">Gui</span>, Add, ListView, Optionen, SpalteTitel1|SpalteTitel2|...</pre>
+<pre class="Syntax Indent" id="GuiAdd"><span class="func">Gui</span>, Add, ListView, Optionen, SpaltenTitel</pre>
 <p>Das folgende Beispiel ist ein lauffähiges Skript, das alle Dateien im Ordner "Eigene Dateien" des Benutzers in einer ListView auflistet:</p>
 <pre><em>; Zweispaltige ListView erstellen:</em>
 Gui, Add, ListView, r20 w700 gMeineListView, Name|Größe (KB)
@@ -58,37 +67,49 @@ return
 GuiClose:  <em>; Skript automatisch beenden, wenn das Fenster geschlossen wird.</em>
 ExitApp</pre>
 
-<h2 id="Options">Optionen und Styles für den Optionen-Parameter</h2>
-<p id="AltSubmit"><strong>AltSubmit:</strong> Teilt dem Skript mehr ListView-Ereignisse als normal mit. Mit anderen Worten, das g-Label wird häufiger gestartet. Weitere Informationen finden Sie unter <a href="#notify">ListView-Benachrichtigungen</a>.</p>
-<p><strong>Background:</strong> Geben Sie das Wort <em>Background</em> an, unmittelbar gefolgt von einem Farbnamen (siehe <a href="Progress.htm#colors">Farbentabelle</a>) oder RGB-Wert (mit oder ohne 0x-Präfix). Beispiele: <code class="no-highlight">BackgroundSilver</code>, <code class="no-highlight">BackgroundFFDD99</code>. Wenn diese Option nicht vorhanden ist, verwendet die ListView als Hintergrundfarbe standardmäßig die Farbe, die im letzten Parameter von <a href="Gui.htm#Color">Gui Color</a> definiert ist (wenn keine definiert ist, dann die Standardhintergrundfarbe des Systems). Mit <code class="no-highlight">BackgroundDefault</code> kann die Standardhintergrundfarbe des Systems gesetzt werden (in der Regel weiß). Zum Beispiel kann die Standardfarbe einer ListView via <code>GuiControl, +BackgroundDefault, MeineListView</code> wiederhergestellt werden.</p>
-<p><strong>C:</strong> Textfarbe. Geben Sie den Buchstaben C an, unmittelbar gefolgt von einem Farbnamen (siehe <a href="Progress.htm#colors">Farbentabelle</a>) oder RGB-Wert (mit oder ohne 0x-Präfix). Beispiele: <code class="no-highlight">cRed</code>, <code class="no-highlight">cFF2211</code>, <code class="no-highlight">c0xFF2211</code>, <code class="no-highlight">cDefault</code>.</p>
-<p id="Checked"><strong>Checked:</strong> Stellt eine CheckBox auf der linken Seite jeder Zeile bereit. Geben Sie beim <a href="#LV_Add">Hinzufügen</a> einer Zeile das Wort <em>Check</em> in den Optionen an, um die CheckBox vorerst im abgehakten Zustand anzuzeigen. Der Benutzer kann die CheckBox anklicken oder die Leertaste drücken, um ein Häkchen zu setzen oder zu entfernen.</p>
-<p id="Count"><strong>Count:</strong> Geben Sie das Wort <em>Count</em> an, unmittelbar gefolgt von der Anzahl der Zeilen, die die ListView letztendlich enthalten soll. Dies ist kein Limit: Nach Erreichen dieser Anzahl können weiterhin neue Zeilen hinzugefügt werden. Stattdessen dient diese Option eher als Hinweis, dass das Steuerelement den Speicher nur einmal reservieren soll und nicht jedes Mal, wenn eine neue Zeile hinzugefügt wird, was die Performanz beim Hinzufügen neuer Zeilen (und bis zu einem gewissen Grad auch beim Sortieren) deutlich verbessert. Um die Performanz noch weiter zu verbessern, verwenden Sie <code>GuiControl, -Redraw, MeineListView</code>, bevor Sie eine große Anzahl von Zeilen hinzufügen. Verwenden Sie anschließend <code>GuiControl, +Redraw, MeineListView</code>, um die Neuzeichnung wieder zu aktivieren (wodurch auch das Steuerelement neu gezeichnet wird).</p>
-<p><strong>Grid:</strong> Zeigt horizontale und vertikale Linien an, um die Grenzen zwischen den Zeilen und Spalten zu verdeutlichen.</p>
-<p><strong>Hdr:</strong> Geben Sie <code class="no-highlight">-Hdr</code> (minus Hdr) an, um die Kopfzeile (Spaltenüberschriften) zu verstecken. Um sie später wieder sichtbar zu machen, verwenden Sie <code>GuiControl, +Hdr, MeineListView</code>.</p>
-<p id="LVS_EX"><strong>LV:</strong> Geben Sie die Zeichenkette <em>LV</em> an, unmittelbar gefolgt von der Zahl eines <a href="../misc/Styles.htm#LVS_EX">erweiterten ListView-Styles</a>. Diese Styles sind etwas völlig anderes als die generischen erweiterten Styles. Zum Beispiel bewirkt <code class="no-highlight">-E0x200</code>, dass der generische erweiterte Style WS_EX_CLIENTEDGE (Standardrahmen des Steuerelements) entfernt wird, während <code class="no-highlight">-LV0x20</code> den erweiterten ListView-Style <a href="#frs">LVS_EX_FULLROWSELECT</a> entfernt.</p>
-<p><strong>LV0x10:</strong> Geben Sie <code class="no-highlight">-LV0x10</code> an, um den Benutzer daran zu hindern, die Spaltenüberschriften zwecks Neuanordnung nach links oder rechts zu verschieben. Normalerweise ist das in der Regel nicht notwendig, weil die physische Neuanordnung der Spalten keinen Einfluss auf die vom Skript gesehene Spaltenanordnung hat. Die erste Spalte wird aus Sicht des Skripts immer Spalte 1 sein, auch dann, wenn der Benutzer sie z.B. physisch ganz nach rechts verschoben hat.</p>
-<p id="frs"><strong>LV0x20:</strong> Geben Sie <code class="no-highlight">-LV0x20</code> an, damit eine Zeile nur durch Anklicken des ersten Feldes ausgewählt werden kann (normalerweise kann sie durch Anklicken eines <em>beliebigen</em> Feldes ausgewählt werden). Diese Option hat den Vorteil, dass der Benutzer leichter ein Rechteck über mehrere Zeilen ziehen kann, um sie auszuwählen.</p>
-<p><strong>Multi:</strong> Geben Sie <code class="no-highlight">-Multi</code> (minus Multi) an, um den Benutzer daran zu hindern, mehr als eine Zeile auszuwählen.</p>
-<p id="NoSortHdr"><strong>NoSortHdr:</strong> Verhindert, dass die Kopfzeile angeklickt werden kann. Die Spaltenüberschriften werden nicht mehr als normale Schaltflächen dargestellt, sondern bekommen ein flacheres Aussehen. Im Gegensatz zu den meisten anderen ListView-Styles kann dieser Style nicht mehr geändert werden, nachdem die ListView erstellt wurde.</p>
-<p id="NoSort"><strong>NoSort:</strong> Verhindert die automatische Sortierung beim Anklicken einer Spaltenüberschrift. Die Spaltenüberschrift verhält sich jedoch weiterhin visuell wie eine Schaltfläche (es sei denn, die <a href="#NoSortHdr">NoSortHdr</a>-Option oben wurde angegeben). Außerdem erhält das g-Label weiterhin die <a href="#ColClick">ColClick-Benachrichtigung</a>, die z.B. für eine benutzerdefinierte Sortierung verwendet werden kann.</p>
-<p id="ReadOnly"><strong>ReadOnly:</strong> Geben Sie <code class="no-highlight">-ReadOnly</code> (minus ReadOnly) an, um dem Benutzer das Editieren des Textes in der ersten Spalte jeder Zeile zu erlauben. Um eine Zeile zu editieren, wählen Sie sie aus und drücken Sie <kbd>F2</kbd> (siehe <a href="#WantF2">WantF2</a>-Option unten). Alternativ können Sie einmal auf eine Zeile klicken, um sie auszuwählen, mindestens eine halbe Sekunde warten und dann erneut auf dieselbe Zeile klicken, um sie zu editieren.</p>
-<p><strong>R:</strong> Höhe in Zeilen (beim Erstellen). Geben Sie den Buchstaben R an, unmittelbar gefolgt von der Anzahl der Zeilen, für die innerhalb des Steuerelements Platz geschaffen werden soll. Zum Beispiel bewirkt <code class="no-highlight">R10</code>, dass das Steuerelement 10 Zeilen hoch gemacht wird. Wenn die ListView mit einem anderen <a href="#View">Ansichtsmodus</a> als Report erstellt wurde, wird die Höhe des Steuerelements so angepasst, dass Symbolzeilen anstelle von Textzeilen hineinpassen. Hinweis: Wenn <a href="#IL">Symbole</a> zu den Zeilen einer ListView hinzugefügt werden, erhöht sich die Höhe jeder Zeile, wodurch diese Option ungenau wird.</p>
-<p id="Sort"><strong>Sort:</strong> Sortiert die Zeilen in alphabetischer Reihenfolge, basierend auf dem Inhalt der ersten Spalte.</p>
-<p id="SortDesc"><strong>SortDesc:</strong> Wie oben, aber in absteigender Reihenfolge.</p>
-<p id="WantF2"><strong>WantF2:</strong> In <span class="ver">[v1.0.44+]</span> kann <code class="no-highlight">-WantF2</code> (minus WantF2) angegeben werden, um den Benutzer daran zu hindern, die aktuell fokussierte Zeile mit <kbd>F2</kbd> zu <a href="#ReadOnly">editieren</a>. Diese Einstellung wird ignoriert, es sei denn, <a href="#ReadOnly">-ReadOnly</a> ist ebenfalls wirksam. Unabhängig von dieser Einstellung erhält das g-Label weiterhin <a href="#NotifyK">F2-Benachrichtigungen</a>.</p>
-<p><strong>(Namenlose numerische Styles):</strong> Andere Styles als die oben genannten werden nur selten verwendet und haben daher keine Namen. Eine vollständige Liste finden Sie unter <a href="../misc/Styles.htm#ListView">ListView-Styles</a>.</p>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+  <dt id="Options">Optionen</dt>
+  <dd>
+    <p>Neben den <a href="Gui.htm#ControlOptions">allgemeinen Optionen und Styles</a> werden die folgenden unterstützt oder sind erwähnenswert:</p>
+    <p><strong>Background</strong><em>Farbe</em>: Hintergrundfarbe. Geben Sie für <em>Farbe</em> einen Farbnamen (siehe <a href="Progress.htm#colors">Farbentabelle</a>) oder RGB-Wert (mit oder ohne 0x-Präfix) an. Beispiele: <code class="no-highlight">BackgroundSilver</code>, <code class="no-highlight">BackgroundFFDD99</code>. Wenn diese Option nicht vorhanden ist, verwendet die ListView als Hintergrundfarbe standardmäßig die Farbe, die mit dem <em>SteuerelementFarbe</em>-Parameter von <a href="Gui.htm#Color">Gui Color</a> definiert wurde (wenn keine definiert wurde, dann die Standardhintergrundfarbe des Systems). Mit <code class="no-highlight">BackgroundDefault</code> kann die Standardhintergrundfarbe des Systems gesetzt werden (in der Regel weiß). Zum Beispiel kann die Standardfarbe einer ListView via <code>GuiControl, +BackgroundDefault, MeineListView</code> wiederhergestellt werden.</p>
+    <p><strong>C</strong><em>Farbe</em>: Textfarbe. Geben Sie für <em>Farbe</em> einen Farbnamen (siehe <a href="Progress.htm#colors">Farbentabelle</a>) oder RGB-Wert (mit oder ohne 0x-Präfix) an. Beispiele: <code class="no-highlight">cRed</code>, <code class="no-highlight">cFF2211</code>, <code class="no-highlight">c0xFF2211</code>, <code class="no-highlight">cDefault</code>.</p>
+    <p id="Checked"><strong>Checked:</strong> Stellt ein Kontrollkästchen auf der linken Seite jeder Zeile bereit. Geben Sie beim <a href="#LV_Add">Hinzufügen</a> einer Zeile das Wort <em>Check</em> in den Optionen an, um das Kontrollkästchen vorerst im angehakten Zustand anzuzeigen. Der Benutzer kann das Kontrollkästchen anklicken oder die Leertaste drücken, um ein Häkchen zu setzen oder zu entfernen.</p>
+    <p id="Count"><strong>Count</strong><em>N</em>: Geben Sie für <em>N</em> die Anzahl der Zeilen an, die die ListView letztendlich enthalten wird. Dies ist kein Limit: Nach Erreichen dieser Anzahl können weiterhin neue Zeilen hinzugefügt werden. Stattdessen dient diese Option eher als Hinweis, dass das Steuerelement den Speicher nur einmal reservieren soll und nicht jedes Mal, wenn eine neue Zeile hinzugefügt wird, was die Performanz beim Hinzufügen neuer Zeilen (und bis zu einem gewissen Grad auch beim Sortieren) deutlich verbessert. Um die Performanz noch weiter zu verbessern, verwenden Sie <code>GuiControl, -Redraw, MeineListView</code>, bevor Sie eine große Anzahl von Zeilen hinzufügen. Verwenden Sie anschließend <code>GuiControl, +Redraw, MeineListView</code>, um die Neuzeichnung wieder zu aktivieren (wodurch auch das Steuerelement neu gezeichnet wird).</p>
+    <p><strong>Grid:</strong> Zeigt horizontale und vertikale Linien an, um die Grenzen zwischen den Zeilen und Spalten zu verdeutlichen.</p>
+    <p><strong>Hdr:</strong> Geben Sie <code class="no-highlight">-Hdr</code> (minus Hdr) an, um die Kopfzeile (Spaltenüberschriften) zu verstecken. Um sie später wieder sichtbar zu machen, verwenden Sie <code>GuiControl, +Hdr, MeineListView</code>.</p>
+    <p><strong>Icon</strong>, <strong>Tile</strong>, <strong>IconSmall</strong>, <strong>List</strong> oder <strong>Report</strong>: Einzelheiten finden Sie unter <a href="#View">Ansichtsmodi</a>.</p>
+    <p id="LVS_EX"><strong>LV</strong><em>n</em>: Geben Sie für <em>N</em> die Zahl eines <a href="../misc/Styles.htm#LVS_EX">erweiterten ListView-Styles</a> an. Diese Styles sind etwas völlig anderes als die generischen erweiterten Styles. Zum Beispiel bewirkt <code class="no-highlight">-E0x200</code>, dass der generische erweiterte Style WS_EX_CLIENTEDGE (Standardrahmen des Steuerelements) entfernt wird, während <code class="no-highlight">-LV0x20</code> den erweiterten ListView-Style <a href="#frs">LVS_EX_FULLROWSELECT</a> entfernt.</p>
+    <p><strong>LV0x10:</strong> Geben Sie <code class="no-highlight">-LV0x10</code> an, um den Benutzer daran zu hindern, die Spaltenüberschriften zwecks Neuanordnung nach links oder rechts zu verschieben. Normalerweise ist das in der Regel nicht notwendig, weil die physische Neuanordnung der Spalten keinen Einfluss auf die vom Skript gesehene Spaltenanordnung hat. Die erste Spalte wird aus Sicht des Skripts immer Spalte 1 sein, auch dann, wenn der Benutzer sie z.B. physisch ganz nach rechts verschoben hat.</p>
+    <p id="frs"><strong>LV0x20:</strong> Geben Sie <code class="no-highlight">-LV0x20</code> an, damit eine Zeile nur durch Anklicken des ersten Feldes ausgewählt werden kann (normalerweise kann sie durch Anklicken eines <em>beliebigen</em> Feldes ausgewählt werden). Diese Option hat den Vorteil, dass der Benutzer leichter ein Rechteck über mehrere Zeilen ziehen kann, um sie auszuwählen.</p>
+    <p><strong>Multi:</strong> Geben Sie <code class="no-highlight">-Multi</code> (minus Multi) an, um den Benutzer daran zu hindern, mehr als eine Zeile auszuwählen.</p>
+    <p id="NoSortHdr"><strong>NoSortHdr:</strong> Verhindert, dass die Kopfzeile angeklickt werden kann. Die Spaltenüberschriften werden nicht mehr als normale Schaltflächen dargestellt, sondern bekommen ein flacheres Aussehen. Im Gegensatz zu den meisten anderen ListView-Styles kann dieser Style nicht mehr geändert werden, nachdem die ListView erstellt wurde.</p>
+    <p id="NoSort"><strong>NoSort:</strong> Verhindert die automatische Sortierung beim Anklicken einer Spaltenüberschrift. Die Spaltenüberschrift verhält sich jedoch weiterhin visuell wie eine Schaltfläche (es sei denn, die <a href="#NoSortHdr">NoSortHdr</a>-Option wurde angegeben). Außerdem erhält das g-Label weiterhin die <a href="#ColClick">ColClick-Benachrichtigung</a>, die z.B. für eine benutzerdefinierte Sortierung verwendet werden kann.</p>
+    <p id="ReadOnly"><strong>ReadOnly:</strong> Geben Sie <code class="no-highlight">-ReadOnly</code> (minus ReadOnly) an, um dem Benutzer das Editieren des Textes in der ersten Spalte jeder Zeile zu erlauben. Um eine Zeile zu editieren, wählen Sie sie aus und drücken Sie <kbd>F2</kbd> (siehe <a href="#WantF2">WantF2</a>-Option unten). Alternativ können Sie einmal auf eine Zeile klicken, um sie auszuwählen, mindestens eine halbe Sekunde warten und dann erneut auf dieselbe Zeile klicken, um sie zu editieren.</p>
+    <p id="Sort"><strong>Sort:</strong> Sortiert die Zeilen in alphabetischer Reihenfolge, basierend auf dem Inhalt der ersten Spalte.</p>
+    <p id="SortDesc"><strong>SortDesc:</strong> Wie oben, aber in absteigender Reihenfolge.</p>
+    <p id="WantF2"><strong>WantF2</strong> <span class="ver">[v1.0.44+]</span>: Geben Sie <code class="no-highlight">-WantF2</code> (minus WantF2) an, um den Benutzer daran zu hindern, die aktuell fokussierte Zeile mit <kbd>F2</kbd> zu <a href="#ReadOnly">editieren</a>. Diese Einstellung wird ignoriert, es sei denn, <a href="#ReadOnly">-ReadOnly</a> ist ebenfalls wirksam. Unabhängig von dieser Einstellung erhält das g-Label weiterhin <a href="#NotifyK">F2-Benachrichtigungen</a>.</p>
+    <p><strong>G</strong><em>Label</em>: Das <a href="Gui.htm#label">g-Label</a> wird jedes Mal automatisch gestartet, wenn der Benutzer eine Aktion im Steuerelement ausführt. Wenn das Steuerelement die <a href="Gui.htm#AltSubmit">AltSubmit</a>-Option hat, wird das g-Label häufiger gestartet. Einzelheiten finden Sie unter <a href="#notify">ListView-Benachrichtigungen</a>.</p>
+    <p><strong>W</strong><em>n</em>: Setzt die Breite des Steuerelements. Zum Beispiel bewirkt <code class="no-highlight">w400</code>, dass das Steuerelement 400 Pixel breit gemacht wird. Wenn diese Option weggelassen wird, ist die Breite standardmäßig das 30-fache der aktuellen Schriftgröße.</p>
+    <p><strong>R</strong><em>n</em> oder <strong>H</strong><em>n</em>: Setzt die Höhe des Steuerelements. Zum Beispiel bewirkt <code class="no-highlight">r7</code>, dass im Steuerelement Platz für 7 Zeilen geschaffen wird, oder <code class="no-highlight">h400</code>, dass die Gesamthöhe des Steuerelements auf 400 Pixel gesetzt wird. Wenn beide Optionen weggelassen werden, ist die Höhe standardmäßig 5 Zeilen. Wenn die ListView mit einem anderen <a href="#View">Ansichtsmodus</a> als Report erstellt wurde, wird die Höhe des Steuerelements so angepasst, dass Symbolzeilen anstelle von Textzeilen hineinpassen. Beachten Sie, dass beim Hinzufügen von <a href="#IL">Symbolen</a> die Höhe jeder ListView-Zeile erhöht wird, wodurch diese Option ungenau wird.</p>
+    <p><strong>(Namenlose numerische Styles):</strong> Andere Styles als die oben genannten werden nur selten verwendet und haben daher keine Namen. Eine Liste von Styles finden Sie in der <a href="../misc/Styles.htm#ListView">ListView-Styles-Tabelle</a>.</p>
+  </dd>
+  <dt>SpaltenTitel</dt>
+  <dd>
+    <p>Eine via Vertikalstrich getrennte Liste von Spaltentiteln wie z.B. <code class="no-highlight">Rot|Grün|Blau</code>, die die Kopfzeile der ListView bilden.</p>
+  </dd>
+</dl>
 
 <h2 id="View">Ansichtsmodi</h2>
-<p>Eine ListView hat fünf Ansichtsmodi. Der am häufigsten verwendete Modus ist die Report-Ansicht (Standardeinstellung). Um eine andere Ansicht zu verwenden, fügen Sie den entsprechenden Namen in die Optionsliste ein. Die Ansicht kann auch geändert werden, nachdem das Steuerelement erstellt wurde, zum Beispiel: <code>GuiControl, +IconSmall, MeineListView</code>.</p>
-<p><strong>Icon:</strong> Große-Symbole-Ansicht. In dieser und allen anderen Ansichten außer <em>Report</em> sind nur die Texte der ersten Spalte sichtbar. Um Symbole in dieser Ansicht anzuzeigen, muss der ListView eine Große-Symbole-<a href="#IL">ImageList</a> zugewiesen werden.</p>
-<p><strong>Tile:</strong> Große-Symbole-Ansicht, aber mit ergonomischen Unterschieden – z.B. wird der Text für jedes Element rechts vom Symbol angezeigt, nicht darunter. <a href="#Checked">Checkboxen</a> funktionieren nicht in dieser Ansicht. Außerdem wird der Versuch, diese Ansicht in Betriebssystemen älter als Windows XP anzuzeigen, ignoriert.</p>
-<p><strong>IconSmall:</strong> Kleine-Symbole-Ansicht.</p>
-<p><strong>List:</strong> Kleine-Symbole-Ansicht im Listenformat, in der die Symbole in Spalten dargestellt werden. Die Anzahl der Spalten hängt von der Breite des Steuerelements und der Breite des breitesten darin enthaltenen Textelements ab.</p>
-<p><strong>Report:</strong> Wechselt zurück zur Report-Ansicht, was die Standardeinstellung für jede neue ListView ist. Zum Beispiel: <code>GuiControl, +Report, MeineListView</code>.</p>
+<p>Eine ListView hat fünf Ansichten. Die am häufigsten verwendete ist Report (Standard). Um eine andere zu verwenden, geben Sie ihren Namen in <em>Optionen</em> an. Die Ansicht kann auch geändert werden, nachdem das Steuerelement erstellt wurde, zum Beispiel: <code>GuiControl, +IconSmall, MeineListView</code>.</p>
+<p><strong>Icon:</strong> Große Symbole. In dieser und allen anderen Ansichten außer <em>Report</em> sind nur die Texte der ersten Spalte sichtbar. Um Symbole in dieser Ansicht anzuzeigen, muss der ListView eine Große-Symbole-<a href="#IL">ImageList</a> zugewiesen werden.</p>
+<p><strong>Tile:</strong> Kacheln. Eine Variante der Große-Symbole-Ansicht, aber mit ergonomischen Unterschieden – z.B. wird der Text für jedes Element rechts vom Symbol angezeigt, nicht darunter. <a href="#Checked">Kontrollkästchen</a> funktionieren nicht in dieser Ansicht. Außerdem wird der Versuch, diese Ansicht in Betriebssystemen älter als Windows XP anzuzeigen, ignoriert.</p>
+<p><strong>IconSmall:</strong> Kleine Symbole.</p>
+<p><strong>List:</strong> Liste. Eine Variante der Kleine-Symbole-Ansicht, aber in Listenform, in der die Symbole in Spalten dargestellt werden. Die Anzahl der Spalten hängt von der Breite des Steuerelements und der Breite des breitesten darin enthaltenen Textelements ab.</p>
+<p><strong>Report:</strong> Details. Ermöglicht die Darstellung einer klassischen Tabelle in Form von Zeilen und Spalten. Standardeinstellung für jede neue ListView. Zum Beispiel: <code>GuiControl, +Report, MeineListView</code>.</p>
 
-<h2 id="BuiltIn">Interne ListView-Funktionen</h2>
-<p>Alle folgenden ListView-Funktionen arbeiten mit dem <a href="Gui.htm#DefaultWin">Standard-GUI-Fenster</a> des aktuellen Threads (was z.B. mit <code><a href="Gui.htm#Default">Gui, 2:Default</a></code> geändert werden kann). Wenn das Standardfenster nicht existiert oder keine ListView-Steuerelemente hat, geben alle Funktionen Null zurück, um das Problem zu kennzeichnen.</p>
+<h2 id="BuiltIn">Interne Funktionen</h2>
+<p>Die folgenden Funktionen arbeiten mit dem <a href="Gui.htm#DefaultWin">Standard-GUI-Fenster</a> des aktuellen Threads (was mit <a href="Gui.htm#Default">Gui Default</a> geändert werden kann). Wenn das Standardfenster nicht existiert oder keine ListView-Steuerelemente hat, geben die Funktionen Null zurück, um das Problem zu kennzeichnen.</p>
 <p id="GuiLV">Wenn das Fenster mehr als ein ListView-Steuerelement hat, arbeiten die Funktionen standardmäßig mit dem zuletzt hinzugefügten. Um dies zu ändern, verwenden Sie <code>Gui, ListView, ListViewName</code>, wobei <em>ListViewName</em> entweder der Name der <a href="Gui.htm#var">zugeordneten Variable</a>, die ClassNN-Bezeichnung (wie vom internen Tool "Window Spy" angezeigt) oder in <span class="ver">[v1.1.04+]</span> die HWND-Nummer (eindeutige ID) der ListView ist. Einmal geändert, werden alle existierenden und zukünftigen <a href="../misc/Threads.htm">Threads</a> die angegebene ListView verwenden. <span class="ver">[v1.1.23+]</span>: <a href="../Variables.htm#DefaultListView">A_DefaultListView</a> enthält die aktuelle Einstellung.</p>
 <p id="RowNumber">Der auf dieser Seite verwendete Begriff "Zeilennummer" bezieht sich auf die aktuelle Position einer Zeile innerhalb der ListView. Die erste/oberste Zeile ist 1, die zweite 2 und so weiter. Nachdem eine Zeile hinzugefügt wurde, kann sich die Zeilennummer durch Sortieren, Löschen und Einfügen anderer Zeilen ändern. Daher ist es ratsam, <a href="#LV_GetText">LV_GetText()</a> in einer Schleife zu verwenden, um bestimmte Zeilen anhand ihres Inhalts zu lokalisieren.</p>
 
@@ -110,7 +131,7 @@ ExitApp</pre>
 <p id="bifGet">Abruffunktionen:</p>
 <ul>
   <li><a href="#LV_GetCount">LV_GetCount</a>: Gibt die Anzahl der Zeilen oder Spalten im Steuerelement zurück.</li>
-  <li><a href="#LV_GetNext">LV_GetNext</a>: Gibt die Zeilennummer der nächsten ausgewählten, abgehakten oder fokussierten Zeile zurück.</li>
+  <li><a href="#LV_GetNext">LV_GetNext</a>: Gibt die Zeilennummer der nächsten ausgewählten, angehakten oder fokussierten Zeile zurück.</li>
   <li><a href="#LV_GetText">LV_GetText</a>: Ruft den Text auf einer bestimmten Zeilen- und Spaltennummer ab.</li>
 </ul>
 
@@ -127,7 +148,7 @@ ExitApp</pre>
   <dt id="RowOptions">Optionen</dt>
   <dd>
     <p>Wenn leer oder weggelassen, werden standardmäßig keine Optionen verwendet. Andernfalls geben Sie eine oder mehrere Optionen aus der unteren Liste an (nicht Groß-/Kleinschreibung-sensitiv). Trennen Sie alle Optionen jeweils durch ein Leer- oder Tabulatorzeichen. Um eine Option zu entfernen, setzen Sie ein Minuszeichen davor. Um eine Option hinzuzufügen, lassen Sie das Vorzeichen weg oder setzen Sie ein Pluszeichen davor.</p>
-    <p id="Check"><strong>Check:</strong> Zeigt ein Häkchen in der Zeile an (sofern die ListView über <a href="#Checked">Checkboxen</a> verfügt). Mit <code>LV_Modify(ZeileNummer, "-Check")</code> kann das Häkchen später wieder entfernt werden.</p>
+    <p id="Check"><strong>Check:</strong> Zeigt ein Häkchen in der Zeile an (sofern die ListView über <a href="#Checked">Kontrollkästchen</a> verfügt). Mit <code>LV_Modify(ZeileNummer, "-Check")</code> kann das Häkchen später wieder entfernt werden.</p>
     <p id="ColN"><strong>Col:</strong> Geben Sie das Wort <em>Col</em> an, unmittelbar gefolgt von der Spaltennummer, ab der die Parameter <em>Spalte1</em> usw. angewendet werden sollen. Diese Option wird häufig in Verbindung mit <a href="#LV_Modify">LV_Modify()</a> verwendet, um einzelne Felder in einer Zeile zu ändern, ohne die Felder links davon zu beeinflussen.</p>
     <p id="Focus"><strong>Focus:</strong> Setzt den Tastaturfokus auf die Zeile (wird oft in Verbindung mit <a href="#Select">Select</a> verwendet). Mit <code>LV_Modify(ZeileNummer, "-Focus")</code> kann der Fokus später wieder entfernt werden.</p>
     <p><strong>Icon:</strong> Geben Sie das Wort <em>Icon</em> an, unmittelbar gefolgt von der Nummer des Symbols, das links in der ersten Spalte dieser Zeile angezeigt werden soll. Wenn diese Option fehlt, wird das erste Symbol in der <a href="#IL">ImageList</a> verwendet. Um ein leeres Symbol anzuzeigen, geben Sie -1 oder eine Zahl größer als die Anzahl der Symbole in der ImageList an. Wenn dem Steuerelement keine Kleine-Symbole-ImageList zugewiesen wurde, wird in der <a href="#View">Report-Ansicht</a> weder ein Symbol angezeigt noch Platz dafür reserviert.</p>
@@ -151,7 +172,7 @@ ExitApp</pre>
   <dt>ZeileNummer</dt>
   <dd>
     <p>Die Nummer der neuen Zeile, die eingefügt werden soll. Alle Zeilen, die auf oder unterhalb von <em>ZeileNummer</em> sind, werden nach unten verschoben, um Platz für die neue Zeile zu schaffen. Wenn <em>ZeileNummer</em> größer als die Anzahl der Zeilen in der Liste ist (sogar bis zu 2147483647), wird die neue Zeile am Ende der Liste hinzugefügt.</p>
-    </dd>
+  </dd>
   <dt>Optionen</dt>
   <dd>
     <p>Wenn leer oder weggelassen, werden standardmäßig keine Optionen verwendet. Andernfalls geben Sie eine oder mehrere Optionen aus der <a href="#RowOptions">obigen Liste</a> an.</p>
@@ -317,7 +338,7 @@ Loop % LV_GetCount("Column")
 }</pre>
 
 <h3 id="LV_GetNext">LV_GetNext</h3>
-<p>Gibt die Zeilennummer der nächsten ausgewählten, abgehakten oder fokussierten Zeile zurück.</p>
+<p>Gibt die Zeilennummer der nächsten ausgewählten, angehakten oder fokussierten Zeile zurück.</p>
 <pre class="Syntax">ZeileNummer := <span class="func">LV_GetNext</span>(<span class="optional">StartZeileNummer, ZeileTyp</span>)</pre>
 <h4 class="func_section" id="LV_GetNext_Parameters">Parameter</h4>
 <dl>
@@ -328,12 +349,12 @@ Loop % LV_GetCount("Column")
   <dt>ZeileTyp</dt>
   <dd>
     <p>Wenn leer oder weggelassen, sucht die Funktion nach der nächsten ausgewählten/markierten Zeile (siehe das Beispiel unten). Andernfalls geben Sie eine der folgenden Zeichenketten an:</p>
-    <p><strong>C</strong> oder <strong>Checked</strong>: Die nächste abgehakte Zeile suchen.</p>
+    <p><strong>C</strong> oder <strong>Checked</strong>: Die nächste angehakte Zeile suchen.</p>
     <p><strong>F</strong> oder <strong>Focused</strong>: Die fokussierte Zeile suchen. Es gibt nie mehr als eine fokussierte Zeile in der gesamten Liste, und manchmal gar keine.</p>
   </dd>
 </dl>
 <h4 class="func_section" id="LV_GetNext_Return_Value">Rückgabewert</h4>
-<p>Diese Funktion gibt die Zeilennummer der nächsten ausgewählten, abgehakten oder fokussierten Zeile zurück. Wenn keine gefunden wird, gibt sie 0 zurück.</p>
+<p>Diese Funktion gibt die Zeilennummer der nächsten ausgewählten, angehakten oder fokussierten Zeile zurück. Wenn keine gefunden wird, gibt sie 0 zurück.</p>
 <h4 class="func_section" id="LV_GetNext_Remarks">Bemerkungen</h4>
 <p>Das folgende Beispiel meldet alle ausgewählten Zeilen in der ListView:</p>
 <pre>ZeileNummer := 0  <em>; Die Suche bei der ersten Zeile beginnen.</em>
@@ -345,10 +366,10 @@ Loop
     LV_GetText(Text, ZeileNummer)
     MsgBox Die nächste ausgewählte Zeile ist Nr. %ZeileNummer%, deren erstes Feld "%Text%" enthält.
 }</pre>
-<p>Das nächste Beispiel ist eine alternative Methode, um herauszufinden, ob eine bestimmte Zeilennummer abgehakt ist:</p>
+<p>Das nächste Beispiel ist eine alternative Methode, um herauszufinden, ob eine bestimmte Zeilennummer angehakt ist:</p>
 <pre>Gui +LastFound
 SendMessage, 0x102C, <i>ZeileNummer</i> - 1, 0xF000, SysListView321  <em>; 0x102C ist LVM_GETITEMSTATE. 0xF000 ist LVIS_STATEIMAGEMASK.</em>
-IstAbgehakt := (ErrorLevel &gt;&gt; 12) - 1  <em>; Setzt IstAbgehakt auf 1 (true), wenn <i>ZeileNummer</i> abgehakt ist, andernfalls auf 0 (false).</em></pre>
+IstAngehakt := (ErrorLevel &gt;&gt; 12) - 1  <em>; Setzt IstAngehakt auf 1 (true), wenn <i>ZeileNummer</i> angehakt ist, andernfalls auf 0 (false).</em></pre>
 
 <h3 id="LV_GetText">LV_GetText</h3>
 <p>Ruft den Text auf einer bestimmten Zeilen- und Spaltennummer ab.</p>
@@ -395,18 +416,18 @@ IstAbgehakt := (ErrorLevel &gt;&gt; 12) - 1  <em>; Setzt IstAbgehakt auf 1 (true
 <p>Obwohl alle <a href="#View">Ansichtsmodi</a> außer Icon und Tile traditionell kleine Symbole anzeigen, kann dies überschrieben werden, indem eine Große-Symbole-ImageList an LV_SetImageList() übergeben und als zweiter Parameter 1 (kleines Symbol) angegeben wird. Dadurch wird auch die Höhe jeder Zeile in der ListView erhöht, um Platz für das große Symbol zu schaffen.</p>
 
 <h2 id="notify">G-Label-Benachrichtigungen (Primär)</h2>
-<p>Es ist möglich, ein <a href="Gui.htm#label">g-Label</a> wie z.B. <code class="no-highlight"><strong>g</strong>MeineSubroutine</code> in den Optionen des Steuerelements anzugeben. Dadurch wird jedes Mal, wenn der Benutzer eine Aktion im Steuerelement ausführt, das Label <em>MeineSubroutine</em> gestartet. Diese Subroutine kann die internen Variablen <a href="../Variables.htm#Gui">A_Gui</a> und <a href="../Variables.htm#GuiControl">A_GuiControl</a> verwenden, um zu ermitteln, welches Fenster und welche ListView für das Ereignis verantwortlich waren. Noch wichtiger ist, dass sie <strong>A_GuiEvent</strong> verwenden kann, die eine der folgenden Zeichenketten oder Buchstaben enthält (aus Kompatibilitätsgründen mit zukünftigen Versionen sollte ein Skript nicht davon ausgehen, dass das die einzig möglichen Werte sind):</p>
-<p><strong>DoubleClick:</strong> Der Benutzer hat im Steuerelement einen Doppelklick gemacht. Die interne Variable A_EventInfo enthält die Nummer der fokussierten Zeile. Mit <a href="#LV_GetNext">LV_GetNext()</a> kann stattdessen die Nummer der ersten <em>ausgewählten</em> Zeile abgerufen werden (die Nummer ist 0, wenn der Benutzer eine leere Fläche doppelt angeklickt hat).</p>
-<p><strong>R:</strong> Der Benutzer hat im Steuerelement einen <em>doppelten Rechtsklick</em> gemacht. Die interne Variable A_EventInfo enthält die Nummer der fokussierten Zeile.</p>
-<p id="ColClick"><strong>ColClick:</strong> Der Benutzer hat eine Spaltenüberschrift angeklickt. Die Variable A_EventInfo enthält die Spaltennummer, die der Spalte ursprünglich bei ihrer Erstellung zugewiesen wurde, d.h. die Nummer spiegelt nicht das Ziehen und Ablegen von Spalten durch den Benutzer wider. Eine mögliche Reaktion auf einen Spaltenklick ist die Sortierung nach den Daten einer versteckten Spalte (mit einer Breite von 0), die in einem sortierfreundlichen Format vorliegen (z.B. ein Datum im <a href="FileSetTime.htm#YYYYMMDD">YYYYMMDD</a>-Format). Eine versteckte Spalte dieser Art spiegelt eine andere Spalte wider, die dieselben Daten in einem lesbaren Format (z.B. DD.MM.YY) anzeigt. Zum Beispiel könnte ein Skript die Spalte 3 via <code><a href="#LV_ModifyCol">LV_ModifyCol</a>(3, 0)</code> verstecken und dann die automatische Sortierung in der sichtbaren Spalte 2 via <code>LV_ModifyCol(2, "NoSort")</code> deaktivieren. Anschließend würde das Skript als Reaktion auf die ColClick-Benachrichtigung für Spalte 2 die ListView nach den Daten der versteckten Spalte via <code>LV_ModifyCol(3, "Sort")</code> sortieren.</p>
-<p id="Drag"><strong>D:</strong> Der Benutzer hat begonnen, eine Zeile oder ein Symbol via Maus zu ziehen (derzeit wird das Ziehen von Zeilen oder Symbolen intern nicht unterstützt). Die interne Variable A_EventInfo enthält die Nummer der fokussierten Zeile. <span class="ver">[v1.0.44+]</span>: Diese Benachrichtigung tritt auch ohne <a href="#AltSubmit">AltSubmit</a> auf.</p>
+<p>Es ist möglich, ein <a href="Gui.htm#label">g-Label</a> wie z.B. <code class="no-highlight"><strong>g</strong>MeineSubroutine</code> in <em>Optionen</em> anzugeben. Dadurch wird jedes Mal, wenn der Benutzer eine Aktion im Steuerelement ausführt, das Label <em>MeineSubroutine</em> gestartet. Diese Subroutine kann die internen Variablen <a href="../Variables.htm#Gui">A_Gui</a> und <a href="../Variables.htm#GuiControl">A_GuiControl</a> verwenden, um zu ermitteln, welches Fenster und welche ListView für das Ereignis verantwortlich waren. Noch wichtiger ist, dass sie <a href="../Variables.htm#GuiEvent">A_GuiEvent</a> verwenden kann, die eine der folgenden Zeichenketten oder Buchstaben enthält (aus Kompatibilitätsgründen mit zukünftigen Versionen sollte ein Skript nicht davon ausgehen, dass das die einzig möglichen Werte sind):</p>
+<p><strong>DoubleClick:</strong> Der Benutzer hat im Steuerelement einen Doppelklick gemacht. Die interne Variable <a href="../Variables.htm#EventInfo">A_EventInfo</a> enthält die Nummer der fokussierten Zeile. Mit <a href="#LV_GetNext">LV_GetNext()</a> kann stattdessen die Nummer der ersten <em>ausgewählten</em> Zeile abgerufen werden (die Nummer ist 0, wenn der Benutzer eine leere Fläche doppelt angeklickt hat).</p>
+<p><strong>R:</strong> Der Benutzer hat im Steuerelement einen <em>doppelten Rechtsklick</em> gemacht. Die interne Variable <a href="../Variables.htm#EventInfo">A_EventInfo</a> enthält die Nummer der fokussierten Zeile.</p>
+<p id="ColClick"><strong>ColClick:</strong> Der Benutzer hat eine Spaltenüberschrift angeklickt. Die Variable <a href="../Variables.htm#EventInfo">A_EventInfo</a> enthält die Spaltennummer, die der Spalte ursprünglich bei ihrer Erstellung zugewiesen wurde, d.h. die Nummer spiegelt nicht das Ziehen und Ablegen von Spalten durch den Benutzer wider. Eine mögliche Reaktion auf einen Spaltenklick ist die Sortierung nach den Daten einer versteckten Spalte (mit einer Breite von 0), die in einem sortierfreundlichen Format vorliegen (z.B. ein Datum im <a href="FileSetTime.htm#YYYYMMDD">YYYYMMDD</a>-Format). Eine versteckte Spalte dieser Art spiegelt eine andere Spalte wider, die dieselben Daten in einem lesbaren Format (z.B. DD.MM.YY) anzeigt. Zum Beispiel könnte ein Skript die Spalte 3 via <code><a href="#LV_ModifyCol">LV_ModifyCol</a>(3, 0)</code> verstecken und dann die automatische Sortierung in der sichtbaren Spalte 2 via <code>LV_ModifyCol(2, "NoSort")</code> deaktivieren. Anschließend würde das Skript als Reaktion auf die ColClick-Benachrichtigung für Spalte 2 die ListView nach den Daten der versteckten Spalte via <code>LV_ModifyCol(3, "Sort")</code> sortieren.</p>
+<p id="Drag"><strong>D:</strong> Der Benutzer hat begonnen, eine Zeile oder ein Symbol via Maus zu ziehen (derzeit wird das Ziehen von Zeilen oder Symbolen intern nicht unterstützt). Die interne Variable <a href="../Variables.htm#EventInfo">A_EventInfo</a> enthält die Nummer der fokussierten Zeile. <span class="ver">[v1.0.44+]</span>: Diese Benachrichtigung tritt auch ohne <a href="#AltSubmit">AltSubmit</a> auf.</p>
 <p><strong>d</strong> (kleines D): Dasselbe wie oben, außer dass beim Ziehen die rechte statt linke Maustaste verwendet wurde.</p>
-<p><strong>e</strong> (kleines E): Der Benutzer hat aufgehört, das erste Feld einer Zeile zu editieren (der Benutzer kann das Feld nur editieren, wenn <code class="no-highlight"><a href="#ReadOnly">-ReadOnly</a></code> in den Optionen der ListView vorhanden ist). Die interne Variable A_EventInfo enthält die Nummer der Zeile.</p>
+<p><strong>e</strong> (kleines E): Der Benutzer hat aufgehört, das erste Feld einer Zeile zu editieren (der Benutzer kann das Feld nur editieren, wenn die Option <a href="#ReadOnly">-ReadOnly</a> vorhanden ist). Die interne Variable <a href="../Variables.htm#EventInfo">A_EventInfo</a> enthält die Nummer der Zeile.</p>
 
-<h2 id="G-Label_Notifications_Secondary">G-Label-Benachrichtigungen (Sekundär)</h2>
-<p>Wenn das Wort AltSubmit in den <a href="#Options">Optionen</a> der ListView vorhanden ist, wird das g-Label häufiger gestartet und <strong>A_GuiEvent</strong> kann die folgenden zusätzlichen Werte enthalten:</p>
-<p><strong>Normal:</strong> Der Benutzer hat eine Zeile mit der linken Maustaste angeklickt. Die interne Variable A_EventInfo enthält die Nummer der fokussierten Zeile.</p>
-<p><strong>RightClick:</strong> Der Benutzer hat eine Zeile mit der rechten Maustaste angeklickt. Die interne Variable A_EventInfo enthält die Nummer der fokussierten Zeile. In den meisten Fällen ist es ratsam, kein Kontextmenü als Reaktion auf dieses Ereignis anzuzeigen. Verwenden Sie stattdessen das <a href="Gui.htm#GuiContextMenu">GuiContextMenu-Label</a>, da es auch die MENÜ-Taste erkennt. Zum Beispiel:</p>
+<h2 id="AltSubmit">G-Label-Benachrichtigungen (Sekundär)</h2>
+<p>Wenn die ListView die <a href="Gui.htm#AltSubmit">AltSubmit</a>-Optionen hat, wird das g-Label häufiger gestartet und <a href="../Variables.htm#GuiEvent">A_GuiEvent</a> auf einen der folgenden zusätzlichen Werte gesetzt:</p>
+<p><strong>Normal:</strong> Der Benutzer hat eine Zeile mit der linken Maustaste angeklickt. Die interne Variable <a href="../Variables.htm#EventInfo">A_EventInfo</a> enthält die Nummer der fokussierten Zeile.</p>
+<p><strong>RightClick:</strong> Der Benutzer hat eine Zeile mit der rechten Maustaste angeklickt. Die interne Variable <a href="../Variables.htm#EventInfo">A_EventInfo</a> enthält die Nummer der fokussierten Zeile. In den meisten Fällen ist es ratsam, kein Kontextmenü als Reaktion auf dieses Ereignis anzuzeigen. Verwenden Sie stattdessen das <a href="Gui.htm#GuiContextMenu">GuiContextMenu-Label</a>, da es auch die MENÜ-Taste erkennt. Zum Beispiel:</p>
 <pre>GuiContextMenu:  <em>; Startet bei Rechtsklick oder Drücken der MENÜ-Taste.</em>
 if (A_GuiControl != "MeineListView")  <em>; Diese Überprüfung ist optional. Das Menü wird nur für Klicks innerhalb der ListView angezeigt.</em>
     return
@@ -414,13 +435,13 @@ if (A_GuiControl != "MeineListView")  <em>; Diese Überprüfung ist optional. Da
 ; sind auch dann korrekt, wenn der Benutzer die MENÜ-Taste drückt:</em>
 Menu, MeinKontextmenü, Show, %A_GuiX%, %A_GuiY%
 return</pre>
-<p><strong>A:</strong> Eine Zeile wurde aktiviert, was standardmäßig durch einen Doppelklick geschieht. Die interne Variable A_EventInfo enthält die Nummer der Zeile.</p>
+<p><strong>A:</strong> Eine Zeile wurde aktiviert, was standardmäßig durch einen Doppelklick geschieht. Die interne Variable <a href="../Variables.htm#EventInfo">A_EventInfo</a> enthält die Nummer der Zeile.</p>
 <p><strong>C:</strong> Die ListView hat die Mauserfassung freigegeben.</p>
-<p><strong>E:</strong> Der Benutzer hat begonnen, das erste Feld einer Zeile zu editieren (der Benutzer kann das Feld nur editieren, wenn <a href="#ReadOnly">-ReadOnly</a> in den Optionen der ListView vorhanden ist). Die interne Variable A_EventInfo enthält die Nummer der Zeile.</p>
+<p><strong>E:</strong> Der Benutzer hat begonnen, das erste Feld einer Zeile zu editieren (der Benutzer kann das Feld nur editieren, wenn die Option <a href="#ReadOnly">-ReadOnly</a> vorhanden ist). Die interne Variable <a href="../Variables.htm#EventInfo">A_EventInfo</a> enthält die Nummer der Zeile.</p>
 <p><strong>F:</strong> Die ListView hat den Tastaturfokus erhalten.</p>
 <p><strong>f</strong> (kleines F): Die ListView hat den Tastaturfokus verloren.</p>
-<p id="ItemChanged"><strong>I:</strong> Der Zustand einer Zeile hat sich geändert, weil sie ausgewählt, abgewählt, abgehakt usw. wurde. Wenn der Benutzer eine neue Zeile auswählt, empfängt die ListView mindestens zwei solcher Benachrichtigungen: Eine für die Abwahl der vorherigen Zeile und eine für die Auswahl der neuen Zeile. <span class="ver">[v1.0.44+]</span>: Die interne Variable A_EventInfo enthält die Nummer der Zeile. <span class="ver">[v1.0.46.10+]</span>: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> enthält beliebig viele der folgenden Buchstaben, die angeben, wie die Zeile geändert wurde: S (ausgewählt) oder s (abgewählt), und/oder F (fokussiert) oder f (defokussiert), und/oder C (Häkchen gesetzt) oder c (Häkchen entfernt). Zum Beispiel bedeutet SF, dass die Zeile ausgewählt und fokussiert wurde. Um festzustellen, ob ein bestimmter Buchstabe vorhanden ist, verwenden Sie eine <a href="LoopParse.htm">parsende Schleife</a> oder die GroßKleinSensitiv-Option von <a href="InStr.htm">InStr()</a>, z.B. <code>InStr(ErrorLevel, "S", true)</code>. Hinweis: Aus Kompatibilitätsgründen mit zukünftigen Versionen sollte ein Skript nicht davon ausgehen, dass "SsFfCc" die einzig möglichen Buchstaben sind. Sie können auch <a href="Critical.htm">Critical</a> in die erste Zeile von <a href="Gui.htm#label">g-Label</a> einfügen, um sicherzustellen, dass alle "I"-Benachrichtigungen empfangen werden (andernfalls könnten einige von ihnen verloren gehen, wenn das Skript nicht mit ihnen Schritt halten kann).</p>
-<p id="NotifyK"><strong>K:</strong> Der Benutzer hat eine Taste gedrückt, während die ListView den Fokus hatte. A_EventInfo enthält den virtuellen Tastencode der Taste (eine Zahl zwischen 1 und 255). Dieser Code kann via <a href="GetKey.htm">GetKeyName()</a> in einen Tastennamen oder in ein Zeichen übersetzt werden. Zum Beispiel <code>Taste := GetKeyName(<a href="Format.htm">Format</a>("vk{:x}", A_EventInfo))</code>. Bei den meisten Tastaturbelegungen können die Tasten A bis Z via <code><a href="Chr.htm">Chr</a>(A_EventInfo)</code> in das entsprechende Zeichen übersetzt werden. <kbd>F2</kbd> wird unabhängig von <a href="#WantF2">WantF2</a> erfasst. <kbd>Enter</kbd> hingegen wird nicht erfasst; um es zu erfassen, verwenden Sie eine Standardschaltfläche, wie <a href="#Enter">unten</a> beschrieben.</p>
+<p id="ItemChanged"><strong>I:</strong> Der Zustand einer Zeile hat sich geändert, weil sie ausgewählt, abgewählt, angehakt usw. wurde. Wenn der Benutzer eine neue Zeile auswählt, empfängt die ListView mindestens zwei solcher Benachrichtigungen: Eine für die Abwahl der vorherigen Zeile und eine für die Auswahl der neuen Zeile. <span class="ver">[v1.0.44+]</span>: Die interne Variable <a href="../Variables.htm#EventInfo">A_EventInfo</a> enthält die Nummer der Zeile. <span class="ver">[v1.0.46.10+]</span>: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> enthält beliebig viele der folgenden Buchstaben, die angeben, wie die Zeile geändert wurde: S (ausgewählt) oder s (abgewählt), und/oder F (fokussiert) oder f (defokussiert), und/oder C (Häkchen gesetzt) oder c (Häkchen entfernt). Zum Beispiel bedeutet SF, dass die Zeile ausgewählt und fokussiert wurde. Um festzustellen, ob ein bestimmter Buchstabe vorhanden ist, verwenden Sie eine <a href="LoopParse.htm">parsende Schleife</a> oder die GroßKleinSensitiv-Option von <a href="InStr.htm">InStr()</a>, z.B. <code>InStr(ErrorLevel, "S", true)</code>. Hinweis: Aus Kompatibilitätsgründen mit zukünftigen Versionen sollte ein Skript nicht davon ausgehen, dass "SsFfCc" die einzig möglichen Buchstaben sind. Sie können auch <a href="Critical.htm">Critical</a> in die erste Zeile von <a href="Gui.htm#label">g-Label</a> einfügen, um sicherzustellen, dass alle "I"-Benachrichtigungen empfangen werden (andernfalls könnten einige von ihnen verloren gehen, wenn das Skript nicht mit ihnen Schritt halten kann).</p>
+<p id="NotifyK"><strong>K:</strong> Der Benutzer hat eine Taste gedrückt, während die ListView den Fokus hatte. <a href="../Variables.htm#EventInfo">A_EventInfo</a> enthält den virtuellen Tastencode der Taste (eine Zahl zwischen 1 und 255). Dieser Code kann via <a href="GetKey.htm">GetKeyName()</a> in einen Tastennamen oder in ein Zeichen übersetzt werden. Zum Beispiel <code>Taste := GetKeyName(<a href="Format.htm">Format</a>("vk{:x}", A_EventInfo))</code>. Bei den meisten Tastaturbelegungen können die Tasten A bis Z via <code><a href="Chr.htm">Chr</a>(A_EventInfo)</code> in das entsprechende Zeichen übersetzt werden. <kbd>F2</kbd> wird unabhängig von <a href="#WantF2">WantF2</a> erfasst. <kbd>Enter</kbd> hingegen wird nicht erfasst; um es zu erfassen, verwenden Sie eine Standardschaltfläche, wie <a href="#Enter">unten</a> beschrieben.</p>
 <p><strong>M:</strong> Auswahlrechteck. Der Benutzer hat begonnen, ein Auswahlrechteck über mehrere Zeilen oder Symbole zu ziehen.</p>
 <p><strong>S:</strong> Der Benutzer hat begonnen, in der ListView zu scrollen.</p>
 <p><strong>s</strong> (kleines S): Der Benutzer hat aufgehört, in der ListView zu scrollen.</p>
@@ -439,7 +460,12 @@ return
 
 GuiClose:  <em>; Skript beenden, wenn der Benutzer die GUI der ListView schließt.</em>
 ExitApp</pre>
-
+<p>ImageList-Funktionen:</p>
+<ul>
+  <li><a href="#IL_Create">IL_Create</a>: Erstellt eine neue ImageList, die zunächst leer ist.</li>
+  <li><a href="#IL_Add">IL_Add</a>: Fügt ein Symbol oder Bild zu einer bestimmten ImageList hinzu.</li>
+  <li><a href="#IL_Destroy">IL_Destroy</a>: Löscht eine bestimmte ImageList.</li>
+</ul>
 <h3 id="IL_Create">IL_Create</h3>
 <p>Erstellt eine neue ImageList, die zunächst leer ist.</p>
 <pre class="Syntax">ImageListID := <span class="func">IL_Create</span>(<span class="optional">AnfänglicheAnzahl, WachsendeAnzahl, GroßeSymbole</span>)</pre>
@@ -510,10 +536,9 @@ SymbolIndex := <span class="func">IL_Add</span>(ImageListID, BildDateiName, Mask
 <h4 class="func_section" id="IL_Destroy_Return_Value">Rückgabewert</h4>
 <p>Bei Erfolg gibt diese Funktion 1 (true) zurück. Bei Misserfolg gibt sie 0 (false) zurück.</p>
 <h4 class="func_section" id="IL_Destroy_Remarks">Bemerkungen</h4>
-<p>Es ist normalerweise nicht notwendig, ImageLists zu zerstören, da sie, wenn sie einmal mit einer ListView verbunden sind, automatisch zerstört werden, wenn die ListView oder ihr übergeordnetes Fenster zerstört wird. Wenn die ListView ihre ImageLists mit anderen ListViews teilt (indem sie 0x40 in ihren Optionen hat), sollte das Skript die ImageList explizit zerstören, nachdem es alle ListViews zerstört hat, die diese ImageList verwenden. Entsprechend sollte das Skript, wenn es eine der alten ImageLists mit einer neuen ersetzt, die alte explizit zerstören.</p>
+<p>Es ist normalerweise nicht notwendig, ImageLists zu zerstören, da sie, wenn sie einmal mit einer ListView verbunden sind, automatisch zerstört werden, wenn die ListView oder ihr übergeordnetes Fenster zerstört wird. Wenn die ListView ihre ImageLists mit anderen ListViews teilt (indem sie 0x40 in <em>Optionen</em> hat), sollte das Skript die ImageList explizit zerstören, nachdem es alle ListViews zerstört hat, die diese ImageList verwenden. Entsprechend sollte das Skript, wenn es eine der alten ImageLists mit einer neuen ersetzt, die alte explizit zerstören.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Der Befehl <a href="Gui.htm#Submit">Gui Submit</a> funktioniert nicht mit einem ListView-Steuerelement. Demzufolge kann die <a href="Gui.htm#var">zugeordnete Variable</a> der ListView (falls vorhanden) verwendet werden, um andere Daten zu speichern, ohne befürchten zu müssen, dass diese jemals überschrieben werden.</p>
 <p>Nachdem eine Spalte sortiert wurde – z.B. durch Anklicken der Spaltenüberschrift oder Aufruf von <code><a href="#LV_ModifyCol">LV_ModifyCol</a>(1, "Sort")</code> – erscheinen alle danach hinzugefügten Zeilen am Ende der Liste, anstatt die aktuelle Sortierreihenfolge zu berücksichtigen. Es sei denn, die Styles <a href="#Sort">Sort</a> und <a href="#SortDesc">SortDesc</a> werden verwendet, dann werden neue Zeilen an die korrekten Positionen verschoben.</p>
 <p id="Enter">Um einen <kbd>Enter</kbd>-Tastendruck in einer fokussierten ListView zu erfassen, verwenden Sie eine <a href="GuiControls.htm#DefaultButton">Standardschaltfläche</a> (die bei Bedarf versteckt werden kann). Zum Beispiel:</p>
 <pre>Gui, Add, Button, Hidden Default, OK
@@ -542,7 +567,7 @@ return</pre>
 <p><a class="ex_number" href="#ExAllRows"></a> Wählt alle Zeilen aus oder ab, durch Angabe von 0 als Zeilennummer.</p>
 <pre><a href="#LV_Modify">LV_Modify</a>(0, "Select")   <em>; Alle auswählen.</em>
 LV_Modify(0, "-Select")  <em>; Alle abwählen.</em>
-LV_Modify(0, "-Check")  <em>; Die Häkchen von allen <a href="#Checked">CheckBoxes</a> entfernen.</em></pre>
+LV_Modify(0, "-Check")  <em>; Die Häkchen von allen <a href="#Checked">Kontrollkästchen</a> entfernen.</em></pre>
 </div>
 
 <div class="ex" id="ExAutoSize">
@@ -551,7 +576,7 @@ LV_Modify(0, "-Check")  <em>; Die Häkchen von allen <a href="#Checked">CheckBox
 </div>
 
 <div class="ex" id="ExAdvanced">
-<p><a class="ex_number" href="#ExAdvanced"></a> Das folgende Beispiel ist ein lauffähiges Skript, das umfangreicher ist als das obige Beispiel. Es zeigt die Dateien eines vom Benutzer ausgewählten Ordners an und weist jeder Datei je nach Typ das entsprechende Symbol zu. Der Benutzer kann eine Datei doppelt anklicken, um sie zu öffnen, oder eine oder mehrere Dateien rechtsklicken, um ein Kontextmenü anzuzeigen.</p>
+<p><a class="ex_number" href="#ExAdvanced"></a> Das folgende Beispiel ist ein lauffähiges Skript, das umfangreicher ist als das Beispiel ganz oben. Es zeigt die Dateien eines vom Benutzer ausgewählten Ordners an und weist jeder Datei je nach Typ das entsprechende Symbol zu. Der Benutzer kann eine Datei doppelt anklicken, um sie zu öffnen, oder eine oder mehrere Dateien rechtsklicken, um ein Kontextmenü anzuzeigen.</p>
 <pre><em>; Dem Benutzer erlauben, das Fenster zu maximieren oder dessen Größe zu ändern:</em>
 Gui +Resize
 
@@ -560,7 +585,7 @@ Gui, Add, Button, Default gButtonOrdnerLaden, Ordner laden
 Gui, Add, Button, x+20 gButtonLeeren, Liste leeren
 Gui, Add, Button, x+20, Ansicht wechseln
 
-<em>; ListView und ihre Spalten via <a href="#GuiAdd">Gui Add</a> erstellen:</em>
+<em>; ListView und ihre Spalten erstellen:</em>
 Gui, Add, ListView, xm r20 w700 vMeineListView gMeineListView, Name|Ordner|Größe (KB)|Typ
 <a href="#LV_ModifyCol">LV_ModifyCol</a>(3, "Integer")  <em>; Aus Sortierungsgründen die Spalte "Größe" als Integer kennzeichnen.</em>
 

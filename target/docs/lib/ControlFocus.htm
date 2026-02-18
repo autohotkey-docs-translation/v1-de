@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>ControlFocus - Syntax &amp; Verwendung | AutoHotkey v1</title>
-<meta name="description" content="Der ControlFocus-Befehl setzt den Eingabefokus auf ein bestimmtes Steuerelement innerhalb eines Fensters." />
+<meta name="description" content="Der ControlFocus-Befehl setzt den Tastaturfokus auf ein Steuerelement." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -14,7 +14,7 @@
 
 <h1>ControlFocus</h1>
 
-<p>Setzt den Eingabefokus auf ein bestimmtes Steuerelement innerhalb eines Fensters.</p>
+<p>Setzt den Tastaturfokus auf ein Steuerelement.</p>
 
 <pre class="Syntax"><span class="func">ControlFocus</span> <span class="optional">, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 
@@ -37,25 +37,26 @@
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
 <h2 id="Remarks">Bemerkungen</h2>
+<p>Dieser Befehl ist für die Verwendung mit Steuerelementen in einem Nicht-GUI-Fenster vorgesehen, also einem Fenster, das nicht mit dem <a href="Gui.htm">Gui</a>-Befehl erstellt wurde. Er funktioniert am besten mit den gängigen oder vordefinierten Steuerelementen von Microsoft. Einige Anwendungen verwenden jedoch benutzerdefinierte oder modifizierte Steuerelemente – in diesem Fall funktioniert der Befehl möglicherweise nicht wie erwartet. Für <a href="GuiControls.htm">GUI-Steuerelemente</a> ist es in der Regel sinnvoller, <a href="GuiControl.htm#Focus">GuiControl Focus</a> zu verwenden.</p>
 <p>Um den gewünschten Effekt zu erzielen, darf das Fenster des Steuerelements weder minimiert noch versteckt sein.</p>
 <p>Um die Zuverlässigkeit zu erhöhen, erfolgt jedes Mal, nachdem dieser Befehl ausgeführt wurde, automatisch eine Verzögerung. Diese Verzögerung kann via <a href="SetControlDelay.htm">SetControlDelay</a> geändert werden.</p>
 <p>Mit <a href="MouseGetPos.htm">MouseGetPos</a> kann die ClassNN-Bezeichnung oder HWND-Nummer (eindeutige ID) des Steuerelements unter dem Mauszeiger abgerufen werden.</p>
-<p id="WM_NEXTDLGCTL">Wenn ein Steuerelement durch eine Benutzereingabe fokussiert wird (z.B. durch Drücken der Tabulatortaste), werden zusätzliche Effekte unabhängig vom fokussierten Steuerelement angewendet. Diese Effekte werden nicht von ControlFocus angewendet, daher gelten die folgenden Einschränkungen:</p>
+<p id="WM_NEXTDLGCTL">Wenn ein Steuerelement durch eine Benutzereingabe fokussiert wird, z.B. durch Drücken von <kbd>Tab</kbd>, werden zusätzliche Effekte unabhängig vom fokussierten Steuerelement angewendet. Diese Effekte werden nicht von ControlFocus angewendet, daher gelten die folgenden Einschränkungen:</p>
 <ul>
-  <li>Beim Fokussieren einer Schaltfläche wird diese nicht automatisch zur Standardschaltfläche gemacht (normalerweise geschieht das nur, wenn eine Schaltfläche durch eine Benutzereingabe fokussiert wird). Die Standardschaltfläche kann üblicherweise durch Drücken der Eingabetaste aktiviert werden.</li>
-  <li>Wenn eine Benutzereingabe zuvor eine kurzzeitige Änderung der Standardschaltfläche bewirkt hat, wird beim Fokussieren eines Steuerelements, das keine Schaltfläche ist, die Standardhervorhebung nicht automatisch auf die eigentliche Standardschaltfläche zurückgesetzt. Drückt man dann die Eingabetaste, kann es passieren, dass die Standardschaltfläche aktiviert wird, obwohl sie nicht hervorgehoben ist.</li>
-  <li>Beim Fokussieren eines Eingabefeldes wird dessen Text nicht automatisch markiert. Stattdessen wird die Einfügemarke (Textcursor) in der Regel an der Stelle positioniert, an der sie sich befand, als das Steuerelement zuletzt den Fokus hatte.</li>
+  <li>Beim Fokussieren einer Schaltfläche wird diese nicht automatisch zur Standardschaltfläche gemacht (normalerweise geschieht das nur, wenn eine Schaltfläche durch eine Benutzereingabe fokussiert wird). Die Standardschaltfläche kann üblicherweise durch Drücken von <kbd>Enter</kbd> aktiviert werden.</li>
+  <li>Wenn eine Benutzereingabe zuvor eine kurzzeitige Änderung der Standardschaltfläche bewirkt hat, wird beim Fokussieren eines Steuerelements, das keine Schaltfläche ist, die Standardhervorhebung nicht automatisch auf die eigentliche Standardschaltfläche zurückgesetzt. Drückt man dann <kbd>Enter</kbd>, kann es passieren, dass die Standardschaltfläche aktiviert wird, obwohl sie nicht hervorgehoben ist.</li>
+  <li>Beim Fokussieren eines Eingabefelds wird dessen Text nicht automatisch markiert. Stattdessen wird die Einfügemarke in der Regel an der Stelle positioniert, an der sie sich befand, als das Steuerelement zuletzt den Fokus hatte.</li>
 </ul>
 <p>Die <a href="https://learn.microsoft.com/windows/win32/dlgbox/wm-nextdlgctl">WM_NEXTDLGCTL</a>-Meldung kann verwendet werden, um das Steuerelement zu fokussieren und diese zusätzlichen Effekte anzuwenden. Zum Beispiel:</p>
-<pre>WinExist("A") <em>; Macht das aktive Fenster zum zuletzt gefundenen Fenster </em>
-ControlGet, StrlmntHwnd, Hwnd,, Button1  <em>; Holt HWND der ersten Schaltfläche</em>
-SendMessage, 0x0028, StrlmntHwnd, True  <em>; 0x0028 ist WM_NEXTDLGCTL</em></pre>
+<pre>WinExist("A") <em>; Macht das aktive Fenster zum zuletzt gefundenen Fenster.</em>
+ControlGet, StrlmntHwnd, Hwnd,, Button1  <em>; Holt HWND der ersten Schaltfläche.</em>
+SendMessage, 0x0028, StrlmntHwnd, True  <em>; 0x0028 ist WM_NEXTDLGCTL.</em></pre>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="SetControlDelay.htm">SetControlDelay</a>, <a href="ControlGetFocus.htm">ControlGetFocus</a>, <a href="Control.htm">Control</a>, <a href="ControlGet.htm">ControlGet</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlGetText.htm">ControlGetText</a>, <a href="ControlSetText.htm">ControlSetText</a>, <a href="ControlSend.htm">ControlSend</a></p>
+<p><a href="SetControlDelay.htm">SetControlDelay</a>, <a href="ControlGetFocus.htm">ControlGetFocus</a>, <a href="GuiControl.htm#Focus">GuiControl Focus</a>, <a href="Control.htm">Control</a>, <a href="ControlGet.htm">ControlGet</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlGetText.htm">ControlGetText</a>, <a href="ControlSetText.htm">ControlSetText</a>, <a href="ControlSend.htm">ControlSend</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a class="ex_number" href="#ExBasic"></a> Setzt den Eingabefokus auf die OK-Schaltfläche.</p>
+<p><a class="ex_number" href="#ExBasic"></a> Setzt den Tastaturfokus auf die OK-Schaltfläche in einem GUI- oder Nicht-GUI-Fenster.</p>
 <pre>ControlFocus, OK, Beliebiger Fenstertitel</pre>
 </div>
 

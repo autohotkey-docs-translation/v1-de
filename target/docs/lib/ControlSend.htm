@@ -44,6 +44,7 @@
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
 <h2 id="Remarks">Bemerkungen</h2>
+<p>Dieser Befehl ist für die Verwendung mit Steuerelementen in einem Nicht-GUI-Fenster vorgesehen, also einem Fenster, das nicht mit dem <a href="Gui.htm">Gui</a>-Befehl erstellt wurde. Er funktioniert am besten mit den gängigen oder vordefinierten Steuerelementen von Microsoft. Einige Anwendungen verwenden jedoch benutzerdefinierte oder modifizierte Steuerelemente – in diesem Fall funktioniert der Befehl möglicherweise nicht wie erwartet. Für <a href="GuiControls.htm">GUI-Steuerelemente</a> ist es in der Regel sinnvoller, <a href="GuiControl.htm">GuiControl</a> zu verwenden, sofern es ein entsprechendes Gegenstück gibt.</p>
 <p>Im Gegensatz zu <a href="Send.htm">Send</a> ignoriert ControlSend die <a href="SendMode.htm">SendMode</a>-Einstellung. ControlSend verwendet die systeminterne PostMessage-Funktion zum Senden von Tastaturmeldungen.</p>
 <p>ControlSendRaw ist quasi dasselbe wie ControlSend, außer dass es die in <em>Tasten</em> angegebenen Tastendrücke im Rohzustand sendet, d.h. es findet keine Übersetzung von z.B. <code class="no-highlight">{Enter}</code> zu <kbd>Enter</kbd>, <code class="no-highlight">^c</code> zu <kbd>Strg</kbd>+<kbd>C</kbd> usw. statt. Weitere Informationen finden Sie unter <a href="Send.htm#SendRaw">Raw-Modus</a>. <a href="Send.htm#Raw">{Raw}</a> oder <a href="Send.htm#Text">{Text}</a> kann auch bei ControlSend verwendet werden. <span class="ver">[v1.1.27+]</span>: Der <a href="Send.htm#SendText">Text-Modus</a> kann für das Senden von Text zuverlässiger sein.</p>
 <p>Wenn der <em>Steuerelement</em>-Parameter weggelassen wird, versucht dieser Befehl, die Tastendrücke entweder an das oberste Steuerelement zu senden (welches oft das richtige ist) oder, wenn keine Steuerelemente vorhanden sind, an das Fenster selbst. Das ist nützlich, wenn das Fenster keine Steuerelemente zu haben scheint, oder wenn es egal ist, an welches Steuerelement die Tastendrücke gesendet werden.</p>
@@ -56,13 +57,15 @@
 <pre>SetKeyDelay, 10, 10
 SetKeyDelay, 0, 10
 SetKeyDelay, -1, 0</pre>
-<p>Wenn es sich bei dem Zielsteuerelement um ein Edit-Steuerelement (oder ähnliches) handelt, sind die folgenden Aktionen in der Regel zuverlässiger und schneller als ControlSend:</p>
-<pre><a href="Control.htm">Control</a>, EditPaste, Dieser Text wird an der Position des Textcursors eingefügt., SteuerelementName, FensterTitel</pre>
-<pre><a href="ControlSetText.htm">ControlSetText</a>, SteuerelementName, Dieser Text wird den bisherigen Text vollständig ersetzen., FensterTitel</pre>
+<p>Wenn es sich bei dem Zielsteuerelement um ein Eingabefeld (oder ähnliches) handelt, sind die folgenden Befehle in der Regel zuverlässiger und schneller als ControlSend:</p>
+<ul>
+  <li><a href="Control.htm#EditPaste">Control EditPaste</a> zum Einfügen von Text an der Position der Einfügemarke.</li>
+  <li><a href="ControlSetText.htm">ControlSetText</a> zum Ersetzen des aktuellen Textes.</li>
+</ul>
 <p>ControlSend ist normalerweise nicht in der Lage, die Menüleiste eines Fensters zu manipulieren. Um das zu umgehen, verwenden Sie <a href="WinMenuSelectItem.htm">WinMenuSelectItem</a>. Sollte dies aufgrund der Art der Menüleiste nicht funktionieren, können Sie stattdessen versuchen, die Meldung des gewünschten Menüpunkts mithilfe des <a href="../misc/SendMessage.htm">SendMessage-Tutorials</a> herauszufinden.</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="SetKeyDelay.htm">SetKeyDelay</a>, <a href="../misc/EscapeChar.htm">Escapesequenzen (z.B. `%)</a>, <a href="Control.htm">Control</a>, <a href="ControlGet.htm">ControlGet</a>, <a href="ControlGetText.htm">ControlGetText</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlSetText.htm">ControlSetText</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="Send.htm">Send</a>, <a href="../misc/Winamp.htm">Winamp automatisieren</a></p>
+<p><a href="SetKeyDelay.htm">SetKeyDelay</a>, <a href="../misc/EscapeChar.htm">Escapesequenzen (z.B. `%)</a>, <a href="Control.htm">Control</a>, <a href="ControlGet.htm">ControlGet</a>, <a href="ControlGetText.htm">ControlGetText</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlSetText.htm">ControlSetText</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="Send.htm">Send</a>, <a href="GuiControl.htm">GuiControl</a>, <a href="../misc/Winamp.htm">Winamp automatisieren</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExNotepad">
 <p><a class="ex_number" href="#ExNotepad"></a> Öffnet Notepad im minimierten Zustand und sendet ihm etwas Text. Dieses Beispiel kann unter Windows 11 oder höher fehlschlagen, da es die klassische Version von Notepad erfordert.</p>

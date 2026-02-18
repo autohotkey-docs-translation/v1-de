@@ -1,10 +1,10 @@
 translateData = {
   // Sidebar
   "C̲ontent":"I̲nhalt",
-  "Content tab":"Inhalt-Tab",
+  "Content tab":"Inhalt-Reiter",
   "Shortcut: ALT+C":"Tastaturkurzbefehl: ALT+I",
   "In̲dex":true,
-  "Index tab":"Index-Tab",
+  "Index tab":"Index-Reiter",
   "Shortcut: ALT+N":"Tastaturkurzbefehl: ALT+N",
   "Filter":true,
   "Directives":"Direktiven",
@@ -18,7 +18,7 @@ translateData = {
   "Built-in Methods/Properties":"Interne Methoden/Eigenschaften",
   "Ahk2Exe Compiler":"Ahk2Exe-Compiler",
   "S̲earch":"S̲uchen",
-  "Search tab":"Suchen-Tab",
+  "Search tab":"Suchen-Reiter",
   "Shortcut: ALT+S":"Tastaturkurzbefehl: ALT+S",
   "Search":"Suchen",
   "Highlight keywords":"Suchwörter hervorheben",
@@ -27,7 +27,7 @@ translateData = {
   "Collapse or uncollapse the quick reference":"Kurzübersicht zu- oder aufklappen",
   // Oberleiste
   "Skip navigation":"Navigation überspringen",
-  "Hide or show the sidebar":"Seitenleiste verstecken oder anzeigen",
+  "Hide or show the sidebar":"Randleiste verstecken oder anzeigen",
   "Go to the homepage":"Zur Homepage springen",
   "en":"de",
   "Change the language":"Sprache wechseln",
@@ -40,7 +40,7 @@ translateData = {
   "Change the font size":"Schriftgröße ändern",
   "Print this document":"Dieses Dokument drucken",
   "Open this document in the default browser (requires internet connection). Middle-click to copy the link address.":"Dieses Dokument im Standardbrowser öffnen (benötigt Internetverbindung). Klicken Sie mit der mittleren Maustaste, um die Adresse des Links zu kopieren.",
-  "Use the dark or light theme":"Dunkles oder helles Farbschema verwenden",
+  "Use the dark or light scheme":"Dunkles oder helles Farbschema verwenden",
   "Open the help settings":"Einstellungen für die Hilfe öffnen",
   // ALT+... Tastaturkurzbefehle (muss in Großbuchstaben sein)
   "C":"I",

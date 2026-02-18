@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>ControlClick - Syntax &amp; Verwendung | AutoHotkey v1</title>
-<meta name="description" content="Der ControlClick-Befehl sendet einen Mausklick oder eine Mausradaktion an ein Steuerelement." />
+<meta name="description" content="Der ControlClick-Befehl sendet einen Mausklick oder eine Mausradaktion an ein Fenster oder Steuerelement." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -14,7 +14,7 @@
 
 <h1>ControlClick</h1>
 
-<p>Sendet einen Mausklick oder eine Mausradaktion an ein Steuerelement.</p>
+<p>Sendet einen Mausklick oder eine Mausradaktion an ein Fenster oder Steuerelement.</p>
 
 <pre class="Syntax"><span class="func">ControlClick</span> <span class="optional">, Steuerelement-oder-Pos, FensterTitel, FensterText, WelcheTaste, KlicksAnzahl, Optionen, AusnahmeTitel, AusnahmeText</span></pre>
 <h2 id="Parameters">Parameter</h2>
@@ -46,14 +46,14 @@
   <dd><p>Wenn leer oder weggelassen, wird standardmäßig 1 verwendet. Andernfalls geben Sie an, wie oft die Maustaste geklickt oder das Mausrad gedreht werden soll. Kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p></dd>
 
   <dt>Optionen</dt>
-  <dd><p>Wenn leer oder weggelassen, besteht jeder Klick aus einem Down- und Up-Ereignis, das in der Mitte des Steuerelements erfolgt (sofern Modus 2 verwendet wird). Andernfalls geben Sie eine Zeichenkette an, die aus einer oder mehreren der folgenden Optionen besteht: Zum Beispiel: <code class="no-highlight">d x50 y25</code>.</p>
+  <dd><p>Wenn leer oder weggelassen, besteht jeder Klick aus einem Down- und Up-Ereignis, das in der Mitte des Steuerelements erfolgt (sofern Modus 2 verwendet wird). Andernfalls geben Sie eine oder mehrere der folgenden Optionen an, jeweils getrennt durch beliebig viele Leer- oder Tabulatorzeichen. Zum Beispiel: <code class="no-highlight">d x50 y25</code>.</p>
       <p><strong>NA</strong> <span class="ver">[v1.0.45+]</span>: Kann die Zuverlässigkeit erhöhen. Siehe <a href="#Reliability">Zuverlässigkeit</a> weiter unten.</p>
       <p><strong>D:</strong> Drückt die Maustaste nach unten, ohne sie wieder loszulassen (also ein Down-Ereignis). Fehlt sowohl die D- als auch U-Option, wird ein vollständiger Mausklick gesendet (also ein Down- und Up-Ereignis).</p>
       <p><strong>U:</strong> Lässt die Maustaste los (also ein Up-Ereignis). Diese Option sollte nicht verwendet werden, wenn die D-Option bereits vorhanden ist (und umgekehrt).</p>
       <p><strong>Pos:</strong> Geben Sie das Wort Pos in <em>Optionen</em> an, um den X/Y-Positioniermodus zu erzwingen, wie oben im <em>Steuerelement-oder-Pos</em>-Parameter beschrieben.</p>
       <p><strong>X</strong><em>n</em>: Geben Sie für <em>n</em> die X-Position an, auf der geklickt werden soll, relativ zur oberen linken Ecke des Steuerelements. Wenn weggelassen, erfolgt der Mausklick in der horizontalen Mitte des Steuerelements.</p>
       <p><strong>Y</strong><em>n</em>: Geben Sie für <em>n</em> die Y-Position an, auf der geklickt werden soll, relativ zur oberen linken Ecke des Steuerelements. Wenn weggelassen, erfolgt der Mausklick in der vertikalen Mitte des Steuerelements.</p>
-      <p>Verwenden Sie dezimale (nicht hexadezimale) Zahlen für die Optionen X und Y.</p></dd>
+      <p>Verwenden Sie dezimale (nicht hexadezimale) Zahlen für die Optionen X und Y. Die Zahlen sind in Pixel.</p></dd>
 
 </dl>
 
@@ -68,6 +68,7 @@
 ControlClick, Toolbar321, FensterTitel,,,, NA</pre>
 <p>Die NA-Option verhindert einerseits, dass das Zielfenster als aktiv markiert wird, und andererseits, dass die Eingabeverarbeitung des Fensters und des Skripts vermischt werden, was eventuelle Störungen durch physische Mausbewegungen unterdrückt (aber normalerweise nur, wenn das Zielfenster nicht aktiv ist). Diese Methode funktioniert möglicherweise nicht für alle Arten von Fenstern und Steuerelementen.</p>
 <h2 id="Remarks">Bemerkungen</h2>
+<p>Dieser Befehl ist für die Verwendung mit Steuerelementen in einem Nicht-GUI-Fenster vorgesehen, also einem Fenster, das nicht mit dem <a href="Gui.htm">Gui</a>-Befehl erstellt wurde. Er funktioniert am besten mit den gängigen oder vordefinierten Steuerelementen von Microsoft. Einige Anwendungen verwenden jedoch benutzerdefinierte oder modifizierte Steuerelemente – in diesem Fall funktioniert der Befehl möglicherweise nicht wie erwartet. Für <a href="GuiControls.htm">GUI-Steuerelemente</a> ist es in der Regel sinnvoller, <a href="GuiControl.htm">GuiControl</a> zu verwenden (sofern es ein entsprechendes Gegenstück gibt) oder ihr <a href="Gui.htm#label">g-Label</a> direkt auszuführen.</p>
 <p>Einige Anwendungen ignorieren eine <em>KlicksAnzahl</em> höher als 1 beim Drehen des Mausrads. Für solche Anwendungen können Sie eine Schleife nutzen, um das Mausrad mehr als einen Schritt zu drehen. Das folgende Beispiel dreht das Mausrad fünf Schritte:</p>
 <pre>Loop, 5
     ControlClick, <i>Steuerelement</i>, <i>FensterTitel</i>, <i>FensterText</i>, WheelUp</pre>
@@ -76,17 +77,17 @@ ControlClick, Toolbar321, FensterTitel,,,, NA</pre>
 <p><a href="SetControlDelay.htm">SetControlDelay</a>, <a href="Control.htm">Control</a>, <a href="ControlGet.htm">ControlGet</a>, <a href="ControlGetText.htm">ControlGetText</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="ControlSetText.htm">ControlSetText</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="Click.htm">Click</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a class="ex_number" href="#ExBasic"></a> Klickt die OK-Schaltfläche.</p>
+<p><a class="ex_number" href="#ExBasic"></a> Klickt auf die OK-Schaltfläche in einem GUI- oder Nicht-GUI-Fenster.</p>
 <pre>ControlClick, OK, Beliebiger Fenstertitel</pre>
 </div>
 
 <div class="ex" id="ExCoord">
-<p><a class="ex_number" href="#ExCoord"></a> Klickt auf bestimmte Koordinaten. Beachten Sie, dass zwischen X und Y kein Komma steht.</p>
+<p><a class="ex_number" href="#ExCoord"></a> Klickt auf bestimmte Koordinaten in einem GUI- oder Nicht-GUI-Fenster. Beachten Sie, dass zwischen X und Y kein Komma steht.</p>
 <pre>ControlClick, x55 y77, Beliebiger Fenstertitel</pre>
 </div>
 
 <div class="ex" id="ExReliability">
-<p><a class="ex_number" href="#ExReliability"></a> Klickt im NA-Modus auf Koordinaten relativ zum angegebenen Steuerelement.</p>
+<p><a class="ex_number" href="#ExReliability"></a> Klickt zuverlässiger auf bestimmte Koordinaten relativ zu einem Steuerelement in einem GUI- oder Nicht-GUI-Fenster.</p>
 <pre>SetControlDelay -1  <em>; Kann Zuverlässigkeit erhöhen und Nebeneffekte reduzieren.</em>
 ControlClick, Toolbar321, Beliebiger Fenstertitel,,,, NA x192 y10</pre>
 </div>
