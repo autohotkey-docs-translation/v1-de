@@ -16,7 +16,7 @@
 <h1>ControlGet</h1>
 
 <p>Ruft verschiedene Arten von Informationen über ein Steuerelement ab.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, <a href="#SubCommands">Unterbefehl</a> <span class="optional">, Wert, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, <a href="#SubCommands">Unterbefehl</a> <span class="optional">, Wert, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
@@ -26,17 +26,16 @@
   <dt>Unterbefehl, Wert</dt>
   <dd>Diese Parameter sind voneinander abhängig und können wie <a href="#SubCommands">unten gezeigt</a> verwendet werden.</dd>
 
-  <dt>Steuerelement</dt>
+  <dt>StrlmntID</dt>
   <dd>
-    <p>Wenn leer oder weggelassen, wird das oberste Steuerelement des Zielfensters verwendet. Andernfalls geben Sie entweder die ClassNN-Bezeichnung (Klassenname und Instanznummer des Steuerelements) oder den Text des Steuerelements an, die beide mit dem internen Tool "Window Spy" ermittelt werden können. Wenn Text verwendet wird, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>.</p>
-    <p>Um mit dem Fensterhandle (HWND) eines Steuerelements zu arbeiten, lassen Sie den <em>Steuerelement</em>-Parameter leer und übergeben Sie <code class="no-highlight">ahk_id %StrlmntHwnd%</code> als <em>FensterTitel</em>-Parameter (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist). Die HWND-Nummer eines Steuerelements kann üblicherweise via <a href="#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall()</a> abgerufen werden.</p>
+    <p>Wenn leer oder weggelassen, wird das oberste Steuerelement des Zielfensters verwendet. Andernfalls geben Sie die ClassNN oder den Text des Steuerelements an, oder lassen Sie den Parameter leer und geben Sie <code class="no-highlight">ahk_id %StrlmntHwnd%</code> im <em>FensterTitel</em>-Parameter an, um mit dem HWND des Steuerelements zu arbeiten. Einzelheiten finden Sie unter <a href="../misc/ControlID.htm">Steuerelementidentifikatoren</a>.</p>
   </dd>
 
   <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
   <dd>
     <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden).</p>
     <p><em>AusnahmeTitel</em> und <em>AusnahmeText</em> können verwendet werden, um ein oder mehrere Fenster anhand ihres Titels oder Textes auszuschließen. Ihre Angabe ähnelt der von <em>FensterTitel</em> und <em>FensterText</em>, außer dass <em>AusnahmeTitel</em> keine anderen Kriterien als den Fenstertitel erkennt.</p>
-    <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> und <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig muss ein Fenstertitel mit dem angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> beginnen, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
+    <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> bzw. <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig muss ein Fenstertitel mit dem angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> beginnen, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
   </dd>
 </dl>
 
@@ -62,7 +61,7 @@
 
 <h3 id="List">List</h3>
 <p>Liefert eine Liste der Einträge/Zeilen in einem Listenfeld, einem Kombinationsfeld, einer Dropdownliste oder einem ListView-Steuerelement.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, List <span class="optional">, Optionen, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, List <span class="optional">, Optionen, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <p>Die Ausgabe, Fehlerbehandlung und Verwendung des <em>Optionen</em>-Parameters sind abhängig vom Zielsteuerelement. Konkret heißt das:</p>
 
 <h4 id="ListBox_ComboBox_DropDownList">Listenfeld, Kombinationsfeld und Dropdownliste</h4>
@@ -100,19 +99,19 @@ Loop, Parse, AusgewählteZeilen, `n  <em>; Zeilen sind mit Zeilenvorschüben (`n
 
 <h3 id="Checked">Checked</h3>
 <p>Liefert 1, wenn ein Kontrollkästchen oder Optionsfeld markiert ist, oder 0, wenn unmarkiert.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Checked <span class="optional">,, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Checked <span class="optional">,, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 
 <h3 id="Enabled">Enabled</h3>
 <p>Liefert 1, wenn die Interaktion mit einem Steuerelement erlaubt ist, oder 0, wenn verboten.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Enabled <span class="optional">,, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Enabled <span class="optional">,, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 
 <h3 id="Visible">Visible</h3>
 <p>Liefert 1, wenn ein Steuerelement sichtbar ist, oder 0, wenn versteckt.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Visible <span class="optional">,, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Visible <span class="optional">,, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 
 <h3 id="Tab">Tab</h3>
 <p>Liefert die Positionsnummer der aktiven Registerkarte in einem Registerkarten-Steuerelement.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Tab <span class="optional">,, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Tab <span class="optional">,, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <p><em>AusgabeVar</em> wird auf 1 für die erste Registerkarte gesetzt, 2 für die zweite und so weiter.</p>
 <p>Um stattdessen herauszufinden, wie viele Registerkarten ein Registerkarten-Steuerelement hat, gehen Sie wie folgt vor:</p>
 <pre><a href="PostMessage.htm">SendMessage</a>, 0x1304,,, SysTabControl321, <i>FensterTitel</i>  <em>; 0x1304 ist TCM_GETITEMCOUNT.</em>
@@ -120,14 +119,14 @@ RegisterkartenAnzahl := ErrorLevel</pre>
 
 <h3 id="FindString">FindString</h3>
 <p>Liefert die Positionsnummer eines Eintrags in einem Listenfeld, Kombinationsfeld oder einer Dropdownliste.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, FindString, Zeichenkette <span class="optional">, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, FindString, Zeichenkette <span class="optional">, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <p><em>Zeichenkette</em> muss der vollständige Text eines Eintrags sein.</p>
 <p><em>AusgabeVar</em> wird auf 1 für den ersten Eintrag gesetzt, 2 für den zweiten und so weiter.</p>
 <p>Wenn kein Eintrag gefunden wurde, wird <em>AusgabeVar</em> leer gemacht und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p>
 
 <h3 id="Choice">Choice</h3>
 <p>Liefert den Text des aktuell ausgewählten Eintrags in einem Listenfeld, Kombinationsfeld oder einer Dropdownliste.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Choice <span class="optional">,, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Choice <span class="optional">,, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <p>Wenn kein Eintrag ausgewählt ist, wird <em>AusgabeVar</em> leer gemacht und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p>
 <p>Bei einem <em>Mehrfachauswahl</em>-Listenfeld wird <em>AusgabeVar</em> immer auf den Text des Eintrags gesetzt, der den Tastaturfokus hat. In der Regel ist das der zuletzt ausgewählte Eintrag bei mehreren ausgewählten Einträgen.</p>
 <p>Um stattdessen die Positionsnummer des ausgewählten Eintrags abzurufen, gehen Sie wie folgt vor (verwenden Sie nur eine der ersten zwei Zeilen, also entweder LB_GETCURSEL für Listenfeld oder CB_GETCURSEL für Kombinationsfeld oder Dropdownliste):</p>
@@ -139,49 +138,48 @@ AuswahlPosN := (ErrorLevel&lt;&lt;32&gt;&gt;32) + 1</pre>
 
 <h3 id="LineCount">LineCount</h3>
 <p>Liefert die Anzahl der Zeilen in einem Eingabefeld.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, LineCount <span class="optional">,, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, LineCount <span class="optional">,, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <p><em>AusgabeVar</em> wird auf 1 für insgesamt eine Zeile gesetzt, 2 für zwei Zeilen und so weiter.</p>
 <p>Alle Eingabefelder haben mindestens eine Zeile, selbst wenn das Steuerelement leer ist.</p>
 
 <h3 id="CurrentLine">CurrentLine</h3>
 <p>Liefert die Zeilennummer in einem Eingabefeld, auf der sich die Einfügemarke befindet.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, CurrentLine <span class="optional">,, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, CurrentLine <span class="optional">,, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <p><em>AusgabeVar</em> wird auf 1 für die erste Zeile gesetzt, 2 für die zweite und so weiter.</p>
 <p>Wenn Text im Steuerelement markiert ist, wird <em>AusgabeVar</em> auf die Zeilennummer gesetzt, wo die Markierung beginnt.</p>
 
 <h3 id="CurrentCol">CurrentCol</h3>
 <p>Liefert die Spaltennummer in einem Eingabefeld, auf der sich die Einfügemarke befindet.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, CurrentCol <span class="optional">,, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, CurrentCol <span class="optional">,, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <p><em>AusgabeVar</em> wird auf 1 für die erste Spalte gesetzt, 2 für die zweite und so weiter.</p>
 <p>Wenn Text im Steuerelement markiert ist, wird <em>AusgabeVar</em> auf die Spaltennummer gesetzt, wo die Markierung beginnt.</p>
 
 <h3 id="Line">Line</h3>
 <p>Liefert den Text einer Zeile in einem Eingabefeld per Zeilennummer.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Line, N <span class="optional">, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Line, N <span class="optional">, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <p><em>N</em> muss eine Zeilennummer sein. Die erste Zeile ist 1, die zweite 2 und so weiter.</p>
 <p>Wenn <em>N</em> nicht existiert, wird <em>AusgabeVar</em> leer gemacht und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p>
 <p>Je nach Typ des Steuerelements kann <em>AusgabeVar</em> entweder mit einem Wagenrücklauf (`r) oder einem Wagenrücklauf-Zeilenvorschub-Paar (`r`n) enden.</p>
 
 <h3 id="Selected">Selected</h3>
 <p>Liefert den markierten Text in einem Eingabefeld.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Selected <span class="optional">,, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Selected <span class="optional">,, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <p>Wenn kein Text markiert ist, wird <em>AusgabeVar</em> leer gemacht und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 0 gesetzt (was auf Erfolg hinweist).</p>
 <p>Es kann vorkommen, dass bestimmte Typen von Steuerelementen wie RichEdit20A manchmal nicht den korrekten Text erzeugen (z.B. Metapad).</p>
 
 <h3 id="Style">Style</h3>
 <p>Liefert eine 8-stellige Hexadezimalzahl, die den Style eines Steuerelements repräsentiert.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Style <span class="optional">,, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Style <span class="optional">,, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <p>Einige Styles finden Sie unter <a href="../misc/Styles.htm">Fenster- und Steuerelement-Styles</a>.</p>
 
 <h3 id="ExStyle">ExStyle</h3>
 <p>Liefert eine 8-stellige Hexadezimalzahl, die den erweiterten Style eines Steuerelements repräsentiert.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, ExStyle <span class="optional">,, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, ExStyle <span class="optional">,, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <p>Einige Styles finden Sie unter <a href="../misc/Styles.htm">Fenster- und Steuerelement-Styles</a>.</p>
 
 <h3 id="Hwnd">Hwnd <span class="ver">[v1.0.43.06+]</span></h3>
-<p>Liefert das Fensterhandle (HWND) eines Steuerelements.</p>
-<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Hwnd <span class="optional">,, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
-<p>Die HWND-Nummer (eindeutige ID) eines Steuerelements wird oft in Verbindung mit <a href="PostMessage.htm">PostMessage</a>, <a href="PostMessage.htm">SendMessage</a> und <a href="DllCall.htm">DllCall()</a> verwendet. Die HWND-Nummer eines Steuerelements kann auch mit <a href="MouseGetPos.htm">MouseGetPos</a> abgerufen werden. So eine HWND-Nummer kann direkt als <a href="../misc/WinTitle.htm#ahk_id">ahk_id-Fenstertitel</a> verwendet werden (das auch mit versteckten Steuerelementen funktioniert, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist).</p>
+<p>Liefert das <a href="../misc/ControlID.htm#HWND">Fensterhandle (HWND)</a> eines Steuerelements.</p>
+<pre class="Syntax"><span class="func">ControlGet</span>, AusgabeVar, Hwnd <span class="optional">,, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
@@ -190,7 +188,7 @@ AuswahlPosN := (ErrorLevel&lt;&lt;32&gt;&gt;32) + 1</pre>
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Dieser Befehl ist für die Verwendung mit Steuerelementen in einem Nicht-GUI-Fenster vorgesehen, also einem Fenster, das nicht mit dem <a href="Gui.htm">Gui</a>-Befehl erstellt wurde. Er funktioniert am besten mit den gängigen oder vordefinierten Steuerelementen von Microsoft. Einige Anwendungen verwenden jedoch benutzerdefinierte oder modifizierte Steuerelemente – in diesem Fall funktioniert der Befehl möglicherweise nicht wie erwartet. Für <a href="GuiControls.htm">GUI-Steuerelemente</a> ist es in der Regel sinnvoller, <a href="GuiControlGet.htm">GuiControlGet</a> zu verwenden, sofern es ein entsprechendes Gegenstück gibt.</p>
 <p>Im Gegensatz zu Befehlen, die ein Steuerelement ändern, erfolgt nach ControlGet keine automatische Verzögerung, d.h. <a href="SetControlDelay.htm">SetControlDelay</a> hat keinen Einfluss auf ControlGet.</p>
-<p>Mit <a href="MouseGetPos.htm">MouseGetPos</a> kann die ClassNN-Bezeichnung oder HWND-Nummer (eindeutige ID) des Steuerelements unter dem Mauszeiger abgerufen werden. Mit <a href="WinGet.htm#ControlList">WinGet ControlList</a> kann eine Liste von Steuerelementen in einem Fenster abgerufen werden.</p>
+<p>Mit <a href="MouseGetPos.htm">MouseGetPos</a> kann die <a href="../misc/ControlID.htm#ClassNN">ClassNN</a> oder das <a href="../misc/ControlID.htm#HWND">HWND</a> des Steuerelements unter dem Mauszeiger abgerufen werden. Mit <a href="WinGet.htm#ControlList">WinGet ControlList</a> kann eine Liste von allen Steuerelementen in einem Fenster abgerufen werden.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="Control.htm">Control</a>, <a href="GuiControlGet.htm">GuiControlGet</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlGetText.htm">ControlGetText</a>, <a href="ControlSetText.htm">ControlSetText</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="WinGet.htm">WinGet</a></p>
@@ -212,7 +210,7 @@ else
 </div>
 
 <div class="ex" id="ExHwnd">
-<p><a class="ex_number" href="#ExHwnd"></a> Liefert das Fensterhandle (HWND) des ersten Eingabefelds in einem GUI- oder Nicht-GUI-Fenster.</p>
+<p><a class="ex_number" href="#ExHwnd"></a> Liefert das <a href="../misc/ControlID.htm#HWND">Fensterhandle (HWND)</a> des ersten Eingabefelds in einem GUI- oder Nicht-GUI-Fenster.</p>
 <pre>ControlGet, AusgabeVar, Hwnd,, Edit1, Beliebiger Fenstertitel</pre>
 </div>
 

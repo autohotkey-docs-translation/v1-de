@@ -360,6 +360,7 @@ tocData = [
   [
     ["Steuerelemente","",
     [
+      ["Identifikatoren","misc/ControlID.htm"],
       ["Control","lib/Control.htm"],
       ["ControlClick","lib/ControlClick.htm"],
       ["ControlFocus","lib/ControlFocus.htm"],

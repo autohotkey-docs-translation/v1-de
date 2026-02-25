@@ -16,7 +16,7 @@
 
 <p>Ruft die aktuelle Position des Mauszeigers ab, und optional das Fenster oder Steuerelement, über dem sich der Mauszeiger befindet.</p>
 
-<pre class="Syntax"><span class="func">MouseGetPos</span> <span class="optional">, AusgabeVarX, AusgabeVarY, AusgabeVarFenster, AusgabeVarSteuerelement, Flag</span></pre>
+<pre class="Syntax"><span class="func">MouseGetPos</span> <span class="optional">, AusgabeVarX, AusgabeVarY, AusgabeVarFenster, AusgabeVarStrlmnt, Flag</span></pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
@@ -25,18 +25,18 @@
     </dd>
 
   <dt>AusgabeVarFenster</dt>
-  <dd><p>Wenn weggelassen, wird der zugehörige Wert nicht gespeichert. Andernfalls geben Sie den Namen der Ausgabevariable an, in der die <a href="WinGet.htm">eindeutige ID-Nummer</a> des Fensters unter dem Mauszeiger gespeichert werden soll. Wenn das Fenster nicht ermittelt werden kann, wird diese Variable leer gemacht.</p>
+  <dd><p>Wenn weggelassen, wird der zugehörige Wert nicht gespeichert. Andernfalls geben Sie den Namen der Ausgabevariable an, in der die <a href="../misc/WinTitle.htm#ahk_id">eindeutige ID (HWND)</a> des Fensters unter dem Mauszeiger gespeichert werden soll. Wenn das Fenster nicht ermittelt werden kann, wird diese Variable leer gemacht.</p>
       <p>Das Fenster muss nicht aktiv sein, um erkannt zu werden. Versteckte Fenster können nicht erkannt werden.</p></dd>
 
-  <dt>AusgabeVarSteuerelement</dt>
-  <dd><p>Wenn weggelassen, wird der zugehörige Wert nicht gespeichert. Andernfalls geben Sie den Namen der Ausgabevariable an, in der die ClassNN-Bezeichnung des Steuerelements unter dem Mauszeiger gespeichert werden soll. Wenn das Steuerelement nicht ermittelt werden kann, wird diese Variable leer gemacht.</p>
-      <p>In <span class="ver">[v1.0.14+]</span> sollten die Namen der Steuerelemente immer mit den in Window Spy angezeigten Namen übereinstimmen (vorher war dies nicht immer der Fall). Das Fenster des Steuerelements unter dem Mauszeiger muss nicht aktiv sein, um erkannt zu werden.</p></dd>
+  <dt>AusgabeVarStrlmnt</dt>
+  <dd><p>Wenn weggelassen, wird der zugehörige Wert nicht gespeichert. Andernfalls geben Sie den Namen der Ausgabevariable an, in der die <a href="../misc/ControlID.htm#ClassNN">ClassNN</a> des Steuerelements unter dem Mauszeiger gespeichert werden soll. Wenn das Steuerelement nicht ermittelt werden kann, wird diese Variable leer gemacht.</p>
+      <p>In <span class="ver">[v1.0.14+]</span> sollte die ClassNN immer mit der übereinstimmen, die in Window Spy angezeigt wird (vorher war dies nicht immer der Fall). Das Fenster des Steuerelements unter dem Mauszeiger muss nicht aktiv sein, um erkannt zu werden.</p></dd>
 
   <dt>Flag</dt>
   <dd>
-    <p>Wenn leer oder weggelassen, wird standardmäßig 0 verwendet, d.h. es wird die Standardmethode zum Ermitteln von <em>AusgabeVarSteuerelement</em> verwendet und die ClassNN-Bezeichnung des Steuerelements abgerufen. Andernfalls geben Sie eine Kombination (Summe) der folgenden Zahlen an:</p>
-    <p><strong>1:</strong> Verwendet eine einfachere Methode zum Ermitteln von <em>AusgabeVarSteuerelement</em>. Diese Methode ermittelt korrekt das aktive/oberste untergeordnete Fenster einer MDI-Anwendung (Multiple Document Interface) wie SysEdit oder TextPad. Allerdings ist sie für andere Zwecke, wie z.B. die Erkennung von Steuerelementen innerhalb eines GroupBox-Steuerelements, weniger genau.</p>
-    <p><strong>2</strong> <span class="ver">[v1.0.43.06+]</span>: Speichert die <a href="ControlGet.htm#Hwnd">HWND-Nummer (eindeutige ID)</a> des Steuerelements in <em>AusgabeVarSteuerelement</em>, nicht die ClassNN-Bezeichnung des Steuerelements.</p>
+    <p>Wenn leer oder weggelassen, wird standardmäßig 0 verwendet, d.h. es wird die Standardmethode zum Ermitteln von <em>AusgabeVarStrlmnt</em> verwendet und die <a href="../misc/ControlID.htm#ClassNN">ClassNN</a> des Steuerelements abgerufen. Andernfalls geben Sie eine Kombination (Summe) der folgenden Zahlen an:</p>
+    <p><strong>1:</strong> Verwendet eine einfachere Methode zum Ermitteln von <em>AusgabeVarStrlmnt</em>. Diese Methode ermittelt korrekt das aktive/oberste untergeordnete Fenster einer MDI-Anwendung (Multiple Document Interface) wie SysEdit oder TextPad. Allerdings ist sie für andere Zwecke, wie z.B. die Erkennung von Steuerelementen innerhalb eines GroupBox-Steuerelements, weniger genau.</p>
+    <p><strong>2</strong> <span class="ver">[v1.0.43.06+]</span>: Speichert das <a href="../misc/ControlID.htm#HWND">HWND</a> des Steuerelements in <em>AusgabeVarStrlmnt</em>, nicht dessen <a href="../misc/ControlID.htm#ClassNN">ClassNN</a>.</p>
     <p>Zum Beispiel können Sie den <em>Flag</em>-Parameter auf 3 setzen, um beide Optionen zu aktivieren.</p>
   </dd>
 
@@ -57,16 +57,16 @@ MsgBox, Der Zeiger befindet sich auf X%xpos% Y%ypos%.</pre>
 </div>
 
 <div class="ex" id="ExWatchCursor">
-<p><a class="ex_number" href="#ExWatchCursor"></a> Zeigt die HWND-Nummer, den Klassennamen, den Titel und die Steuerelemente des Fensters an, das sich gerade unter dem Mauszeiger befindet.</p>
+<p><a class="ex_number" href="#ExWatchCursor"></a> Zeigt das HWND, den Klassennamen, den Titel und die Steuerelemente des Fensters an, das sich gerade unter dem Mauszeiger befindet.</p>
 <pre>#Persistent
 SetTimer, ZeigerÜberwachen, 100
 return
 
 ZeigerÜberwachen:
-MouseGetPos, , , ID, Steuerelement
+MouseGetPos, , , ID, Strlmnt
 WinGetTitle, Titel, ahk_id %ID%
 WinGetClass, Klasse, ahk_id %ID%
-ToolTip, ahk_id %ID%`nahk_class %Klasse%`n%Titel%`Steuerelement: %Steuerelement%
+ToolTip, ahk_id %ID%`nahk_class %Klasse%`n%Titel%`Steuerelement: %Strlmnt%
 return</pre>
 </div>
 

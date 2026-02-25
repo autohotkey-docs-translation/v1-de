@@ -17,8 +17,8 @@
 <p>Sendet eine Meldung an ein Fenster oder Steuerelement (SendMessage wartet zusätzlich auf eine Bestätigung).</p>
 
 <pre class="Syntax">
-<span class="func">PostMessage</span>, MldNummer <span class="optional">, wParam, lParam, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>
-<span class="func">SendMessage</span>, MldNummer <span class="optional">, wParam, lParam, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText, Zeitlimit</span>
+<span class="func">PostMessage</span>, MldNummer <span class="optional">, wParam, lParam, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>
+<span class="func">SendMessage</span>, MldNummer <span class="optional">, wParam, lParam, StrlmntID, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText, Zeitlimit</span>
 </pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
@@ -32,16 +32,16 @@
   <dt>lParam</dt>
   <dd><p>Wenn leer oder weggelassen, wird 0 gesendet. Andernfalls geben Sie die zweite Komponente der Meldung an. Kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p></dd>
 
-  <dt>Steuerelement</dt>
-  <dd><p>Wenn leer oder weggelassen, wird die Meldung direkt an das Zielfenster gesendet, nicht an eines seiner Steuerelemente. Andernfalls geben Sie entweder die ClassNN-Bezeichnung (Klassenname und Instanznummer des Steuerelements) oder den Text des Steuerelements an, die beide mit dem internen Tool "Window Spy" ermittelt werden können. Wenn Text verwendet wird, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>.</p>
-    <p>Um mit dem Fensterhandle (HWND) eines Steuerelements zu arbeiten, lassen Sie den <em>Steuerelement</em>-Parameter leer und übergeben Sie <code class="no-highlight">ahk_id %StrlmntHwnd%</code> als <em>FensterTitel</em>-Parameter (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist). Die HWND-Nummer eines Steuerelements kann üblicherweise via <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall()</a> abgerufen werden.</p>
-    </dd>
+  <dt>StrlmntID</dt>
+  <dd>
+    <p>Wenn leer oder weggelassen, wird die Meldung direkt an das Zielfenster gesendet, nicht an eines seiner Steuerelemente. Andernfalls geben Sie die ClassNN oder den Text des Steuerelements an, oder lassen Sie den Parameter leer und geben Sie <code class="no-highlight">ahk_id %StrlmntHwnd%</code> im <em>FensterTitel</em>-Parameter an, um mit dem HWND des Steuerelements zu arbeiten. Einzelheiten finden Sie unter <a href="../misc/ControlID.htm">Steuerelementidentifikatoren</a>.</p>
+  </dd>
 
   <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
   <dd>
     <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden).</p>
     <p><em>AusnahmeTitel</em> und <em>AusnahmeText</em> können verwendet werden, um ein oder mehrere Fenster anhand ihres Titels oder Textes auszuschließen. Ihre Angabe ähnelt der von <em>FensterTitel</em> und <em>FensterText</em>, außer dass <em>AusnahmeTitel</em> keine anderen Kriterien als den Fenstertitel erkennt.</p>
-    <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> und <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig muss ein Fenstertitel mit dem angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> beginnen, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
+    <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> bzw. <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig muss ein Fenstertitel mit dem angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> beginnen, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
   </dd>
 
   <dt>Zeitlimit <span class="ver">[AHK_L 42+]</span></dt>
@@ -63,13 +63,13 @@
 <p>PostMessage platziert die Meldung in die Meldungswarteschlange des Zielfensters, ohne auf eine Bestätigung oder Antwort zu warten. SendMessage hingegen wartet, bis das Zielfenster die Meldung verarbeitet hat oder bis das Zeitlimit überschritten wurde.</p>
 <p>Die <em>wParam</em>- und <em>lParam</em>-Parameter müssen Integer sein. Wenn AutoHotkey oder das Zielfenster 32-Bit ist, werden nur die unteren 32 Bits verwendet, d.h. der Wert muss zwischen -2147483648 und 4294967295 (0xFFFFFFFF) liegen. Wenn sowohl AutoHotkey als auch das Zielfenster 64-Bit sind, kann ein beliebiger <a href="../Variables.htm#cap">von AutoHotkey unterstützter</a> Integerwert verwendet werden. Wie bei allen Integerwerten in AutoHotkey kennzeichnet ein 0x-Präfix einen hexadezimalen Wert. Zum Beispiel ist 0xFF äquivalent zu 255.</p>
 <p>Es ist möglich, eine Zeichenkette via <em>wParam</em> oder <em>lParam</em> zu senden, indem die Adresse einer Variable angegeben wird. Verwenden Sie dafür den <a href="../Variables.htm#amp">Adressoperator (&amp;)</a>. Zum Beispiel:</p>
-<pre>SendMessage, 0x000C, 0, <strong>&amp;MeineVar</strong>, ClassNN, FensterTitel  <em>; 0x000C ist WM_SETTEXT</em></pre>
+<pre>SendMessage, 0x000C, 0, &amp;MeineVar, ClassNN, FensterTitel  <em>; 0x000C ist WM_SETTEXT</em></pre>
 <p><span class="ver">[v1.0.43.06+]</span>: Eine Zeichenkette in <em>MeineVar</em>, die vom Empfänger der Meldung eingefügt wurde, wird korrekt erkannt, ohne dass zusätzliche Schritte erforderlich sind. Diese Erkennung funktioniert allerdings nur, wenn das erste Zeichen des Parameters ein Und-Zeichen (&amp;) ist; z.B. würde <code>&amp;MeineVar</code> oder <code>&amp;MeineVar+5</code> funktionieren, aber nicht <code>5+&amp;MeineVar</code>.</p>
 <p>Es kann auch eine direkt geschriebene bzw. in Anführungszeichen gesetzte Zeichenkette gesendet werden (in diesem Fall muss der &amp;-Operator weggelassen werden):</p>
 <pre>#Persistent
 ListVars
 WinWaitActive, ahk_class AutoHotkey
-SendMessage, 0x000C, 0, "<strong>Neuer Titel</strong>"  <em>; 0x000C ist WM_SETTEXT</em></pre>
+SendMessage, 0x000C, 0, "Neuer Titel"  <em>; 0x000C ist WM_SETTEXT</em></pre>
 <p>Um eine Meldung an alle Fenster im Betriebssystem zu senden – auch an solche, die versteckt oder deaktiviert sind – fügen Sie <code class="no-highlight">ahk_id 0xFFFF</code> in <em>FensterTitel</em> ein (0xFFFF ist HWND_BROADCAST). Diese Technik sollte nur für Meldungen verwendet werden, die zum Broadcasten geeignet sind, wie zum Beispiel:</p>
 <pre>SendMessage, 0x001A,,,, ahk_id 0xFFFF  <em>; 0x001A ist WM_SETTINGCHANGE</em></pre>
 <p>Mit <a href="OnMessage.htm">OnMessage()</a> kann ein Skript eine Meldung abfangen.</p>

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>StrlmntID-Parameter (Steuerelementidentifikatoren) | AutoHotkey v1</title>
+<meta name="description" content="Diese Seite listet Identifikatoren auf, die im StrlmntID-Parameter von Befehlen verwendet werden können, um das Zielsteuerelement zu identifizieren." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<link href="../static/dark.css" rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" id="dark_css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga4.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>StrlmntID-Parameter <span class="headnote">(Steuerelementidentifikatoren)</span></h1>
+
+<p>Einige Befehle haben einen <em>StrlmntID</em>-Parameter, der verwendet wird, um das Steuerelement in einem Fenster zu identifizieren, mit dem gearbeitet werden soll. Dieser Parameter kann der Text des Steuerelements oder ein anderer auf dieser Seite beschriebener Identifikator sein.</p>
+
+<h2 id="toc">Inhaltsverzeichnis</h2>
+<ul>
+  <li><a href="#Control_Identifiers">Steuerelementidentifikatoren</a>
+    <ul>
+      <li><a href="#HWND">HWND</a></li>
+      <li><a href="#Associated_Variable">Zugeordnete Variable</a></li>
+      <li><a href="#ClassNN">ClassNN</a></li>
+      <li><a href="#Text">Text</a></li>
+      <li><a href="#Omitted">Weggelassen</a></li>
+    </ul>
+  </li>
+  <li><a href="#Remarks">Bemerkungen</a></li>
+  <li><a href="#Related">Siehe auch</a></li>
+</ul>
+
+<h2 id="Control_Identifiers">Steuerelementidentifikatoren</h2>
+<p>Die folgenden Identifikatoren sind nach ihrer Rangfolge sortiert. Dieses Detail ist nur in seltenen Fällen von Bedeutung, nämlich dann, wenn es zu Mehrdeutigkeiten kommt. Wenn ein Fenster z.B. zwei Eingabefelder hat, das erste mit dem Text "Edit2" und das zweite mit ClassNN "Edit2", und <code>Control, Hide,, Edit2</code> verwendet wird, wird das zweite Eingabefeld versteckt, weil ClassNN höherrangig ist.</p>
+
+<h3 id="HWND">HWND</h3>
+<p>Ein HWND (kurz für "Handle to Window") identifiziert ein Steuerelement eindeutig, solange es existiert. Um damit zu arbeiten, lassen Sie den <em>StrlmntID</em>-Parameter leer und geben Sie <code class="no-highlight">ahk_id %StrlmntHwnd%</code> im <a href="WinTitle.htm"><em>FensterTitel</em>-Parameter</a> an (dies funktioniert auch mit versteckten Steuerelementen, selbst wenn <a href="../lib/DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist). <span class="ver">[v1.1.04+]</span>: Bei <a href="../lib/GuiControl.htm">GuiControl</a> und <a href="../lib/GuiControlGet.htm">GuiControlGet</a> kann das HWND direkt in <em>StrlmntID</em> angegeben werden.</p>
+<p>Das HWND eines Steuerelements kann via <a href="../lib/DllCall.htm">DllCall()</a>, in <span class="ver">[v1.0.43.06+]</span> via <a href="../lib/ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="../lib/WinGet.htm#ControlListHwnd">WinGet ControlListHwnd</a> und <a href="../lib/MouseGetPos.htm">MouseGetPos</a>, in <span class="ver">[v1.0.46.01+]</span> via <a href="../lib/Gui.htm#HwndOutputVar">Hwnd-Option (Gui Add)</a> und in <span class="ver">[v1.0.46.16+]</span> via <a href="../lib/GuiControlGet.htm#Hwnd">GuiControlGet Hwnd</a> abgerufen werden.</p>
+<p>Ein HWND ist besonders nützlich, wenn Meldungen direkt an ein Steuerelement via <a href="../lib/PostMessage.htm">PostMessage</a> oder <a href="../lib/PostMessage.htm">SendMessage</a> gesendet werden, oder wenn native APIs mit <a href="../lib/DllCall.htm">DllCall()</a> aufgerufen werden. Es ist auch hilfreich, wenn Steuerelemente dynamisch erstellt oder neu angeordnet werden, da das HWND während der Lebensdauer des Steuerelements konstant bleibt.</p>
+
+<h3 id="Associated_Variable">Zugeordnete Variable</h3>
+<p>Ein GUI-Steuerelement kann anhand des Namens seiner zugeordneten Variable identifiziert werden. Dies gilt für Steuerelemente, die mit <a href="../lib/Gui.htm#Add">Gui Add</a> erstellt wurden, wenn die <a href="../lib/Gui.htm#var">V-Option</a> verwendet wird (z.B. <code class="no-highlight">vMeinEdit</code>). Der Variablenname kann anschließend als Identifikator für <a href="../lib/GuiControl.htm">GuiControl</a> und <a href="../lib/GuiControlGet.htm">GuiControlGet</a> verwendet werden, um das Steuerelement eindeutig zu identifizieren.</p>
+<p>Die Verwendung einer zugeordneten Variable ist oft der einfachste Weg, um ein GUI-Steuerelement zu identifizieren, selbst für Steuerelemente, die nicht eingabefähig sind (wie z.B. <a href="../lib/GuiControls.htm#Text">Text</a> oder <a href="../lib/GuiControls.htm#GroupBox">GroupBox</a>). Auch wenn die Variable in solchen Fällen nicht zum Speichern von Eingaben dient, kann sie immerhin als stabiler und lesbarer Identifikator verwendet werden.</p>
+
+<h3 id="ClassNN">ClassNN</h3>
+<p>Die ClassNN eines Steuerelements ist der Name seiner Fensterklasse, gefolgt von seiner Sequenznummer innerhalb des Top-Level-Fensters, das dieses Steuerelement enthält. Die Sequenznummer spiegelt die Position des Steuerelements unter den Steuerelementen derselben Klasse wider, und zwar in der Reihenfolge, in der sie erstellt wurden. Zum Beispiel ist <code class="no-highlight">Edit1</code> das erste Eingabefeld in einem Fenster und <code class="no-highlight">Button12</code> die zwölfte Schaltfläche.</p>
+<p>Einige Klassennamen enthalten Ziffern, die nicht zur Sequenznummer des Steuerelements gehören. Zum Beispiel ist "SysListView321" das erste ListView-Steuerelement in einem Fenster, nicht das dreihunderteinundzwanzigste. Um den Klassennamen ohne Sequenznummer abzurufen, übergeben Sie das HWND des Steuerelements an <a href="../lib/WinGetClass.htm">WinGetClass</a>.</p>
+<p>Die ClassNN eines Steuerelements kann via Window Spy ermittelt werden. Einige Befehle wie <a href="../lib/ControlGetFocus.htm">ControlGetFocus</a>, <a href="../lib/GuiControlGet.htm#Focus">GuiControlGet Focus</a>, <a href="../lib/WinGet.htm#ControlList">WinGet ControlList</a> und <a href="../lib/MouseGetPos.htm">MouseGetPos</a> rufen eine ClassNN ab.</p>
+<p>Die Sequenznummer ist kein persistenter Identifikator. Die Nummer kann sich ändern, wenn die Anwendung Steuerelemente neu erstellt, ihre Reihenfolge ändert oder dynamische oder virtualisierte UI-Elemente verwendet. Es ist möglich, dass einige moderne Frameworks (z.B. WPF oder Electron) gar keine traditionellen Win32-Klassennamen preisgeben oder bereits etablierte Klassennamen für mehrere nicht verwandte Steuerelemente verwenden.</p>
+<p>ClassNN ist oft praktisch, wenn die Steuerelemente keinen eindeutigen Text haben und die Reihenfolge der Steuerelemente stabil bleibt. Wenn die Stabilität nicht garantiert werden kann, sollten Sie ein HWND oder einen anderen Identifikator verwenden.</p>
+
+<h3 id="Text">Text</h3>
+<p>Der Text eines Steuerelements kann als Identifikator verwendet werden, z.B. <code class="no-highlight">OK</code> für eine OK-Schaltfläche. Das Übereinstimmungsverhalten ist abhängig von <a href="../lib/SetTitleMatchMode.htm">SetTitleMatchMode</a>. Verwenden Sie Text, wenn er eindeutig und stabil ist; viele Steuerelemente aktualisieren ihn dynamisch oder geben keinen verwertbaren Text preis.</p>
+<p>Der Text eines Steuerelements kann via Window Spy ermittelt werden. Einige Befehle wie <a href="../lib/ControlGetText.htm">ControlGetText</a> und <a href="../lib/GuiControlGet.htm">GuiControlGet</a> rufen einen solchen Text ab.</p>
+
+<h3 id="Omitted">Weggelassen</h3>
+<p>Bei Nicht-GUI-Befehlen bewirkt das Weglassen des <em>StrlmntID</em>-Parameters, dass sie mit dem obersten Steuerelement des Zielfensters arbeiten. Allerdings weisen einige von ihnen ein Sonderverhalten auf, wenn dieser Parameter weggelassen wird:</p>
+<ul>
+  <li><a href="../lib/ControlClick.htm">ControlClick</a> klickt das Zielfenster selbst an, wenn es keine Steuerelemente hat.</li>
+  <li><a href="../lib/ControlSend.htm">ControlSend</a> sendet die Tastendrücke an das Zielfenster selbst, wenn es keine Steuerelemente hat.</li>
+  <li><a href="../lib/PostMessage.htm">PostMessage</a> und <a href="../lib/PostMessage.htm">SendMessage</a> senden die Meldung direkt an das Zielfenster.</li>
+</ul>
+<p>Bei <a href="../lib/GuiControlGet.htm">GuiControlGet</a> bewirkt das Weglassen des <em>StrlmntID</em>-Parameters, dass es sich so verhält, als wäre der Name der <a href="#Associated_Variable">zugeordneten Variable</a> des Steuerelements (falls vorhanden) angegeben worden.</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Die folgenden Befehle haben einen <em>StrlmntID</em>-Parameter: <a href="../lib/Control.htm">Control</a>, <a href="../lib/ControlClick.htm">ControlClick</a>, <a href="../lib/ControlFocus.htm">ControlFocus</a>, <a href="../lib/ControlGet.htm">ControlGet</a>, <a href="../lib/ControlGetPos.htm">ControlGetPos</a>, <a href="../lib/ControlGetText.htm">ControlGetText</a>, <a href="../lib/ControlMove.htm">ControlMove</a>, <a href="../lib/ControlSend.htm">ControlSend</a>, <a href="../lib/ControlSetText.htm">ControlSetText</a>, <a href="../lib/GuiControl.htm">GuiControl</a>, <a href="../lib/GuiControlGet.htm">GuiControlGet</a>, <a href="../lib/PostMessage.htm">PostMessage</a>, <a href="../lib/PostMessage.htm">SendMessage</a>. Die meisten dieser Befehle haben Beispiele auf der entsprechenden Seite, die die Verwendung von Steuerelementidentifikatoren demonstrieren.</p>
+<p>ClassNN und der Text von Steuerelementen können sich ändern, wenn Anwendungen Steuerelemente neu erstellen, ihre Reihenfolge ändern, dynamische oder virtualisierte Schnittstellen verwenden oder auf Frameworks zurückgreifen, die keine stabilen Win32-Klassennamen oder Texte bereitstellen. Wenn Identifikatoren unzuverlässig sind, verwenden Sie lieber ein HWND, das für dessen Lebensdauer stabil ist, oder kombinieren Sie mehrere Kriterien. Allgemein gilt: Verwenden Sie den Text des Steuerelements, wenn er eindeutig und stabil ist, verwenden Sie ClassNN, wenn die Reihenfolge der Steuerelemente konsistent und die Lesbarkeit erwünscht ist, und verwenden Sie ein HWND, wenn maximale Stabilität erforderlich ist. Vermeiden Sie hartcodierte Identifikatoren über Anwendungsversionen hinweg, es sei denn, Sie kontrollieren die Zielanwendung.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="WinTitle.htm">FensterTitel-Parameter &amp; Zuletzt Gefundenes Fenster</a></p>
+
+</body>
+</html>

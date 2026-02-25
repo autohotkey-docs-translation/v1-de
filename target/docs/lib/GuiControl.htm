@@ -16,19 +16,17 @@
 <h1>GuiControl</h1>
 
 <p>Führt eine Vielzahl von Änderungen an einem Steuerelement innerhalb eines GUI-Fensters durch.</p>
-<pre class="Syntax"><span class="func">GuiControl</span>, <a href="#SubCommands">Unterbefehl</a>, SteuerelementID <span class="optional">, Wert</span></pre>
+<pre class="Syntax"><span class="func">GuiControl</span>, <a href="#SubCommands">Unterbefehl</a>, StrlmntID <span class="optional">, Wert</span></pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
   <dt>Unterbefehl, Wert</dt>
   <dd>Diese Parameter sind voneinander abhängig und können wie <a href="#SubCommands">unten gezeigt</a> verwendet werden.</dd>
 
-  <dt>SteuerelementID</dt>
-  <dd><p><em>SteuerelementID</em> kann der Name der zugeordneten Variable eines Steuerelements sein, sofern vorhanden (diese Methode hat Vorrang vor der im nächsten Absatz beschriebenen Methode). In der Regel ist es sinnvoll, jedem Steuerelement, auf das später mit GuiControl oder <a href="GuiControlGet.htm">GuiControlGet</a> zugegriffen wird, eine Variable zuzuordnen, selbst wenn dieses Steuerelement nicht eingabefähig ist (wie z.B. <a href="GuiControls.htm#GroupBox">GroupBox</a> oder <a href="GuiControls.htm#Text">Text</a>).</p>
-  <p>Andernfalls geben Sie für <em>SteuerelementID</em> entweder die ClassNN-Bezeichnung (Klassenname und Instanznummer des Steuerelements) oder den Text des Steuerelements an, die beide mit dem internen Tool "Window Spy" ermittelt werden können. Wenn Text verwendet wird, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>.</p>
-    <p class="note"><strong>Hinweis:</strong> Der Dateiname eines <a href="GuiControls.htm#Picture">Picture</a>-Steuerelements (der zum Zeitpunkt seiner Erstellung angegeben wurde) kann auch als <em>SteuerelementID</em> verwendet werden.</p>
-  <p><span class="ver">[v1.1.04+]</span>: <em>SteuerelementID</em> kann die <a href="Gui.htm#HwndOutputVar">HWND-Nummer (eindeutige ID)</a> eines Steuerelements sein.</p>
-  <p>Wenn sich das Steuerelement nicht auf der Standard-GUI befindet, <strong>muss zudem der Name oder die HWND-Nummer (eindeutige ID) der GUI angegeben werden</strong> -- außer in <span class="ver">[v1.1.20+]</span>, wenn <em>SteuerelementID</em> eine HWND-Nummer ist, da jede HWND-Nummer eindeutig ist. Weitere Informationen finden Sie unter <a href="#Remarks">Bemerkungen</a>.</p>
+  <dt>StrlmntID</dt>
+  <dd>
+    <p>Der Name der zugeordneten Variable (falls vorhanden), die ClassNN, der Text, oder in <span class="ver">[v1.1.04+]</span> das HWND des Steuerelements. Einzelheiten finden Sie unter <a href="../misc/ControlID.htm">Steuerelementidentifikatoren</a>.</p>
+    <p>Wenn sich das Steuerelement nicht auf der Standard-GUI befindet, <strong>muss zudem der Name oder das HWND der GUI angegeben werden</strong> -- außer in <span class="ver">[v1.1.20+]</span>, wenn <em>StrlmntID</em> ein HWND ist, da jedes HWND eindeutig ist. Weitere Informationen finden Sie unter <a href="#Remarks">Bemerkungen</a>.</p>
   </dd>
 </dl>
 
@@ -52,14 +50,14 @@
 
 <h3 id="Blank">(Leer)</h3>
 <p>Fügt neue Inhalte in ein Steuerelement ein.</p>
-<pre class="Syntax"><span class="func">GuiControl</span>,, SteuerelementID <span class="optional">, Wert</span></pre>
+<pre class="Syntax"><span class="func">GuiControl</span>,, StrlmntID <span class="optional">, Wert</span></pre>
 <p>Lassen Sie <em>Unterbefehl</em> leer, um neue Inhalte via <em>Wert</em> in das Steuerelement einzufügen. Konkret heißt das:</p>
 <p><a href="GuiControls.htm#Picture">Picture</a>: Geben Sie für <em>Wert</em> den Dateinamen oder in <span class="ver">[v1.1.23+]</span> ein <a href="../misc/ImageHandles.htm">Handle</a> des neuen Bildes an, das geladen werden soll (siehe <a href="GuiControls.htm#Picture">Gui Picture</a>, welche Dateitypen unterstützt werden). Direkt vor dem Dateinamen können beliebig viele der folgenden Optionen angegeben werden: <code class="no-highlight">*wN</code> (Breite N), <code class="no-highlight">*hN</code> (Höhe N) und <code class="no-highlight">*IconN</code> (Symbolgruppennummer N in einer DLL- oder EXE-Datei). Das folgende Beispiel lädt das Standardsymbol aus der zweiten Symbolgruppe mit einer Breite von 100 Pixel und einer automatischen Höhe via "Seitenverhältnis beibehalten": <code>GuiControl,, MeinBild, *icon2 *w100 *h-1 C:\Meine Anwendung.exe</code>. Geben Sie <code class="no-highlight">*w0 *h0</code> an, um die aktuelle Breite und Höhe des Bildes zu verwenden. Wenn <code class="no-highlight">*w</code> und <code class="no-highlight">*h</code> weggelassen werden, wird die Größe des Bildes an die Größe des Steuerelements angepasst. Beim Laden eines Symbols aus einer ICO-Datei mit mehreren Symbolen hat die Angabe von Breite und Höhe zudem Einfluss darauf, welches Symbol geladen wird. Hinweis: Verwenden Sie nur ein Leer- oder Tabulatorzeichen zwischen der letzten Option und dem Dateinamen selbst; alle anderen Leer- oder Tabulatorzeichen werden als Teil des Dateinamens interpretiert.</p>
 <p><a href="GuiControls.htm#Text">Text</a>/<a href="GuiControls.htm#Button">Button</a>/<a href="GuiControls.htm#GroupBox">GroupBox</a>/<a href="GuiControls.htm#StatusBar">StatusBar</a>/<a href="GuiControls.htm#Link">Link</a>: Geben Sie für <em>Wert</em> den neuen Text des Steuerelements an. Da sich hierbei die Größe des Steuerelements nicht automatisch erweitert, muss so etwas wie <code><a href="#Move">GuiControl, Move</a>, MeinText, W300</code> verwendet werden, um das Steuerelement breiter zu machen. Bei StatusBar wird nur der Text des ersten Segments gesetzt; verwenden Sie <a href="GuiControls.htm#SB_SetText">SB_SetText()</a> für mehr Flexibilität.</p>
 <p><a href="GuiControls.htm#Edit">Edit</a>: Jeder Zeilenvorschub (`n) in <em>Wert</em>, dem kein Wagenrücklauf (`r) vorangestellt ist, wird automatisch in ein Wagenrücklauf-Zeilenvorschub-Paar (`r`n) übersetzt, um eine korrekte Darstellung zu gewährleisten. In der Regel sollte das keine Probleme bereiten, weil <a href="Gui.htm#Submit">Gui Submit</a> und <a href="GuiControlGet.htm">GuiControlGet</a> diese Übersetzung automatisch rückgängig machen, indem sie ein Wagenrücklauf-Zeilenvorschub-Paar (`r`n) mit einem Zeilenvorschub (`n) ersetzen.</p>
 <p><a href="GuiControls.htm#Hotkey">Hotkey</a>: Geben Sie für <em>Wert</em> eine Tastenkombination in Form von Modifikatorsymbolen und einem Tastennamen an, die im Steuerelement angezeigt werden soll, oder lassen Sie diesen Parameter leer, um den Inhalt des Steuerelements zu löschen. Beispiele: <code class="no-highlight">^!c</code>, <code class="no-highlight">^Numpad1</code>, <code class="no-highlight">+Home</code>. Es werden nur die Modifikatoren ^ (STRG), ! (ALT) und + (UMSCHALT) unterstützt. Weitere Tastennamen finden Sie in der <a href="../KeyList.htm">Tastenliste</a>.</p>
 <p><a href="GuiControls.htm#CheckBox">CheckBox</a>: <em>Wert</em> kann 0 für unmarkiert, 1 für markiert oder -1 für unbestimmt sein. Andernfalls wird <em>Wert</em> als neuer Text bzw. neue Beschriftung des Steuerelements behandelt. Schauen Sie sich den <a href="#Text">Text</a>-Unterbefehl an, wie dieses Verhalten überschrieben werden kann.</p>
-<p><a href="GuiControls.htm#Radio">Radio</a>: Dasselbe wie beim CheckBox-Absatz oben. Wenn allerdings ein Radio-Steuerelement ausgewählt wird, das zu einer Radiogruppe gehört, werden alle anderen Radio-Steuerelemente in der Gruppe automatisch abgewählt. Um ein anderes Radio-Steuerelement innerhalb einer Radiogruppe zu markieren, die nur eine zugeordnete Variable hat, müssen Sie für <em>SteuerelementID</em> den Namen/Text des Radio-Steuerelements angeben, wenn diesem nicht genau diese Variable zugeordnet ist.</p>
+<p><a href="GuiControls.htm#Radio">Radio</a>: Dasselbe wie beim CheckBox-Absatz oben. Wenn allerdings ein Radio-Steuerelement ausgewählt wird, das zu einer Radiogruppe gehört, werden alle anderen Radio-Steuerelemente in der Gruppe automatisch abgewählt. Um ein anderes Radio-Steuerelement innerhalb einer Radiogruppe zu markieren, die nur eine zugeordnete Variable hat, müssen Sie für <em>StrlmntID</em> den Namen/Text des Radio-Steuerelements angeben, wenn diesem nicht genau diese Variable zugeordnet ist.</p>
 <p><a href="GuiControls.htm#DateTime">DateTime</a>/<a href="GuiControls.htm#MonthCal">MonthCal</a>: Geben Sie für <em>Wert</em> einen Zeitstempel im <a href="FileSetTime.htm#YYYYMMDD">YYYYMMDDHH24MISS</a>-Format an. Geben Sie <code class="no-highlight">%A_Now%</code> an, um das aktuelle Datum/Uhrzeit (heute) zu verwenden. Bei DateTime-Steuerelementen kann <em>Wert</em> weggelassen werden, um das Steuerelement ohne vorab ausgewähltes Datum/Uhrzeit anzuzeigen (wenn es mit <a href="GuiControls.htm#ChooseNone">dieser Option</a> erstellt wurde). Bei MonthCal-Steuerelementen kann ein Datumsbereich angegeben werden, wenn das Steuerelement eine <a href="GuiControls.htm#MonthCalMulti">Mehrfachauswahl</a> unterstützt.</p>
 <p><a href="GuiControls.htm#UpDown">UpDown</a>/<a href="GuiControls.htm#Slider">Slider</a>/<a href="GuiControls.htm#Progress">Progress</a>: Geben Sie für <em>Wert</em> die neue Position des Steuerelements an. Wenn das erste Zeichen von <em>Wert</em> ein Pluszeichen ist, wird die Zahl als Offset von der aktuellen Position behandelt. Zum Beispiel bewirkt <code class="no-highlight">+10</code>, dass die Position um 10 Pixel erhöht wird, während <code class="no-highlight">+-10</code> (plus minus zehn) bewirkt, dass die Position um 10 Pixel verringert wird. Wenn die neue Position außerhalb des gültigen Wertebereichs liegt, wird das Steuerelement auf den nächstmöglichen gültigen Wert gesetzt.</p>
 <p><a href="GuiControls.htm#Tab">Tab</a>/<a href="GuiControls.htm#DropDownList">DropDownList</a>/<a href="GuiControls.htm#ComboBox">ComboBox</a>/<a href="GuiControls.htm#ListBox">ListBox</a>: Geben Sie für <em>Wert</em> eine via Vertikalstrich getrennte Liste an, um neue Listeneinträge/Tabs an das Ende der Liste des Steuerelements anzufügen. Fügen Sie einen Vertikalstrich als erstes Zeichen ein, um die Liste stattdessen zu ersetzen bzw. zu überschreiben (z.B. <code class="no-highlight">|Rot|Grün|Blau</code>). Geben Sie einen einzelnen Vertikalstrich (|) an, um das Steuerelement leer zu machen. Fügen Sie zwei Vertikalstriche an, um einen Listeneintrag/Tab im Steuerelement vorab auszuwählen (z.B. <code class="no-highlight">Rot|Grün||Blau</code>). Das Trennzeichen zwischen den Feldern kann mit der GUI-Option <a href="Gui.htm#Delimiter">+Delimiter</a> auf etwas anderes als den Vertikalstrich geändert werden. Zum Beispiel kann es mit <code>Gui +Delimiter`n</code> in einen Zeilenvorschub (`n) oder mit <code>Gui +DelimiterTab</code> in einen Tabulator (`t) geändert werden.</p>
@@ -68,7 +66,7 @@
 
 <h3 id="Text">Text</h3>
 <p>Ändert den Text bzw. die Beschriftung eines Steuerelements.</p>
-<pre class="Syntax"><span class="func">GuiControl</span>, Text, SteuerelementID <span class="optional">, Wert</span></pre>
+<pre class="Syntax"><span class="func">GuiControl</span>, Text, StrlmntID <span class="optional">, Wert</span></pre>
 <p>Verhält sich wie der <a href="#Blank">leere</a> Unterbefehl, außer bei:</p>
 <p><a href="GuiControls.htm#CheckBox">CheckBox</a>/<a href="GuiControls.htm#Radio">Radio</a>: <em>Wert</em> wird bedingungslos als neuer Text bzw. neue Beschriftung des Steuerelements behandelt, d.h. es kann auch -1, 0 oder 1 als Text angegeben werden.</p>
 <p><a href="GuiControls.htm#DateTime">DateTime</a>: <em>Wert</em> wird als neues <a href="GuiControls.htm#DateTimeFormat">Datums-/Zeitformat</a> behandelt, das vom Steuerelement angezeigt werden soll. Wenn <em>Wert</em> weggelassen wird, wird jedes benutzerdefinierte Format entfernt und das kurze Datumsformat in Kraft gesetzt.</p>
@@ -76,7 +74,7 @@
 
 <h3 id="Move">Move</h3>
 <p>Verschiebt ein Steuerelement und/oder ändert dessen Größe.</p>
-<pre class="Syntax"><span class="func">GuiControl</span>, Move, SteuerelementID, Optionen</pre>
+<pre class="Syntax"><span class="func">GuiControl</span>, Move, StrlmntID, Optionen</pre>
 <p>Geben Sie für <em>Optionen</em> einen oder mehrere der folgenden Optionsbuchstaben an, jeweils gefolgt von einer dezimalen Zahl (nicht hexadezimal), jeweils getrennt durch beliebig viele Leer- oder Tabulatorzeichen:</p>
 <ul>
   <li><strong>X:</strong> Die neue X-Koordinate der oberen linken Ecke des Steuerelements.</li>
@@ -89,14 +87,14 @@
 
 <h3 id="MoveDraw">MoveDraw</h3>
 <p>Verschiebt ein Steuerelement und/oder ändert dessen Größe, und zeichnet den vom Steuerelement beanspruchten Bereich neu.</p>
-<pre class="Syntax"><span class="func">GuiControl</span>, MoveDraw, SteuerelementID <span class="optional">, Optionen</span></pre>
+<pre class="Syntax"><span class="func">GuiControl</span>, MoveDraw, StrlmntID <span class="optional">, Optionen</span></pre>
 <p>Schauen Sie sich den <a href="#Move">Move</a>-Unterbefehl an, um mehr zu erfahren.</p>
 <p>Obwohl dieser Unterbefehl bei wiederholtem und schnellem Aufruf zu unerwünschtem Flackern führen kann, ist er in der Lage, fehlerhafte Darstellungen beim Zeichnen bestimmter Steuerelemente wie z.B. <a href="GuiControls.htm#GroupBox">GroupBox</a> zu verhindern.</p>
 <p><span class="ver">[v1.0.48.04+]</span>: Der letzte Parameter kann weggelassen werden, um das Steuerelement ohne Verschieben oder Größenänderung neu zu zeichnen.</p>
 
 <h3 id="Focus">Focus</h3>
 <p>Setzt den Tastaturfokus auf ein Steuerelement.</p>
-<pre class="Syntax"><span class="func">GuiControl</span>, Focus, SteuerelementID</pre>
+<pre class="Syntax"><span class="func">GuiControl</span>, Focus, StrlmntID</pre>
 <p>Um den gewünschten Effekt zu erzielen, darf das Fenster weder minimiert noch versteckt sein.</p>
 <p>Wenn ein Steuerelement durch eine Benutzereingabe fokussiert wird, z.B. durch Drücken von <kbd>Tab</kbd>, wendet der Dialogmanager zusätzliche Effekte an, die nicht von diesem Unterbefehl angewendet werden. Siehe <a href="ControlFocus.htm#WM_NEXTDLGCTL">ControlFocus</a> für Details. <a href="https://www.autohotkey.com/v2/">AutoHotkey v2</a> ersetzt diesen Unterbefehl mit einer Methode, die die zusätzlichen Effekte anwendet.</p>
 <p>Siehe <a href="#ExFocus">Beispiel #4</a> für eine Demonstration.</p>
@@ -104,33 +102,33 @@
 <div id="EnableDisable">
   <h3 id="Disable">Disable</h3>
   <p>Verbietet die Interaktion mit einem Steuerelement.</p>
-  <pre class="Syntax"><span class="func">GuiControl</span>, Disable, SteuerelementID</pre>
+  <pre class="Syntax"><span class="func">GuiControl</span>, Disable, StrlmntID</pre>
   <p>Bei <a href="GuiControls.htm#Tab">Tab</a>-Steuerelementen verbietet dieser Unterbefehl zudem die Interaktion mit den Untersteuerelementen.</p>
   <p>Direkt nach dem Wort Disable kann optional eine 0 oder 1 angegeben werden. Eine 0 bewirkt eine Umkehrung des Effekts. Zum Beispiel würden <code class="no-highlight">Disable</code> und <code class="no-highlight">Disable%VarMitEins%</code> die Interaktion mit dem Steuerelement verbieten, während <code class="no-highlight">Disable%VarMitNull%</code> diese erlauben würde.</p>
 
   <h3 id="Enable">Enable</h3>
   <p>Erlaubt die Interaktion mit einem Steuerelement.</p>
-  <pre class="Syntax"><span class="func">GuiControl</span>, Enable, SteuerelementID</pre>
+  <pre class="Syntax"><span class="func">GuiControl</span>, Enable, StrlmntID</pre>
   <p>Bei <a href="GuiControls.htm#Tab">Tab</a>-Steuerelementen erlaubt dieser Unterbefehl zudem die Interaktion mit den Untersteuerelementen. Beachten Sie aber, dass jedes Untersteuerelement, das explizit mit dem <a href="#Disable">Disable</a>-Unterbefehl deaktiviert wurde, sich diese Einstellung merkt und demzufolge auch nach Reaktivierung des Tab-Steuerelements deaktiviert bleibt.</p>
   <p>Direkt nach dem Wort Enable kann optional eine 0 oder 1 angegeben werden. Eine 0 bewirkt eine Umkehrung des Effekts. Zum Beispiel würden <code class="no-highlight">Enable</code> und <code class="no-highlight">Enable%VarMitEins%</code> die Interaktion mit dem Steuerelement erlauben, während <code class="no-highlight">Enable%VarMitNull%</code> diese verbieten würde.</p>
 </div>
 
 <h3 id="Hide">Hide</h3>
 <p>Versteckt ein Steuerelement.</p>
-<pre class="Syntax"><span class="func">GuiControl</span>, Hide, SteuerelementID</pre>
+<pre class="Syntax"><span class="func">GuiControl</span>, Hide, StrlmntID</pre>
 <p>Bei <a href="GuiControls.htm#Tab">Tab</a>-Steuerelementen versteckt dieser Unterbefehl zudem alle Untersteuerelemente.</p>
 <p>Mit dem <a href="#Disable">Disable</a>-Unterbefehl kann zusätzlich der Tastaturkurzbefehl eines Steuerelements (unterstrichene Buchstabe) deaktiviert werden.</p>
 <p>Direkt nach dem Wort Hide kann optional eine 0 oder 1 angegeben werden. Eine 0 bewirkt eine Umkehrung des Effekts. Zum Beispiel würden <code class="no-highlight">Hide</code> und <code class="no-highlight">Hide%VarMitEins%</code> das Steuerelement verstecken, während <code class="no-highlight">Hide%VarMitNull%</code> es sichtbar machen würde.</p>
 
 <h3 id="Show">Show</h3>
 <p>Zeigt ein Steuerelement, falls es zuvor versteckt wurde.</p>
-<pre class="Syntax"><span class="func">GuiControl</span>, Show, SteuerelementID</pre>
+<pre class="Syntax"><span class="func">GuiControl</span>, Show, StrlmntID</pre>
 <p>Bei <a href="GuiControls.htm#Tab">Tab</a>-Steuerelementen macht dieser Unterbefehl zudem alle Untersteuerelemente sichtbar.</p>
 <p>Direkt nach dem Wort Show kann optional eine 0 oder 1 angegeben werden. Eine 0 bewirkt eine Umkehrung des Effekts. Zum Beispiel würden <code class="no-highlight">Show</code> und <code class="no-highlight">Show%VarMitEins%</code> das Steuerelement sichtbar machen, während <code class="no-highlight">Show%VarMitNull%</code> es verstecken würde.</p>
 
 <h3 id="Choose">Choose</h3>
 <p>Selektiert ein Element in einem Multi-Element-Steuerelement (<a href="GuiControls.htm#ListBox">ListBox</a>, <a href="GuiControls.htm#DropDownList">DropDownList</a>, <a href="GuiControls.htm#ComboBox">ComboBox</a> oder <a href="GuiControls.htm#Tab">Tab</a>).</p>
-<pre class="Syntax"><span class="func">GuiControl</span>, Choose, SteuerelementID, N</pre>
+<pre class="Syntax"><span class="func">GuiControl</span>, Choose, StrlmntID, N</pre>
 <p>Geben Sie für <em>N</em> die Positionsnummer an. Das erste Element ist 1, das zweite 2 und so weiter. Wenn <em>N</em> kein Integer ist, wird automatisch der <a href="#ChooseString">ChooseString</a>-Unterbefehl verwendet. <span class="ver">[v1.1.06+]</span>: Wenn <em>N</em> 0 ist, wird die aktuelle Auswahl der ListBox, DropDownList oder ComboBox entfernt.</p>
 <p>Im Gegensatz zu <a href="Control.htm">Control Choose</a> wird dieser Unterbefehl kein <a href="Gui.htm#label">g-Label</a> auslösen, das dem Steuerelement zugeordnet ist, es sei denn, <em>N</em> beginnt mit einem Vertikalstrich (selbst dann wird das g-Label nur ausgelöst, wenn die neue Auswahl von der alten abweicht, zumindest bei Tab-Steuerelementen). Zum Beispiel: <code>GuiControl, Choose, MeineListBox, <strong>|3</strong></code>.</p>
 <p>Soll zusätzlich ein Abschlussereignis ausgelöst werden (ein Doppelklick im Falle von ListBox), fügen Sie am Anfang statt einem zwei Vertikalstriche ein (Tab-Steuerelemente unterstützen das nicht).</p>
@@ -142,19 +140,19 @@ GuiControl, Choose, ListBox1, 0  <em>; Alle Listeneinträge abwählen, benötigt
 
 <h3 id="ChooseString">ChooseString</h3>
 <p>Selektiert per Zeichenkette ein Element in einem Multi-Element-Steuerelement (<a href="GuiControls.htm#ListBox">ListBox</a>, <a href="GuiControls.htm#DropDownList">DropDownList</a>, <a href="GuiControls.htm#ComboBox">ComboBox</a> oder <a href="GuiControls.htm#Tab">Tab</a>).</p>
-<pre class="Syntax"><span class="func">GuiControl</span>, ChooseString, SteuerelementID, Zeichenkette</pre>
+<pre class="Syntax"><span class="func">GuiControl</span>, ChooseString, StrlmntID, Zeichenkette</pre>
 <p>Die Suche endet beim ersten Element, dessen Text mit der angegebenen Zeichenkette beginnt. Mit anderen Worten, wenn <em>Zeichenkette</em> mit mehreren Elementen übereinstimmt, wird das erste ausgewählt.</p>
 <p>Die Suche erfolgt nicht Groß-/Kleinschreibung-sensitiv. Wenn ein Multi-Element-Steuerelement z.B. das Element "UNIX-Text" enthält, genügt die Angabe des Wortes unix (kleingeschrieben), um dieses Element auszuwählen.</p>
 <p>Die Präfixe "|" und "||" werden ebenfalls unterstützt (schauen Sie sich den <a href="#Choose">Choose</a>-Unterbefehl an, um mehr zu erfahren).</p>
 
 <h3 id="Font">Font</h3>
 <p>Wendet die <a href="Gui.htm#Font">aktuellen Schrifteinstellungen</a> eines Fensters auf ein Steuerelement an.</p>
-<pre class="Syntax"><span class="func">GuiControl</span>, Font, SteuerelementID</pre>
+<pre class="Syntax"><span class="func">GuiControl</span>, Font, StrlmntID</pre>
 <p>Siehe <a href="#ExFont">Beispiel #6</a> für eine Demonstration.</p>
 
 <h3 id="options">Optionen</h3>
 <p>Fügt <a href="GuiControls.htm">steuerelementspezifische</a> oder <a href="Gui.htm#ControlOptions">allgemeine</a> Optionen und Styles hinzu oder entfernt sie.</p>
-<pre class="Syntax"><span class="func">GuiControl</span>, +/-Option1 +/-Option2 ..., SteuerelementID <span class="optional">, Wert</span></pre>
+<pre class="Syntax"><span class="func">GuiControl</span>, +/-Option1 +/-Option2 ..., StrlmntID <span class="optional">, Wert</span></pre>
 <p>Das folgende Beispiel aktiviert die <a href="Gui.htm#AltSubmit">AltSubmit</a>-Option und entfernt das <a href="Gui.htm#label">g-Label</a> des Steuerelements:</p>
 <pre>GuiControl, +AltSubmit -g, MeineListBox</pre>
 <p>Das nächste Beispiel macht die OK-Schaltfläche zur neuen Standardschaltfläche:</p>
@@ -162,8 +160,8 @@ GuiControl, Choose, ListBox1, 0  <em>; Alle Listeneinträge abwählen, benötigt
 <p>In der Regel werden alle gültigen Optionen und Styles erkannt. Das bedeutet jedoch nicht, dass sie alle nach der Erstellung eines Steuerelements angewendet oder entfernt werden. Einige <a href="../misc/Styles.htm">Styles</a> können nicht nachträglich geändert werden. Für die <a href="Gui.htm#PosSize">Positionierungs- und Größenoptionen</a> können Sie stattdessen <a href="#Move">GuiControl Move</a> verwenden, optional mit <a href="GuiControlGet.htm#Pos">GuiControlGet Pos</a> für relative Anpassungen.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn mindestens eine der angegebenen Änderungen erfolgreich angewendet wurde. Andernfalls wird es auf 1 gesetzt, um zu kennzeichnen, dass keine der Änderungen angewendet werden konnte. Eine erfolgreich angewendete Änderung kann immer noch vom Steuerelement selbst ignoriert werden.</p>
 <p id="Functor"><span class="ver">[v1.1.20+]</span>: Um ein <a href="../misc/Functor.htm">Funktionsobjekt</a> zum Behandeln von <a href="Gui.htm#label">Ereignissen des Steuerelements</a> zu setzen, muss <em>Wert</em> eine einzelne Variablenreferenz sein, wie in den folgenden zwei Beispielen gezeigt. Andere Ausdrücke, die Objekte zurückgeben, werden zurzeit nicht unterstützt.</p>
-<pre>GuiControl +g, <i>SteuerelementID</i>, %FunkObj%
-GuiControl +g, <i>SteuerelementID</i>, % FunkObj</pre>
+<pre>GuiControl +g, <i>StrlmntID</i>, %FunkObj%
+GuiControl +g, <i>StrlmntID</i>, % FunkObj</pre>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p><span class="ver">[v1.1.04+]</span>: Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Weitere Informationen finden Sie unter <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
@@ -174,7 +172,7 @@ GuiControl +g, <i>SteuerelementID</i>, % FunkObj</pre>
 <p>Um mit einem anderen Fenster als dem <a href="Gui.htm#DefaultWin">Standardfenster</a> zu arbeiten, fügen Sie dessen <a href="Gui.htm#MultiWin">Namen oder Nummer</a> (oder in <span class="ver">[v1.1.03+]</span> dessen <a href="Gui.htm#GuiHwndOutputVar">HWND</a>), gefolgt von einem Doppelpunkt, vor dem Unterbefehl ein. Zum Beispiel:</p>
 <pre>GuiControl, MeineGui:Show, MeinButton
 GuiControl, MeineGui:, MeineListBox, Element1|Element2</pre>
-<p>Dies ist auch erforderlich, wenn <em>SteuerelementID</em> die <a href="Gui.htm#Events">zugeordnete Variable</a> eines Steuerelements ist, da jede Variable für mehrere GUI-Fenster verwendet werden kann. In <span class="ver">[v1.1.20+]</span> kann der GUI-Name weggelassen werden, wenn <em>SteuerelementID</em> die HWND-Nummer (eindeutige ID) eines Steuerelements ist.</p>
+<p>Dies ist auch erforderlich, wenn <em>StrlmntID</em> die <a href="../misc/ControlID.htm#Associated_Variable">zugeordnete Variable</a> eines Steuerelements ist, da jede Variable für mehrere GUI-Fenster verwendet werden kann. In <span class="ver">[v1.1.20+]</span> kann der GUI-Name weggelassen werden, wenn <em>StrlmntID</em> das HWND eines Steuerelements ist.</p>
 <p>Ein GUI-<a href="../misc/Threads.htm">Thread</a> ist ein Thread, der durch eine GUI-Aktion gestartet wurde. Eine GUI-Aktion ist z.B. das Auswählen eines <a href="Gui.htm#Menu">Menüpunkts</a> oder das Auslösen eines <a href="Gui.htm#label">g-Labels</a> (z.B. durch Drücken einer Schaltfläche).</p>
 <p>Der <a href="Gui.htm#DefaultWin">Standardfenstername</a> eines GUI-Threads ist der Name des Fensters, das diesen Thread gestartet hat. Nicht-GUI-Threads verwenden standardmäßig 1.</p>
 <p id="Delete">Es gibt keinen Unterbefehl namens "Delete", um ein Steuerelement zu löschen. Verwenden Sie alternativ die Unterbefehle <a href="#Hide">Hide</a> und/oder <a href="#Disable">Disable</a> oder zerstören Sie das gesamte Fenster mit <a href="Gui.htm#Destroy">Gui Destroy</a> und erstellen Sie es neu.</p>
@@ -185,7 +183,7 @@ GuiControl, MeineGui:, MeineListBox, Element1|Element2</pre>
 <h2 id="Examples">Beispiele</h2>
 
 <div class="ex" id="ExReplaceList">
-<p><a class="ex_number" href="#ExReplaceList"></a> Ersetzt die aktuelle Liste eines <a href="GuiControls.htm#ListBox">ListBox</a>-Steuerelements mithilfe einer <a href="Gui.htm#Events">zugeordneten Variable</a>.</p>
+<p><a class="ex_number" href="#ExReplaceList"></a> Ersetzt die aktuelle Liste eines <a href="GuiControls.htm#ListBox">ListBox</a>-Steuerelements mithilfe einer <a href="../misc/ControlID.htm#Associated_Variable">zugeordneten Variable</a>.</p>
 <pre>Gui, Add, ListBox, vMeineListBox, Schwarz|Weiß
 Gui, Show
 Sleep 1000 <em>; Warten zu Demonstrationszwecken.</em>
@@ -193,7 +191,7 @@ GuiControl,, MeineListBox, |Rot|Grün|Blau</pre>
 </div>
 
 <div class="ex" id="ExNewText">
-<p><a class="ex_number" href="#ExNewText"></a> Fügt neuen Text in ein <a href="GuiControls.htm#Edit">Edit</a>-Steuerelement mittels ClassNN ein.</p>
+<p><a class="ex_number" href="#ExNewText"></a> Fügt neuen Text in ein <a href="GuiControls.htm#Edit">Edit</a>-Steuerelement mittels <a href="../misc/ControlID.htm#ClassNN">ClassNN</a> ein.</p>
 <pre>Gui, Add, Edit, r2 w100, Alte Textzeile.
 Gui, Show
 Sleep 1000 <em>; Warten zu Demonstrationszwecken.</em>
@@ -201,7 +199,7 @@ GuiControl,, Edit1, Neue Textzeile 1.`nNeue Textzeile 2.</pre>
 </div>
 
 <div class="ex" id="ExRadio">
-<p><a class="ex_number" href="#ExRadio"></a> Markiert ein <a href="GuiControls.htm#Radio">Radio</a>-Steuerelement, während alle anderen in der Gruppe automatisch entmarkiert werden, mithilfe einer <a href="Gui.htm#Events">zugeordneten Variable</a>.</p>
+<p><a class="ex_number" href="#ExRadio"></a> Markiert ein <a href="GuiControls.htm#Radio">Radio</a>-Steuerelement, während alle anderen in der Gruppe automatisch entmarkiert werden, mithilfe einer <a href="../misc/ControlID.htm#Associated_Variable">zugeordneten Variable</a>.</p>
 <pre>Gui, Add, Radio, vMeinRadio1 Checked, Optionsfeld 1
 Gui, Add, Radio, vMeinRadio2 Checked, Optionsfeld 2
 Gui, Add, Radio, vMeinRadio3 Checked, Optionsfeld 3
@@ -212,12 +210,12 @@ GuiControl,, MeinRadio2, 1</pre>
 
 <div class="ex" id="ExMove">
 <p><a class="ex_number" href="#ExMove"></a> Beispiele für den <a href="#Move">Move</a>-Unterbefehl.</p>
-<p>Verschiebt ein <a href="GuiControls.htm#Button">Button</a>-Steuerelement an eine neue Position mithilfe seines Textes.</p>
+<p>Verschiebt ein <a href="GuiControls.htm#Button">Button</a>-Steuerelement an eine neue Position mithilfe seines <a href="../misc/ControlID.htm#Text">Textes</a>.</p>
 <pre>Gui, Add, Button,, OK
 Gui, Show, w300 h300
 Sleep 1000 <em>; Warten zu Demonstrationszwecken.</em>
 GuiControl, Move, OK, x100 y200</pre>
-<p>Verschiebt und ändert die Größe eines <a href="GuiControls.htm#Edit">Edit</a>-Steuerelements relativ zu dessen aktueller Position und Größe mithilfe einer <a href="Gui.htm#Events">zugeordneten Variable</a>.</p>
+<p>Verschiebt und ändert die Größe eines <a href="GuiControls.htm#Edit">Edit</a>-Steuerelements relativ zu dessen aktueller Position und Größe mithilfe einer <a href="../misc/ControlID.htm#Associated_Variable">zugeordneten Variable</a>.</p>
 <pre>Gui, Add, Edit, vMeinEdit
 Gui, Show, w300 h300
 Sleep 1000 <em>; Warten zu Demonstrationszwecken.</em>
@@ -226,7 +224,7 @@ GuiControl, Move, MeinEdit, % "x" VarX+10 "y" VarY+5 "w" VarW*2 "h" VarH*1.5</pr
 </div>
 
 <div class="ex" id="ExFocus">
-<p><a class="ex_number" href="#ExFocus"></a> Setzt den Tastaturfokus auf ein <a href="GuiControls.htm#Edit">Edit</a>-Steuerelement mithilfe einer <a href="Gui.htm#Events">zugeordneten Variable</a>.</p>
+<p><a class="ex_number" href="#ExFocus"></a> Setzt den Tastaturfokus auf ein <a href="GuiControls.htm#Edit">Edit</a>-Steuerelement mithilfe einer <a href="../misc/ControlID.htm#Associated_Variable">zugeordneten Variable</a>.</p>
 <pre>Gui, Add, Text, Section, Vorname:
 Gui, Add, Text,, Nachname:
 Gui, Add, Edit, ys vVorname
@@ -237,7 +235,7 @@ GuiControl, Focus, Nachname</pre>
 </div>
 
 <div class="ex" id="ExFont">
-<p><a class="ex_number" href="#ExFont"></a> Ändert die Schriftart und Textfarbe eines <a href="GuiControls.htm#Text">Text</a>-Steuerelements mithilfe einer <a href="Gui.htm#Events">zugeordneten Variable</a>.</p>
+<p><a class="ex_number" href="#ExFont"></a> Ändert die Schriftart und Textfarbe eines <a href="GuiControls.htm#Text">Text</a>-Steuerelements mithilfe einer <a href="../misc/ControlID.htm#Associated_Variable">zugeordneten Variable</a>.</p>
 <pre>Gui, Font, s14
 Gui, Add, Text,, Das ist ein Test.
 Gui, Add, Text, vMeinText, Das ist ein Test.
