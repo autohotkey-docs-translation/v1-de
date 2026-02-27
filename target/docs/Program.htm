@@ -30,6 +30,7 @@ return</pre>
   <li><a href="#run">Ein Skript ausführen</a></li>
   <li><a href="#tray-icon">Tray-Symbol</a></li>
   <li><a href="#main-window">Hauptfenster</a></li>
+  <li><a href="#Window_Spy">Window Spy</a></li>
   <li><a href="#embedded-scripts">Eingebettete Skripte</a></li>
   <li><a href="#cmd">Befehlszeilennutzung</a></li>
   <li><a href="#portability">Portabilität von AutoHotkey.exe</a></li>
@@ -94,7 +95,7 @@ margin-right: .2em;
 <ul>
 <li>Open – Öffnet das <a href="#main-window">Hauptfenster</a> des Skripts.</li>
 <li>Help – Öffnet die Offline-Hilfe von AutoHotkey.</li>
-<li>Window Spy – Zeigt verschiedene Informationen über ein Fenster an.</li>
+<li>Window Spy – Startet <a href="#Window_Spy">Window Spy</a>, das verschiedene Informationen über ein Fenster anzeigt.</li>
 <li>Reload This Script – Lädt das Skript neu. Siehe <a href="lib/Reload.htm">Reload</a>.</li>
 <li>Edit This Script – Öffnet das Skript im Standardeditor. Siehe <a href="lib/Edit.htm">Edit</a>.</li>
 <li>Suspend Hotkeys – Deaktiviert oder aktiviert Hotkeys via <a href="lib/Suspend.htm">Suspend</a>.</li>
@@ -152,6 +153,64 @@ if !A_IsCompiled
 else if SubStr(A_LineFile, 1, 1) = "*" &amp;&amp; A_LineFile != "*#1"
     Titel .= " - " A_LineFile
 </pre>
+
+<h2 id="Window_Spy">Window Spy</h2>
+<p>Window Spy ist ein kleines Hilfsprogramm, das im Lieferumfang von AutoHotkey enthalten ist. Es zeigt detaillierte Informationen über ein Fenster an, darunter dessen Titel, Koordinaten, Größe und Steuerelementdaten. Dieses Programm dient als schnelle Hilfe beim Schreiben von Automatisierungsskripten und unterstützt Sie dabei, die genauen Werte für gängige Befehle zu ermitteln.</p>
+<p>Sie können Window Spy über das <a href="#tray-icon">Tray-Symbol</a>, das Startmenü oder das AutoHotkey-Installationsverzeichnis starten.</p>
+<p>Standardmäßig werden Informationen über das aktive Fenster und sein fokussiertes Steuerelement abgerufen. Um stattdessen Informationen über ein Fenster oder Steuerelement abzurufen, das sich unter dem Mauszeiger befindet, aktivieren Sie die Option "Follow Mouse" (Maus folgen) in der oberen rechten Ecke.</p>
+<p>Sie können die Informationsaktualisierung vorübergehend aussetzen, indem Sie entweder <kbd>Strg</kbd> oder <kbd>Umschalt</kbd> gedrückt halten, Window Spy aktivieren oder mit dem Mauszeiger darüberfahren.</p>
+<p>Window Spy ist in folgende Abschnitte unterteilt, die jeweils ein eigenes, schreibgeschütztes Eingabefeld haben:</p>
+<dl>
+  <dt>Window Title, Class and Process</dt>
+  <dd>
+    <pre class="no-highlight NoIndent">*Unbenannt - Editor
+ahk_class Notepad
+ahk_exe notepad.exe
+ahk_pid 4624</pre>
+    <p>Der Titel des Fensters, und dessen Klasse, Prozesspfad und Prozess-ID mit vorangestelltem <a href="misc/WinTitle.htm#ahk_">ahk_-Schlüsselwort</a>. Diese können alle als Kriterien (sogar in Kombination) im <a href="misc/WinTitle.htm">FensterTitel-Parameter</a> fensterspezifischer Befehle und Funktionen wie <a href="lib/WinActivate.htm">WinActivate</a>, <a href="lib/WinWait.htm">WinWait</a> und <a href="lib/WinExist.htm">WinExist()</a> angegeben werden.</p>
+  </dd>
+  <dt>Mouse Position</dt>
+  <dd>
+    <pre class="no-highlight NoIndent">Screen:  1017, 714 (less often used)
+Window:  733, 513 (default)
+Client:  724, 450 (recommended)
+Color:   FEFEFE (Red=FE Green=FE Blue=FE)</pre>
+<p>Die Koordinaten des Mauszeigers (relativ zum gesamten Bildschirm, Fenster und Clientbereich des Fensters) und die 6-stellige RGB-Farbe des Pixels auf diesen Koordinaten. Nützlich für Befehle wie <a href="lib/Click.htm">Click</a> und <a href="lib/PixelSearch.htm">PixelSearch</a>.</p>
+  </dd>
+  <dt>Focused Control</dt>
+  <dt>Control Under Mouse Position</dt>
+  <dd>
+    <pre class="no-highlight NoIndent">ClassNN: Edit1
+Text:    Das ist Zeile 1. (...)
+         x: 9    y: 63   w: 997  h: 922
+Client:  x: 0    y: 0    w: 976  h: 922</pre>
+    <p>Die <a href="misc/ControlID.htm#ClassNN">ClassNN</a>, der Text (ggf. gekürzt), die Koordinaten (relativ zum Fenster) und die Größe des Steuerelements, das den Tastaturfokus hat oder sich unterhalb des Mauszeigers befindet, sowie die Koordinaten und Größe seines Clientbereichs (das ist der Bereich ohne Scrollbalken und Rahmen). Nützlich für Befehle mit einem <a href="misc/ControlID.htm">StrlmntID-Parameter</a> wie <a href="lib/ControlClick.htm">ControlClick</a> und <a href="lib/ControlSend.htm">ControlSend</a>. Wenn das Steuerelement nicht ermittelt werden kann, wird das Eingabefeld leer sein.</p>
+  </dd>
+  <dt>Active Window Position</dt>
+  <dd>
+    <pre class="no-highlight NoIndent">         x: 781  y: 225  w: 1015 h: 1023
+Client:  x: 0    y: 0    w: 997  h: 951</pre>
+    <p>Die Koordinaten (relativ zum gesamten Bildschirm) und die Größe des Fensters, sowie die Koordinaten und Größe seines Clientbereichs (das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen). Nützlich für fensterspezifische Befehle wie <a href="lib/WinMove.htm">WinMove</a>.</p>
+  </dd>
+  <dt>Status Bar Text</dt>
+  <dd>
+    <pre class="no-highlight NoIndent">(1):     381 Elemente (Freier Speicherplatz: 5.39 GB)
+(2):     15.1 MB
+(3):     Arbeitsplatz</pre>
+    <p>Der Text jedes Segments in der Statusleiste des Fensters (sofern vorhanden). Window Spy versucht, die erste <em>reguläre</em> Statusleiste im Fenster zu lesen (allgemeines Microsoft-Steuerelement: msctls_statusbar32). Einige Programme verwenden eigene Statusleisten oder spezielle Versionen des MS-Steuerelements – in diesem Fall wird das Eingabefeld leer sein.</p>
+  </dd>
+  <dt>Visible Text</dt>
+  <dd>
+    <pre class="no-highlight NoIndent">&amp;Ja
+&amp;Nein
+Möchten Sie fortfahren?</pre>
+    <p>Nur der sichtbare Text des Fensters. Aktivieren Sie die Option "Slow TitleMatchMode" (langsamer Titelübereinstimmungsmodus), um einen alternativen Textabrufmodus zu verwenden, der mit viel mehr Steuerelementen funktioniert.</p>
+  </dd>
+  <dt>All Text</dt>
+  <dd>
+    <p>Ähnlich wie oben, aber der sichtbare und versteckte Text des Fensters.</p>
+  </dd>
+</dl>
 
 <h2 id="embedded-scripts">Eingebettete Skripte <span class="ver">[v1.1.34+]</span></h2>
 <p>Skripte können in eine Standard-AutoHotkey-EXE-Datei eingebettet werden, indem sie mit dem <a href="Scripts.htm#ahk2exe">Ahk2Exe-Compiler</a> als Win32-Ressourcen (RCDATA) hinzugefügt werden. Zusätzliche Skripte können mit der <a href="misc/Ahk2ExeDirectives.htm#AddResource">AddResource</a>-Compilerdirektive hinzugefügt werden.</p>
