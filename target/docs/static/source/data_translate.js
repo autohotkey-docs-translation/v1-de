@@ -52,5 +52,6 @@ translateData = {
   "Back to top":"Zum Seitenanfang",
   "Applies to:\nAutoHotkey_L Revision {0} and later\nAutoHotkey v1.0.90.00 and later":"Gilt für:\nAutoHotkey_L Revision {0} und höher\nAutoHotkey v1.0.90.00 und höher",
   "Applies to AutoHotkey {0} and later":"Gilt für AutoHotkey {0} und höher",
+  "Deprecated.":"Veraltet.",
   "Deprecated. New scripts should use {0} instead.":"Veraltet. Neue Skripte sollten stattdessen {0} verwenden."
 };

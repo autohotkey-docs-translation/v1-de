@@ -16,6 +16,8 @@ deprecateData = {
   "lib/IfInString.htm":"InStr()",
   "lib/IfWinActive.htm":"WinActive()",
   "lib/IfWinExist.htm":"WinExist()",
+  "lib/Object.htm#Insert":"InsertAt, Push, ObjRawSet oder eine einfache Zuweisung",
+  "lib/Object.htm#Remove":"RemoveAt, Delete oder Pop",
   "lib/OnClipboardChange.htm#label":"OnClipboardChange()",
   "lib/OnExit.htm#command":"OnExit()",
   "lib/Progress.htm":"Gui",
