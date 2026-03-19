@@ -36,9 +36,20 @@ jobs:
           $path = "ahk-v2/AutoHotkey32.exe"
         }
         catch {
-          echo "Download failed. Trying choco ..."
-          choco install autohotkey.portable --pre --x86
-          $path = "AutoHotkey.exe"
+          echo "Download failed: $($_.Exception.Message)"
+          echo "Trying GitHub ..."
+
+          $release = Invoke-WebRequest -Uri "https://api.github.com/repos/AutoHotkey/AutoHotkey/releases/latest" -Headers @{ "User-Agent" = "Mozilla/5.0" }
+          $data = $release.Content | ConvertFrom-Json
+          $asset = $data.assets | Where-Object { $_.name -like "AutoHotkey_*.zip" }
+
+          $source = $asset.browser_download_url
+          $dest = "ahk-v2.zip"
+          echo "Downloading $source ..."
+          Invoke-WebRequest -Uri $source -OutFile $dest
+          echo "Extracting files from $dest ..."
+          Expand-Archive -Path $dest
+          $path = "ahk-v2/AutoHotkey32.exe"
         }
         echo "Deleting Google Analytics file ..."
         Remove-Item target\docs\static\ga4.js
