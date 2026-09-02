@@ -107,6 +107,7 @@ var toc = new ctor_toc;
 var index = new ctor_index;
 var search = new ctor_search;
 var features = new ctor_features;
+var docs = {dataPath: scriptDir + '/source/data_docs.js'};
 var translate = {dataPath: scriptDir + '/source/data_translate.js'};
 var deprecate = {dataPath: scriptDir + '/source/data_deprecate.js'};
 
@@ -232,8 +233,8 @@ var isPhone = (document.documentElement.clientWidth <= 600);
               history.replaceState(null, null, "?frame=" + encodeURI(relPath).replace(/#/g, '%23'));
           }
           document.title = data[2];
-          if (structure.modifyTools)
-            structure.modifyTools(relPath, data[4]);
+          if (structure.updateToolLinks)
+            structure.updateToolLinks(relPath, data[4]);
           if ($('#left > div.toc li > span.selected a').attr('href') == data[1].href)
             break;
           else if (data[3] && data[3].toc_clickItemTemp) {
@@ -314,13 +315,8 @@ function ctor_toc()
       }
       else
         var el = document.createElement("button");
-      if (isIE8)
-        el.innerHTML = text;
-      else
-      {
-        el.setAttribute("data-content", text);
-        el.setAttribute("aria-label", text);
-      }
+      $(el).setDisplayText(text);
+      el.setAttribute("aria-label", text);
       var span = document.createElement("span");
       span.innerHTML = el.outerHTML;
       var li = document.createElement("li");
@@ -460,10 +456,12 @@ function ctor_index()
   self.dataPath = scriptDir + '/source/data_index.js';
   self.create = function(input, filter) { // Create and add the index links.
     var output = '';
-    input.sort(function(a, b) {
-      var textA = a[0].toLowerCase(), textB = b[0].toLowerCase()
-      return textA.localeCompare(textB);
-    });
+    var lang = cache.docs_data.LANGUAGE;
+    var collator = window.Intl ? new Intl.Collator(lang) : null;
+    if (collator)
+      input.sort(function(a, b) { return collator.compare(a[0], b[0]); });
+    else
+      input.sort(function(a, b) { return a[0].localeCompare(b[0], lang); });
     for (var i = 0, len = input.length; i < len; i++)
     {
       if (filter != -1 && input[i][2] != filter)
@@ -471,20 +469,19 @@ function ctor_index()
       var a = document.createElement("a");
       a.href = workingDir + input[i][1];
       a.setAttribute("tabindex", "-1");
-      if (isIE8)
-        a.innerHTML = input[i][0];
-      else
-      {
-        a.setAttribute("data-content", input[i][0]);
-        a.setAttribute("aria-label", input[i][0]);
-      }
+      $(a).setDisplayText(input[i][0]);
+      a.setAttribute("aria-label", input[i][0]);
       output += a.outerHTML;
     }
     return output;
   };
   self.modify = function() { // Modify the elements of the index tab.
 
+    if (!retrieveData(docs.dataPath, "docs_data", "docsData", self.modify))
+      return;
     if (!retrieveData(self.dataPath, "index_data", "indexData", self.modify))
+      return;
+    if (!retrieveData(translate.dataPath, "translate_data", "translateData", self.modify))
       return;
 
     var $index = $('#left div.index');
@@ -545,7 +542,7 @@ function ctor_index()
     if (!input)
       return match;
     for (var i = 0; i < indexListChildren.length; i++) {
-      var text = isIE8 ? indexListChildren[i].innerText : indexListChildren[i].getAttribute('data-content');
+      var text = $(indexListChildren[i]).getDisplayText();
       var listitem = text.substr(0, input.length).toLowerCase();
       if (listitem == input) {
         match = indexListChildren.eq(i);
@@ -807,13 +804,8 @@ function ctor_search()
         var a = document.createElement("a");
         a.href = workingDir + ro[t].u;
         a.setAttribute("tabindex", "-1");
-        if (isIE8)
-          a.innerHTML = ro[t].n;
-        else
-        {
-          a.setAttribute("data-content", ro[t].n);
-          a.setAttribute("aria-label", ro[t].n);
-        }
+        $(a).setDisplayText(ro[t].n);
+        a.setAttribute("aria-label", ro[t].n);
         output += a.outerHTML;
       }
       return output;
@@ -881,7 +873,7 @@ function ctor_structure()
 {
   var self = this;
   self.metaViewport = '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">';
-  self.template = '<div id="head" role="banner"><button onclick="structure.focusContent();" class="skip-nav" data-translate aria-label="data-content" data-content="Skip navigation"></button><div class="h-area"><div class="h-tabs"><ul><li><button data-translate title="Shortcut: ALT+C" aria-label="Content tab" data-content="C̲ontent"></button></li><li><button data-translate title="Shortcut: ALT+N" aria-label="Index tab" data-content="In̲dex"></button></li><li><button data-translate title="Shortcut: ALT+S" aria-label="Search tab" data-content="S̲earch"></button></li></ul></div><div class="h-tools sidebar"><ul><li class="sidebar"><button title="Hide or show the sidebar" data-translate aria-label="title">&#926;</button></li></ul></div><div class="h-tools online"><ul><li class="home"><a href="{0}" title="Go to the homepage" data-translate aria-label="title">&#916;</a></li><li class="language"><button data-translate title="Change the language" data-translate aria-label="title" data-content="en"></button><ul class="dropdown languages selected"><li><a href="#" title="English" aria-label="title" data-content="en"></a></li><li><a href="#" title="Deutsch (German)" data-content="de" aria-label="title"></a></li><li><a href="#" title="&#x65e5;&#x672c;&#x8a9e; (Japanese)" data-content="ja" aria-label="title"></a></li><li><a href="#" title="&#xD55C;&#xAD6D;&#xC5B4 (Korean)" aria-label="title" data-content="ko"></a></li><li><a href="#" title="Português (Portuguese)" data-content="pt" aria-label="title"></a></li><li><a href="#" title="&#x4E2D;&#x6587; (Chinese)" aria-label="title" data-content="zh"></a></li></ul></li><li class="version"><button title="Change the version" data-translate aria-label="title" data-content="v1"></button><ul class="dropdown versions selected"><li><a href="#" title="AHK v1.1" aria-label="title" data-content="v1"></a></li><li><a href="#" title="AHK v2.0" aria-label="title" data-content="v2"></a></li></ul></li><li class="edit"><a href="#" title="Edit this document on GitHub" data-translate=2 aria-label="title" data-content="E"></a></li></ul></div><div class="h-tools chm"><ul><li class="back"><button title="Go back" data-translate=2 aria-label="title">&#9668;</button></li><li class="forward"><button title="Go forward" data-translate=2 aria-label="title">&#9658;</button></li><li class="zoom"><button title="Change the font size" data-translate=2 aria-label="title" data-content="Z"></button></li><li class="print"><button title="Print this document" data-translate=2 aria-label="title" data-content="P"></button></li><li class="browser"><a href="#" target="_blank" title="Open this document in the default browser (requires internet connection). Middle-click to copy the link address." data-translate aria-label="title">¬</a></li></ul></div><div class="h-tools main visible"><ul><li class="color"><button title="Use the dark or light scheme" data-translate=2 aria-label="title" data-content="C"></button></li><li class="settings"><button title="Open the help settings" data-translate=2 aria-label="title">&#1029;</button></li></ul></div></div></div><div id="main"><div id="left" role="navigation"><div class="tab toc"></div><div class="tab index"><div class="input"><input type="search" placeholder="Search" data-translate=2 /></div><div class="select"><select size="1" class="empty"><option value="-1" class="empty" selected data-translate>Filter</option><option value="0" data-translate>Directives</option><option value="1" data-translate>Built-in Variables</option><option value="2" data-translate>Built-in Functions</option><option value="3" data-translate>Control Flow Statements</option><option value="4" data-translate>Operators</option><option value="5" data-translate>Declarations</option><option value="6" data-translate>Commands</option><option value="7" data-translate>Sub-commands</option><option value="8" data-translate>Built-in Methods/Properties</option><option value="99" data-translate>Ahk2Exe Compiler</option></select></div><div class="list"></div></div><div class="tab search"><div class="input"><input type="search" placeholder="Search" data-translate=2 /></div><div class="checkbox"><input type="checkbox" id="highlightWords"><label for="highlightWords" data-translate>Highlight keywords</label><div class="updown" title="Go to previous/next occurrence" data-translate aria-label="title"><div class="up"><div class="triangle-up"></div></div><div class="down"><div class="triangle-down"></div></div></div></div><div class="list"></div></div><div class="load"><div class="lds-dual-ring"></div></div><div class="quick"><button class="header" title="Collapse or uncollapse the quick reference" data-translate aria-label="title"><div class="chevron"></div><span data-translate data-content="Quick reference"></span></button><div class="main"></div></div></div><div class="dragbar"></div><div id="right" tabIndex="-1"><div class="load"><div class="lds-dual-ring"></div></div><iframe class="hidden" frameBorder="0" id="frame" src="" role="main">';
+  self.template = '<div id="head" role="banner"><button onclick="structure.focusContent();" class="skip-nav" data-translate aria-label="data-content" data-content="Skip navigation"></button><div class="h-area"><div class="h-tabs"><ul><li><button data-translate title="Shortcut: ALT+C" aria-label="Content tab" data-content="C̲ontent"></button></li><li><button data-translate title="Shortcut: ALT+N" aria-label="Index tab" data-content="In̲dex"></button></li><li><button data-translate title="Shortcut: ALT+S" aria-label="Search tab" data-content="S̲earch"></button></li></ul></div><div class="h-tools sidebar"><ul><li class="sidebar"><button title="Hide or show the sidebar" data-translate aria-label="title">&#926;</button></li></ul></div><div class="h-tools online"><ul><li class="home"><a href="{0}" title="Go to the homepage" data-translate aria-label="title">&#916;</a></li><li class="language"><button></button><ul class="dropdown selected"></ul></li><li class="version"><button></button><ul class="dropdown selected"></ul></li><li class="edit"><a href="#" title="Edit this document on GitHub" data-translate=2 aria-label="title" data-content="E"></a></li></ul></div><div class="h-tools chm"><ul><li class="back"><button title="Go back" data-translate=2 aria-label="title">&#9668;</button></li><li class="forward"><button title="Go forward" data-translate=2 aria-label="title">&#9658;</button></li><li class="zoom"><button title="Change the font size" data-translate=2 aria-label="title" data-content="Z"></button></li><li class="print"><button title="Print this document" data-translate=2 aria-label="title" data-content="P"></button></li><li class="browser"><a href="#" target="_blank" title="Open this document in the default browser (requires internet connection). Middle-click to copy the link address." data-translate aria-label="title">¬</a></li></ul></div><div class="h-tools main visible"><ul><li class="color"><button title="Use the dark or light scheme" data-translate=2 aria-label="title" data-content="C"></button></li><li class="settings"><button title="Open the help settings" data-translate=2 aria-label="title">&#1029;</button></li></ul></div></div></div><div id="main"><div id="left" role="navigation"><div class="tab toc"></div><div class="tab index"><div class="input"><input type="search" placeholder="Search" data-translate=2 /></div><div class="select"><select size="1" class="empty"><option value="-1" class="empty" selected data-translate>Filter</option><option value="0" data-translate>Directives</option><option value="1" data-translate>Built-in Variables</option><option value="2" data-translate>Built-in Functions</option><option value="3" data-translate>Control Flow Statements</option><option value="4" data-translate>Operators</option><option value="5" data-translate>Declarations</option><option value="6" data-translate>Commands</option><option value="7" data-translate>Sub-commands</option><option value="8" data-translate>Built-in Methods/Properties</option><option value="99" data-translate>Ahk2Exe Compiler</option></select></div><div class="list"></div></div><div class="tab search"><div class="input"><input type="search" placeholder="Search" data-translate=2 /></div><div class="checkbox"><input type="checkbox" id="highlightWords"><label for="highlightWords" data-translate>Highlight keywords</label><div class="updown" title="Go to previous/next occurrence" data-translate aria-label="title"><div class="up"><div class="triangle-up"></div></div><div class="down"><div class="triangle-down"></div></div></div></div><div class="list"></div></div><div class="load"><div class="lds-dual-ring"></div></div><div class="quick"><button class="header" title="Collapse or uncollapse the quick reference" data-translate aria-label="title"><div class="chevron"></div><span data-translate data-content="Quick reference"></span></button><div class="main"></div></div></div><div class="dragbar"></div><div id="right" tabIndex="-1"><div class="load"><div class="lds-dual-ring"></div></div><iframe class="hidden" frameBorder="0" id="frame" src="" role="main">';
   self.build = function() { // Write HTML before DOM is loaded to prevent flickering.
     var template = self.template;
     template = template.format(location.protocol + '//' + location.host);
@@ -892,8 +884,6 @@ function ctor_structure()
       {
         template = template.replace('<div class="quick"><button class="header" title="Collapse or uncollapse the quick reference" data-translate aria-label="title"><div class="chevron"></div><span data-translate data-content="Quick reference"></span></button><div class="main"></div></div>', '');
       }
-      if (isIE8)
-         template = template.replace(/ data-content="(.*?)">/g, '>$1');
     }
     if (!isFrameCapable)
       template = template.replace('<iframe class="hidden" frameBorder="0" id="frame" src="" role="main">', '<div class="area" role="main">');
@@ -916,10 +906,29 @@ function ctor_structure()
         tabs[i].className += ' no-quick';
     }
 
+    // --- IE8 has issues with [data-content]:before, so avoid using it ---
+
+    if (isIE8)
+      $('*[data-content]' + (isFrameCapable ? '' : ':not(#right > .area *)')).each(function() {
+        $(this).text($(this).attr('data-content')); $(this).removeAttr('data-content');
+      });
+
+    // --- Wait for docs data ---
+
+    if (!retrieveData(docs.dataPath, "docs_data", "docsData", self.modify))
+      return;
+
     // --- Wait for translation data ---
 
     if (!retrieveData(translate.dataPath, "translate_data", "translateData", self.modify))
       return;
+
+    // --- Show pre-release banner ---
+
+    if (cache.docs_data.PRE_RELEASE) {
+      $('#right').prepend('<div class="banner"><span class="text" data-translate data-content="Pre-release documentation. Specifics may not be added yet and may change with future releases."></span><span class="close" data-content="×"></span></div>');
+      $('#right .banner .close').on('click', function() { $('#right .banner').hide(); });
+    }
 
     // --- Add events ---
 
@@ -936,7 +945,7 @@ function ctor_structure()
 
     // --- Translate elements with data-translate attribute (value 1 for content only, 2 for attributes only) ---
 
-    $('#head').add($('#left')).find('*[data-translate]').each(function() {
+    $('*[data-translate]' + (isFrameCapable ? '' : ':not(#right > .area *)')).each(function() {
       var $this = $(this);
       var elContent = $this.text();
       var attrTitleValue = $this.attr('title');
@@ -965,8 +974,13 @@ function ctor_structure()
       }
     });
 
-    // --- Show/Hide selection lists on click ---
+    // --- Tools ---
 
+    var $main = $('#head .h-tools.sidebar').add('#head .h-tools.main'); // main tools (always visible)
+    var $online = $('#head .h-tools.online'); // online tools (only visible if help is not CHM)
+    var $chm = $('#head .h-tools.chm'); // CHM tools (only visible if help is CHM)
+
+    // Show/hide selection lists on click:
     $('#head .h-tools li:has(.dropdown)').on('click', function() {
       $this = $(this);
       $dropdown = $this.children('.dropdown');
@@ -976,15 +990,17 @@ function ctor_structure()
       $this.toggleClass('selected');
     });
 
-    // --- Main tools (always visible) ---
-
-    var $main = $('#head .h-tools.sidebar').add('#head .h-tools.main');
+    // 'toggle sidebar' tool:
     $main.find('li.sidebar').on('click', function() {
       self.displaySidebar(!cache.displaySidebar);
     });
+
+    // 'open help settings' tool:
     $main.find('li.settings').on('click', function() {
       structure.openSite(scriptDir + '/../settings.htm');
     });
+
+    // 'toggle scheme' tool:
     $main.find('li.color').on('click', function() {
       if (cache.colorScheme == 'dark'
       || (cache.colorScheme == null && window.matchMedia('(prefers-color-scheme: dark)').matches))
@@ -996,93 +1012,105 @@ function ctor_structure()
         postMessageToFrame('setScheme', [cache.colorScheme]);
     });
 
-    // --- Online tools (only visible if help is not CHM) ---
+    // 'change language' tool:
+    var lang = cache.docs_data.LANGUAGE;
+    var lang_items = cache.docs_data.TOOL_LANGUAGE_ITEMS;
+    var $langTool = $('li.language', $online);
+    var $langToolBtn = $('button', $langTool);
+    var $langToolList = $('ul', $langTool);
+    for (var i = 0; i < lang_items.length; i++) {
+      var label = lang_items[i][0], link = lang_items[i][1], title = lang_items[i][2];
+      if (label === lang) {
+        $langToolBtn.setDisplayText(lang);
+        $langToolBtn.attr('title', title + '\n\n' + T('Click to change the language.'));
+        $langToolBtn.attr('aria-label', $langToolBtn.attr('title'));
+        continue;
+      }
+      var li = document.createElement('li'), a = document.createElement('a');
+      $(a).setDisplayText(label).attr({'title': title, 'aria-label': title, 'data-link': link});
+      $(li).append(a); $langToolList.append(li);
+    }
+    $langToolList.on('mouseup', hideDropdown);
 
-    var $online = $('#head .h-tools.online');
-    // Set language code and version:
-    var lang = T("en"), ver = T("v1");
-    // language links. Keys are based on ISO 639-1 language name standard:
-    var link = { 'v1': { 'en': 'https://www.autohotkey.com/docs/v1/',
-                         'de': 'https://ahkde.github.io/docs/v1/',
-                         'ko': 'https://ahkscript.github.io/ko/docs/',
-                         'pt': 'https://ahkscript.github.io/pt/docs/',
-                         'zh': 'https://wyagd001.github.io/zh-cn/docs/' },
-                 'v2': { 'en': 'https://www.autohotkey.com/docs/v2/',
-                         'de': 'https://ahkde.github.io/docs/v2/',
-                         'ja': 'https://ahkscript.github.io/ja/docs/v2/',
-                         'zh': 'https://wyagd001.github.io/v2/docs/' } }
+    // 'change version' tool:
+    var ver = cache.docs_data.PRE_RELEASE ? 'pre' : cache.docs_data.VERSION;
+    var ver_items = cache.docs_data.TOOL_VERSION_ITEMS;
+    var $verTool = $('li.version', $online);
+    var $verToolBtn = $('button', $verTool);
+    var $verToolList = $('ul', $verTool);
+    if (cache.docs_data.PRE_RELEASE) $verTool.addClass('pre');
+    for (var i = 0; i < ver_items.length; i++) {
+      var label = ver_items[i][0], link = ver_items[i][1], title = ver_items[i][2];
+      if (label === ver) {
+        $verToolBtn.setDisplayText(ver);
+        $verToolBtn.attr('title', title + '\n\n' + T('Click to change the version.'));
+        $verToolBtn.attr('aria-label', $verToolBtn.attr('title'));
+        continue;
+      }
+      var li = document.createElement('li'), a = document.createElement('a');
+      $(a).setDisplayText(label).attr({ 'title': title, 'aria-label': title, 'data-link': link });
+      $(li).append(a); $verToolList.append(li);
+    }
+    $verToolList.on('mouseup', hideDropdown);
 
-    var $langList = $online.find('ul.languages')
-    var $verList = $online.find('ul.versions')
+    function hideDropdown(e) {
+      if (e.which != 1 && e.which != 2) return; // left or middle click
+      setTimeout(function() {
+        $dropdown.animate({ height: 'hide' }, 100);
+        $this.removeClass('selected');
+      }, 200);
+    }
 
-    self.modifyTools = function(relPath, equivPath) {
-      // Bug - IE/Edge doesn't turn off list-style if element is hidden:
-      $langList.add($verList).css("list-style", "none");
-      // Hide currently selected language and version in the selection lists:
-      $(isIE8 ? 'a:contains(' + lang + ')' : 'a[data-content=' + lang + ']', $langList).parent().hide();
-      $(isIE8 ? 'a:contains(' + ver + ')' : 'a[data-content=' + ver + ']', $verList).parent().hide();
-      // Add the language links:
-      $langList.find('li').each( function() {
+    // 'go back' tool:
+    $chm.find('li.back').on('click', function() { history.back(); });
+
+    // 'go forward' tool:
+    $chm.find('li.forward').on('click', function() { history.forward(); });
+
+    // 'zoom' tool:
+    $chm.find('li.zoom').on('click', function() {
+      cache.set('fontSize', cache.fontSize + 0.2);
+      if (cache.fontSize > 1.4)
+        cache.set('fontSize', 0.6);
+      $('#frame').contents().find('body').css('font-size', cache.fontSize + 'em');
+    });
+
+    // 'print' tool:
+    $chm.find('li.print').on('click', function() { window.parent.document.getElementById('frame').contentWindow.document.execCommand('print', false, null); });
+
+    // 'open in default browser' tool:
+    var $browserToolLink = $('li.browser > a', $chm);
+    $browserToolLink.on('mouseup', function(e) {
+      if (e.which != 2) return; // middle-click
+      window.clipboardData.setData('Text', this.href);
+    }).attr('data-link', function() {
+      for (var i = 0; i < lang_items.length; i++)
+        if (lang_items[i][0] === lang) return lang_items[i][1];
+    });
+
+    // If help is CHM, show CHM tools, else show online tools
+    (isInsideCHM) ? $chm.show().addClass('visible') : $online.show().addClass('visible');
+    
+    self.updateToolLinks = function(relPath, equivPath) {
+      // language links:
+      $langToolList.find('li').each(function() {
         var a = $(this).find('a');
-        var thisLink = link[ver][isIE8 ? a.text() : a.attr('data-content')];
-        if (thisLink == null)
-          $(this).hide(); // Hide language button
-        else
-          a.attr('href', thisLink + relPath);
+        a.attr('href', a.attr('data-link') + relPath);
       });
-      // Add the version links:
-      $verList.find('li').each( function() {
+      // version links:
+      $verToolList.find('li').each(function() {
         var a = $(this).find('a');
-        var ver = isIE8 ? a.text() : a.attr('data-content');
-        var thisLink = link[ver][lang];
-        // Fallback to default docs:
-        thisLink = (thisLink == null) ? link[ver]['en'] : thisLink;
-        a.attr('href', thisLink + (equivPath || relPath));
+        a.attr('href', a.attr('data-link') + (equivPath || relPath));
       });
-      // Hide dropdown list on click with left or middle mouse button:
-      registerEvent($langList.add($verList), 'mouseup', '', function(e) {
-        if (e.which == 1 || e.which == 2) {
-          setTimeout(function() {
-            $dropdown.animate({height: 'hide'}, 100);
-            $this.removeClass('selected');
-          }, 200);
-        }
-      });
-      // 'Edit page on GitHub' button:
+      // 'edit page on GitHub' link:
       $("li.edit > a").attr({
-        href: T("https://github.com/Lexikos/AutoHotkey_L-Docs/edit/v1/docs/") + relPath,
+        href: cache.docs_data.TOOL_EDIT_LINK + relPath,
         target: "_blank"
       });
-
-      // --- CHM tools (only visible if help is CHM) ---
-
-      var $chm = $('#head .h-tools.chm');
-      // 'Go back' button:
-      registerEvent($chm.find('li.back'), 'click', '', function() { history.back(); });
-      // 'Go forward' button:
-      registerEvent($chm.find('li.forward'), 'click', '', function() { history.forward(); });
-      // 'Zoom' button:
-      registerEvent($chm.find('li.zoom'), 'click', '', function() {
-        cache.set('fontSize', cache.fontSize + 0.2);
-        if (cache.fontSize > 1.4)
-          cache.set('fontSize', 0.6);
-        $('#frame').contents().find('body').css('font-size', cache.fontSize + 'em');
-      });
-      // 'Print' button:
-      registerEvent($chm.find('li.print'), 'click', '', function() { window.parent.document.getElementById('frame').contentWindow.document.execCommand('print', false, null); });
-      // 'Open in default browser' button:
-      btn = $chm.find('li.browser > a').attr('href', link[ver][lang] + relPath);
-      registerEvent(btn, 'mouseup', '', function(e) {
-        if (e.which == 2) {
-          window.clipboardData.setData('Text', this.href);
-        }
-      });
-
-      // --- If help is CHM, show CHM tools, else show online tools ---
-
-      (isInsideCHM) ? $chm.show().addClass('visible') : $online.show().addClass('visible');
+      // 'open in default browser' link:
+      $browserToolLink.attr('href', $browserToolLink.attr('data-link') + relPath);
     };
-    self.modifyTools(relPath, equivPath);
+    self.updateToolLinks(relPath, equivPath);
 
     // --- Apply click events for sidebar tabs ---
 
@@ -1393,18 +1421,21 @@ function ctor_structure()
   }
   // Add shortcuts:
   self.addShortcuts = function() {
+    if (!retrieveData(docs.dataPath, "docs_data", "docsData", self.addShortcuts)) return;
     $(document).on("keydown", function(e) {
       if (e.which == 117) {
         self.pressKey("F6");
         return false;
       }
       if (e.altKey) {
-        var keyList = ["C", "N", "S"];
-        for (var i = 0; i < keyList.length; i++)
-          if (e.which == T(keyList[i]).charCodeAt(0)) {
-            self.pressKey(keyList[i]);
+        var tabs = ['CONTENT', 'INDEX', 'SEARCH'];
+        for (var i = 0; i < tabs.length; i++) {
+          var key = cache.docs_data['TAB_ALT_SHORTCUT_' + tabs[i]];
+          if (e.which == key.charCodeAt(0)) {
+            self.pressKey(key);
             return false;
           }
+        }
       }
     });
   }
@@ -1528,7 +1559,7 @@ function ctor_structure()
     registerEvent(ListBox, 'mouseenter', '> a', function() {
       var $this = $(this);
       if (this.offsetWidth < this.scrollWidth && !$this.attr('title')) {
-        $this.attr('title', isIE8 ? $this.text() : $this.attr('data-content'));
+        $this.attr('title', $this.getDisplayText());
       }
     });
   }
@@ -1756,19 +1787,13 @@ function ctor_features()
       var sel = document.createElement('a');
       sel.className = 'selectCode';
       sel.title = T("Select code");
-      if (isIE8)
-        sel.innerHTML = 'S';
-      else
-        sel.setAttribute("data-content", 'S');
+      $(sel).setDisplayText('S');
       buttons.appendChild(sel);
       if (supportsBlob && !isSyntax && !isNoHighlight) {
         var dwn = document.createElement('a');
         dwn.className = 'downloadCode';
         dwn.title = T("Download code");
-        if (isIE8)
-          dwn.innerHTML = '↓';
-        else
-          dwn.setAttribute("data-content", '↓');
+        $(dwn).setDisplayText('↓');
         buttons.appendChild(dwn);
       }
       $(parent) // Show these buttons on hover:
@@ -2069,6 +2094,16 @@ padding:"inner"+a,content:b,"":"outer"+a},function(c,d){n.fn[d]=function(d,e){va
       clearTimeout($.queueFunc._timer);
       $.queueFunc._queue = [];
     }
+  };
+
+  $.fn.setDisplayText = function(value) {
+    return this.each(function() {
+      isIE8 ? $(this).text(value) : $(this).attr('data-content', value);
+    });
+  };
+
+  $.fn.getDisplayText = function() {
+    return isIE8 ? $(this).text() : $(this).attr('data-content');
   };
 }
 

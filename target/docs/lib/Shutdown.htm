@@ -16,28 +16,59 @@
 
 <p>Fährt das System herunter, startet es neu oder meldet es ab.</p>
 
-<pre class="Syntax"><span class="func">Shutdown</span>, Flag</pre>
+<pre class="Syntax"><span class="func">Shutdown</span>, Flags</pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>Flag</dt>
+  <dt>Flags</dt>
   <dd>
-    <p>Eine Kombination (Summe) der folgenden Zahlen:</p>
-    <ul>
-      <li>0 = Abmelden</li>
-      <li>1 = Herunterfahren</li>
-      <li>2 = Neustart</li>
-      <li>4 = Erzwingen</li>
-      <li>8 = Ausschalten</li>
-    </ul>
-    <p>Addieren Sie die gewünschten Werte. Zum Beispiel ist 9 erforderlich, um das System herunterzufahren und auszuschalten (Herunterfahren + Ausschalten = 1 + 8 = 9). Alternativ kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> wie 1+8 angegeben werden.</p>
-    <p>Der "Erzwingen"-Wert (4) erzwingt das Schließen aller geöffneten Anwendungen. Dies sollte nur im Notfall verwendet werden, da es zu Datenverlust bei allen geöffneten Anwendungen führen kann.</p>
-    <p>Der "Ausschalten"-Wert (8) fährt das System herunter und schaltet den Strom aus.</p>
+    <p>Eine Kombination (oder Summe) von Nummern aus der Tabelle unten, die den Shutdown-Typ angibt.</p>
+    <p>Dieser Parameter kann ein <a href="../Variables.htm#Expressions">Ausdruck</a> sein.</p>
   </dd>
 
 </dl>
 
+<h2 id="Shutdown_Types">Shutdown-Typen</h2>
+<table class="info">
+  <tr>
+    <th>Nummer</th>
+    <th abbr="Konstante">Windows-Konstante</th>
+    <th abbr="Beschr">Beschreibung</th>
+  </tr>
+  <tr>
+    <td>0x0 (0)</td>
+    <td>EWX_LOGOFF</td>
+    <td>Schließt alle Prozesse und meldet danach den Benutzer ab.</td>
+  </tr>
+  <tr>
+    <td>0x1 (1)</td>
+    <td>EWX_SHUTDOWN</td>
+    <td>Fährt das System so weit herunter, dass die Stromversorgung sicher unterbrochen werden kann. Alle Dateipuffer werden auf die Festplatte geflusht, und alle laufenden Prozesse werden beendet. In Windows XP SP1 oder höher wird anschließend die Stromversorgung unterbrochen, sofern das System das Power-Off-Feature unterstützt.</td>
+  </tr>
+  <tr>
+    <td>0x2 (2)</td>
+    <td>EWX_REBOOT</td>
+    <td>Fährt das System herunter und startet es danach neu.</td>
+  </tr>
+  <tr>
+    <td>0x4 (4)</td>
+    <td>EWX_FORCE</td>
+    <td>Erzwingt das Schließen aller geöffneten Anwendungen. Dies sollte nur im Notfall verwendet werden, da es zu Datenverlust bei allen geöffneten Anwendungen führen kann.</td>
+  </tr>
+  <tr>
+    <td>0x8 (8)</td>
+    <td>EWX_POWEROFF</td>
+    <td>Fährt das System herunter und unterbricht die Stromversorgung. Das System muss das Power-Off-Feature unterstützen.</td>
+  </tr>
+  <tr>
+    <td>0x400000 (4194304)</td>
+    <td>EWX_HYBRID_SHUTDOWN</td>
+    <td>Bereitet das System auf den Schnellstart vor, fährt das System herunter und unterbricht die Stromversorgung. Benötigt Windows 8 oder höher, und die entsprechende Option muss in den Energieeinstellungen des Systems aktiviert sein (sofern verfügbar).</td>
+  </tr>
+</table>
+
 <h2 id="Remarks">Bemerkungen</h2>
+<p>Addieren oder kombinieren Sie die gewünschten Werte. Zum Beispiel können Sie 9 (1 + 8) angeben, um das System herunterzufahren und die Stromversorgung zu unterbrechen. Alternativ können Sie einen <a href="../Variables.htm#Expressions">Ausdruck</a> wie <code>1 + 8</code> oder <code>0x1 | 0x8</code> angeben.</p>
 <p>Um das System anzuhalten oder in den Ruhemodus zu versetzen, siehe <a href="#Suspend">Beispiel #2</a> am Ende dieser Seite.</p>
 <p>Um den Monitor auszuschalten, siehe <a href="PostMessage.htm#ExMonitorPower">PostMessage-Beispiel #1</a>.</p>
 <p>Ein Skript kann auch <a href="OnExit.htm">OnExit</a> verwenden, um zu erkennen, wann das System herunterfährt oder der Benutzer sich abmeldet.</p>

@@ -1,5 +1,5 @@
 translateData = {
-  // Sidebar
+  // sidebar
   "C̲ontent":"I̲nhalt",
   "Content tab":"Inhalt-Reiter",
   "Shortcut: ALT+C":"Tastaturkurzbefehl: ALT+I",
@@ -25,16 +25,13 @@ translateData = {
   "Go to previous/next occurrence":"Gehe zum vorherigen/nächsten Vorkommen",
   "Quick reference":"Kurzübersicht",
   "Collapse or uncollapse the quick reference":"Kurzübersicht zu- oder aufklappen",
-  // Oberleiste
+  // header
   "Skip navigation":"Navigation überspringen",
   "Hide or show the sidebar":"Randleiste verstecken oder anzeigen",
   "Go to the homepage":"Zur Homepage springen",
-  "en":"de",
-  "Change the language":"Sprache wechseln",
-  "v1":true,
-  "Change the version":"Version wechseln",
+  "Click to change the language.":"Klicken Sie hier, um die Sprache zu wechseln.",
+  "Click to change the version.":"Klicken Sie hier, um die Version zu wechseln.",
   "Edit this document on GitHub":"Dieses Dokument auf GitHub bearbeiten",
-  "https://github.com/Lexikos/AutoHotkey_L-Docs/edit/v1/docs/":"https://github.com/autohotkey-docs-translation/v1-de/edit/master/target/docs/",
   "Go back":"Eine Seite zurück",
   "Go forward":"Eine Seite vor",
   "Change the font size":"Schriftgröße ändern",
@@ -42,11 +39,8 @@ translateData = {
   "Open this document in the default browser (requires internet connection). Middle-click to copy the link address.":"Dieses Dokument im Standardbrowser öffnen (benötigt Internetverbindung). Klicken Sie mit der mittleren Maustaste, um die Adresse des Links zu kopieren.",
   "Use the dark or light scheme":"Dunkles oder helles Farbschema verwenden",
   "Open the help settings":"Einstellungen für die Hilfe öffnen",
-  // ALT+... Tastaturkurzbefehle (muss in Großbuchstaben sein)
-  "C":"I",
-  "N":true,
-  "S":true,
-  // Inhalt
+  // viewer
+  "Pre-release documentation. Specifics may not be added yet and may change with future releases.":"Vorabversionsdokumentation. Details können noch fehlen und sich in zukünftigen Versionen ändern.",
   "Select code":"Code auswählen",
   "Download code":"Code herunterladen",
   "Back to top":"Zum Seitenanfang",
