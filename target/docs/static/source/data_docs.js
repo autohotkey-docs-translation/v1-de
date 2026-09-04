@@ -11,9 +11,10 @@ docsData = {
   ],
   TOOL_VERSION_ITEMS: [
     ["v1", "https://ahkde.github.io/docs/v1/", "AutoHotkey v1.1"],
-    ["v2", "https://ahkde.github.io/docs/v2/", "AutoHotkey v2"],
-    ["pre", "https://www.autohotkey.com/docs/alpha/", "AutoHotkey Vorabversion"]
+    ["v2", "https://ahkde.github.io/docs/v2/", "AutoHotkey v2.0"]
   ],
+  // TOOL_VERSION_ITEM_PRE: null,
+  TOOL_VERSION_ITEM_PRE: ["https://www.autohotkey.com/docs/alpha/", "AutoHotkey v2.1 Vorabversion"],
   TOOL_EDIT_LINK: "https://github.com/autohotkey-docs-translation/v1-de/edit/master/target/docs/",
   TAB_ALT_SHORTCUT_CONTENT: "I",
   TAB_ALT_SHORTCUT_INDEX: "N",
