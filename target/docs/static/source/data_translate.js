@@ -40,7 +40,7 @@ translateData = {
   "Use the dark or light scheme":"Dunkles oder helles Farbschema verwenden",
   "Open the help settings":"Einstellungen für die Hilfe öffnen",
   // viewer
-  "Pre-release documentation. Specifics may not be added yet and may change with future releases.":"Vorabversionsdokumentation. Details können noch fehlen und sich in zukünftigen Versionen ändern.",
+  "Pre-release documentation. Specifics may not be added yet and may change with future releases.":"Vorabdokumentation. Details können noch fehlen und sich in zukünftigen Versionen ändern.",
   "Select code":"Code auswählen",
   "Download code":"Code herunterladen",
   "Back to top":"Zum Seitenanfang",
