@@ -110,6 +110,7 @@ var features = new ctor_features;
 var docs = {dataPath: scriptDir + '/source/data_docs.js'};
 var translate = {dataPath: scriptDir + '/source/data_translate.js'};
 var deprecate = {dataPath: scriptDir + '/source/data_deprecate.js'};
+var syntax = {dataPath: scriptDir + '/source/data_syntax.js'};
 
 scriptElement.insertAdjacentHTML('afterend', structure.metaViewport);
 var isPhone = (document.documentElement.clientWidth <= 600);
@@ -455,6 +456,13 @@ function ctor_index()
   var self = this;
   self.dataPath = scriptDir + '/source/data_index.js';
   self.create = function(input, filter) { // Create and add the index links.
+    /* Filter types (-1 = unfiltered):
+      0 = directive         5 = declaration
+      1 = built-in var      6 = command
+      2 = built-in func     7 = sub-command
+      3 = control flow      8 = built-in method/prop
+      4 = operator          99 = Ahk2Exe compiler
+    */
     var output = '';
     var lang = cache.docs_data.LANGUAGE;
     var collator = window.Intl ? new Intl.Collator(lang) : null;
@@ -1859,12 +1867,12 @@ function ctor_features()
     var docs_path = scriptDir + '/../';
     if (typeof highlighter == 'undefined')
     {
-      if (!retrieveData(index.dataPath, "index_data", "indexData", function() { self.addSyntaxColors(pres); }))
+      if (!retrieveData(syntax.dataPath, "syntax_data", "syntaxData", function() { self.addSyntaxColors(pres); }))
         return;
-      loadScript(scriptDir + '/highlighter/highlighter.js', function() { highlighter.addSyntaxColors(pres, cache.index_data, docs_path, false); });
+      loadScript(scriptDir + '/highlighter/highlighter.js', function() { highlighter.addSyntaxColors(pres, cache.syntax_data, docs_path, false); });
     }
     else
-      highlighter.addSyntaxColors(pres, cache.index_data, docs_path, false);
+      highlighter.addSyntaxColors(pres, cache.syntax_data, docs_path, false);
   };
 
   // --- Add footer at the bottom of the site ---
